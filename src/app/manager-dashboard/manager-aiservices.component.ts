@@ -27,23 +27,23 @@ export class ManagerAIServicesComponent implements OnInit {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private stateService: StateService,
-  ) {}
+  ) {
+    this.configForm = this.fb.group({
+      streaming: [ false ],
+      assistantName: [ '' ],
+      assistantInstructions: [ '' ]
+    });
+  }
 
   ngOnInit() {
-    const configurationId = this.stateService.configuration._id;
-    this.couchService.get('configurations/' + configurationId).subscribe(
-      (data: any) => {
-        this.configuration = data;
-        this.initForm();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.configuration = this.stateService.configuration;
+    this.configuration.keys = this.stateService.keys;
+    this.initForm();
   }
 
   initForm() {
     this.configForm = this.fb.group({
+      streaming: [ !!this.configuration.streaming ],
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
       assistantName: [ this.configuration.assistant?.name || '' ],
@@ -56,7 +56,6 @@ export class ManagerAIServicesComponent implements OnInit {
       }
     }
   }
-
 
   mapConfigToFormGroup(configObject: any, prefix: string) {
     const formGroupObj = {};
@@ -81,12 +80,13 @@ export class ManagerAIServicesComponent implements OnInit {
     this.spinnerOn = true;
     const updatedConfig = {
       ...this.configuration,
+      streaming: this.configForm.value.streaming,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
       assistant: {
         name: this.configForm.value.assistantName,
-        instructions: this.configForm.value.assistantInstructions,
-      },
+        instructions: this.configForm.value.assistantInstructions
+      }
     };
     this.configurationService.updateConfiguration(updatedConfig).pipe(finalize(spinnerOff)).subscribe(
       () => this.stateService.requestData('configurations', 'local'),

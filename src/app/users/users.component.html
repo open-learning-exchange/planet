@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileTabletView">
+  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
     <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
     <span i18n>Members</span>
     <span class="toolbar-fill"></span>
@@ -7,7 +7,7 @@
     <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
   </ng-container>
 
-  <ng-template #mobileTabletView>
+  <ng-template #mobileView>
     <mat-toolbar-row>
       <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>Members</span>
@@ -82,5 +82,5 @@
     </div>
   </mat-toolbar>
 
-  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog"></planet-users-table>
+  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog" [isLoading]="isLoading"></planet-users-table>
 </div>

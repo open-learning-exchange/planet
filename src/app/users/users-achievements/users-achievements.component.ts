@@ -30,6 +30,7 @@ export class UsersAchievementsComponent implements OnInit {
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false;
+  isLoading = true;
 
   constructor(
     private couchService: CouchService,
@@ -66,6 +67,7 @@ export class UsersAchievementsComponent implements OnInit {
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
       this.setCertifications(courses, progress, certifications);
+      this.isLoading = false;
     });
     this.coursesService.requestCourses();
   }
@@ -103,8 +105,15 @@ export class UsersAchievementsComponent implements OnInit {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
-  isClickable(achievement) {
-    return achievement.description.length > 0;
+  isClickable(achievement): boolean {
+    return (!!achievement.description && achievement.description.length > 0) || (!!achievement.link && achievement.link.length > 0);
+  }
+
+  onAchievementClick(achievement: any, index: number): void {
+    if (!this.isClickable(achievement)) {
+      return;
+    }
+    this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
   get profileImg() {

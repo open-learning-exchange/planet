@@ -1,15 +1,12 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { PlanetMessageService } from '../shared/planet-message.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
-import { UserService } from '../shared/user.service';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import {
@@ -22,8 +19,12 @@ import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
+import { UserService } from '../shared/user.service';
+import { CouchService } from '../shared/couchdb.service';
+import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray } from '../shared/utils';
+import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
@@ -36,10 +37,18 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styleUrls: [ './courses.scss' ]
+  styleUrls: [ './courses.scss' ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+  isLoading = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
   selectedEnrolled = 0;
@@ -104,6 +113,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   deviceTypes: typeof DeviceType = DeviceType;
   showFilters = false;
   showFiltersRow = false;
+  expandedElement: any = null;
+  previewLimit = 450;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -157,6 +168,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {
@@ -393,9 +405,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
-    if (this.isForm) {
-      return;
-    }
+    if (this.isForm) { return; }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -456,6 +466,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openCourseViewDialog(courseId) {
+    if (!this.isDialog && !this.isForm) { return; }
     const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId },
       minWidth: '600px',
@@ -472,6 +483,25 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
     }
+  }
+
+  toggleRow(element: any) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
+  }
+
+  isExpanded(element: any): boolean {
+    return this.expandedElement === element;
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description || !element.images) {
+      return false;
+    }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
   }
 
 }

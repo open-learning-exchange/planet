@@ -14,7 +14,12 @@ import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
-  templateUrl: 'courses-progress-leader.component.html'
+  templateUrl: 'courses-progress-leader.component.html',
+  styles: [ `
+    mat-toolbar.primary-color {
+      padding-top: 8px;
+    }
+  ` ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
@@ -35,6 +40,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   configuration: any = {};
   deviceType: DeviceType;
   deviceTypes = DeviceType;
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -52,6 +58,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.coursesService.requestCourse({ courseId: params.get('id'), forceLatest: true });
     });
@@ -63,6 +70,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.submissions = submissions;
       this.setFullCourse(submissions);
       this.filterSubmittedExamSteps(submissions);
+      this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
   }

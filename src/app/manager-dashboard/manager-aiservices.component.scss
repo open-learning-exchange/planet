@@ -33,6 +33,7 @@
   justify-content: center;
   width: 100%;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .update-button-container button {
@@ -76,7 +77,6 @@
   }
 }
 
-/* Targeting mobile screens*/
 @media (max-width: $screen-sm) {
   .container {
     padding: 10px;

@@ -28,20 +28,22 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div [ngClass]="{'show-less': showLess}" #content>
-      <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
+    <div>
+      <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="previewLimit"></planet-markdown>
       <ng-container *ngIf="item.doc.chat">
         <div class="chat-container">
-          <div *ngFor="let conversation of item.doc.news.conversations">
+          <div *ngFor="let conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations)">
             <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
             <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
           </div>
         </div>
       </ng-container>
     </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>
-      {{ showLess ? 'Show More' : 'Show Less' }}
-    </span>
+    <div *ngIf="showExpand" class="full-width" style="text-align: center;" (click)="showLess = !showLess">
+      <button mat-icon-button>
+        <mat-icon>{{showLess ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}</mat-icon>
+      </button>
+    </div>
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
@@ -49,7 +51,10 @@
       <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
     </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="item.doc.user.name === currentUser.name || currentUser.isUserAdmin">
+    <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
+      <mat-icon>link</mat-icon>
+    </button>
+    <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
       <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
       <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>

@@ -49,8 +49,12 @@
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" required>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.preferredLang"></planet-form-error-messages></mat-error>
+        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" [matAutocomplete]="auto" required>
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let language of languageNames" [value]="language">
+            {{ language }}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
       <div class="full-width" *ngIf="showAdvancedOptions">
         <span i18n>Advanced Options:</span>
@@ -76,7 +80,7 @@
       </div>
     </form>
     <div>
-      <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n>Show Advanced Options</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="showAdvancedOptions" i18n style="margin-bottom: 16px;">Show Advanced Options</mat-slide-toggle>
     </div>
     <div *ngIf="isAdvancedOptionsChanged">
       <mat-icon>warning</mat-icon><span i18n>You have changed the advanced option. Please confirm that you wanted to change it.</span><br/>

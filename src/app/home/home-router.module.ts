@@ -10,8 +10,8 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
+import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
-import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -75,8 +75,13 @@ const alwaysGuardedRoutes = [
 ];
 
 const routes: Routes = [
-  { path: '', component: CommunityComponent, canActivate: [ BetaThenAuthService ] },
-  { path: '',
+  {
+    path: '',
+    component: CommunityComponent,
+    children: [ { path: 'voices/:id', component: NewsListComponent } ]
+  },
+  {
+    path: '',
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
   }
