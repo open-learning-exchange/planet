@@ -28,6 +28,7 @@ export class PlanetMarkdownComponent implements OnChanges {
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
+  imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
 
   constructor(
     private stateService: StateService,
@@ -39,8 +40,7 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.couchAddress}/`;
 
     this.images = this.extractImageUrls(this.content);
-
-    const textOnly = this.content.replace(/!\[.*?\]\(.*?\)/g, '');
+    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
 
     if (this.previewMode) {
       const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
@@ -53,10 +53,9 @@ export class PlanetMarkdownComponent implements OnChanges {
   }
 
   extractImageUrls(content: string): string[] {
-    const imageRegex = /!\[.*?\]\((.*?)\)/g;
     const matches: string[] = [];
     let match: RegExpExecArray | null;
-    while ((match = imageRegex.exec(content)) !== null) {
+    while ((match = this.imageMarkdownRegex.exec(content)) !== null) {
       const url = match[1];
       matches.push(url.startsWith('http') ? url : `${this.couchAddress}${url}`);
     }
