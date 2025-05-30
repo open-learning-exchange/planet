@@ -51,6 +51,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   nextStartIndex = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
+  // store the last opened thread’s root post id
+  lastRootPostId: string;
 
   constructor(
     private dialog: MatDialog,
@@ -111,6 +113,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   showReplies(news) {
+    // remember which thread was opened
+    if (news._id !== 'root') {
+      this.lastRootPostId = news._id;
+    }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
       return;
@@ -141,6 +147,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+
+    // when going back to the main conversation, scroll down to the previously viewed post
+    if (newsId === 'root' && this.lastRootPostId) {
+      setTimeout(() => {
+        const el = document.getElementById(`news-${this.lastRootPostId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 0);
+    }
   }
 
   showPreviousReplies() {
