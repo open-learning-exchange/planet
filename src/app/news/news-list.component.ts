@@ -152,7 +152,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       setTimeout(() => {
         const el = document.getElementById(`news-${this.lastRootPostId}`);
         if (el) {
-          // jump instantly instead of smooth scroll
           el.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }, 0);
