@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -7,13 +7,46 @@ import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
+import { RatingService } from '../../shared/forms/rating.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CouchService } from '../../shared/couchdb.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuTrigger } from '@angular/material/menu';
+
+const popupFormFields = [
+  {
+    'label': $localize`Rate`,
+    'type': 'rating',
+    'name': 'rate',
+    'placeholder': $localize`Your Rating`,
+    'required': false
+  },
+  {
+    'label': $localize`Comment`,
+    'type': 'textarea',
+    'name': 'comment',
+    'placeholder': $localize`Would you like to leave a comment?`,
+    'required': false
+  }
+];
 
 @Component({
   templateUrl: './courses-view.component.html',
   styleUrls: [ 'courses-view.scss' ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
+  @Input() rating: any = { userRating: {} };
+  rateForm: FormGroup;
+  popupForm: FormGroup;
+  isPopupOpen = false;
+  get rateFormField() {
+    return { rate: this.rating.userRating.rate || 0 };
+  }
+  get commentField() {
+    return { comment: this.rating.userRating.comment || '' };
+  }
 
   onDestroy$ = new Subject<void>();
   courseDetail: any = { steps: [] };
@@ -23,6 +56,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   fullView = 'on';
   currentView: string;
   courseId: string;
+  hasRating = false;
   canManage: boolean;
   isLoading: boolean;
   currentUser = this.userService.get();
@@ -33,14 +67,22 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
+    private fb: FormBuilder,
     private router: Router,
+    private snackBar: MatSnackBar,
     private userService: UserService,
     private route: ActivatedRoute,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
+    private dialogsForm: DialogsFormService,
+    private couchService: CouchService,
+    private planetMessage: PlanetMessageService,
+    private ratingService: RatingService,
     private deviceInfoService: DeviceInfoService
   ) {
+    this.rateForm = this.fb.group(this.rateFormField);
+    this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -50,9 +92,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
     this.coursesService.courseUpdated$.pipe(
       switchMap(({ course, progress = [ { stepNum: 0 } ] }: { course: any, progress: any }) => {
         this.courseDetail = course;
+        this.hasCourseRating();
         this.isLoading = false;
         this.coursesService.courseActivity('visit', course);
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
@@ -186,12 +230,101 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   /**
    * Returns routing to previous parent page on Courses
    */
+
+  checkCourseCompletion(){
+    return this.courseDetail.steps.every(step => step.progress !== undefined);
+  }
+
+  hasCourseRating() {
+    const opts: any = {};
+    this.ratingService.getRatings(
+      { itemIds: [this.courseDetail._id], type: 'course' },
+      opts
+    ).subscribe({
+      next: (ratings) => {
+        this.hasRating = ratings && ratings[0]['rate'] > 0;
+      },
+      error: () => {
+        this.hasRating = false;
+      }
+    });
+  }
+
+  updateRatingFromPopup() {
+    // Create a form group with the popup form values
+    const ratingForm = this.fb.group({
+      rate: [this.popupForm.get('rate').value],
+      comment: [this.popupForm.get('comment').value]
+    });
+  
+    // Prepare the rating object similar to PlanetRatingComponent
+    this.rating = Object.assign({ 
+      rateSum: 0, 
+      totalRating: 0, 
+      maleRating: 0, 
+      femaleRating: 0, 
+      userRating: {} 
+    }, this.rating);
+  
+    // Use the same updateRating method from PlanetRatingComponent
+    const configuration = this.stateService.configuration;
+    const newRating = {
+      type: 'course',
+      item: this.courseDetail._id,
+      title: this.courseDetail.courseTitle,
+      createdTime: this.couchService.datePlaceholder,
+      ...this.rating.userRating,
+      ...ratingForm.value,
+      time: this.couchService.datePlaceholder,
+      user: this.userService.get(),
+      createdOn: configuration.code,
+      parentCode: configuration.parentCode
+    };
+  
+    // Update the rating
+    this.couchService.updateDocument('ratings', newRating).subscribe({
+      next: (res: any) => {
+        newRating._rev = res.rev;
+        newRating._id = res.id;
+        this.rating.userRating = newRating;
+        this.hasRating = true;
+        this.ratingService.newRatings(false);
+        this.planetMessage.showMessage($localize`Thank you for your rating`);
+      },
+      error: () => {
+        this.planetMessage.showAlert($localize`There was an issue updating your rating`);
+      }
+    });
+  }
+
+  handleCourseCompletionRating(){
+    if (this.checkCourseCompletion() && !this.hasRating) {
+      this.popupForm = this.fb.group({
+        rate: [0],
+        comment: ['']
+      });
+  
+      const snackBarRef = this.snackBar.open('Thank you for taking this course!', 'Rate Course', {
+        duration: 5000
+      });
+  
+      snackBarRef.onAction().subscribe(() => {
+        this.dialogsForm
+          .confirm($localize`Rating`, popupFormFields, this.popupForm)
+          .subscribe((res) => {
+            if (res) {
+              // If user confirms, update the rating
+              this.updateRatingFromPopup();
+            }
+          });
+      });
+    }
+  }
+  
   goBack() {
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    this.hasCourseRating();
+    this.handleCourseCompletionRating();
+    this.router.navigate(['../../'], { relativeTo: this.route });
   }
-
-  trackBySteps(index: number) {
-    return index;
-  }
-
+  
 }
