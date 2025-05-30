@@ -56,10 +56,16 @@ export class CertificationsService {
   }
 
   isCourseCompleted(course, user) {
-    return course.doc.steps.length === course.progress
+    const coursesArr = [ ...course.progress ];
+
+    const callback = (element, index, array) => {
+      return index + 1 === coursesArr
       .filter(step => step.userId === user._id && step.passed)
       .map(step => step.stepNum)
       .reduce(dedupeShelfReduce, []).length;
+    };
+
+    return course.doc.steps.every(callback);
   }
 
 }
