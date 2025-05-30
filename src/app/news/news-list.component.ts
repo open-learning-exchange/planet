@@ -147,7 +147,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
-
     // when going back to the main conversation, scroll down to the previously viewed post
     if (newsId === 'root' && this.lastRootPostId) {
       setTimeout(() => {
