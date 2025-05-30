@@ -1,0 +1,17 @@
+planet-news-list-item {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+mat-divider {
+  margin: 1.5rem 0 !important;
+  background-color: rgba(0, 0, 0, 0.08);
+  height: 2px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
