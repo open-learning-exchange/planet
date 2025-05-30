@@ -5,7 +5,7 @@
         <mat-tab i18n-label label="Our Voices">
           <h3 style="text-align: right; margin-right: 0.5rem;">
             <ng-container *planetAuthorizedRoles="'learner'">
-              <button mat-raised-button style="background-color: #FFD600; color: black;" (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
+              <button mat-raised-button class="new-voice-button" (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
             </ng-container>
           </h3>
           <ng-container *ngIf="isLoading; else loaded">
