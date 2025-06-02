@@ -113,15 +113,26 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   showReplies(news) {
-    // remember which thread was opened
+    // remember the conversation’s true root post, even from deep threads
     if (news._id !== 'root') {
-      this.lastRootPostId = news._id;
+      this.lastRootPostId = this.getThreadRootId(news);
     }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
       return;
     }
     this.filterNewsToShow(news._id);
+  }
+
+  // climb replies until you reach the top-level post (_id with no replyTo)
+  private getThreadRootId(news: any): string {
+    let current = news;
+    while (current.doc && current.doc.replyTo) {
+      const parent = this.items.find(item => item._id === current.doc.replyTo);
+      if (!parent) break;
+      current = parent;
+    }
+    return current._id;
   }
 
   navigateToReply(newsId) {
