@@ -49,7 +49,8 @@ jobs:
 
       - name: Set latest release
         run: |
-          echo "LATEST_RELEASE=$(git ls-remote --tags --sort=-committerdate | grep -o 'v.*' | head -1)" >> $GITHUB_ENV
+          git fetch --tags
+          echo "LATEST_RELEASE=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
           
       - name: Set is latest release
         if: ${{ github.ref_name == env.LATEST_RELEASE }}
