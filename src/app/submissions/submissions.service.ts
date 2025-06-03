@@ -520,81 +520,84 @@ export class SubmissionsService {
 
   async generateChartImage(data: any): Promise<string> {
     const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 300;
+    canvas.width = 300;
+    canvas.height = 400;
     const ctx = canvas.getContext('2d');
+    const isBar = data.chartType === 'horizontalBar';
 
-    const chartRendered = new Promise<string>((resolve) => {
+    return new Promise<string>((resolve) => {
       const chartConfig = {
-        type: 'pie',
+        type: isBar ? 'bar' : 'pie',
         data: {
           labels: data.labels,
           datasets: [ {
             data: data.data,
+            label: isBar ? '% of Users' : undefined,
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-            ]
+            ],
           } ]
         },
         options: {
+          responsive: false,
+          maintainAspectRatio: false,
           animation: {
             onComplete: function() {
-              this.ctx.font = '12px sans-serif';
-              this.ctx.fillStyle = '#fff';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-              this.getDatasetMeta(0).data.forEach((element, index) => {
-                const count = data.data[index];
+              if (isBar && data.userCounts) {
+                this.getDatasetMeta(0).data.forEach((bar, index) => {
+                  const percentage = data.data[index];
+                  const userCount = data.userCounts[index];
+                  if (percentage > 0) {
+                    ctx.fillText(`${percentage}% (${userCount})`, bar.x + 5, bar.y);
+                  }
+                });
+              } else if (!isBar) {
                 const total = data.data.reduce((sum, val) => sum + val, 0);
-                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-                if (count > 0) {
-                  const pos = element.tooltipPosition();
-                  ctx.fillText(`${count.toString()}(${percentage}%)`, pos.x, pos.y);
-                }
-              });
+                this.getDatasetMeta(0).data.forEach((element, index) => {
+                  const count = data.data[index];
+                  const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+                  if (count > 0) {
+                    const pos = element.tooltipPosition();
+                    ctx.fillText(`${count}(${percentage}%)`, pos.x, pos.y);
+                  }
+                });
+              }
               resolve(this.toBase64Image());
             }
-          },
-          responsive: false,
-          maintainAspectRatio: false
+          }
         }
       };
-      const chart = new Chart(ctx, chartConfig);
+      return new Chart(ctx, chartConfig);
     });
-
-    return chartRendered;
   }
 
-  aggregateQuestionResponses(question: any, submissions: any[]): { labels: string[], data: number[] } {
-    const counts: { [choiceText: string]: number } = {};
-    question.choices.forEach((choice: any) => {
-      counts[choice.text] = 0;
-    });
+  aggregateQuestionResponses(question, submissions) {
+    const totalUsers = submissions.length;
+    const counts: Record<string, Set<string>> = {};
 
-    submissions.forEach(submission => {
-      const answer = submission.answers[question.index];
-      if (!answer) { return; }
+    question.choices.forEach(c => { counts[c.text] = new Set(); });
+    submissions.forEach(sub => {
+      const ans = sub.answers[question.index];
+      if (!ans) { return; }
 
-      if (question.type === 'select') {
-        const choiceText = answer.value.text;
-        if (counts[choiceText] !== undefined) {
-          counts[choiceText]++;
-        }
-      } else if (question.type === 'selectMultiple') {
-        if (Array.isArray(answer.value)) {
-          answer.value.forEach((selected: any) => {
-            const choiceText = selected.text;
-            if (counts[choiceText] !== undefined) {
-              counts[choiceText]++;
-            }
-          });
-        }
-      }
+      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+      selections.forEach(selection => {
+        const txt = selection.text ?? selection;
+        counts[txt]?.add(sub.user._id || sub.user.name);
+      });
     });
 
     const labels = Object.keys(counts);
-    const data = labels.map(label => counts[label]);
-    return { labels, data };
+    const userCounts = labels.map(l => counts[l].size);
+    const data = question.type === 'selectMultiple' ? userCounts.map(c => totalUsers ? Math.round(c / totalUsers * 100) : 0) : userCounts;
+
+    return {
+      labels,
+      data,
+      userCounts,
+      totalUsers,
+      chartType: question.type === 'selectMultiple' ? 'horizontalBar' : 'pie'
+    };
   }
 
   async analyseResponses(exam: any, submissions: any) {
