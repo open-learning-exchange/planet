@@ -102,7 +102,17 @@
                   <mat-icon>edit</mat-icon>
                   <label *ngIf="!isMobile" i18n> Edit </label>
                 </button>
+                <button *ngIf="element.userStatus === 'member' && mode === 'team'" 
+        mat-raised-button 
+        color="accent" 
+        class="margin-lr-3" 
+        (click)="convertToEnterprise(element.doc); $event.stopPropagation()">
+  <mat-icon>transform</mat-icon>
+  <label *ngIf="!isMobile" i18n> Convert </label>
+</button>
+
               </ng-container>
+              
               <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc); $event.stopPropagation()">
                 <mat-icon>add_circle</mat-icon>
                 <label *ngIf="!isMobile" i18n> Request to Join </label>
