@@ -59,6 +59,7 @@ jobs:
       - name: Check Package Changes
         run: |
           git fetch origin master --depth 2
+          echo $(./docker/planet/scripts/check_dependencies.sh)
           echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/check_dependencies.sh)" >> $GITHUB_ENV
 
       - name: Docker login
