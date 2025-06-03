@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+echo $LATEST_RELEASE
+
 PREVIOUS_REF="origin/master:package.json"
 
 if [ $(git branch --show-current) = "master" ]; then
