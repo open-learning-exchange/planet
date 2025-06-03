@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+echo "CHECKING DEPENDENCIES"
 echo $LATEST_RELEASE
 
 PREVIOUS_REF="origin/master:package.json"
