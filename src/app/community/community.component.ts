@@ -34,6 +34,7 @@ import { UserChallengeStatusService } from '../shared/user-challenge-status.serv
   preserveWhitespaces: true,
   styleUrls: [ './community.scss' ],
   encapsulation: ViewEncapsulation.None
+  
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -43,6 +44,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
+  redDotMap: { [voiceId: string]: boolean } = {};
   links: any[] = [];
   finances: any[] = [];
   councillors: any[] = [];
@@ -84,7 +86,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.markUnreadRepliesToMyVoices();
       this.isLoading = false;
+      console.log('Sample voice item =', this.news[0]);
+      console.log('Sample voice.doc =', this.news[0].doc);
+
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -356,6 +362,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   toggleShowButton(data) {
     this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
+    if (this.redDotMap[data._id]) {
+      delete this.redDotMap[data._id];
+    }
   }
 
   toggleDeleteMode() {
@@ -446,4 +455,29 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     this.resizeCalendar = index === 5;
   }
+  initRedDotsFromReplies() {
+    for (const voice of this.news) {
+      if (
+        voice.doc.createdOn === this.user._id &&
+        (voice.doc.replies || []).length > 0 &&
+        !this.redDotMap[voice._id]
+      ) {
+        this.redDotMap[voice._id] = true;
+      }
+    }
+  }
+  markUnreadRepliesToMyVoices() {
+    for (const voice of this.news) {
+      const isMine = voice.doc.createdOn === this.user._id;
+      const hasReplies = (voice.doc.replies || []).length > 0;
+      const isUnseen = !this.redDotMap[voice._id];
+  
+      if (isMine && hasReplies && isUnseen) {
+        this.redDotMap[voice._id] = true;
+      }
+    }
+  }
+  
+  
+  
 }
