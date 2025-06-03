@@ -24,7 +24,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   @Input() showRepliesButton = true;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
-  @Input() showRedDot: boolean = false;
+  @Input() showRedDot = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();

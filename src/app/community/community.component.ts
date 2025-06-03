@@ -34,7 +34,7 @@ import { UserChallengeStatusService } from '../shared/user-challenge-status.serv
   preserveWhitespaces: true,
   styleUrls: [ './community.scss' ],
   encapsulation: ViewEncapsulation.None
-  
+
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -471,13 +471,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
       const isMine = voice.doc.createdOn === this.user._id;
       const hasReplies = (voice.doc.replies || []).length > 0;
       const isUnseen = !this.redDotMap[voice._id];
-  
+
       if (isMine && hasReplies && isUnseen) {
         this.redDotMap[voice._id] = true;
       }
     }
   }
-  
-  
-  
+
+
+
 }
