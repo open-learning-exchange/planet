@@ -129,7 +129,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     let current = news;
     while (current.doc && current.doc.replyTo) {
       const parent = this.items.find(item => item._id === current.doc.replyTo);
-      if (!parent) break;
+      if (!parent) {
+        break;
+      }
       current = parent;
     }
     return current._id;
