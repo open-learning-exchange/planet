@@ -46,18 +46,11 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Set latest release
-        run: |
-          git fetch origin master --depth 2
-          git fetch origin master --tags
-          git tag | sort --version-sort
-          echo "LATEST_RELEASE=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
           
-      - name: Set is latest release
-        if: ${{ github.ref_name == env.LATEST_RELEASE }}
+      - name: Set is release
+        # if: ${{ endsWith(github.ref_name, env.PLANET_VERSION) }}
         run: |
-          echo "IS_LATEST_RELEASE=true" >> $GITHUB_ENV
+          echo "IS_RELEASE=true" >> $GITHUB_ENV
 
       - name: Check Package Changes
         run: |
