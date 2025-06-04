@@ -1,11 +1,8 @@
 #!/usr/bin/env sh
 
-echo "CHECKING DEPENDENCIES"
-echo $IS_RELEASE
-
 PREVIOUS_REF="origin/master:package.json"
 
-if [ $(git branch --show-current) = "master" ]; then
+if [ $(git branch --show-current) = "master" ] || [ "$IS_RELEASE" = "true" ]; then
   PREVIOUS_REF="origin/master~1:package.json"
 fi
 
