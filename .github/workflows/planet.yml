@@ -50,6 +50,7 @@ jobs:
       - name: Set latest release
         run: |
           git fetch origin master --depth 2
+          git fetch origin master --tags
           git tag | sort --version-sort
           echo "LATEST_RELEASE=$(git tag | sort --version-sort | tail -n1)" >> $GITHUB_ENV
           
