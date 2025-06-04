@@ -435,24 +435,22 @@ export class SubmissionsService {
             if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
             question.index = i;
             docContent.push({ text: `Q${i + 1}: ${question.body}` });
+            const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+            const pieImg = await this.generateChartImage(pieAgg);
             if (question.type === 'selectMultiple') {
               const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
               const barImg = await this.generateChartImage(barAgg);
-              const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
-              const pieImg = await this.generateChartImage(pieAgg);
-
               docContent.push({
                 stack: [
-                  { image: barImg, width: 200, margin: [ 0, 10, 0, 10 ] },
-                  { image: pieImg, width: 200, margin: [ 0, 10, 0, 10 ] }
+                  { image: barImg, width: 250, margin: [ 0, 10, 0, 10 ] },
+                  { image: pieImg, width: 250, margin: [ 0, 10, 0, 10 ] }
                 ],
                 alignment: 'center'
               });
             } else {
-              const agg = this.aggregateQuestionResponses(question, updatedSubmissions);
-              const img = await this.generateChartImage(agg);
-              docContent.push({ image: img, width: 200, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
+              docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
             }
+            docContent.push({ text: '', pageBreak: 'after' });
           }
         }
         if (exportOptions.includeAnalysis) {
@@ -535,7 +533,7 @@ export class SubmissionsService {
 
     return new Promise<string>((resolve) => {
       const chartConfig = {
-        type: data.chartType,
+        type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
           datasets: [ {
