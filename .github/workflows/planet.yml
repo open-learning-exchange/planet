@@ -48,14 +48,13 @@ jobs:
         uses: actions/checkout@v4
           
       - name: Set is release
-        # if: ${{ endsWith(github.ref_name, env.PLANET_VERSION) }}
+        if: ${{ endsWith(github.ref_name, env.PLANET_VERSION) }}
         run: |
           echo "IS_RELEASE=true" >> $GITHUB_ENV
 
       - name: Check Package Changes
         run: |
           git fetch origin master --depth 2
-          ./docker/planet/scripts/check_dependencies.sh
           echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/check_dependencies.sh)" >> $GITHUB_ENV
 
       - name: Docker login
@@ -72,7 +71,7 @@ jobs:
           docker push $repo
       
       - name: Push latest pre-build
-        if: ${{ github.ref == 'refs/heads/master' && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
+        if: ${{ (github.ref == 'refs/heads/master' || env.IS_RELEASE == 'true') && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
