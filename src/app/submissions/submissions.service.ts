@@ -431,20 +431,28 @@ export class SubmissionsService {
         if (exportOptions.includeCharts) {
           setHeader('Charts');
           for (let i = 0; i < exam.questions.length; i++) {
-            if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
-              continue;
-            }
             const question = exam.questions[i];
+            if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
             question.index = i;
-            const aggregated = this.aggregateQuestionResponses(question, updatedSubmissions);
-            const chartImage = await this.generateChartImage(aggregated);
             docContent.push({ text: `Q${i + 1}: ${question.body}` });
-            docContent.push({
-              image: chartImage,
-              width: 200,
-              alignment: 'center',
-              margin: [ 0, 10, 0, 10 ]
-            });
+            if (question.type === 'selectMultiple') {
+              const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
+              const barImg = await this.generateChartImage(barAgg);
+              const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+              const pieImg = await this.generateChartImage(pieAgg);
+
+              docContent.push({
+                stack: [
+                  { image: barImg, width: 200, margin: [ 0, 10, 0, 10 ] },
+                  { image: pieImg, width: 200, margin: [ 0, 10, 0, 10 ] }
+                ],
+                alignment: 'center'
+              });
+            } else {
+              const agg = this.aggregateQuestionResponses(question, updatedSubmissions);
+              const img = await this.generateChartImage(agg);
+              docContent.push({ image: img, width: 200, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
+            }
           }
         }
         if (exportOptions.includeAnalysis) {
@@ -523,11 +531,11 @@ export class SubmissionsService {
     canvas.width = 300;
     canvas.height = 400;
     const ctx = canvas.getContext('2d');
-    const isBar = data.chartType === 'horizontalBar';
+    const isBar = data.chartType === 'bar';
 
     return new Promise<string>((resolve) => {
       const chartConfig = {
-        type: isBar ? 'bar' : 'pie',
+        type: data.chartType,
         data: {
           labels: data.labels,
           datasets: [ {
@@ -541,6 +549,7 @@ export class SubmissionsService {
         options: {
           responsive: false,
           maintainAspectRatio: false,
+          indexAxis: 'x',
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
@@ -571,7 +580,7 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(question, submissions) {
+  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent') {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
@@ -589,14 +598,14 @@ export class SubmissionsService {
 
     const labels = Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
-    const data = question.type === 'selectMultiple' ? userCounts.map(c => totalUsers ? Math.round(c / totalUsers * 100) : 0) : userCounts;
+    const data = mode === 'percent' ? userCounts.map(c => (totalUsers ? Math.round((c / totalUsers) * 100) : 0)) : userCounts;
 
     return {
       labels,
       data,
       userCounts,
       totalUsers,
-      chartType: question.type === 'selectMultiple' ? 'horizontalBar' : 'pie'
+      chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
     };
   }
 
