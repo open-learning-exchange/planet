@@ -16,6 +16,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
+import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -451,7 +452,7 @@ export class SubmissionsService {
           const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
           setHeader('AI Analysis');
           docContent.push({
-            text: analysisPayload.chat,
+            stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
             margin: [ 0, 10, 0, 10 ]
           });
         }
@@ -637,20 +638,7 @@ export class SubmissionsService {
       const payloadString = JSON.stringify(payload, null, 2);
       const response = await this.chatService.getPrompt(
         {
-          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-            Please provide a comprehensive analysis of the survey responses in three sections, formatted neatly for a pdf export:
-
-            1. INDIVIDUAL QUESTION ANALYSIS: Insights for each question individually.
-
-            2. CORRELATIONS BETWEEN QUESTIONS: Look for specific patterns in how people answered different questions together.
-            Focus on finding the strongest correlations between specific answer choices across different questions.
-            Highlight at least 3-5 significant correlations if they exist, especially ones that reveal important insights about the survey purpose.
-
-            3. DEMOGRAPHIC BREAKDOWN: Group responses by demographic factors such as age ranges, gender, and other user inputted demographic information.
-            For each demographic group, identify which answer choices were most common for each question.
-            Only include demographic insights when there are clear differences between groups.
-
-            ${payloadString}`,
+          content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
           aiProvider: { name: 'openai' },
           assistant: false
         },
