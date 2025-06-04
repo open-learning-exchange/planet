@@ -68,6 +68,7 @@ jobs:
       - name: Push latest pre-build
         if: ${{ github.ref == 'refs/heads/master' && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker tag $repo $latestrepo
           docker push $latestrepo

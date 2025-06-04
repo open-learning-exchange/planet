@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,13 +10,15 @@ import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { calculateMdAdjustedLimit } from '../shared/utils';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges {
+export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() item;
   @Input() replyObject;
@@ -29,6 +31,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
+  onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -61,6 +64,9 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
         || this.item.doc.images.length > 0;
     }
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.currentUser = this.userService.get();
+    });
   }
 
   ngOnChanges() {
@@ -76,6 +82,11 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     } else {
       this.item.sharedSourceInfo = null;
     }
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   addReply(news) {

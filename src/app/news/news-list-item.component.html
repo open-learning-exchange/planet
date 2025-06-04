@@ -57,7 +57,7 @@
     <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
       <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-      <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
+      <button mat-button i18n *ngIf="editable && !item.doc.chat && labels.listed.length > 0" [matMenuTriggerFor]="labelMenu">Add Label</button>
       <mat-menu #labelMenu="matMenu">
         <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
       </mat-menu>
