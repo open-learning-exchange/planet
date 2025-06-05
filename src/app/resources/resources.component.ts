@@ -13,7 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById, logFilteredTitles
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -80,6 +80,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, OnC
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    logFilteredTitles(this.resources.filteredData, 'doc.title');
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;

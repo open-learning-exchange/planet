@@ -11,7 +11,7 @@ import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
-  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, logFilteredTitles
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -94,6 +94,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    logFilteredTitles(this.courses.filteredData, 'doc.courseTitle');
   }
   user = this.userService.get();
   userShelf: any = [];
