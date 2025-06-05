@@ -53,6 +53,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, OnC
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
+  @Input() embedded = false;
   @Input() searchText = '';
   @Input() globalSearch = false;
   dialogRef: MatDialogRef<DialogsListComponent>;

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -62,6 +62,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
   @Input() isDialog = false;
   @Input() isForm = false;
+  @Input() embedded = false;
+  @Input() searchText = '';
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
@@ -150,7 +152,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   ngOnInit() {
-    this.titleSearch = '';
+    this.titleSearch = this.searchText;
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -183,9 +185,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.filterIds.ids = this.includeIds;
-    this.titleSearch = this.titleSearch;
+    if (changes.searchText) {
+      this.titleSearch = changes.searchText.currentValue || '';
+    } else {
+      this.titleSearch = this.titleSearch;
+    }
   }
 
   ngOnDestroy() {

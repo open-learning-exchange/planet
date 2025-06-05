@@ -1,4 +1,4 @@
-<mat-toolbar *ngIf="!isForm">
+<mat-toolbar *ngIf="!isForm && !embedded">
   <ng-container *ngIf="deviceType === deviceTypes.TABLET || deviceType === deviceTypes.DESKTOP; else mobileView">
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
@@ -263,4 +263,4 @@
     </mat-paginator>
   </div>
 </div>
-<planet-resources *ngIf="globalSearch" [isDialog]="true" [searchText]="titleSearch" [globalSearch]="true"></planet-resources>
+<planet-resources *ngIf="globalSearch" [isDialog]="true" [embedded]="true" [searchText]="titleSearch"></planet-resources>
