@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener, OnChanges, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -13,7 +13,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById
+  createDeleteArray, filterSpecificFieldsByWord, commonSortingDataAccessor, selectedOutOfFilter, trackById, logFilteredTitles
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -43,7 +43,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     ]),
   ],
 })
-export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   isLoading = true;
   resources = new MatTableDataSource();
   pageEvent: PageEvent;
@@ -53,6 +53,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
+  @Input() embedded = false;
+  @Input() searchText = '';
+  @Input() globalSearch = false;
   dialogRef: MatDialogRef<DialogsListComponent>;
   readonly dbName = 'resources';
   message = '';
@@ -77,6 +80,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    logFilteredTitles(this.resources.filteredData, 'doc.title');
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -130,11 +134,17 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isTablet = window.innerWidth <= 1040;
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.searchText) {
+      this.titleSearch = changes.searchText.currentValue || '';
+    }
+  }
+
   ngOnInit() {
     if (this.myView !== 'myPersonals') {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
-    this.titleSearch = '';
+    this.titleSearch = this.searchText;
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),

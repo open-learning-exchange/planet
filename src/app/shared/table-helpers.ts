@@ -190,3 +190,10 @@ export const filterIds = (filterObj: { ids: string[] }) => {
     return filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true;
   };
 };
+
+export const logFilteredTitles = (filteredData: any[], titleField: string) => {
+  const titles = filteredData
+    .map(item => getProperty(item, titleField))
+    .filter(title => typeof title === 'string');
+  console.log('Filtered titles:', titles.join(', '));
+};
