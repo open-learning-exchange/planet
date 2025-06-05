@@ -54,16 +54,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (this.item.latestMessage) {
-      this.showExpand = true;
-      this.showLess = false;
-    }
-    if (this.item.doc.news?.conversations.length > 1) {
-      this.showExpand = true;
-    } else {
-      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
-        || this.item.doc.images.length > 0;
-    }
+    this.handleItemExpansion();
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.currentUser = this.userService.get();
     });
@@ -82,6 +73,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.item.sharedSourceInfo = null;
     }
+    this.handleItemExpansion();
   }
 
   ngOnDestroy() {
@@ -105,6 +97,21 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       });
       this.sendNewsNotifications(news);
     });
+  }
+
+  handleItemExpansion() {
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    } else {
+      this.showLess = true;
+    }
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
+    }
   }
 
   sendNewsNotifications(news: any = '') {
