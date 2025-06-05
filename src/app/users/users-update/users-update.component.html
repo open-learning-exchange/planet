@@ -129,7 +129,7 @@
         <button *ngIf="(uploadImage && currentImgKey) && !file; else Uploader" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
         <ng-template #Uploader>
           <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
-            Upload
+            Select Image
           </button>
           <input #fileInput id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
         </ng-template>
