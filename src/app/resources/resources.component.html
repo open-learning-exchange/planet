@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!globalSearch">
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>

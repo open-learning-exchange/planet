@@ -100,6 +100,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   isAuthorized = false;
   tagFilter = new FormControl([]);
   tagFilterValue = [];
+  globalSearch = false;
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
