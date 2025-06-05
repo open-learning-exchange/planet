@@ -24,6 +24,10 @@
     h1 {
       display: inline;
       font-size: 1.5rem;
+
+      @media (max-width: #{$screen-xs}) {
+        font-size: clamp(0.5rem, calc(0.1rem + 3vw), 1.5rem);
+      }
     }
 
     .menu-button {
