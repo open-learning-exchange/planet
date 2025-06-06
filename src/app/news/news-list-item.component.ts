@@ -45,6 +45,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   previewLimit = 500;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isSmallMobile: boolean;
 
   constructor(
     private router: Router,
@@ -59,6 +60,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
   }
 
   ngOnInit() {
@@ -87,6 +89,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
   }
 
   ngOnDestroy() {

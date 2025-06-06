@@ -20,15 +20,27 @@
       </div>
       <div class="time-panel">
         <ng-container *ngIf="item.sharedDate; else checkEditTime">
-          <mat-icon class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon> {{item.sharedDate | timeAgo}}
+          <mat-icon *ngIf="isSmallMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
+          <ng-template #shareText>
+            <span i18n>shared: </span>
+          </ng-template>
+          {{item.sharedDate | timeAgo}}
         </ng-container>
         <ng-template #checkEditTime>
           <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate; else creationTime">
-            <mat-icon class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon> {{item.doc.updatedDate | timeAgo}}
+            <mat-icon *ngIf="isSmallMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
+            <ng-template #editText>
+              <span i18n>edited: </span>
+            </ng-template>
+            {{item.doc.updatedDate | timeAgo}}
           </ng-container>
         </ng-template>
         <ng-template #creationTime>
-          <mat-icon class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon> {{item.doc.time | timeAgo}}
+          <mat-icon *ngIf="isSmallMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
+          <ng-template #postText>
+            <span i18n>posted: </span>
+          </ng-template>
+          {{item.doc.time | timeAgo}}
         </ng-template>
       </div>
     </mat-card-subtitle>
@@ -59,7 +71,7 @@
         item.doc.user.name}}
     </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE; else actionItems">
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || isSmallMobile; else actionItems">
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
