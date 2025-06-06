@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.19.0",
+  "version": "0.19.10",
   "myplanet": {
-    "latest": "v0.25.55",
-    "min": "v0.24.55"
+    "latest": "v0.25.68",
+    "min": "v0.24.68"
   },
   "scripts": {
     "ng": "ng",
@@ -56,16 +56,14 @@
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
-    "@types/cropperjs": "^1.3.0",
     "chart.js": "^2.9.3",
-    "cropperjs": "^1.5.6",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.3.1",
     "mime": "^2.4.3",
-    "ngx-img": "^10.15.0",
+    "ngx-image-cropper": "^3.2.1",
     "pdfmake": "^0.1.63",
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",
