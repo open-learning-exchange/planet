@@ -9,7 +9,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -23,8 +22,6 @@ import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
-
-const showdown = require('showdown');
 
 @Component({
   templateUrl: 'exams-add.component.html',

@@ -6,11 +6,8 @@ export const environment = {
   chatAddress: window.location.origin + '/ml/',
   couchAddress: window.location.origin + '/db',
   centerAddress: 'planet-center-address',
-  uplanetAddress: 'https://planet.gt',
   centerProtocol: 'https',
   parentProtocol: 'planet-parent-protocol',
-  uPlanetCode: 'guatemala',
-  uParentCode: 'guatemala@earth',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: 'planet-sync-address'
 };

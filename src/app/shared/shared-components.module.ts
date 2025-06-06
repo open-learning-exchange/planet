@@ -7,7 +7,6 @@ import { CovalentMarkdownModule } from '@covalent/markdown';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
-import { ClickOutsideDirective } from './clickoutside.directive';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
 import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
@@ -36,7 +35,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
@@ -61,7 +59,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
