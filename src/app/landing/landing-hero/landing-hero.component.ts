@@ -8,9 +8,9 @@ import { DialogsVideoComponent } from '../../shared/dialogs/dialogs-video.compon
   styleUrls: [ 'landing-hero.scss' ]
 })
 export class LandingHeroComponent {
-  constructor(
-    private dialog: MatDialog
-  ) {}
+  constructor(private dialog: MatDialog) {
+    this.playVideo();
+  }
 
   playVideo() {
     this.dialog.open(DialogsVideoComponent, {
