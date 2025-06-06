@@ -550,6 +550,14 @@ export class SubmissionsService {
           responsive: false,
           maintainAspectRatio: false,
           indexAxis: 'x',
+          scales: isBar ? {
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+              max: 100,
+              ticks: { precision: 0 }
+            }
+          } : {},
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
@@ -589,7 +597,7 @@ export class SubmissionsService {
       const ans = sub.answers[question.index];
       if (!ans) { return; }
 
-      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ans.value] : [];
       selections.forEach(selection => {
         const txt = selection.text ?? selection;
         counts[txt]?.add(sub.user._id || sub.user.name);
@@ -598,7 +606,18 @@ export class SubmissionsService {
 
     const labels = Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
-    const data = mode === 'percent' ? userCounts.map(c => (totalUsers ? Math.round((c / totalUsers) * 100) : 0)) : userCounts;
+    let data: number[];
+
+    if (mode === 'percent') {
+      if (question.type === 'selectMultiple') {
+        const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
+        data = totalSelections > 0 ? userCounts.map(c => Math.round((c / totalSelections) * 100)) : userCounts.map(_ => 0);
+      } else {
+        data = totalUsers > 0 ? userCounts.map(c => Math.round((c / totalUsers) * 100)) : userCounts.map(_ => 0);
+      }
+    } else {
+      data = userCounts;
+    }
 
     return {
       labels,
