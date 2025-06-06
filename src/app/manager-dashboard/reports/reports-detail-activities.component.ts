@@ -58,7 +58,7 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',
-        conversationLength: activity.conversations.length
+        conversationLength: activity?.conversations?.length || 0
       }));
     } else {
       this.activities.data = this.activitiesByDoc.map(activity => {
