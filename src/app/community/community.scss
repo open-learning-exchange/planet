@@ -28,6 +28,14 @@
       margin-right: 0.25rem;
     }
   }
+  .new-voice-button{
+    background-color: $accent;
+    color: black;
+
+    &:hover{
+      background-color: darken($accent, 10%);
+    }
+  }
 }
 
 planet-calendar {
