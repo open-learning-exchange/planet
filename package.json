@@ -57,7 +57,7 @@
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
     "@fullcalendar/timegrid": "^5.10.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^3.0.0",
     "date-fns": "^2.29.2",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import { Chart,  ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -23,6 +23,7 @@ const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 const converter = new showdown.Converter();
+Chart.register(BarController, DoughnutController, BarElement, ArcElement);
 
 @Injectable({
   providedIn: 'root'
@@ -533,7 +534,7 @@ export class SubmissionsService {
     const isBar = data.chartType === 'bar';
 
     return new Promise<string>((resolve) => {
-      const chartConfig = {
+      const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
         type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,

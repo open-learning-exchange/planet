@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { styleVariables } from '../../shared/utils';
@@ -26,6 +26,8 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+
+Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip);
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -437,22 +439,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       updateChart.update();
       return;
     }
-    this.charts.push(new Chart(chartName, {
+    const chartConfig: ChartConfiguration<'bar'> = {
       type: 'bar',
       data,
       options: {
-        title: { display: true, text: titleOfChartName(chartName), fontSize: 16 },
-        legend: { position: 'bottom' },
+        plugins: {
+          title: { display: true, text: titleOfChartName(chartName), font: { size: 16 } },
+          legend: { position: 'bottom' }
+        },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { type: 'category' } ],
-          yAxes: [ {
+          x: { type: 'category' },
+          y: {
             type: 'linear',
-            ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
-          } ]
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
         }
       }
-    }));
+    }
+    this.charts.push(new Chart(chartName, chartConfig));
   }
 
   openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
