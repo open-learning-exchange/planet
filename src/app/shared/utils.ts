@@ -1,6 +1,9 @@
 import styleVars from '../_variables.scss';
 
-const showdown = require('showdown');
+export const showdown = require('showdown');
+export const pdfMake = require('pdfmake/build/pdfmake');
+export const pdfFonts = require('pdfmake/build/vfs_fonts');
+export const converter = new showdown.Converter();
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -108,7 +111,6 @@ export const markdownToPlainText = (markdown: any) => {
   if (typeof markdown !== 'string') {
     return markdown;
   }
-  const converter = new showdown.Converter();
   const html = document.createElement('div');
   html.innerHTML = converter.makeHtml(markdown);
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');

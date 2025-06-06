@@ -11,10 +11,8 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { formatDate } from '../../shared/utils';
+import { formatDate, pdfMake, pdfFonts } from '../../shared/utils';
 
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -192,7 +190,7 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
-          const formattedDate = achievement.date ?  formatDate(achievement.date) : '';
+          const formattedDate = achievement.date ? formatDate(achievement.date) : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
             { text: achievement.date ? formattedDate : '', marginLeft: 40 },
