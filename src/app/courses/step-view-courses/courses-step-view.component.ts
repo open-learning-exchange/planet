@@ -12,6 +12,7 @@ import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submis
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../../shared/dialogs/dialogs-announcement.component';
+import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -238,7 +239,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   get localizedStepInfo(): string {
-    return $localize`The following information is a course step from the "${this.stepDetail?.stepTitle}" course with a description "${this.stepDetail?.description}". Be sure to assist the learner in the best way you can. `;
+    return coursesStepPrompt(this.stepDetail?.stepTitle, this.stepDetail?.description);
   }
 
 }

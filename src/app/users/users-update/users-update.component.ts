@@ -1,8 +1,9 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CouchService } from '../../shared/couchdb.service';
-import { switchMap, map } from 'rxjs/operators';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
@@ -13,7 +14,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
-import { Subscription } from 'rxjs';
+import { CouchService } from '../../shared/couchdb.service';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -38,31 +39,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   submissionMode = false;
   showAdditionalFields = false;
   planetConfiguration = this.stateService.configuration;
-  ngxImgConfig = { crop: [ { ratio: 1 } ], fileType: [ 'image/gif', 'image/jpeg', 'image/png' ] };
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
   isFormInitialized = false;
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
-  ngxImgText = {
-    default: $localize`Drag and drop`,
-    _default: $localize`Drag and drop or click`,
-    button: $localize`Choose File`,
-    try_again: $localize`Try Again`,
-    replace: $localize`Drag and drop or click to replace`,
-    reset: $localize`Remove`,
-    error: $localize`Oops, something wrong happened.`
-  };
-  ngxImgErrText = {
-    fileSize: $localize`The file size is too big ({{ value }} max).`,
-    minWidth: $localize`The image width is too small ({{ value }}}px min).`,
-    maxWidth: $localize`The image width is too big ({{ value }}}px max).`,
-    minHeight: $localize`The image height is too small ({{ value }}}px min).`,
-    maxHeight: $localize`The image height is too big ({{ value }}}px max).`,
-    imageFormat: $localize`The image format is not allowed ({{ value }} only).`,
-    fileType: $localize`The file type is not allowed.`
-  };
+  imageChangedEvent: Event | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -208,9 +191,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  onImageSelect(img) {
-    this.file = img;
-    this.previewSrc = img;
+  fileChangeEvent(event: Event): void {
+    this.imageChangedEvent = event;
+  }
+
+  onImageSelect(event: ImageCroppedEvent) {
+    this.previewSrc = event.base64;
+    this.file = event.base64;
     this.uploadImage = true;
     this.avatarChanged = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);

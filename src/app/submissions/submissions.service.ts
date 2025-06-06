@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
-import { catchError, finalize, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Chart } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
@@ -16,6 +16,7 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
+import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
 const showdown = require('showdown');
 const pdfMake = require('pdfmake/build/pdfmake');
@@ -282,10 +283,17 @@ export class SubmissionsService {
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
     return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-        const filteredSubmissions = team
-          ? submissions.filter(s => s.team === team)
-          : submissions;
-        return forkJoin(
+      const normalizedSubmissions = submissions.map(sub => ({
+        ...sub,
+        parent: {
+          ...sub.parent,
+          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+        }
+      }));
+      const filteredSubmissions = team
+          ? normalizedSubmissions.filter(s => s.team === team)
+          : normalizedSubmissions;
+      return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
               return this.teamsService.getTeamName(submission.team).pipe(
@@ -364,9 +372,14 @@ export class SubmissionsService {
         }),
         switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
-          const filteredSubmissions = team
-            ? submissions.filter(s => s.team === team)
-            : submissions;
+          const normalizedSubmissions = submissions.map(sub => ({
+            ...sub,
+            parent: {
+              ...sub.parent,
+              questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+            }
+          }));
+          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);
@@ -380,17 +393,14 @@ export class SubmissionsService {
           return forkJoin(
             submissionsWithPlanetName.map(submission => {
               if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(
-                  map(teamName => ({ ...submission, teamName }))
-                );
+                return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
               }
               return of(submission);
             })
           ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
           );
         })
-      )
-      .subscribe(async tuple => {
+      ).subscribe(async tuple => {
         if (!tuple) {
           return;
         }
@@ -422,27 +432,33 @@ export class SubmissionsService {
         if (exportOptions.includeCharts) {
           setHeader('Charts');
           for (let i = 0; i < exam.questions.length; i++) {
-            if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
-              continue;
-            }
             const question = exam.questions[i];
+            if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
             question.index = i;
-            const aggregated = this.aggregateQuestionResponses(question, updatedSubmissions);
-            const chartImage = await this.generateChartImage(aggregated);
             docContent.push({ text: `Q${i + 1}: ${question.body}` });
-            docContent.push({
-              image: chartImage,
-              width: 200,
-              alignment: 'center',
-              margin: [ 0, 10, 0, 10 ]
-            });
+            const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+            const pieImg = await this.generateChartImage(pieAgg);
+            if (question.type === 'selectMultiple') {
+              const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
+              const barImg = await this.generateChartImage(barAgg);
+              docContent.push({
+                stack: [
+                  { image: barImg, width: 250, margin: [ 0, 10, 0, 10 ] },
+                  { image: pieImg, width: 250, margin: [ 0, 10, 0, 10 ] }
+                ],
+                alignment: 'center'
+              });
+            } else {
+              docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
+            }
+            docContent.push({ text: '', pageBreak: 'after' });
           }
         }
         if (exportOptions.includeAnalysis) {
           const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
           setHeader('AI Analysis');
           docContent.push({
-            text: analysisPayload.chat,
+            stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
             margin: [ 0, 10, 0, 10 ]
           });
         }
@@ -511,81 +527,85 @@ export class SubmissionsService {
 
   async generateChartImage(data: any): Promise<string> {
     const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 300;
+    canvas.width = 300;
+    canvas.height = 400;
     const ctx = canvas.getContext('2d');
+    const isBar = data.chartType === 'bar';
 
-    const chartRendered = new Promise<string>((resolve) => {
+    return new Promise<string>((resolve) => {
       const chartConfig = {
-        type: 'pie',
+        type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
           datasets: [ {
             data: data.data,
+            label: isBar ? '% of Users' : undefined,
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-            ]
+            ],
           } ]
         },
         options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
           animation: {
             onComplete: function() {
-              this.ctx.font = '12px sans-serif';
-              this.ctx.fillStyle = '#fff';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-              this.getDatasetMeta(0).data.forEach((element, index) => {
-                const count = data.data[index];
+              if (isBar && data.userCounts) {
+                this.getDatasetMeta(0).data.forEach((bar, index) => {
+                  const percentage = data.data[index];
+                  const userCount = data.userCounts[index];
+                  if (percentage > 0) {
+                    ctx.fillText(`${percentage}% (${userCount})`, bar.x + 5, bar.y);
+                  }
+                });
+              } else if (!isBar) {
                 const total = data.data.reduce((sum, val) => sum + val, 0);
-                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-                if (count > 0) {
-                  const pos = element.tooltipPosition();
-                  ctx.fillText(`${count.toString()}(${percentage}%)`, pos.x, pos.y);
-                }
-              });
+                this.getDatasetMeta(0).data.forEach((element, index) => {
+                  const count = data.data[index];
+                  const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+                  if (count > 0) {
+                    const pos = element.tooltipPosition();
+                    ctx.fillText(`${count}(${percentage}%)`, pos.x, pos.y);
+                  }
+                });
+              }
               resolve(this.toBase64Image());
             }
-          },
-          responsive: false,
-          maintainAspectRatio: false
+          }
         }
       };
-      const chart = new Chart(ctx, chartConfig);
+      return new Chart(ctx, chartConfig);
     });
-
-    return chartRendered;
   }
 
-  aggregateQuestionResponses(question: any, submissions: any[]): { labels: string[], data: number[] } {
-    const counts: { [choiceText: string]: number } = {};
-    question.choices.forEach((choice: any) => {
-      counts[choice.text] = 0;
-    });
+  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent') {
+    const totalUsers = submissions.length;
+    const counts: Record<string, Set<string>> = {};
 
-    submissions.forEach(submission => {
-      const answer = submission.answers[question.index];
-      if (!answer) { return; }
+    question.choices.forEach(c => { counts[c.text] = new Set(); });
+    submissions.forEach(sub => {
+      const ans = sub.answers[question.index];
+      if (!ans) { return; }
 
-      if (question.type === 'select') {
-        const choiceText = answer.value.text;
-        if (counts[choiceText] !== undefined) {
-          counts[choiceText]++;
-        }
-      } else if (question.type === 'selectMultiple') {
-        if (Array.isArray(answer.value)) {
-          answer.value.forEach((selected: any) => {
-            const choiceText = selected.text;
-            if (counts[choiceText] !== undefined) {
-              counts[choiceText]++;
-            }
-          });
-        }
-      }
+      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+      selections.forEach(selection => {
+        const txt = selection.text ?? selection;
+        counts[txt]?.add(sub.user._id || sub.user.name);
+      });
     });
 
     const labels = Object.keys(counts);
-    const data = labels.map(label => counts[label]);
-    return { labels, data };
+    const userCounts = labels.map(l => counts[l].size);
+    const data = mode === 'percent' ? userCounts.map(c => (totalUsers ? Math.round((c / totalUsers) * 100) : 0)) : userCounts;
+
+    return {
+      labels,
+      data,
+      userCounts,
+      totalUsers,
+      chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
+    };
   }
 
   async analyseResponses(exam: any, submissions: any) {
@@ -628,20 +648,7 @@ export class SubmissionsService {
       const payloadString = JSON.stringify(payload, null, 2);
       const response = await this.chatService.getPrompt(
         {
-          content: $localize`The following is a ${exam.type} with the name ${exam.name} and description ${exam.description}.
-            Please provide a comprehensive analysis of the survey responses in three sections, formatted neatly for a pdf export:
-
-            1. INDIVIDUAL QUESTION ANALYSIS: Insights for each question individually.
-
-            2. CORRELATIONS BETWEEN QUESTIONS: Look for specific patterns in how people answered different questions together.
-            Focus on finding the strongest correlations between specific answer choices across different questions.
-            Highlight at least 3-5 significant correlations if they exist, especially ones that reveal important insights about the survey purpose.
-
-            3. DEMOGRAPHIC BREAKDOWN: Group responses by demographic factors such as age ranges, gender, and other user inputted demographic information.
-            For each demographic group, identify which answer choices were most common for each question.
-            Only include demographic insights when there are clear differences between groups.
-
-            ${payloadString}`,
+          content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
           aiProvider: { name: 'openai' },
           assistant: false
         },

@@ -105,6 +105,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.getCommunityData();
     });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.user = this.userService.get();
+      this.isLoggedIn = this.user._id !== undefined;
+      this.getCommunityData();
+    });
   }
 
   @HostListener('window:resize') onResize() {
@@ -351,11 +356,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   toggleShowButton(data) {
     this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
-    if (data._id !== 'root') {
-      this.router.navigate([ '/voices', data._id ]);
-    } else {
-      this.router.navigate([ '' ]);
-    }
   }
 
   toggleDeleteMode() {

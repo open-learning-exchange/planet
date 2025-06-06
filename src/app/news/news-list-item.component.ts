@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,13 +11,15 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 import { AuthService } from '../shared/auth-guard.service';
 import { calculateMdAdjustedLimit } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges {
+export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() item;
   @Input() replyObject;
@@ -31,6 +33,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
+  onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -59,19 +62,10 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    if (this.item.latestMessage) {
-      this.showExpand = true;
-      this.showLess = false;
-    }
-    if (this.item.doc.news?.conversations.length > 1) {
-      this.showExpand = true;
-    } else if (this.replyView) {
-      this.showExpand = false;
-      this.showLess = false;
-    } else {
-      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
-        || this.item.doc.images.length > 0;
-    }
+    this.handleItemExpansion();
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.currentUser = this.userService.get();
+    });
     this.addTeamLabelsFromViewIn();
   }
 
@@ -79,10 +73,25 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+    if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
+      const viewIn = this.item.doc.viewIn[0];
+      if (viewIn.name) {
+        const sourceType = viewIn.mode === 'enterprise' ? 'enterprise' : 'team';
+        this.item.sharedSourceInfo = `shared on ${new Date(this.item.sharedDate).toLocaleString()} from ${sourceType} ${viewIn.name}`;
+      }
+    } else {
+      this.item.sharedSourceInfo = null;
+    }
+    this.handleItemExpansion();
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   addReply(news) {
@@ -101,6 +110,21 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       });
       this.sendNewsNotifications(news);
     });
+  }
+
+  handleItemExpansion() {
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    } else {
+      this.showLess = true;
+    }
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
+    }
   }
 
   sendNewsNotifications(news: any = '') {
