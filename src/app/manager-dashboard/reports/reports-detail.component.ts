@@ -457,7 +457,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           }
         }
       }
-    }
+    };
     this.charts.push(new Chart(chartName, chartConfig));
   }
 

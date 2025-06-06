@@ -151,7 +151,7 @@ export class ReportsHealthComponent implements OnChanges {
           x: { title: { display: true, text: 'Week of' } }
         },
       }
-    }
+    };
     this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), chartConfig));
   }
 

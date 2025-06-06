@@ -111,7 +111,7 @@ export const markdownToPlainText = (markdown: any) => {
 };
 
 export const truncateText = (text, length) => {
-  if (!text) return '';
+  if (!text) { return ''; }
   if (text.length > length) {
     return `${text.slice(0, length)}...`;
   }

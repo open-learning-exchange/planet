@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart,  ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
