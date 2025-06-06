@@ -11,6 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { formatDate } from '../../shared/utils';
 
 const pdfMake = require('pdfmake/build/pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -139,9 +140,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = this.user.birthDate
-      ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(this.user.birthDate))
-      : '';
+    const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate) : '';
     let contentArray = [
       {
         text: $localize`${`${this.user.firstName}'s achievements`}`,
@@ -193,9 +192,7 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
-          const formattedDate = achievement.date
-            ? new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(achievement.date))
-            : '';
+          const formattedDate = achievement.date ?  formatDate(achievement.date) : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
             { text: achievement.date ? formattedDate : '', marginLeft: 40 },
