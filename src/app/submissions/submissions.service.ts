@@ -530,8 +530,8 @@ export class SubmissionsService {
     const canvas = document.createElement('canvas');
     canvas.width = 300;
     canvas.height = 400;
-    const ctx = canvas.getContext('2d');
     const isBar = data.chartType === 'bar';
+    const ctx = canvas.getContext('2d');
 
     return new Promise<string>((resolve) => {
       const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
@@ -565,7 +565,7 @@ export class SubmissionsService {
                   const percentage = data.data[index];
                   const userCount = data.userCounts[index];
                   if (percentage > 0) {
-                    ctx.fillText(`${percentage}% (${userCount})`, bar.x + 5, bar.y);
+                    ctx.fillText(`${userCount}`, bar.x - 2.5 , bar.y);
                   }
                 });
               } else if (!isBar) {
@@ -575,7 +575,7 @@ export class SubmissionsService {
                   const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
                   if (count > 0) {
                     const pos = element.tooltipPosition();
-                    ctx.fillText(`${count}(${percentage}%)`, pos.x, pos.y);
+                    ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
                   }
                 });
               }
@@ -597,7 +597,7 @@ export class SubmissionsService {
       const ans = sub.answers[question.index];
       if (!ans) { return; }
 
-      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ans.value] : [];
+      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
       selections.forEach(selection => {
         const txt = selection.text ?? selection;
         counts[txt]?.add(sub.user._id || sub.user.name);
