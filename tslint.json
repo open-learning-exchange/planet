@@ -2,11 +2,7 @@
   "rulesDirectory": [
     "node_modules/codelyzer"
   ],
-  "extends": [
-    "tslint-eslint-rules"
-  ],
   "rules": {
-    "array-bracket-spacing": "always",
     "arrow-return-shorthand": true,
     "callable-types": true,
     "class-name": true,
@@ -80,7 +76,6 @@
     "no-unused-expression": true,
     "no-use-before-declare": true,
     "no-var-keyword": true,
-    "object-curly-spacing": "always",
     "object-literal-sort-keys": false,
     "one-line": [
       true,
@@ -142,7 +137,6 @@
     "use-lifecycle-interface": true,
     "use-pipe-transform-interface": true,
     "component-class-suffix": true,
-    "directive-class-suffix": true,
-    "no-multi-spaces": true
+    "directive-class-suffix": true
   }
 }
