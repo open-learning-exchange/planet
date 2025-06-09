@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { CommunityComponent } from './requests.component';
 import { CouchService } from '../../shared/couchdb.service';
@@ -12,7 +12,7 @@ describe('CommunityComponent', () => {
   let component: CommunityComponent;
   let fixture: ComponentFixture<CommunityComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpClientModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule ],
       declarations: [ CommunityComponent ],
