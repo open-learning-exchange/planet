@@ -1,7 +1,7 @@
 export const surveyAnalysisPrompt = (examType, examName, examDescription, payloadString) => $localize`The following is a ${examType} named “${examName}” with description “${examDescription}”.
   ${payloadString}
 
-  Please generate a detailed AI Analysis for PDF export, organized into three sections:
+  Please generate a detailed AI Analysis for PDF export, organized into 4 sections:
 
   1. INDIVIDUAL QUESTION ANALYSIS
     If the question is a **Closed-ended questions(type - select or selectMultiple):**

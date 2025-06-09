@@ -405,10 +405,11 @@ export class SubmissionsService {
     ];
   }
 
-  async exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: {
-     includeQuestions, includeAnswers, includeCharts, includeAnalysis
-    },
-                             team?: string
+  async exportSubmissionsPdf(
+    exam,
+    type: 'exam' | 'survey',
+    exportOptions: { includeQuestions, includeAnswers, includeCharts, includeAnalysis },
+    team?: string
   ) {
     forkJoin([
       this.getSubmissionsExport(exam, type),
