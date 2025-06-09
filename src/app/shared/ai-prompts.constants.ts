@@ -4,10 +4,11 @@ export const surveyAnalysisPrompt = (examType, examName, examDescription, payloa
   Please generate a detailed AI Analysis for PDF export, organized into three sections:
 
   1. INDIVIDUAL QUESTION ANALYSIS
-    a. **Closed-ended questions:**
+    If the question is a **Closed-ended questions(type - select or selectMultiple):**
         - List the top three answer choices with absolute counts and percentages.
-        - Call out any low-frequency responses (<10%) that reveal surprising insights.
-    b. **Open-ended question(s):**
+        - In addition to the top three, highlight any answer choice with fewer than 10% of responses and suggest why it might be under-selected
+        - Create a hypothesis for the selections
+    If the question is an **Open-ended question(s) (type - input or textarea):**
         - Require direct quotes with respondent demographics if available.
         - Perform sentiment and keyword analysis
         - Highlight any singular but high-impact outlier suggestions.
@@ -24,11 +25,15 @@ export const surveyAnalysisPrompt = (examType, examName, examDescription, payloa
 
   3. DEMOGRAPHIC BREAKDOWN
     - Define cohorts based on demographic factors such as:
-      - **Age groups:**
+      - **Age groups:** Compare each closed‐ended choice across age, gender, and location segments—calling out where a choice is at least 15 percentage‐points higher or lower than the overall average.
       - **Gender** (if available)
     - For each cohort, list their top two choices per closed-ended question (counts + percentages).
     - Report only differences from the overall sample exceeding 20 percentage points.
 
-  Ensure every numeric insight shows both count and percentage. Use clear headings, subheadings, bullet points, and simple tables where helpful for a clean PDF layout.`;
+  4. RECOMMENDATIONS AND INSIGHTS
+    - Provide actionable recommendations based on the analysis: provide concrete recommendations for how a community initiative could address that top challenge—grounded in the data
+    - Highlight any surprising insights or trends.
+
+  Ensure every numeric insight shows both count and percentage. Use clear markdown styles like headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.`;
 
 export const coursesStepPrompt = (stepTitle, stepDescription) => $localize`The following information is a course step from the "${stepTitle}" course with a description "${stepDescription}". Be sure to assist the learner in the best way you can. `;
