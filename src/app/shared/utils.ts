@@ -121,7 +121,8 @@ export const calculateMdAdjustedLimit = (content, limit) => {
   const hasMdStyles = /#{1,6}\s+.+/g.test(content);
   const hasLists = /^(\*|-|\d+\.)\s+/gm.test(content);
   const hasTables = /^\|(.+)\|/gm.test(content);
-  const scaleFactor = hasLists ? 0.2 : hasTables ? 0.55 : hasMdStyles ? 0.8 : 1;
+  const hasRegularText = /[^\s#|\-*0-9.]/.test(content);
 
+  const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
   return Math.floor(limit * scaleFactor);
 };
