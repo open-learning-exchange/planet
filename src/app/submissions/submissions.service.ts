@@ -153,11 +153,7 @@ export class SubmissionsService {
 
   nextQuestion(submission, index, field, isFinish = true) {
     const close = this.shouldCloseSubmission(submission, field);
-    return !close ?
-      this.findNextQuestion(submission, index + 1, field) :
-      isFinish ?
-      -1 :
-      index;
+    return !close ? this.findNextQuestion(submission, index + 1, field) : isFinish ? -1 : index;
   }
 
   updateGrade(submission, grade, index, comment?) {
@@ -290,9 +286,7 @@ export class SubmissionsService {
           questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
         }
       }));
-      const filteredSubmissions = team
-          ? normalizedSubmissions.filter(s => s.team === team)
-          : normalizedSubmissions;
+      const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
       return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
@@ -302,9 +296,7 @@ export class SubmissionsService {
             }
             return of(submission);
           })
-        ).pipe(
-          map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ])
-        );
+        ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
         const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
@@ -323,10 +315,7 @@ export class SubmissionsService {
             }), {})
           };
         });
-        this.csvService.exportCSV({
-          data,
-          title
-        });
+        this.csvService.exportCSV({ data, title });
       })
     );
   }
@@ -350,16 +339,76 @@ export class SubmissionsService {
     if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
-    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
-      '<pre>'.concat(answerText, '</pre>') :
-      answerText;
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ? '<pre>'.concat(answerText, '</pre>') : answerText;
   }
 
-  async exportSubmissionsPdf(
-    exam,
-    type: 'exam' | 'survey',
-    exportOptions: { includeQuestions, includeAnswers, includeCharts, includeAnalysis },
-    team?: string
+  setHeader(docContent, name) {
+    docContent.push({ text: '', pageBreak: 'before' });
+    docContent.push({
+      text: $localize`${name}`,
+      style: 'header',
+      margin: [ 0, 10, 0, 10 ]
+    });
+  }
+
+  async buildChartSection(exam, updatedSubmissions, docContent) {
+    this.setHeader(docContent, 'Charts');
+    for (let i = 0; i < exam.questions.length; i++) {
+      const question = exam.questions[i];
+      if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
+      question.index = i;
+      docContent.push({ text: `Q${i + 1}: ${question.body}` });
+      const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+      const pieImg = await this.generateChartImage(pieAgg);
+      if (question.type === 'selectMultiple') {
+        const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
+        const barImg = await this.generateChartImage(barAgg);
+        docContent.push({
+          stack: [
+            { image: barImg, width: 250, margin: [ 0, 10, 0, 10 ] },
+            { image: pieImg, width: 250, margin: [ 0, 10, 0, 10 ] }
+          ],
+          alignment: 'center'
+        });
+      } else {
+        docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
+      }
+      docContent.push({ text: '', pageBreak: 'after' });
+    }
+  }
+
+  async buildAnalysisSection(exam, updatedSubmissions, docContent) {
+    const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
+    this.setHeader(docContent, 'AI Analysis');
+    docContent.push({
+      stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
+      margin: [ 0, 10, 0, 10 ]
+    });
+  }
+
+  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+    const submissionContents = markdownSubmissions.map((markdown, index) => {
+      const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
+      return {
+        ...pageBreak,
+        stack: htmlToPdfmake(converter.makeHtml(markdown))
+      };
+    });
+    return [
+      { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
+      { text: exam.description || '' },
+      { text: '\n' },
+      { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
+      { text: '', pageBreak: 'after' },
+      ...submissionContents
+    ];
+  }
+
+  async exportSubmissionsPdf(exam, type: 'exam' | 'survey', exportOptions: {
+     includeQuestions, includeAnswers, includeCharts, includeAnalysis
+    },
+                             team?: string
   ) {
     forkJoin([
       this.getSubmissionsExport(exam, type),
@@ -401,66 +450,14 @@ export class SubmissionsService {
           );
         })
       ).subscribe(async tuple => {
-        if (!tuple) {
-          return;
-        }
+        if (!tuple) { return; }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-        const submissionContents = markdownSubmissions.map((markdown, index) => {
-          const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
-          return {
-            ...pageBreak,
-            stack: htmlToPdfmake(converter.makeHtml(markdown))
-          };
-        });
-        const docContent = [
-          { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
-          { text: exam.description || '' },
-          { text: '\n' },
-          { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
-          { text: '', pageBreak: 'after' },
-          ...submissionContents
-        ];
-        const setHeader = (name) => {
-          docContent.push({ text: '', pageBreak: 'before' });
-          docContent.push({
-            text: $localize`${name}`,
-            style: 'header',
-            margin: [ 0, 10, 0, 10 ]
-          });
-        };
+        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
         if (exportOptions.includeCharts) {
-          setHeader('Charts');
-          for (let i = 0; i < exam.questions.length; i++) {
-            const question = exam.questions[i];
-            if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
-            question.index = i;
-            docContent.push({ text: `Q${i + 1}: ${question.body}` });
-            const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
-            const pieImg = await this.generateChartImage(pieAgg);
-            if (question.type === 'selectMultiple') {
-              const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
-              const barImg = await this.generateChartImage(barAgg);
-              docContent.push({
-                stack: [
-                  { image: barImg, width: 250, margin: [ 0, 10, 0, 10 ] },
-                  { image: pieImg, width: 250, margin: [ 0, 10, 0, 10 ] }
-                ],
-                alignment: 'center'
-              });
-            } else {
-              docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
-            }
-            docContent.push({ text: '', pageBreak: 'after' });
-          }
+          await this.buildChartSection(exam, updatedSubmissions, docContent);
         }
         if (exportOptions.includeAnalysis) {
-          const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
-          setHeader('AI Analysis');
-          docContent.push({
-            stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
-            margin: [ 0, 10, 0, 10 ]
-          });
+          await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
         }
         pdfMake.createPdf({
           content: docContent,
