@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { calculateMdAdjustedLimit } from '../shared/utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -22,6 +23,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() item;
   @Input() replyObject;
+  @Input() replyView;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
@@ -39,7 +41,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  teamLabels = [];
   previewLimit = 500;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  isSmallMobile: boolean;
 
   constructor(
     private router: Router,
@@ -50,14 +56,19 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private stateService: StateService,
     private dialog: MatDialog,
     private authService: AuthService,
-    private clipboard: Clipboard
-  ) {}
+    private clipboard: Clipboard,
+    private deviceInfoService: DeviceInfoService,
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
+  }
 
   ngOnInit() {
     this.handleItemExpansion();
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.currentUser = this.userService.get();
     });
+    this.addTeamLabelsFromViewIn();
   }
 
   ngOnChanges() {
@@ -74,6 +85,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.item.sharedSourceInfo = null;
     }
     this.handleItemExpansion();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
   }
 
   ngOnDestroy() {
@@ -179,6 +195,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
         restoreFocus: false,
         maxHeight: '90vh'
       });
+    });
+  }
+
+  addTeamLabelsFromViewIn() {
+    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
+      this.teamLabels = [];
+      return;
+    }
+    this.item.doc.viewIn.forEach(view => {
+      if (view.section === 'teams' && view.name) {
+        this.teamLabels.push(`${view.name}`);
+      }
     });
   }
 
