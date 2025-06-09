@@ -8,7 +8,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, pdfMake, pdfFonts, converter } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,11 +18,7 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
-const showdown = require('showdown');
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-const converter = new showdown.Converter();
 
 @Injectable({
   providedIn: 'root'

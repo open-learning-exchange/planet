@@ -1,7 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.19.12",
+  "version": "0.19.13",
   "myplanet": {
     "latest": "v0.25.72",
     "min": "v0.24.72"
@@ -56,9 +56,7 @@
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
-    "@fullcalendar/timegrid": "^5.10.1",
     "chart.js": "^2.9.3",
-    "date-fns": "^2.29.2",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
@@ -70,7 +68,6 @@
     "pouchdb": "^7.1.1",
     "pouchdb-authentication": "^1.1.3",
     "pouchdb-find": "^7.1.1",
-    "ramda": "^0.28.0",
     "rxjs": "6.5.4",
     "showdown": "1.9.1",
     "tslib": "^1.10.0",
