@@ -175,6 +175,8 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.dialog.open(UserProfileDialogComponent, {
         data: { member: { ...member, userPlanetCode: member.planetCode } },
         maxWidth: '90vw',
+        autoFocus: false,  
+        restoreFocus: false,
         maxHeight: '90vh'
       });
     });
