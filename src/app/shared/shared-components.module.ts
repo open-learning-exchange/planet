@@ -25,6 +25,7 @@ import { LanguageLabelComponent } from './language-label.component';
 import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     RestrictDiacriticsDirective,
     ChatOutputDirective,
     OverlayModule,
-    TruncateTextPipe
+    TruncateTextPipe,
+    TimeAgoPipe
   ],
   declarations: [
     PlanetLocalStatusComponent,
@@ -76,7 +78,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     AvatarComponent,
     RestrictDiacriticsDirective,
     ChatOutputDirective,
-    TruncateTextPipe
+    TruncateTextPipe,
+    TimeAgoPipe
   ]
 })
 export class SharedComponentsModule {}
