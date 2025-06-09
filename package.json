@@ -1,7 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.19.14",
+  "version": "0.19.15",
   "myplanet": {
     "latest": "v0.25.72",
     "min": "v0.24.72"
@@ -56,7 +56,7 @@
     "@fullcalendar/core": "^5.10.1",
     "@fullcalendar/daygrid": "^5.10.1",
     "@fullcalendar/interaction": "^5.10.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^3.9.1",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
