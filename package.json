@@ -59,6 +59,8 @@
     "chart.js": "^3.9.1",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "jszip": "^3.2.2",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.3.1",
