@@ -25,6 +25,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Input() redDotMap: { [voiceId: string]: boolean } = {};
   @ViewChild('anchor', { static: true }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
