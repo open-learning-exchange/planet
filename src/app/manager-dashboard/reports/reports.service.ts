@@ -273,14 +273,23 @@ export class ReportsService {
 
   getChatHistory() {
     return this.couchService.get('chat_history/_all_docs', { params: { include_docs: 'true' } })
-    .pipe(
-      map((data: any) => data.rows.map((row: any) => row.doc))
-    );
+      .pipe(map((data: any) => data.rows.map((row: any) => row.doc)));
   }
 
   groupChatUsage(chats: any) {
     return ({
       byMonth: this.groupByMonth(this.appendGender(chats), 'createdDate', '_id')
+    });
+  }
+
+  getVoicesCreated() {
+    return this.couchService.get('news/_all_docs', { params: { include_docs: 'true' } })
+      .pipe(map((data: any) => data.rows.map((row: any) => row.doc)));
+  }
+
+  groupVoicesCreated(voices: any[]) {
+    return ({
+      byMonth: this.groupByMonth(this.appendGender(voices), 'time', '_id')
     });
   }
 
