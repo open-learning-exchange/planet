@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, pdfMake, pdfFonts, converter } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,11 +18,8 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
-const showdown = require('showdown');
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-const converter = new showdown.Converter();
+Chart.register(BarController, DoughnutController, BarElement, ArcElement);
 
 @Injectable({
   providedIn: 'root'
@@ -527,11 +524,11 @@ export class SubmissionsService {
     const canvas = document.createElement('canvas');
     canvas.width = 300;
     canvas.height = 400;
-    const ctx = canvas.getContext('2d');
     const isBar = data.chartType === 'bar';
+    const ctx = canvas.getContext('2d');
 
     return new Promise<string>((resolve) => {
-      const chartConfig = {
+      const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
         type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
@@ -547,6 +544,14 @@ export class SubmissionsService {
           responsive: false,
           maintainAspectRatio: false,
           indexAxis: 'x',
+          scales: isBar ? {
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+              max: 100,
+              ticks: { precision: 0 }
+            }
+          } : {},
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
@@ -554,7 +559,7 @@ export class SubmissionsService {
                   const percentage = data.data[index];
                   const userCount = data.userCounts[index];
                   if (percentage > 0) {
-                    ctx.fillText(`${percentage}% (${userCount})`, bar.x + 5, bar.y);
+                    ctx.fillText(`${userCount}`, bar.x - 2.5 , bar.y);
                   }
                 });
               } else if (!isBar) {
@@ -564,7 +569,7 @@ export class SubmissionsService {
                   const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
                   if (count > 0) {
                     const pos = element.tooltipPosition();
-                    ctx.fillText(`${count}(${percentage}%)`, pos.x, pos.y);
+                    ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
                   }
                 });
               }
@@ -595,7 +600,18 @@ export class SubmissionsService {
 
     const labels = Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
-    const data = mode === 'percent' ? userCounts.map(c => (totalUsers ? Math.round((c / totalUsers) * 100) : 0)) : userCounts;
+    let data: number[];
+
+    if (mode === 'percent') {
+      if (question.type === 'selectMultiple') {
+        const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
+        data = totalSelections > 0 ? userCounts.map(c => Math.round((c / totalSelections) * 100)) : userCounts.map(_ => 0);
+      } else {
+        data = totalUsers > 0 ? userCounts.map(c => Math.round((c / totalUsers) * 100)) : userCounts.map(_ => 0);
+      }
+    } else {
+      data = userCounts;
+    }
 
     return {
       labels,
