@@ -3,8 +3,8 @@ FROM treehouses/node:3.16 AS builder
 
 RUN apk update && apk add --no-cache poppler-utils
 
-COPY ./chatapi/package-lock.json ./
-RUN npm ci
+COPY ./chatapi/package.json ./
+RUN npm install --production
 
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
