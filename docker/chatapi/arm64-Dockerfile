@@ -1,11 +1,6 @@
 FROM ubuntu:xenial as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-COPY ./docker/chatapi/crosscompile_chatapi.sh .
-RUN bash ./crosscompile_chatapi.sh armv8 install
-
-#####
-
 # Build stage
 FROM treehouses/node-tags:arm64-3.16
 COPY ./chatapi/package*.json ./
