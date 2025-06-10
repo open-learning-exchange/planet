@@ -56,6 +56,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     steps: new ReportsDetailData('time')
   };
   chatActivities = new ReportsDetailData('createdDate');
+  voicesActivities = new ReportsDetailData('time');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -75,6 +76,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   coursesLoading = true;
   chatLoading = true;
   healthLoading = true;
+  voicesLoading = true;
   healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
 
@@ -170,6 +172,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getPlanetCounts(local);
       this.getTeams();
       this.getChatUsage();
+      this.getVoicesUsage();
       this.dialogsLoadingService.stop();
     });
   }
@@ -233,6 +236,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     ));
     this.chatActivities.filter(this.filter);
     this.setChatUsage();
+    this.voicesActivities.filter(this.filter);
+    this.setVoicesUsage();
   }
 
   getLoginActivities() {
@@ -378,6 +383,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setChatUsage() {
     const { byMonth } = this.activityService.groupChatUsage(this.chatActivities.filteredData);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'chatUsageChart' });
+  }
+
+  getVoicesUsage() {
+    this.activityService.getVoicesCreated().subscribe((data) => {
+      this.voicesActivities.data = data.map(item => ({
+      ...item,
+      user: item.user?.name || '',
+    }));
+      this.voicesLoading = false;
+    });
+  }
+
+  setVoicesUsage() {
+    const { byMonth } = this.activityService.groupVoicesCreated(this.voicesActivities.filteredData);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'voicesCreatedChart' });
   }
 
   getTeamMembers(team: any) {
