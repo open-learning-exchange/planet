@@ -12,6 +12,8 @@ COPY ./chatapi/tsconfig.json ./tsconfig.json
 RUN npm run build
 
 # Production stage
+FROM treehouses/node-tags:arm64-3.16
+
 COPY --from=builder /dist ./dist/
 COPY --from=builder /node_modules ./node_modules/
 COPY ./chatapi/package.json ./

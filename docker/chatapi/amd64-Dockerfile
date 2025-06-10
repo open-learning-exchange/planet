@@ -1,5 +1,5 @@
 # Build stage
-FROM treehouses/node:3.16
+FROM treehouses/node:3.16 AS builder
 
 RUN apk update && apk add --no-cache poppler-utils
 
@@ -11,6 +11,8 @@ COPY ./chatapi/tsconfig.json ./tsconfig.json
 RUN npm run build
 
 # Production stage
+FROM treehouses/node:3.16
+
 COPY --from=builder /dist ./dist/
 COPY --from=builder /node_modules ./node_modules/
 COPY ./chatapi/package.json ./
