@@ -2,20 +2,22 @@
 FROM treehouses/node-tags:arm64-3.16 AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apk update && apk add --no-cache poppler-utils
-
 COPY ./chatapi/package.json ./
-RUN npm install --production
+
+RUN npm install
 
 COPY ./chatapi/src ./src/
-COPY ./chatapi/tsconfig.json ./tsconfig.json
+COPY ./chatapi/tsconfig.json ./
+
 RUN npm run build
 
 # Production stage
 FROM treehouses/node-tags:arm64-3.16
 
-COPY --from=builder /dist ./dist/
-COPY --from=builder /node_modules ./node_modules/
+RUN apk add --no-cache poppler-utils
 COPY ./chatapi/package.json ./
+
+RUN npm install --production
+COPY --from=builder /dist ./dist/
 
 CMD ["node", "dist/index.js"]
