@@ -1,5 +1,5 @@
 # Build stage
-FROM treehouses/node-tags:arm64-3.16 as builder
+FROM treehouses/node-tags:arm64-3.16 AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./chatapi/package*.json ./
