@@ -16,7 +16,7 @@ For development environment add a .env file in the `chatapi` directory
 
 Add the following configs in the .env file:
   ```
-    SERVE_PORT=5000
+    SERVE_PORT=5050
     COUCHDB_HOST=http://localhost:2200
     COUCHDB_USER=username
     COUCHDB_PASS=password

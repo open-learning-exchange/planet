@@ -135,7 +135,7 @@ server {
   }
 
   location /ml/ {
-    proxy_pass       http://chatapi:5000/;
+    proxy_pass       http://chatapi:5050/;
     proxy_set_header Host      $host;
     proxy_set_header X-Real-IP $remote_addr;
     client_max_body_size 1024M;

@@ -16,6 +16,6 @@ RUN npm install --production
 COPY ./chatapi/src ./src/
 COPY ./chatapi/tsconfig.json ./tsconfig.json
 
-EXPOSE 5000
+EXPOSE 5050
 
 CMD ["npm", "run", "start"]

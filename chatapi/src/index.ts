@@ -93,6 +93,6 @@ app.get('/checkproviders', async (req: any, res: any) => {
   });
 });
 
-const port = process.env.SERVE_PORT || 5000;
+const port = process.env.SERVE_PORT || 5050;
 
 server.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
