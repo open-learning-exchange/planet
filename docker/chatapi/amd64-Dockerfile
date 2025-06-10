@@ -1,6 +1,6 @@
 # Build stage
 FROM treehouses/node:3.16 AS builder
-COPY ./chatapi/package*.json ./
+COPY ../chatapi/package*.json ./
 RUN npm ci
 
 COPY ../chatapi/src ./src/
