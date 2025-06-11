@@ -50,7 +50,7 @@ You'll see you containers like this
 ```
 CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                                                             NAMES
 0914c167f20e   d14b10ade528               "/bin/sh -c ./docker…"   2 weeks ago     Up 2 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 443/tcp                      planet-prod-planet-1
-42d4b4ea3826   898294509ee6               "npm run start"          2 weeks ago     Up 2 seconds   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp                       planet-prod-chatapi-1
+42d4b4ea3826   898294509ee6               "npm run start"          2 weeks ago     Up 2 seconds   0.0.0.0:5400->5400/tcp, [::]:5400->5400/tcp                       planet-prod-chatapi-1
 c03b86dfede9   9859c264e24e               "/bin/sh -c 'bash ./…"   2 weeks ago     Up 2 seconds                                                                     planet-prod-db-init-1
 f7ddb76ae6b6   treehouses/couchdb:2.3.1   "tini -- /docker-ent…"   14 months ago   Up 2 seconds   4369/tcp, 9100/tcp, 0.0.0.0:2200->5984/tcp, [::]:2200->5984/tcp   planet-prod-couchdb-1
 
