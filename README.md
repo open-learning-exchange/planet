@@ -76,7 +76,7 @@ If port 3000 is in use, try ```ng serve --port 3001```
 
 Run `cd chatapi` and add a .env file in the `chatapi` directory with the following configs in the .env file(change the username and password to your CouchDB admin credentials):
   ```
-    SERVE_PORT=5050
+    SERVE_PORT=5400
     COUCHDB_HOST=http://localhost:2200
     COUCHDB_USER=username
     COUCHDB_PASS=password
@@ -84,7 +84,7 @@ Run `cd chatapi` and add a .env file in the `chatapi` directory with the followi
 
 Configure the models(API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB. Currently we support *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini* models.
 
-**Note:** The dev chatapi runs on port 5050 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`
+**Note:** The dev chatapi runs on port 5400 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`
 
 To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions. To start the chatapi:
 ```

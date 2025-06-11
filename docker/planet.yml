@@ -7,12 +7,12 @@ services:
       - "2200:5984"
   chatapi:
     expose:
-      - 5050
+      - 5400
     image: treehouses/planet:chatapi-local
     depends_on:
       - couchdb
     ports:
-      - "5050:5050"
+      - "5400:5400"
     environment:
       - COUCHDB_HOST=http://couchdb:5984
       - SERVE_PORT=5050
