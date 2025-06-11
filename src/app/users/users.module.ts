@@ -14,6 +14,8 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from './users-achievements/users-achievements.module';
 import { UsersTableComponent } from './users-table.component';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   exports: [
@@ -29,6 +31,8 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     MaterialModule,
     SharedComponentsModule,
     UsersAchievementsModule,
+    MatDialogModule,
+    MatButtonModule,
     ImageCropperModule
   ],
   declarations: [
