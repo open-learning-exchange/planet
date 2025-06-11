@@ -126,7 +126,7 @@
     <div *ngIf="!submissionMode" class="profile-image-section">
       <div style="text-align: center;">
         <img class="profile-image-update" [src]="previewSrc"><br>
-        <button mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+        <button *ngIf="uploadImage && currentImgKey" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
           <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
             Select Image
           </button>
