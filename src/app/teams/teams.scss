@@ -43,13 +43,11 @@
   .highlighted {
     background-color: $accent;
   }
+
   .team-type-label {
-    font-size: 11px;
+    font-size: 12px;
     color: #666;
-    margin-top: -5px;
-    display: inline-block;
   }
-  
 
   @media (max-width: $screen-sm) {
     mat-cell button {
