@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,16 +10,20 @@ import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { calculateMdAdjustedLimit } from '../shared/utils';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: [ './news-list-item.scss' ]
 })
-export class NewsListItemComponent implements OnInit, OnChanges {
+export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() item;
   @Input() replyObject;
+  @Input() replyView;
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
@@ -29,6 +33,7 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
+  onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
   showExpand = false;
   showLess = true;
@@ -36,7 +41,11 @@ export class NewsListItemComponent implements OnInit, OnChanges {
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
+  teamLabels = [];
   previewLimit = 500;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  isSmallMobile: boolean;
 
   constructor(
     private router: Router,
@@ -47,20 +56,19 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     private stateService: StateService,
     private dialog: MatDialog,
     private authService: AuthService,
-    private clipboard: Clipboard
-  ) {}
+    private clipboard: Clipboard,
+    private deviceInfoService: DeviceInfoService,
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
+  }
 
   ngOnInit() {
-    if (this.item.latestMessage) {
-      this.showExpand = true;
-      this.showLess = false;
-    }
-    if (this.item.doc.news?.conversations.length > 1) {
-      this.showExpand = true;
-    } else {
-      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
-        || this.item.doc.images.length > 0;
-    }
+    this.handleItemExpansion();
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.currentUser = this.userService.get();
+    });
+    this.addTeamLabelsFromViewIn();
   }
 
   ngOnChanges() {
@@ -76,6 +84,17 @@ export class NewsListItemComponent implements OnInit, OnChanges {
     } else {
       this.item.sharedSourceInfo = null;
     }
+    this.handleItemExpansion();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   addReply(news) {
@@ -94,6 +113,21 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       });
       this.sendNewsNotifications(news);
     });
+  }
+
+  handleItemExpansion() {
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    } else {
+      this.showLess = true;
+    }
+    if (this.item.doc.news?.conversations.length > 1) {
+      this.showExpand = true;
+    } else {
+      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
+        || this.item.doc.images.length > 0;
+    }
   }
 
   sendNewsNotifications(news: any = '') {
@@ -157,8 +191,22 @@ export class NewsListItemComponent implements OnInit, OnChanges {
       this.dialog.open(UserProfileDialogComponent, {
         data: { member: { ...member, userPlanetCode: member.planetCode } },
         maxWidth: '90vw',
+        autoFocus: false,
+        restoreFocus: false,
         maxHeight: '90vh'
       });
+    });
+  }
+
+  addTeamLabelsFromViewIn() {
+    if ([ 'teams', 'enterprises' ].some(route => this.router.url.includes(route))) {
+      this.teamLabels = [];
+      return;
+    }
+    this.item.doc.viewIn.forEach(view => {
+      if (view.section === 'teams' && view.name) {
+        this.teamLabels.push(`${view.name}`);
+      }
     });
   }
 

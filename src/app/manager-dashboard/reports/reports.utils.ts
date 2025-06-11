@@ -101,7 +101,8 @@ export const titleOfChartName = (chartName: string) => {
     visitChart: $localize`Total Member Visits by Month`,
     uniqueVisitChart: $localize`Unique Member Visits by Month`,
     stepCompletedChart: $localize`Steps Completed by Month`,
-    chatUsageChart: $localize`Chats Created by Month`
+    chatUsageChart: $localize`Chats Created by Month`,
+    voicesCreatedChart: $localize`Voices Created by Month`,
   };
   return chartNames[chartName];
 };

@@ -80,8 +80,17 @@
           </ng-container>
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="membership">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="membership" hidden>Membership</mat-header-cell>
+        <mat-cell *matCellDef="let element" hidden>{{ element.userStatus }}</mat-cell>
+      </ng-container>
       <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef i18n>
+          <span>Action</span>
+          <button mat-button *ngIf="showUserTeamsFilter" (click)="sortbyUserTeams()" i18n-title title="Toggle myTeams">
+            <mat-icon>check</mat-icon>
+          </button>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element" class>
           <div [ngClass]="{'horizontal-align button-container': isMobile}">
             <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
