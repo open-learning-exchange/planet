@@ -594,7 +594,11 @@ export class SubmissionsService {
       const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
       selections.forEach(selection => {
         const txt = selection.text ?? selection;
-        counts[txt]?.add(sub.user._id || sub.user.name);
+        if (!counts[txt]) {
+          counts[txt] = new Set();
+        }
+        const uniqueId = sub.user._id || sub.user.name || sub._id;
+        counts[txt].add(uniqueId);
       });
     });
 
