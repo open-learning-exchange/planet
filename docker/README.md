@@ -10,7 +10,7 @@ Docker means many things to many people. In simplest form we can say that docker
 ### Components
 We have several docker components in our application there are
 * Planet. There are two version, one is for production and one is for development.
-  * Planet for production. It basically our production optimized Planet(sometimes served via Nginx).
+  * Planet for production. It basically our production optimized Planet (sometimes served via Nginx).
   * Planet for development. It basically a runtime that make it possible for Planet to run (mostly node.js)
 * CouchDB. It basically a CouchDB container and it developed in the different project. You can access it here in [ole-vi/rpi-couchdb](https://github.com/ole-vi/rpi-couchdb)
 * CouchDB initialization data a.k.a. `db-init`. It contains all the schema necessary for our Planet to run.
