@@ -373,7 +373,6 @@ export class SubmissionsService {
 
         docContent.push({
           stack: [
-            { text: '% of responders selecting each option', style: 'chartTitle', margin: [ 0, 5, 0, 5 ] },
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
             { text: 'Breakdown of All Selections', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
             {
@@ -562,6 +561,7 @@ export class SubmissionsService {
           labels: data.labels,
           datasets: [ {
             data: data.data,
+            label: isBar ? '% of responders/selection' : undefined,
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
