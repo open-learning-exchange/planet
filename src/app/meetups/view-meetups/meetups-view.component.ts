@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
@@ -28,7 +28,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Input() editable = true;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
-  canManage = true;
+  canManage = false;
   members = [];
   parent = this.route.snapshot.data.parent;
   listDialogRef: MatDialogRef<DialogsListComponent>;
@@ -37,7 +37,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<MeetupsViewComponent>,
+    @Optional() public dialogRef: MatDialogRef<MeetupsViewComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
@@ -51,6 +52,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.canManage = this.userService.get()?._id;
     this.getEnrolledUsers();
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
@@ -181,6 +183,20 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
         autoFocus: false
       }
     );
+  }
+
+  editTask() {
+    if (this.dialogRef && this.data && this.data.onEditTask) {
+      this.dialogRef.close();
+      this.data.onEditTask();
+    }
+  }
+
+  deleteTask() {
+    if (this.dialogRef && this.data && this.data.onDeleteTask) {
+      this.dialogRef.close();
+      this.data.onDeleteTask();
+    }
   }
 
 }

@@ -35,6 +35,13 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
+  static nonNegativeNumberValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    return (ac.value >= 0) ? null : { invalidPositive: true };
+  }
+
   static choiceSelected(requireCorrect: boolean) {
     return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent || !requireCorrect) {
@@ -170,20 +177,6 @@ export class CustomValidators {
       }
       if (!timeRegExp.test(ac.value)) {
         return { invalidTimeFormat: true };
-      }
-      return null;
-    };
-  }
-
-  static startDateValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const today = new Date();
-       // Reset to start of day for accurate comparison
-      today.setHours(0, 0, 0, 0);
-      const selectedDate = new Date(control.value);
-
-      if (control.value && selectedDate < today) {
-        return { dateInPast : true };
       }
       return null;
     };
