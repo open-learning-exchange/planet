@@ -146,7 +146,13 @@ export class CsvService {
           headers = Array.from({ length: maxCols }, (_, i) => `Col ${i + 1}`);
           rows = rawData;
         }
-        return { headers, rows };
+
+        const uniqueHeaders = headers.map((header, index) => {
+          const duplicateCount = headers.slice(0, index).filter(h => h === header).length;
+          return duplicateCount > 0 ? `${header}_${duplicateCount + 1}` : header;
+        });
+
+        return { headers: uniqueHeaders, rows };
       })
     );
   }
