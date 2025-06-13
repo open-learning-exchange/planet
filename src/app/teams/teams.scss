@@ -64,4 +64,14 @@
       align-items: flex-start;
     }
   }
+  @media (max-width: 768px) {
+    .mobile-scroll-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    mat-table {
+      min-width: 800px; // 依据你表格的列数微调
+    }
+  }
 }
