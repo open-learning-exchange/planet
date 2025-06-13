@@ -21,6 +21,7 @@ export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   assistant: boolean,
+  context: any = '',
   callback?: (response: string) => void
 ): Promise<string> {
   const provider = models[aiProvider.name];
@@ -37,7 +38,7 @@ export async function aiChatStream(
         await addToThread(thread.id, message.content);
       }
 
-      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, callback);
+      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
 
       return completionText;
     } catch (error) {

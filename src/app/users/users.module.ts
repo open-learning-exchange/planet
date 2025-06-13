@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxImgModule } from 'ngx-img';
-
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { UsersComponent } from './users.component';
 import { UsersArchiveComponent } from './users-archive/users-archive.component';
 import { UsersProfileComponent } from './users-profile/users-profile.component';
@@ -21,7 +20,6 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     UsersTableComponent, UsersComponent
   ],
   imports: [
-    NgxImgModule,
     UsersRouterModule,
     CommonModule,
     FormsModule,
@@ -30,7 +28,8 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     PlanetDialogsModule,
     MaterialModule,
     SharedComponentsModule,
-    UsersAchievementsModule
+    UsersAchievementsModule,
+    ImageCropperModule
   ],
   declarations: [
     UsersComponent,

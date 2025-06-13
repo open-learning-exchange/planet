@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { styleVariables } from '../../shared/utils';
@@ -26,6 +26,8 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+
+Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip);
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -54,11 +56,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     steps: new ReportsDetailData('time')
   };
   chatActivities = new ReportsDetailData('createdDate');
+  voicesActivities = new ReportsDetailData('time');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
   dateFilterForm: FormGroup;
-  disableShowAllTime = true;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -70,14 +72,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   };
   selectedTimeFilter = '12m';
   showCustomDateFields = false;
-  timeFilterOptions = [
-    { value: '7d', label: 'Last 7 days' },
-    { value: '1m', label: 'Last 30 days' },
-    { value: '6m', label: 'Last 6 Months' },
-    { value: '12m', label: 'Last 12 Months' },
-    { value: 'all', label: 'All Time' },
-    { value: 'custom', label: 'Custom' },
-  ];
+  resourcesLoading = true;
+  coursesLoading = true;
+  chatLoading = true;
+  healthLoading = true;
+  voicesLoading = true;
+  healthNoData = false;
+  timeFilterOptions = this.activityService.standardTimeFilters;
 
   constructor(
     private activityService: ReportsService,
@@ -103,7 +104,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
-
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
@@ -111,15 +111,30 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           return;
         }
         const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        this.dateQueryParams = {
-          startDate: new Date(new Date(queryParams['startDate']).setHours(0, 0, 0, 0)),
-          endDate: new Date(new Date(queryParams['endDate']).setHours(0, 0, 0))
+        const parseDate = (dateStr) => {
+          if (!dateStr) { return null; }
+          const [ y, m, d ] = dateStr.split('-').map(Number);
+          return new Date(y, m - 1, d);
         };
+        this.dateQueryParams = {
+          startDate: parseDate(queryParams['startDate']),
+          endDate: parseDate(queryParams['endDate']) || this.today
+        };
+        if (
+          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+        ) {
+          this.selectedTimeFilter = 'custom';
+          this.showCustomDateFields = true;
+        }
+        this.dateFilterForm.controls.endDate.setValue(
+          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+          ? this.dateQueryParams.endDate : this.today
+        );
         this.codeParam = params.get('code');
         this.planetCode = this.codeParam || this.stateService.configuration.code;
         this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
         this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.resetDateFilter({ startDate: new Date(new Date().setMonth(new Date().getMonth() - 12)), endDate: this.today });
         this.initializeData(!this.codeParam);
       });
     });
@@ -157,8 +172,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getPlanetCounts(local);
       this.getTeams();
       this.getChatUsage();
+      this.getVoicesUsage();
       this.dialogsLoadingService.stop();
-      this.filterData();
     });
   }
 
@@ -194,9 +209,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge'
         });
         this.location.replaceState(urlTree.toString());
-
-        this.disableShowAllTime = startDate.getTime() === this.minDate.getTime() &&
-          endDate.getTime() === this.today.getTime();
       }
       this.filterData();
     });
@@ -224,6 +236,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     ));
     this.chatActivities.filter(this.filter);
     this.setChatUsage();
+    this.voicesActivities.filter(this.filter);
+    this.setVoicesUsage();
   }
 
   getLoginActivities() {
@@ -237,7 +251,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : this.minDate
+        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -309,6 +323,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
+    }, error => {
+      if (type === 'resourceActivities') {
+        this.resourcesLoading = false;
+      } else if (type === 'courseActivities') {
+        this.coursesLoading = false;
+      }
     });
   }
 
@@ -351,12 +376,28 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatLoading = false;
     });
   }
 
   setChatUsage() {
     const { byMonth } = this.activityService.groupChatUsage(this.chatActivities.filteredData);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'chatUsageChart' });
+  }
+
+  getVoicesUsage() {
+    this.activityService.getVoicesCreated().subscribe((data) => {
+      this.voicesActivities.data = data.map(item => ({
+      ...item,
+      user: item.user?.name || '',
+    }));
+      this.voicesLoading = false;
+    });
+  }
+
+  setVoicesUsage() {
+    const { byMonth } = this.activityService.groupVoicesCreated(this.voicesActivities.filteredData);
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'voicesCreatedChart' });
   }
 
   getTeamMembers(team: any) {
@@ -382,7 +423,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   setGenderDatasets(data, unique = false) {
-    const months = setMonths();
+    const months = setMonths({
+      startDate: this.filter.startDate,
+      endDate: this.filter.endDate
+    });
+    const labels = months.map(month => monthDataLabels(month));
+
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
@@ -402,36 +448,40 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },
-      labels: months.map(month => monthDataLabels(month))
+      labels
     });
   }
 
   setChart({ data, labels, chartName }) {
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
-      updateChart.data = { ...data, labels: [] };
+      updateChart.data = { ...data, labels };
       updateChart.update();
       return;
     }
-    this.charts.push(new Chart(chartName, {
+    const chartConfig: ChartConfiguration<'bar'> = {
       type: 'bar',
       data,
       options: {
-        title: { display: true, text: titleOfChartName(chartName), fontSize: 16 },
-        legend: { position: 'bottom' },
+        plugins: {
+          title: { display: true, text: titleOfChartName(chartName), font: { size: 16 } },
+          legend: { position: 'bottom' }
+        },
         maintainAspectRatio: false,
         scales: {
-          xAxes: [ { labels, type: 'category' } ],
-          yAxes: [ {
+          x: { type: 'category' },
+          y: {
             type: 'linear',
-            ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 }
-          } ]
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
         }
       }
-    }));
+    };
+    this.charts.push(new Chart(chartName, chartConfig));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview') {
+  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
@@ -651,9 +701,32 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       case 'health':
         this.exportDocView(reportType, dateRange, members, null);
         break;
+      case 'chat':
+        this.exportChatData(dateRange, members, sortBy);
+        break;
     }
     this.dialogsFormService.closeDialogsForm();
     this.dialogsLoadingService.stop();
+  }
+
+  exportChatData(dateRange: any, members: any[], sortBy: string) {
+    let data = filterByMember(filterByDate(this.chatActivities.data, 'createdDate', dateRange), members);
+    if (sortBy) {
+      data = this.sortData(data, sortBy);
+    }
+    const exportData = data.map(activity => ({
+      'User': activity.user || '',
+      'AI Provider': activity.aiProvider || '',
+      'Timestamp': new Date(activity.createdDate).toLocaleString(),
+      'Chat Responses': activity.conversations?.length || 0,
+      'Assistant': activity.assistant ? 'Yes' : 'No',
+      'Shared': activity.shared ? 'Yes' : 'No',
+      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+    }));
+    this.csvService.exportCSV({
+      data: exportData,
+      title: $localize`Chat Usage`
+    });
   }
 
   exportSummary(dateRange: any, members: any[], sortBy: string) {
@@ -739,25 +812,19 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
     const newStartDate = startDate || this.minDate;
     const newEndDate = endDate || this.today;
-    // Use setTimeout to avoid "ExpressionChangedAfterItHasBeenCheckedError"
-    setTimeout(() => {
-      this.disableShowAllTime = true;
-    });
     this.dateFilterForm.patchValue({
       startDate: newStartDate,
       endDate: newEndDate
     }, { emitEvent: true });
-    this.filterData();
   }
 
   onTimeFilterChange(timeFilter: string) {
     this.selectedTimeFilter = timeFilter;
-    this.showCustomDateFields = timeFilter === 'custom';
-    const now = new Date();
-    let newStartDate: Date;
-    const newEndDate: Date = now;
+    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
+    this.showCustomDateFields = showCustomDateFields;
+
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date(now);
+      const currentStartDate = new Date();
       currentStartDate.setMonth(currentStartDate.getMonth() - 12);
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
@@ -766,33 +833,25 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    switch (timeFilter) {
-      case '7d':
-        newStartDate = new Date(now);
-        newStartDate.setDate(now.getDate() - 7);
-        break;
-      case '1m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 1);
-        break;
-      case '6m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 6);
-        break;
-      case '12m':
-        newStartDate = new Date(now);
-        newStartDate.setMonth(now.getMonth() - 12);
-        break;
-      case 'all':
-        newStartDate = this.minDate;
-        break;
-      default:
-        return;
-    }
-    this.resetDateFilter({ startDate: newStartDate, endDate: newEndDate });
-    this.filter.startDate = newStartDate;
-    this.filter.endDate = newEndDate;
+    this.resetDateFilter({ startDate, endDate });
+    this.filter.startDate = startDate;
+    this.filter.endDate = endDate;
     this.filterData();
+  }
+
+  clearFilters() {
+    this.filter.app = '';
+    this.selectedTeam = 'All';
+    this.filter.members = [];
+    this.onTimeFilterChange('12m');
+  }
+
+  onHealthLoadingChange(loading: boolean) {
+    this.healthLoading = loading;
+  }
+
+  onHealthNoDataChange(noData: boolean) {
+    this.healthNoData = noData;
   }
 
 }

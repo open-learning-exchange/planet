@@ -59,13 +59,14 @@ export async function retrieveResponse(threadId: any): Promise<string> {
 
 // Run with streaming enabled
 export async function createAndHandleRunWithStreaming(
-  threadID: any, assistantID: any, callback?: (response: string) => void
+  threadID: any, assistantID: any, instructions: string, callback?: (response: string) => void
 ): Promise<string> {
   let completionText = '';
 
   return new Promise((resolve, reject) => {
     keys.openai.beta.threads.runs.stream(threadID, {
-      'assistant_id': assistantID
+      'assistant_id': assistantID,
+      instructions
     })
       .on('textDelta', (textDelta: { value: string }) => {
         if (textDelta && textDelta.value) {
@@ -75,7 +76,7 @@ export async function createAndHandleRunWithStreaming(
           }
         }
       })
-      .on('toolCallDelta', (toolCallDelta: { type: string; code_interpreter: { input: string; outputs: any[] } } ) => {
+      .on('toolCallDelta', (toolCallDelta: { type: string; code_interpreter: { input: string; outputs: any[] } }) => {
         if (toolCallDelta.type === 'code_interpreter') {
           if (toolCallDelta && toolCallDelta.code_interpreter && toolCallDelta.code_interpreter.input) {
             completionText += toolCallDelta.code_interpreter.input;

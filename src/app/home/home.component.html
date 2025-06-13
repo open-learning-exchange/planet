@@ -69,7 +69,7 @@
         <button mat-menu-item i18n planetChangePassword *ngIf="user.planetCode === this.configuration.code">Change Password</button>
         <button mat-menu-item i18n (click)="logoutClick()">Logout</button>
       </ng-container>
-      <button mat-menu-item i18n routerLink="/login" *ngIf="!isLoggedIn">Login</button>
+      <button mat-menu-item i18n (click)="openLoginDialog()" *ngIf="!isLoggedIn">Login</button>
     </mat-menu>
     <!--Notification dropdown menu-->
     <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
@@ -113,7 +113,7 @@
               i18n-title title="Community"
               [routerLinkActiveOptions]="{exact:true}">
               <mat-icon svgIcon="home"></mat-icon>
-              <label i18n>Community</label>
+              <label i18n>{{ 'Community' | truncateText:12 }}</label>
             </a>
           </li>
           <li *ngSwitchCase="'nation'">
@@ -123,7 +123,7 @@
               i18n-title title="Nation"
               [routerLinkActiveOptions]="{exact:true}">
               <mat-icon>home</mat-icon>
-              <label i18n>Nation</label>
+              <label i18n>{{ 'Nation' | truncateText:12 }}</label>
             </a>
           </li>
         </ng-container>
@@ -133,7 +133,7 @@
             planetPulsateIcon
             i18n-title title="Dashboard">
             <mat-icon>dashboard</mat-icon>
-            <label i18n>myDashboard</label>
+            <label i18n>{{ 'myDashboard' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
@@ -142,7 +142,7 @@
             planetPulsateIcon
             i18n-title title="Library">
             <mat-icon svgIcon="myLibrary"></mat-icon>
-            <label i18n>Library</label>
+            <label i18n>{{ 'Library' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
@@ -151,7 +151,7 @@
             planetPulsateIcon
             i18n-title title="Courses">
             <mat-icon svgIcon="myCourses"></mat-icon>
-            <label i18n>Courses</label>
+            <label i18n>{{ 'Courses' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
@@ -160,7 +160,7 @@
             planetPulsateIcon
             i18n-title title="Teams">
             <mat-icon svgIcon="myTeams"></mat-icon>
-            <label i18n>Teams</label>
+            <label i18n>{{ 'Teams' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
@@ -169,7 +169,7 @@
             planetPulsateIcon
             i18n-title title="Enterprises">
             <mat-icon>work</mat-icon>
-            <label i18n>Enterprises</label>
+            <label i18n>{{ 'Enterprises' | truncateText:12 }}</label>
           </a>
         </li>
         <ng-container [ngSwitch]="configuration.planetType">
@@ -191,47 +191,47 @@
         <li>
           <a mat-button routerLink="/chat" i18n-title title="Chat">
             <mat-icon>question_answer</mat-icon>
-            <label i18n>Chat</label>
+            <label i18n>{{ 'Chat' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
           <a mat-button planetFeedback i18n-title title="Feedback">
             <mat-icon svgIcon="feedback"></mat-icon>
-            <label i18n>Feedback</label>
+            <label i18n>{{ 'Feedback' | truncateText:12 }}</label>
           </a>
         </li>
         <li>
           <a mat-button routerLink="/feedback" i18n-title title="Messages">
             <mat-icon svgIcon="feedbacklist"></mat-icon>
-            <label i18n>Messages</label>
+            <label i18n>{{ 'Messages' | truncateText:12 }}</label>
           </a>
         </li>
         <ng-container *planetAuthorizedRoles="'manager'">
           <li>
             <a mat-button routerLink="/manager" i18n-title title="Manager Settings">
               <mat-icon svgIcon="usersettings"></mat-icon>
-              <label i18n>Manager Settings</label>
+              <label i18n>{{ 'Manager Settings' | truncateText:12 }}</label>
             </a>
           </li>
         </ng-container>
         <li>
           <a mat-button class="language-button" i18n-title title="Language">
             <planet-language [iconOnly]="true"></planet-language>
-            <label *ngIf="sidenavState === 'open'" class="language-label" i18n>Language</label>
+            <label *ngIf="sidenavState === 'open'" class="language-label" i18n>{{ 'Language' | truncateText:12 }}</label>
           </a>
         </li>
         <ng-container *planetAuthorizedRoles="''">
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">
               <mat-icon svgIcon="sync"></mat-icon>
-              <label i18n>Sync</label>
+              <label i18n>{{ 'Sync' | truncateText:12 }}</label>
             </a>
           </li>
         </ng-container>
         <li>
           <a mat-button (click)="logoutClick()" i18n-title title="Logout">
             <mat-icon svgIcon="logout"></mat-icon>
-            <label i18n>Logout</label>
+            <label i18n>{{ 'Logout' | truncateText:12 }}</label>
           </a>
         </li>
       </ul>

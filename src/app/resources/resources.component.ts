@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,7 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
-import { Subject, of, combineLatest } from 'rxjs';
+import { CouchService } from '../shared/couchdb.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import {
@@ -23,7 +23,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -34,7 +34,14 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
   styleUrls: [ './resources.scss' ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
@@ -92,6 +99,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   isTablet: boolean;
   showFiltersRow = false;
+  expandedElement: any = null;
+  previewLimit = 450;
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -123,7 +132,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     if (this.myView !== 'myPersonals') {
-      this.displayedColumns = [ 'select', ...this.displayedColumns, 'rating' ];
+      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
@@ -383,6 +392,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  toggleRow(element: any) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
+  }
+
+  isExpanded(element: any): boolean {
+    return this.expandedElement === element;
+  }
+
+  formatLevels(levels: string | string[] = []): string {
+    const arr = Array.isArray(levels) ? levels : String(levels).split(',');
+    return arr.map(s => s.trim()).filter(Boolean).join(', ');
+  }
+
+  showPreviewExpand(element: any): boolean {
+    if (!element.description) { return false; }
+    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
   }
 
 }
