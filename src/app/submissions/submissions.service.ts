@@ -361,7 +361,7 @@ export class SubmissionsService {
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          ['Option', 'Users Count', '% of Users', 'Selections Count', '% of All Selections'],
+          [ 'Option', 'Users Count', '% of Users', 'Selections Count', '% of All Selections' ],
           ...barAgg.labels.map((label, index) => [
             label,
             barAgg.userCounts[index].toString(),
@@ -373,17 +373,17 @@ export class SubmissionsService {
 
         docContent.push({
           stack: [
-            { text: '% of responders selecting each option', style: 'chartTitle', margin: [0, 5, 0, 5] },
+            { text: '% of responders selecting each option', style: 'chartTitle', margin: [ 0, 5, 0, 5 ] },
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: 'Breakdown of All Selections', style: 'chartTitle', margin: [0, 15, 0, 5] },
+            { text: 'Breakdown of All Selections', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
             {
               table: {
                 headerRows: 1,
-                widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+                widths: [ '*', 'auto', 'auto', 'auto', 'auto' ],
                 body: tableData
               },
               layout: 'lightHorizontalLines',
-              margin: [0, 5, 0, 10]
+              margin: [ 0, 5, 0, 10 ]
             }
           ],
           alignment: 'center'
@@ -609,7 +609,12 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users') {
+  aggregateQuestionResponses(
+    question,
+    submissions,
+    mode: 'percent' | 'count' = 'percent',
+    calculationMode: 'users' | 'selections' = 'users'
+  ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
