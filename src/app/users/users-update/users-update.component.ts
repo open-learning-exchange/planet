@@ -213,6 +213,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.uploadImage = false;
     this.avatarChanged = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
+    this.imageChangedEvent = null;
   }
 
   deleteImageAttachment() {
