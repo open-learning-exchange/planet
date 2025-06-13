@@ -377,7 +377,7 @@ export class SubmissionsService {
             {
               table: {
                 headerRows: 1,
-                widths: [ '*', 'auto', 'auto', 'auto', 'auto' ],
+                widths: [ '*', 'auto', 'auto', 'auto' ],
                 body: tableData
               },
               layout: 'lightHorizontalLines',
