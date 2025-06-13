@@ -634,12 +634,12 @@ export class SubmissionsService {
     if (mode === 'percent') {
       if (question.type === 'selectMultiple') {
         if (calculationMode === 'users') {
-          data = totalUsers > 0 ? userCounts.map(c => Math.round((c / totalUsers) * 100)) : userCounts.map(_ => 0);
+          data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
         } else {
-          data = totalSelections > 0 ? userCounts.map(c => Math.round((c / totalSelections) * 100)) : userCounts.map(_ => 0);
+          data = totalSelections > 0 ? userCounts.map(c => parseFloat(((c / totalSelections) * 100).toFixed(1))) : userCounts.map(_ => 0);
         }
       } else {
-        data = totalUsers > 0 ? userCounts.map(c => Math.round((c / totalUsers) * 100)) : userCounts.map(_ => 0);
+        data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
       }
     } else {
       data = userCounts;
