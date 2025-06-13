@@ -361,12 +361,11 @@ export class SubmissionsService {
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          [ 'Option', 'Users Count', '% of Users', 'Selections Count', '% of All Selections' ],
+          [ 'Option', 'Count', '% of Users', '% of All Selections' ],
           ...barAgg.labels.map((label, index) => [
             label,
             barAgg.userCounts[index].toString(),
             `${barAgg.data[index]}%`,
-            barAgg.userCounts[index].toString(),
             `${selectionAgg.data[index]}%`
           ])
         ];
