@@ -34,5 +34,8 @@
         <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
       </mat-form-field>
     </div>
+    <mat-checkbox
+      *ngIf="questionForm.controls.type.value.includes('select') && examType !=='exam'"
+      [formControl]="questionForm.controls.hasOtherOption" i18n>Add "Other"</mat-checkbox>
   </div>
 </form>
