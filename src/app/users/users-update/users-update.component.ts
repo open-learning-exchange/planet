@@ -15,12 +15,34 @@ import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
+
+  constructor(
+    private fb: FormBuilder,
+    private couchService: CouchService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private stateService: StateService,
+    private validatorService: ValidatorService,
+    private dialog: MatDialog,
+
+    private unsavedChangesService: UnsavedChangesService
+  ) {
+    this.userData();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+    });
+  }
   user: any = {};
   initialFormValues: any;
   educationLevel = educationLevel;
@@ -46,24 +68,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
   imageChangedEvent: Event | null = null;
-
-  constructor(
-    private fb: FormBuilder,
-    private couchService: CouchService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private stateService: StateService,
-    private validatorService: ValidatorService,
-    private unsavedChangesService: UnsavedChangesService
-  ) {
-    this.userData();
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.isNavigating = true;
-      }
-    });
-  }
+  @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   ngOnInit() {
     const routeSnapshot = this.route.snapshot;
@@ -257,5 +262,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
     }
   }
+
+openImageEditDialog(event: Event): void {
+  this.imageChangedEvent = event;
+  this.dialog.open(this.imageEditDialog, {
+    width: '600px'
+  });
+}
+
 
 }

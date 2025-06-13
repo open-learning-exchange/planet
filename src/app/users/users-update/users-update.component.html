@@ -131,7 +131,7 @@
           <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
             Select Image
           </button>
-          <input #fileInput id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
+          <input #fileInput id="fileInput" type="file" (change)="openImageEditDialog($event)" style="display: none;" />
         </ng-template>
       </div>
       <div class="profile-image-upload">
@@ -140,3 +140,23 @@
     </div>
   </div>
 </div>
+<ng-template #imageEditDialog>
+  <h2 mat-dialog-title i18n>Edit Profile Image</h2>
+  <mat-dialog-content>
+    <div style="text-align: center;">
+      <img class="profile-image-update" [src]="previewSrc" /><br /><br />
+      <input type="file" (change)="fileChangeEvent($event)" /><br /><br />
+    </div>
+    <div class="profile-image-upload">
+      <image-cropper
+        [imageChangedEvent]="imageChangedEvent"
+        format="webp"
+        (imageCropped)="onImageSelect($event)">
+      </image-cropper>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close i18n>Save</button>
+  </mat-dialog-actions>
+</ng-template>
+
