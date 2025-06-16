@@ -126,11 +126,13 @@
     <div *ngIf="!submissionMode" class="profile-image-section">
       <div style="text-align: center;">
         <img class="profile-image-update" [src]="previewSrc"><br>
-        <button *ngIf="uploadImage && currentImgKey" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
-          <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
-            Select Image
+        <div class="action-buttons">
+          <button mat-raised-button color="secondary" (click)="fileInput.click()">
+            Choose Image
           </button>
-          <input #fileInput id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
+          <button *ngIf="uploadImage && currentImgKey" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+        </div>
+        <input #fileInput id="fileInput" type="file" (change)="fileChangeEvent($event)" style="display: none;" />
       </div>
       <div class="profile-image-upload">
         <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" (imageCropped)="onImageSelect($event)"></image-cropper>
