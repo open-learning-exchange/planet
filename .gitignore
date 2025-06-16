@@ -41,6 +41,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Virtual Machine
+.vagrant/
+
 # NPM/Yarn
 *.lock
 package-lock.json
