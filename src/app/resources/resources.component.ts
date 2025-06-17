@@ -14,7 +14,7 @@ import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, filterSpecificFieldsHybrid, selectedOutOfFilter, trackById, commonSortingDataAccessor
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, selectedOutOfFilter, trackById
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';

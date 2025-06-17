@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, OnChanges, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation} from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -50,7 +50,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   encapsulation: ViewEncapsulation.None
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   isLoading = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
