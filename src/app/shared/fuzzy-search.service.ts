@@ -54,7 +54,7 @@ export class FuzzySearchService {
     // Direct substring match (fastest) or check distance/similarity
     return normalizedTarget.includes(normalizedSearch) ||
            this.levenshteinDistance(normalizedSearch, normalizedTarget) <= opts.maxDistance ||
-           (target.length > 0 ? (target.length - this.levenshteinDistance(normalizedSearch, normalizedTarget)) 
+           (target.length > 0 ? (target.length - this.levenshteinDistance(normalizedSearch, normalizedTarget))
             / target.length : 1) >= opts.threshold;
   }
 
