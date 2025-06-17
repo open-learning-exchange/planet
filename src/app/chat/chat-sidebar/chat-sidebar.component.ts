@@ -40,6 +40,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: { [key: string]: FormGroup } = {};
+  isMobile = window.innerWidth <= 768;
+
 
   constructor(
     private chatService: ChatService,
