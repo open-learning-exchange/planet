@@ -23,13 +23,8 @@ export class FuzzySearchService {
   private levenshteinDistance(str1: string, str2: string): number {
     const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
 
-    for (let i = 0; i <= str1.length; i++) {
-      matrix[0][i] = i;
-    }
-
-    for (let j = 0; j <= str2.length; j++) {
-      matrix[j][0] = j;
-    }
+    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
 
     for (let j = 1; j <= str2.length; j++) {
       for (let i = 1; i <= str1.length; i++) {
@@ -46,71 +41,41 @@ export class FuzzySearchService {
   }
 
   /**
-   * Calculate similarity score between two strings (0-1, higher = more similar)
-   */
-  private similarity(str1: string, str2: string): number {
-    const longer = str1.length > str2.length ? str1 : str2;
-    const shorter = str1.length > str2.length ? str2 : str1;
-    const editDistance = this.levenshteinDistance(longer, shorter);
-
-    if (longer.length === 0) {
-      return 1.0;
-    }
-
-    return (longer.length - editDistance) / longer.length;
-  }
-
-  /**
    * Check if search term fuzzy matches target string
    */
   fuzzyMatch(searchTerm: string, target: string, options?: FuzzySearchOptions): boolean {
     const opts = { ...this.defaultOptions, ...options };
 
-    if (!opts.caseSensitive) {
-      searchTerm = searchTerm.toLowerCase();
-      target = target.toLowerCase();
-    }
+    // Normalize strings
+    const normalizeStr = (str: string) => opts.caseSensitive ? str : str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalizedSearch = normalizeStr(searchTerm);
+    const normalizedTarget = normalizeStr(target);
 
-    // Normalize strings (remove accents)
-    searchTerm = searchTerm.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    target = target.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-    // Direct substring match (fastest)
-    if (target.includes(searchTerm)) {
-      return true;
-    }
-
-    // Check if edit distance is within acceptable range
-    const distance = this.levenshteinDistance(searchTerm, target);
-    if (distance <= opts.maxDistance) {
-      return true;
-    }
-
-    // Check similarity threshold for longer strings
-    const similarity = this.similarity(searchTerm, target);
-    return similarity >= opts.threshold;
+    // Direct substring match (fastest) or check distance/similarity
+    return normalizedTarget.includes(normalizedSearch) ||
+           this.levenshteinDistance(normalizedSearch, normalizedTarget) <= opts.maxDistance ||
+           (target.length > 0 ? (target.length - this.levenshteinDistance(normalizedSearch, normalizedTarget)) / target.length : 1) >= opts.threshold;
   }
 
   /**
    * Check if any word in search matches any word in target with fuzzy logic
    */
   fuzzyWordMatch(searchTerms: string, target: string, options?: FuzzySearchOptions): boolean {
-    const searchWords = searchTerms.split(' ').map(word => word.trim()).filter(word => word.length > 0);
-    const targetWords = target.split(' ').map(word => word.trim()).filter(word => word.length > 0);
+    const searchWords = searchTerms.split(' ').filter(word => word.trim());
+    const targetWords = target.split(' ').filter(word => word.trim());
 
     return searchWords.every(searchWord => {
-      // For very short search words, require exact match
+      // For very short search words, require exact substring match
       if (searchWord.length <= 2) {
-        return targetWords.some(targetWord =>
-          !options?.caseSensitive ?
-            targetWord.toLowerCase().includes(searchWord.toLowerCase()) :
-            targetWord.includes(searchWord)
+        const searchLower = options?.caseSensitive ? searchWord : searchWord.toLowerCase();
+        return targetWords.some(targetWord => 
+          (options?.caseSensitive ? targetWord : targetWord.toLowerCase()).includes(searchLower)
         );
       }
 
-      // For longer words, use fuzzy matching
+      // For longer words, use fuzzy matching against words or full target
       return targetWords.some(targetWord => this.fuzzyMatch(searchWord, targetWord, options)) ||
-             this.fuzzyMatch(searchWord, target, options); // Also check against full target
+             this.fuzzyMatch(searchWord, target, options);
     });
   }
 }

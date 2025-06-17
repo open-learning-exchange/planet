@@ -60,57 +60,21 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   };
 };
 
-// Add fuzzy search version of filterSpecificFieldsByWord
-export const filterSpecificFieldsByWordFuzzy = (filterFields: string[], fuzzySearchService: FuzzySearchService): any => {
-  return (data: any, filter: string) => {
-    const searchTerms = filter.trim();
-    if (!searchTerms) {
-      return true;
-    }
-
-    return filterFields.some(field => {
-      const fieldValue = getProperty(data, field);
-      if (typeof fieldValue === 'string') {
-        return fuzzySearchService.fuzzyWordMatch(searchTerms, fieldValue, { threshold: 0.7, maxDistance: 2 });
-      }
-      return false;
-    });
-  };
-};
-
 // Enhanced version that combines exact and fuzzy search
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
   return (data: any, filter: string) => {
     const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (!normalizedFilter) return true;
 
-    if (!normalizedFilter) {
-      return true;
-    }
+    return filterFields.some(field => {
+      const fieldValue = getProperty(data, field);
+      if (typeof fieldValue !== 'string') return false;
 
-    // First try exact matching
-    for (let i = 0; i < filterFields.length; i++) {
-      const fieldValue = getProperty(data, filterFields[i]);
-      if (typeof fieldValue === 'string') {
-        const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (normalizedFieldValue.includes(normalizedFilter)) {
-          return true;
-        }
-      }
-    }
-
-    // If no exact match and fuzzy search is available, try fuzzy matching
-    if (fuzzySearchService) {
-      for (let i = 0; i < filterFields.length; i++) {
-        const fieldValue = getProperty(data, filterFields[i]);
-        if (typeof fieldValue === 'string') {
-          if (fuzzySearchService.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 })) {
-            return true;
-          }
-        }
-      }
-    }
-
-    return false;
+      // Try exact match first, then fuzzy if available
+      const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return normalizedFieldValue.includes(normalizedFilter) || 
+             (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
+    });
   };
 };
 
