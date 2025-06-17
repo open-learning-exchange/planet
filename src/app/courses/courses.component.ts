@@ -9,9 +9,11 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
-  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
+  filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
+  createDeleteArray, filterSpecificFieldsHybrid, selectedOutOfFilter, trackById, commonSortingDataAccessor,
+  filterSpecificFieldsByWord, filterIds
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -47,7 +49,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   ]
 })
 
-export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
@@ -104,7 +106,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
-    filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
+    filterSpecificFieldsHybrid(['doc.courseTitle'], this.fuzzySearchService),
     filterShelf(this.myCoursesFilter, 'admission'),
     filterIds(this.filterIds)
   ]);
@@ -133,7 +135,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private fuzzySearchService: FuzzySearchService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {

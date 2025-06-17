@@ -1,4 +1,5 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
+import { FuzzySearchService } from './fuzzy-search.service';
 
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
@@ -56,6 +57,60 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
                fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
       });
     });
+  };
+};
+
+// Add fuzzy search version of filterSpecificFieldsByWord
+export const filterSpecificFieldsByWordFuzzy = (filterFields: string[], fuzzySearchService: FuzzySearchService): any => {
+  return (data: any, filter: string) => {
+    const searchTerms = filter.trim();
+    if (!searchTerms) {
+      return true;
+    }
+
+    return filterFields.some(field => {
+      const fieldValue = getProperty(data, field);
+      if (typeof fieldValue === 'string') {
+        return fuzzySearchService.fuzzyWordMatch(searchTerms, fieldValue, { threshold: 0.7, maxDistance: 2 });
+      }
+      return false;
+    });
+  };
+};
+
+// Enhanced version that combines exact and fuzzy search
+export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
+  return (data: any, filter: string) => {
+    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    if (!normalizedFilter) {
+      return true;
+    }
+
+    // First try exact matching
+    for (let i = 0; i < filterFields.length; i++) {
+      const fieldValue = getProperty(data, filterFields[i]);
+      if (typeof fieldValue === 'string') {
+        const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (normalizedFieldValue.includes(normalizedFilter)) {
+          return true;
+        }
+      }
+    }
+
+    // If no exact match and fuzzy search is available, try fuzzy matching
+    if (fuzzySearchService) {
+      for (let i = 0; i < filterFields.length; i++) {
+        const fieldValue = getProperty(data, filterFields[i]);
+        if (typeof fieldValue === 'string') {
+          if (fuzzySearchService.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 })) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   };
 };
 
