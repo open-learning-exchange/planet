@@ -64,15 +64,15 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
   return (data: any, filter: string) => {
     const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (!normalizedFilter) return true;
+    if (!normalizedFilter) { return true; }
 
     return filterFields.some(field => {
       const fieldValue = getProperty(data, field);
-      if (typeof fieldValue !== 'string') return false;
+      if (typeof fieldValue !== 'string') { return false; }
 
       // Try exact match first, then fuzzy if available
       const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      return normalizedFieldValue.includes(normalizedFilter) || 
+      return normalizedFieldValue.includes(normalizedFilter) ||
              (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
     });
   };

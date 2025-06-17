@@ -23,8 +23,8 @@ export class FuzzySearchService {
   private levenshteinDistance(str1: string, str2: string): number {
     const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
 
-    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
-    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+    for (let i = 0; i <= str1.length; i++) { matrix[0][i] = i; }
+    for (let j = 0; j <= str2.length; j++) { matrix[j][0] = j; }
 
     for (let j = 1; j <= str2.length; j++) {
       for (let i = 1; i <= str1.length; i++) {
@@ -54,7 +54,8 @@ export class FuzzySearchService {
     // Direct substring match (fastest) or check distance/similarity
     return normalizedTarget.includes(normalizedSearch) ||
            this.levenshteinDistance(normalizedSearch, normalizedTarget) <= opts.maxDistance ||
-           (target.length > 0 ? (target.length - this.levenshteinDistance(normalizedSearch, normalizedTarget)) / target.length : 1) >= opts.threshold;
+           (target.length > 0 ? (target.length - this.levenshteinDistance(normalizedSearch, normalizedTarget)) 
+            / target.length : 1) >= opts.threshold;
   }
 
   /**
@@ -68,7 +69,7 @@ export class FuzzySearchService {
       // For very short search words, require exact substring match
       if (searchWord.length <= 2) {
         const searchLower = options?.caseSensitive ? searchWord : searchWord.toLowerCase();
-        return targetWords.some(targetWord => 
+        return targetWords.some(targetWord =>
           (options?.caseSensitive ? targetWord : targetWord.toLowerCase()).includes(searchLower)
         );
       }
