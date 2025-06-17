@@ -52,11 +52,11 @@ export class FuzzySearchService {
     const longer = str1.length > str2.length ? str1 : str2;
     const shorter = str1.length > str2.length ? str2 : str1;
     const editDistance = this.levenshteinDistance(longer, shorter);
-    
+
     if (longer.length === 0) {
       return 1.0;
     }
-    
+
     return (longer.length - editDistance) / longer.length;
   }
 
@@ -65,7 +65,7 @@ export class FuzzySearchService {
    */
   fuzzyMatch(searchTerm: string, target: string, options?: FuzzySearchOptions): boolean {
     const opts = { ...this.defaultOptions, ...options };
-    
+
     if (!opts.caseSensitive) {
       searchTerm = searchTerm.toLowerCase();
       target = target.toLowerCase();
@@ -101,8 +101,8 @@ export class FuzzySearchService {
     return searchWords.every(searchWord => {
       // For very short search words, require exact match
       if (searchWord.length <= 2) {
-        return targetWords.some(targetWord => 
-          !options?.caseSensitive ? 
+        return targetWords.some(targetWord =>
+          !options?.caseSensitive ?
             targetWord.toLowerCase().includes(searchWord.toLowerCase()) :
             targetWord.includes(searchWord)
         );

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, OnChanges, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -46,10 +46,11 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 
-export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   isLoading = true;
   selection = new SelectionModel(true, []);
   selectedNotEnrolled = 0;
@@ -106,7 +107,7 @@ export class CoursesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
-    filterSpecificFieldsHybrid(['doc.courseTitle'], this.fuzzySearchService),
+    filterSpecificFieldsHybrid([ 'doc.courseTitle' ], this.fuzzySearchService),
     filterShelf(this.myCoursesFilter, 'admission'),
     filterIds(this.filterIds)
   ]);

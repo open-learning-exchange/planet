@@ -82,7 +82,7 @@ export const filterSpecificFieldsByWordFuzzy = (filterFields: string[], fuzzySea
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
   return (data: any, filter: string) => {
     const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    
+
     if (!normalizedFilter) {
       return true;
     }
