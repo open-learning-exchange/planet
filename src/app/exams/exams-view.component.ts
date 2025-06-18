@@ -250,7 +250,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      this.unansweredQuestions = submission.parent.questions.reduce((unanswered, q, index) => [
+      const questions = submission.parent.questions || [];
+      this.unansweredQuestions = questions.reduce((unanswered, q, index) => [
         ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
       ], []);
       this.submissionId = submission._id;
@@ -258,7 +259,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (this.fromSubmission === true) {
         this.examType = submission.parent.type === 'surveys' ? 'survey' : 'exam';
         this.title = submission.parent.name;
-        this.setQuestion(submission.parent.questions);
+        this.setQuestion(questions);
         this.grade = (ans && ans.grade !== undefined) ? ans.grade : this.grade;
         this.comment = ans && ans.gradeComment;
       }

@@ -9,7 +9,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -23,8 +22,6 @@ import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
-
-const showdown = require('showdown');
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -46,6 +43,7 @@ export class ExamsAddComponent implements OnInit {
   returnUrl = this.coursesService.returnUrl || 'courses';
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
+  isQuestionsActive = false;
   private _question: FormGroup;
   get question(): FormGroup {
     return this._question;
@@ -85,6 +83,7 @@ export class ExamsAddComponent implements OnInit {
         CustomValidators.required,
         this.nameValidator()
       ],
+      description: '',
       passingPercentage: [
         100,
         [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
@@ -129,6 +128,9 @@ export class ExamsAddComponent implements OnInit {
       this.showFormError = false;
       this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
     } else {
+      if (this.examForm.controls.name.invalid) {
+        this.isQuestionsActive = false;
+      }
       this.showErrorMessage();
     }
   }
@@ -185,6 +187,7 @@ export class ExamsAddComponent implements OnInit {
 
   stepClick(index: number) {
     this.activeQuestionIndex = index;
+    this.isQuestionsActive = index > -1;
     if (index > -1) {
       this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
     }

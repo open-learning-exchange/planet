@@ -1,25 +1,22 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { forkJoin } from 'rxjs';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
 
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styles: [ `
-    mat-divider {
-      margin: 1rem 0;
-    }
-  ` ]
+  styleUrls: [ './news-list.component.scss' ],
 })
-export class NewsListComponent implements OnChanges {
+export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   @Input() items: any[] = [];
   @Input() editSuccessMessage = $localize`Message updated successfully.`;
@@ -27,6 +24,9 @@ export class NewsListComponent implements OnChanges {
   @Input() viewableId: string;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() useReplyRoutes = false;
+  @ViewChild('anchor', { static: true }) anchor: any;
+  observer: IntersectionObserver;
   displayedItems: any[] = [];
   replyObject: any = {};
   isMainPostShared = true;
@@ -35,14 +35,32 @@ export class NewsListComponent implements OnChanges {
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   @Output() viewChange = new EventEmitter<any>();
+  isLoadingMore = false;
+  hasMoreNews = false;
+  pageSize = 10;
+  nextStartIndex = 0;
+  totalReplies = 0;
+  // Key value store for max number of posts viewed per conversation
+  pageEnd = { root: 10 };
 
   constructor(
     private dialog: MatDialog,
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
+
+  ngOnInit() {
+
+    this.router.events.subscribe(() => {
+      this.initNews();
+    });
+
+    this.initNews();
+  }
 
   ngOnChanges() {
     let isLatest = true;
@@ -55,14 +73,58 @@ export class NewsListComponent implements OnChanges {
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
+    this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
   }
 
+  ngAfterViewInit() {
+    this.observer = new IntersectionObserver(
+      ([ entry ]) => {
+        if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore) {
+          this.loadMoreItems();
+        }
+      },
+      { root: null, rootMargin: '0px', threshold: 1.0 }
+    );
+
+    this.observer.observe(this.anchor.nativeElement);
+  }
+
+  ngOnDestroy() {
+    this.observer.disconnect();
+  }
+
+  initNews() {
+    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    this.filterNewsToShow(newVoiceId);
+  }
+
   showReplies(news) {
+    if (this.useReplyRoutes) {
+      this.navigateToReply(news._id);
+      return;
+    }
+    this.filterNewsToShow(news._id);
+  }
+
+  navigateToReply(newsId) {
+    if (newsId !== 'root') {
+      this.router.navigate([ '/voices', newsId ]);
+    } else {
+      this.router.navigate([ '' ]);
+    }
+  }
+
+  filterNewsToShow(newsId) {
+    if (newsId === this.replyViewing._id) {
+      return;
+    }
+    const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
+    this.loadPagedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
       (
@@ -86,12 +148,14 @@ export class NewsListComponent implements OnChanges {
       'required': true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
-    const formGroup = { message: [ initialValue, CustomValidators.required ] };
+    const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };
     this.dialogsFormService.openDialogsForm(title, fields, formGroup, {
       onSubmit: (newNews: any) => {
         if (newNews) {
-          const updatedNews = { ...news, ...newNews, viewIn: news.viewIn };
-          this.postNews(updatedNews, newNews);
+          this.postNews(
+            { ...news, viewIn: news.viewIn.filter(view => view._id === this.viewableId).map(({ sharedDate, ...viewIn }) => viewIn) },
+            newNews
+          );
         }
       },
       autoFocus: true
@@ -114,7 +178,7 @@ export class NewsListComponent implements OnChanges {
         okClick: this.deleteNews(news),
         changeType: 'delete',
         type: 'news',
-        displayName: news.message
+        displayName: news.chat ? news.news.conversations[0].response : news.message
       }
     });
   }
@@ -172,4 +236,44 @@ export class NewsListComponent implements OnChanges {
     return item._id;
   }
 
+  getCurrentItems(): any[] {
+    if (this.replyViewing._id === 'root') {
+      return this.items.filter(item => !item.doc.replyTo);
+    }
+    return this.replyObject[this.replyViewing._id] || [];
+  }
+
+  paginateItems(list: any[], start: number, size: number) {
+    const end = start + size;
+    const page = list.slice(start, end);
+    return {
+      items: page,
+      endIndex: start + page.length,
+      hasMore: end < list.length
+    };
+  }
+
+  loadPagedItems(initial = true) {
+    let pageSize = this.pageSize;
+    if (initial) {
+      this.displayedItems = [];
+      this.nextStartIndex = 0;
+      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
+      pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
+    }
+    const news = this.getCurrentItems();
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
+
+    this.displayedItems = [ ...this.displayedItems, ...items ];
+    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
+    this.nextStartIndex = endIndex;
+    this.hasMoreNews = hasMore;
+    this.isLoadingMore = false;
+    this.totalReplies = news.length;
+  }
+
+  loadMoreItems() {
+    this.isLoadingMore = true;
+    this.loadPagedItems(false);
+  }
 }

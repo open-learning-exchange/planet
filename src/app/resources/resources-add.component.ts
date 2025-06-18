@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
+import { FileInputComponent } from '../shared/forms/file-input.component';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
@@ -41,7 +42,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   deleteAttachment = false;
   resourceForm: FormGroup;
   readonly dbName = 'resources'; // make database name a constant
-  userDetail: any = {};
+  currentUsername = '';
   pageType: string | null = null;
   disableDownload = true;
   disableDelete = true;
@@ -64,6 +65,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
   private initialState = '';
+  @ViewChild('fileInput') fileInput!: FileInputComponent;
 
   constructor(
     private router: Router,
@@ -83,6 +85,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
+    this.currentUsername = this.userService.get().name;
     this.createForm();
     this.resourceForm.setValidators(() => {
       if (this.file && this.file.size / 1024 / 1024 > 512) {
@@ -91,7 +94,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         return null;
       }
     });
-    this.userDetail = this.userService.get();
     this.resourcesService.requestResourcesUpdate(false, false);
     if (!this.isDialog && this.route.snapshot.url[0].path === 'update') {
       this.resourcesService.resourcesListener(false).pipe(first())
@@ -135,7 +137,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       resourceFor: [],
       medium: '',
       resourceType: '',
-      addedBy: '',
+      addedBy: this.currentUsername,
       openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
       isDownloadable: '',
       sourcePlanet: this.stateService.configuration.code,
@@ -261,8 +263,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   markAttachmentForDeletion() {
     this.attachmentMarkedForDeletion = true;
     this.resourceFilename = '';
-    this.disableDownload = true;
     this.disableDelete = true;
+    this.disableDownload = true;
+    this.resourceForm.patchValue({ isDownloadable: false });
     this.hasUnsavedChanges = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }
@@ -330,11 +333,21 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ '/resources' ]);
   }
 
+  removeNewFile() {
+    this.file = null;
+    this.fileInput.clearFile();
+    this.disableDownload = !this.existingResource.doc?._attachments || this.attachmentMarkedForDeletion;
+    this.resourceForm.updateValueAndValidity();
+    this.hasUnsavedChanges = true;
+    this.unsavedChangesService.setHasUnsavedChanges(true);
+  }
+
   bindFile(event: Event) {
     const input = event.target as HTMLInputElement;
     const disableOpenWhichFile = () => {
       this.resourceForm.controls.openWhichFile.setValue('');
       this.resourceForm.controls.openWhichFile.disable();
+      this.attachedZipFiles = [];
     };
     if (!input.files || input.files.length === 0) {
       disableOpenWhichFile();
@@ -342,7 +355,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     this.file = input.files[0];
     this.disableDownload = false;
-    this.disableDelete = false;
     this.resourceForm.updateValueAndValidity();
 
     if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
@@ -361,17 +373,32 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  private captureInitialState() {
-    this.initialState = JSON.stringify({
-      form: this.resourceForm.value,
-      tags: this.tags.value,
-      attachment: this.file ? {
-        name: this.file.name,
-        size: this.file.size,
-        type: this.file.type
-      } : null,
+  private getNormalizedState(): any {
+    const formValue = this.resourceForm.value;
+    return {
+      title: formValue.title || '',
+      description: formValue.description || '',
+      language: formValue.language || '',
+      publisher: formValue.publisher || '',
+      linkToLicense: formValue.linkToLicense || '',
+      subject: formValue.subject || [],
+      level: formValue.level || [],
+      openWith: formValue.openWith || '',
+      resourceFor: formValue.resourceFor || [],
+      medium: formValue.medium || '',
+      resourceType: formValue.resourceType || '',
+      author: formValue.author || '',
+      year: formValue.year || '',
+      tags: this.tags.value || [],
+      attachment: this.file
+        ? { name: this.file.name, size: this.file.size, type: this.file.type }
+        : null,
       attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
-    });
+    };
+  }
+
+  private captureInitialState() {
+    this.initialState = JSON.stringify(this.getNormalizedState());
   }
 
   onFormChanges() {
@@ -379,20 +406,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       this.resourceForm.valueChanges,
       this.tags.valueChanges
     ])
-      .pipe(
-        debounce(() => race(interval(200), of(true)))
-      )
-      .subscribe(([ formValue, tags ]) => {
-        const currentState = JSON.stringify({
-          form: this.resourceForm.value,
-          tags: this.tags.value,
-          attachment: this.file ? {
-            name: this.file.name,
-            size: this.file.size,
-            type: this.file.type
-          } : null,
-          attachmentMarkedForDeletion: this.attachmentMarkedForDeletion
-        });
+      .pipe(debounce(() => race(interval(200), of(true))))
+      .subscribe(() => {
+        const currentState = JSON.stringify(this.getNormalizedState());
         this.hasUnsavedChanges = currentState !== this.initialState;
         this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });

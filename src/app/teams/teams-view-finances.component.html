@@ -19,7 +19,7 @@
   </div>
 </div>
 <mat-card class="margin-lr" *ngIf="showBalanceWarning">
-  <mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span>
+  <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
 </mat-card>
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
   <ng-container matColumnDef="date">

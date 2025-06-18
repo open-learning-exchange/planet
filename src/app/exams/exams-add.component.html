@@ -26,12 +26,23 @@
         <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
       </mat-menu>
-      <div class="exam-inputs" *ngIf="!isCourseContent">
-        <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
-          <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
+      <mat-accordion class="exam-inputs" *ngIf="!isCourseContent">
+        <mat-expansion-panel [expanded]="!isQuestionsActive">
+          <mat-expansion-panel-header (click)="isQuestionsActive = !isQuestionsActive">
+            <mat-panel-title i18n> Survey Info </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div>
+            <mat-form-field class="full-width">
+              <input matInput i18n-placeholder placeholder="Title" formControlName="name" required>
+              <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
+            </mat-form-field>
+            <mat-form-field class="full-width mat-form-field-type-no-underline">
+              <planet-markdown-textbox class="full-width" [required]="false" i18n-placeholder placeholder="Survey Description" [formControl]="examForm.controls.description"></planet-markdown-textbox>
+              <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
           <span class="exam-question" i18n>{{ plainText(question.value.body) || 'Question ' + (i+1) }}</span>
