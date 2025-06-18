@@ -11,7 +11,7 @@ If the HTML & CSS are fewer than 12 lines total, please keep the `template` and 
 If there are more than 12 lines, but the component has little to no TypeScript functionality, then an exception can be made if code reviewers agree to it.
 
 ### TSLint
-We have a git hook to run TSLint from the Vagrant before pushing code to the repository.  Please install this hook to your local machine by running the following command:
+We have a git hook to run TSLint before pushing code to the repository.  Please install this hook to your local machine by running the following command:
 ```
 npm run install-hooks
 ```
