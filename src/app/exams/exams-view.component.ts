@@ -370,7 +370,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
 
     if (Array.isArray(ac.value)) {
-      return ac.value.length > 0 ? null : { required: true };
+      if (ac.value.length === 0) {
+        return { required: true };
+      }
+      const hasEmptyOther = ac.value.some(option =>
+        option && option.isOther && (!option.text || !option.text.trim())
+      );
+      return hasEmptyOther ? { required: true } : null;
+    }
+    if (ac.value && ac.value.isOther && (!ac.value.text || !ac.value.text.trim())) {
+      return { required: true };
     }
 
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
@@ -396,6 +405,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (event.checked) {
       const otherOption = { id: 'other', text: this.otherTextMulti.value || '', isOther: true };
       this.setAnswer({ checked: true }, otherOption);
+    } else {
+      const value = this.answer.value || [];
+      const otherIndex = value.findIndex(option => option.id === 'other');
+      if (otherIndex > -1) {
+        value.splice(otherIndex, 1);
+        this.answer.setValue(value.length > 0 ? value : null);
+        this.answer.updateValueAndValidity();
+      }
     }
   }
 
