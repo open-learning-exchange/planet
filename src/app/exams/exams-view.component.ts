@@ -373,7 +373,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (ac.value.length === 0) {
         return { required: true };
       }
-      const hasEmptyOther = ac.value.some(option => 
+      const hasEmptyOther = ac.value.some(option =>
         option && option.isOther && (!option.text || !option.text.trim())
       );
       return hasEmptyOther ? { required: true } : null;
