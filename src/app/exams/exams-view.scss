@@ -36,8 +36,15 @@
     white-space: normal;
   }
 
+  .other-option-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .other-option-input {
     border: none;
     border-bottom: 1px dotted #000;
+    outline: none;
   }
 }
