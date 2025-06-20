@@ -1,4 +1,4 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/028682cc4cd969b05280/maintainability)](https://codeclimate.com/github/open-learning-exchange/planet/maintainability)
+[![Maintainability](https://qlty.sh/badges/d936229a-e812-4e3a-806e-4f5d7cd4ace5/maintainability.svg)](https://qlty.sh/gh/open-learning-exchange/projects/planet)
 [![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
 [![Docker Stars](https://img.shields.io/docker/stars/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
@@ -102,6 +102,18 @@ To run the chatapi locally, you need to use node v18. You can use nvm(linux) or 
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
+
+## Locale Configuration
+
+To run planet in development with a different locale, you can set the `CONF` environment variable. For example, to run in Spanish, use:
+```
+  npm run start -- --configuration=spa 
+
+  or 
+
+  ng serve --configuration=spa
+```
+*You can use the short-hand `-c` in place of `--configuration`*
 
 ## Unit & End-to-End Tests
 

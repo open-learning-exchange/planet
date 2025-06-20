@@ -19,7 +19,6 @@ export class NewsService {
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
-  private activeReplyId: string | null = null;
 
   constructor(
     private couchService: CouchService,
@@ -128,14 +127,6 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
-  }
-
-  setActiveReplyId(replyId: string | null) {
-    this.activeReplyId = replyId;
-  }
-
-  getActiveReplyId(): string | null {
-    return this.activeReplyId;
   }
 
 }

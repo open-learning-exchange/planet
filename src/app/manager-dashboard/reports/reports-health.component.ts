@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, LineController } from 'chart.js';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, filterByDate, weekDataLabels, scaleLabel } from './reports.utils';
@@ -7,6 +7,8 @@ import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
+
+Chart.register(LineController);
 
 @Component({
   selector: 'planet-reports-health',
@@ -36,6 +38,8 @@ export class ReportsHealthComponent implements OnChanges {
   @Input() isActive: boolean;
   @Output() changeDateRange = new EventEmitter<{ startDate: Date, endDate: Date }>();
   @Output() updateHealthData = new EventEmitter<any[]>();
+  @Output() healthLoadingChange = new EventEmitter<boolean>();
+  @Output() healthNoDataChange = new EventEmitter<boolean>();
   @ViewChild('diagnosesChart') diagnosesChart;
   charts: any[] = [];
   showChart: boolean;
@@ -44,6 +48,7 @@ export class ReportsHealthComponent implements OnChanges {
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
   selectedCondition = 'COVID-19';
+  isLoading = true;
 
   constructor(
     private reportsService: ReportsService,
@@ -55,12 +60,14 @@ export class ReportsHealthComponent implements OnChanges {
     const weeks = generateWeeksArray(this.dateRange);
     if (this.planetCode && changes.planetCode && changes.planetCode.previousValue !== changes.planetCode.currentValue) {
       this.headlineData = null;
+      this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
         this.setHealthData(weeks);
       });
     } else if (changes.isActive && changes.isActive.currentValue === true && !this.examinations) {
       this.headlineData = null;
+      this.healthLoadingChange.emit(true);
       this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
         this.examinations = examinations;
         this.setHealthData(weeks);
@@ -91,6 +98,8 @@ export class ReportsHealthComponent implements OnChanges {
         data.conditions
       )
     }), { total: filteredExaminations.length, unique: [], conditions: {} });
+    this.healthLoadingChange.emit(false);
+    this.healthNoDataChange.emit(filteredExaminations.length === 0);
     this.setWeeklyChart(this.selectedCondition);
   }
 
@@ -125,19 +134,25 @@ export class ReportsHealthComponent implements OnChanges {
       setTimeout(() => this.setChart({ data, chartName }));
       return;
     }
-    this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), {
+    const chartConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data,
       options: {
-        title: { display: false },
-        legend: { display: false },
+        plugins: {
+          title: { display: false },
+          legend: { display: false }
+        },
         maintainAspectRatio: false,
         scales: {
-          yAxes: [ { type: 'linear', ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 } } ],
-          xAxes: [ { scaleLabel: scaleLabel('Week of') } ]
-        }
+          y: {
+            type: 'linear',
+            ticks: {  precision: 0 }
+          },
+          x: { title: { display: true, text: 'Week of' } }
+        },
       }
-    }));
+    };
+    this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), chartConfig));
   }
 
   onSelectedConditionChange(condition) {

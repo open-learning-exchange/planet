@@ -37,6 +37,7 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
       grid-area: img;
       width: calc(#{$dashboard-tile-width} - 0.5rem);
       max-width: 15vh;
+      max-height: 15vh;
       border-radius: 50%;
       justify-self: end;
       align-self: center;

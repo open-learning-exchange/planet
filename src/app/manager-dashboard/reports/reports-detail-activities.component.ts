@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
+import { truncateText } from '../../shared/utils';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
@@ -45,13 +46,6 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       sortNumberOrString(this.sortingObject(item, property), property);
   }
 
-  truncateTitle(title: string) {
-    if (title?.length > 150) {
-      return title.slice(0, 150) + '...';
-    }
-    return title;
-  }
-
   ngOnChanges() {
     this.matSortActive = this.activityType === 'health' ? 'weekOf' : '';
     this.displayedColumns = columns[this.activityType];
@@ -64,12 +58,12 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
         assistant: activity.assistant ? 'True' : '',
         shared: activity.shared ? 'True' : '',
-        conversationLength: activity.conversations.length
+        conversationLength: activity?.conversations?.length || 0
       }));
     } else {
       this.activities.data = this.activitiesByDoc.map(activity => {
         if (activity.max) {
-          activity.max.title = this.truncateTitle(activity.max.title);
+          activity.max.title = truncateText(activity.max.title, 150);
         }
         return {
           averageRating: (this.ratings.find((rating: any) => rating.item === (activity.resourceId || activity.courseId)) || {}).value,
