@@ -214,10 +214,12 @@
             </a>
           </li>
         </ng-container>
-        <li class="language-item">
-          <planet-language [iconOnly]="true"></planet-language>
-          <label *ngIf="sidenavState === 'open'" class="language-label" i18n>Language</label>
-        </li>
+        <li>
+          <a mat-button class="language-button" i18n-title title="Language" (click)="openLanguageSelector()">
+            <planet-language [iconOnly]="true"></planet-language>
+            <label *ngIf="sidenavState === 'open'" class="language-label" i18n>{{ 'Language' | truncateText:12 }}</label>
+          </a>
+        </li>        
         <ng-container *planetAuthorizedRoles="''">
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">
