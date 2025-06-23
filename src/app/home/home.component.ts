@@ -33,7 +33,6 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
     ])
   ]
 })
-
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
   notifications = [];
