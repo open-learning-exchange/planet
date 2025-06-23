@@ -354,7 +354,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const rebuilt = answer.value.map(val => {
           if (val.id === 'other') {
             this.currentOtherOption.text = val.text || '';
-             return this.currentOtherOption;;
+            return this.currentOtherOption;
           }
           return val;
         });

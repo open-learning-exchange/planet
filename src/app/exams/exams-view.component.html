@@ -33,16 +33,16 @@
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-radio-button>
               <ng-container *ngIf="question?.hasOtherOption">
-                <mat-radio-button [value]="currentOtherOption">
-                  <div class="other-option-flex">
+                <div class="other-option-flex">
+                  <mat-radio-button [value]="currentOtherOption">
                     <span class="multiple-choice-text" i18n>Other: </span>
-                    <input matInput
-                      class="other-option-input"
-                      [disabled]="!isOtherSelected()"
-                      [(ngModel)]="currentOtherOption.text"
-                      (ngModelChange)="updateOtherText()">
-                  </div>
-                </mat-radio-button>
+                  </mat-radio-button>
+                  <input matInput
+                    class="other-option-input"
+                    [disabled]="!isOtherSelected()"
+                    [(ngModel)]="currentOtherOption.text"
+                    (ngModelChange)="updateOtherText()">
+                </div>
               </ng-container>
             </mat-radio-group>
             <div *ngSwitchCase="'selectMultiple'" class="question-list">
@@ -53,16 +53,12 @@
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-checkbox>
               <ng-container *ngIf="question?.hasOtherOption">
-                <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
-                  <div class="other-option-flex">
+                <div class="other-option-flex">
+                  <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
                     <span class="multiple-choice-text" i18n>Other: </span>
-                    <input matInput
-                      class="other-option-input"
-                      [disabled]="!checkboxState['other']"
-                      [(ngModel)]="currentOtherOption.text"
-                      (ngModelChange)="updateOtherText()">
-                  </div>
-                </mat-checkbox>
+                  </mat-checkbox>
+                  <input matInput class="other-option-input" [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                </div>
               </ng-container>
             </div>
           </ng-container>
