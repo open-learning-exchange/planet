@@ -12,7 +12,6 @@ export class PlanetLanguageComponent implements OnInit {
   languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
   @Input() iconOnly: boolean;
-
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   constructor(private router: Router) {}

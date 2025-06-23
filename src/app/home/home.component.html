@@ -219,7 +219,7 @@
             <planet-language [iconOnly]="true"></planet-language>
             <label *ngIf="sidenavState === 'open'" class="language-label" i18n>{{ 'Language' | truncateText:12 }}</label>
           </a>
-        </li>        
+        </li>
         <ng-container *planetAuthorizedRoles="''">
           <li *ngIf="onlineStatus === 'accepted'">
             <a mat-button planetSync i18n-title title="Sync">

@@ -18,9 +18,7 @@ import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '..
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 
-
 @Component({
-
   templateUrl: './home.component.html',
   styleUrls: [ './home.scss' ],
   animations: [
@@ -153,7 +151,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   openLanguageSelector(): void {
     this.languageComponent?.openMenu();
   }
-
 
   @HostListener('window:resize') onResize() {
     const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
