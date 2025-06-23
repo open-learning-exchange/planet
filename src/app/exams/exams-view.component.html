@@ -33,14 +33,14 @@
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-radio-button>
               <ng-container *ngIf="question?.hasOtherOption">
-                <mat-radio-button [value]="otherOptionValue">
+                <mat-radio-button [value]="currentOtherOption">
                   <div class="other-option-flex">
                     <span class="multiple-choice-text" i18n>Other: </span>
                     <input matInput
                       class="other-option-input"
                       [disabled]="!isOtherSelected()"
-                      [formControl]="otherText"
-                      (ngModelChange)="updateOtherOptionValue()">
+                      [(ngModel)]="currentOtherOption.text"
+                      (ngModelChange)="updateOtherText()">
                   </div>
                 </mat-radio-button>
               </ng-container>
@@ -53,14 +53,14 @@
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-checkbox>
               <ng-container *ngIf="question?.hasOtherOption">
-                <mat-checkbox [checked]="checkboxState['other']" (change)="setOtherOptionMultiple($event)">
+                <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
                   <div class="other-option-flex">
                     <span class="multiple-choice-text" i18n>Other: </span>
                     <input matInput
                       class="other-option-input"
                       [disabled]="!checkboxState['other']"
-                      [formControl]="otherTextMulti"
-                      (ngModelChange)="updateOtherOptionValueMultiple()">
+                      [(ngModel)]="currentOtherOption.text"
+                      (ngModelChange)="updateOtherText()">
                   </div>
                 </mat-checkbox>
               </ng-container>
