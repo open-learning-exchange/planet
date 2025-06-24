@@ -3,13 +3,10 @@
 Ensure you have set the chatapi configs via the manager -> AI Configurations or in the `configurations` database in couchdb:
 
 For model choices view:
-  Openai: https://platform.openai.com/docs/models
-  Perplexity: https://docs.perplexity.ai/guides/model-cards
-  deepseek: https://api-docs.deepseek.com/quick_start/pricing
-  Gemini: https://deepmind.google/technologies/gemini/
-
-
-Note: This applies for both production and development environments.
+  - Openai: https://platform.openai.com/docs/models
+  - Perplexity: https://docs.perplexity.ai/models/model-cards
+  - Deepseek: https://api-docs.deepseek.com/quick_start/pricing
+  - Gemini: https://deepmind.google/technologies/gemini/
 
 ## Development Notes
 For development environment add a .env file in the `chatapi` directory
@@ -21,6 +18,12 @@ Add the following configs in the .env file:
     COUCHDB_USER=username
     COUCHDB_PASS=password
   ```
+
+*Note*: To run the development environment, ensure that you are using node 18. and then use `npm run dev` to start the development server. This will use nodemon to automatically restart the server on file changes.
+
+## Additional Notes
+
+By default the local production(docker containers) and local development environment run on port 5000. To use both at the same time, ensure you change the port for one of them.(preferably the development environment in the .env file). Alternatively, turn off the local production environment when developing using docker desktop or docker stop {{chatapi container id}}.
 
 In the production environment these configs are set in the `planet.yml` file.
 
