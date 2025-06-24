@@ -19,7 +19,9 @@ Add the following configs in the .env file:
     COUCHDB_PASS=password
   ```
 
-*Note*: To run the development environment, ensure that you are using node 18. and then use `npm run dev` to start the development server. This will use nodemon to automatically restart the server on file changes.
+For *linux* users we recommend using `5000` as the serve port, while for *windows* and *macOS* users we recommend using `5400` as the serve port to avoid conflicts with other services.
+
+**Note**: To run the development environment, ensure that you are using node 18. and then use `npm run dev` to start the development server. This will use nodemon to automatically restart the server on file changes.
 
 ## Additional Notes
 
