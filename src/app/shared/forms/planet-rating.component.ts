@@ -95,7 +95,7 @@ export class PlanetRatingComponent implements OnChanges {
       if (this.ratingType === 'course') {
         this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
       } else {
-        this.planetMessage.showMessage($localize`Please add the ${this.ratingType} to your library before rating!`);
+        this.planetMessage.showMessage($localize`Add the ${this.ratingType} to your library before rating!`);
       }
       this.enrolled = false;
       return;
