@@ -215,7 +215,7 @@
           </li>
         </ng-container>
         <li>
-          <a mat-button class="language-button" i18n-title title="Language">
+          <a mat-button class="language-button" i18n-title title="Language" (click)="openLanguageSelector()">
             <planet-language [iconOnly]="true"></planet-language>
             <label *ngIf="sidenavState === 'open'" class="language-label" i18n>{{ 'Language' | truncateText:12 }}</label>
           </a>
