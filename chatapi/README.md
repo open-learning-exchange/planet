@@ -25,7 +25,7 @@ For *linux* users we recommend using `5000` as the serve port, while for *window
 
 ## Additional Notes
 
-By default the local production(docker containers) and local development environment run on port 5000. To use both at the same time, ensure you change the port for one of them.(preferably the development environment in the .env file). Alternatively, turn off the local production environment when developing using docker desktop or docker stop {{chatapi container id}}.
+By default the local production(docker containers) and local development environment run on same port. To use both at the same time, ensure that you change one of the port numbers.(preferably the development environment in the .env file). Alternatively, turn off the local production environment when developing using docker desktop or docker stop {{chatapi container id}}.
 
 In the production environment these configs are set in the `planet.yml` file.
 
