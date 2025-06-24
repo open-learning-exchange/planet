@@ -51,6 +51,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
+  otherText = new FormControl('');
+  otherTextMulti = new FormControl('');
+  otherOptionValue: any = { id: 'other', text: '', isOther: true };
 
   constructor(
     private router: Router,
@@ -284,20 +287,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setAnswer(event, option) {
     const value = this.answer.value || [];
-
-
     if (event.checked) {
-      if (!value.includes(option)) {
+      if (!value.find(val => val.id === option.id)) {
         value.push(option);
+      } else if (option.id === 'other') {
+        const otherIndex = value.findIndex(val => val.id === 'other');
+        if (otherIndex > -1) {
+          value[otherIndex].text = option.text;
+        }
       }
     } else {
-      const index = value.indexOf(option);
+      const index = value.findIndex(val => val.id === option.id);
       if (index > -1) {
         value.splice(index, 1);
       }
     }
 
-    this.answer.setValue(value);
+    this.answer.setValue(value.length > 0 ? value : null);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
   }
@@ -347,7 +353,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         setSelectMultipleAnswer(answer.value);
         break;
       case 'select':
-        this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        if (answer.value && answer.value.id === 'other') {
+          this.answer.setValue(this.otherOptionValue);
+        } else {
+          this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        }
         break;
       default:
         this.answer.setValue(answer.value);
@@ -360,7 +370,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
 
     if (Array.isArray(ac.value)) {
-      return ac.value.length > 0 ? null : { required: true };
+      if (ac.value.length === 0) {
+        return { required: true };
+      }
+      const hasEmptyOther = ac.value.some(option =>
+        option && option.isOther && (!option.text || !option.text.trim())
+      );
+      return hasEmptyOther ? { required: true } : null;
+    }
+    if (ac.value && ac.value.isOther && (!ac.value.text || !ac.value.text.trim())) {
+      return { required: true };
     }
 
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
@@ -370,6 +389,43 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
+  }
+
+  isOtherSelected() {
+    return this.answer.value && this.answer.value.id === 'other';
+  }
+
+  updateOtherOptionValue() {
+    this.otherOptionValue = { id: 'other', text: this.otherText.value, isOther: true };
+    this.answer.setValue(this.otherOptionValue);
+  }
+
+  setOtherOptionMultiple(event) {
+    this.checkboxState['other'] = event.checked;
+    if (event.checked) {
+      const otherOption = { id: 'other', text: this.otherTextMulti.value || '', isOther: true };
+      this.setAnswer({ checked: true }, otherOption);
+    } else {
+      const value = this.answer.value || [];
+      const otherIndex = value.findIndex(option => option.id === 'other');
+      if (otherIndex > -1) {
+        value.splice(otherIndex, 1);
+        this.answer.setValue(value.length > 0 ? value : null);
+        this.answer.updateValueAndValidity();
+      }
+    }
+  }
+
+  updateOtherOptionValueMultiple() {
+    if (this.checkboxState['other']) {
+      const value = this.answer.value || [];
+      const otherIndex = value.findIndex(option => option.id === 'other');
+
+      if (otherIndex > -1) {
+        value[otherIndex].text = this.otherTextMulti.value;
+        this.answer.setValue([ ...value ]);
+      }
+    }
   }
 
 }
