@@ -3,7 +3,6 @@
 $toolbar-height: 25vh;
 $label-height: 1rem;
 
-/* 添加的溢出修复 */
 * {
   box-sizing: border-box;
 }
@@ -17,7 +16,6 @@ mat-toolbar, mat-toolbar-row {
   overflow-x: hidden;
 }
 
-/* 原有代码 */
 .mat-column-select {
   max-width: 44px;
 }
