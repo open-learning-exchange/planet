@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 
@@ -11,6 +12,7 @@ export class PlanetLanguageComponent implements OnInit {
   languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
   @Input() iconOnly: boolean;
+  @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   constructor(private router: Router) {}
 
@@ -25,5 +27,9 @@ export class PlanetLanguageComponent implements OnInit {
 
   getRouterUrl(language) {
     return '/' + language.shortCode + this.router.url;
+  }
+
+  openMenu() {
+    this.menuTrigger?.openMenu();
   }
 }
