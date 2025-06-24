@@ -3,9 +3,62 @@
 $toolbar-height: 25vh;
 $label-height: 1rem;
 
+/* 基础容器溢出控制 */
+.primary-link-hover {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.space-container {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+.view-container {
+  overflow-x: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Toolbar 响应式修复 */
+mat-toolbar {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-toolbar-row {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  min-height: 64px;
+  gap: 8px;
+}
+
+/* 搜索框和表单字段响应式 */
+.collections-search {
+  min-width: 120px;
+  max-width: 200px;
+  flex: 1;
+}
+
+.mat-form-field-dynamic-width {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Tag输入组件 */
+planet-tag-input {
+  max-width: 100%;
+  overflow: hidden;
+}
+
 /* Column Widths */
 .mat-column-select {
   max-width: 44px;
+  min-width: 44px;
 }
 
 .mat-column-info {
@@ -20,6 +73,12 @@ $label-height: 1rem;
 
 .mat-column-rating {
   max-width: 115px;
+  min-width: 115px;
+}
+
+.mat-column-courseTitle {
+  min-width: 200px;
+  word-break: break-word;
 }
 
 .column {
@@ -52,21 +111,54 @@ $label-height: 1rem;
 }
 
 .search-bar {
-  height: $toolbar-height;
+  height: auto;
+  min-height: 64px;
+  padding: 8px 0;
 }
 
 .break-word {
   word-break: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* 表格内容溢出控制 */
+.list-content-menu {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.list-content-menu-auto {
+  max-width: none;
+}
+
+/* Tags 列表优化 */
+.tags-list {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .tags-list mat-chip {
-  max-width: 200px;
+  max-width: 150px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
+  margin: 2px;
 }
 
+/* 表格响应式 */
+mat-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mat-table {
+  min-width: 100%;
+}
+
+/* 中等屏幕优化 */
 @media(max-width: $screen-md) {
   .mat-column-info {
     max-width: 120px;
@@ -75,9 +167,37 @@ $label-height: 1rem;
   .mat-column-createdDate {
     max-width: 70px;
   }
+  
+  .collections-search {
+    min-width: 100px;
+    max-width: 150px;
+  }
+  
+  .tags-list mat-chip {
+    max-width: 120px;
+  }
 }
 
+/* 小屏幕移动端优化 */
 @media(max-width: $screen-sm) {
+  /* 工具栏移动端优化 */
+  mat-toolbar-row {
+    padding: 0 8px;
+    min-height: 56px;
+  }
+  
+  .collections-search {
+    min-width: 80px;
+    max-width: 120px;
+    margin: 4px 8px;
+  }
+  
+  .toolbar-fill {
+    flex: 0 0 auto;
+    min-width: 8px;
+  }
+  
+  /* 表格移动端重构 */
   .created-label {
     display: inline-block;
   }
@@ -97,7 +217,10 @@ $label-height: 1rem;
   .mat-row {
     flex-direction: column;
     align-items: start;
-    padding: 8px 24px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .table-selection-top {
@@ -106,5 +229,125 @@ $label-height: 1rem;
 
   .rating-cell {
     align-self: flex-end;
+    margin-top: 8px;
   }
+  
+  /* 移动端标题优化 */
+  .header {
+    width: 100%;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+  
+  .header a {
+    display: block;
+    width: 100%;
+    word-break: break-word;
+  }
+  
+  /* 内容区域移动端优化 */
+  .content {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  
+  /* Tags 移动端优化 */
+  .tags-list {
+    width: 100%;
+    margin: 8px 0;
+  }
+  
+  .tags-list mat-chip {
+    max-width: 100px;
+    margin: 2px 4px 2px 0;
+  }
+  
+  /* 菜单按钮移动端优化 */
+  .menu {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+  
+  /* 进度条移动端优化 */
+  .course-progress {
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  /* 本地状态指示器 */
+  planet-local-status {
+    margin-top: 8px;
+  }
+}
+
+/* 超小屏幕优化 */
+@media(max-width: 480px) {
+  mat-toolbar-row {
+    padding: 0 4px;
+  }
+  
+  .collections-search {
+    min-width: 60px;
+    max-width: 100px;
+    margin: 4px;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+  }
+  
+  .tags-list mat-chip {
+    max-width: 80px;
+    font-size: 12px;
+  }
+  
+  .mat-row {
+    padding: 8px 12px;
+  }
+  
+  /* 分页器移动端优化 */
+  mat-paginator {
+    overflow-x: auto;
+  }
+  
+  .mat-paginator-container {
+    min-height: 56px;
+  }
+}
+
+/* 横屏模式优化 */
+@media(max-width: $screen-sm) and (orientation: landscape) {
+  .search-bar {
+    height: auto;
+    min-height: 48px;
+  }
+  
+  mat-toolbar-row {
+    min-height: 48px;
+  }
+}
+
+/* 修复表格展开行 */
+.mat-row.expanded-row {
+  border-bottom-color: transparent;
+}
+
+.mat-row .mat-cell {
+  border-bottom-color: transparent;
+}
+
+/* 确保所有内容都不会横向溢出 */
+* {
+  box-sizing: border-box;
+}
+
+.view-full-height {
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.view-table {
+  overflow-x: auto;
 }
