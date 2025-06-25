@@ -1,43 +1,218 @@
 @import "../variables.scss";
 
 :host {
-  .mat-column-doc-teamType {
-    max-width: 150px;
-    padding-right: 0.5rem;
+  // 整体容器
+  .view-container {
+    overflow-x: hidden;
+    width: 100%;
   }
 
-  .mat-column-visitLog-visitCount {
-    justify-content: center;
-    max-width: 80px;
-    padding-right: 1rem;
-    margin-right: 1rem
+  // 表格布局
+  .mat-table {
+    width: 100%;
+    overflow: hidden;
   }
 
-  mat-row {
-    cursor: pointer;
+  // Desktop模式 - 固定表格布局，不滑动
+  @media (min-width: $screen-sm + 1) {
+    .mat-table {
+      table-layout: fixed;
+    }
+
+    .mat-header-row, .mat-row {
+      overflow: hidden;
+    }
+
+    // Desktop列宽分配
+    .mat-column-doc-name { width: 25%; }
+    .mat-column-visitLog-lastVisit { width: 20%; }
+    .mat-column-visitLog-visitCount { 
+      width: 15%; 
+      justify-content: center;
+      padding-right: 1rem;
+      margin-right: 1rem;
+    }
+    .mat-column-doc-teamType { 
+      width: 15%; 
+      max-width: 150px;
+      padding-right: 0.5rem;
+    }
+    .mat-column-action { width: 25%; }
+
+    .mat-header-cell, .mat-cell {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 8px;
+    }
+
+    // Desktop按钮 - 显示完整文字
+    .mat-cell button, .mat-cell div button[mat-raised-button] {
+      width: 150px;
+      text-align: center;
+      padding: 8px 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      
+      label {
+        display: inline;
+      }
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .horizontal-align {
+      justify-content: center;
+    }
   }
 
-  .button-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  .horizontal-align {
-    justify-content: center;
+  // Mobile模式 - 可滑动布局
+  @media (max-width: $screen-sm) {
+    .mat-table {
+      table-layout: auto;
+      min-width: 800px; // 设置最小宽度确保所有内容显示
+    }
+
+    // 表头可滑动
+    .mat-header-row {
+      display: flex;
+      overflow-x: auto;
+      overflow-y: hidden;
+      min-width: 800px;
+      
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 2px;
+      }
+    }
+
+    // 数据行可滑动
+    .mat-row {
+      display: flex !important;
+      overflow-x: auto;
+      overflow-y: hidden;
+      min-width: 800px;
+      cursor: pointer;
+      
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0,0,0,0.3);
+        border-radius: 2px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background-color: rgba(0,0,0,0.1);
+      }
+    }
+
+    // Mobile固定列宽 - 保留所有数据
+    .mat-header-cell {
+      flex-shrink: 0;
+      padding: 8px;
+      white-space: nowrap;
+      
+      &.mat-column-doc-name { width: 200px; min-width: 200px; }
+      &.mat-column-visitLog-lastVisit { width: 150px; min-width: 150px; }
+      &.mat-column-visitLog-visitCount { width: 140px; min-width: 140px; }
+      &.mat-column-doc-teamType { width: 120px; min-width: 120px; }
+      &.mat-column-action { width: 190px; min-width: 190px; }
+    }
+
+    .mat-cell {
+      flex-shrink: 0;
+      padding: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      
+      &.mat-column-doc-name { width: 200px; min-width: 200px; }
+      &.mat-column-visitLog-lastVisit { width: 150px; min-width: 150px; }
+      &.mat-column-visitLog-visitCount { 
+        width: 140px; 
+        min-width: 140px;
+        text-align: center;
+      }
+      &.mat-column-doc-teamType { width: 120px; min-width: 120px; }
+      &.mat-column-action { 
+        width: 190px; 
+        min-width: 190px;
+        overflow: visible;
+      }
+    }
+
+    // Mobile按钮 - 只显示图标但保留所有功能
+    .mat-cell button, .mat-cell div button[mat-raised-button] {
+      min-width: 36px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      margin: 2px;
+      
+      mat-icon {
+        margin: 0;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+      
+      label {
+        display: none; // 隐藏文字标签
+      }
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: nowrap;
+      min-width: fit-content;
+    }
+
+    .horizontal-align {
+      justify-content: flex-start;
+    }
+
+    // 滑动提示
+    .mat-row {
+      position: relative;
+      
+      &::after {
+        content: '⇢';
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0,0,0,0.4);
+        font-size: 14px;
+        pointer-events: none;
+        opacity: 0.6;
+        z-index: 1;
+        background: linear-gradient(to right, transparent, white 30%);
+        padding-left: 10px;
+      }
+    }
   }
 
-  .team-name{
+  // 通用样式
+  .team-name {
     max-width: 95%;
     overflow: hidden;
-  }
-
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
-    width: 150px;
-    text-align: center;
-    padding: 8px 12px;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .highlighted {
@@ -49,19 +224,12 @@
     color: #666;
   }
 
-  @media (max-width: $screen-sm) {
-    mat-cell button {
-      min-width: 0;
-      padding: 0 3px;
-    }
-
+  // 平板适配
+  @media (max-width: 1024px) and (min-width: $screen-sm + 1) {
     .mat-cell button, .mat-cell div button[mat-raised-button] {
-      width: 50px;
-    }
-
-    .button-container {
-      flex-direction: column;
-      align-items: flex-start;
+      width: 120px;
+      padding: 6px 10px;
+      font-size: 0.9em;
     }
   }
 }
