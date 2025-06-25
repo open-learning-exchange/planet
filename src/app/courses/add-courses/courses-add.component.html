@@ -6,42 +6,53 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button (click)="isFormExpanded = !isFormExpanded">
+      <mat-icon>{{ isFormExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
   </mat-toolbar>
-  <div class="view-container view-full-height">
-    <div class="form-container">
-      <form [formGroup]="courseForm" class="form-spacing" novalidate>
-        <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
-          <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="courseForm.controls.description" imageGroup="community"></planet-markdown-textbox>
-          <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction" [matAutocomplete]="auto">
-          <mat-autocomplete #auto="matAutocomplete">
-            <mat-option *ngFor="let language of languageNames" [value]="language">
-              {{ language }}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel" required>
-            <mat-option *ngFor="let grade of gradeLevels" [value]="grade.value">{{grade.label}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel" required>
-            <mat-option *ngFor="let sub of subjectLevels" [value]="sub.value">{{sub.label}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
-        </mat-form-field>
-      </form>
-    </div>
-    <div [ngClass]="{'steps-container': steps.length > 0 }">
+  <div class="view-container view-full-height" [ngClass]="{'edit-mode': pageType === 'Edit'}">
+    <mat-expansion-panel [expanded]="isFormExpanded" class="course-details-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title i18n class="course-title-header">
+          Course Details: {{(courseForm.controls.courseTitle.value || 'New Course') | truncateText:50}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="form-container">
+        <form [formGroup]="courseForm" class="form-spacing" novalidate>
+          <mat-form-field class="full-width">
+            <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
+            <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <mat-form-field class="full-width mat-form-field-type-no-underline">
+            <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="courseForm.controls.description" imageGroup="community"></planet-markdown-textbox>
+            <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput i18n-placeholder placeholder="Language of Instruction" formControlName="languageOfInstruction" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let language of languageNames" [value]="language">
+                {{ language }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select i18n-placeholder placeholder="Grade Level" formControlName="gradeLevel" required>
+              <mat-option *ngFor="let grade of gradeLevels" [value]="grade.value">{{grade.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select i18n-placeholder placeholder="Subject Level" formControlName="subjectLevel" required>
+              <mat-option *ngFor="let sub of subjectLevels" [value]="sub.value">{{sub.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="full-width mat-form-field-type-no-underline">
+            <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
+          </mat-form-field>
+        </form>
+      </div>
+    </mat-expansion-panel>
+    <div class="steps-container" [ngClass]="{'has-steps': steps.length > 0}" *ngIf="steps.length > 0">
       <planet-courses-step [(steps)]="steps" (addStepEvent)="addStep()"></planet-courses-step>
     </div>
     <div class="actions-container">
