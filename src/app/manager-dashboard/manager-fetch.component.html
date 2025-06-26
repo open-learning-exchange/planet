@@ -11,7 +11,6 @@
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>
-
   <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="pushedItems" matSort>
       <ng-container matColumnDef="select">
@@ -29,34 +28,29 @@
           </mat-checkbox>
         </mat-cell>
       </ng-container>
-
       <ng-container matColumnDef="item">
         <mat-header-cell *matHeaderCellDef mat-sort-header="item" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.db === 'resources'">
             {{ element.item.doc.title }}
-            <mat-icon class="margin-lr-5" style="color: #666; opacity: 1; display: inline-block;">library_books</mat-icon>
+            <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
           </ng-container>
           <ng-container *ngIf="element.db === 'courses'">
             {{ element.item.doc.courseTitle }}
-            <mat-icon class="margin-lr-5" style="color: #666; opacity: 1; display: inline-block;">school</mat-icon>
+            <mat-icon class="margin-lr-5 fetch-icon">school</mat-icon>
           </ng-container>
         </mat-cell>
       </ng-container>
-
       <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef i18n>Date Sent</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
       </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
-      
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No Record Found</div></td>
       </tr>
     </mat-table>
-
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
