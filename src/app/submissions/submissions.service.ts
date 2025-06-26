@@ -361,7 +361,7 @@ export class SubmissionsService {
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          [ 'Option', 'Count', '% of Users', '% of All Selections' ],
+          [ 'Option', 'Count', '% of Users*', '% of All Selections' ],
           ...barAgg.labels.map((label, index) => [
             label,
             barAgg.userCounts[index].toString(),
@@ -382,7 +382,8 @@ export class SubmissionsService {
               },
               layout: 'lightHorizontalLines',
               margin: [ 0, 5, 0, 10 ]
-            }
+            },
+            { text: `*Percentage of users who selected the choice. Users may select multiple options -> Total survey Respondents ${updatedSubmissions.length}` }
           ],
           alignment: 'center'
         });
@@ -618,6 +619,10 @@ export class SubmissionsService {
     const counts: Record<string, Set<string>> = {};
 
     question.choices.forEach(c => { counts[c.text] = new Set(); });
+    if (question.hasOtherOption) {
+      counts['Other'] = new Set();
+    }
+
     submissions.forEach((sub, submissionIndex) => {
       const ans = sub.answers[question.index];
       if (!ans) { return; }
@@ -625,8 +630,12 @@ export class SubmissionsService {
       const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
       const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
       selections.forEach(selection => {
-        const txt = selection.text ?? selection;
-        counts[txt]?.add(userId);
+        if (selection.isOther || selection.id === 'other') {
+          counts['Other']?.add(userId);
+        } else {
+          const txt = selection.text ?? selection;
+          counts[txt]?.add(userId);
+        }
       });
     });
 
