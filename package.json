@@ -1,10 +1,17 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
+<<<<<<< 8815-fetch-items-icons-visibility
   "version": "0.19.38",
   "myplanet": {
     "latest": "v0.26.28",
     "min": "v0.25.28"
+=======
+  "version": "0.19.37",
+  "myplanet": {
+    "latest": "v0.26.26",
+    "min": "v0.25.26"
+>>>>>>> master
   },
   "scripts": {
     "ng": "ng",

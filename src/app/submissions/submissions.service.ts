@@ -226,7 +226,7 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = '', team?: string) {
+  createSubmission(parent: any, type: string, user: any = {}, team?: string) {
     return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
