@@ -3,10 +3,10 @@
     <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
     <button mat-stroked-button type="button" *ngIf="replyViewing.doc.replyTo && replyViewing.doc.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
   </div>
-  <p i18n>Viewing replies for:</p>
   <planet-news-list-item class="main-message"
     [item]="replyViewing"
     [replyObject]="replyObject"
+    [replyView]="replyViewing._id!=='root'"
     [showRepliesButton]="false"
     [editable]="editable"
     [isMainPostShared]="showMainPostShare"
@@ -18,6 +18,7 @@
     (changeLabels)="changeLabels($event)">
   </planet-news-list-item>
   <mat-divider></mat-divider>
+  <p i18n>Replies ({{ totalReplies }}):</p>
 </ng-container>
 <ng-container *ngFor="let item of displayedItems; trackBy: trackById">
   <div [attr.id]="'news-' + item._id">
