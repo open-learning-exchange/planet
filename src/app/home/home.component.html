@@ -210,13 +210,15 @@
             <label i18n>{{ 'Messages' | truncateText:12 }}</label>
           </a>
         </li>
-        <ng-container *planetAuthorizedRoles="'manager'">
-          <li>
-            <a mat-button routerLink="/manager" i18n-title title="Manager Settings">
-              <mat-icon svgIcon="usersettings"></mat-icon>
-              <label i18n>{{ 'Manager Settings' | truncateText:12 }}</label>
-            </a>
-          </li>
+        <ng-container *ngIf="isLoggedIn">
+          <ng-container *planetAuthorizedRoles="'manager'">
+            <li>
+              <a mat-button routerLink="/manager" i18n-title title="Manager Settings">
+                <mat-icon svgIcon="usersettings"></mat-icon>
+                <label i18n>{{ 'Manager Settings' | truncateText:12 }}</label>
+              </a>
+            </li>
+          </ng-container>
         </ng-container>
         <li>
           <a mat-button class="language-button" i18n-title title="Language" (click)="openLanguageSelector()">
@@ -224,20 +226,22 @@
             <label *ngIf="sidenavState === 'open'" class="language-label" i18n>{{ 'Language' | truncateText:12 }}</label>
           </a>
         </li>
-        <ng-container *planetAuthorizedRoles="''">
-          <li *ngIf="onlineStatus === 'accepted'">
-            <a mat-button planetSync i18n-title title="Sync">
-              <mat-icon svgIcon="sync"></mat-icon>
-              <label i18n>{{ 'Sync' | truncateText:12 }}</label>
+        <ng-container *ngIf="isLoggedIn">
+          <ng-container *planetAuthorizedRoles="''">
+            <li *ngIf="onlineStatus === 'accepted'">
+              <a mat-button planetSync i18n-title title="Sync">
+                <mat-icon svgIcon="sync"></mat-icon>
+                <label i18n>{{ 'Sync' | truncateText:12 }}</label>
+              </a>
+            </li>
+          </ng-container>
+          <li>
+            <a mat-button (click)="logoutClick()" i18n-title title="Logout">
+              <mat-icon svgIcon="logout"></mat-icon>
+              <label i18n>{{ 'Logout' | truncateText:12 }}</label>
             </a>
           </li>
         </ng-container>
-        <li>
-          <a mat-button (click)="logoutClick()" i18n-title title="Logout">
-            <mat-icon svgIcon="logout"></mat-icon>
-            <label i18n>{{ 'Logout' | truncateText:12 }}</label>
-          </a>
-        </li>
       </ul>
     </div>
   </mat-sidenav>
