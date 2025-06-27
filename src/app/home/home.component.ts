@@ -83,6 +83,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.onUserUpdate();
+        this.getNotification();
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
