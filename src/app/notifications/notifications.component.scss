@@ -5,6 +5,7 @@
 }
 
 @media (max-width: $screen-sm) {
+  
   .responsive-toolbar {
     display: flex;
     flex-direction: column;
@@ -29,7 +30,7 @@
         margin: 0 0 12px 0;
       }
     }
-    
+
     mat-form-field {
       width: 100%;
       margin: 0;
