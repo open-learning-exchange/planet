@@ -361,11 +361,12 @@ export class SubmissionsService {
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          [ 'Option', 'Count', '% of Users*', '% of All Selections' ],
+          [ 'Option', 'User Count', '% of Users*', 'Selections count', '% of All Selections' ],
           ...barAgg.labels.map((label, index) => [
             label,
-            barAgg.userCounts[index].toString(),
+            `${barAgg.userCounts[index].toString()} / ${barAgg.totalUsers}`,
             `${barAgg.data[index]}%`,
+            `${barAgg.userCounts[index].toString()} / ${selectionAgg.totalSelections}`,
             `${selectionAgg.data[index]}%`
           ])
         ];
@@ -373,17 +374,19 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: 'Breakdown of All Selections', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            { text: 'Selection Breakdown', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            { text: `Total respondents: ${updatedSubmissions.length}` },
+            { text: `Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
             {
               table: {
                 headerRows: 1,
-                widths: [ '*', 'auto', 'auto', 'auto' ],
+                widths: [ '*', 'auto', 'auto', 'auto', 'auto' ],
                 body: tableData
               },
               layout: 'lightHorizontalLines',
               margin: [ 0, 5, 0, 10 ]
             },
-            { text: `*Percentage of users who selected the choice. Users may select multiple options -> Total survey Respondents ${updatedSubmissions.length}` }
+            { text: `*Percentage of users who selected the choice. Users may select multiple options` },
           ],
           alignment: 'center'
         });
