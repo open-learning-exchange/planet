@@ -1,6 +1,7 @@
 <mat-card class="dashboard-card">
-  <div class="left-tile accent-color">
-    <a *ngIf="link || emptyLink; else noLink" [routerLink]="[link || emptyLink]">
+  <div class="left-tile accent-color" [class.accordion-toggle]="isAccordionMode"
+       [class.expanded]="isExpanded" (click)="isAccordionMode && toggleAccordion($event)">
+    <a *ngIf="link || emptyLink; else noLink" [routerLink]="isAccordionMode ? null : [link || emptyLink]">
       <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
     </a>
     <ng-template #noLink>
@@ -8,25 +9,32 @@
         <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
       </span>
     </ng-template>
-    <a class="small" *ngIf="cardType==='myLibrary'" routerLink="/chat" i18n>myChat</a>
-    <a class="small" *ngIf="cardType==='myCourses'" routerLink="myProgress" i18n>myProgress</a>
+    <mat-icon *ngIf="isAccordionMode" class="toggle-icon">{{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
   </div>
   <div class="right-tile" #items>
-    <div class="dashboard-items" [ngClass]="{'dashboard-empty': itemData.length === 0}" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event)">
+    <div class="dashboard-items"
+         [ngClass]="{'dashboard-empty': itemData.length === 0, 'accordion-list': isAccordionMode}"
+         cdkDropList
+         [cdkDropListOrientation]="isAccordionMode ? 'vertical' : 'horizontal'"
+         (cdkDropListDropped)="drop($event)">
       <ng-container *ngIf="!isLoading; else loadingMessage">
         <ng-container *ngFor="let item of itemData;let even=even">
           <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
             <div
               class="dashboard-item"
-              [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link && !recentlyDragged}"
+              [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link && !recentlyDragged, 'accordion-item': isAccordionMode}"
               [routerLink]="recentlyDragged ? null : item.link"
               [matTooltip]="item.tooltip"
               cdkDrag
-              [cdkDragDisabled]="cardType==='myLife'"
+              [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
             >
-              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false">{{item.firstLine}}</p>
-              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': tileLines,'word-wrap': 'break-word' }">{{item.title | truncateText:50}}</p>
+              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
+                {{item.firstLine}}
+              </p>
+              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': isAccordionMode ? 'none' : tileLines,'word-wrap': 'break-word' }">
+                {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
+              </p>
               <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardType!=='myLife' && !item?.canRemove">
                 <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
               </button>

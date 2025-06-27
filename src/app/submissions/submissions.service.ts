@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, pdfMake, pdfFonts, converter } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,11 +18,8 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
-const showdown = require('showdown');
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-const converter = new showdown.Converter();
+Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
 @Injectable({
   providedIn: 'root'
@@ -153,11 +150,7 @@ export class SubmissionsService {
 
   nextQuestion(submission, index, field, isFinish = true) {
     const close = this.shouldCloseSubmission(submission, field);
-    return !close ?
-      this.findNextQuestion(submission, index + 1, field) :
-      isFinish ?
-      -1 :
-      index;
+    return !close ? this.findNextQuestion(submission, index + 1, field) : isFinish ? -1 : index;
   }
 
   updateGrade(submission, grade, index, comment?) {
@@ -233,7 +226,7 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = '', team?: string) {
+  createSubmission(parent: any, type: string, user: any = {}, team?: string) {
     return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
@@ -290,9 +283,7 @@ export class SubmissionsService {
           questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
         }
       }));
-      const filteredSubmissions = team
-          ? normalizedSubmissions.filter(s => s.team === team)
-          : normalizedSubmissions;
+      const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
       return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
@@ -302,9 +293,7 @@ export class SubmissionsService {
             }
             return of(submission);
           })
-        ).pipe(
-          map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ])
-        );
+        ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
         const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
@@ -323,10 +312,7 @@ export class SubmissionsService {
             }), {})
           };
         });
-        this.csvService.exportCSV({
-          data,
-          title
-        });
+        this.csvService.exportCSV({ data, title });
       })
     );
   }
@@ -350,9 +336,91 @@ export class SubmissionsService {
     if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
-    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
-      '<pre>'.concat(answerText, '</pre>') :
-      answerText;
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ? '<pre>'.concat(answerText, '</pre>') : answerText;
+  }
+
+  setHeader(docContent, name) {
+    docContent.push({ text: '', pageBreak: 'before' });
+    docContent.push({
+      text: $localize`${name}`,
+      style: 'header',
+      margin: [ 0, 10, 0, 10 ]
+    });
+  }
+
+  async buildChartSection(exam, updatedSubmissions, docContent) {
+    this.setHeader(docContent, 'Charts');
+    for (let i = 0; i < exam.questions.length; i++) {
+      const question = exam.questions[i];
+      if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
+      question.index = i;
+      docContent.push({ text: `Q${i + 1}: ${question.body}` });
+      if (question.type === 'selectMultiple') {
+        const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
+        const barImg = await this.generateChartImage(barAgg);
+
+        const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
+        const tableData = [
+          [ 'Option', 'Count', '% of Users', '% of All Selections' ],
+          ...barAgg.labels.map((label, index) => [
+            label,
+            barAgg.userCounts[index].toString(),
+            `${barAgg.data[index]}%`,
+            `${selectionAgg.data[index]}%`
+          ])
+        ];
+
+        docContent.push({
+          stack: [
+            { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
+            { text: 'Breakdown of All Selections', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            {
+              table: {
+                headerRows: 1,
+                widths: [ '*', 'auto', 'auto', 'auto' ],
+                body: tableData
+              },
+              layout: 'lightHorizontalLines',
+              margin: [ 0, 5, 0, 10 ]
+            }
+          ],
+          alignment: 'center'
+        });
+      } else {
+        const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+        const pieImg = await this.generateChartImage(pieAgg);
+        docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
+      }
+      docContent.push({ text: '', pageBreak: 'after' });
+    }
+  }
+
+  async buildAnalysisSection(exam, updatedSubmissions, docContent) {
+    const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
+    this.setHeader(docContent, 'AI Analysis');
+    docContent.push({
+      stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
+      margin: [ 0, 10, 0, 10 ]
+    });
+  }
+
+  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+    const submissionContents = markdownSubmissions.map((markdown, index) => {
+      const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
+      return {
+        ...pageBreak,
+        stack: htmlToPdfmake(converter.makeHtml(markdown))
+      };
+    });
+    return [
+      { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
+      { text: exam.description || '' },
+      { text: '\n' },
+      { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
+      { text: '', pageBreak: 'after' },
+      ...submissionContents
+    ];
   }
 
   async exportSubmissionsPdf(
@@ -401,60 +469,14 @@ export class SubmissionsService {
           );
         })
       ).subscribe(async tuple => {
-        if (!tuple) {
-          return;
-        }
+        if (!tuple) { return; }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
-        const submissionContents = markdownSubmissions.map((markdown, index) => {
-          const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
-          return {
-            ...pageBreak,
-            stack: htmlToPdfmake(converter.makeHtml(markdown))
-          };
-        });
-        const docContent = [
-          { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
-          { text: exam.description || '' },
-          { text: '\n' },
-          { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
-          { text: '', pageBreak: 'after' },
-          ...submissionContents
-        ];
-        const setHeader = (name) => {
-          docContent.push({ text: '', pageBreak: 'before' });
-          docContent.push({
-            text: $localize`${name}`,
-            style: 'header',
-            margin: [ 0, 10, 0, 10 ]
-          });
-        };
+        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
         if (exportOptions.includeCharts) {
-          setHeader('Charts');
-          for (let i = 0; i < exam.questions.length; i++) {
-            if (exam.questions[i].type !== 'select' && exam.questions[i].type !== 'selectMultiple') {
-              continue;
-            }
-            const question = exam.questions[i];
-            question.index = i;
-            const aggregated = this.aggregateQuestionResponses(question, updatedSubmissions);
-            const chartImage = await this.generateChartImage(aggregated);
-            docContent.push({ text: `Q${i + 1}: ${question.body}` });
-            docContent.push({
-              image: chartImage,
-              width: 200,
-              alignment: 'center',
-              margin: [ 0, 10, 0, 10 ]
-            });
-          }
+          await this.buildChartSection(exam, updatedSubmissions, docContent);
         }
         if (exportOptions.includeAnalysis) {
-          const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
-          setHeader('AI Analysis');
-          docContent.push({
-            stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
-            margin: [ 0, 10, 0, 10 ]
-          });
+          await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
         }
         pdfMake.createPdf({
           content: docContent,
@@ -467,6 +489,11 @@ export class SubmissionsService {
             header: {
               fontSize: 20,
               bold: true
+            },
+            chartTitle: {
+              fontSize: 12,
+              bold: true,
+              alignment: 'center'
             }
           }
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
@@ -521,81 +548,115 @@ export class SubmissionsService {
 
   async generateChartImage(data: any): Promise<string> {
     const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 300;
+    canvas.width = 300;
+    canvas.height = 400;
+    const isBar = data.chartType === 'bar';
     const ctx = canvas.getContext('2d');
 
-    const chartRendered = new Promise<string>((resolve) => {
-      const chartConfig = {
-        type: 'pie',
+    return new Promise<string>((resolve) => {
+      const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
+        type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
           datasets: [ {
             data: data.data,
+            label: isBar ? '% of responders/selection' : undefined,
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-            ]
+            ],
           } ]
         },
         options: {
+          responsive: false,
+          maintainAspectRatio: false,
+          indexAxis: 'x',
+          scales: isBar ? {
+            y: {
+              type: 'linear',
+              beginAtZero: true,
+              max: 100,
+              ticks: { precision: 0 }
+            }
+          } : {},
           animation: {
             onComplete: function() {
-              this.ctx.font = '12px sans-serif';
-              this.ctx.fillStyle = '#fff';
-              this.ctx.textAlign = 'center';
-              this.ctx.textBaseline = 'middle';
-              this.getDatasetMeta(0).data.forEach((element, index) => {
-                const count = data.data[index];
+              if (isBar && data.userCounts) {
+                this.getDatasetMeta(0).data.forEach((bar, index) => {
+                  const percentage = data.data[index];
+                  const userCount = data.userCounts[index];
+                  if (percentage > 0) {
+                    ctx.fillText(`${userCount}`, bar.x - 2.5 , bar.y);
+                  }
+                });
+              } else if (!isBar) {
                 const total = data.data.reduce((sum, val) => sum + val, 0);
-                const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-                if (count > 0) {
-                  const pos = element.tooltipPosition();
-                  ctx.fillText(`${count.toString()}(${percentage}%)`, pos.x, pos.y);
-                }
-              });
+                this.getDatasetMeta(0).data.forEach((element, index) => {
+                  const count = data.data[index];
+                  const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+                  if (count > 0) {
+                    const pos = element.tooltipPosition();
+                    ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
+                  }
+                });
+              }
               resolve(this.toBase64Image());
             }
-          },
-          responsive: false,
-          maintainAspectRatio: false
+          }
         }
       };
-      const chart = new Chart(ctx, chartConfig);
+      return new Chart(ctx, chartConfig);
     });
-
-    return chartRendered;
   }
 
-  aggregateQuestionResponses(question: any, submissions: any[]): { labels: string[], data: number[] } {
-    const counts: { [choiceText: string]: number } = {};
-    question.choices.forEach((choice: any) => {
-      counts[choice.text] = 0;
-    });
+  aggregateQuestionResponses(
+    question,
+    submissions,
+    mode: 'percent' | 'count' = 'percent',
+    calculationMode: 'users' | 'selections' = 'users'
+  ) {
+    const totalUsers = submissions.length;
+    const counts: Record<string, Set<string>> = {};
 
-    submissions.forEach(submission => {
-      const answer = submission.answers[question.index];
-      if (!answer) { return; }
+    question.choices.forEach(c => { counts[c.text] = new Set(); });
+    submissions.forEach((sub, submissionIndex) => {
+      const ans = sub.answers[question.index];
+      if (!ans) { return; }
 
-      if (question.type === 'select') {
-        const choiceText = answer.value.text;
-        if (counts[choiceText] !== undefined) {
-          counts[choiceText]++;
-        }
-      } else if (question.type === 'selectMultiple') {
-        if (Array.isArray(answer.value)) {
-          answer.value.forEach((selected: any) => {
-            const choiceText = selected.text;
-            if (counts[choiceText] !== undefined) {
-              counts[choiceText]++;
-            }
-          });
-        }
-      }
+      const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
+      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+      selections.forEach(selection => {
+        const txt = selection.text ?? selection;
+        counts[txt]?.add(userId);
+      });
     });
 
     const labels = Object.keys(counts);
-    const data = labels.map(label => counts[label]);
-    return { labels, data };
+    const userCounts = labels.map(l => counts[l].size);
+    const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
+    let data: number[];
+
+    if (mode === 'percent') {
+      if (question.type === 'selectMultiple') {
+        if (calculationMode === 'users') {
+          data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
+        } else {
+          data = totalSelections > 0 ? userCounts.map(c => parseFloat(((c / totalSelections) * 100).toFixed(1))) : userCounts.map(_ => 0);
+        }
+      } else {
+        data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
+      }
+    } else {
+      data = userCounts;
+    }
+
+    return {
+      labels,
+      data,
+      userCounts,
+      totalUsers,
+      totalSelections,
+      chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
+    };
   }
 
   async analyseResponses(exam: any, submissions: any) {

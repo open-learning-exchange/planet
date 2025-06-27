@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration, LineController } from 'chart.js';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
 import { generateWeeksArray, filterByDate, weekDataLabels, scaleLabel } from './reports.utils';
@@ -7,6 +7,8 @@ import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
+
+Chart.register(LineController);
 
 @Component({
   selector: 'planet-reports-health',
@@ -132,19 +134,25 @@ export class ReportsHealthComponent implements OnChanges {
       setTimeout(() => this.setChart({ data, chartName }));
       return;
     }
-    this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), {
+    const chartConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data,
       options: {
-        title: { display: false },
-        legend: { display: false },
+        plugins: {
+          title: { display: false },
+          legend: { display: false }
+        },
         maintainAspectRatio: false,
         scales: {
-          yAxes: [ { type: 'linear', ticks: { beginAtZero: true, precision: 0, suggestedMax: 10 } } ],
-          xAxes: [ { scaleLabel: scaleLabel('Week of') } ]
-        }
+          y: {
+            type: 'linear',
+            ticks: {  precision: 0 }
+          },
+          x: { title: { display: true, text: 'Week of' } }
+        },
       }
-    }));
+    };
+    this.charts.push(new Chart(this.diagnosesChart.nativeElement.getContext('2d'), chartConfig));
   }
 
   onSelectedConditionChange(condition) {
