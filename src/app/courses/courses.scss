@@ -3,7 +3,19 @@
 $toolbar-height: 25vh;
 $label-height: 1rem;
 
-/* Column Widths */
+* {
+  box-sizing: border-box;
+}
+
+.primary-link-hover, .space-container, .view-container {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+mat-toolbar, mat-toolbar-row {
+  overflow-x: hidden;
+}
+
 .mat-column-select {
   max-width: 44px;
 }
