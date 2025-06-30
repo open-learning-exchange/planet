@@ -48,7 +48,6 @@
     max-width: 50%;
   }
  
-  /* 移动端适配样式 - 不影响桌面端 */
   @media (max-width: 768px) {
     .mat-toolbar.primary-color {
       overflow-x: auto;
