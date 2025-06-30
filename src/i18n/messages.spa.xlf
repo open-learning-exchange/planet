@@ -1692,13 +1692,13 @@
         </context-group>
         <target state="final">Chats creados por mes</target>
       </trans-unit>
-      <trans-unit id="7825041680227667156" datatype="html">
+      <trans-unit id="7825041680227667156" datatype="html" approved="yes">
         <source>Voices Created by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">105</context>
         </context-group>
-        <target state="needs-translation">Voices Created by Month</target>
+        <target state="final">Voces creados por mes</target>
       </trans-unit>
       <trans-unit id="3399978138646383384" datatype="html" approved="yes">
         <source>Login Time Ascending</source>
@@ -3040,7 +3040,7 @@
         </context-group>
         <target state="final">Su valoración</target>
       </trans-unit>
-      <trans-unit id="553595635622656592" datatype="html">
+      <trans-unit id="553595635622656592" datatype="html" approved="yes">
         <source>The following is a <x id="PH" equiv-text="examType"/> named “<x id="PH_1" equiv-text="examName"/>” with description “<x id="PH_2" equiv-text="examDescription"/>”.
   <x id="PH_3" equiv-text="payloadString"/>
 
@@ -3082,7 +3082,7 @@
           <context context-type="sourcefile">src/app/shared/ai-prompts.constants.ts</context>
           <context context-type="linenumber">1,37</context>
         </context-group>
-        <target state="needs-translation">The following is a <x id="PH" equiv-text="examType"/> named “<x id="PH_1" equiv-text="examName"/>” with description “<x id="PH_2" equiv-text="examDescription"/>”.
+        <target state="final">The following is a <x id="PH" equiv-text="examType"/> named “<x id="PH_1" equiv-text="examName"/>” with description “<x id="PH_2" equiv-text="examDescription"/>”.
   <x id="PH_3" equiv-text="payloadString"/>
 
   Please generate a detailed AI Analysis for PDF export, organized into 4 sections:
@@ -3120,13 +3120,13 @@
 
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</target>
       </trans-unit>
-      <trans-unit id="594689402621327710" datatype="html">
+      <trans-unit id="594689402621327710" datatype="html" approved="yes">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;. Be sure to assist the learner in the best way you can. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/ai-prompts.constants.ts</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">The following information is a course step from the "<x id="PH" equiv-text="stepTitle"/>" course with a description "<x id="PH_1" equiv-text="stepDescription"/>". Be sure to assist the learner in the best way you can. </target>
+        <target state="final">La siguiente información es un paso del curso "<x id="PH" equiv-text="stepTitle"/>" con una descripción "<x id="PH_1" equiv-text="stepDescription"/>". Asegúrate de ayudar al estudiante de la mejor manera que puedas. </target>
       </trans-unit>
       <trans-unit id="8579890230783442432" datatype="html" approved="yes">
         <source>You were assigned a new role</source>
@@ -4426,29 +4426,29 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Hora límite</target>
       </trans-unit>
-      <trans-unit id="5516871186038324585" datatype="html">
+      <trans-unit id="5516871186038324585" datatype="html" approved="yes">
         <source>There was an error removing <x id="PH" equiv-text="m);      "/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.ts</context>
           <context context-type="linenumber">123</context>
         </context-group>
-        <target state="needs-translation">There was an error removing <x id="PH" equiv-text="m);      "/></target>
+        <target state="final">Hubo un error al eliminar <x id="PH" equiv-text="m);      "/></target>
       </trans-unit>
-      <trans-unit id="6420930851320881686" datatype="html">
+      <trans-unit id="6420930851320881686" datatype="html" approved="yes">
         <source>There was an error reordering <x id="PH" equiv-text="lf(ids, this.s"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.ts</context>
           <context context-type="linenumber">155</context>
         </context-group>
-        <target state="needs-translation">There was an error reordering <x id="PH" equiv-text="lf(ids, this.s"/></target>
+        <target state="final">Hubo un error al reordenar <x id="PH" equiv-text="lf(ids, this.s"/></target>
       </trans-unit>
-      <trans-unit id="257db50b566d32714d0330ac58efb1c84ad42204" datatype="html">
+      <trans-unit id="257db50b566d32714d0330ac58efb1c84ad42204" datatype="html" approved="yes">
         <source> Add item to <x id="INTERPOLATION" equiv-text="routerLink]=&quot;"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.html</context>
           <context context-type="linenumber">44,46</context>
         </context-group>
-        <target state="needs-translation"> Add item to <x id="INTERPOLATION" equiv-text="routerLink]=&quot;"/> </target>
+        <target state="final"> Agregar elemento a <x id="INTERPOLATION" equiv-text="routerLink]=&quot;"/> </target>
       </trans-unit>
       <trans-unit id="5302177a8ea30701d4bd9494f736c20c69eb18e9" datatype="html" approved="yes">
         <source>Loading tiles...</source>
@@ -5310,13 +5310,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Editar </target>
       </trans-unit>
-      <trans-unit id="9c21534d5f72d785400389cffcf36fd54720cfab" datatype="html">
+      <trans-unit id="9c21534d5f72d785400389cffcf36fd54720cfab" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Send </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">93,94</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Send </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>enviar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar </target>
       </trans-unit>
       <trans-unit id="1365267edc446b469a03c1d394cb608772b45061" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>archive<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Archive</source>
@@ -6246,13 +6246,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final"><x id="INTERPOLATION" equiv-text="title=&quot;{{ mode === 'enterprise' ? 'Unido a la empresa' : 'Unido al equipo"/></target>
       </trans-unit>
-      <trans-unit id="8290229ecea3d05f79d4fac76c601738c9ee6d4b" datatype="html">
+      <trans-unit id="8290229ecea3d05f79d4fac76c601738c9ee6d4b" datatype="html" approved="yes">
         <source> (<x id="INTERPOLATION" equiv-text="             ({{ element.doc.type === &apos;enterprise&apos; ? &apos;enterpris"/>) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.html</context>
           <context context-type="linenumber">49,51</context>
         </context-group>
-        <target state="needs-translation"> (<x id="INTERPOLATION" equiv-text="             ({{ element.doc.type === 'enterprise' ? 'enterpris"/>) </target>
+        <target state="final"><x id="INTERPOLATION" equiv-text="             ({{ element.doc.type === 'enterprise' ? 'enterpris"/></target>
       </trans-unit>
       <trans-unit id="4ea0e590d72ebac13cbc7f154b2aefd2b1052d70" datatype="html" approved="yes">
         <source>Most recent visit</source>
@@ -6304,21 +6304,21 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Conectado con</target>
       </trans-unit>
-      <trans-unit id="57606e257eeefc85faaa6286a25d8e7a4a987e8b" datatype="html">
+      <trans-unit id="57606e257eeefc85faaa6286a25d8e7a4a987e8b" datatype="html" approved="yes">
         <source>Toggle myTeams</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.html</context>
           <context context-type="linenumber">90</context>
         </context-group>
-        <target state="needs-translation">Toggle myTeams</target>
+        <target state="final">Cambiar myTeams</target>
       </trans-unit>
-      <trans-unit id="3de8c580524622a1140d3281b06c12023de25d6f" datatype="html">
+      <trans-unit id="3de8c580524622a1140d3281b06c12023de25d6f" datatype="html" approved="yes">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Action<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button mat-button *ngIf=&quot;showUserTeamsFilter&quot; (click)=&quot;sortbyUserTeams()&quot; i18n-title title=&quot;Toggle myTeams&quot;&gt;             "/><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>check<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.html</context>
           <context context-type="linenumber">89,91</context>
         </context-group>
-        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Action<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button mat-button *ngIf=&quot;showUserTeamsFilter&quot; (click)=&quot;sortbyUserTeams()&quot; i18n-title title=&quot;Toggle myTeams&quot;&gt;             "/><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>check<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></target>
+        <target state="final"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Acción<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/><x id="START_TAG_BUTTON" ctype="x-button" equiv-text="&lt;button mat-button *ngIf=&quot;showUserTeamsFilter&quot; (click)=&quot;sortbyUserTeams()&quot; i18n-title title=&quot;Toggle myTeams&quot;&gt;             "/><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>comprobar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="CLOSE_TAG_BUTTON" ctype="x-button" equiv-text="&lt;/button&gt;"/></target>
       </trans-unit>
       <trans-unit id="9a7330a3133a05a1ac8c7203ee474a54b837f7c6" datatype="html" approved="yes">
         <source> Leave </source>
@@ -6430,21 +6430,21 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Añadir evento</target>
       </trans-unit>
-      <trans-unit id="4821033970564711703" datatype="html">
+      <trans-unit id="4821033970564711703" datatype="html" approved="yes">
         <source>Task deleted successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
           <context context-type="linenumber">284</context>
         </context-group>
-        <target state="needs-translation">Task deleted successfully</target>
+        <target state="final">Tarea eliminada correctamente</target>
       </trans-unit>
-      <trans-unit id="3554642967477012387" datatype="html">
+      <trans-unit id="3554642967477012387" datatype="html" approved="yes">
         <source>There was an error deleting this task</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
           <context context-type="linenumber">288</context>
         </context-group>
-        <target state="needs-translation">There was an error deleting this task</target>
+        <target state="final">Hubo un problema al eliminar esta tarea</target>
       </trans-unit>
       <trans-unit id="7499744147119662441" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="actionType"/> Report</source>
@@ -6914,13 +6914,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Mostrar conversación principal</target>
       </trans-unit>
-      <trans-unit id="f412e04e38c5a1acfccd4d624b0329054bc194e5" datatype="html">
+      <trans-unit id="f412e04e38c5a1acfccd4d624b0329054bc194e5" datatype="html" approved="yes">
         <source>Replies (<x id="INTERPOLATION" equiv-text="{{ totalReplies }}"/>):</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list.component.html</context>
           <context context-type="linenumber">21</context>
         </context-group>
-        <target state="needs-translation">Replies (<x id="INTERPOLATION" equiv-text="{{ totalReplies }}"/>):</target>
+        <target state="final">Respuestas (<x id="INTERPOLATION" equiv-text="{{ totalReplies }}"/>):</target>
       </trans-unit>
       <trans-unit id="30e850b858676433f80f0c08b606f675f611b6ee" datatype="html" approved="yes">
         <source>Show previous replies</source>
@@ -7368,13 +7368,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">{VAR_SELECT, select, team {Join Requests} enterprise {Applicants} services {Join Requests}}</target>
       </trans-unit>
-      <trans-unit id="6193e2d59147c9cac9abe2193437ae051d361cd2" datatype="html">
+      <trans-unit id="6193e2d59147c9cac9abe2193437ae051d361cd2" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">102</context>
         </context-group>
-        <target state="needs-translation"><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
+        <target state="final"><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="6fc5e65900ae1415d3170d5d2842f0dcae1b6645" datatype="html" approved="yes">
         <source>Accept</source>
@@ -7416,13 +7416,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Ningún miembro se ha unido a este <x id="ICU" equiv-text="{ mode, select, team {equipo} enterprise {empresa} }"/>.</target>
       </trans-unit>
-      <trans-unit id="e9380251e9a84d7cb036660f8b4b93f9077afa9c" datatype="html">
+      <trans-unit id="e9380251e9a84d7cb036660f8b4b93f9077afa9c" datatype="html" approved="yes">
         <source>Members (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">125</context>
         </context-group>
-        <target state="needs-translation">Members (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
+        <target state="final">Miembros (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="51aa8d757cd8d219f5f7f4e88eb33ea22dea9e08" datatype="html" approved="yes">
         <source>There are currently no tasks assigned to this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }"/>.</source>
@@ -7654,53 +7654,53 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Voz</target>
       </trans-unit>
-      <trans-unit id="881e463db4ad2b69cb18601342b1a545c70f6920" datatype="html">
+      <trans-unit id="881e463db4ad2b69cb18601342b1a545c70f6920" datatype="html" approved="yes">
         <source>shared</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
-        <target state="needs-translation">shared</target>
+        <target state="final">compartido</target>
       </trans-unit>
-      <trans-unit id="cd0e7d7784db9727230d0e58ba152c69c958e5c4" datatype="html">
+      <trans-unit id="cd0e7d7784db9727230d0e58ba152c69c958e5c4" datatype="html" approved="yes">
         <source>shared: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="needs-translation">shared: </target>
+        <target state="final">compartido: </target>
       </trans-unit>
-      <trans-unit id="21b49c781278b889db0e3c586eb5f166634253ce" datatype="html">
+      <trans-unit id="21b49c781278b889db0e3c586eb5f166634253ce" datatype="html" approved="yes">
         <source>edited</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="needs-translation">edited</target>
+        <target state="final">editado</target>
       </trans-unit>
-      <trans-unit id="133ca3ae0112665ced72c1884aedf0d929a03f66" datatype="html">
+      <trans-unit id="133ca3ae0112665ced72c1884aedf0d929a03f66" datatype="html" approved="yes">
         <source>edited: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
-        <target state="needs-translation">edited: </target>
+        <target state="final">editado: </target>
       </trans-unit>
-      <trans-unit id="33fa65b5e368470e983e8ab1abfb34f938be2bbf" datatype="html">
+      <trans-unit id="33fa65b5e368470e983e8ab1abfb34f938be2bbf" datatype="html" approved="yes">
         <source>posted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">posted</target>
+        <target state="final">publicado</target>
       </trans-unit>
-      <trans-unit id="e59d1dfb8cca53dd2f48925ac29989ebc69c8d89" datatype="html">
+      <trans-unit id="e59d1dfb8cca53dd2f48925ac29989ebc69c8d89" datatype="html" approved="yes">
         <source>posted: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">41</context>
         </context-group>
-        <target state="needs-translation">posted: </target>
+        <target state="final">publicado: </target>
       </trans-unit>
       <trans-unit id="d3264ba8ab8803008264b34452501cbcbd829d24" datatype="html" approved="yes">
         <source>Copy Voice Link</source>
@@ -7734,13 +7734,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra}}</target>
       </trans-unit>
-      <trans-unit id="fed05eb45fc6be6e1aa9414763f35cb21a81724b" datatype="html">
+      <trans-unit id="fed05eb45fc6be6e1aa9414763f35cb21a81724b" datatype="html" approved="yes">
         <source>Share with <x id="ICU" equiv-text="{       shareTarget, select, community {Community} nation {Nation} center {Earth}     }"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/news/news-list-item.component.html</context>
           <context context-type="linenumber">100,102</context>
         </context-group>
-        <target state="needs-translation">Share with <x id="ICU" equiv-text="{       shareTarget, select, community {Community} nation {Nation} center {Earth}     }"/></target>
+        <target state="final">Compartir con <x id="ICU" equiv-text="{         shareTarget, select, community {comunidad} nation {nación} center {Earth}       }"/></target>
       </trans-unit>
       <trans-unit id="5885812276699399735" datatype="html" approved="yes">
         <source>Edit Achievement</source>
@@ -9126,13 +9126,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final"> Debe seleccionar el correcto <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {elección} selectMultiple {opciones}}     "/> </target>
       </trans-unit>
-      <trans-unit id="bb818976b1728b095a442d18d1e5541f5d564a23" datatype="html">
+      <trans-unit id="bb818976b1728b095a442d18d1e5541f5d564a23" datatype="html" approved="yes">
         <source>Add &quot;Other&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-question.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
-        <target state="needs-translation">Add "Other"</target>
+        <target state="final">Añadir "Otro"</target>
       </trans-unit>
       <trans-unit id="3456814180102116536" datatype="html" approved="yes">
         <source>Preview is not available for this test</source>
@@ -9190,7 +9190,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Ingresa tu respuesta aquí</target>
       </trans-unit>
-      <trans-unit id="6c661cb9bcbda63caab53ad76bb00de3259a9529" datatype="html">
+      <trans-unit id="6c661cb9bcbda63caab53ad76bb00de3259a9529" datatype="html" approved="yes">
         <source>Other: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
@@ -9200,7 +9200,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/exams/exams-view.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
-        <target state="needs-translation">Other: </target>
+        <target state="final">Otro: </target>
       </trans-unit>
       <trans-unit id="da5335cbd9d3f9bac761139454df5b79c4547718" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}</source>
@@ -9628,13 +9628,13 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">completo</target>
       </trans-unit>
-      <trans-unit id="5d622b47dfa7425d01f4bb6034f2998099aadc27" datatype="html">
+      <trans-unit id="5d622b47dfa7425d01f4bb6034f2998099aadc27" datatype="html" approved="yes">
         <source>incomplete</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">77</context>
         </context-group>
-        <target state="needs-translation">incomplete</target>
+        <target state="final">incompleto</target>
       </trans-unit>
       <trans-unit id="bdcb1032f75d1947b65ab44ff55a216c45236bdd" datatype="html" approved="yes">
         <source>Grade</source>
