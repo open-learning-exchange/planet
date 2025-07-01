@@ -5,10 +5,10 @@ import { Pipe, PipeTransform, Inject, LOCALE_ID } from '@angular/core';
 })
 export class TimeAgoPipe implements PipeTransform {
   // Use the current app locale instead of hardcoded 'en'
-  private rtf: Intl.RelativeTimeFormat;
+  // cast Intl to any so TS stops complaining -> cleaner with ts ^4.1.2
+  private rtf: any;
 
   constructor(@Inject(LOCALE_ID) private locale: string) {
-    // cast Intl to any so TS stops complaining -> cleaner with ts ^4.1.2
     this.rtf = new ((Intl as any).RelativeTimeFormat)(this.locale, { numeric: 'auto' });
   }
 
