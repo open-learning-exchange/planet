@@ -23,5 +23,6 @@
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false
-  }
+  },
+  "include": [ "src/**/*" ]
 }
