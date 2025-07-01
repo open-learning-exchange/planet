@@ -16,7 +16,7 @@ import { switchMap, first, debounce } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { debug } from '../debug-operator';
 
-import * as mime from 'mime';
+import mime from 'mime';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { languages } from '../shared/languages';
