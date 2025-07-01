@@ -453,9 +453,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   get leadersTabLabel(): string {
     const config = this.configuration || this.stateService.configuration || {};
     const planetType = config.planetType;
-    
-    return planetType === 'nation' 
-      ? $localize`Nation Leaders` 
+
+    return planetType === 'nation'
+      ? $localize`Nation Leaders`
       : $localize`Community Leaders`;
   }
 }
