@@ -57,11 +57,11 @@ run_lint() {
   tslint=$(npm run lint)
 }
 
-echo "Running ng linters"
+echo "Running planet linters"
 run_lint .
 
 ret_code_tslint=$?
-output_result $ret_code_tslint "tslint" $tslint
+output_result $ret_code_tslint "eslint" $tslint
 
 echo "Running chatapi linters"
 run_lint chatapi
