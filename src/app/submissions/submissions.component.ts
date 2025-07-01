@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { find, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
@@ -127,6 +127,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionQuery() {
+    const parentId = this.route.snapshot.paramMap.get('id');
+    if (parentId) {
+      this.filter.type = 'survey';
+      return findDocuments({ parentId, type: 'survey', status: { '$ne': 'pending' } });
+    }
     switch (this.mode) {
       case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       case 'review': return findDocuments({
@@ -209,6 +214,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   appendCourseInfo(submission, courses) {
+    if (!submission.parentId || !submission.parentId.includes('@')) {
+      return submission;
+    }
     const [ examId, courseId ] = submission.parentId.split('@');
     if (!courseId) {
       return submission;
