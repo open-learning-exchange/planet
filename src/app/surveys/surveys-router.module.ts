@@ -9,7 +9,8 @@ const routes: Routes = [
   { path: '', component: SurveysComponent },
   { path: 'add', component: ExamsAddComponent },
   { path: 'update/:id', component: ExamsAddComponent },
-  { path: 'dispense', component: ExamsViewComponent, data: { newUser: true } }
+  { path: 'dispense', component: ExamsViewComponent, data: { newUser: true } },
+  { path: 'submissions', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) }
 ];
 
 @NgModule({
