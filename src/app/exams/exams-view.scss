@@ -1,54 +1,53 @@
 :host {
-  
+
   .view-container {
     display: grid;
     grid-template-rows: min-content minmax(auto, min-content) max-content min-content;
- 
+
     td-markdown {
       overflow-y: auto;
     }
   }
- 
+
   .question-list {
     display: flex;
     flex-direction: column;
- 
+
     mat-radio-button, mat-checkbox {
       margin: 5px;
       float: left;
     }
- 
+
     mat-radio-button:last-child, mat-checkbox:last-child {
       margin-bottom: 15px;
     }
   }
- 
+
   .v-align-center, .v-align-center > * {
     display: flex;
     align-items: center;
   }
- 
+
   .question-header {
     margin-bottom: 8px;
   }
- 
+
   .multiple-choice-text {
     white-space: normal;
   }
- 
+
   .other-option-flex {
     display: flex;
     align-items: center;
     gap: 8px;
   }
- 
+
   .other-option-input {
     border: none;
     border-bottom: 1px dotted #000;
     outline: none;
     max-width: 50%;
   }
- 
   @media (max-width: 768px) {
     .mat-toolbar.primary-color {
       overflow-x: auto;
@@ -59,7 +58,7 @@
       min-height: 56px;
       height: auto;
     }
- 
+
     .mat-toolbar.primary-color .ellipsis-title {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -67,38 +66,38 @@
       max-width: 120px;
       display: inline-block;
     }
- 
+
     .mat-toolbar.primary-color > span:nth-child(2) {
       flex: 1 1 auto;
       min-width: 150px;
       line-height: 1.4;
     }
- 
+
     .mat-toolbar.primary-color .toolbar-fill {
       display: none;
     }
- 
+
     .mat-toolbar.primary-color button[mat-icon-button] {
       margin-left: auto;
     }
   }
- 
+
   @media (max-width: 480px) {
     .mat-toolbar.primary-color {
       font-size: 0.85em;
       padding: 2px 4px;
     }
- 
+
     .mat-toolbar.primary-color .ellipsis-title {
       max-width: 100px;
     }
- 
+
     .mat-toolbar.primary-color button[mat-icon-button] {
       width: 36px;
       height: 36px;
       line-height: 36px;
     }
- 
+
     .mat-toolbar.primary-color button[mat-icon-button] .mat-icon {
       font-size: 20px;
       width: 20px;
@@ -106,4 +105,4 @@
       line-height: 20px;
     }
   }
- }
+}
