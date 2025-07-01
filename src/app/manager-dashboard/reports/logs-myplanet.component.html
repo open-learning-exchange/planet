@@ -35,7 +35,7 @@
         <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
+    <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5" i18n>
       Clear
     </button>
     <mat-icon>search</mat-icon>
@@ -94,7 +94,7 @@
       </form>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
-      <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
+      <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5" i18n>
         Clear
       </button>
       <mat-icon>search</mat-icon>
@@ -109,7 +109,7 @@
     <mat-toolbar-row class="primary-color font-size-1">
       <span i18n>myPlanet</span>
       <span class="toolbar-fill"></span>
-      <button mat-raised-button color="accent" (click)="exportAll()" *ngIf="!isEmpty">
+      <button mat-raised-button color="accent" (click)="exportAll()" *ngIf="!isEmpty" i18n>
         Export All
       </button>
     </mat-toolbar-row>
@@ -121,7 +121,7 @@
           <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
         </mat-expansion-panel-header>
         <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
-        <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;" *ngIf="!isEmpty">
+        <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;" *ngIf="!isEmpty" i18n>
           Export
         </button>
       </mat-expansion-panel>
