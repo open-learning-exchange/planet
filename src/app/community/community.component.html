@@ -21,8 +21,7 @@
           </ng-template>
         </mat-tab>
         <mat-tab
-          [label]="configuration.planetType === 'nation' ? 'Nation Leaders' : 'Community Leaders'"
-          i18n-label
+          [label]="leadersTabLabel"
           *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">

@@ -38,7 +38,7 @@ import { ConfigurationCheckService } from '../shared/configuration-check.service
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration: any = {};
+  configuration: any = this.stateService.configuration || {};
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -448,5 +448,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
+  }
+
+  get leadersTabLabel(): string {
+    const config = this.configuration || this.stateService.configuration || {};
+    const planetType = config.planetType;
+    
+    return planetType === 'nation' 
+      ? $localize`Nation Leaders` 
+      : $localize`Community Leaders`;
   }
 }
