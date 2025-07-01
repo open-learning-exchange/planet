@@ -55,9 +55,9 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
       this.activities.data = this.activitiesByDoc.map(activity => ({
         ...activity,
         createdDate: new Date(activity.createdDate).getTime(),
-        hasAttachments: activity.context?.resource?.attachments ? 'True' : '',
-        assistant: activity.assistant ? 'True' : '',
-        shared: activity.shared ? 'True' : '',
+        hasAttachments: activity.context?.resource?.attachments ? $localize`True` : '',
+        assistant: activity.assistant ? $localize`True` : '',
+        shared: activity.shared ? $localize`True` : '',
         conversationLength: activity?.conversations?.length || 0
       }));
     } else {
