@@ -1,7 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.19.42",
+  "version": "0.19.43",
   "myplanet": {
     "latest": "v0.26.47",
     "min": "v0.25.47"
@@ -10,6 +10,7 @@
     "ng": "ng",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "start": "ng serve --aot --configuration=$CONF",
+    "dev": "./dev-env.sh && ng serve --aot --configuration=dev",
     "build": "npm run ng-high-memory -- build --prod --configuration=$CONF",
     "test": "ng test",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
