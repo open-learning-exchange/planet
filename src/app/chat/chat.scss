@@ -5,8 +5,60 @@
   margin: 0;
 }
 
+// 桌面端显示按钮组，隐藏下拉菜单
+.desktop-toggle {
+  display: flex;
+}
+
+.mobile-select-container {
+  display: none;
+}
+
+// 移动端隐藏按钮组，显示下拉菜单
 @media only screen and (max-width: $screen-md) {
   .titlebar {
     display: none;
+  }
+  
+  // 隐藏桌面端按钮组
+  .desktop-toggle {
+    display: none;
+  }
+  
+  // 显示移动端下拉菜单容器
+  .mobile-select-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .mobile-select-icon {
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .mobile-select {
+    min-width: 100px;
+    font-size: 14px;
+    
+    // 自定义下拉菜单样式
+    ::ng-deep .mat-select-value {
+      font-size: 14px;
+    }
+    
+    ::ng-deep .mat-select-arrow {
+      color: rgba(10, 9, 9, 0.7);
+    }
+    
+    ::ng-deep .mat-select-value-text {
+      color: black;
+    }
+    
+    ::ng-deep .mat-select-trigger {
+      border: none;
+      background: transparent;
+    }
   }
 }

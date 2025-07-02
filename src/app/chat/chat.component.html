@@ -1,10 +1,35 @@
+<!-- HTML模板 -->
 <mat-toolbar>
-  <button class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button class="titlebar" mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group *ngIf="displayToggle; else textDisplay" [(ngModel)]="activeService" (change)="toggleAIService()">
-    <mat-button-toggle *ngFor="let service of aiServices" [value]="service.model" i18n>{{service.name}}</mat-button-toggle>
+  
+  <!-- 桌面端：保持原有的按钮组 -->
+  <mat-button-toggle-group 
+    *ngIf="displayToggle; else textDisplay" 
+    [(ngModel)]="activeService" 
+    (change)="toggleAIService()"
+    class="desktop-toggle">
+    <mat-button-toggle *ngFor="let service of aiServices" [value]="service.model" i18n>
+      {{service.name}}
+    </mat-button-toggle>
   </mat-button-toggle-group>
+  
+  <!-- 移动端：使用带图标的下拉菜单 -->
+  <div *ngIf="displayToggle" class="mobile-select-container">
+    <mat-icon class="mobile-select-icon">smart_toy</mat-icon>
+    <mat-select 
+      [(ngModel)]="activeService" 
+      (selectionChange)="toggleAIService()"
+      class="mobile-select">
+      <mat-option *ngFor="let service of aiServices" [value]="service.model">
+        {{service.name}}
+      </mat-option>
+    </mat-select>
+  </div>
+  
   <ng-template #textDisplay>
     <span i18n>{{activeService}}</span>
   </ng-template>
