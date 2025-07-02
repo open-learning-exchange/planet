@@ -51,9 +51,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
-  otherText = new FormControl('');
-  otherTextMulti = new FormControl('');
-  otherOptionValue: any = { id: 'other', text: '', isOther: true };
+  currentOtherOption: { id: 'other'; text: string; isOther: true } | null = null;
 
   constructor(
     private router: Router,
@@ -105,6 +103,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const mode = params.get('mode');
     this.mode = mode || this.mode;
     this.answer.setValue(null);
+    this.currentOtherOption = { id: 'other', text: '', isOther: true };
     this.spinnerOn = true;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
@@ -188,6 +187,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     if (direction !== 0) {
       this.checkboxState = {};
+      this.currentOtherOption = { id: 'other', text: '', isOther: true };
     }
     this.isNewQuestion = true;
     this.spinnerOn = false;
@@ -227,6 +227,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    this.currentOtherOption = { id: 'other', text: '', isOther: true };
   }
 
   setCourseListener() {
@@ -288,7 +289,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setAnswer(event, option) {
     const value = this.answer.value || [];
     if (event.checked) {
-      if (!value.find(val => val.id === option.id)) {
+      if (!value.some(val => val.id === option.id)) {
         value.push(option);
       } else if (option.id === 'other') {
         const otherIndex = value.findIndex(val => val.id === 'other');
@@ -350,11 +351,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        setSelectMultipleAnswer(answer.value);
+        const rebuilt = answer.value.map(val => {
+          if (val.id === 'other') {
+            this.currentOtherOption.text = val.text || '';
+            return this.currentOtherOption;
+          }
+          return val;
+        });
+        setSelectMultipleAnswer(rebuilt);
         break;
       case 'select':
         if (answer.value && answer.value.id === 'other') {
-          this.answer.setValue(this.otherOptionValue);
+          this.currentOtherOption.text = answer.value.text;
+          this.answer.setValue(this.currentOtherOption);
         } else {
           this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
         }
@@ -392,40 +401,22 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   isOtherSelected() {
-    return this.answer.value && this.answer.value.id === 'other';
+    return this.answer.value?.id === 'other';
   }
 
-  updateOtherOptionValue() {
-    this.otherOptionValue = { id: 'other', text: this.otherText.value, isOther: true };
-    this.answer.setValue(this.otherOptionValue);
-  }
-
-  setOtherOptionMultiple(event) {
-    this.checkboxState['other'] = event.checked;
-    if (event.checked) {
-      const otherOption = { id: 'other', text: this.otherTextMulti.value || '', isOther: true };
-      this.setAnswer({ checked: true }, otherOption);
+  toggleOtherMultiple({ checked }): void {
+    this.checkboxState['other'] = checked;
+    if (checked) {
+      this.setAnswer({ checked: true }, this.currentOtherOption);
     } else {
-      const value = this.answer.value || [];
-      const otherIndex = value.findIndex(option => option.id === 'other');
-      if (otherIndex > -1) {
-        value.splice(otherIndex, 1);
-        this.answer.setValue(value.length > 0 ? value : null);
-        this.answer.updateValueAndValidity();
-      }
+      const remaining = (this.answer.value || []).filter(o => o.id !== 'other');
+      this.answer.setValue(remaining.length ? remaining : null);
+      this.answer.updateValueAndValidity();
     }
   }
 
-  updateOtherOptionValueMultiple() {
-    if (this.checkboxState['other']) {
-      const value = this.answer.value || [];
-      const otherIndex = value.findIndex(option => option.id === 'other');
-
-      if (otherIndex > -1) {
-        value[otherIndex].text = this.otherTextMulti.value;
-        this.answer.setValue([ ...value ]);
-      }
-    }
+  updateOtherText(): void {
+    this.answer.updateValueAndValidity();
   }
 
 }
