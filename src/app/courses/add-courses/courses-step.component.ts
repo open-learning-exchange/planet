@@ -16,14 +16,6 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 })
 export class CoursesStepComponent implements OnDestroy {
 
-  getButtonLabel(type: 'exam' | 'survey'): string {
-    if (type === 'exam') {
-      return this.activeStep?.exam ? $localize`Update Test` : $localize`Add Test`;
-    } else {
-      return this.activeStep?.survey ? $localize`Update Survey` : $localize`Add Survey`;
-    }
-  }
-
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
@@ -33,6 +25,14 @@ export class CoursesStepComponent implements OnDestroy {
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
+
+  getButtonLabel(type: 'exam' | 'survey'): string {
+    if (type === 'exam') {
+      return this.activeStep?.exam ? $localize`Update Test` : $localize`Add Test`;
+    } else {
+      return this.activeStep?.survey ? $localize`Update Survey` : $localize`Add Survey`;
+    }
+  }
 
   constructor(
     private router: Router,
