@@ -126,16 +126,16 @@ export class ChangePasswordDirective implements OnChanges {
     ).subscribe((responses) => {
       const errors = responses.filter(r => r.ok === false);
       if (errors.length === 0) {
-        this.planetMessageService.showMessage('Password successfully updated');
+        this.planetMessageService.showMessage($localize`Password successfully updated`);
         this.dialogsFormService.closeDialogsForm();
       } else {
         this.planetMessageService.showAlert(errors.map(e => e.reason).join(' & '));
       }
     }, (err) => {
       if (err.error.reason === 'Name or password is incorrect.') {
-        this.dialogsFormService.showErrorMessage('Old password isn\'t valid');
+        this.dialogsFormService.showErrorMessage($localize`Old password isn't valid`);
       }
-      this.planetMessageService.showAlert('Error changing password');
+      this.planetMessageService.showAlert($localize`Error changing password`);
     });
   }
 

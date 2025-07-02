@@ -58,10 +58,10 @@ export class CommunityLinkDialogComponent {
     ).subscribe({
       next: () => {
         this.dialogRef.close();
-        this.planetMessageService.showMessage(`Added link: ${linkTitle}`);
+        this.planetMessageService.showMessage($localize`Added link: ${linkTitle}`);
       },
       error: () => {
-        this.planetMessageService.showAlert(`Error adding link`);
+        this.planetMessageService.showAlert($localize`Error adding link`);
       }
     });
   }
