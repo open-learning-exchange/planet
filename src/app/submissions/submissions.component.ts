@@ -50,6 +50,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
+  // routeTeam = this.route.parent?.snapshot.paramMap.get('teamId') || null;
 
   constructor(
     private router: Router,
@@ -127,7 +128,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionQuery() {
-    const parentId = this.route.snapshot.paramMap.get('id');
+    const parentId = this.route.snapshot.paramMap.get('surveyid');
     if (parentId) {
       this.filter.type = 'survey';
       return findDocuments({ parentId, type: 'survey', status: { '$ne': 'pending' } });
