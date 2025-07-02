@@ -50,7 +50,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
-  // routeTeam = this.route.parent?.snapshot.paramMap.get('teamId') || null;
+  surveyId = this.route.snapshot.paramMap.get('surveyid');
 
   constructor(
     private router: Router,
@@ -128,10 +128,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionQuery() {
-    const parentId = this.route.snapshot.paramMap.get('surveyid');
-    if (parentId) {
+    if (this.surveyId) {
       this.filter.type = 'survey';
-      return findDocuments({ parentId, type: 'survey', status: { '$ne': 'pending' } });
+      return findDocuments({ parentId: this.surveyId, type: 'survey', status: { '$ne': 'pending' } });
     }
     switch (this.mode) {
       case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
@@ -178,7 +177,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    if (this.surveyId) {
+      this.router.navigate([ '/manager/surveys' ]);
+    } else {
+      this.router.navigate([ '..' ], { relativeTo: this.route });
+    }
   }
 
   submissionAction(submission) {
