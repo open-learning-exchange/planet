@@ -9,9 +9,9 @@
   "scripts": {
     "ng": "ng",
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
-    "start": "ng serve --aot --configuration=$CONF",
-    "dev": "./dev-env.sh && ng serve --configuration=dev",
-    "build": "npm run ng-high-memory -- build --configuration production --configuration=$CONF",
+    "start": "ng serve",
+    "dev": "./dev-env.sh && ng serve",
+    "build": "npm run ng-high-memory -- build --configuration production",
     "test": "ng test",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
