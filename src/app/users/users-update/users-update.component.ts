@@ -49,6 +49,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
   imageChangedEvent: Event | null = null;
+  showImagePreview = true;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
@@ -264,9 +265,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   openImageEditDialog(event: Event): void {
+    this.showImagePreview = false;
     this.imageChangedEvent = event;
-    this.dialog.open(this.imageEditDialog, {
+    const dialogRef = this.dialog.open(this.imageEditDialog, {
       width: '1000px'
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.showImagePreview = true;
     });
   }
 

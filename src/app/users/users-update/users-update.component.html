@@ -125,7 +125,7 @@
     </div>
     <div *ngIf="!submissionMode">
       <div style="text-align: center;">
-        <img class="profile-image-update" [src]="previewSrc"><br>
+        <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
         <button *ngIf="(uploadImage && currentImgKey) && !file; else Uploader" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
         <ng-template #Uploader>
           <button mat-raised-button color="secondary" class="upload-button" (click)="fileInput.click()">
