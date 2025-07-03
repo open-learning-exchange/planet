@@ -8,7 +8,6 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
@@ -24,5 +23,6 @@
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false
-  }
+  },
+  "include": [ "src/**/*" ]
 }

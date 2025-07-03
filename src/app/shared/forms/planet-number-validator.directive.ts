@@ -2,7 +2,7 @@ import { Directive, Host, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControlName, FormControl, Validators } from '@angular/forms';
 
 @Directive({
-  // tslint:disable-next-line:directive-selector
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'input[type="number"]'
 })
 export class PlanetNumberValidatorDirective implements AfterViewInit {

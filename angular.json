@@ -39,7 +39,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "aot": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -59,7 +58,13 @@
             ],
             "scripts": [],
             "i18nMissingTranslation": "ignore",
-            "poll": 2000
+            "poll": 2000,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -72,9 +77,7 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -110,7 +113,6 @@
               ]
             },
             "eng": {
-              "aot": true,
               "outputPath": "dist/eng",
               "localize": ["en"],
               "budgets": [
@@ -120,7 +122,6 @@
                 }
               ]},
             "som": {
-              "aot": true,
               "outputPath": "dist/som",
               "localize": ["so"],
               "budgets": [
@@ -130,7 +131,6 @@
                 }
               ]},
             "fra": {
-              "aot": true,
               "outputPath": "dist/fra",
               "localize": ["fr"],
               "budgets": [
@@ -140,7 +140,6 @@
                 }
               ]},
             "nep": {
-              "aot": true,
               "outputPath": "dist/nep",
               "localize": ["ne"],
               "budgets": [
@@ -150,7 +149,6 @@
                 }
               ]},
             "ara": {
-              "aot": true,
               "outputPath": "dist/ara",
               "localize": ["ar"],
               "budgets": [
@@ -160,7 +158,6 @@
                 }
               ]},
             "spa": {
-              "aot": true,
               "outputPath": "dist/spa",
               "localize": ["es"],
               "budgets": [
@@ -169,7 +166,8 @@
                   "maximumWarning": "6kb"
                 }
               ]}
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -203,7 +201,8 @@
             "spa": {
               "browserTarget": "planet-app:build:spa"
             }
-          }
+          },
+          "defaultConfiguration": "dev"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -211,7 +210,6 @@
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
             "format": "xlf",
-            "i18nFormat": "xlf",
             "ivy": true
           },
           "ivy":true
@@ -235,13 +233,12 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": []
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
@@ -256,15 +253,6 @@
           "options": {
             "protractorConfig": "./protractor.conf.js",
             "devServerTarget": "planet-app:serve:test"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "e2e/tsconfig.e2e.json"
-            ],
-            "exclude": []
           }
         }
       }
@@ -285,5 +273,8 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }

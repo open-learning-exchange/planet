@@ -90,13 +90,13 @@ For chatapi development instructions, refer to the [chatapi README](chatapi/READ
 
 ## Locale Configuration
 
-To run planet in development with a different locale, you can set the `CONF` environment variable. For example, to run in Spanish, use:
+To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
 ```
-  npm run start -- --configuration=spa 
+  npm run dev -- --configuration spa 
 
   or 
 
-  ng serve --configuration=spa
+  ng serve --configuration spa
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
