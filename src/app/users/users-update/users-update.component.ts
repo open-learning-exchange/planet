@@ -23,7 +23,6 @@ import { TemplateRef, ViewChild } from '@angular/core';
   styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
-
   user: any = {};
   initialFormValues: any;
   educationLevel = educationLevel;
