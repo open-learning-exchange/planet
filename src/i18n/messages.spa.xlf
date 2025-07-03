@@ -1670,7 +1670,7 @@
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="final">Visitas únicas de socios por mes</target>
+        <target state="final">Visitas únicas de miembros por mes</target>
       </trans-unit>
       <trans-unit id="2502500993744072451" datatype="html" approved="yes">
         <source>Steps Completed by Month</source>
@@ -3150,7 +3150,7 @@
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
           <context context-type="linenumber">32</context>
         </context-group>
-        <target state="final">¿Cuál es la Misión de tu compañía?</target>
+        <target state="final">¿Cuál es la misión de su empresa?</target>
       </trans-unit>
       <trans-unit id="6427786681980602269" datatype="html" approved="yes">
         <source>What are the Services your enterprise provides?</source>
@@ -4576,7 +4576,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.ts</context>
           <context context-type="linenumber">116</context>
         </context-group>
-        <target state="final">Trabajos enviados</target>
+        <target state="final">Envíos</target>
       </trans-unit>
       <trans-unit id="2299187798995800780" datatype="html" approved="yes">
         <source>Chat</source>
@@ -4928,7 +4928,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
           <context context-type="linenumber">73</context>
         </context-group>
-        <target state="final">Siempre apagado</target>
+        <target state="final">Siempre desactivado</target>
       </trans-unit>
       <trans-unit id="c1e1118519a4f142313444ed2bdb82170013e250" datatype="html" approved="yes">
         <source>Always on</source>
@@ -4936,7 +4936,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
           <context context-type="linenumber">74</context>
         </context-group>
-        <target state="final">Siempre encendido</target>
+        <target state="final">Siempre activado</target>
       </trans-unit>
       <trans-unit id="af35c9701f1da4d2256efd069e7d85ae35dd4d9b" datatype="html" approved="yes">
         <source>User preferences</source>
@@ -5248,7 +5248,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="final">Curso Vinculado</target>
+        <target state="final">Curso vinculado</target>
       </trans-unit>
       <trans-unit id="51fd3207f18af7d6ed95489eb16762ce05a6c99b" datatype="html" approved="yes">
         <source>Created/Updated on</source>
@@ -5704,7 +5704,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/users/users-table.component.html</context>
           <context context-type="linenumber">86</context>
         </context-group>
-        <target state="final">Papel</target>
+        <target state="final">Roles</target>
       </trans-unit>
       <trans-unit id="2fe8e67fe8c2d66bad95533f4283d15809c23dad" datatype="html" approved="yes">
         <source>DOB</source>
@@ -6852,7 +6852,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/teams/teams-member.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, Add {¡Añade el título} Change {¡Cambia el título}}</target>
+        <target state="final">{VAR_SELECT, select, Add {Añade el título} Change {Cambia el título}}</target>
       </trans-unit>
       <trans-unit id="bf6dd19b542b56633db84ff59788d210d2acf79f" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, true {Change Role} false {Add Role}}</source>
@@ -6860,7 +6860,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/teams/teams-member.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, true {¡Cambia el rol} false {¡Añade el rol}}</target>
+        <target state="final">{VAR_SELECT, select, true {Cambia el rol} false {Añade el rol}}</target>
       </trans-unit>
       <trans-unit id="586a5fd72602b5b14ec0c55f84814de47bb21e3a" datatype="html" approved="yes">
         <source>Tasks</source>
@@ -7324,7 +7324,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {¡Añadir un plan} enterprise {¡Añadir una misión &amp; servicios} services {¡Añadir servicios}}</target>
+        <target state="final">{VAR_SELECT, select, team {Añadir un plan} enterprise {Añadir una misión &amp; servicios} services {Añadir servicios}}</target>
       </trans-unit>
       <trans-unit id="d673be67f1c59c63300b6c9de7d785bd0d7b7668" datatype="html" approved="yes">
         <source>
@@ -10802,7 +10802,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">40</context>
         </context-group>
-        <target state="final">Asignatura:(s)</target>
+        <target state="final">Asignatura(s)</target>
       </trans-unit>
       <trans-unit id="04ebbdae2eff3f050cedad98528b4b045591442c" datatype="html" approved="yes">
         <source>Level(s)</source>
@@ -12104,7 +12104,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.ts</context>
           <context context-type="linenumber">295</context>
         </context-group>
-        <target state="final">PIN restablecido correctamente</target>
+        <target state="final">PIN restablecido con éxito</target>
       </trans-unit>
       <trans-unit id="1642449670886651477" datatype="html" approved="yes">
         <source>Error to reset pin</source>
@@ -12344,7 +12344,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">63</context>
         </context-group>
-        <target state="final">Localización:</target>
+        <target state="final">Local:</target>
       </trans-unit>
       <trans-unit id="4e586f8772241fe2b0d5a2ed2c4bcc823107a141" datatype="html" approved="yes">
         <source>myPlanet Version</source>
@@ -12752,7 +12752,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
           <context context-type="linenumber">46</context>
         </context-group>
-        <target state="final">reporte de myPlanet</target>
+        <target state="final">Reporte de myPlanet</target>
       </trans-unit>
       <trans-unit id="6dc80dbe0ad845ae86ef6056ee11b4c326662277" datatype="html" approved="yes">
         <source> Show All Time </source>
@@ -13436,7 +13436,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">27,30</context>
         </context-group>
-        <target state="final">{VAR_SELECT_2, select, sandbox {Añade a {VAR_SELECT, select, nation {Red} center {¡Región}}} other {¡Mover {VAR_SELECT_1, select, nation {Redes} center {¡Regiones}}}}</target>
+        <target state="final">{VAR_SELECT_2, select, sandbox {Añade a {VAR_SELECT, select, nation {Red} center {Región}}} other {Mover {VAR_SELECT_1, select, nation {Redes} center {Regiones}}}}</target>
       </trans-unit>
       <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html" approved="yes">
         <source>
@@ -13560,7 +13560,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, nation {¡Añade la red} center {¡Añade la región}}</target>
+        <target state="final">{VAR_SELECT, select, nation {Añade la red} center {Añade la región}}</target>
       </trans-unit>
       <trans-unit id="d20ffd3c02b2da8a11d59baedec3970e756ec612" datatype="html" approved="yes">
         <source>
