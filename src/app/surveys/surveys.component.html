@@ -119,7 +119,7 @@
               </div>
             </ng-container>
             <div>
-              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length" i18n>
+              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
                 <mat-icon>insert_drive_file</mat-icon> Submissions
               </button>
             </div>
