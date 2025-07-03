@@ -42,6 +42,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
+  // store the last opened thread’s root post id
+  lastRootPostId: string;
 
   constructor(
     private dialog: MatDialog,
@@ -102,11 +104,28 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   showReplies(news) {
+    // remember the conversation’s true root post, even from deep threads
+    if (news._id !== 'root') {
+      this.lastRootPostId = this.getThreadRootId(news);
+    }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
       return;
     }
     this.filterNewsToShow(news._id);
+  }
+
+  // climb replies until you reach the top-level post (_id with no replyTo)
+  private getThreadRootId(news: any): string {
+    let current = news;
+    while (current.doc && current.doc.replyTo) {
+      const parent = this.items.find(item => item._id === current.doc.replyTo);
+      if (!parent) {
+        break;
+      }
+      current = parent;
+    }
+    return current._id;
   }
 
   navigateToReply(newsId) {
@@ -132,6 +151,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+    // when going back to the main conversation, scroll down to the previously viewed post
+    if (newsId === 'root' && this.lastRootPostId) {
+      setTimeout(() => {
+        const el = document.getElementById(`news-${this.lastRootPostId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto', block: 'center' });
+        }
+      }, 0);
+    }
   }
 
   showPreviousReplies() {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement } from 'chart.js';
+import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -19,7 +19,7 @@ import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-Chart.register(BarController, DoughnutController, BarElement, ArcElement);
+Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
 @Injectable({
   providedIn: 'root'
@@ -226,7 +226,7 @@ export class SubmissionsService {
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = '', team?: string) {
+  createSubmission(parent: any, type: string, user: any = {}, team?: string) {
     return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
@@ -355,19 +355,44 @@ export class SubmissionsService {
       if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
       question.index = i;
       docContent.push({ text: `Q${i + 1}: ${question.body}` });
-      const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
-      const pieImg = await this.generateChartImage(pieAgg);
       if (question.type === 'selectMultiple') {
-        const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent');
+        const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
+
+        const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
+        const tableData = [
+          [ 'Option', 'User Count', '% of Users*', 'Selections count', '% of All Selections' ],
+          ...barAgg.labels.map((label, index) => [
+            label,
+            `${barAgg.userCounts[index].toString()} / ${barAgg.totalUsers}`,
+            `${barAgg.data[index]}%`,
+            `${barAgg.userCounts[index].toString()} / ${selectionAgg.totalSelections}`,
+            `${selectionAgg.data[index]}%`
+          ])
+        ];
+
         docContent.push({
           stack: [
-            { image: barImg, width: 250, margin: [ 0, 10, 0, 10 ] },
-            { image: pieImg, width: 250, margin: [ 0, 10, 0, 10 ] }
+            { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
+            { text: 'Selection Breakdown', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            { text: `Total respondents: ${updatedSubmissions.length}` },
+            { text: `Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
+            {
+              table: {
+                headerRows: 1,
+                widths: [ '*', 'auto', 'auto', 'auto', 'auto' ],
+                body: tableData
+              },
+              layout: 'lightHorizontalLines',
+              margin: [ 0, 5, 0, 10 ]
+            },
+            { text: `*Percentage of users who selected the choice. Users may select multiple options` },
           ],
           alignment: 'center'
         });
       } else {
+        const pieAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+        const pieImg = await this.generateChartImage(pieAgg);
         docContent.push({ image: pieImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] });
       }
       docContent.push({ text: '', pageBreak: 'after' });
@@ -468,6 +493,11 @@ export class SubmissionsService {
             header: {
               fontSize: 20,
               bold: true
+            },
+            chartTitle: {
+              fontSize: 12,
+              bold: true,
+              alignment: 'center'
             }
           }
         }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
@@ -534,7 +564,7 @@ export class SubmissionsService {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isBar ? '% of Users' : undefined,
+            label: isBar ? '% of responders/selection' : undefined,
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -582,32 +612,50 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent') {
+  aggregateQuestionResponses(
+    question,
+    submissions,
+    mode: 'percent' | 'count' = 'percent',
+    calculationMode: 'users' | 'selections' = 'users'
+  ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
     question.choices.forEach(c => { counts[c.text] = new Set(); });
-    submissions.forEach(sub => {
+    if (question.hasOtherOption) {
+      counts['Other'] = new Set();
+    }
+
+    submissions.forEach((sub, submissionIndex) => {
       const ans = sub.answers[question.index];
       if (!ans) { return; }
 
+      const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
       const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
       selections.forEach(selection => {
-        const txt = selection.text ?? selection;
-        counts[txt]?.add(sub.user._id || sub.user.name);
+        if (selection.isOther || selection.id === 'other') {
+          counts['Other']?.add(userId);
+        } else {
+          const txt = selection.text ?? selection;
+          counts[txt]?.add(userId);
+        }
       });
     });
 
     const labels = Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
+    const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
     let data: number[];
 
     if (mode === 'percent') {
       if (question.type === 'selectMultiple') {
-        const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
-        data = totalSelections > 0 ? userCounts.map(c => Math.round((c / totalSelections) * 100)) : userCounts.map(_ => 0);
+        if (calculationMode === 'users') {
+          data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
+        } else {
+          data = totalSelections > 0 ? userCounts.map(c => parseFloat(((c / totalSelections) * 100).toFixed(1))) : userCounts.map(_ => 0);
+        }
       } else {
-        data = totalUsers > 0 ? userCounts.map(c => Math.round((c / totalUsers) * 100)) : userCounts.map(_ => 0);
+        data = totalUsers > 0 ? userCounts.map(c => parseFloat(((c / totalUsers) * 100).toFixed(1))) : userCounts.map(_ => 0);
       }
     } else {
       data = userCounts;
@@ -618,6 +666,7 @@ export class SubmissionsService {
       data,
       userCounts,
       totalUsers,
+      totalSelections,
       chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
     };
   }

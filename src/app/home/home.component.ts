@@ -16,6 +16,7 @@ import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
+import { PlanetLanguageComponent } from '../shared/planet-language.component';
 
 @Component({
   templateUrl: './home.component.html',
@@ -43,6 +44,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   classicToolbarWidth = 0;
   @ViewChild('content') private mainContent;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
+  @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
   planetName;
   isAndroid: boolean;
   showBanner = true;
@@ -81,6 +83,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.onUserUpdate();
+        this.getNotification();
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
@@ -143,6 +146,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  openLanguageSelector(): void {
+    this.languageComponent?.openMenu();
   }
 
   @HostListener('window:resize') onResize() {
