@@ -5,59 +5,16 @@
   margin: 0;
 }
 
-
-.desktop-toggle {
+.select-container {
   display: flex;
 }
 
-.mobile-select-container {
-  display: none;
+.select-item {
+  min-width: 100px;
 }
 
 @media only screen and (max-width: $screen-md) {
   .titlebar {
     display: none;
-  }
-  
-
-  .desktop-toggle {
-    display: none;
-  }
-  
-
-  .mobile-select-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .mobile-select-icon {
-    color: rgba(0, 0, 0, 0.8);
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-  }
-  
-  .mobile-select {
-    min-width: 100px;
-    font-size: 14px;
-    
-
-    ::ng-deep .mat-select-value {
-      font-size: 14px;
-    }
-    
-    ::ng-deep .mat-select-arrow {
-      color: rgba(10, 9, 9, 0.7);
-    }
-    
-    ::ng-deep .mat-select-value-text {
-      color: black;
-    }
-    
-    ::ng-deep .mat-select-trigger {
-      border: none;
-      background: transparent;
-    }
   }
 }
