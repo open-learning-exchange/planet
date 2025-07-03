@@ -24,25 +24,6 @@ import { TemplateRef, ViewChild } from '@angular/core';
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  constructor(
-    private fb: FormBuilder,
-    private couchService: CouchService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private stateService: StateService,
-    private validatorService: ValidatorService,
-    private dialog: MatDialog,
-
-    private unsavedChangesService: UnsavedChangesService
-  ) {
-    this.userData();
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.isNavigating = true;
-      }
-    });
-  }
   user: any = {};
   initialFormValues: any;
   educationLevel = educationLevel;
@@ -69,6 +50,25 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   private subscriptions: Subscription = new Subscription();
   imageChangedEvent: Event | null = null;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
+
+  constructor(
+    private fb: FormBuilder,
+    private couchService: CouchService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private stateService: StateService,
+    private validatorService: ValidatorService,
+    private dialog: MatDialog,
+    private unsavedChangesService: UnsavedChangesService
+  ) {
+    this.userData();
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isNavigating = true;
+      }
+    });
+  }
 
   ngOnInit() {
     const routeSnapshot = this.route.snapshot;
@@ -263,12 +263,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-openImageEditDialog(event: Event): void {
-  this.imageChangedEvent = event;
-  this.dialog.open(this.imageEditDialog, {
-    width: '600px'
-  });
-}
-
+  openImageEditDialog(event: Event): void {
+    this.imageChangedEvent = event;
+    this.dialog.open(this.imageEditDialog, {
+      width: '1000px'
+    });
+  }
 
 }
