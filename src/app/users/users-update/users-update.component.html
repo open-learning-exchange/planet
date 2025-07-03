@@ -146,7 +146,7 @@
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-button mat-dialog-close i18n>Cancel</button>
+    <button mat-button mat-dialog-close (click)="resetSelection()" i18n>Cancel</button>
     <button mat-button mat-dialog-close i18n>Confirm</button>
   </mat-dialog-actions>
 </ng-template>

@@ -294,7 +294,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     const dialogRef = this.dialog.open(this.imageEditDialog, {
       width: '1000px'
     });
-    dialogRef.afterClosed().subscribe(() => {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== 'confirm') {
+        this.resetSelection();
+      }
       this.showImagePreview = true;
     });
   }
