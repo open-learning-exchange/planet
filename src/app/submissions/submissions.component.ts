@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
-import { find, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
@@ -50,7 +50,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
-  surveyId = this.route.snapshot.paramMap.get('surveyid');
+  surveyId = this.route.snapshot.params['surveyId'];
 
   constructor(
     private router: Router,
@@ -177,11 +177,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    if (this.surveyId) {
-      this.router.navigate([ '/manager/surveys' ]);
-    } else {
-      this.router.navigate([ '..' ], { relativeTo: this.route });
-    }
+    this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 
   submissionAction(submission) {
