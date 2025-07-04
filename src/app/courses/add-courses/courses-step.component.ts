@@ -26,6 +26,14 @@ export class CoursesStepComponent implements OnDestroy {
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
 
+  getButtonLabel(type: 'exam' | 'survey'): string {
+    if (type === 'exam') {
+      return this.activeStep?.exam ? $localize`Update Test` : $localize`Add Test`;
+    } else {
+      return this.activeStep?.survey ? $localize`Update Survey` : $localize`Add Survey`;
+    }
+  }
+
   constructor(
     private router: Router,
     private fb: FormBuilder,

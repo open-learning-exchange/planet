@@ -49,13 +49,13 @@ export class DialogsImagesComponent implements OnInit {
     const sanitizedFileName = file.name.trim().replace(/\s+/g, '_');
     const imageExists = this.images.some(img => sanitizedFileName === img.filename);
     if (imageExists) {
-      this.planetMessageService.showAlert('An image with that filename exists. Please rename or select another image.');
+      this.planetMessageService.showAlert($localize`An image with that filename exists. Please rename or select another image.`);
       return;
     }
     const mediaType = this.resourcesService.simpleMediaType(file.type);
     const planet = this.stateService.configuration.code;
     if (mediaType !== 'image') {
-      this.planetMessageService.showAlert('File must be an image');
+      this.planetMessageService.showAlert($localize`File must be an image`);
       return;
     }
     const newResource = {

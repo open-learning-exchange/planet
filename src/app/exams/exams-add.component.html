@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button (click)="goBack()" i18n><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
   {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
   {{examType === 'exam' && courseName ? courseName + ':' : ''}}
   {pageType, select, Add {Add} Update {Update} Copy {Copy}}
