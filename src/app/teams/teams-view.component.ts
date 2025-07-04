@@ -540,7 +540,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openResource(resourceId) {
-    this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId, returnState: { teamId: this.teamId, mode: this.mode } }, autoFocus: false });
+    this.dialog.open(DialogsResourcesViewerComponent, {
+      data: { resourceId, returnState: { teamId: this.teamId, mode: this.mode }
+    }, autoFocus: false });
   }
 
   openMemberDialog(member) {
