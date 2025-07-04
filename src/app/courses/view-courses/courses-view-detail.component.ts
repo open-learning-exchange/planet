@@ -66,7 +66,5 @@ export class CoursesViewDetailDialogComponent implements OnInit {
 
   routeToCourses(courseId) {
     this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
-    const url = this.router.serializeUrl(this.router.createUrlTree([ '../../courses/view/', courseId ], { relativeTo: this.route }));
-    window.open(url, '_blank');
   }
 }
