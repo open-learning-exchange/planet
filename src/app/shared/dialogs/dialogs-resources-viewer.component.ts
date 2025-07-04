@@ -21,7 +21,6 @@ export class DialogsResourcesViewerComponent {
   ) {}
 
   viewResources() {
-    console.log('return', this.data);
     this.dialogRef.close();
     const navigationExtras = this.data.returnState ? { state: { returnState: this.data.returnState } } : { relativeTo: this.route };
     this.router.navigate([ `/resources/view/${this.data.resourceId}` ], navigationExtras);
