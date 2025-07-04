@@ -124,12 +124,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isTablet = window.innerWidth <= 1040;
+    this.isTablet = this.deviceType === DeviceType.TABLET;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isTablet = window.innerWidth <= 1040;
+    this.isTablet = this.deviceType === DeviceType.TABLET;
   }
 
   ngOnInit() {
