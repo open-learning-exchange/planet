@@ -27,6 +27,7 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
+import { ConfigurationCheckService } from '../shared/configuration-check.service';
 
 @Component({
   selector: 'planet-community',
@@ -57,7 +58,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoading = true;
+  activeReplyId: string | null = null;
 
   constructor(
     private dialog: MatDialog,
@@ -74,14 +76,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
+    this.configurationCheckService.checkConfiguration();
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.isLoading = false;
@@ -103,6 +106,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       of(this.stateService.configuration),
       this.stateService.couchStateListener('configurations')
     ).subscribe(() => {
+      this.getCommunityData();
+    });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.user = this.userService.get();
+      this.isLoggedIn = this.user._id !== undefined;
       this.getCommunityData();
     });
   }
@@ -349,6 +357,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
+    this.activeReplyId = data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -434,9 +443,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   tabChanged({ index }: { index: number }) {
     if (index === 0) {
-      const activeReplyId = this.newsService.getActiveReplyId();
-      const targetUrl = activeReplyId ? `/voices/${activeReplyId}` : '';
-      this.router.navigate([ targetUrl ]);
+      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
     } else {
       this.router.navigate([ '' ]);
     }

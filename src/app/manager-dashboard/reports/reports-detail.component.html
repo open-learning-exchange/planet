@@ -162,6 +162,7 @@
         <canvas id="courseViewChart"></canvas>
         <canvas id="stepCompletedChart"></canvas>
         <canvas id="chatUsageChart"></canvas>
+        <canvas id="voicesCreatedChart"></canvas>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
@@ -277,10 +278,10 @@
           No data found
         </div>
         <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="resourceActivities.byDoc" 
-            [ratings]="ratings.resources" 
-            activityType="resources" 
+          <planet-reports-detail-activities
+            [activitiesByDoc]="resourceActivities.byDoc"
+            [ratings]="ratings.resources"
+            activityType="resources"
             (itemClick)="openResourceView($event)">
           </planet-reports-detail-activities>
         </div>
@@ -293,11 +294,11 @@
           No data found
         </div>
         <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="courseActivities.byDoc" 
-            [ratings]="ratings.courses" 
-            [progress]="progress" 
-            activityType="courses" 
+          <planet-reports-detail-activities
+            [activitiesByDoc]="courseActivities.byDoc"
+            [ratings]="ratings.courses"
+            [progress]="progress"
+            activityType="courses"
             (itemClick)="openCourseView($event)">
           </planet-reports-detail-activities>
         </div>
@@ -310,10 +311,10 @@
           No data found
         </div>
         <div [hidden]="healthLoading || healthNoData">
-          <planet-reports-health 
-            [planetCode]="planetCode" 
-            [dateRange]="dateFilterForm?.value" 
-            [isActive]="healthTab.isActive" 
+          <planet-reports-health
+            [planetCode]="planetCode"
+            [dateRange]="dateFilterForm?.value"
+            [isActive]="healthTab.isActive"
             (changeDateRange)="resetDateFilter($event)"
             (healthLoadingChange)="onHealthLoadingChange($event)"
             (healthNoDataChange)="onHealthNoDataChange($event)">
@@ -328,8 +329,8 @@
           No data found
         </div>
         <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="chatActivities.filteredData" 
+          <planet-reports-detail-activities
+            [activitiesByDoc]="chatActivities.filteredData"
             activityType="chat">
           </planet-reports-detail-activities>
         </div>

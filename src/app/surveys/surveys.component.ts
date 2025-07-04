@@ -123,9 +123,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
             taken: this.teamId || this.routeTeamId
               ? relatedSubmissions.filter(
-                (data) => data.status !== 'pending' &&
+                (data) => data.status === 'complete' &&
                 (data.team === this.teamId || data.team === this.routeTeamId)).length
-              : relatedSubmissions.filter(data => data.status !== 'pending').length
+              : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
         ...this.createParentSurveys(submissions)
@@ -362,7 +362,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recordSurvey(survey: any) {
-    this.submissionsService.createSubmission(survey, 'survey', '', this.teamId || this.routeTeamId || '' ).subscribe((res: any) => {
+    this.submissionsService.createSubmission(survey, 'survey', {}, this.teamId || this.routeTeamId || '' ).subscribe((res: any) => {
       this.router.navigate([
         this.teamId ? 'surveys/dispense' : 'dispense',
         { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
