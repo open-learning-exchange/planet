@@ -65,6 +65,7 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   }
 
   routeToCourses(courseId) {
-    this.router.navigate([ '../../courses/view/', courseId ], { relativeTo: this.route });
+    const navigationExtras = this.data.returnState ? { state: { returnState: this.data.returnState } } : { relativeTo: this.route };
+    this.router.navigate([ '../../courses/view/', courseId ], navigationExtras);
   }
 }

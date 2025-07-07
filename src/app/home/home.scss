@@ -156,6 +156,10 @@
           background-color: rgba(0, 0, 0, 0.06);
           transition: background-color 1s ease-in;
         }
+        // Fix SVG icons to use primary color when active
+        mat-icon ::ng-deep svg {
+          fill: $primary;
+        }
       }
 
       // Animates pulsating icon when navbar link clicked
@@ -197,7 +201,7 @@
 }
 
 .banner {
-  background-color: #2196f3;
+  background-color: $primary;
   color: white;
   padding: 10px;
   text-align: center;

@@ -1,10 +1,16 @@
 <mat-toolbar>
-  <button class="titlebar" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <button class="titlebar" mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
-  <mat-button-toggle-group *ngIf="displayToggle; else textDisplay" [(ngModel)]="activeService" (change)="toggleAIService()">
-    <mat-button-toggle *ngFor="let service of aiServices" [value]="service.model" i18n>{{service.name}}</mat-button-toggle>
-  </mat-button-toggle-group>
+  <div *ngIf="displayToggle" class="select-container">
+    <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()" class="select-item">
+      <mat-option *ngFor="let service of aiServices" [value]="service.model">
+        {{service.name}}
+      </mat-option>
+    </mat-select>
+  </div>
   <ng-template #textDisplay>
     <span i18n>{{activeService}}</span>
   </ng-template>
