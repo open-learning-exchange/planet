@@ -4,7 +4,6 @@ import { Component, Input } from '@angular/core';
   selector: 'planet-label',
   template: `
     <span i18n>{label, select,
-      // Form labels
       temperature {Temperature (°C)}
       pulse {Pulse (bpm)}
       bp {Blood Pressure}
@@ -16,10 +15,9 @@ import { Component, Input } from '@angular/core';
       offer {Offer}
       advice {Request for Advice}
       shared chat {Shared Chat}
-      // Diseases
-      Amebiasis {Amebiasis}
       Acute Otitis Media {Acute Otitis Media}
       Acute Respiratory Infection {Acute Respiratory Infection}
+      Amebiasis {Amebiasis}
       Brucellosis {Brucellosis}
       Cancer {Cancer}
       Cardiovascular disorders {Cardiovascular disorders}
@@ -27,6 +25,7 @@ import { Component, Input } from '@angular/core';
       Chancroid {Chancroid}
       Chikungunya {Chikungunya}
       Chlamydia {Chlamydia}
+      Chronic Kidney Disease {Chronic Kidney Disease}
       Cirrhosis of the liver {Cirrhosis of the liver}
       Conjunctivitis {Conjunctivitis}
       COVID-19 {COVID-19}
@@ -41,6 +40,9 @@ import { Component, Input } from '@angular/core';
       Epilepsy {Epilepsy}
       FGM {FGM}
       Fungal Infection {Fungal Infections}
+      Giardiasis {Giardiasis}
+      Gonorrhea {Gonorrhea}
+      Heatstroke {Heatstroke}
       Hepatitis A {Hepatitis A}
       Hepatitis B {Hepatitis B}
       Hepatitis C {Hepatitis C}
@@ -55,7 +57,7 @@ import { Component, Input } from '@angular/core';
       Leishmaniasis {Leishmaniasis}
       Leptospirosis {Leptospirosis}
       Low Birth Weight {Low Birth Weight}
-      Lymphogranuloma Venereum (LGV) {Lymphogranuloma Venereum}
+      Lymphogranuloma Venereum {Lymphogranuloma Venereum}
       Malaria {Malaria}
       Malnutrition {Malnutrition}
       Maternal Hemorrhage {Maternal Hemorrhage}
@@ -71,12 +73,14 @@ import { Component, Input } from '@angular/core';
       Rotavirus {Rotavirus}
       Scabies {Scabies}
       Schistosomiasis {Schistosomiasis}
+      Soil-Transmitted Helminths {Soil-Transmitted Helminths}
       Stroke {Stroke}
       Syphilis {Syphilis}
       Trauma {Trauma}
       Trichomoniasis {Trichomoniasis}
       Tuberculosis {Tuberculosis}
       Typhoid Fever {Typhoid Fever}
+      Vitamin A Deficiency {Vitamin A Deficiency}
       Zika {Zika}
     }</span>
   `

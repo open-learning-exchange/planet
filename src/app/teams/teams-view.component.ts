@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab } from '@angular/material/tabs';
+import { Subject, forkJoin, of, throwError } from 'rxjs';
+import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { TeamsService } from './teams.service';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
@@ -26,6 +26,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { teamLocalizedInfoPrompt } from '../shared/ai-prompts.constants';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -103,9 +104,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
-    if (this.mode === 'services') {
-
-    }
   }
 
   ngAfterViewChecked() {
@@ -476,9 +474,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
-      ...message,
-      sharedDate: null,
-      sharedTeam: null
+      ...message
     }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
@@ -556,12 +552,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  truncateText(text: string, maxLength: number): string {
-    if (!text) { return ''; }
-    return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-  }
-
-
   get localizedTeamInfo() {
     const type = this.team.type;
     const formattedFinances = this.finances.map(finance =>
@@ -569,11 +559,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).join(', ');
     const formattedReports = this.teamsService.exportReportsData(this.reports).map(report => JSON.stringify(report)).join(', ');
 
-    return $localize`The following information is about the ${type} "${this.team?.name}" with a description "${this.team?.description}".
-     ${this.team.services?.trim() ? 'The enterprise has the following services ' + this.team.services + '. ' : ''}
-     ${this.team.rules?.trim() ? 'The enterprise has the following rules ' + this.team.services + '. ' : ''}
-     ${type === 'enterprise' ? 'and has the following financial transactions ' + formattedFinances + ' and financial reports ' + formattedReports + '. ' : ''}
-     Be sure to assist the team member in the best way`;
+    return teamLocalizedInfoPrompt(this.team, type, formattedFinances, formattedReports);
   }
 
 }

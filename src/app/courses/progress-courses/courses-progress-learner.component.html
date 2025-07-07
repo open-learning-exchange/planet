@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
+  <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a><span i18n>myProgress</span>
 </mat-toolbar>
 
 <div class="space-container">
@@ -9,6 +9,13 @@
   <div class="view-container view-full-height">
     <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength" [showTotals]="false" (clickAction)="handleCourseClick($event)" (changeData)="changeData($event)">
     </planet-courses-progress-chart>
-    <ng-template #noProgress i18n>No Progress record available</ng-template>
+    <ng-template #noProgress>
+      <div class="view-container" *ngIf="isLoading" i18n>
+        Loading Progress...
+      </div>
+      <div class="view-container" *ngIf="!isLoading" i18n>
+        No Progress record available
+      </div>
+    </ng-template>
   </div>
 </div>

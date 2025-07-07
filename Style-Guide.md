@@ -11,7 +11,7 @@ If the HTML & CSS are fewer than 12 lines total, please keep the `template` and 
 If there are more than 12 lines, but the component has little to no TypeScript functionality, then an exception can be made if code reviewers agree to it.
 
 ### TSLint
-We have a git hook to run TSLint from the Vagrant before pushing code to the repository.  Please install this hook to your local machine by running the following command:
+We have a git hook to run TSLint before pushing code to the repository.  Please install this hook to your local machine by running the following command:
 ```
 npm run install-hooks
 ```
@@ -56,17 +56,174 @@ For more information, see the docs [here](https://angular.io/guide/i18n).
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
-## SCSS Style
+
 ### Naming
-This is a work in progress.  Please keep names descriptive and concise.  Feature or the role of the class should be a prefix separated with a dash from the rest of the name.
+Component files should be named after their page/feature and follow Angular's standard naming pattern:
+```
+feature.component.ts      // Component logic
+feature.component.html    // Component template
+feature.component.scss    // Component styles
+```
+
+### Code Comments
+We follow a minimalist approach to code comments:
+
+- Keep comments sparse and meaningful
+- Only add comments when logic is complex and not immediately obvious from the code itself
+- Use clear, descriptive method and variable names instead of comments when possible
+- For complex algorithms or business rules that may not be intuitive, include a brief explanation
+- Avoid redundant comments
+
+### SCSS Style
+For CSS class names, keep them descriptive and concise. Feature or role of the class should be a prefix separated with a dash from the rest of the name.
+
+### Variables
+#### Color & Theme Variables
+All color variables should be defined in `/src/app/_variables.scss`:
+- Use Material's theme system (`$primary`, `$accent`, `$warn`)
+- Define semantic variables (e.g., `$light-grey` not `$color-1`)
+- Use Material's `mat-color()` function to access theme colors
+- Never hardcode color values
+
+#### Screen Size Variables
+Default breakpoint variables in `_variables.scss`:
+```scss
+$screen-md: 1000px;  // Medium screen breakpoint
+$screen-sm: 780px;   // Small screen breakpoint
+$screen-xs: 480px;   // Extra small screen breakpoint
+```
+
+Components can override these for specific needs using the `screen-sizes` mixin:
+```scss
+@include screen-sizes($screen-md: 1200px, $screen-sm: 780px);
+```
+
 ### Reusability
 We would like to make our classes reusable across components when possible.  When creating a new class, make sure to consider if this can be used across current or in development components.  If so, please create the class in the `styles.scss` file.
 
 If, in the future, the `styles.scss` file becomes so large it is difficult to manage, we will break it up into different files.
 ### Test classes
 For unit tests it is easier to locate tags with a specific unit test class that has a prefix `km-`.  These __should not be used for any CSS styling__.  By limiting these to unit test use it allows people working on testing to remove unused `km-` classes knowing that they are not affecting the site in any way.
+
 ### Variables
-Please put variables in the `/src/app/variables.scss`.
+Please put variables in the `/src/app/_variables.scss`.
+
 ## Unit & End-to-end Testing
 ### Classes
 Please use specific test classes to query the HTML elements when testing.  These can be added directly to the HTML template and should have the prefix `km-` to let people working on the SCSS know that this class is for testing only.  By using specific test classes we can ensure consistent testing even as the CSS changes.
+
+## UI Styles
+### Color Usage
+Use Angular Material's color system with these conventions for buttons:
+
+- Default: Primary color (blue) for standard actions
+  - Use `mat-button` or `mat-raised-button color="primary"`
+- Accent color (yellow) for attention-drawing actions
+  - Use `mat-button` or `mat-raised-button color="accent"`
+- Warning color (red) for destructive actions
+  - Use `mat-button` or `mat-raised-button color="warn"`
+- Grey (default with no color attribute) for secondary actions
+  - Use `mat-button` without color attribute
+- Disabled state automatically applies grey
+  - Use [disabled]= "condition"
+
+Common patterns from our components:
+- Dialog submit: `<button [disabled]="!linkForm.valid">`
+- Bulk actions: `<button [disabled]="!selection.selected.length">`
+- Clear filters: `<button [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0">`
+- Step progression: `<button [disabled]="stepNum > 0 && !step.isPreviousTestTaken">`
+
+### Toolbars
+When designing component toolbars, follow these patterns:
+
+- Primary (first) toolbar:
+  - Use filter lists and search inputs directly in the toolbar
+  - White background (default mat-toolbar)
+- Secondary toolbars:
+  - Use kebab menu (three vertical dots) to contain actions on tablet and mobile views
+  - Primary color background with white text (`primary-color` class)
+  - Use white icons and text for buttons (`mat-icon`, `font-size-1` classes)
+
+### Loading Indicators
+For consistent loading states across the application, follow these standards:
+
+- For page-level or component-level loading:
+  - Use simple text indicators with "Loading [resource]..." format
+  - Example: `<span i18n>Loading courses...</span>`
+  - Always include an `*ngIf="isLoading"` condition with an `else` template for loaded content
+
+- For action-based loading (form submissions, data operations):
+  - Use `DialogsLoadingService` to show a loading wheel
+  - Start loading with `dialogsLoadingService.start()`
+  - Stop loading with `dialogsLoadingService.stop()` in both success and error cases
+  - Always use within a `finalize()` operator in RxJS pipes to ensure loading stops
+
+- Loading state variables:
+  - Initialize as `isLoading = true` when data fetching begins
+  - Set to `false` when data loading completes
+
+### Icons
+When using icons in the application, follow these guidelines:
+
+- Use Material icons (`mat-icon`) whenever possible
+- Prefer opaque icons over transparent ones for better visibility
+- Keep icon sizes consistent within similar UI elements
+- Use icon colors that maintain sufficient contrast with the background
+- For custom icons, ensure they match Material Design style guidelines
+
+### Dialog Button Standards
+When creating dialog boxes, follow these button placement rules:
+
+- Primary action buttons (right side):
+  - Submit/OK button should be rightmost
+  - Use mat-raised-button with primary color
+- Secondary action buttons (left side):
+  - Cancel button should be immediately left of primary action
+  - Additional actions (if any) go to left of Cancel
+  - Use mat-button without color
+- Labels:
+  - Use "Cancel" and "Submit" for form dialogs
+  - Use "Close" and "OK" for confirmation dialogs
+
+### Text Capitalization
+For consistency in our UI text, follow these capitalization and punctuation rules:
+
+- Buttons, Headers, and Titles: 
+  - Use Title Case (Capitalize Each Word)
+  - Do not use periods
+  - Example: "Submit Request", "User Profile", "Course Management"
+- Messages and regular content: 
+  - Use Sentence case (Only first letter capitalized)
+  - Include periods at the end of complete sentences
+  - Example: "Your request has been submitted.", "Please enter valid credentials."
+  - Exception: Short status, placeholder, or label text doesn't need periods ("No results found", "Required field")
+
+### Text Truncation
+To maintain clean UI layouts and improve readability, follow these guidelines for truncating text:
+
+- Use `TruncateTextPipe` in templates to truncate text dynamically.
+- Use the `truncateText` utility function in TypeScript for programmatic truncation.
+- Avoid hardcoded or redundant truncation logic.
+
+### Form Fields and Error Messages
+For consistency in forms across the application, follow these standards:
+
+- Form Field Labels:
+  - Use Title Case for field labels
+  - Do not use colons after labels
+- Placeholder Text:
+  - Use Sentence case
+  - Be concise and descriptive
+- Error Messages:
+  - Use Sentence case
+  - End with a period
+  - Be specific about the error
+
+### Form Validation Patterns
+For form validation, refer to these standard validator implementations:
+
+- Built-in validators: Angular's `Validators` class
+- Custom validators: Found in `/src/app/validators/custom-validators.ts`
+  - Common use cases: time, date, password matching, link validation
+- Async validators: Found in `/src/app/validators/validator.service.ts`
+  - Common use cases: unique field checking, password verification

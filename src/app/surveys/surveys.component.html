@@ -90,12 +90,12 @@
                 *ngIf="!teamId && !routeTeamId"
                 [matMenuTriggerFor]="sendMenu"
                 [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
-                i18n><mat-icon>arrow_drop_down</mat-icon> Send
+                i18n><mat-icon>send</mat-icon> Send
               </button>
             </div>
             <mat-menu #sendMenu="matMenu">
-              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User <mat-icon>send</mat-icon></button>
-              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team <mat-icon>send</mat-icon></button>
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team</button>
             </mat-menu>
             <div [matTooltip]="element.teamId && isManagerRoute ? 'This is a team created survey' :
                               element.isArchived ? 'Survey is archived and cannot be recorded' :
@@ -118,6 +118,11 @@
                 i18n><mat-icon>archive</mat-icon> Archive</button>
               </div>
             </ng-container>
+            <div>
+              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
+                <mat-icon>insert_drive_file</mat-icon> Submissions
+              </button>
+            </div>
           </ng-container>
           <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
           <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
@@ -134,7 +139,14 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>No Survey Found</div></td>
+        <td>
+          <div class="view-container" *ngIf="isLoading" i18n>
+            Loading Surveys...
+          </div>
+          <div class="view-container" *ngIf="!isLoading" i18n>
+            No Survey Found
+          </div>
+        </td>
       </tr>
     </mat-table>
     <mat-paginator #paginator

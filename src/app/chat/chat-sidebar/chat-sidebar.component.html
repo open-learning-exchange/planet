@@ -1,5 +1,6 @@
 <mat-drawer-container class="sidebar-drawer" autosize>
-  <mat-drawer #drawer mode="side" [opened]="deviceType !== deviceTypes.MOBILE">
+  <mat-drawer #drawer mode="side" [opened]="deviceType === deviceTypes.DESKTOP || deviceType === deviceTypes.TABLET">
+
     <div class="header-container">
       <div class="header">
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
@@ -66,9 +67,7 @@
               <mat-icon>share</mat-icon>
             </button>
           </ng-template>
-          <ng-template #conversationTitle>
-            {{ (conversation?.title?.length > 19 ? conversation?.title?.slice(0, 19) + '...' : conversation?.title) }}
-          </ng-template>
+          <ng-template #conversationTitle>{{ conversation?.title | truncateText:19 }}</ng-template>
         </li>
       </ul>
     </ng-container>

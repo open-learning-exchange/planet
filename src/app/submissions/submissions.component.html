@@ -5,7 +5,7 @@
     </button>
     <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!isMobile">
+    <ng-container *ngIf="!isMobile && !surveyId">
       <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
       <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
       <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
@@ -14,11 +14,11 @@
       <mat-icon>filter_list</mat-icon>
     </button>
   </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
     <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
     <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
   </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
     <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
   </mat-toolbar-row>
 </mat-toolbar>
@@ -73,7 +73,8 @@
         <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
           <mat-chip-list *ngSwitchCase="'pending'"><mat-chip  class="chip-no-style" i18n>pending</mat-chip></mat-chip-list>
           <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip class="chip-no-style" selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
-          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchCase="'complete'"><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
+          <mat-chip-list *ngSwitchDefault><mat-chip class="chip-no-style" selected color="warn" i18n>incomplete</mat-chip></mat-chip-list>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="grade">
@@ -102,7 +103,7 @@
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status!=='pending' || mode === 'survey'}"></mat-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="submissionAction(row)" [ngClass]="{'cursor-pointer': row.status==='complete' || mode === 'survey'}"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" i18n>No Record Found</div></td>
       </tr>

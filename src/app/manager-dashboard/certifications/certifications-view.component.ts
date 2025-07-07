@@ -8,7 +8,13 @@ import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
 
 @Component({
-  templateUrl: './certifications-view.component.html'
+  templateUrl: './certifications-view.component.html',
+  styles: [ `
+    .placeholder-message {
+      margin-top: 20px;
+      display: block;
+    }
+  ` ]
 })
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 

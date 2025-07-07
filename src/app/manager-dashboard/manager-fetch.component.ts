@@ -22,6 +22,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     .mat-column-date {
       max-width: 150px;
     }
+    .fetch-icon {
+      color: #666;
+    }
   ` ]
 })
 

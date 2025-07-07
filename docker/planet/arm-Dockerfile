@@ -16,7 +16,6 @@ RUN apk add --no-cache \
     gettext
 
 COPY ./docker/planet/default.conf.template /etc/nginx/templates/
-RUN touch /etc/nginx/conf.d/auth.txt
 COPY package.json ./
 COPY ./docker/planet/scripts/ ./
 RUN mkdir -p /usr/share/nginx/html \
