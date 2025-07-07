@@ -5,7 +5,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button *ngIf="isOpenai && resource.mediaType !== 'video'" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+    <button *ngIf="isOpenai && resource?.mediaType !== 'video'" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <span class="toolbar-fill"></span>
@@ -70,7 +70,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window *ngIf="showChat" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }" [conversations]="conversations"></planet-chat-window>
+    <planet-chat-window *ngIf="showChat && resource?.mediaType !== 'video'" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }" [conversations]="conversations"></planet-chat-window>
     <ng-container *ngIf="showChat; else stepViewContent">
       <div class="flex-view">
         <ng-container *ngTemplateOutlet="stepViewContent"></ng-container>
