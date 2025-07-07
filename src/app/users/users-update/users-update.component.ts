@@ -42,6 +42,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
+  attachmentDeleted = false;
+  originalAttachments: any = null;
   isFormInitialized = false;
   private isNavigating = false;
   private subscriptions: Subscription = new Subscription();
@@ -86,6 +88,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.uploadImage = true;
+          this.originalAttachments = { ...data._attachments };
         }
         this.previewSrc = this.currentProfileImg;
         console.log('data: ', data);
@@ -213,6 +216,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.uploadImage = false;
     this.avatarChanged = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
+    this.imageChangedEvent = null;
   }
 
   deleteImageAttachment() {
@@ -227,9 +231,29 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.currentProfileImg = 'assets/image.png';
     this.removeImageFile();
     this.avatarChanged = true;
+    this.attachmentDeleted = true;
     this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
+  resetSelection() {
+    if (this.attachmentDeleted && this.originalAttachments) {
+      this.user._attachments = { ...this.originalAttachments };
+      this.currentImgKey = Object.keys(this.originalAttachments)[0];
+      this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
+      this.uploadImage = true;
+      this.attachmentDeleted = false;
+      this.previewSrc = this.currentProfileImg;
+      this.file = null;
+      this.imageChangedEvent = null;
+    } else {
+      this.previewSrc = this.currentProfileImg;
+      this.file = null;
+      this.uploadImage = this.currentProfileImg !== 'assets/image.png';
+      this.imageChangedEvent = null;
+    }
+    this.avatarChanged = false;
+    this.unsavedChangesService.setHasUnsavedChanges(this.isFormPristine() ? false : true);
+  }
 
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
