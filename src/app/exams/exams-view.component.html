@@ -103,7 +103,7 @@
           mat-raised-button
           color="accent"
           (click)="nextQuestion({ isFinish: true })"
-          [disabled]=" !answer.valid || grade === undefined || grade === null"
+          [disabled]="!answer.valid || grade === undefined || grade === null"
           i18n>
           {examType, select, survey {Finish Survey} exam {Finish Test}}
         </button>
