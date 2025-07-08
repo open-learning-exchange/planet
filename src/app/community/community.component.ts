@@ -44,6 +44,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
+  filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
   councillors: any[] = [];
@@ -60,6 +61,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   isLoading = true;
   activeReplyId: string | null = null;
+  voiceSearch: string = '';
 
   constructor(
     private dialog: MatDialog,
@@ -87,6 +89,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.filteredNews = this.news;
       this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -448,5 +451,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
+  }
+
+  onVoicesSearchChange(searchValue: string): void {
+    if (!searchValue) {
+      this.filteredNews = this.news;
+    } else {
+      const lower = searchValue.toLowerCase();
+      this.filteredNews = this.news.filter(item => item.doc.message?.toLowerCase().includes(lower));
+    }
   }
 }

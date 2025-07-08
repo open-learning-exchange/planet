@@ -28,14 +28,6 @@
       margin-right: 0.25rem;
     }
   }
-  .new-voice-button{
-    background-color: $accent;
-    color: black;
-
-    &:hover{
-      background-color: darken($accent, 10%);
-    }
-  }
 }
 
 planet-calendar {
@@ -71,4 +63,27 @@ mat-tab-group, mat-tab {
 
 .toggle-button {
   margin-bottom: 1rem;
+}
+
+.responsive-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: auto;
+  height: auto;
+  padding: 20px;
+  margin-bottom: 1rem;
+  border-radius: 7.5px;
+  opacity: 0.9;
+
+  > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    mat-form-field {
+      flex: 1 1 auto;
+      margin-right: 16px;
+    }
+  }
 }
