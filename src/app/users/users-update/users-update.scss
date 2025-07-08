@@ -63,7 +63,7 @@
 
 .profile-image-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   grid-template-areas: 'image-lt image-rt';
   grid-column-gap: 1rem;
   padding: 0 1rem;
@@ -71,7 +71,6 @@
 
 .profile-image-update {
   grid-area: image-lt;
-  margin-left: unset;
 }
 
 .profile-image-upload {
@@ -79,7 +78,6 @@
 }
 
 @media (max-width: $screen-sm) {
-
   .profile-image-section{
     display: flex;
     flex-direction: column;
