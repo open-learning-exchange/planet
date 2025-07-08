@@ -44,7 +44,7 @@
           <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
             { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
           </button>
-          <button (click)="confirmDeleteDescription()" mat-stroked-button>
+          <button *planetAuthorizedRoles="''" (click)="confirmDeleteDescription()" mat-stroked-button>
             <span i18n>Remove Description</span>
           </button>
           <ng-container *ngIf="!planetCode">
