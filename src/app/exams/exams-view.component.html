@@ -90,7 +90,7 @@
       </div>
       <div class="v-align-center action-buttons">
         <button
-          *ngIf="mode !== 'view'"
+          *ngIf="mode !== 'view'&& !(mode !== 'grade' && questionNum === maxQuestions)"
           mat-raised-button
           color="primary"
           (click)="nextQuestion()"
@@ -99,11 +99,11 @@
           <ng-container i18n>Submit Answer</ng-container>
         </button>
         <button
-          *ngIf="mode === 'take'"
+          *ngIf="mode === 'take'&& isComplete "
           mat-raised-button
           color="accent"
           (click)="nextQuestion({ isFinish: true })"
-          [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
+          [disabled]=" !answer.valid || grade === undefined || grade === null"
           i18n>
           {examType, select, survey {Finish Survey} exam {Finish Test}}
         </button>
