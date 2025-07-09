@@ -3,26 +3,41 @@
 Ensure you have set the chatapi configs via the manager -> AI Configurations or in the `configurations` database in couchdb:
 
 For model choices view:
-  Openai: https://platform.openai.com/docs/models
-  Perplexity: https://docs.perplexity.ai/guides/model-cards
-  deepseek: https://api-docs.deepseek.com/quick_start/pricing
-  Gemini: https://deepmind.google/technologies/gemini/
-
-
-Note: This applies for both production and development environments.
+  - Openai: https://platform.openai.com/docs/models
+  - Perplexity: https://docs.perplexity.ai/models/model-cards
+  - Deepseek: https://api-docs.deepseek.com/quick_start/pricing
+  - Gemini: https://deepmind.google/technologies/gemini/
 
 ## Development Notes
-For development environment add a .env file in the `chatapi` directory
-
-Add the following configs in the .env file:
+Run `cd chatapi` and add a .env file in the `chatapi` directory with the following configs in the .env file(ensure the username & password match your admin credentials):
   ```
     SERVE_PORT=5000
     COUCHDB_HOST=http://localhost:2200
-    COUCHDB_USER=username
-    COUCHDB_PASS=password
+    COUCHDB_USER=planet
+    COUCHDB_PASS=planet
   ```
 
-In the production environment these configs are set in the `planet.yml` file.
+By default(linux), the chatapi uses 5000 as the serve port. For *windows* and *macOS* users we recommend using `5400` as the serve port to avoid conflicts with other services.
+
+While developing or testing, if you are using a different port number or 5400(windows & macOs users), use `npm run dev` instead of `ng s` and ensure that the `CHAT_PORT` in the root directory `.env` file is the same as the `SERVE_PORT` in the `/chatapi/.env` file.
+
+To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions. To start the chatapi:
+```
+  npm install
+  nvm use 18
+  npm run dev
+```
+
+**Note:** The dev(npm) chatapi by default runs on port 5000(linux) similar to the production(docker) environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`
+
+### Fatal error in chatapi using an arm32 device
+
+If you are using an 32bit arm device and encounter a fatal error while running the chatapi container run the following:
+```
+  wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1~bpo10+1_armhf.deb
+
+  dpkg -i libseccomp2_2.5.1-1~bpo10+1_armhf.deb
+```
 
 ## API Overview
 
