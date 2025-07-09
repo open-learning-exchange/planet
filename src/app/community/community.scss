@@ -92,6 +92,7 @@ mat-tab-group, mat-tab {
   }
   .new-voice-btn {
     flex: 0 0 auto;
+    align-self: center;
   }
 }
 
@@ -102,12 +103,12 @@ mat-tab-group, mat-tab {
 
 @media only screen and (max-width: $screen-sm) {
   .responsive-toolbar {
-    align-items: stretch;
     width: 100%
   }
 
   .toolbar-row {
     display: flex;
+    align-items: stretch;
     flex-direction: column;
   }
 }

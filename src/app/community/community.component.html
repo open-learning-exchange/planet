@@ -28,8 +28,8 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <ng-container *planetAuthorizedRoles="'learner'" class="new-voice-btn">
-                <button mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
+              <ng-container *planetAuthorizedRoles="'learner'">
+                <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
               </ng-container>
             </div>
           </mat-toolbar>
