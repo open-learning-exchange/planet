@@ -54,7 +54,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
     this.updateMyLifeItemsFormat();
   }
 
@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.setBadgesCourses(courses, certifications);
     });
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
     this.initMyLifeItems();
   }
 
@@ -233,9 +233,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
       data: { courseId: course._id },
-      minWidth: '600px',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
+      minWidth: '50vw',
+      maxWidth: '80vw',
+      maxHeight: '80vh',
       autoFocus: false
     });
   }
