@@ -6208,7 +6208,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/users/users-table.component.html</context>
           <context context-type="linenumber">121,122</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_top<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label *ngIf=&quot;!isMobile&quot;&gt; "/> Promocionar<x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/></target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_top<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label *ngIf=&quot;!isMobile&quot;&gt; "/> Promover<x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/></target>
       </trans-unit>
       <trans-unit id="ba1b06e46b5c26020c13fd7d28bd9a93fcd99a0c" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>vertical_align_bottom<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/><x id="START_TAG_LABEL" ctype="x-label" equiv-text="&lt;label *ngIf=&quot;!isMobile&quot;&gt; "/> Demote <x id="CLOSE_TAG_LABEL" ctype="x-label" equiv-text="&lt;/label&gt;"/></source>
