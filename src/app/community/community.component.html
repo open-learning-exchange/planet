@@ -4,13 +4,31 @@
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
           <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
-            <h1 i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Voices Board</h1>
-            <div>
-              <mat-form-field>
+            <h1 i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Board</h1>
+            <div class="toolbar-row">
+              <mat-form-field class="search-form-field">
                 <mat-icon class="small-icon" matPrefix>search</mat-icon>
                 <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="onVoicesSearchChange($event)">
               </mat-form-field>
-              <ng-container *planetAuthorizedRoles="'learner'">
+              <mat-form-field class="label-filter-field">
+                <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)" i18n-placeholder placeholder="Filter by label">
+                  <mat-select-trigger>
+                    <ng-container *ngIf="selectedLabel">
+                      <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
+                      {{ selectedLabel | titlecase }}
+                    </ng-container>
+                    <ng-container *ngIf="!selectedLabel">
+                      All
+                    </ng-container>
+                  </mat-select-trigger>
+                  <mat-option value="">All</mat-option>
+                  <mat-option *ngFor="let label of availableLabels" [value]="label">
+                    <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
+                    {{ label | titlecase }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *planetAuthorizedRoles="'learner'" class="new-voice-btn">
                 <button mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
               </ng-container>
             </div>
