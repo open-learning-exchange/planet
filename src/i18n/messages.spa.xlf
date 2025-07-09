@@ -412,7 +412,7 @@
           <context context-type="sourcefile">src/app/users/users-table.component.html</context>
           <context context-type="linenumber">132</context>
         </context-group>
-        <target state="final">Ver perfil</target>
+        <target state="final"> Ver perfil</target>
       </trans-unit>
       <trans-unit id="d3781ad331fdd0bc9055c45a41664ac467de63af" datatype="html" approved="yes">
         <source>Edit Profile</source>
@@ -6188,7 +6188,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/users/users-table.component.html</context>
           <context context-type="linenumber">113</context>
         </context-group>
-        <target state="final">Desactivar</target>
+        <target state="final"> Desactivar</target>
       </trans-unit>
       <trans-unit id="daa52b3eb35d393bd15ae121c96b502ef4011163" datatype="html" approved="yes">
         <source> Delete </source>
