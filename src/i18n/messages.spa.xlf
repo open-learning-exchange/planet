@@ -14878,6 +14878,38 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
         </context-group>
         <target state="final">Ningún miembro ha sido certificado.</target>
       </trans-unit>
+      <trans-unit id="3661918091547424244" datatype="html">
+        <source>Help Wanted</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/label.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <target state="final">Necesito Ayuda</target>
+      </trans-unit>
+      <trans-unit id="5980912879753983465" datatype="html">
+        <source>Offer</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/label.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <target state="final">Oferta</target>
+      </trans-unit>
+      <trans-unit id="5539992569875812885" datatype="html">
+        <source>Request for Advice</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/label.component.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <target state="final">Solicitando Consejo</target>
+      </trans-unit>
+      <trans-unit id="9117503218610363748" datatype="html">
+        <source>Shared Chat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/label.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <target state="final">Chat Compartido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
