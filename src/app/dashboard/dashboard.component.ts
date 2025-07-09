@@ -232,7 +232,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: course._id },
+      data: { courseId: course._id, returnState: { route: 'myDashboard' } },
       minWidth: '50vw',
       maxWidth: '80vw',
       maxHeight: '80vh',
