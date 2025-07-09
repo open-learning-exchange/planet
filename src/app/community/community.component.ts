@@ -61,9 +61,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   isLoading = true;
   activeReplyId: string | null = null;
-  voiceSearch: string = '';
+  voiceSearch = '';
   availableLabels: string[] = [];
-  selectedLabel: string = '';
+  selectedLabel = '';
 
   constructor(
     private dialog: MatDialog,
@@ -470,16 +470,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     let filtered = this.news;
     if (this.selectedLabel) {
       filtered = filtered.filter(item => {
-        if ((item.doc.labels || []).includes(this.selectedLabel)) {
-          return true;
-        }
-        if ((item.doc.viewIn || []).some(view => view.name === this.selectedLabel)) {
-          return true;
-        }
-        if (this.selectedLabel === 'shared chat' && item.doc.chat === true) {
-          return true;
-        }
-        return false;
+        return (item.doc.labels || []).includes(this.selectedLabel)
+          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
+          || (this.selectedLabel === 'shared chat' && item.doc.chat === true);
       });
     }
     if (this.voiceSearch) {
@@ -507,12 +500,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getLabelIcon(label: string): string {
-    if (label === 'shared chat') {
-      return 'question_answer';
-    }
-    if (this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label))) {
-      return 'groups';
-    }
-    return 'label_important';
+    return label === 'shared chat' ? 'question_answer'
+      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+      : 'label_important';
   }
 }
