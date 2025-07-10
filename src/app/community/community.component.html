@@ -66,15 +66,14 @@
           </ng-container>
           <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
-          <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
-            { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
-          </button>
-          <button (click)="confirmDeleteDescription()" mat-stroked-button>
-            <span i18n>Remove Description</span>
-          </button>
-          <ng-container *ngIf="!planetCode">
-            <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
-            </div>
+          <ng-container *planetAuthorizedRoles="''">
+            <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+              { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
+            </button>
+            <button (click)="confirmDeleteDescription()" mat-stroked-button>
+              <span i18n>Remove Description</span>
+            </button>
+            <div *ngIf="!planetCode" class="action-buttons sticky-button"></div>
           </ng-container>
           <ng-container>
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
@@ -89,11 +88,13 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-          <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-            <span *ngIf="!deleteMode" i18n>Remove Links</span>
-            <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-          </button>
+          <ng-container *planetAuthorizedRoles="''">
+            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+            <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+              <span *ngIf="!deleteMode" i18n>Remove Links</span>
+              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+            </button>
+          </ng-container>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
           <planet-community-list></planet-community-list>

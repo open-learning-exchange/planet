@@ -190,7 +190,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goBack() {
     const returnState = history.state?.returnState;
     if (returnState) {
-      this.router.navigate([ `${returnState.mode}s/view/${returnState.teamId}` ]);
+      this.router.navigate([ `${returnState.route}` ]);
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
