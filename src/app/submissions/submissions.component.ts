@@ -130,7 +130,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   submissionQuery() {
     if (this.surveyId) {
       this.filter.type = 'survey';
-      return findDocuments({ parentId: this.surveyId, type: 'survey', status: { '$ne': 'pending' } });
+      return findDocuments({ parentId: this.surveyId, type: 'survey', status: 'complete' });
     }
     switch (this.mode) {
       case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
