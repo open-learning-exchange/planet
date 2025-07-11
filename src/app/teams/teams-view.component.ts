@@ -26,6 +26,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { teamLocalizedInfoPrompt } from '../shared/ai-prompts.constants';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -551,6 +552,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       maxWidth: '90vw',
       maxHeight: '90vh'
     });
+  }
+
+  get localizedTeamInfo() {
+    const type = this.team.type;
+    const formattedFinances = this.finances.map(finance =>
+      `${finance.type}: ${finance.description} (${finance.amount} on ${new Date(finance.date).toLocaleDateString()})`
+    ).join(', ');
+    const formattedReports = this.teamsService.exportReportsData(this.reports).map(report => JSON.stringify(report)).join(', ');
+
+    return teamLocalizedInfoPrompt(this.team, type, formattedFinances, formattedReports);
   }
 
 }

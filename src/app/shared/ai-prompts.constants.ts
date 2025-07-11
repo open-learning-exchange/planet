@@ -37,3 +37,9 @@ export const surveyAnalysisPrompt = (examType, examName, examDescription, payloa
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.`;
 
 export const coursesStepPrompt = (stepTitle, stepDescription) => $localize`The following information is a course step from the "${stepTitle}" course with a description "${stepDescription}". Be sure to assist the learner in the best way you can. `;
+
+export const teamLocalizedInfoPrompt = (team, type, finances, reports) => $localize`The following information is about the ${type} "${team?.name}" with a description "${team?.description}".
+  ${team.services?.trim() ? 'The enterprise has the following services ' + team.services + '. ' : ''}
+  ${team.rules?.trim() ? 'The enterprise has the following rules ' + team.services + '. ' : ''}
+  ${type === 'enterprise' ? 'and has the following financial transactions ' + finances + ' and financial reports ' + reports + '. ' : ''}
+  Be sure to assist the team member in the best way`;
