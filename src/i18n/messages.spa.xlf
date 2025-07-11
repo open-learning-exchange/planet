@@ -5382,7 +5382,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/surveys/surveys.component.html</context>
           <context context-type="linenumber">93,94</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>enviar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar </target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>send<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Enviar </target>
       </trans-unit>
       <trans-unit id="1365267edc446b469a03c1d394cb608772b45061" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>archive<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt; "/> Archive</source>
@@ -9020,7 +9020,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="final">Guardar &amp; Devolución</target>
+        <target state="final">Guardar &amp; Volver</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html" approved="yes">
         <source>Add Question</source>
@@ -12650,7 +12650,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="final">No se encontraron datos</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Ejecutar sincronización</target>
       </trans-unit>
       <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
@@ -12658,7 +12658,7 @@ Descripción de <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit
           <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>actualizar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
       </trans-unit>
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
         <source>Error</source>
