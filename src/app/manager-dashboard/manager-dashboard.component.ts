@@ -51,6 +51,36 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     mat-slide-toggle {
       padding: 3px;
     }
+    .mobile-activity-stats {
+  margin-top: 16px;
+}
+
+.mobile-stat-row {
+  display: flex;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.mobile-stat-item {
+  flex: 1;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.mobile-stat-title {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.mobile-stat-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
   ` ]
 })
 
