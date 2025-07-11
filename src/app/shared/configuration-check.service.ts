@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CouchService } from './couchdb.service';
 import { of } from 'rxjs';
-import { tap, switchMap, catchError } from 'rxjs/operators';
+import { tap, switchMap, catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class ConfigurationCheckService {
   checkConfiguration() {
     // If not e2e tests, route to create user if there is no admin
     if (!environment.test) {
-      this.checkAdminExistence().pipe(
+      return this.checkAdminExistence().pipe(
         switchMap(noAdmin => {
           // false means there is admin
           if (noAdmin) {
@@ -35,9 +35,14 @@ export class ConfigurationCheckService {
             return of(false);
           }
           return this.couchService.get('', { domain: data[0].parentDomain });
+        }),
+        map(data => {
+          this.online = (data) ? 'on' : 'off';
+          return this.online;
         })
-      ).subscribe(data => { this.online = (data) ? 'on' : ''; });
+      );
     }
+    return of(undefined);
   }
 
   checkAdminExistence() {
