@@ -33,11 +33,11 @@ export class DeviceInfoService {
     const mobileWidth = breakpoints.mobile || 780;
     const tabletWidth = breakpoints.tablet || 1000;
 
-    if (this.screenWidth <= smallMobileWidth) {
+    if (this.screenWidth < smallMobileWidth) {
       return DeviceType.SMALL_MOBILE;
-    } else if (this.screenWidth <= mobileWidth) {
+    } else if (this.screenWidth < mobileWidth) {
       return DeviceType.MOBILE;
-    } else if (this.screenWidth <= tabletWidth) {
+    } else if (this.screenWidth < tabletWidth) {
       return DeviceType.TABLET;
     } else {
       return DeviceType.DESKTOP;
