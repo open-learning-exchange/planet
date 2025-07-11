@@ -459,4 +459,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  viewSurveySubmissions(survey: any): void {
+    this.router.navigate([ survey._id, { type: 'survey' } ], { relativeTo: this.route });
+  }
+
 }
