@@ -125,8 +125,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
     } else {
-      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
-        || this.item.doc.images.length > 0;
+      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
+      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
     }
   }
 
