@@ -1,11 +1,16 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, Inject, LOCALE_ID } from '@angular/core';
 
 @Pipe({
   name: 'timeAgo', pure: true
 })
 export class TimeAgoPipe implements PipeTransform {
+  // Use the current app locale instead of hardcoded 'en'
   // cast Intl to any so TS stops complaining -> cleaner with ts ^4.1.2
-  private rtf = new ( (Intl as any).RelativeTimeFormat )('en', { numeric: 'auto' });
+  private rtf: any;
+
+  constructor(@Inject(LOCALE_ID) private locale: string) {
+    this.rtf = new ((Intl as any).RelativeTimeFormat)(this.locale, { numeric: 'auto' });
+  }
 
   transform(value: string | number | Date): string {
     if (!value) { return ''; }
@@ -27,6 +32,6 @@ export class TimeAgoPipe implements PipeTransform {
         return this.rtf.format(n, unit);
       }
     }
-    return 'just now';
+    return $localize`just now`;
   }
 }

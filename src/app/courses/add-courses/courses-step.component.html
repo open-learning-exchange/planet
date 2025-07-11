@@ -31,9 +31,9 @@
     </ng-container>
   </div>
   <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()" i18n>{{activeStep?.exam ? 'Update' : 'Add' }} Test</a>
+    <a mat-raised-button color="primary" (click)="addExam()">{{ examButtonLabel }}</a>
     <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
-    <a mat-raised-button color="primary" (click)="addExam('survey')" i18n>{{ activeStep?.survey ? 'Update' : 'Add' }} Survey</a>
+    <a mat-raised-button color="primary" (click)="addExam('survey')">{{ surveyButtonLabel }}</a>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
   </div>
 </planet-step-list>

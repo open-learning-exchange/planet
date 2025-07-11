@@ -182,6 +182,11 @@
     label {
       cursor: pointer;
       margin: 0 24px;
+      display: inline-block;
+      max-width: 12ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

@@ -2,12 +2,12 @@
   <button mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span>AI API Configurations</span>
+  <span i18n>AI API Configurations</span>
 </mat-toolbar>
 
 <form class="container" [formGroup]="configForm">
   <mat-card class="card">
-    <mat-card-title>API Keys</mat-card-title>
+    <mat-card-title i18n>API Keys</mat-card-title>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
         <mat-list-item *ngFor="let key of objectKeys(configuration.keys)">
@@ -19,6 +19,7 @@
                 [type]="hideKey[key] ? 'password' : 'text'"
                 [formControlName]="'keys_' + key"
                 placeholder="Enter API key"
+                i18n-placeholder
               />
               <button mat-icon-button matSuffix (click)="toggleHideKey(key)">
                 <mat-icon>{{ hideKey[key] ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -35,14 +36,14 @@
 
 
   <mat-card class="card">
-    <mat-card-title>Models</mat-card-title>
+    <mat-card-title i18n>Models</mat-card-title>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
         <mat-list-item *ngFor="let model of objectKeys(configuration.models)">
           <div class="list-item-content">
             <span>{{ model | titlecase }}</span>
             <mat-form-field>
-              <input matInput [formControlName]="'models_' + model" placeholder="Enter model" />
+              <input matInput [formControlName]="'models_' + model" placeholder="Enter model" i18n-placeholder />
             </mat-form-field>
           </div>
         </mat-list-item>
@@ -51,30 +52,30 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title>Assistant Configuration</mat-card-title>
+    <mat-card-title i18n>Assistant Configuration</mat-card-title>
     <mat-card-content *ngIf="configuration.assistant">
       <mat-list>
         <mat-list-item>
           <div class="list-item-content">
-            <span>Name:</span>
+            <span i18n>Name:</span>
             <mat-form-field>
-              <input matInput formControlName="assistantName" placeholder="Assistant name" />
+              <input matInput formControlName="assistantName" placeholder="Assistant name" i18n-placeholder/>
             </mat-form-field>
           </div>
         </mat-list-item>
       </mat-list>
 
       <div class="list-item-content instructions">
-        <span>Instructions:</span>
+        <span i18n>Instructions:</span>
         <mat-form-field>
-          <textarea matInput formControlName="assistantInstructions" placeholder="Assistant instructions"></textarea>
+          <textarea matInput formControlName="assistantInstructions" placeholder="Assistant instructions" i18n-placeholder></textarea>
         </mat-form-field>
       </div>
     </mat-card-content>
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title>Chat Configurations</mat-card-title>
+    <mat-card-title i18n>Chat Configurations</mat-card-title>
     <mat-card-content>
       <mat-list>
         <mat-list-item>
@@ -92,5 +93,5 @@
   </mat-card>
 </form>
 <div class="update-button-container">
-  <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()">Update Configuration</button>
+  <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="saveConfig()" i18n>Update Configuration</button>
 </div>

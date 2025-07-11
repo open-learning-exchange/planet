@@ -2,91 +2,95 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'planet-label',
-  template: `
-    <span i18n>{label, select,
-      temperature {Temperature (°C)}
-      pulse {Pulse (bpm)}
-      bp {Blood Pressure}
-      height {Height (cm)}
-      weight {Weight (kg)}
-      vision {Vision}
-      hearing {Hearing}
-      help {Help Wanted}
-      offer {Offer}
-      advice {Request for Advice}
-      shared chat {Shared Chat}
-      Acute Otitis Media {Acute Otitis Media}
-      Acute Respiratory Infection {Acute Respiratory Infection}
-      Amebiasis {Amebiasis}
-      Brucellosis {Brucellosis}
-      Cancer {Cancer}
-      Cardiovascular disorders {Cardiovascular disorders}
-      Chagas Disease {Chagas Disease}
-      Chancroid {Chancroid}
-      Chikungunya {Chikungunya}
-      Chlamydia {Chlamydia}
-      Chronic Kidney Disease {Chronic Kidney Disease}
-      Cirrhosis of the liver {Cirrhosis of the liver}
-      Conjunctivitis {Conjunctivitis}
-      COVID-19 {COVID-19}
-      Cryptosporidiosis {Cryptosporidiosis}
-      Dental Caries {Dental Caries}
-      Dengue {Dengue}
-      Dengue Hemorrhagic Fever {Dengue Hemorrhagic Fever}
-      Diabetes {Diabetes}
-      Diarrhoea diseases {Diarrhoea diseases}
-      Ebola {Ebola}
-      Emphysema {Emphysema}
-      Epilepsy {Epilepsy}
-      FGM {FGM}
-      Fungal Infection {Fungal Infections}
-      Giardiasis {Giardiasis}
-      Gonorrhea {Gonorrhea}
-      Heatstroke {Heatstroke}
-      Hepatitis A {Hepatitis A}
-      Hepatitis B {Hepatitis B}
-      Hepatitis C {Hepatitis C}
-      Herpes Simplex Virus{Herpes Simplex Virus}
-      HIV/AIDS {HIV/AIDS}
-      Human Papillomavirus{Human Papillomavirus}
-      Hypertension {Hypertension}
-      Iodine Deficiency {Iodine Deficiency}
-      Influenza {Influenza}
-      Iron-Deficiency Anemia {Iron-Deficiency Anemia}
-      Ischaemic heart disease {Ischaemic heart disease}
-      Leishmaniasis {Leishmaniasis}
-      Leptospirosis {Leptospirosis}
-      Low Birth Weight {Low Birth Weight}
-      Lymphogranuloma Venereum {Lymphogranuloma Venereum}
-      Malaria {Malaria}
-      Malnutrition {Malnutrition}
-      Maternal Hemorrhage {Maternal Hemorrhage}
-      Measles {Measles}
-      Meningitis {Meningitis}
-      Mycoplasma genitalium {Mycoplasma genitalium}
-      Neonatal sepsis and infections {Neonatal sepsis and infections}
-      Obesity {Obesity}
-      Preeclampsia/Eclampsia {Preeclampsia/Eclampsia}
-      Preterm Birth Complications {Preterm Birth Complications}
-      Pneumonia {Pneumonia}
-      Rabies {Rabies}
-      Rotavirus {Rotavirus}
-      Scabies {Scabies}
-      Schistosomiasis {Schistosomiasis}
-      Soil-Transmitted Helminths {Soil-Transmitted Helminths}
-      Stroke {Stroke}
-      Syphilis {Syphilis}
-      Trauma {Trauma}
-      Trichomoniasis {Trichomoniasis}
-      Tuberculosis {Tuberculosis}
-      Typhoid Fever {Typhoid Fever}
-      Vitamin A Deficiency {Vitamin A Deficiency}
-      Zika {Zika}
-    }</span>
-  `
+  template: `<span>{{getTranslatedLabel()}}</span>`
 })
 export class LabelComponent {
 
   @Input() label: string;
+
+  private labelTranslations: { [key: string]: string } = {
+    'temperature': $localize`Temperature (°C)`,
+    'pulse': $localize`Pulse (bpm)`,
+    'bp': $localize`Blood Pressure`,
+    'height': $localize`Height (cm)`,
+    'weight': $localize`Weight (kg)`,
+    'vision': $localize`Vision`,
+    'hearing': $localize`Hearing`,
+    'help': $localize`Help Wanted`,
+    'offer': $localize`Offer`,
+    'advice': $localize`Request for Advice`,
+    'shared chat': $localize`Shared Chat`,
+    'Acute Otitis Media': $localize`Acute Otitis Media`,
+    'Acute Respiratory Infection': $localize`Acute Respiratory Infection`,
+    'Amebiasis': $localize`Amebiasis`,
+    'Brucellosis': $localize`Brucellosis`,
+    'Cancer': $localize`Cancer`,
+    'Cardiovascular disorders': $localize`Cardiovascular disorders`,
+    'Chagas Disease': $localize`Chagas Disease`,
+    'Chancroid': $localize`Chancroid`,
+    'Chikungunya': $localize`Chikungunya`,
+    'Chlamydia': $localize`Chlamydia`,
+    'Chronic Kidney Disease': $localize`Chronic Kidney Disease`,
+    'Cirrhosis of the liver': $localize`Cirrhosis of the liver`,
+    'Conjunctivitis': $localize`Conjunctivitis`,
+    'COVID-19': $localize`COVID-19`,
+    'Cryptosporidiosis': $localize`Cryptosporidiosis`,
+    'Dental Caries': $localize`Dental Caries`,
+    'Dengue': $localize`Dengue`,
+    'Dengue Hemorrhagic Fever': $localize`Dengue Hemorrhagic Fever`,
+    'Diabetes': $localize`Diabetes`,
+    'Diarrhoea diseases': $localize`Diarrhoea diseases`,
+    'Ebola': $localize`Ebola`,
+    'Emphysema': $localize`Emphysema`,
+    'Epilepsy': $localize`Epilepsy`,
+    'FGM': $localize`FGM`,
+    'Fungal Infection': $localize`Fungal Infections`,
+    'Giardiasis': $localize`Giardiasis`,
+    'Gonorrhea': $localize`Gonorrhea`,
+    'Heatstroke': $localize`Heatstroke`,
+    'Hepatitis A': $localize`Hepatitis A`,
+    'Hepatitis B': $localize`Hepatitis B`,
+    'Hepatitis C': $localize`Hepatitis C`,
+    'Herpes Simplex Virus': $localize`Herpes Simplex Virus`,
+    'HIV/AIDS': $localize`HIV/AIDS`,
+    'Human Papillomavirus': $localize`Human Papillomavirus`,
+    'Hypertension': $localize`Hypertension`,
+    'Iodine Deficiency': $localize`Iodine Deficiency`,
+    'Influenza': $localize`Influenza`,
+    'Iron-Deficiency Anemia': $localize`Iron-Deficiency Anemia`,
+    'Ischaemic heart disease': $localize`Ischaemic heart disease`,
+    'Leishmaniasis': $localize`Leishmaniasis`,
+    'Leptospirosis': $localize`Leptospirosis`,
+    'Low Birth Weight': $localize`Low Birth Weight`,
+    'Lymphogranuloma Venereum': $localize`Lymphogranuloma Venereum`,
+    'Malaria': $localize`Malaria`,
+    'Malnutrition': $localize`Malnutrition`,
+    'Maternal Hemorrhage': $localize`Maternal Hemorrhage`,
+    'Measles': $localize`Measles`,
+    'Meningitis': $localize`Meningitis`,
+    'Mycoplasma genitalium': $localize`Mycoplasma genitalium`,
+    'Neonatal sepsis and infections': $localize`Neonatal sepsis and infections`,
+    'Obesity': $localize`Obesity`,
+    'Preeclampsia/Eclampsia': $localize`Preeclampsia/Eclampsia`,
+    'Preterm Birth Complications': $localize`Preterm Birth Complications`,
+    'Pneumonia': $localize`Pneumonia`,
+    'Rabies': $localize`Rabies`,
+    'Rotavirus': $localize`Rotavirus`,
+    'Scabies': $localize`Scabies`,
+    'Schistosomiasis': $localize`Schistosomiasis`,
+    'Soil-Transmitted Helminths': $localize`Soil-Transmitted Helminths`,
+    'Stroke': $localize`Stroke`,
+    'Syphilis': $localize`Syphilis`,
+    'Trauma': $localize`Trauma`,
+    'Trichomoniasis': $localize`Trichomoniasis`,
+    'Tuberculosis': $localize`Tuberculosis`,
+    'Typhoid Fever': $localize`Typhoid Fever`,
+    'Vitamin A Deficiency': $localize`Vitamin A Deficiency`,
+    'Zika': $localize`Zika`
+  };
+
+  getTranslatedLabel(): string {
+    return this.labelTranslations[this.label] || this.label;
+  }
 
 }

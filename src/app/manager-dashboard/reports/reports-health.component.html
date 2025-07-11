@@ -8,7 +8,7 @@
   <h1 class="mat-title" i18n>Diagnoses</h1>
   <div>
     <span *ngFor="let condition of conditions">
-      <planet-label i18n-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
+      <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
     </span>
   </div>
   <h1 class="mat-title" i18n>Diagnosis Trend</h1>
@@ -16,7 +16,9 @@
     <span i18n>Select diagnosis to view trend:</span>
     <mat-form-field>
       <mat-select mat-select [value]="selectedCondition" (selectionChange)="onSelectedConditionChange($event.value)">
-       <mat-option *ngFor="let condition of conditions" value={{condition}}>{{condition}}</mat-option>
+       <mat-option *ngFor="let condition of conditions" [value]="condition">
+         <planet-label [label]="condition"></planet-label>
+       </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
