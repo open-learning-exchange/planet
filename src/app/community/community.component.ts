@@ -65,6 +65,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
 
+  get leadersTabLabel(): string {
+    return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -454,13 +458,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
-  }
-
-  get leadersTabLabel(): string {
-    const config = this.configuration || this.stateService.configuration || {};
-    const planetType = config.planetType;
-
-    return planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
   onLabelFilterChange(label: string): void {

@@ -45,9 +45,7 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab
-          [label]="leadersTabLabel"
-          *ngIf="isLoggedIn">
+        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
