@@ -2,21 +2,49 @@
 
 :host {
   .view-container {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    grid-template-rows: auto 42px;
-    grid-column-gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 10px;
+    min-height: 70vh;
+    
     > * {
-      overflow-y: auto;
+      overflow-y: visible;
+    }
+  }
+
+  .course-details-panel {
+    margin-bottom: 1rem;
+    flex: 0 0 auto;
+    
+    &:not(.mat-expanded) {
+      overflow: hidden;
+      
+      ::ng-deep .mat-expansion-panel-content {
+        display: none;
+      }
+    }
+    
+    ::ng-deep .mat-expansion-panel-body {
+      padding: 0 24px 16px;
+    }
+    
+    ::ng-deep .mat-expansion-panel-header {
+      height: 64px;
+      padding: 0 24px;
+      overflow: hidden;
     }
   }
 
   .steps-container {
-    grid-row: span 2;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    overflow-y: visible;
   }
 
   .actions-container {
-    align-self: center;
+    align-self: flex-start;
+    margin-top: auto;
   }
 
   .form-container {
@@ -35,7 +63,7 @@
     .view-container {
       grid-template-columns: 1fr;
       grid-row-gap: 2rem;
-      grid-template-rows: 1fr;
+      grid-template-rows: auto;
       grid-template-areas:
       'form-area form-area'
       'steps-area steps-area'
