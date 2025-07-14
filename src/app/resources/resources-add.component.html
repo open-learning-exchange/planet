@@ -3,7 +3,7 @@
   <span *ngIf="pageType" i18n>{{ pageType }} Resource</span>
 </mat-toolbar>
 
-<div [ngClass]= "'space-contain'">
+<div [ngClass]= "{'space-contain':!isDialog}">
   <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</mat-toolbar>
   <div class="view-container view-full-height">
     <div>
