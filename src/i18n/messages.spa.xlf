@@ -4645,7 +4645,7 @@
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
-        <target state="translated"><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} "/> Tablero</target>
+        <target state="translated">Tablón de la <x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} "/></target>
       </trans-unit>
       <trans-unit id="5ff640324f4a4d67cb4668dd08b54b94c974400c" datatype="html">
         <source>Search voice</source>
@@ -10038,7 +10038,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="final">Guardar &amp; Devolución</target>
+        <target state="final">Guardar &amp; volver</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html" approved="yes">
         <source>Add Question</source>
