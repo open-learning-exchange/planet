@@ -288,7 +288,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   get additionalFieldsButtonText(): string {
-    return this.showAdditionalFields 
+    return this.showAdditionalFields
       ? $localize`Hide Additional Fields`
       : $localize`Show Additional Fields`;
   }
