@@ -6864,16 +6864,6 @@
         </context-group>
         <target state="final"> Activar características beta </target>
       </trans-unit>
-      <trans-unit id="b6f1e1297316e0fcd84da81c8105400f5dca88ea" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{ showAdditionalFields ? &apos;Hide Additional Fields&apos; : &apos;Show Additional Fields&apos; }}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">117</context>
-        </context-group>
-        <target state="translated"><x id="INTERPOLATION" equiv-text="{{ showAdditionalFields ? 'Ocultar Campos Adicionales' : 'Campos Adicionales' }}"/></target>
-      </trans-unit>
       <trans-unit id="2e6be334a2152f179a557167f98ce4459ff9a2f9" datatype="html" approved="yes">
         <source>Age</source>
         <context-group purpose="location">
@@ -15287,6 +15277,22 @@
           <context context-type="linenumber">23</context>
         </context-group>
         <target state="final">Ningún miembro ha sido certificado.</target>
+      </trans-unit>
+      <trans-unit id="3980587235644320853" datatype="html">
+        <source>Hide Additional Fields</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">292</context>
+        </context-group>
+        <target state="final">Ocultar Campos Adicionales</target>
+      </trans-unit>
+      <trans-unit id="7052925768280651006" datatype="html">
+        <source>Show Additional Fields</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
+          <context context-type="linenumber">293</context>
+        </context-group>
+        <target state="final">Mostrar Campos Adicionales</target>
       </trans-unit>
     </body>
   </file>
