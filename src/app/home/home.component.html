@@ -6,7 +6,7 @@
       <h1><ng-container>Planet</ng-container> {{planetName}}</h1>
     </a>
   </span>
-  <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
+  <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern && configuration?.planetType">
     <ng-container [ngSwitch]="configuration.planetType" >
       <a *ngSwitchCase="'community'" mat-button routerLink="/"
         routerLinkActive="active"
