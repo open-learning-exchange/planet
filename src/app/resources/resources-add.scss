@@ -1,75 +1,47 @@
 @import '../variables';
 
 :host {
- .view-container {
-   display: grid;
-   grid-template-rows: auto 42px;
-   width: 100%;
-   > * {
-     overflow-y: auto;
-   }
- }
+  .view-container {
+    display: grid;
+    grid-template-rows: auto 42px;
+    > * {
+      overflow-y: auto;
+    }
+  }
 
- .actions-container {
-   align-self: flex-start;
-   width: 100%;
- }
+  .actions-container {
+    align-self: flex-start;
+  }
 
- .form-spacing {
-   width: 100%;
-   max-width: none;
-   justify-content: flex-start;
-   padding: 0;
- }
+  .form-spacing {
+    width: auto;
+    justify-content: flex-start;
+  }
 
- .header-label {
-   display: block;
-   margin-top: 10px;
- }
+  .header-label {
+    display: block;
+    margin-top: 10px;
+  }
 
- .existing-file-container {
-   display: flex;
-   align-items: center;
-   width: 100%;
- }
+  .existing-file-container {
+    display: flex;
+    align-items: center;
+  }
 
- .filename {
-   flex: 1;
- }
+  .filename {
+    flex: 1;
+  }
 
- mat-form-field {
-   width: 100%;
- }
+  @media (max-width: $screen-md) {
+    .form-container {
+      width: auto;
+    }
 
- .full-width {
-   width: 100% !important;
- }
-
- .file-upload {
-   width: 100%;
- }
-
- .space-contain {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  width: 100%;
-}
-
- @media (max-width: $screen-md) {
-   .form-container {
-     width: 100%;
-     padding: 0;
-   }
-
-   .filename {
-     white-space: nowrap;
-     overflow: hidden;
-     text-overflow: ellipsis;
-     max-width: 100%;
-   }
- }
+    .filename {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+  }
 }
