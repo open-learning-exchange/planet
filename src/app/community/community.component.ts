@@ -44,6 +44,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   user = this.userService.get();
   isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
+  filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
   councillors: any[] = [];
@@ -60,6 +61,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   isLoading = true;
   activeReplyId: string | null = null;
+  voiceSearch = '';
+  availableLabels: string[] = [];
+  selectedLabel = '';
 
   constructor(
     private dialog: MatDialog,
@@ -87,6 +91,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.filteredNews = this.news;
+      this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -448,5 +454,54 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
+  }
+
+  onLabelFilterChange(label: string): void {
+    this.selectedLabel = label;
+    this.applyFilters();
+  }
+
+  onVoicesSearchChange(searchValue: string): void {
+    this.voiceSearch = searchValue;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    let filtered = this.news;
+    if (this.selectedLabel) {
+      filtered = filtered.filter(item => {
+        return (item.doc.labels || []).includes(this.selectedLabel)
+          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
+          || (this.selectedLabel === 'shared chat' && item.doc.chat === true);
+      });
+    }
+    if (this.voiceSearch) {
+      const lower = this.voiceSearch.toLowerCase();
+      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
+    }
+    this.filteredNews = filtered;
+  }
+
+  getAvailableLabels(news: any[]): string[] {
+    const labelSet = new Set<string>();
+    news.forEach(item => {
+      (item.doc.labels || []).forEach(label => labelSet.add(label));
+      (item.doc.viewIn || []).forEach(view => {
+        if (view.name) {
+          labelSet.add(view.name);
+        }
+      });
+      if (item.doc.chat === true) {
+        labelSet.add('shared chat');
+      }
+    });
+
+    return Array.from(labelSet);
+  }
+
+  getLabelIcon(label: string): string {
+    return label === 'shared chat' ? 'question_answer'
+      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+      : 'label_important';
   }
 }

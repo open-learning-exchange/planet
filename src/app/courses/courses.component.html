@@ -131,7 +131,7 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a class="break-word" [ngClass]="{ 'cursor-pointer': !isDialog && !isForm }" [routerLink]="!isDialog && !isForm ? ['view', element._id] : null" (click)="openCourseViewDialog(element._id)">
+              <a class="break-word" [ngClass]="{ 'cursor-pointer': !isDialog && !isForm }" [routerLink]="!isDialog && !isForm ? ['view', element._id] : ['/courses/view', element._id]" [target]="isDialog || isForm ? '_blank' : null">
                 {{element.doc.courseTitle | truncateText:180}}
               </a>
               <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
