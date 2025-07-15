@@ -91,7 +91,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.configurationCheckService.checkConfiguration();
+    this.configurationCheckService.checkConfiguration().subscribe();
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
