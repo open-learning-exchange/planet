@@ -184,9 +184,15 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ 'update' ], { relativeTo: this.route });
   }
   /**
+   * If returnState is set in history, it will navigate to that page.(teams/enterprises)
    * Returns routing to previous parent page on Courses
    */
   goBack() {
+    const returnState = history.state?.returnState;
+    if (returnState) {
+      this.router.navigate([ `${returnState.route}` ]);
+      return;
+    }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 

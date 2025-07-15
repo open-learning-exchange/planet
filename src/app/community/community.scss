@@ -28,14 +28,6 @@
       margin-right: 0.25rem;
     }
   }
-  .new-voice-button{
-    background-color: $accent;
-    color: black;
-
-    &:hover{
-      background-color: darken($accent, 10%);
-    }
-  }
 }
 
 planet-calendar {
@@ -71,4 +63,52 @@ mat-tab-group, mat-tab {
 
 .toggle-button {
   margin-bottom: 1rem;
+}
+
+.responsive-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: auto;
+  height: auto;
+  padding: 15px;
+  margin-bottom: 1rem;
+  border-radius: 7.5px;
+  opacity: 0.9;
+}
+
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  width: 100%;
+  gap: 12px;
+
+  .search-form-field {
+    flex: 2 1 0;
+  }
+  .label-filter-field {
+    flex: 1 1 0;
+  }
+  .new-voice-btn {
+    flex: 0 0 auto;
+    align-self: center;
+  }
+}
+
+.label-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@media only screen and (max-width: $screen-sm) {
+  .responsive-toolbar {
+    width: 100%
+  }
+
+  .toolbar-row {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+  }
 }

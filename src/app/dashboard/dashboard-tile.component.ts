@@ -63,7 +63,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   ngOnInit() {
-    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+    if (this.cardType === 'myLife' && (this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE)) {
       this.isExpanded = true;
     }
   }
@@ -96,7 +96,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   get isAccordionMode(): boolean {
-    return this.deviceType === DeviceType.MOBILE;
+    return this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   removeFromShelf(event, item: any) {

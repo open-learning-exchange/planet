@@ -205,10 +205,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
+    const surveyid = this.route.snapshot.params['surveyid'];
     this.isLoading = false;
     this.router.navigate([ this.route.snapshot.params.snap ? '../../' : '../',
       this.mode === 'take' ? {} :
-      { type: this.mode === 'grade' ? 'exam' : 'survey' }
+      { type: this.mode === 'grade' ? 'exam' : 'survey', ...(surveyid ? { surveyid } : {}) }
     ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }

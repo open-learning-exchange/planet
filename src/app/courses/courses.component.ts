@@ -468,20 +468,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     });
   }
 
-  openCourseViewDialog(courseId) {
-    if (!this.isDialog && !this.isForm) { return; }
-    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId },
-      minWidth: '600px',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      autoFocus: false
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.dialog.closeAll();
-    });
-  }
-
   addTag(tag: string) {
     if (tag.trim()) {
       this.tagInputComponent.writeValue([ tag ]);
