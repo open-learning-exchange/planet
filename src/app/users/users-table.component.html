@@ -110,12 +110,12 @@
               </button>
               <button mat-raised-button color="primary" *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
                 <mat-icon>lock</mat-icon>
-                <label *ngIf="!isMobile">Deactivate</label>
+                <label *ngIf="!isMobile" i18n>Deactivate</label>
               </button>
             </span>
-            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0" i18n>
+            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
               <mat-icon>delete</mat-icon>
-              <label *ngIf="!isMobile"> Delete </label>
+              <label *ngIf="!isMobile" i18n> Delete </label>
             </button>
             <button *ngIf="!element.doc.isUserAdmin && filterType === 'local'" (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary" i18n>
               <mat-icon>vertical_align_top</mat-icon>
@@ -127,9 +127,9 @@
               <label *ngIf="!isMobile"> Demote </label>
             </button>
           </span>
-          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
+          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary">
             <mat-icon>visibility</mat-icon>
-            <label *ngIf="!isMobile"> View Profile </label>
+            <label *ngIf="!isMobile" i18n>View Profile</label>
           </button>
         </div>
       </mat-cell>
