@@ -38,7 +38,7 @@ import { ConfigurationCheckService } from '../shared/configuration-check.service
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration: any = {};
+  configuration: any = this.stateService.configuration || {};
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -64,6 +64,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   availableLabels: string[] = [];
   selectedLabel = '';
+
+  get leadersTabLabel(): string {
+    return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
 
   constructor(
     private dialog: MatDialog,
