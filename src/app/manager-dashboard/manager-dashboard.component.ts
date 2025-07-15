@@ -343,7 +343,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     const deviceType = this.deviceInfoService.getDeviceType();
-this.isMobile = [DeviceType.MOBILE, DeviceType.SMALL_MOBILE, DeviceType.TABLET].includes(deviceType);
+    this.isMobile = [ DeviceType.MOBILE, DeviceType.SMALL_MOBILE, DeviceType.TABLET ].includes(deviceType);
     this.gridRowHeight = this.isMobile ? '3.6rem' : '2rem';
   }
 
