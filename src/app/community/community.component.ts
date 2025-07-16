@@ -229,42 +229,55 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
       ])),
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const docs = users.filter(user => {
-          return this.user._id !== user._id &&
-            user._id !== 'satellite' &&
-            notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, this.user._id));
+        const docs = this.createNotificationDocs(users, notifications);
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
-      if (
-        this.userStatusService.getStatus('joinedCourse') &&
-        this.userStatusService.getStatus('surveyComplete') &&
-        !this.userStatusService.getStatus('hasPost')
-      ) {
-        this.dialog.open(DialogsAnnouncementSuccessComponent, {
-          width: '50vw',
-          maxHeight: '100vh'
-        });
-        this.userStatusService.updateStatus('hasPost', true);
-      }
+      this.showAnnouncementIfNeeded();
     });
   }
 
-  sendNotifications(user, currentUser) {
+  private createNotificationDocs(users: any[], notifications: any[]): any[] {
+    return users
+      .filter(user => this.shouldNotifyUser(user, notifications))
+      .map(user => this.buildNotification(user, this.user._id));
+  }
+
+  private shouldNotifyUser(user: any, notifications: any[]): boolean {
+    return this.user._id !== user._id &&
+      user._id !== 'satellite' &&
+      notifications.every(notification => notification.user !== user._id);
+  }
+
+  private buildNotification(user: any, currentUserId: string) {
     return {
-      'user': user,
-      'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
+      'user': user._id,
+      'message': $localize`<b>${currentUserId.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',
       'priority': 1,
       'status': 'unread',
       'time': this.couchService.datePlaceholder,
-      planetCode: user.userPlanetCode
+      userPlanetCode: user.userPlanetCode
     };
   }
+
+  private showAnnouncementIfNeeded(): void {
+    if (
+      this.userStatusService.getStatus('joinedCourse') &&
+      this.userStatusService.getStatus('surveyComplete') &&
+      !this.userStatusService.getStatus('hasPost')
+    ) {
+      this.dialog.open(DialogsAnnouncementSuccessComponent, {
+        width: '50vw',
+        maxHeight: '100vh'
+      });
+      this.userStatusService.updateStatus('hasPost', true);
+    }
+  }
+
 
   teamObject(planetCode?: string) {
     const code = planetCode || this.stateService.configuration.code;
