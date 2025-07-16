@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
 import { UsersUpdateComponent } from './users-update.component';
@@ -13,7 +13,7 @@ describe('UserUpdateProfileComponent', () => {
   let component: UsersUpdateComponent;
   let fixture: ComponentFixture<UsersUpdateComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule ],
       declarations: [ UsersUpdateComponent, FormErrorMessagesComponent ],
