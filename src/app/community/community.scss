@@ -77,6 +77,10 @@ mat-tab-group, mat-tab {
   opacity: 0.9;
 }
 
+.responsive-toolbar.sticky-button {
+  opacity: 1;
+}
+
 .toolbar-row {
   display: flex;
   flex-wrap: wrap;
@@ -94,6 +98,13 @@ mat-tab-group, mat-tab {
     flex: 0 0 auto;
     align-self: center;
   }
+}
+
+.toolbar-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .label-icon {
