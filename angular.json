@@ -114,58 +114,76 @@
             },
             "eng": {
               "outputPath": "dist/eng",
-              "localize": ["en"],
+              "localize": [
+                "en"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]},
+              ]
+            },
             "som": {
               "outputPath": "dist/som",
-              "localize": ["so"],
+              "localize": [
+                "so"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]},
+              ]
+            },
             "fra": {
               "outputPath": "dist/fra",
-              "localize": ["fr"],
+              "localize": [
+                "fr"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]},
+              ]
+            },
             "nep": {
               "outputPath": "dist/nep",
-              "localize": ["ne"],
+              "localize": [
+                "ne"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]},
+              ]
+            },
             "ara": {
               "outputPath": "dist/ara",
-              "localize": ["ar"],
+              "localize": [
+                "ar"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]},
+              ]
+            },
             "spa": {
               "outputPath": "dist/spa",
-              "localize": ["es"],
+              "localize": [
+                "es"
+              ],
               "budgets": [
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "6kb"
                 }
-              ]}
+              ]
+            }
           },
           "defaultConfiguration": ""
         },
@@ -212,7 +230,7 @@
             "format": "xlf",
             "ivy": true
           },
-          "ivy":true
+          "ivy": true
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -258,7 +276,6 @@
       }
     }
   },
-  "defaultProject": "planet-app",
   "schematics": {
     "@schematics/angular:class": {
       "skipTests": true
@@ -275,6 +292,8 @@
     }
   },
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

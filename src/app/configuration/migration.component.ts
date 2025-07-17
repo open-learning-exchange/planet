@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material/stepper';
@@ -38,7 +38,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 export class MigrationComponent implements OnInit {
 
   @ViewChild('stepper') stepper: MatStepper;
-  cloneForm: FormGroup;
+  cloneForm: UntypedFormGroup;
   cloneDomain = '';
   cloneProtocol = '';
   admins: any = {};
@@ -47,7 +47,7 @@ export class MigrationComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private couchService: CouchService,
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,

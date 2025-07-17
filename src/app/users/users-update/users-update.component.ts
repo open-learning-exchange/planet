@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -26,7 +26,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   initialFormValues: any;
   educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
-  editForm: FormGroup;
+  editForm: UntypedFormGroup;
   currentImgKey: string;
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
@@ -51,7 +51,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
