@@ -202,7 +202,7 @@
               "browserTarget": "planet-app:build:spa"
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "dev"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
