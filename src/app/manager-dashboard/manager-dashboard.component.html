@@ -97,4 +97,27 @@
     <mat-grid-tile>{{activityLogs?.resourceVisits}}</mat-grid-tile>
     <mat-grid-tile>{{activityLogs?.ratings}}</mat-grid-tile>
   </mat-grid-list>
+  <div *ngIf="isMobile" class="mobile-activity-stats">
+    <div class="mobile-stat-row">
+      <div class="mobile-stat-item">
+        <div class="mobile-stat-title" i18n><b>Last Upgrade</b></div>
+        <div class="mobile-stat-value">{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</div>
+      </div>
+      <div class="mobile-stat-item">
+        <div class="mobile-stat-title" i18n><b>Last Sync</b></div>
+        <div class="mobile-stat-value">{{activityLogs?.lastSync?.max.time | date: 'medium'}}</div>
+      </div>
+    </div>
+    
+    <div class="mobile-stat-row">
+      <div class="mobile-stat-item">
+        <div class="mobile-stat-title" i18n><b>Resource Views Last 30 Days</b></div>
+        <div class="mobile-stat-value">{{activityLogs?.resourceVisits}}</div>
+      </div>
+      <div class="mobile-stat-item">
+        <div class="mobile-stat-title" i18n><b>Total Ratings Last 30 Days</b></div>
+        <div class="mobile-stat-value">{{activityLogs?.ratings}}</div>
+      </div>
+    </div>
+  </div>
 </div>
