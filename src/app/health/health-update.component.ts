@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
@@ -19,8 +19,8 @@ import { debounce } from 'rxjs/operators';
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: FormGroup;
-  healthForm: FormGroup;
+  profileForm: UntypedFormGroup;
+  healthForm: UntypedFormGroup;
   existingData: any = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
@@ -28,7 +28,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
