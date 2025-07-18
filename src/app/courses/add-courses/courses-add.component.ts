@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -26,7 +26,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   readonly dbName = 'courses'; // make database name a constant
-  courseForm: FormGroup;
+  courseForm: UntypedFormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
@@ -65,7 +65,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,

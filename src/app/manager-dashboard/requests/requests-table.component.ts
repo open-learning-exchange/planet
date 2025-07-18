@@ -13,7 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -53,7 +53,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,

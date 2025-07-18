@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
 import { CouchService } from '../../shared/couchdb.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/user.service';
@@ -28,24 +28,24 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   achievementNotFound = false;
-  editForm: FormGroup;
-  profileForm: FormGroup;
+  editForm: UntypedFormGroup;
+  profileForm: UntypedFormGroup;
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
-  get achievements(): FormArray {
-    return <FormArray>this.editForm.controls.achievements;
+  get achievements(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.achievements;
   }
-  get references(): FormArray {
-    return <FormArray>this.editForm.controls.references;
+  get references(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.references;
   }
-  get links(): FormArray {
-    return <FormArray>this.editForm.controls.links;
+  get links(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.links;
   }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -248,7 +248,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     };
   }
 
-  updateFormArray(formArray: FormArray, value, index = -1) {
+  updateFormArray(formArray: UntypedFormArray, value, index = -1) {
     if (index === -1) {
       formArray.push(value);
     } else {

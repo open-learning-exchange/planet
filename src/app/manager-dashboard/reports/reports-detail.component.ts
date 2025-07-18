@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -60,7 +60,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
-  dateFilterForm: FormGroup;
+  dateFilterForm: UntypedFormGroup;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -92,7 +92,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.initDateFilterForm();

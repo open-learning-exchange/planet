@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
@@ -22,7 +22,7 @@ import { debounce } from 'rxjs/operators';
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
-  healthForm: FormGroup;
+  healthForm: UntypedFormGroup;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   event: any = {};
@@ -30,7 +30,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private healthService: HealthService,
     private router: Router,
     private route: ActivatedRoute,

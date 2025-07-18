@@ -7,7 +7,7 @@ import { ManagerService } from '../manager.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { ReportsService } from './reports.service';
 
@@ -28,7 +28,7 @@ export class LogsMyPlanetComponent implements OnInit {
   startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
   endDate: Date = new Date();
   selectedChildren: any[] = [];
-  logsForm: FormGroup;
+  logsForm: UntypedFormGroup;
   minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   today = new Date();
   versions: string[] = [];
@@ -49,7 +49,7 @@ export class LogsMyPlanetComponent implements OnInit {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private activityService: ReportsService,
   ) {

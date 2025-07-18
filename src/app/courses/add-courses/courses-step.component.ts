@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: FormGroup;
+  stepForm: UntypedFormGroup;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
@@ -36,7 +36,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService

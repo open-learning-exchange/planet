@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 
 @Injectable({
@@ -8,7 +8,7 @@ import { CustomValidators } from '../validators/custom-validators';
 export class ExamsService {
 
   constructor(
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {}
 
   newQuestionForm(requireCorrect, initialValue?: any) {
@@ -35,9 +35,9 @@ export class ExamsService {
   }
 
   newQuestionChoice(newId, intialValue?) {
-    return this.setInitalFormValue(new FormGroup({
-      'text': new FormControl('', CustomValidators.required),
-      'id': new FormControl(newId)
+    return this.setInitalFormValue(new UntypedFormGroup({
+      'text': new UntypedFormControl('', CustomValidators.required),
+      'id': new UntypedFormControl(newId)
     }), intialValue);
   }
 
@@ -48,9 +48,9 @@ export class ExamsService {
     return formGroup;
   }
 
-  updateQuestion(question: FormGroup, newQuestion: FormGroup) {
+  updateQuestion(question: UntypedFormGroup, newQuestion: UntypedFormGroup) {
     const { choices: newChoices, ...fields } = newQuestion.value;
-    const choices = (<FormArray>question.controls.choices);
+    const choices = (<UntypedFormArray>question.controls.choices);
     this.removeChoices(choices, newChoices);
     question.patchValue(fields);
     newChoices.forEach((choice) => {
@@ -64,7 +64,7 @@ export class ExamsService {
     });
   }
 
-  removeChoices(oldChoices: FormArray, newChoices: any[]) {
+  removeChoices(oldChoices: UntypedFormArray, newChoices: any[]) {
     let oldChoice: any;
     for (let i = oldChoices.length - 1; i > -1; i--) {
       oldChoice = oldChoices.value[i];
