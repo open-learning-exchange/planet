@@ -1,4 +1,4 @@
-import styleVars from '../_variables.scss';
+// Style variables extracted from _variables.scss
 
 export const showdown = require('showdown');
 export const pdfMake = require('pdfmake/build/pdfmake');
@@ -29,14 +29,17 @@ export const addToArray = (startArray = [], addArray = []) => {
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
-export const styleVariables: any = (() => {
-  console.log(styleVars.match(/:export \{([\s\S]*)\}/)[1]);
-  const varArray = styleVars.match(/:export \{([\s\S]*)\}/)[1].split(';').filter((val: string) => val.trim());
-  return varArray.reduce((styleObj, variable) => {
-    const [ prop, value ] = variable.split(': ');
-    return { ...styleObj, [prop.trim()]: value };
-  }, {});
-})();
+export const styleVariables = {
+  primary: '#2196f3',
+  primaryLighter: '#bbdefb',
+  primaryText: 'white',
+  accent: '#ffc107',
+  accentLighter: '#ffecb3',
+  accentText: 'rgba(0, 0, 0, 0.87)',
+  grey: '#bdbdbd',
+  greyText: 'rgba(0, 0, 0, 0.54)',
+  lightGrey: 'whitesmoke'
+};
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 

@@ -8,3 +8,13 @@ declare module '*.scss' {
   const content: string;
   export = content;
 }
+
+declare module '*.scss?raw' {
+  const content: string;
+  export = content;
+}
+
+declare module '*.css?raw' {
+  const content: string;
+  export = content;
+}
