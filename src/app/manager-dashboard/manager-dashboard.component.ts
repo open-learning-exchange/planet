@@ -236,7 +236,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         ...res };
       this.dialogRef = this.dialog.open(DialogsListComponent, {
         data: data,
-        maxHeight: '500px',
+        maxHeight: '600px',
         width: '600px',
         autoFocus: false
       });
