@@ -41,20 +41,93 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], planetName: string) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
+                   planetName: string, chatActivities: any[] = []) {
+    const allData = [ ...logins, ...resourceViews, ...courseViews, ...stepCompletions, ...chatActivities ];
+    const startDate = allData.length > 0 ?
+      new Date(Math.min(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) :
+      new Date();
+    const endDate = allData.length > 0 ?
+      new Date(Math.max(...allData.map(item => new Date(item.loginTime || item.time || item.createdDate).getTime()))) :
+      new Date();
+    const formatDate = (date) => {
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
+    };
     const options = {
-      title: $localize`Summary report for ${planetName}`,
+      title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} to ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
-      showLabels: false,
-      useKeysAsHeaders: false
+      showLabels: true,
+      useKeysAsHeaders: true
     };
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
-    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions);
+    const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
+      this.reportsService.groupChatUsage(chatActivities).byMonth : [];
+    const allMonths = new Set<string>();
+    [ ...groupedLogins, ...groupedResourceViews, ...groupedCourseViews, ...groupedStepCompletions, ...groupedChatData ]
+      .forEach(item => allMonths.add(item.date));
+    const sortedMonths = Array.from(allMonths).sort();
+    const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    const formattedData = [];
+    const processSection = (title: string, groupedData: any[], countUnique: boolean) => {
+      formattedData.push({ Section: $localize`${title}`, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+      let totalAll = 0;
+      let totalMale = 0;
+      let totalFemale = 0;
+      let totalUnspecified = 0;
+      sortedMonths.forEach((month, i) => {
+        const monthLabel = monthLabels[i];
+        const all = this.getMonthlyData(month, groupedData, countUnique);
+        const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
+        const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
+        const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
+        totalAll += all;
+        totalMale += male;
+        totalFemale += female;
+        totalUnspecified += unspecified;
+        formattedData.push({
+          Section: '',
+          Month: monthLabel,
+          All: all,
+          Male: male,
+          Female: female,
+          Unspecified: unspecified
+        });
+      });
+      formattedData.push({
+        Section: '',
+        Month: $localize`Total`,
+        All: totalAll,
+        Male: totalMale,
+        Female: totalFemale,
+        Unspecified: totalUnspecified
+      });
+    };
+    processSection('Unique Member Visits', groupedLogins, true);
+    processSection('Total Member Visits', groupedLogins, false);
+    processSection('Resource Views', groupedResourceViews, false);
+    processSection('Course Views', groupedCourseViews, false);
+    processSection('Steps Completed', groupedStepCompletions, false);
+    processSection('Chats Created', groupedChatData, false);
     this.generate(formattedData, options);
+  }
+
+  private getMonthlyData(month: string, data: any[], countUnique: boolean): number {
+    const monthData = data.filter(item => item.date === month);
+    if (countUnique && monthData.length > 0) {
+      const uniqueUsers = new Set();
+      monthData.forEach(item => {
+        if (item.unique && item.unique.length) {
+          item.unique.forEach(user => uniqueUsers.add(user));
+        }
+      });
+      return uniqueUsers.size;
+    } else {
+      return monthData.reduce((total, item) => total + (item.count || 0), 0);
+    }
   }
 
   summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions) {
