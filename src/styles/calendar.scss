@@ -1,5 +1,5 @@
-@import '~@fullcalendar/common/main.css';
-@import '~@fullcalendar/daygrid/main.css';
+/* FullCalendar v6 no longer ships CSS via NPM packages. */
+/* Import CSS from CDN in index.html if needed. */
 @import '../app/variables';
 
 full-calendar {
