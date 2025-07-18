@@ -60,6 +60,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isLoading = true;
+  currentTab = 0;
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
   voiceSearch = '';
@@ -453,13 +454,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
+    // stash reply only on voices tab change
+    if (this.currentTab === 0 && index !== 0) {
+      this.lastReplyId = this.activeReplyId;
+    }
     if (index === 0) {
       this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
     } else {
-      this.lastReplyId = this.activeReplyId;
       this.router.navigate([ '' ]);
     }
-    this.resizeCalendar = index === 5;
+    this.resizeCalendar = (index === 5);
+    this.currentTab = index;
   }
 
   onLabelFilterChange(label: string): void {
