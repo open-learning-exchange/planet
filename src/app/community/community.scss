@@ -69,12 +69,10 @@ mat-tab-group, mat-tab {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: auto;
   height: auto;
-  padding: 15px;
-  margin-bottom: 1rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
   border-radius: 7.5px;
-  opacity: 0.9;
 }
 
 .toolbar-row {
@@ -93,6 +91,13 @@ mat-tab-group, mat-tab {
   .new-voice-btn {
     flex: 0 0 auto;
     align-self: center;
+  }
+  .pin-btn {
+    align-self: center;
+
+    mat-icon svg {
+      fill: black;
+    }
   }
 }
 
