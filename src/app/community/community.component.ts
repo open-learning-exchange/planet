@@ -61,6 +61,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceTypes = DeviceType;
   isLoading = true;
   activeReplyId: string | null = null;
+  lastReplyId: string | null = null;
   voiceSearch = '';
   availableLabels: string[] = [];
   selectedLabel = '';
@@ -367,7 +368,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
-    this.activeReplyId = data._id;
+    this.activeReplyId = data._id === 'root' ? null : data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -453,8 +454,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   tabChanged({ index }: { index: number }) {
     if (index === 0) {
-      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
+      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
     } else {
+      this.lastReplyId = this.activeReplyId;
       this.router.navigate([ '' ]);
     }
     this.resizeCalendar = index === 5;
