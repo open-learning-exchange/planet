@@ -127,11 +127,9 @@
       <div style="text-align: center;">
         <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
         <div class="action-buttons">
-          <button mat-raised-button color="secondary" (click)="fileInput.click()">
-            Choose Image
-          </button>
-          <button *ngIf="imageChangedEvent || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()">Reset Selection</button>
-          <button *ngIf="uploadImage && currentImgKey && !imageChangedEvent && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+          <button mat-raised-button color="secondary" (click)="fileInput.click()"><span i18n>Choose Image</span></button>
+          <button *ngIf="imageChangedEvent || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
+          <button *ngIf="uploadImage && currentImgKey && !imageChangedEvent && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
         </div>
         <input #fileInput id="fileInput" type="file" accept="image/*" (change)="openImageEditDialog($event)" style="display: none;" />
       </div>

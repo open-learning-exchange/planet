@@ -2,6 +2,106 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
     <body>
+      <trans-unit id="f27b58b0eb4ddfcb5ecfddf15e0a34e1f89d0a66" datatype="html">
+        <source>Choose Image</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+        <target state="final">Elegir imagen</target>
+      </trans-unit>
+      <trans-unit id="be524b1b27f78b029186060f4fe54bc5c593d53d" datatype="html">
+        <source>Reset Selection</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
+          <context context-type="linenumber">131</context>
+        </context-group>
+        <target state="final">Restablecer selección</target>
+      </trans-unit>
+      <trans-unit id="upgrade-string" datatype="html">
+        <source>Upgrade</source>
+        <target state="final">Actualizar</target>
+      </trans-unit>
+      <trans-unit id="choose-image-string" datatype="html">
+        <source>Choose Image</source>
+        <target state="final">Elegir imagen</target>
+      </trans-unit>
+      <trans-unit id="reset-selection-string" datatype="html">
+        <source>Reset Selection</source>
+        <target state="final">Restablecer selección</target>
+      </trans-unit>
+      <trans-unit id="remove-string" datatype="html">
+        <source>Remove</source>
+        <target state="final">Eliminar</target>
+      </trans-unit>
+      <trans-unit id="view-profile-string" datatype="html">
+        <source> View Profile</source>
+        <target state="final"> Ver perfil</target>
+      </trans-unit>
+      <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html" approved="yes">
+        <source> View Profile</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-table.component.html</context>
+          <context context-type="linenumber">132</context>
+        </context-group>
+        <target state="final"> Ver perfil</target>
+      </trans-unit>
+      <trans-unit id="fetch-items-string" datatype="html">
+        <source>Fetch Items</source>
+        <target state="final">Obtener elementos</target>
+      </trans-unit>
+      <trans-unit id="manage-sync-string" datatype="html">
+        <source>Manage Sync</source>
+        <target state="final">Administrar sincronización</target>
+      </trans-unit>
+      <trans-unit id="members-string" datatype="html">
+        <source>Members</source>
+        <target state="final">Miembros</target>
+      </trans-unit>
+      <trans-unit id="ai-configurations-string" datatype="html">
+        <source>AI Configurations</source>
+        <target state="final">Configuraciones de IA</target>
+      </trans-unit>
+      <trans-unit id="certifications-string" datatype="html">
+        <source>Certifications</source>
+        <target state="final">Certificaciones</target>
+      </trans-unit>
+      <trans-unit id="delete-community-string" datatype="html">
+        <source>Delete Community</source>
+        <target state="final">Eliminar comunidad</target>
+      </trans-unit>
+      <trans-unit id="resend-registration-request-string" datatype="html">
+        <source>Resend Registration Request</source>
+        <target state="final">Reenviar solicitud de registro</target>
+      </trans-unit>
+      <trans-unit id="feedback-string" datatype="html">
+        <source>Feedback</source>
+        <target state="final">Retroalimentación</target>
+      </trans-unit>
+      <trans-unit id="configuration-string" datatype="html">
+        <source>Configuration</source>
+        <target state="final">Configuración</target>
+      </trans-unit>
+      <trans-unit id="reports-string" datatype="html">
+        <source>Reports</source>
+        <target state="final">Informes</target>
+      </trans-unit>
+      <trans-unit id="myplanet-reports-string" datatype="html">
+        <source>myPlanet Reports</source>
+        <target state="final">Informes de myPlanet</target>
+      </trans-unit>
+      <trans-unit id="myplanet-logs-string" datatype="html">
+        <source>myPlanet Logs</source>
+        <target state="final">Registros de myPlanet</target>
+      </trans-unit>
+      <trans-unit id="surveys-string" datatype="html">
+        <source>Surveys</source>
+        <target state="final">Encuestas</target>
+      </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
         <source>ltr</source>
         <context-group purpose="location">
@@ -860,6 +960,7 @@
         </context-group>
         <target state="final">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
+      <!-- Removed obsolete button-level translation units for Run Sync and Refresh -->
       <trans-unit id="6441458224198272423" datatype="html" approved="yes">
         <source>Is your feedback Urgent?</source>
         <context-group purpose="location">
@@ -14650,22 +14751,7 @@
         </context-group>
         <target state="final">Tarea de Sincronización</target>
       </trans-unit>
-      <trans-unit id="d729ab401a97d0712caa5fc38325aeac44cbfe5a" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Ejecutar sincronización</target>
-      </trans-unit>
-      <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>actualizar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
-      </trans-unit>
+      <!-- Removed obsolete icon-level translation units for Run Sync and Refresh -->
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
         <source>Error</source>
         <context-group purpose="location">
@@ -15293,6 +15379,30 @@
           <context context-type="linenumber">293</context>
         </context-group>
         <target state="final">Mostrar Campos Adicionales</target>
+      </trans-unit>
+      <trans-unit id="080038e8503262160ecb9223c0cc88b22851ec4a" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Run Sync </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
+          <context context-type="linenumber">9,11</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Ejecutar sincronización </target>
+      </trans-unit>
+      <trans-unit id="f44122cb87f0a8e5b9e538f2d6bb8032a0dc2f46" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Refresh </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
+          <context context-type="linenumber">13,15</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Refrescar </target>
+      </trans-unit>
+      <trans-unit id="a57b32c730a6bf191d5bd1f6cf86f7d9466589ff" datatype="html">
+        <source> Run Sync</source>
+        <target state="final"> Ejecutar sincronización</target>
+      </trans-unit>s
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source> Refresh</source>
+        <target state="final"> Actualizar</target>
       </trans-unit>
     </body>
   </file>

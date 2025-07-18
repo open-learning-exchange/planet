@@ -90,14 +90,6 @@
                 }
               ]
             },
-            "dev": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
-            },
             "test": {
               "budgets": [
                 {
@@ -202,17 +194,15 @@
               "browserTarget": "planet-app:build:spa"
             }
           },
-          "defaultConfiguration": "dev"
+          "defaultConfiguration": ""
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
-            "format": "xlf",
-            "ivy": true
-          },
-          "ivy":true
+            "format": "xlf"
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
