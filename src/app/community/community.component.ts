@@ -162,12 +162,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.couchService.updateDocument('notifications', data);
   }
 
+  private getShareTarget(type: string): string | undefined {
+    if (type === 'center') {
+      return 'nation';
+    }
+    if (type === 'nation') {
+      return 'community';
+    }
+    return undefined;
+  }
+
   getCommunityData() {
-    const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.planetCode = params.get('code');
-        this.shareTarget = this.planetCode ? undefined : setShareTarget(this.stateService.configuration.planetType);
+        this.shareTarget = this.planetCode ? undefined : this.getShareTarget(this.stateService.configuration.planetType);
         return this.planetCode ?
           this.couchService.findAll('communityregistrationrequests', { selector: { code: this.planetCode } }) :
           of([ this.stateService.configuration ]);
@@ -224,18 +233,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       messagePlanetCode: this.configuration.code,
       ...message
     }, $localize`Message has been posted successfully`).pipe(
-      switchMap(() => forkJoin([
-        this.usersService.getAllUsers(),
-        this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
-      ])),
-      switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const docs = users.filter(user => {
-          return this.user._id !== user._id &&
-            user._id !== 'satellite' &&
-            notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, this.user._id));
-        return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
-      }),
+      switchMap(() => this.createNotificationsForPost()),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
@@ -251,6 +249,22 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.userStatusService.updateStatus('hasPost', true);
       }
     });
+  }
+
+  private createNotificationsForPost() {
+    return forkJoin([
+      this.usersService.getAllUsers(),
+      this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
+    ]).pipe(
+      switchMap(([ users, notifications ]: [ any[], any[] ]) => {
+        const docs = users
+          .filter(user => this.user._id !== user._id &&
+            user._id !== 'satellite' &&
+            notifications.every(notification => notification.user !== user._id))
+          .map(user => this.sendNotifications(user._id, this.user._id));
+        return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
+      })
+    );
   }
 
   sendNotifications(user, currentUser) {
