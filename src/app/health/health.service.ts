@@ -12,6 +12,8 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class HealthService {
 
+  private examinations = new BehaviorSubject<any[]>([]);
+  examinationsUpdated = this.examinations.asObservable();
   healthData: any = {};
   readonly encryptedFields = [
     'events', 'profile', 'lastExamination', 'userKey',
@@ -149,4 +151,13 @@ export class HealthService {
     return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
+  deleteExamination(eventId: string, eventRev: string) {
+    return this.couchService.delete(`health/${eventId}?rev=${eventRev}`).pipe(
+      switchMap(() => this.getExaminations(this.stateService.configuration.code)),
+      switchMap((exams: any[]) => {
+        this.examinations.next(exams);
+        return of(true);
+      })
+    );
+  }
 }
