@@ -11,6 +11,7 @@ import { ConfigurationCheckService } from '../shared/configuration-check.service
 
 export class LoginComponent implements OnInit {
 
+  online = 'off';
   planetVersion: string;
 
   constructor(
@@ -20,7 +21,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.getPlanetVersion();
-    this.configurationCheckService.checkConfiguration();
+    this.configurationCheckService.checkConfiguration().subscribe(isOnline => {
+      this.online = isOnline;
+    });
   }
 
   getPlanetVersion() {

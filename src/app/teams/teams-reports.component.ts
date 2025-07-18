@@ -79,7 +79,7 @@ export class TeamsReportsComponent implements DoCheck {
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
             const action = isEdit ? 'edited' : 'added';
-            this.planetMessageService.showMessage(`Report ${action}`);
+            this.planetMessageService.showMessage($localize`Report ${action}`);
           })
         }
       );
@@ -95,12 +95,12 @@ export class TeamsReportsComponent implements DoCheck {
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
-            this.planetMessageService.showMessage('Report deleted');
+            this.planetMessageService.showMessage($localize`Report deleted`);
             this.dialogsLoadingService.stop();
             deleteDialog.close();
           },
           onError: () => {
-            this.planetMessageService.showAlert('There was a problem deleting the report.');
+            this.planetMessageService.showAlert($localize`There was a problem deleting the report.`);
             this.dialogsLoadingService.stop();
           }
         },

@@ -38,7 +38,7 @@ import { ConfigurationCheckService } from '../shared/configuration-check.service
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration: any = {};
+  configuration: any = this.stateService.configuration || {};
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -65,6 +65,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
 
+  get leadersTabLabel(): string {
+    return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -87,7 +91,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.configurationCheckService.checkConfiguration();
+    this.configurationCheckService.checkConfiguration().subscribe();
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));

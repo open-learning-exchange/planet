@@ -65,7 +65,9 @@
       <mat-form-field>
         <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
       </mat-form-field>
-      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()" i18n><mat-icon>reply</mat-icon>Reply</button>
+      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">
+        <mat-icon>reply</mat-icon><span i18n>Reply</span>
+      </button>
       <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'" i18n>Close</button>
       <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="feedback.status === 'Closed'" i18n>Re-open</button>
     </div>
