@@ -69,16 +69,10 @@ mat-tab-group, mat-tab {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: auto;
   height: auto;
-  padding: 15px;
-  margin-bottom: 1rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
   border-radius: 7.5px;
-  opacity: 0.9;
-}
-
-.responsive-toolbar.sticky-button {
-  opacity: 1;
 }
 
 .toolbar-row {
@@ -98,13 +92,13 @@ mat-tab-group, mat-tab {
     flex: 0 0 auto;
     align-self: center;
   }
-}
+  .pin-btn {
+    align-self: center;
 
-.toolbar-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+    mat-icon svg {
+      fill: black;
+    }
+  }
 }
 
 .label-icon {

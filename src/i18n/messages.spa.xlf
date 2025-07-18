@@ -4639,14 +4639,6 @@
         </context-group>
         <target state="final">{VAR_SELECT, select, community {Comunidad} nation {Nación} center {Tierra}}</target>
       </trans-unit>
-      <trans-unit id="ad54bfa97a3c6a90cd6a7602620235e3872f4240" datatype="html">
-        <source><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} "/> Board</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/community/community.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-        <target state="translated">Tablón de la <x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} "/></target>
-      </trans-unit>
       <trans-unit id="5ff640324f4a4d67cb4668dd08b54b94c974400c" datatype="html">
         <source>Search voice</source>
         <context-group purpose="location">

@@ -1385,7 +1385,8 @@
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="
 
-  validAnswer(field) {"/>&lt;/b&gt; has
+  validAnswer(field) {
+"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="= undefined &amp;&amp; field !== false &amp;&amp; field !== &apos;&apos; &amp;&amp; field !== n"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="dSubmissionNotification(isR"/>&lt;/b&gt;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
@@ -4016,13 +4017,6 @@
           <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="ad54bfa97a3c6a90cd6a7602620235e3872f4240" datatype="html">
-        <source><x id="ICU" equiv-text=" i18n&gt;{ configuration.planetType, select, community {Community} nation {Nation} center {Ea"/> Board</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/community/community.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5ff640324f4a4d67cb4668dd08b54b94c974400c" datatype="html">
         <source>Search voice</source>
         <context-group purpose="location">
@@ -6336,7 +6330,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="229103727470276623" datatype="html">
-        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {"/> successfully</source>
+        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {
+"/> successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">224</context>

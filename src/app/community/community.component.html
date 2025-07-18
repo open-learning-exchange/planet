@@ -3,13 +3,7 @@
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <mat-toolbar class="primary-color font-size-1 responsive-toolbar" [ngClass]="{ 'sticky-button': pinned }">
-            <div class="toolbar-title-row">
-              <h1 i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Board</h1>
-              <button mat-icon-button (click)="pinned = !pinned">
-                <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
-              </button>
-            </div>
+          <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar" [ngClass]="{ 'sticky-button': pinned }">
             <div class="toolbar-row">
               <mat-form-field class="search-form-field">
                 <mat-icon class="small-icon" matPrefix>search</mat-icon>
@@ -36,6 +30,9 @@
               <ng-container *planetAuthorizedRoles="'learner'">
                 <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
               </ng-container>
+              <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
+                <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
+              </button>
             </div>
           </mat-toolbar>
           <ng-container *ngIf="isLoading; else loaded">
