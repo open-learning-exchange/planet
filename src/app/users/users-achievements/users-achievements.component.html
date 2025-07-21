@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar *ngIf="!publicView">
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Achievements</span>
   <span class="toolbar-fill"></span>
