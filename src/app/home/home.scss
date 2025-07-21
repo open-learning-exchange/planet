@@ -1,3 +1,4 @@
+@use '@angular/material' as mat;
 @import '../variables';
 
 :host {
@@ -62,7 +63,7 @@
     justify-self: center;
     a.active {
       color: $primary-text;
-      background-color: mat-color($planet-app-primary, $dark-hue);
+      background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
     }
   }
 
@@ -182,6 +183,11 @@
     label {
       cursor: pointer;
       margin: 0 24px;
+      display: inline-block;
+      max-width: 12ch;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

@@ -531,7 +531,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { teamId: this.teamId, mode: this.mode } },
+      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -541,7 +541,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openResource(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, {
-      data: { resourceId, returnState: { teamId: this.teamId, mode: this.mode }
+      data: { resourceId, returnState: { route: `${this.mode}s/view/${this.teamId}` }
     }, autoFocus: false });
   }
 

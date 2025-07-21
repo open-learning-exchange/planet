@@ -3,27 +3,49 @@
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <h3 style="text-align: right; margin-right: 0.5rem;">
-            <ng-container *planetAuthorizedRoles="'learner'">
-              <button mat-raised-button class="new-voice-button" (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
-            </ng-container>
-          </h3>
+          <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
+            <h1 i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Board</h1>
+            <div class="toolbar-row">
+              <mat-form-field class="search-form-field">
+                <mat-icon class="small-icon" matPrefix>search</mat-icon>
+                <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="onVoicesSearchChange($event)">
+              </mat-form-field>
+              <mat-form-field class="label-filter-field">
+                <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)" i18n-placeholder placeholder="Filter by label">
+                  <mat-select-trigger>
+                    <ng-container *ngIf="selectedLabel">
+                      <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
+                      <planet-label [label]="selectedLabel"></planet-label>
+                    </ng-container>
+                    <ng-container *ngIf="!selectedLabel">
+                      <span i18n>All</span>
+                    </ng-container>
+                  </mat-select-trigger>
+                  <mat-option value=""><span i18n>All</span></mat-option>
+                  <mat-option *ngFor="let label of availableLabels" [value]="label">
+                    <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
+                    <planet-label [label]="label"></planet-label>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <ng-container *planetAuthorizedRoles="'learner'">
+                <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
+              </ng-container>
+            </div>
+          </mat-toolbar>
           <ng-container *ngIf="isLoading; else loaded">
             <span i18n>Loading voices...</span>
           </ng-container>
           <ng-template #loaded>
             <ng-container *ngIf="news?.length > 0; else noVoices">
-              <planet-news-list [items]="news" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true"></planet-news-list>
+              <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true"></planet-news-list>
             </ng-container>
           </ng-template>
           <ng-template #noVoices>
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab
-          [label]="configuration.planetType === 'nation' ? 'Nation Leaders' : 'Community Leaders'"
-          i18n-label
-          *ngIf="isLoggedIn">
+        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
@@ -41,15 +63,14 @@
           </ng-container>
           <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
-          <button class="toggle-button" *planetAuthorizedRoles="''" (click)="openDescriptionDialog()" mat-stroked-button i18n>
-            { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
-          </button>
-          <button (click)="confirmDeleteDescription()" mat-stroked-button>
-            <span i18n>Remove Description</span>
-          </button>
-          <ng-container *ngIf="!planetCode">
-            <div *planetAuthorizedRoles="''" class="action-buttons sticky-button">
-            </div>
+          <ng-container *planetAuthorizedRoles="''">
+            <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+              { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
+            </button>
+            <button (click)="confirmDeleteDescription()" mat-stroked-button>
+              <span i18n>Remove Description</span>
+            </button>
+            <div *ngIf="!planetCode" class="action-buttons sticky-button"></div>
           </ng-container>
           <ng-container>
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
@@ -64,11 +85,13 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-          <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-            <span *ngIf="!deleteMode" i18n>Remove Links</span>
-            <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-          </button>
+          <ng-container *planetAuthorizedRoles="''">
+            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+            <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+              <span *ngIf="!deleteMode" i18n>Remove Links</span>
+              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+            </button>
+          </ng-container>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
           <planet-community-list></planet-community-list>

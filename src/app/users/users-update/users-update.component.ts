@@ -287,6 +287,12 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
+  get additionalFieldsButtonText(): string {
+    return this.showAdditionalFields
+      ? $localize`Hide Additional Fields`
+      : $localize`Show Additional Fields`;
+  }
+
   openImageEditDialog(event: Event): void {
     this.showImagePreview = false;
     this.imageChangedEvent = event;

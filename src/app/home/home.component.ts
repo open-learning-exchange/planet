@@ -97,8 +97,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       this.getNotification();
     });
     this.planetName = this.stateService.configuration.name;
-    this.stateService.couchStateListener('configurations').subscribe((res) => {
+    this.stateService.couchStateListener('configurations').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
       if (res !== undefined) {
+        this.configuration = this.stateService.configuration;
+        this.planetType = this.stateService.configuration.planetType;
         this.planetName = this.stateService.configuration.name;
       }
     });

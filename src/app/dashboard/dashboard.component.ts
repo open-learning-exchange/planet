@@ -115,12 +115,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
-      { baseFirstLine: $localize`my`, title: $localize`Chat`, link: '/chat' },
-      { baseFirstLine: $localize`my`, title: $localize`Progress`, link: 'myProgress' },
+      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: 'chat' },
+      { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
       { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
       { baseFirstLine: $localize`my`, title: $localize`Surveys`, link: 'mySurveys', badge: this.surveysCount },
-      { baseFirstLine: $localize`my`, title: $localize`Health`, link: 'myHealth' }
+      { baseFirstLine: $localize` my `, title: $localize`Health`, link: 'myHealth' }
     ];
     this.updateMyLifeItemsFormat();
   }
@@ -232,7 +232,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: course._id },
+      data: { courseId: course._id, returnState: { route: 'myDashboard' } },
       minWidth: '50vw',
       maxWidth: '80vw',
       maxHeight: '80vh',
