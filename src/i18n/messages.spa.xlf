@@ -1,3 +1,17 @@
+      <trans-unit id="3051919120993673498" datatype="html" approved="yes">
+        <source><x id="PH" equiv-text="team._id ? 'Update' : 'Create'"/> <x id="PH_1" equiv-text="toProperCase(type)"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">70</context>
+        </context-group>
+        <target state="final"><x id="PH" equiv-text="team._id ? 'Update' : 'Create'"/> <x id="PH_1" equiv-text="toProperCase(type)"/></target>
+        <!-- Spanish translations:
+          Create Team: Crear equipo
+          Create Enterprise: Crear empresa
+          Update Team: Actualizar equipo
+          Update Enterprise: Actualizar empresa
+        -->
+      </trans-unit>
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
@@ -13043,7 +13057,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="final">Tus listas actuales de comentarios</target>
+        <target state="final">Tu lista actual de comentarios</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
         <source>Feedback List</source>
@@ -13531,7 +13545,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro}}</target>
+        <target state="final">{VAR_SELECT, select, community {Nación} nation {Centro}}</target>
       </trans-unit>
       <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}"/>:</source>
@@ -13583,7 +13597,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="final"> Listar todo desde el <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
+        <target state="final"> Listar todo desde la <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
         <source>List Resources</source>
@@ -14657,7 +14671,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">44,46</context>
         </context-group>
-        <target state="final">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas}}}}</target>
+        <target state="final">{VAR_SELECT_1, select, pending {Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {Redes de comunidad conectadas} center {Regiones conectadas}}}}</target>
       </trans-unit>
       <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html" approved="yes">
         <source>

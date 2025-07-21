@@ -3870,10 +3870,6 @@
           <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">60</context>
         </context-group>
@@ -7716,7 +7712,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
@@ -8057,11 +8053,18 @@
           <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="837d523294ab34048b13185692c3dafa840bc8cb" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>visibility<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> View </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">22,23</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html">
         <source> Communities </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">23,25</context>
+          <context context-type="linenumber">25,27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ad04bb523a788003d6b8a315737017bec4b95ccf" datatype="html">
@@ -8071,42 +8074,42 @@
           }"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">26,31</context>
+          <context context-type="linenumber">28,33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="b9c49b313d32ce0caf34adf9923e135a2194acfc" datatype="html">
         <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">27,30</context>
+          <context context-type="linenumber">29,32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html">
         <source> Edit Name </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">38,40</context>
+          <context context-type="linenumber">40,42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6a5dc9ef5dc9696b284c9a8e22b6c17be506f202" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Accept </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">44,45</context>
+          <context context-type="linenumber">46,47</context>
         </context-group>
       </trans-unit>
       <trans-unit id="da6a199f9d566a94598155ef50b6f14f785ca24e" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Delete </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">48,49</context>
+          <context context-type="linenumber">50,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d9b9979281299d602aec1989ca81ca60b0782030" datatype="html">
         <source>No Requests Found</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">55</context>
+          <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6095875067730636945" datatype="html">
