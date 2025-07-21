@@ -1,17 +1,3 @@
-      <trans-unit id="3051919120993673498" datatype="html" approved="yes">
-        <source><x id="PH" equiv-text="team._id ? 'Update' : 'Create'"/> <x id="PH_1" equiv-text="toProperCase(type)"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">70</context>
-        </context-group>
-        <target state="final"><x id="PH" equiv-text="team._id ? 'Update' : 'Create'"/> <x id="PH_1" equiv-text="toProperCase(type)"/></target>
-        <!-- Spanish translations:
-          Create Team: Crear equipo
-          Create Enterprise: Crear empresa
-          Update Team: Actualizar equipo
-          Update Enterprise: Actualizar empresa
-        -->
-      </trans-unit>
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
@@ -247,6 +233,10 @@
           <context context-type="linenumber">289</context>
         </context-group>
         <target state="final">Cursos</target>
+      </trans-unit>
+      <trans-unit id="course-string" datatype="html" approved="yes">
+        <source>Course</source>
+        <target state="final">Curso</target>
       </trans-unit>
       <trans-unit id="8a6afcf38cbb3107a31ae8636805be7f65182dc8" datatype="html" approved="yes">
         <source>Teams</source>
@@ -12283,7 +12273,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/></target>
+        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/> Curso</target>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
@@ -15417,6 +15407,10 @@
       <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
         <source> Refresh</source>
         <target state="final"> Actualizar</target>
+      </trans-unit>
+      <trans-unit id="addEditCourseToolbar" datatype="html" approved="yes">
+        <source>{this.pageType, select, Add {Add} Edit {Edit}} Course</source>
+        <target state="final">{this.pageType, select, Add {Añadir curso} Edit {Editar curso}}</target>
       </trans-unit>
     </body>
   </file>

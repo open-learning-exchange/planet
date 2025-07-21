@@ -1463,8 +1463,8 @@
           <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="d1d945a445b0a365fb7842ed9436e4b540d6b839" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ pageType }}"/> Course</source>
+      <trans-unit id="addEditCourseHeader" datatype="html">
+        <source>{VAR_SELECT, select, Add {Add Course} Edit {Edit Course}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">3</context>
@@ -3033,7 +3033,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">110</context>
+          <context context-type="linenumber">117</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements.component.ts</context>
@@ -12611,67 +12611,102 @@
           <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3051919120993673498" datatype="html">
-        <source><x id="PH" equiv-text="team._id ? &apos;Update&apos; : &apos;Create&apos;"/> <x id="PH_1" equiv-text="toProperCase(type)"/></source>
+      <trans-unit id="845614819065934949" datatype="html">
+        <source>Update Team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1678548018195726594" datatype="html">
+        <source>Create Team</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1955454244691848249" datatype="html">
+        <source>Update Enterprise</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="934702387522776833" datatype="html">
+        <source>Create Enterprise</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5551225127433638341" datatype="html">
+        <source>Update Services</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8922582554481662245" datatype="html">
+        <source>Create Services</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3888232331381898998" datatype="html">
         <source>Team Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3339419883396525689" datatype="html">
         <source>Local team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">111</context>
+          <context context-type="linenumber">118</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8087439227464292608" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has posted a message on <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">267</context>
+          <context context-type="linenumber">274</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8274468202054901134" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has requested to join <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">269</context>
+          <context context-type="linenumber">276</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5859925700973676403" datatype="html">
         <source>You have been added to <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">278</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8332877715727171894" datatype="html">
         <source>You have not been accepted to <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">273</context>
+          <context context-type="linenumber">280</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2593714830120779298" datatype="html">
         <source>You have been removed from <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">275</context>
+          <context context-type="linenumber">282</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1597965293531498649" datatype="html">
         <source><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">277</context>
+          <context context-type="linenumber">284</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c647b3d5498b15dac0193e63a10d95f5f5a2b915" datatype="html">
