@@ -20,68 +20,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styles: [ `
-    .view-container > * {
-      margin-bottom: 0.5rem;
-    }
-    .view-container > *:last-child {
-      margin-bottom: 0;
-    }
-    .send-view {
-      padding-bottom: 0;
-    }
-    .list-view {
-      padding-top: 0;
-    }
-    .mat-raised-button {
-      margin: 0.25rem;
-    }
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .version-card {
-      flex: 1;
-      max-width: calc(50% - 20px);
-      margin: 1rem;
-    }
-    .pinClass {
-      font-size: 1.5rem;
-    }
-    mat-slide-toggle {
-      padding: 3px;
-    }
-    .mobile-activity-stats {
-  margin-top: 16px;
-}
-
-.mobile-stat-row {
-  display: flex;
-  margin-bottom: 12px;
-  gap: 8px;
-}
-
-.mobile-stat-item {
-  flex: 1;
-  padding: 12px;
-  background: #f5f5f5;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-}
-
-.mobile-stat-title {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
-  line-height: 1.2;
-}
-
-.mobile-stat-value {
-  font-size: 14px;
-  color: #333;
-  font-weight: 500;
-}
-  ` ]
+  styleUrls: [ './manager-dashboard.scss' ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -105,7 +44,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isHub = false;
   streaming: boolean;
   overlayOpen = false;
-  isMobile: boolean;
   gridRowHeight = '2rem';
 
   constructor(
@@ -338,13 +276,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.versionLocalApk = localVersion.replace(/v/gi, '').trim();
       this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '').trim();
     });
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    const deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = [ DeviceType.MOBILE, DeviceType.SMALL_MOBILE, DeviceType.TABLET ].includes(deviceType);
-    this.gridRowHeight = this.isMobile ? '3.6rem' : '2rem';
   }
 
 }

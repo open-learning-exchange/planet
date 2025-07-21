@@ -85,38 +85,26 @@
       <b>{{ '  Planet  ' + planetConfiguration.name + ' ' }}</b>
       <a class="margin-lr-8" [routerLink]="['reports', 'detail']" i18n mat-raised-button>Report Detail</a>
     </p>
-
   </div>
-  <mat-grid-list cols="4" [rowHeight]="gridRowHeight">
-    <mat-grid-tile i18n><b>Last Upgrade</b></mat-grid-tile>
-    <mat-grid-tile i18n><b>Last Sync</b></mat-grid-tile>
-    <mat-grid-tile i18n><b>Resource Views Last 30 Days</b></mat-grid-tile>
-    <mat-grid-tile i18n><b>Total Ratings Last 30 Days</b></mat-grid-tile>
-    <mat-grid-tile>{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</mat-grid-tile>
-    <mat-grid-tile>{{activityLogs?.lastSync?.max.time | date: 'medium'}}</mat-grid-tile>
-    <mat-grid-tile>{{activityLogs?.resourceVisits}}</mat-grid-tile>
-    <mat-grid-tile>{{activityLogs?.ratings}}</mat-grid-tile>
-  </mat-grid-list>
-  <div *ngIf="isMobile" class="mobile-activity-stats">
-    <div class="mobile-stat-row">
-      <div class="mobile-stat-item">
-        <div class="mobile-stat-title" i18n><b>Last Upgrade</b></div>
-        <div class="mobile-stat-value">{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</div>
+  <div class="activity-stats">
+    <div class="stat-row">
+      <div class="stat-item">
+        <span i18n><b>Last Upgrade</b></span>
+        <div>{{activityLogs?.lastUpgrade?.max.time | date: 'medium'}}</div>
       </div>
-      <div class="mobile-stat-item">
-        <div class="mobile-stat-title" i18n><b>Last Sync</b></div>
-        <div class="mobile-stat-value">{{activityLogs?.lastSync?.max.time | date: 'medium'}}</div>
+      <div class="stat-item">
+        <span i18n><b>Last Sync</b></span>
+        <div>{{activityLogs?.lastSync?.max.time | date: 'medium'}}</div>
       </div>
     </div>
-    
-    <div class="mobile-stat-row">
-      <div class="mobile-stat-item">
-        <div class="mobile-stat-title" i18n><b>Resource Views Last 30 Days</b></div>
-        <div class="mobile-stat-value">{{activityLogs?.resourceVisits}}</div>
+    <div class="stat-row">
+      <div class="stat-item">
+        <span i18n><b>Resource Views Last 30 Days</b></span>
+        <div>{{activityLogs?.resourceVisits}}</div>
       </div>
-      <div class="mobile-stat-item">
-        <div class="mobile-stat-title" i18n><b>Total Ratings Last 30 Days</b></div>
-        <div class="mobile-stat-value">{{activityLogs?.ratings}}</div>
+      <div class="stat-item">
+        <span i18n><b>Total Ratings Last 30 Days</b></span>
+        <div>{{activityLogs?.ratings}}</div>
       </div>
     </div>
   </div>
