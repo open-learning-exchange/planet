@@ -90,7 +90,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">46</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event.component.html</context>
@@ -299,7 +299,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">49</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/health/health-event.component.html</context>
@@ -1463,18 +1463,19 @@
           <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="addEditCourseHeader" datatype="html">
-        <source>{VAR_SELECT, select, Add {Add Course} Edit {Edit Course}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="44580df1afd2ff4e9a556eda8458eaf474b45ef7" datatype="html">
         <source>{VAR_SELECT, select, Add {Add} Edit {Edit}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
+          <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
@@ -1485,21 +1486,25 @@
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}"/> Course</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html">
         <source>Course Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="eec715de352a6b114713b30b640d319fa78207a0" datatype="html">
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">18</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-step.component.html</context>
@@ -1518,28 +1523,28 @@
         <source>Language of Instruction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e2ec6c55b25c3243cda9a5e14ca9cf5cb6457433" datatype="html">
         <source>Grade Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="85f929f5065179d0605ed68115b8915deaf7e710" datatype="html">
         <source>Subject Level</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">33</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2af7efecfae8d7fed3b07f718a623eca1ad8163f" datatype="html">
         <source>Labels</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
@@ -1550,7 +1555,7 @@
         <source>Add Step</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
-          <context context-type="linenumber">50</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-step.component.html</context>
@@ -3033,7 +3038,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">116</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements.component.ts</context>
@@ -8955,15 +8960,12 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="509aec59a1c49b501507ee45bbef88e41c4d3060" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ pageType }}"/> Resource</source>
+      <trans-unit id="111ee59650c79a4d07526389d050ae8338e4014f" datatype="html">
+        <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}"/> Resource</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="111ee59650c79a4d07526389d050ae8338e4014f" datatype="html">
-        <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}"/> Resource</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
           <context context-type="linenumber">7</context>
@@ -12611,102 +12613,88 @@
           <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="845614819065934949" datatype="html">
-        <source>Update Team</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">72</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1678548018195726594" datatype="html">
-        <source>Create Team</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">72</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="1955454244691848249" datatype="html">
         <source>Update Enterprise</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="934702387522776833" datatype="html">
         <source>Create Enterprise</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5551225127433638341" datatype="html">
-        <source>Update Services</source>
+      <trans-unit id="845614819065934949" datatype="html">
+        <source>Update Team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8922582554481662245" datatype="html">
-        <source>Create Services</source>
+      <trans-unit id="1678548018195726594" datatype="html">
+        <source>Create Team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3888232331381898998" datatype="html">
         <source>Team Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3339419883396525689" datatype="html">
         <source>Local team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">117</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8087439227464292608" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has posted a message on <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">274</context>
+          <context context-type="linenumber">273</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8274468202054901134" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has requested to join <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">276</context>
+          <context context-type="linenumber">275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5859925700973676403" datatype="html">
         <source>You have been added to <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">278</context>
+          <context context-type="linenumber">277</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8332877715727171894" datatype="html">
         <source>You have not been accepted to <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">280</context>
+          <context context-type="linenumber">279</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2593714830120779298" datatype="html">
         <source>You have been removed from <x id="PH" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">281</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1597965293531498649" datatype="html">
         <source><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
-          <context context-type="linenumber">284</context>
+          <context context-type="linenumber">283</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c647b3d5498b15dac0193e63a10d95f5f5a2b915" datatype="html">

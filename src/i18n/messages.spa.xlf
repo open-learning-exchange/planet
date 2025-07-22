@@ -15412,6 +15412,22 @@
         <source>{this.pageType, select, Add {Add} Edit {Edit}} Course</source>
         <target state="final">{this.pageType, select, Add {Añadir curso} Edit {Editar curso}}</target>
       </trans-unit>
+      <trans-unit id="create-team" datatype="html" approved="yes">
+        <source>Create Team</source>
+        <target state="final">Crear equipo</target>
+      </trans-unit>
+      <trans-unit id="update-team" datatype="html" approved="yes">
+        <source>Update Team</source>
+        <target state="final">Actualizar equipo</target>
+      </trans-unit>
+      <trans-unit id="create-enterprise" datatype="html" approved="yes">
+        <source>Create Enterprise</source>
+        <target state="final">Crear empresa</target>
+      </trans-unit>
+      <trans-unit id="update-enterprise" datatype="html" approved="yes">
+        <source>Update Enterprise</source>
+        <target state="final">Actualizar empresa</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
