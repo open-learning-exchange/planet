@@ -21,7 +21,6 @@
     <ng-container *ngIf="requestStatus === 'accepted'">
       <a routerLink="sync" i18n mat-raised-button>Manage Sync</a>
       <a routerLink="/upgrade" *ngIf="versionLocal !== versionParent" mat-raised-button>
-        <mat-icon>upgrade</mat-icon>
         <span i18n>Upgrade</span>
       </a>
       <a routerLink="/upgrade/myplanet" *ngIf="versionLocal === versionParent && versionLocalApk !== versionLatestApk" i18n mat-raised-button>Upgrade myPlanet</a>
