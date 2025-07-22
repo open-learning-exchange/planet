@@ -25,6 +25,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Output() viewChange = new EventEmitter<any>();
+  @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: true }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
@@ -34,7 +36,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
-  @Output() viewChange = new EventEmitter<any>();
   isLoadingMore = false;
   hasMoreNews = false;
   pageSize = 10;
@@ -253,7 +254,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
   }
 
-  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
+    if (action === 'select') {
+      this.changeLabelsFilter.emit({ label, action });
+      return;
+    }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);

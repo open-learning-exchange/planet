@@ -508,4 +508,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
       : 'label_important';
   }
+
+  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
+    this.selectedLabel = action === 'select' ? label : '';
+    this.applyFilters();
+  }
 }

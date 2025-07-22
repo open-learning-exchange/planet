@@ -55,6 +55,11 @@ mat-card-content {
   background-color: $light-grey;
 }
 
+planet-label {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
 @media (max-width: $screen-xs) {
   .subtitle-row .label-panel .mat-chip {
     max-width: 80px;
