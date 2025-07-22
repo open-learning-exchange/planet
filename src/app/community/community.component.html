@@ -15,16 +15,16 @@
                   <mat-select-trigger>
                     <ng-container *ngIf="selectedLabel">
                       <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
-                      {{ selectedLabel | titlecase }}
+                      <planet-label [label]="selectedLabel"></planet-label>
                     </ng-container>
                     <ng-container *ngIf="!selectedLabel">
-                      All
+                      <span i18n>All</span>
                     </ng-container>
                   </mat-select-trigger>
-                  <mat-option value="">All</mat-option>
+                  <mat-option value=""><span i18n>All</span></mat-option>
                   <mat-option *ngFor="let label of availableLabels" [value]="label">
                     <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
-                    {{ label | titlecase }}
+                    <planet-label [label]="label"></planet-label>
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -45,10 +45,7 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab
-          [label]="configuration.planetType === 'nation' ? 'Nation Leaders' : 'Community Leaders'"
-          i18n-label
-          *ngIf="isLoggedIn">
+        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member

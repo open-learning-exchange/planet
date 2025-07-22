@@ -175,9 +175,9 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       request: this.submitTransaction(transaction, { status: 'archived' }),
       onNext: () => {
         this.deleteDialog.close();
-        this.planetMessageService.showMessage('You have deleted a transaction.');
+        this.planetMessageService.showMessage($localize`You have deleted a transaction.`);
       },
-      onError: () => this.planetMessageService.showAlert('There was a problem deleting this transaction.')
+      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this transaction.`)
     };
   }
 
