@@ -68,6 +68,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     let isLatest = true;
     this.replyObject = {};
     this.items.forEach(item => {
+      if (!item.doc.viewableBy || item.doc.viewableBy !== this.viewableBy) {
+        item.doc.viewableBy = this.viewableBy;
+      }
       this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
       if (!item.doc.replyTo && isLatest) {
         item.latestMessage = true;
