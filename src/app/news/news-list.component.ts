@@ -255,10 +255,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
-    if (action === 'select') {
-      this.changeLabelsFilter.emit({ label, action });
-      return;
-    }
+    this.changeLabelsFilter.emit({ label, action });
+    if (action === 'select') { return; }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
