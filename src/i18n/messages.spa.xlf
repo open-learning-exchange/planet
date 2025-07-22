@@ -10661,7 +10661,7 @@
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {¡Envíos}}</target>
+        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {Envíos}}</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
         <source>Status</source>
