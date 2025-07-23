@@ -10,7 +10,7 @@
                 <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="onVoicesSearchChange($event)">
               </mat-form-field>
               <mat-form-field class="label-filter-field">
-                <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)" i18n-placeholder placeholder="Filter by label">
+                <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
                   <mat-select-trigger>
                     <ng-container *ngIf="selectedLabel">
                       <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>

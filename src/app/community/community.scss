@@ -66,12 +66,6 @@ mat-tab-group, mat-tab {
 }
 
 .responsive-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  height: auto;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
   border-radius: 7.5px;
 }
 
@@ -108,12 +102,28 @@ mat-tab-group, mat-tab {
 
 @media only screen and (max-width: $screen-sm) {
   .responsive-toolbar {
-    width: 100%
+    height: auto;
+    gap: 0;
   }
 
   .toolbar-row {
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
+    .search-form-field,
+    .label-filter-field {
+      min-width: 0;
+    }
+    .new-voice-btn,
+    .pin-btn {
+      min-width: 0;
+    }
+  }
+}
+
+@media only screen and (max-width: $screen-xs) {
+  .toolbar-row {
+    .search-form-field,
+    .label-filter-field {
+      flex: 1 1 25%;
+      min-width: 0;
+    }
   }
 }
