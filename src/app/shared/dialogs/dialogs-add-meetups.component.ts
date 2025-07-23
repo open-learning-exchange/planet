@@ -2,6 +2,7 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
+import { UnsavedChangesService } from '../unsaved-changes.service';
 
 @Component({
   template: `
@@ -40,7 +41,7 @@ export class DialogsAddMeetupsComponent {
     this.dialogRef.disableClose = true;
     this.dialogRef.backdropClick().subscribe(() => {
       if (this.meetupsAdd && this.meetupsAdd.hasUnsavedChanges) {
-        const confirmClose = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+        const confirmClose = window.confirm(UnsavedChangesService.warningMsg);
         if (confirmClose) {
           this.meetupsAdd.hasUnsavedChanges = false;
           this.meetupsAdd.unsavedChangesService.setHasUnsavedChanges(false);

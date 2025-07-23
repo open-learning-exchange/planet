@@ -314,7 +314,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
 
   goBack() {
     if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      const confirmLeave = window.confirm(UnsavedChangesService.warningMsg);
       if (!confirmLeave) {
         return;
       }
@@ -326,7 +326,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
 
   canDeactivate(): boolean {
     if (this.hasUnsavedChanges) {
-      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
+      return window.confirm(UnsavedChangesService.warningMsg);
     }
     return true;
   }
@@ -334,7 +334,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+      $event.returnValue = UnsavedChangesService.warningMsg;
     }
   }
 

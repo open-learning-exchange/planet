@@ -417,13 +417,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      $event.returnValue = UnsavedChangesService.warningMsg;
     }
   }
 
   canDeactivate(): boolean {
     if (this.hasUnsavedChanges) {
-      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+      return window.confirm(UnsavedChangesService.warningMsg);
     }
     return true;
   }

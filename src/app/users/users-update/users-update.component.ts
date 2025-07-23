@@ -283,14 +283,12 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges || this.avatarChanged) {
-      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      $event.returnValue = UnsavedChangesService.warningMsg;
     }
   }
 
   get additionalFieldsButtonText(): string {
-    return this.showAdditionalFields
-      ? $localize`Hide Additional Fields`
-      : $localize`Show Additional Fields`;
+    return this.showAdditionalFields ? $localize`Hide Additional Fields` : $localize`Show Additional Fields`;
   }
 
   openImageEditDialog(event: Event): void {

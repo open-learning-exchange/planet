@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class UnsavedChangesService {
+  static readonly warningMsg = $localize`You have unsaved changes. Are you sure you want to leave?`;
   private unsavedChanges = false;
 
   setHasUnsavedChanges(hasChanges: boolean) {
