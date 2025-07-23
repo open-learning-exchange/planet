@@ -38,7 +38,7 @@
           </ng-container>
           <ng-template #loaded>
             <ng-container *ngIf="news?.length > 0; else noVoices">
-              <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true"></planet-news-list>
+              <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)"></planet-news-list>
             </ng-container>
           </ng-template>
           <ng-template #noVoices>
