@@ -66,6 +66,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   availableLabels: string[] = [];
   selectedLabel = '';
+  pinned = false;
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
