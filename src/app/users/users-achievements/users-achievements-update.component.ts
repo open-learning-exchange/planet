@@ -14,7 +14,7 @@ import { forkJoin, Subject, interval, of, race } from 'rxjs';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 import { debounce } from 'rxjs/operators';
 
 @Component({
@@ -55,8 +55,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService,
-    private unsavedChangesService: UnsavedChangesService
+    private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -119,7 +118,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           profileForm: this.profileForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
 
     this.profileForm.valueChanges
@@ -137,7 +135,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           profileForm: this.profileForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
@@ -285,7 +282,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     if (this.editForm.valid && this.profileForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
       this.hasUnsavedChanges = false;
-      this.unsavedChangesService.setHasUnsavedChanges(false);
     } else {
       this.markAsInvalid(this.editForm);
       this.markAsInvalid(this.profileForm);
@@ -313,28 +309,17 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   goBack() {
-    if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm(UnsavedChangesService.warningMsg);
-      if (!confirmLeave) {
-        return;
-      }
-    }
-    this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm(UnsavedChangesService.warningMsg);
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = UnsavedChangesService.warningMsg;
+      $event.returnValue = warningMsg;
     }
   }
 

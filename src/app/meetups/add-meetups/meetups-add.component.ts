@@ -17,7 +17,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 import { interval, of, race } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
@@ -60,8 +60,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private userService: UserService,
-    private stateService: StateService,
-    public unsavedChangesService: UnsavedChangesService
+    private stateService: StateService
   ) {
     this.createForm();
    }
@@ -122,7 +121,6 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           day: formValue.day || []
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
@@ -164,7 +162,6 @@ onSubmit() {
       this.addMeetup(meetup);
   }
   this.hasUnsavedChanges = false;
-  this.unsavedChangesService.setHasUnsavedChanges(false);
 }
 
   changeTimeFormat(time: string): string {
@@ -210,14 +207,6 @@ onSubmit() {
   }
 
   cancel() {
-    if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm(UnsavedChangesService.warningMsg);
-      if (!confirmLeave) {
-        return;
-      }
-    }
-    this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.goBack();
   }
 
@@ -230,16 +219,13 @@ onSubmit() {
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm(UnsavedChangesService.warningMsg);
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = UnsavedChangesService.warningMsg;
+      $event.returnValue = warningMsg;
     }
   }
 
