@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
@@ -13,6 +13,8 @@ export class ChatComponent implements OnInit {
   activeService: string;
   aiServices: AIProvider[] = [];
   displayToggle: boolean;
+  @Input() displayHeaderRow = true;
+  @Input() context: any;
 
   constructor(
     private chatService: ChatService,
@@ -28,6 +30,7 @@ export class ChatComponent implements OnInit {
       this.chatService.toggleAIServiceSignal(this.activeService);
     });
     this.subscribeToAIService();
+    this.chatService.setChatMode(this.context.type);
   }
 
   subscribeToAIService() {
