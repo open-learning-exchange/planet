@@ -28,7 +28,7 @@ export class UsersAchievementsComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
-  publicView = this.route.snapshot.data.requiresAuth === false;
+  publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
   constructor(

@@ -20,38 +20,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styles: [ `
-    .view-container > * {
-      margin-bottom: 0.5rem;
-    }
-    .view-container > *:last-child {
-      margin-bottom: 0;
-    }
-    .send-view {
-      padding-bottom: 0;
-    }
-    .list-view {
-      padding-top: 0;
-    }
-    .mat-raised-button {
-      margin: 0.25rem;
-    }
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .version-card {
-      flex: 1;
-      max-width: calc(50% - 20px);
-      margin: 1rem;
-    }
-    .pinClass {
-      font-size: 1.5rem;
-    }
-    mat-slide-toggle {
-      padding: 3px;
-    }
-  ` ]
+  styleUrls: [ './manager-dashboard.scss' ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -75,7 +44,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   isHub = false;
   streaming: boolean;
   overlayOpen = false;
-  isMobile: boolean;
   gridRowHeight = '2rem';
 
   constructor(
@@ -308,12 +276,6 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.versionLocalApk = localVersion.replace(/v/gi, '').trim();
       this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '').trim();
     });
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.isMobile = this.deviceInfoService.getDeviceType() === DeviceType.MOBILE;
-    this.gridRowHeight = this.isMobile ? '3.6rem' : '2rem';
   }
 
 }
