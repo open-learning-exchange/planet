@@ -60,7 +60,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isLoading = true;
+  currentTab = 0;
   activeReplyId: string | null = null;
+  lastReplyId: string | null = null;
   voiceSearch = '';
   availableLabels: string[] = [];
   selectedLabel = '';
@@ -367,7 +369,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
-    this.activeReplyId = data._id;
+    this.activeReplyId = data._id === 'root' ? null : data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -452,12 +454,17 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
+    // stash reply only on voices tab change
+    if (this.currentTab === 0 && index !== 0) {
+      this.lastReplyId = this.activeReplyId;
+    }
     if (index === 0) {
-      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
+      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
     } else {
       this.router.navigate([ '' ]);
     }
-    this.resizeCalendar = index === 5;
+    this.resizeCalendar = (index === 5);
+    this.currentTab = index;
   }
 
   onLabelFilterChange(label: string): void {
