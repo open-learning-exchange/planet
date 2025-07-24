@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         if (this.unsavedChangesService.getHasUnsavedChanges()) {
-          const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
+          const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
           if (confirmLeave) {
             this.unsavedChangesService.setHasUnsavedChanges(false);
           } else {

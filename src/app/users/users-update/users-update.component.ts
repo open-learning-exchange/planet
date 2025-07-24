@@ -271,7 +271,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   canDeactivate(): boolean {
     if (this.hasUnsavedChanges || this.avatarChanged) {
-      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
+      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
     }
     return true;
   }
@@ -283,7 +283,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges || this.avatarChanged) {
-      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
     }
   }
 
