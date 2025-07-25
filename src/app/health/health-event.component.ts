@@ -13,7 +13,7 @@ import { switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { warningMsg } from '../shared/unsaved-changes.component';
 import { debounce } from 'rxjs/operators';
 
 @Component({
@@ -38,8 +38,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService,
-    private unsavedChangesService: UnsavedChangesService
+    private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
       temperature: [ '', Validators.min(1) ],
@@ -132,7 +131,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
         const currentState = JSON.stringify(processedForm);
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
@@ -148,7 +146,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     } else {
       this.saveEvent().subscribe(() => {
         this.hasUnsavedChanges = false;
-        this.unsavedChangesService.setHasUnsavedChanges(false);
         this.goBack();
       });
     }
@@ -161,14 +158,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   goBack() {
-    if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-      if (!confirmLeave) {
-        return;
-      }
-    }
-    this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
+    // Let the router guard handle the unsaved changes prompt
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
@@ -196,7 +186,6 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     });
     this.dialogPrompt.afterClosed().subscribe(result => {
       this.hasUnsavedChanges = !result;
-      this.unsavedChangesService.setHasUnsavedChanges(!result);
     });
   }
 
@@ -234,16 +223,13 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+      $event.returnValue = warningMsg;
     }
   }
 }
