@@ -66,6 +66,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   availableLabels: string[] = [];
   selectedLabel = '';
+  pinned = false;
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
@@ -514,5 +515,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return label === 'shared chat' ? 'question_answer'
       : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
       : 'label_important';
+  }
+
+  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
+    this.selectedLabel = action === 'select' ? label : '';
+    this.applyFilters();
   }
 }
