@@ -1385,7 +1385,8 @@
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="
 
-  validAnswer(field) {"/>&lt;/b&gt; has
+  validAnswer(field) {
+"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="= undefined &amp;&amp; field !== false &amp;&amp; field !== &apos;&apos; &amp;&amp; field !== n"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="dSubmissionNotification(isR"/>&lt;/b&gt;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
@@ -6336,7 +6337,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="229103727470276623" datatype="html">
-        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {"/> successfully</source>
+        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {
+"/> successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">224</context>
@@ -13772,6 +13774,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="loadingReports" datatype="html">
+        <source>Loading reports...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="linenumber">[line number]</context>
         </context-group>
       </trans-unit>
     </body>

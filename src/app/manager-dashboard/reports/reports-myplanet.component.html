@@ -133,7 +133,10 @@
         </button>
       </mat-expansion-panel>
     </ng-container>
-    <ng-container *ngIf="isEmpty">
+    <ng-container *ngIf="isLoading">
+      <mat-panel-title i18n="@@loadingReports">Loading reports...</mat-panel-title>
+    </ng-container>
+    <ng-container *ngIf="!isLoading && isEmpty">
       <mat-panel-title i18n>No record was found</mat-panel-title>
     </ng-container>
   </div>
