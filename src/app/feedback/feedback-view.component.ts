@@ -12,6 +12,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
+import { trackById } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -20,6 +21,7 @@ import { UsersService } from '../users/users.service';
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
   private onDestroy$ = new Subject<void>();
+  @ViewChild('chatList') chatListElement: ElementRef;
   feedback: any = {};
   user: any = {};
   newMessage = '';
@@ -28,7 +30,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParams = 'off';
   showParamsButton = false;
   users = {};
-  @ViewChild('chatList') chatListElement: ElementRef;
+  trackById = trackById;
 
   constructor(
     private couchService: CouchService,
@@ -174,10 +176,6 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   scrollToBottom() {
     this.chatListElement.nativeElement.scrollTo({ top: this.chatListElement.nativeElement.scrollHeight, behavior: 'smooth' });
-  }
-
-  feedbackTrackByFn(index, item) {
-    return item._id;
   }
 
   toggleParams() {

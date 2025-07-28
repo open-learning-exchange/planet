@@ -23,7 +23,7 @@
     <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched">
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
     </div>
-    <div *ngFor="let choice of choices.controls; index as i; trackBy: choiceTrackByFn">
+    <div *ngFor="let choice of choices.controls; index as i; trackBy: trackByFn">
       <mat-checkbox
         (change)="setCorrect($event, choice)"
         [checked]="correctCheckboxes[choice.controls.id.value]"
