@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
+import { trackById } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-news-list',
@@ -45,6 +46,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageEnd = { root: 10 };
   // store the last opened thread’s root post id
   lastRootPostId: string;
+  trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
@@ -261,10 +263,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
-  }
-
-  trackById(index, item) {
-    return item._id;
   }
 
   getCurrentItems(): any[] {

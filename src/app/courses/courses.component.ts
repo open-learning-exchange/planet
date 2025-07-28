@@ -11,7 +11,7 @@ import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
