@@ -232,6 +232,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       showFormErrors(this.courseForm.controls);
       return;
     }
+    this.hasUnsavedChanges = false;
     this.updateCourse(this.courseForm.value, shouldNavigate);
   }
 
@@ -272,11 +273,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   saveDraft() {
     const course = this.convertMarkdownImagesText({ ...this.courseForm.value, images: this.images }, this.steps);
-    this.pouchService.saveDocEditing(
-      { ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags },
-      this.dbName,
-      this.courseId
-    );
+    this.pouchService.saveDocEditing({ ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId);
     this.hasUnsavedChanges = false;
     this.planetMessageService.showMessage($localize`Draft saved successfully`);
   }
