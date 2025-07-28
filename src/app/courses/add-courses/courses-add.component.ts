@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
@@ -18,6 +18,7 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 
 @Component({
   templateUrl: 'courses-add.component.html',
@@ -76,28 +77,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.onFormChanges();
   }
 
-  createForm() {
-    const configuration = this.stateService.configuration;
-    this.courseForm = this.fb.group({
-      courseTitle: [
-        '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(
-          this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
-        )
-      ],
-      description: [ '', CustomValidators.requiredMarkdown ],
-      languageOfInstruction: '',
-      gradeLevel: '',
-      subjectLevel: '',
-      createdDate: this.couchService.datePlaceholder,
-      creator: this.userService.get().name + '@' + configuration.code,
-      sourcePlanet: configuration.code,
-      resideOn: configuration.code,
-      updatedDate: this.couchService.datePlaceholder
-    });
-  }
-
   ngOnInit() {
     const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
     forkJoin([
@@ -139,6 +118,35 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = warningMsg;
+    }
+  }
+
+  createForm() {
+    const configuration = this.stateService.configuration;
+    this.courseForm = this.fb.group({
+      courseTitle: [
+        '',
+        CustomValidators.required,
+        ac => this.validatorService.isUnique$(
+          this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
+        )
+      ],
+      description: [ '', CustomValidators.requiredMarkdown ],
+      languageOfInstruction: '',
+      gradeLevel: '',
+      subjectLevel: '',
+      createdDate: this.couchService.datePlaceholder,
+      creator: this.userService.get().name + '@' + configuration.code,
+      sourcePlanet: configuration.code,
+      resideOn: configuration.code,
+      updatedDate: this.couchService.datePlaceholder
+    });
   }
 
   submitAddedExam() {
@@ -186,11 +194,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       }
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
       this.coursesService.course = { form: course, steps: course.steps, tags };
-      this.pouchService.saveDocEditing(
-        { ...course, tags, initialTags: this.coursesService.course.initialTags },
-        this.dbName,
-        this.courseId
-      );
       const currentState = JSON.stringify({
         form: this.courseForm.value,
         steps: this.steps,
@@ -265,6 +268,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   cancel() {
     this.navigateBack();
+  }
+
+  saveDraft() {
+    const course = this.convertMarkdownImagesText({ ...this.courseForm.value, images: this.images }, this.steps);
+    this.pouchService.saveDocEditing(
+      { ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags },
+      this.dbName,
+      this.courseId
+    );
+    this.hasUnsavedChanges = false;
+    this.planetMessageService.showMessage($localize`Draft saved successfully`);
   }
 
   canDeactivate(): boolean {
