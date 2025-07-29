@@ -64,14 +64,15 @@
       align-items: flex-start;
     }
   }
-  @media (max-width: 768px) {
+
+  @media (max-width: $screen-sm) {
     .mobile-scroll-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
-  
+
     mat-table {
-      min-width: 800px; 
+      min-width: 800px;
     }
   }
 }
