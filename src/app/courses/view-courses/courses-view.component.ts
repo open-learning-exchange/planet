@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { Subject } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { trackByIndex } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -30,6 +31,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   examText: 'retake' | 'take' = 'take';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  trackByFn = trackByIndex;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -184,14 +186,16 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ 'update' ], { relativeTo: this.route });
   }
   /**
+   * If returnState is set in history, it will navigate to that page.(teams/enterprises)
    * Returns routing to previous parent page on Courses
    */
   goBack() {
+    const returnState = history.state?.returnState;
+    if (returnState) {
+      this.router.navigate([ `${returnState.route}` ]);
+      return;
+    }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-  }
-
-  trackBySteps(index: number) {
-    return index;
   }
 
 }

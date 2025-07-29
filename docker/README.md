@@ -10,7 +10,7 @@ Docker means many things to many people. In simplest form we can say that docker
 ### Components
 We have several docker components in our application there are
 * Planet. There are two version, one is for production and one is for development.
-  * Planet for production. It basically our production optimized Planet that served via Nginx.
+  * Planet for production. It basically our production optimized Planet (sometimes served via Nginx).
   * Planet for development. It basically a runtime that make it possible for Planet to run (mostly node.js)
 * CouchDB. It basically a CouchDB container and it developed in the different project. You can access it here in [ole-vi/rpi-couchdb](https://github.com/ole-vi/rpi-couchdb)
 * CouchDB initialization data a.k.a. `db-init`. It contains all the schema necessary for our Planet to run.
@@ -29,16 +29,14 @@ This docker compose can be use for your development environment and very handy, 
 ## How to use
 I will divide this how to use into two sections, for development and for production. It is interesting to run our development environment on top of isolated docker container.
 
-### For Development
-
 ### For Production
 
-1. Move to `docker` folder
+1. Move to `srv/planet` folder
 2. Run the following command to spawn your environment for the first time
-   (Optional: update planet.yml with specific images from https://hub.docker.com/r/treehouses/planet/tags/)
+   (Optional: update planet.yml with the latest or a specific images from https://hub.docker.com/r/treehouses/planet/tags/)
 
 ```
-docker-compose -f planet.yml -f install.yml -p planet up -d --build
+docker-compose -f planet.yml -p planet up -d --build
 ```
 
 See if the docker containers running
@@ -50,12 +48,14 @@ docker ps
 You'll see you containers like this
 
 ```
-CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                                                                NAMES
-ea3b914c3193        planetdev_planet    "/bin/sh -c 'bash ..."   About a minute ago   Up 58 seconds       0.0.0.0:3000->3000/tcp                                               planetdev_planet_1
-57f30698ccda        klaemo/couchdb      "tini -- /docker-e..."   About a minute ago   Up About a minute   4369/tcp, 9100/tcp, 0.0.0.0:2200->5984/tcp, 0.0.0.0:2201->5986/tcp   planetdev_couchdb_1
+CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                                                             NAMES
+0914c167f20e   d14b10ade528               "/bin/sh -c ./docker…"   2 weeks ago     Up 2 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 443/tcp                      planet-prod-planet-1
+42d4b4ea3826   898294509ee6               "npm run start"          2 weeks ago     Up 2 seconds   0.0.0.0:5400->5400/tcp, [::]:5400->5400/tcp                       planet-prod-chatapi-1
+c03b86dfede9   9859c264e24e               "/bin/sh -c 'bash ./…"   2 weeks ago     Up 2 seconds                                                                     planet-prod-db-init-1
+f7ddb76ae6b6   treehouses/couchdb:2.3.1   "tini -- /docker-ent…"   14 months ago   Up 2 seconds   4369/tcp, 9100/tcp, 0.0.0.0:2200->5984/tcp, [::]:2200->5984/tcp   planet-prod-couchdb-1
 ```
 
-Connect to your `planetdev_planet` with
+Connect to your `planet-prod-planet-1` with
 
 ```
 docker logs {{id}}
@@ -64,7 +64,7 @@ docker logs {{id}}
 in this case
 
 ```
-docker logs ea3b914c3193 -f
+docker logs 0914c167f20e -f
 ```
 
 press `CTRL+C` to exit logs view
@@ -72,19 +72,19 @@ press `CTRL+C` to exit logs view
 3. When you're done, you can do the following command
 
 ```
-docker-compose -f planet.yml -f install.yml -p planet stop
+docker-compose -f planet.yml -p planet stop
 ```
 
 4. When you go back to code
 
 ```
-docker-compose -f planet.yml -f install.yml -p planet start
+docker-compose -f planet.yml -p planet start
 ```
 
 5. When you have to delete the environment
 
 ```
-docker-compose -f planet.yml -f install.yml -p planet down
+docker-compose -f planet.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.

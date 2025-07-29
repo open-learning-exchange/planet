@@ -18,7 +18,7 @@ export class AppComponent {
   ) {
     iconRegistry.addSvgIcon(
       'myLibrary',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/folder.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/library.svg'));
     iconRegistry.addSvgIcon(
       'myCourses',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/school.svg'));
@@ -33,7 +33,7 @@ export class AppComponent {
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
     iconRegistry.addSvgIcon(
       'feedbacklist',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/mail.svg'));
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedbacklist.svg'));
     iconRegistry.addSvgIcon(
       'logout',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/logout.svg'));
@@ -52,6 +52,12 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'sync',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sync.svg'));
+    iconRegistry.addSvgIcon(
+      'pin',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pin.svg'));
+    iconRegistry.addSvgIcon(
+      'unpin',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/unpin.svg'));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {

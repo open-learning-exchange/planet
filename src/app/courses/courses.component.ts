@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -9,9 +9,10 @@ import { Router, ActivatedRoute, } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
+import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
-  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
+  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { debug } from '../debug-operator';
@@ -44,7 +45,8 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -104,7 +106,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
-    filterSpecificFieldsByWord([ 'doc.courseTitle' ]),
+    filterSpecificFieldsHybrid([ 'doc.courseTitle' ], this.fuzzySearchService),
     filterShelf(this.myCoursesFilter, 'admission'),
     filterIds(this.filterIds)
   ]);
@@ -133,7 +135,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private dialogsLoadingService: DialogsLoadingService,
     private tagsService: TagsService,
     private searchService: SearchService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private fuzzySearchService: FuzzySearchService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -462,20 +465,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     ).subscribe(() => {
       this.getCourses();
       this.planetMessageService.showMessage($localize`Collections updated`);
-    });
-  }
-
-  openCourseViewDialog(courseId) {
-    if (!this.isDialog && !this.isForm) { return; }
-    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId },
-      minWidth: '600px',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      autoFocus: false
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.dialog.closeAll();
     });
   }
 

@@ -3,6 +3,7 @@
   <span i18n>Courses/Resources Sent</span>
   <span class="toolbar-fill"></span>
 </mat-toolbar>
+
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
@@ -10,7 +11,6 @@
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>
-
   <div class="view-container view-full-height view-table">
     <mat-table #table [dataSource]="pushedItems" matSort>
       <ng-container matColumnDef="select">
@@ -31,8 +31,14 @@
       <ng-container matColumnDef="item">
         <mat-header-cell *matHeaderCellDef mat-sort-header="item" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.db === 'resources'">{{ element.item.doc.title }}<mat-icon class="margin-lr-5" svgIcon="myLibrary"></mat-icon></ng-container>
-          <ng-container *ngIf="element.db === 'courses'">{{ element.item.doc.courseTitle }}<mat-icon class="margin-lr-5" svgIcon="myCourses"></mat-icon></ng-container>
+          <ng-container *ngIf="element.db === 'resources'">
+            {{ element.item.doc.title }}
+            <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
+          </ng-container>
+          <ng-container *ngIf="element.db === 'courses'">
+            {{ element.item.doc.courseTitle }}
+            <mat-icon class="margin-lr-5 fetch-icon">school</mat-icon>
+          </ng-container>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="date">
@@ -45,7 +51,6 @@
         <td><div class="view-container" i18n>No Record Found</div></td>
       </tr>
     </mat-table>
-
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"

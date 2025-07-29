@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
@@ -85,6 +85,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
+  trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
@@ -184,10 +185,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};
     this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
-  }
-
-  trackByFn(index, item) {
-    return item._id;
   }
 
   filterPredicate() {

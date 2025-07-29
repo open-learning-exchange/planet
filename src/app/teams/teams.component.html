@@ -46,7 +46,7 @@
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
             {{element.doc.name | truncateText:150}}
-            <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
+            <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus === 'member'">check</mat-icon>
             <span *ngIf="myTeamsFilter==='on'" class="team-type-label" i18n>
               ({{ element.doc.type === 'enterprise' ? 'enterprise' : 'team' }})
             </span>

@@ -5,7 +5,7 @@
     </button>
     <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!isMobile">
+    <ng-container *ngIf="!isMobile && !surveyId">
       <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
       <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
       <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
@@ -14,11 +14,11 @@
       <mat-icon>filter_list</mat-icon>
     </button>
   </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
     <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
     <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
   </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile">
+  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
     <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
   </mat-toolbar-row>
 </mat-toolbar>

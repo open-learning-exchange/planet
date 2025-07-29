@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
+import { trackById } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-news-list',
@@ -25,6 +26,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Output() viewChange = new EventEmitter<any>();
+  @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: true }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
@@ -34,7 +37,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
-  @Output() viewChange = new EventEmitter<any>();
   isLoadingMore = false;
   hasMoreNews = false;
   pageSize = 10;
@@ -42,6 +44,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
+  // store the last opened thread’s root post id
+  lastRootPostId: string;
+  trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
@@ -102,11 +107,28 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   showReplies(news) {
+    // remember the conversation’s true root post, even from deep threads
+    if (news._id !== 'root') {
+      this.lastRootPostId = this.getThreadRootId(news);
+    }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
       return;
     }
     this.filterNewsToShow(news._id);
+  }
+
+  // climb replies until you reach the top-level post (_id with no replyTo)
+  private getThreadRootId(news: any): string {
+    let current = news;
+    while (current.doc && current.doc.replyTo) {
+      const parent = this.items.find(item => item._id === current.doc.replyTo);
+      if (!parent) {
+        break;
+      }
+      current = parent;
+    }
+    return current._id;
   }
 
   navigateToReply(newsId) {
@@ -132,6 +154,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.postSharedWithCommunity(this.items.find(item => item._id === this.replyViewing.doc.replyTo))
       );
     this.viewChange.emit(this.replyViewing);
+    // when going back to the main conversation, scroll down to the previously viewed post
+    if (newsId === 'root' && this.lastRootPostId) {
+      setTimeout(() => {
+        const el = document.getElementById(`news-${this.lastRootPostId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto', block: 'center' });
+        }
+      }, 0);
+    }
   }
 
   showPreviousReplies() {
@@ -225,15 +256,13 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
   }
 
-  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
+    this.changeLabelsFilter.emit({ label, action });
+    if (action === 'select') { return; }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
-  }
-
-  trackById(index, item) {
-    return item._id;
   }
 
   getCurrentItems(): any[] {

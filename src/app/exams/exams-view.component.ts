@@ -51,6 +51,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
+  currentOtherOption: { id: 'other'; text: string; isOther: true } | null = null;
 
   constructor(
     private router: Router,
@@ -102,6 +103,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const mode = params.get('mode');
     this.mode = mode || this.mode;
     this.answer.setValue(null);
+    this.currentOtherOption = { id: 'other', text: '', isOther: true };
     this.spinnerOn = true;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
@@ -185,6 +187,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     if (direction !== 0) {
       this.checkboxState = {};
+      this.currentOtherOption = { id: 'other', text: '', isOther: true };
     }
     this.isNewQuestion = true;
     this.spinnerOn = false;
@@ -202,10 +205,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
+    const surveyid = this.route.snapshot.params['surveyid'];
     this.isLoading = false;
     this.router.navigate([ this.route.snapshot.params.snap ? '../../' : '../',
       this.mode === 'take' ? {} :
-      { type: this.mode === 'grade' ? 'exam' : 'survey' }
+      { type: this.mode === 'grade' ? 'exam' : 'survey', ...(surveyid ? { surveyid } : {}) }
     ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
@@ -224,6 +228,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    this.currentOtherOption = { id: 'other', text: '', isOther: true };
   }
 
   setCourseListener() {
@@ -284,20 +289,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setAnswer(event, option) {
     const value = this.answer.value || [];
-
-
     if (event.checked) {
-      if (!value.includes(option)) {
+      if (!value.some(val => val.id === option.id)) {
         value.push(option);
+      } else if (option.id === 'other') {
+        const otherIndex = value.findIndex(val => val.id === 'other');
+        if (otherIndex > -1) {
+          value[otherIndex].text = option.text;
+        }
       }
     } else {
-      const index = value.indexOf(option);
+      const index = value.findIndex(val => val.id === option.id);
       if (index > -1) {
         value.splice(index, 1);
       }
     }
 
-    this.answer.setValue(value);
+    this.answer.setValue(value.length > 0 ? value : null);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
   }
@@ -344,10 +352,22 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        setSelectMultipleAnswer(answer.value);
+        const rebuilt = answer.value.map(val => {
+          if (val.id === 'other') {
+            this.currentOtherOption.text = val.text || '';
+            return this.currentOtherOption;
+          }
+          return val;
+        });
+        setSelectMultipleAnswer(rebuilt);
         break;
       case 'select':
-        this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        if (answer.value && answer.value.id === 'other') {
+          this.currentOtherOption.text = answer.value.text;
+          this.answer.setValue(this.currentOtherOption);
+        } else {
+          this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        }
         break;
       default:
         this.answer.setValue(answer.value);
@@ -360,7 +380,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
 
     if (Array.isArray(ac.value)) {
-      return ac.value.length > 0 ? null : { required: true };
+      if (ac.value.length === 0) {
+        return { required: true };
+      }
+      const hasEmptyOther = ac.value.some(option =>
+        option && option.isOther && (!option.text || !option.text.trim())
+      );
+      return hasEmptyOther ? { required: true } : null;
+    }
+    if (ac.value && ac.value.isOther && (!ac.value.text || !ac.value.text.trim())) {
+      return { required: true };
     }
 
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
@@ -370,6 +399,25 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
+  }
+
+  isOtherSelected() {
+    return this.answer.value?.id === 'other';
+  }
+
+  toggleOtherMultiple({ checked }): void {
+    this.checkboxState['other'] = checked;
+    if (checked) {
+      this.setAnswer({ checked: true }, this.currentOtherOption);
+    } else {
+      const remaining = (this.answer.value || []).filter(o => o.id !== 'other');
+      this.answer.setValue(remaining.length ? remaining : null);
+      this.answer.updateValueAndValidity();
+    }
+  }
+
+  updateOtherText(): void {
+    this.answer.updateValueAndValidity();
   }
 
 }

@@ -50,6 +50,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
+  surveyId = this.route.snapshot.params['surveyId'];
 
   constructor(
     private router: Router,
@@ -127,6 +128,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   submissionQuery() {
+    if (this.surveyId) {
+      this.filter.type = 'survey';
+      return findDocuments({ parentId: this.surveyId, type: 'survey', status: 'complete' });
+    }
     switch (this.mode) {
       case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
       case 'review': return findDocuments({
@@ -172,7 +177,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 
   submissionAction(submission) {
@@ -209,6 +214,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   appendCourseInfo(submission, courses) {
+    if (!submission.parentId || !submission.parentId.includes('@')) {
+      return submission;
+    }
     const [ examId, courseId ] = submission.parentId.split('@');
     if (!courseId) {
       return submission;

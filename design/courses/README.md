@@ -18,4 +18,4 @@ Read about Design Document from CouchDB's documentation [here](http://docs.couch
 8. Add your `.json` using the `upsert_design` function in the `couchdb-setup.sh` file and run the script to add it to CouchDB.
 
 
-You can view a sample validate document function [here](https://github.com/ole-vi/planet/blob/courses-component/design/courses/course-validators.js), its json file [here](https://github.com/ole-vi/planet/blob/courses-component/design/courses/course-validators.json), the Vagrant file [here](https://github.com/ole-vi/planet/blob/998fff9b295bdf1e5a732b3ba50907cba6f4a9cd/Vagrantfile#L121) and docker file [here](https://github.com/ole-vi/planet/blob/998fff9b295bdf1e5a732b3ba50907cba6f4a9cd/docker/db-init/docker-entrypoint.sh#L27).
+You can view a sample validate document function [here](https://github.com/ole-vi/planet/blob/courses-component/design/courses/course-validators.js), its json file [here](https://github.com/ole-vi/planet/blob/courses-component/design/courses/course-validators.json) and docker file [here](https://github.com/ole-vi/planet/blob/998fff9b295bdf1e5a732b3ba50907cba6f4a9cd/docker/db-init/docker-entrypoint.sh#L27).

@@ -1,21 +1,23 @@
-FROM ubuntu:xenial as builder
+# Build stage
+FROM treehouses/node-tags:arm64-3.16 AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-COPY ./docker/chatapi/crosscompile_chatapi.sh .
-RUN bash ./crosscompile_chatapi.sh armv8 install
-
-#####
-
-FROM treehouses/node-tags:arm64-3.16
-
-RUN apk update && apk add --no-cache -utils
-
 COPY ./chatapi/package.json ./
-RUN npm install --production
+
+RUN npm install
 
 COPY ./chatapi/src ./src/
-COPY ./chatapi/tsconfig.json ./tsconfig.json
+COPY ./chatapi/tsconfig.json ./
 
-EXPOSE 5000
+RUN npm run build
 
-CMD ["npm", "run", "start"]
+# Production stage
+FROM treehouses/node-tags:arm64-3.16
+
+RUN apk add --no-cache poppler-utils
+COPY ./chatapi/package.json ./
+
+RUN npm install --production
+COPY --from=builder /dist ./dist/
+
+CMD ["node", "dist/index.js"]
