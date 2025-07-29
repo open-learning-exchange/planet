@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
+import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, interval, of, Subscription } from 'rxjs';
+import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
@@ -10,7 +10,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { UnsavedChangesService } from '../shared/unsaved-changes.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -65,9 +64,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   planetType = this.stateService.configuration.planetType;
 
   private onDestroy$ = new Subject<void>();
-  private hasUnsavedChangesSubscription: Subscription;
-  hasUnsavedChanges = false;
-  private routerSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -75,10 +71,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private router: Router,
     private userService: UserService,
     private pouchAuthService: PouchAuthService,
-    private unsavedChangesService: UnsavedChangesService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService,
+    private notificationsService: NotificationsService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -105,18 +100,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
-    this.routerSubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        if (this.unsavedChangesService.getHasUnsavedChanges()) {
-          const confirmLeave = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-          if (confirmLeave) {
-            this.unsavedChangesService.setHasUnsavedChanges(false);
-          } else {
-            this.router.navigateByUrl(this.router.url);
-          }
-        }
-      }
-    });
   }
 
   ngDoCheck() {
@@ -140,12 +123,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnDestroy() {
-    if (this.hasUnsavedChangesSubscription) {
-      this.hasUnsavedChangesSubscription.unsubscribe();
-    }
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }

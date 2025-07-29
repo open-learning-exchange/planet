@@ -26,19 +26,25 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   readonly dbName = 'courses'; // make database name a constant
+  private onDestroy$ = new Subject<void>();
+  private isDestroyed = false;
+  private isSaved = false;
+  private stepsChange$ = new Subject<any[]>();
+  private initialState = '';
+  private _steps = [];
   courseForm: FormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
   tags = this.fb.control([]);
-  private onDestroy$ = new Subject<void>();
-  private isDestroyed = false;
-  private isSaved = false;
-  private stepsChange$ = new Subject<any[]>();
-  private navigationViaCancel = false;
+  // from the constants import
+  gradeLevels = constants.gradeLevels;
+  subjectLevels = constants.subjectLevels;
+  images: any[] = [];
+  // from the languages import
+  languageNames = languages.map(list => list.name);
+  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
   hasUnsavedChanges = false;
-  private initialState = '';
-  private _steps = [];
   get steps() {
     return this._steps;
   }
@@ -51,16 +57,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
   }
-
-  // from the constants import
-  gradeLevels = constants.gradeLevels;
-  subjectLevels = constants.subjectLevels;
-  images: any[] = [];
-
-  // from the languages import
-  languageNames = languages.map(list => list.name);
-
-  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
 
   constructor(
     private router: Router,
@@ -268,23 +264,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   cancel() {
-    this.navigationViaCancel = true;
-    if (this.hasUnsavedChanges) {
-      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-      if (!confirmCancel) {
-        this.navigationViaCancel = false;
-        return;
-      }
-    }
-    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.navigateBack();
   }
 
   canDeactivate(): boolean {
-    if (this.navigationViaCancel) {
-      return true;
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   navigateBack() {
@@ -300,10 +284,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   removeStep(pos) {
     this.steps.splice(pos, 1);
-  }
-
-  stepTrackByFn(index, item) {
-    return item.id;
   }
 
   convertMarkdownImagesText(course, steps) {
