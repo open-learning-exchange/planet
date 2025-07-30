@@ -1,19 +1,9 @@
-import {
-  Component,
-  Input,
-  ViewEncapsulation,
-  OnChanges,
-  Output,
-  EventEmitter,
-  OnInit,
-  ViewChildren,
-  QueryList,
-  ViewChild
-} from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { MatSelectionList } from '@angular/material/list';
 import * as constants from '../constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
-import { MatSelectionList } from '@angular/material/list';
+import { trackByCategory } from '../../shared/table-helpers';
 
 @Component({
   template: `
@@ -82,6 +72,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   @Input() startingSelection: any;
   @Output() searchChange = new EventEmitter<any>();
   @ViewChildren(CoursesSearchListComponent) searchListComponents: QueryList<CoursesSearchListComponent>;
+  trackByFn = trackByCategory;
 
   categories = [
     { 'label': 'languageOfInstruction', 'options': languages },
@@ -123,10 +114,6 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   selectChange({ items, category }) {
     this.selected[category] = items;
     this.searchChange.emit({ items, category });
-  }
-
-  trackByFn(index, item: { category: string, items: string[] }) {
-    return item.category;
   }
 
 }

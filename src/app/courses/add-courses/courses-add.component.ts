@@ -334,10 +334,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.steps.splice(pos, 1);
   }
 
-  stepTrackByFn(index, item) {
-    return item.id;
-  }
-
   convertMarkdownImagesText(course, steps) {
     return { ...this.coursesService.storeMarkdownImages({ ...course, steps }) };
   }
