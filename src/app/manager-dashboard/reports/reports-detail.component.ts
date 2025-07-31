@@ -705,8 +705,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       resourceData,
       courseData,
       progressData,
+      chatData,
       this.planetName,
-      chatData
+      dateRange.startDate,
+      dateRange.endDate
     );
   }
 
