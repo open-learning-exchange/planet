@@ -34,6 +34,7 @@ import { SearchService } from '../shared/forms/search.service';
 import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { FederatedSearchService } from '../shared/federated-search.service';
 
 @Component({
   selector: 'planet-courses',
@@ -94,6 +95,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    if (this.federatedSearch) {
+      this.updateFederatedResults();
+    }
   }
   user = this.userService.get();
   userShelf: any = [];
@@ -103,6 +107,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   tagFilter = new FormControl([]);
   tagFilterValue = [];
   searchSelection: any = { _empty: true };
+  federatedSearch = false;
+  federatedResults = [];
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
@@ -136,7 +142,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private federatedSearchService: FederatedSearchService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -491,6 +498,18 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       return false;
     }
     return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
+  }
+
+  onFederatedToggle() {
+    if (this.federatedSearch) {
+      this.updateFederatedResults();
+    } else {
+      this.federatedResults = [];
+    }
+  }
+
+  updateFederatedResults() {
+    this.federatedSearchService.search(this._titleSearch).subscribe(res => this.federatedResults = res);
   }
 
 }

@@ -30,6 +30,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { FederatedSearchService } from '../shared/federated-search.service';
 
 @Component({
   selector: 'planet-resources',
@@ -78,6 +79,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    if (this.federatedSearch) {
+      this.updateFederatedResults();
+    }
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -86,6 +90,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   showFilters = false;
   searchSelection: any = { _empty: true };
+  federatedSearch = false;
+  federatedResults = [];
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
@@ -120,7 +126,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private federatedSearchService: FederatedSearchService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -416,6 +423,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   showPreviewExpand(element: any): boolean {
     if (!element.description) { return false; }
     return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
+  }
+
+  onFederatedToggle() {
+    if (this.federatedSearch) {
+      this.updateFederatedResults();
+    } else {
+      this.federatedResults = [];
+    }
+  }
+
+  updateFederatedResults() {
+    this.federatedSearchService.search(this._titleSearch).subscribe(res => this.federatedResults = res);
   }
 
 }

@@ -37,6 +37,7 @@
   <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
+  <mat-checkbox class="margin-lr-4" [(ngModel)]="federatedSearch" (change)="onFederatedToggle()">Federated</mat-checkbox>
   <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
 </ng-template>
 
@@ -105,6 +106,7 @@
   </ng-template>
 
   <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
+    <planet-federated-results [results]="federatedResults" *ngIf="federatedSearch"></planet-federated-results>
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
