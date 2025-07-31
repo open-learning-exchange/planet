@@ -13270,7 +13270,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="final">Registros de myPlanet</target>
+        <target state="final"><x id="START_BOLD_TEXT" ctype="x-b"/>Última actualización<x id="CLOSE_BOLD_TEXT" ctype="x-b"/></target>
       </trans-unit>
       <trans-unit id="4541971088b5826c229cdd4a546515a4ea5ca759" datatype="html" approved="yes">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Last Sync<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
