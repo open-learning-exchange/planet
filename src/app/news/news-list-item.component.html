@@ -66,11 +66,13 @@
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-    <button mat-button type="button" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
-      {{item.doc.user.firstName ?
-        item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
-        item.doc.user.name}}
-    </button>
+      <button mat-button type="button" class="cursor-pointer user-name-truncate" (click)="openMemberDialog(item.doc.user)">
+      <span class="user-name-truncate-text ellipsis">
+        {{item.doc.user.firstName ?
+          item.doc.user.firstName + ((" " + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
+          item.doc.user.name}}
+      </span>
+      </button>
     <span class="toolbar-fill"></span>
     <ng-container *ngIf="deviceType === deviceTypes.MOBILE || isSmallMobile; else actionItems">
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
