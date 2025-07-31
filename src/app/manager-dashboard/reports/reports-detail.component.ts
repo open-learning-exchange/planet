@@ -8,7 +8,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { styleVariables } from '../../shared/utils';
+import { styleVariables, formatDate } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
@@ -195,9 +195,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filter = { ...this.filter, startDate, endDate };
 
       if (startDate && endDate && this.minDate && this.today) {
-        const formatDate = (date: Date) => {
-          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        };
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
 

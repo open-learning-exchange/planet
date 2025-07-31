@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
-import { markdownToPlainText } from './utils';
+import { markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
@@ -43,7 +43,7 @@ export class CsvService {
 
   exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], chatActivities: any[], planetName: string, startDate: Date, endDate: Date) {
     const options = {
-      title: $localize`Summary report for ${planetName}\n${startDate} - ${endDate}`,
+      title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
       showLabels: true,
