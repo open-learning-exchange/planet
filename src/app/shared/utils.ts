@@ -1,6 +1,9 @@
 import styleVars from '../_variables.scss';
 
-const showdown = require('showdown');
+export const showdown = require('showdown');
+export const pdfMake = require('pdfmake/build/pdfmake');
+export const pdfFonts = require('pdfmake/build/vfs_fonts');
+export const converter = new showdown.Converter();
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -87,6 +90,10 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
 
+export const formatDate = (date: string) => {
+  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
+};
+
 export const deepEqual = (item1: any, item2: any) => {
   if (typeof item1 !== typeof item2) {
     return false;
@@ -104,8 +111,25 @@ export const markdownToPlainText = (markdown: any) => {
   if (typeof markdown !== 'string') {
     return markdown;
   }
-  const converter = new showdown.Converter();
   const html = document.createElement('div');
   html.innerHTML = converter.makeHtml(markdown);
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
+};
+
+export const truncateText = (text, length) => {
+  if (!text) { return ''; }
+  if (text.length > length) {
+    return `${text.slice(0, length)}...`;
+  }
+  return text;
+};
+
+export const calculateMdAdjustedLimit = (content, limit) => {
+  const hasMdStyles = /#{1,6}\s+.+/g.test(content);
+  const hasLists = /^(\*|-|\d+\.)\s+/gm.test(content);
+  const hasTables = /^\|(.+)\|/gm.test(content);
+  const hasRegularText = /[^\s#|\-*0-9.]/.test(content);
+
+  const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
+  return Math.floor(limit * scaleFactor);
 };

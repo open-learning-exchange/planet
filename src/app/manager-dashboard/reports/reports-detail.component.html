@@ -162,6 +162,7 @@
         <canvas id="courseViewChart"></canvas>
         <canvas id="stepCompletedChart"></canvas>
         <canvas id="chatUsageChart"></canvas>
+        <canvas id="voicesCreatedChart"></canvas>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
@@ -270,52 +271,66 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <div *ngIf="!resourceActivities || !resourceActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="resourcesLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!resourceActivities || !resourceActivities.byDoc.length">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="resourceActivities.byDoc" 
-            [ratings]="ratings.resources" 
-            activityType="resources" 
+        <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0">
+          <planet-reports-detail-activities
+            [activitiesByDoc]="resourceActivities.byDoc"
+            [ratings]="ratings.resources"
+            activityType="resources"
             (itemClick)="openResourceView($event)">
           </planet-reports-detail-activities>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <div *ngIf="!courseActivities || !courseActivities.byDoc.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="coursesLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!courseActivities || !courseActivities.byDoc.length">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="courseActivities.byDoc" 
-            [ratings]="ratings.courses" 
-            [progress]="progress" 
-            activityType="courses" 
+        <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0">
+          <planet-reports-detail-activities
+            [activitiesByDoc]="courseActivities.byDoc"
+            [ratings]="ratings.courses"
+            [progress]="progress"
+            activityType="courses"
             (itemClick)="openCourseView($event)">
           </planet-reports-detail-activities>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <div *ngIf="healthTab.isActive && (!healthComponent?.examinations || !healthComponent?.headlineData?.total)" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="healthTab.isActive && healthLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!healthComponent?.examinations || !healthComponent?.headlineData?.total">
-          <planet-reports-health 
-          [planetCode]="planetCode" 
-          [dateRange]="dateFilterForm?.value" 
-          [isActive]="healthTab.isActive" 
-          (changeDateRange)="resetDateFilter($event)">
+        <div *ngIf="healthTab.isActive && !healthLoading && healthNoData" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div [hidden]="healthLoading || healthNoData">
+          <planet-reports-health
+            [planetCode]="planetCode"
+            [dateRange]="dateFilterForm?.value"
+            [isActive]="healthTab.isActive"
+            (changeDateRange)="resetDateFilter($event)"
+            (healthLoadingChange)="onHealthLoadingChange($event)"
+            (healthNoDataChange)="onHealthNoDataChange($event)">
         </planet-reports-health>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <div *ngIf="!chatActivities?.filteredData?.length" class="view-container view-full-height loading-message" i18n>
+        <div *ngIf="chatLoading" class="view-container view-full-height" i18n>
           Reports loading...
         </div>
-        <div [hidden]="!chatActivities?.filteredData?.length">
-          <planet-reports-detail-activities 
-            [activitiesByDoc]="chatActivities.filteredData" 
+        <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
+          No data found
+        </div>
+        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0">
+          <planet-reports-detail-activities
+            [activitiesByDoc]="chatActivities.filteredData"
             activityType="chat">
           </planet-reports-detail-activities>
         </div>

@@ -37,6 +37,7 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
       grid-area: img;
       width: calc(#{$dashboard-tile-width} - 0.5rem);
       max-width: 15vh;
+      max-height: 15vh;
       border-radius: 50%;
       justify-self: end;
       align-self: center;
@@ -130,4 +131,61 @@ $top-row-height: calc(#{$dashboard-tile-width} + 0.5rem);
 
 .closebtn:hover {
   color: rgb(0, 0, 0);
+}
+
+@media (max-width: $screen-sm) {
+  :host {
+    height: auto;
+    grid-template-rows: auto auto auto auto auto;
+    padding: 0.5rem;
+    
+    mat-card {
+      display: flex;
+      flex-direction: column;
+      grid-template-areas: unset;
+      grid-template-columns: unset;
+      grid-template-rows: unset;
+      
+      &.horizontal {
+        flex-direction: column !important;
+        align-items: center;
+        div[style*="display: flex; align-items: flex-start;"] {
+          flex-direction: column;
+          align-items: center !important;
+          width: 100%;
+      
+          .dashboard-name {
+            margin-left: 0 !important;
+            margin-top: 8px;
+            text-align: center;
+            
+            h1 {
+              justify-content: center;
+            }
+          }
+        }
+        
+        div[style*="flex-direction: column; align-items: flex-end;"] {
+          order: 2;
+          width: 100%;
+          margin-top: 12px;
+          align-items: center !important;
+          
+          .date {
+            text-align: center;
+            margin-bottom: 8px;
+          }
+          
+          .badges {
+            justify-content: center !important;
+          }
+        }
+      }
+      
+      img {
+        justify-self: center;
+        max-width: 80px;
+      }
+    }
+  }
 }

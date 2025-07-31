@@ -34,12 +34,11 @@ jobs:
         id: step1
         run: |
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
-    if: ${{ github.event.inputs.buildtype == 'prebuild' }}
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
@@ -47,19 +46,38 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+          
+      - name: Set is release
+        if: ${{ endsWith(github.ref_name, env.PLANET_VERSION) }}
+        run: |
+          echo "IS_RELEASE=true" >> $GITHUB_ENV
+
+      - name: Check Package Changes
+        run: |
+          git fetch origin master --depth 2
+          echo "SHOULD_UPDATE_PACKAGES=$(./docker/planet/scripts/check_dependencies.sh)" >> $GITHUB_ENV
 
       - name: Docker login
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Pre-Build Planet
+        if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: |
-          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo . 
+          docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo .
           docker images
-          docker tag $repo $latestrepo
           docker push $repo
+      
+      - name: Push latest pre-build
+        if: ${{ (github.ref == 'refs/heads/master' || env.IS_RELEASE == 'true') && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker tag $repo $latestrepo
           docker push $latestrepo
 
   deploy-single-language:
@@ -69,10 +87,6 @@ jobs:
     runs-on: ubuntu-latest 
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-
-    #strategy:
-    #  matrix:
-    #    lang: [ eng, ara, fra, spa, nep, som ]
 
     steps:
       - name: Checkout Code
@@ -85,14 +99,23 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
-      - name: Build single language build
-        # if: ${{ matrix.lang == 'eng' || github.event.inputs.buildtype == 'single-language' || github.ref_type == 'tag' }}
+      - name: Tag prebuild as latest
+        continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
         run: |
-          repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
+          docker pull $prerepo
+          docker tag $prerepo $latestprerepo
+
+      - name: Build single language build
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$BRANCH"
           export NODE_OPTIONS=--max_old_space_size=4096
           mkdir -p ./ng-app/dist
-          docker build -f './docker/planet/builder-Dockerfile' -t $repo . 
+          docker build -f './docker/planet/builder-Dockerfile' -t $repo .
           docker images
           docker push $repo
           docker tag $repo $branchrepo
@@ -119,12 +142,13 @@ jobs:
 
       - name: Build image
         run: |
-          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$GITHUB_REF_NAME"
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$BRANCH"
           LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
           mkdir -p ./ng-app/dist
           mkdir -p ./ng-app/langbuild
-          docker create --name langbuild "$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$GITHUB_REF_NAME"
+          docker create --name langbuild "$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$BRANCH"
           docker export langbuild > langbuild.tar
           tar -xf langbuild.tar -C ./ng-app/langbuild
           for LANGUAGE in "${LANGUAGES[@]}"; do
@@ -153,7 +177,6 @@ jobs:
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
     if: ${{ always() }}
-    #if: ${{ (github.ref_type == 'tag' || github.event.inputs.buildtype == 'deploy' || github.ref_name == 'master') && always() }}
     runs-on: ubuntu-latest
 
     steps:
@@ -162,17 +185,18 @@ jobs:
 
       - name: Multiarch Deploy
         run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
-          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_planet_latest.yaml
@@ -181,18 +205,19 @@ jobs:
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
         run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
           versiontag="$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
           yq e '.tags |= . + ["latest"] ' - | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_planet_versioned.yaml

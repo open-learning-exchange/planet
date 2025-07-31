@@ -3,7 +3,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { Subject } from 'rxjs';
 import { map, switchMap, filter, catchError } from 'rxjs/operators';
-import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,13 @@ export class StateService {
   private inProgress = { local: new Map(), parent: new Map() };
 
   get configuration(): any {
-    return this.state.local.configurations.docs[0] || {};
+    const config = this.state.local.configurations.docs[0] || {};
+    const { keys, ...safeConfig } = config;
+    return safeConfig;
+  }
+
+  get keys(): any {
+    return this.state.local.configurations.docs[0]?.keys || {};
   }
 
   constructor(

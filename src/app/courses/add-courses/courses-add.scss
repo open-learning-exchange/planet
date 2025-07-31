@@ -27,6 +27,10 @@
     width: auto;
   }
 
+  .draft-btn {
+    background: $grey;
+  }
+
   @media (max-width: $screen-md) {
     .form-spacing {
       justify-content: center;

@@ -1,5 +1,5 @@
 <mat-toolbar *ngIf="!isForm">
-  <ng-container *ngIf="deviceType !== deviceTypes.MOBILE; else mobileView">
+  <ng-container *ngIf="deviceType === deviceTypes.TABLET || deviceType === deviceTypes.DESKTOP; else mobileView">
     <mat-toolbar-row>
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
@@ -131,9 +131,9 @@
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a *ngIf="!isDialog && !isForm; else newTabLink" [routerLink]="['view', element._id]" class="break-word">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
-            <ng-template #newTabLink><a class="cursor-pointer break-word" (click)="openCourseViewDialog(element._id)">{{ element.doc.courseTitle.length > 180 ? element.doc.courseTitle.slice(0, 180) + '...' : element.doc.courseTitle }}</a>
-            </ng-template>
+              <a class="break-word" [ngClass]="{ 'cursor-pointer': !isDialog && !isForm }" [routerLink]="!isDialog && !isForm ? ['view', element._id] : ['/courses/view', element._id]" [target]="isDialog || isForm ? '_blank' : null">
+                {{element.doc.courseTitle | truncateText:180}}
+              </a>
               <span *ngIf="!parent && !isDialog" [ngClass]="{ 'cursor-pointer': !isForm }">
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="In myCourses" [inline]="true" *ngIf="element.admission" (click)="courseToggle(element._id, 'resign')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3" i18n-matTooltip matTooltip="Not in myCourses" [inline]="true" *ngIf="!element.admission && element.doc.steps.length" (click)="courseToggle(element._id, 'admission')">bookmark_border</mat-icon>
@@ -155,10 +155,10 @@
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="350"></planet-markdown>
-            <div *ngIf="element.doc.description.length > 350"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
+            <div *ngIf="showPreviewExpand(element.doc)" style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
-                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+                <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
               </button>
             </div>
           </div>
@@ -214,7 +214,7 @@
             <p><ng-container i18n>Subject Level:</ng-container>{{ " " }}<planet-language-label [options]="subjectOptions" [label]="element.doc.subjectLevel"></planet-language-label></p>
             <p *ngIf="element.doc.languageOfInstruction">
               <ng-container i18n>Language:</ng-container>{{ " " }}
-              <planet-language-label [options]="languages" [label]="element.doc.languageOfInstruction"></planet-language-label>
+              {{element.doc.languageOfInstruction}}
             </p>
             <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet">
               <ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}
@@ -252,7 +252,14 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
       <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>{{ isLoading ? 'Courses Loading...' : 'No Course Found' }}</div></td>
+        <td>
+          <div class="view-container" *ngIf="isLoading" i18n>
+            Courses Loading...
+          </div>
+          <div class="view-container" *ngIf="!isLoading" i18n>
+            No Course Found
+          </div>
+        </td>
       </tr>
     </mat-table>
     <mat-paginator #paginator

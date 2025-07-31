@@ -1,67 +1,105 @@
 <mat-card>
   <mat-card-header>
-    <img mat-card-avatar [src]="item.avatar" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
-    <mat-card-title>
-      <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
-        {{item.doc.user.firstName ?
-          item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
-          item.doc.user.name}}
-      </a>
-    </mat-card-title>
-    <mat-card-subtitle>
-      <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
-      <ng-container i18n>posted on</ng-container> {{item.doc.time | date: 'medium' }}
-      <ng-container *ngIf="item.sharedSourceInfo; else sharedDateOnly"> | {{item.sharedSourceInfo}}</ng-container>
-      <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate"> | <ng-container i18n>edited on</ng-container> {{item.doc.updatedDate | date: 'medium'}}</ng-container>
-      <ng-template #sharedDateOnly>
-        <ng-container *ngIf="item.sharedDate"> | <ng-container i18n>shared on</ng-container> {{item.sharedDate | date: 'medium'}}</ng-container>
-      </ng-template>
-      <mat-chip-list>
-        <mat-chip color="primary" selected class="planet-chip-label chip-no-style" *ngFor="let label of item.doc.labels">
-          <planet-label i18n-label [label]="label"></planet-label>
-          <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable && !item.doc.chat" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
-        </mat-chip>
-        <mat-chip class="planet-chip-label chip-no-style chat-chip" *ngIf="item.doc.chat">
-          <planet-label i18n-label [label]="'shared chat'"></planet-label>
-        </mat-chip>
-      </mat-chip-list>
+    <mat-card-subtitle class="subtitle-row">
+      <div class="label-panel">
+        <mat-chip-list>
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-primary" *ngFor="let label of item.doc.labels" (click)="labelClick(label, 'select')">
+            <mat-icon class="small-icon">label_important</mat-icon>
+            <planet-label [label]="label"></planet-label>
+            <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
+          </mat-chip>
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-accent" *ngFor="let teamLabel of teamLabels" (click)="labelClick(teamLabel, 'select')">
+            <mat-icon class="small-icon">group</mat-icon>
+            <planet-label [label]="teamLabel"></planet-label>
+          </mat-chip>
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-grey" *ngIf="item.doc.chat" (click)="labelClick('shared chat', 'select')">
+            <mat-icon class="small-icon">question_answer</mat-icon>
+            <planet-label [label]="'shared chat'"></planet-label>
+          </mat-chip>
+        </mat-chip-list>
+        <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
+      </div>
+      <div class="time-panel">
+        <ng-container *ngIf="item.sharedDate; else checkEditTime">
+          <mat-icon *ngIf="isSmallMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
+          <ng-template #shareText>
+            <span i18n>shared: </span>
+          </ng-template>
+          {{item.sharedDate | timeAgo}}
+        </ng-container>
+        <ng-template #checkEditTime>
+          <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate; else creationTime">
+            <mat-icon *ngIf="isSmallMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
+            <ng-template #editText>
+              <span i18n>edited: </span>
+            </ng-template>
+            {{item.doc.updatedDate | timeAgo}}
+          </ng-container>
+        </ng-template>
+        <ng-template #creationTime>
+          <mat-icon *ngIf="isSmallMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
+          <ng-template #postText>
+            <span i18n>posted: </span>
+          </ng-template>
+          {{item.doc.time | timeAgo}}
+        </ng-template>
+      </div>
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <div [ngClass]="{'show-less': showLess}" #content>
-      <planet-markdown class="img-wrap" [content]="item.doc.message"></planet-markdown>
+    <div>
+      <planet-markdown class="img-resize" [content]="item.doc.message" [previewMode]="showLess" [limit]="previewLimit"></planet-markdown>
       <ng-container *ngIf="item.doc.chat">
         <div class="chat-container">
-          <div *ngFor="let conversation of item.doc.news.conversations">
+          <div *ngFor="let conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations)">
             <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
             <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
           </div>
         </div>
       </ng-container>
     </div>
-    <span class="primary-text-color cursor-pointer" *ngIf="(showExpand || !showLess) && !item.latestMessage" (click)="showLess = !showLess" i18n>
-      {{ showLess ? 'Show More' : 'Show Less' }}
-    </span>
+    <div *ngIf="showExpand" class="full-width" style="text-align: center;" (click)="showLess = !showLess">
+      <button mat-icon-button>
+        <mat-icon>{{showLess ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}</mat-icon>
+      </button>
+    </div>
   </mat-card-content>
   <mat-card-actions class="display-flex">
-    <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
-    <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
-      <ng-container i18n>Show Replies</ng-container> ({{replyObject[item.doc._id]?.length}})
+    <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
+    <button mat-button type="button" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
+      {{item.doc.user.firstName ?
+        item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
+        item.doc.user.name}}
     </button>
     <span class="toolbar-fill"></span>
-    <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
-      <mat-icon>link</mat-icon>
-    </button>
-    <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
-      <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-      <button mat-button i18n *ngIf="editable && !item.doc.chat" [matMenuTriggerFor]="labelMenu" [disabled]="labels.listed.length === 0">Add Label</button>
-      <mat-menu #labelMenu="matMenu">
-        <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || isSmallMobile; else actionItems">
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="actionItems"></ng-container>
       </mat-menu>
-      <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
-        shareTarget, select, community {Community} nation {Nation} center {Earth}
-      }</button>
     </ng-container>
   </mat-card-actions>
 </mat-card>
+
+<ng-template #actionItems>
+  <button mat-button *ngIf="editable || item.public === true" type="button" (click)="addReply(item.doc)" i18n>Reply</button>
+  <button mat-button type="button" *ngIf="replyObject[item.doc._id]?.length > 0 && showRepliesButton" (click)="showReplies(item)">
+    <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+  </button>
+  <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
+    <mat-icon>link</mat-icon>
+  </button>
+  <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
+    <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
+    <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+    <button mat-button i18n *ngIf="editable && labels.listed.length > 0" [matMenuTriggerFor]="labelMenu">Add Label</button>
+    <mat-menu #labelMenu="matMenu">
+      <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
+    </mat-menu>
+    <button mat-button *ngIf="showShare" (click)="shareStory(item.doc)" i18n>Share with {
+      shareTarget, select, community {Community} nation {Nation} center {Earth}
+    }</button>
+  </ng-container>
+</ng-template>

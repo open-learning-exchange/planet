@@ -64,9 +64,9 @@
         View Resource Details
       </a>
       <span>{{stepNum}}/{{maxStep}}</span>
-      <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
-      <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="stepNum === maxStep || (!parent && stepDetail?.exam?.questions.length > 0 && !attempts)" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
-      <button mat-raised-button class="finish-button" *ngIf="stepNum === maxStep" [disabled]="!parent && stepDetail?.exam?.questions.length > 0 && !attempts" (click)="backToCourseDetail()" i18n>Finish</button>
+      <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1 || isLoading" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
+      <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
+      <button mat-raised-button class="finish-button" *ngIf="stepNum === maxStep" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
     </div>
   </mat-toolbar>
   <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">

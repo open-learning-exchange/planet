@@ -1,13 +1,15 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
+import { CanComponentDeactivate } from '../unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 
 @Component({
   template: `
     <ng-container [ngSwitch]="view">
       <planet-meetups-add #meetupsAdd *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
-        [sync]="sync" [meetup]="meetup" (onGoBack)="meetupsChange()">
+        [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
       </planet-meetups-add>
       <planet-meetups-view *ngSwitchCase="'view'"
         [isDialog]="true"
@@ -18,7 +20,7 @@ import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.compo
     </ng-container>
   `
 })
-export class DialogsAddMeetupsComponent {
+export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;
 
   link: any = {};
@@ -30,7 +32,8 @@ export class DialogsAddMeetupsComponent {
   constructor(
     public dialogRef: MatDialogRef<DialogsAddMeetupsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private dialog: MatDialog
   ) {
     this.link = this.data.link || this.link;
     this.sync = this.data.sync || this.sync;
@@ -39,17 +42,26 @@ export class DialogsAddMeetupsComponent {
     this.editable = this.data.editable !== undefined && this.data.editable !== null ? this.data.editable : this.editable;
     this.dialogRef.disableClose = true;
     this.dialogRef.backdropClick().subscribe(() => {
-      if (this.meetupsAdd && this.meetupsAdd.hasUnsavedChanges) {
-        const confirmClose = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-        if (confirmClose) {
-          this.meetupsAdd.hasUnsavedChanges = false;
-          this.meetupsAdd.unsavedChangesService.setHasUnsavedChanges(false);
-          this.dialogRef.close();
-        }
-      } else {
-        this.dialogRef.close();
-      }
+      this.checkUnsavedChangesAndClose();
     });
+  }
+
+  canDeactivate(): boolean {
+    return this.meetupsAdd ? this.meetupsAdd.canDeactivate() : true;
+  }
+
+  private checkUnsavedChangesAndClose(): void {
+    if (this.meetupsAdd && this.meetupsAdd.canDeactivate() === false) {
+      const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
+      dialogResult.subscribe(confirmed => {
+        if (confirmed) {
+          this.meetupsAdd.hasUnsavedChanges = false;
+          this.meetupsChange();
+        }
+      });
+    } else {
+      this.meetupsChange();
+    }
   }
 
   meetupsChange() {
@@ -60,7 +72,7 @@ export class DialogsAddMeetupsComponent {
 
   switchView(view: 'add' | 'view' | 'close') {
     if (view === 'close') {
-      this.meetupsChange();
+      this.checkUnsavedChangesAndClose();
     }
     this.view = view;
   }

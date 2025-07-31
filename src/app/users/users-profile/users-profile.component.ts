@@ -71,7 +71,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   ngOnDestroy() {

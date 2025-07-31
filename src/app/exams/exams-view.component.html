@@ -32,6 +32,18 @@
               <mat-radio-button [value]="option" *ngFor="let option of question?.choices">
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-radio-button>
+              <ng-container *ngIf="question?.hasOtherOption">
+                <div class="other-option-flex">
+                  <mat-radio-button [value]="currentOtherOption">
+                    <span class="multiple-choice-text" i18n>Other: </span>
+                  </mat-radio-button>
+                  <input matInput
+                    class="other-option-input"
+                    [disabled]="!isOtherSelected()"
+                    [(ngModel)]="currentOtherOption.text"
+                    (ngModelChange)="updateOtherText()">
+                </div>
+              </ng-container>
             </mat-radio-group>
             <div *ngSwitchCase="'selectMultiple'" class="question-list">
               <span class="mat-caption" i18n>
@@ -40,6 +52,14 @@
               <mat-checkbox *ngFor="let option of question?.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
                 <span class="multiple-choice-text">{{option.text}}</span>
               </mat-checkbox>
+              <ng-container *ngIf="question?.hasOtherOption">
+                <div class="other-option-flex">
+                  <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
+                    <span class="multiple-choice-text" i18n>Other: </span>
+                  </mat-checkbox>
+                  <input matInput class="other-option-input" [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                </div>
+              </ng-container>
             </div>
           </ng-container>
         </ng-container>
@@ -75,7 +95,7 @@
           color="primary"
           (click)="nextQuestion()"
           [planetSubmit]="spinnerOn"
-          [disabled]="!answer.valid || grade === undefined || grade === null">
+          [disabled]="!answer.valid || grade === undefined || grade === null || (mode !== 'grade' && questionNum === maxQuestions)">
           <ng-container i18n>Submit Answer</ng-container>
         </button>
         <button

@@ -21,14 +21,17 @@ export class UserService {
   private usersDb = '_users';
   private logsDb = 'login_activities';
   private _shelf: any = { };
+  skipNextShelfRefresh = false;
+
   get shelf(): any {
     return this._shelf;
   }
   set shelf(shelf: any) {
     this._shelf = shelf;
-    if (Object.keys(shelf).length > 0) {
+    if (Object.keys(shelf).length > 0 && !this.skipNextShelfRefresh) {
       this.shelfChange.next(shelf);
     }
+    this.skipNextShelfRefresh = false;
   }
   currentSession: any;
   userProperties: string[] = [];

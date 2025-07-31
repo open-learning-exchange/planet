@@ -23,6 +23,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   searchValue = '';
   planets: any[] = [];
   isEmpty = false;
+  isLoading = true;
   isMobile: boolean;
   showFiltersRow = false;
   deviceType: DeviceType;
@@ -74,6 +75,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   ngOnInit() {
     this.onTimeFilterChange('all');
+    this.isLoading = true;
     this.getMyPlanetList(this.route.snapshot.params.hubId);
     this.reportsForm.valueChanges.subscribe(() => {
       this.startDate = this.reportsForm.get('startDate').value;
@@ -98,7 +100,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   clearFilters() {
     this.searchValue = '';
     this.selectedVersion = '';
-    this.selectedTimeFilter = '24h';
+    this.selectedTimeFilter = 'all';
     this.resetDateFilter();
     this.applyFilters();
   }
@@ -180,7 +182,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   resetDateFilter() {
-    this.onTimeFilterChange('24h');
+    this.onTimeFilterChange('all');
   }
 
   myPlanetGroups(planet: any, myPlanets: any[]) {
@@ -195,16 +197,24 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   getMyPlanetList(hubId) {
-    this.myPlanetRequest(hubId).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
-      this.setAllPlanets(
-        [ { doc: this.configuration } ].concat(
-          planets.filter(planet => planet.doc.docType !== 'parentName')
-        ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
-        myPlanets
-      );
-      this.planets = this.allPlanets;
-      this.isEmpty = areNoChildren(this.planets);
-    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
+    this.isLoading = true;
+    this.myPlanetRequest(hubId).subscribe(
+      ([ planets, myPlanets ]: [ any, any ]) => {
+        this.setAllPlanets(
+          [ { doc: this.configuration } ].concat(
+            planets.filter(planet => planet.doc.docType !== 'parentName')
+          ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+          myPlanets
+        );
+        this.planets = this.allPlanets;
+        this.isEmpty = areNoChildren(this.planets);
+        this.isLoading = false;
+      },
+      (error) => {
+        this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`);
+        this.isLoading = false;
+      }
+    );
   }
 
   myPlanetRequest(hubId) {

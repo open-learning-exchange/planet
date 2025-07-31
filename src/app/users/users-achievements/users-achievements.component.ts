@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -12,9 +11,8 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { formatDate, pdfMake, pdfFonts } from '../../shared/utils';
 
-const pdfMake = require('pdfmake/build/pdfmake');
-const pdfFonts = require('pdfmake/build/vfs_fonts');
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -30,7 +28,7 @@ export class UsersAchievementsComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
-  publicView = this.route.snapshot.data.requiresAuth === false;
+  publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
   constructor(
@@ -106,8 +104,15 @@ export class UsersAchievementsComponent implements OnInit {
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
-  isClickable(achievement) {
-    return achievement.description.length > 0;
+  isClickable(achievement): boolean {
+    return (!!achievement.description && achievement.description.length > 0) || (!!achievement.link && achievement.link.length > 0);
+  }
+
+  onAchievementClick(achievement: any, index: number): void {
+    if (!this.isClickable(achievement)) {
+      return;
+    }
+    this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
   }
 
   get profileImg() {
@@ -133,7 +138,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = format(new Date(this.user.birthDate), 'MMM d, y');
+    const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate) : '';
     let contentArray = [
       {
         text: $localize`${`${this.user.firstName}'s achievements`}`,
@@ -185,9 +190,10 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
+          const formattedDate = achievement.date ? formatDate(achievement.date) : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.date ? format(new Date(achievement?.date), 'MMM d, y') : '', marginLeft: 40 },
+            { text: achievement.date ? formattedDate : '', marginLeft: 40 },
             { text: achievement.link, marginLeft: 40 },
             { text: achievement.description, marginLeft: 40 },
           ];

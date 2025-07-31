@@ -50,25 +50,18 @@ TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
 # Stash all uncommitted changes before running tests
 git stash -k
 
-# Check if vagrant is running
-vagrant_status=$(vagrant status dev --machine-readable | grep state,running)
-
 run_lint() {
   local dir=$1
 
-  if [ "$vagrant_status" = "" ]; then
-    cd $dir
-    tslint=$(npm run lint)
-  else
-    tslint=$(vagrant ssh dev -- -t `cd /vagrant/$dir;npm run lint`)
-  fi
+  cd $dir
+  tslint=$(npm run lint)
 }
 
-echo "Running ng linters"
+echo "Running planet linters"
 run_lint .
 
 ret_code_tslint=$?
-output_result $ret_code_tslint "tslint" $tslint
+output_result $ret_code_tslint "eslint" $tslint
 
 echo "Running chatapi linters"
 run_lint chatapi

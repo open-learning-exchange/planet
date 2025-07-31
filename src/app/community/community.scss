@@ -64,3 +64,66 @@ mat-tab-group, mat-tab {
 .toggle-button {
   margin-bottom: 1rem;
 }
+
+.responsive-toolbar {
+  border-radius: 7.5px;
+}
+
+.toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  width: 100%;
+  gap: 12px;
+
+  .search-form-field {
+    flex: 2 1 0;
+  }
+  .label-filter-field {
+    flex: 1 1 0;
+  }
+  .new-voice-btn {
+    flex: 0 0 auto;
+    align-self: center;
+  }
+  .pin-btn {
+    align-self: center;
+
+    mat-icon svg {
+      fill: black;
+    }
+  }
+}
+
+.label-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@media only screen and (max-width: $screen-sm) {
+  .responsive-toolbar {
+    height: auto;
+    gap: 0;
+  }
+
+  .toolbar-row {
+    .search-form-field,
+    .label-filter-field {
+      min-width: 0;
+    }
+    .new-voice-btn,
+    .pin-btn {
+      min-width: 0;
+    }
+  }
+}
+
+@media only screen and (max-width: $screen-xs) {
+  .toolbar-row {
+    .search-form-field,
+    .label-filter-field {
+      flex: 1 1 25%;
+      min-width: 0;
+    }
+  }
+}

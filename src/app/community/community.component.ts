@@ -27,6 +27,7 @@ import {
   challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
+import { ConfigurationCheckService } from '../shared/configuration-check.service';
 
 @Component({
   selector: 'planet-community',
@@ -37,12 +38,13 @@ import { UserChallengeStatusService } from '../shared/user-challenge-status.serv
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
-  configuration: any = {};
+  configuration: any = this.stateService.configuration || {};
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
   isLoggedIn = this.user._id !== undefined;
   news: any[] = [];
+  filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
   councillors: any[] = [];
@@ -57,7 +59,18 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading: boolean;
+  isLoading = true;
+  currentTab = 0;
+  activeReplyId: string | null = null;
+  lastReplyId: string | null = null;
+  voiceSearch = '';
+  availableLabels: string[] = [];
+  selectedLabel = '';
+  pinned = false;
+
+  get leadersTabLabel(): string {
+    return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
 
   constructor(
     private dialog: MatDialog,
@@ -74,16 +87,19 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnInit() {
+    this.configurationCheckService.checkConfiguration().subscribe();
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
-    this.isLoading = true;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.filteredNews = this.news;
+      this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
@@ -103,6 +119,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       of(this.stateService.configuration),
       this.stateService.couchStateListener('configurations')
     ).subscribe(() => {
+      this.getCommunityData();
+    });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.user = this.userService.get();
+      this.isLoggedIn = this.user._id !== undefined;
       this.getCommunityData();
     });
   }
@@ -349,6 +370,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
+    this.activeReplyId = data._id === 'root' ? null : data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -433,9 +455,70 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
-    if (index !== 0) {
+    // stash reply only on voices tab change
+    if (this.currentTab === 0 && index !== 0) {
+      this.lastReplyId = this.activeReplyId;
+    }
+    if (index === 0) {
+      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
+    } else {
       this.router.navigate([ '' ]);
     }
-    this.resizeCalendar = index === 5;
+    this.resizeCalendar = (index === 5);
+    this.currentTab = index;
+  }
+
+  onLabelFilterChange(label: string): void {
+    this.selectedLabel = label;
+    this.applyFilters();
+  }
+
+  onVoicesSearchChange(searchValue: string): void {
+    this.voiceSearch = searchValue;
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    let filtered = this.news;
+    if (this.selectedLabel) {
+      filtered = filtered.filter(item => {
+        return (item.doc.labels || []).includes(this.selectedLabel)
+          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
+          || (this.selectedLabel === 'shared chat' && item.doc.chat === true);
+      });
+    }
+    if (this.voiceSearch) {
+      const lower = this.voiceSearch.toLowerCase();
+      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
+    }
+    this.filteredNews = filtered;
+  }
+
+  getAvailableLabels(news: any[]): string[] {
+    const labelSet = new Set<string>();
+    news.forEach(item => {
+      (item.doc.labels || []).forEach(label => labelSet.add(label));
+      (item.doc.viewIn || []).forEach(view => {
+        if (view.name) {
+          labelSet.add(view.name);
+        }
+      });
+      if (item.doc.chat === true) {
+        labelSet.add('shared chat');
+      }
+    });
+
+    return Array.from(labelSet);
+  }
+
+  getLabelIcon(label: string): string {
+    return label === 'shared chat' ? 'question_answer'
+      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+      : 'label_important';
+  }
+
+  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
+    this.selectedLabel = action === 'select' ? label : '';
+    this.applyFilters();
   }
 }

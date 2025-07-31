@@ -1,8 +1,8 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/028682cc4cd969b05280/maintainability)](https://codeclimate.com/github/open-learning-exchange/planet/maintainability)
-[![Build Status](https://travis-ci.org/open-learning-exchange/planet.svg?branch=master)](https://travis-ci.org/open-learning-exchange/planet)
+[![license: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Docker Stars](https://img.shields.io/docker/stars/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
 [![Docker Pulls](https://img.shields.io/docker/pulls/treehouses/planet.svg?maxAge=604800)](https://store.docker.com/community/images/treehouses/planet)
-
+[![Maintainability](https://qlty.sh/badges/d936229a-e812-4e3a-806e-4f5d7cd4ace5/maintainability.svg)](https://qlty.sh/gh/open-learning-exchange/projects/planet)
+[![chat on discord](https://img.shields.io/discord/1079980988421132369?logo=discord&color=%237785cc)](https://discord.gg/BVrFEeNtQZ)
 
 # **Planet Learning**
 
@@ -72,26 +72,11 @@ ng serve
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
 
-## Chatapi Development Notes
-
-Run `cd chatapi` and add a .env file in the `chatapi` directory with the following configs in the .env file(change the username and password to your CouchDB admin credentials):
-  ```
-    SERVE_PORT=5000
-    COUCHDB_HOST=http://localhost:2200
-    COUCHDB_USER=username
-    COUCHDB_PASS=password
-  ```
+## Chatapi Notes
 
 Configure the models(API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB. Currently we support *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini* models.
 
-**Note:** The dev chatapi runs on port 5000 similar to the production environment. Therefore, only one of them can run at a time. To deactivate the production chatapi run `docker stop planet_chatapi_1(or container id)`
-
-To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions. To start the chatapi:
-```
-  npm install
-  nvm use 18
-  npm run dev
-```
+For chatapi development instructions, refer to the [chatapi README](chatapi/README.md).
 
 ## Project Guidelines
 
@@ -102,6 +87,18 @@ To run the chatapi locally, you need to use node v18. You can use nvm(linux) or 
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
+
+## Locale Configuration
+
+To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
+```
+  npm run dev -- --configuration spa 
+
+  or 
+
+  ng serve --configuration spa
+```
+*You can use the short-hand `-c` in place of `--configuration`*
 
 ## Unit & End-to-End Tests
 
@@ -182,14 +179,5 @@ npm i @types/mime@3.0.0
 ### Error on initial npm install
 
 If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.
-
-### Fatal error in chatapi using an arm32 device
-
-If you are using an 32bit arm device and encounter a fatal error while running the chatapi container run the following:
-```
-  wget http://ftp.us.debian.org/debian/pool/main/libs/libseccomp/libseccomp2_2.5.1-1~bpo10+1_armhf.deb
-
-  dpkg -i libseccomp2_2.5.1-1~bpo10+1_armhf.deb
-```
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

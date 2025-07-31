@@ -5,14 +5,14 @@
  *  }
  * ]
  */
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'planet-courses-progress-chart',
   templateUrl: 'courses-progress-chart.component.html',
   styleUrls: [ 'courses-progress-chart.scss' ]
 })
-export class CoursesProgressChartComponent implements OnChanges {
+export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   @Input() inputs = [];
   @Input() label = '';
@@ -26,6 +26,7 @@ export class CoursesProgressChartComponent implements OnChanges {
   @ViewChild('errorsUser') dataElement;
   sets = [];
   horizTotals = [];
+  private observer: MutationObserver;
 
   ngOnChanges() {
     const fillEmptyItems = (items) => [].concat(Array(this.height - items.length).fill(''), items);
@@ -37,6 +38,33 @@ export class CoursesProgressChartComponent implements OnChanges {
     this.horizTotals = this.sets.reduce((totals, set) => {
       return set.items.map((item, index) => ({ count: (item.number || 0) + (totals[index].count), clickable: item.clickable }));
     }, Array(this.height).fill(0).map(() => ({ count: 0, clickable: false })));
+  }
+
+  ngAfterViewInit() {
+    this.scrollToBottom();
+
+    const elementToObserve = this.dataElement.nativeElement;
+    this.observer = new MutationObserver(() => {
+      this.scrollToBottom();
+    });
+
+    this.observer.observe(elementToObserve, { childList: true });
+  }
+
+  ngOnDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
+
+  scrollToBottom() {
+    if (this.dataElement && this.dataElement.nativeElement) {
+      const element = this.dataElement.nativeElement;
+      element.scrollTop = element.scrollHeight;
+      this.yScrollElements.forEach((elem) => {
+        elem.nativeElement.scrollTop = elem.nativeElement.scrollHeight;
+      });
+    }
   }
 
   dataClick(event, set, index) {

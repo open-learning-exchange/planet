@@ -12,6 +12,7 @@ import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submis
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../../shared/dialogs/dialogs-announcement.component';
+import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -138,17 +139,39 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   // direction = -1 for previous, 1 for next
   changeStep(direction) {
+    const targetStep = this.stepNum + direction;
+    if (targetStep < 1 || targetStep > this.maxStep) {
+      return;
+    }
+    if (this.isLoading) {
+      return;
+    }
+    if (direction > 0 && !this.canProceedToNextStep()) {
+      return;
+    }
     this.isLoading = true;
-    this.router.navigate([ '../' + (this.stepNum + direction) ], { relativeTo: this.route });
     this.conversations = [];
     this.resetCourseStep();
     this.countActivity = true;
+    this.router.navigate([ '../' + targetStep ], { relativeTo: this.route });
   }
 
   resetCourseStep() {
     this.resource = undefined;
     this.stepDetail = { stepTitle: '', description: '', resources: [] };
     this.attempts = 0;
+  }
+
+  canProceedToNextStep(): boolean {
+    if (this.stepNum > this.maxStep) {
+      return false;
+    }
+    if (!this.parent &&
+        this.stepDetail?.exam?.questions?.length > 0 &&
+        !this.attempts && !this.examPassed) {
+      return false;
+    }
+    return true;
   }
 
   backToCourseDetail() {
@@ -216,7 +239,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   get localizedStepInfo(): string {
-    return $localize`The following information is a course step from the "${this.stepDetail?.stepTitle}" course with a description "${this.stepDetail?.description}". Be sure to assist the learner in the best way you can. `;
+    return coursesStepPrompt(this.stepDetail?.stepTitle, this.stepDetail?.description);
   }
 
 }

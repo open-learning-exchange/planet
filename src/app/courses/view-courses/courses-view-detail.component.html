@@ -1,7 +1,7 @@
 <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="false" [ratingType]="'course'"></planet-rating>
 <p><b i18n>Subject Level:</b> <planet-language-label [options]="subjectOptions" [label]="courseDetail?.subjectLevel"></planet-language-label></p>
 <p><b i18n>Grade Level:</b> <planet-language-label [options]="gradeOptions" [label]="courseDetail?.gradeLevel"></planet-language-label></p>
-<p *ngIf="courseDetail?.languageOfInstruction"><b i18n>Language of Instruction:</b> <planet-language-label [options]="languageOptions" [label]="courseDetail?.languageOfInstruction || 'N/A'"></planet-language-label></p>
+<p *ngIf="courseDetail?.languageOfInstruction"><b i18n>Language of Instruction:</b> {{courseDetail?.languageOfInstruction}}</p>
 <p *ngIf="courseDetail?.creatorDoc"><b i18n>Creator:</b> {{courseDetail?.creatorDoc?.fullName}} </p>
 <p><b i18n>Created on:</b> {{(courseDetail?.createdDate | date: 'mediumDate') || 'N/A'}}</p>
 <p *ngIf="courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet"><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>

@@ -9,6 +9,14 @@
   max-width: 100px;
 }
 
+.mat-cell.mat-column-name span {
+  padding-right:5px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
 mat-cell p {
   margin: 0;
 }

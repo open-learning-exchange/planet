@@ -1,4 +1,5 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 
 $primary-hue: 500;
 $accent-hue: 500;
@@ -6,44 +7,46 @@ $warn-hue: 500;
 $light-hue: 100;
 $dark-hue: 700;
 
-$planet-primary: $mat-blue;
-$planet-accent: $mat-amber;
-$planet-warn: $mat-red;
-$planet-green: mat-color($mat-green, $primary-hue);
+$planet-primary: mat.$blue-palette;
+$planet-accent: mat.$amber-palette;
+$planet-warn: mat.$red-palette;
+$planet-green: mat.get-color-from-palette(mat.$green-palette, $primary-hue);
 
-$planet-app-primary: mat-palette($planet-primary, $primary-hue);
-$planet-app-accent: mat-palette($planet-accent, $accent-hue);
-$planet-app-warn: mat-palette($planet-warn, $warn-hue);
+$planet-app-primary: mat.define-palette($planet-primary, $primary-hue);
+$planet-app-accent: mat.define-palette($planet-accent, $accent-hue);
+$planet-app-warn: mat.define-palette($planet-warn, $warn-hue);
 
-$planet-app-theme: mat-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+$planet-app-theme: mat.define-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
 
-$primary: mat-color($planet-app-primary, $primary-hue);
-$accent: mat-color($planet-app-accent, $accent-hue);
-$warn: mat-color($planet-app-warn, $warn-hue);
-$primary-text: mat-contrast($planet-primary, $primary-hue);
-$accent-text: mat-contrast($planet-accent, $accent-hue);
-$light-grey: mat-color($mat-grey, 100);
-$grey: mat-color($mat-grey, 400);
-$grey-text: map-get($mat-light-theme-foreground, 'secondary-text');
-$primary-lighter: mat-color($planet-app-primary, 100);
-$primary-light: mat-color($planet-app-primary, 300);
-$accent-lighter: mat-color($planet-app-accent, 100);
-$primary-dark: mat-color($planet-app-primary, $dark-hue);
+$primary: mat.get-color-from-palette($planet-app-primary, $primary-hue);
+$accent: mat.get-color-from-palette($planet-app-accent, $accent-hue);
+$warn: mat.get-color-from-palette($planet-app-warn, $warn-hue);
+$primary-text: mat.get-contrast-color-from-palette($planet-primary, $primary-hue);
+$accent-text: mat.get-contrast-color-from-palette($planet-accent, $accent-hue);
+$light-grey: mat.get-color-from-palette(mat.$grey-palette, 100);
+$grey: mat.get-color-from-palette(mat.$grey-palette, 400);
+$grey-text: map-get(mat.$light-theme-foreground-palette, 'secondary-text');
+$primary-lighter: mat.get-color-from-palette($planet-app-primary, 100);
+$primary-light: mat.get-color-from-palette($planet-app-primary, 300);
+$accent-lighter: mat.get-color-from-palette($planet-app-accent, 100);
+$primary-dark: mat.get-color-from-palette($planet-app-primary, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
-$disabled-button: map-get($mat-light-theme-background, 'disabled-button');
-$disabled-button-text: map-get($mat-light-theme-foreground, 'disabled-button');
+$disabled-button: map-get(mat.$light-theme-background-palette, 'disabled-button');
+$disabled-button-text: map-get(mat.$light-theme-foreground-palette, 'disabled-button');
 
 $font-family: Roboto, sans-serif;
 
 // Our default screen sizes
 $screen-md: 1000px;
 $screen-sm: 780px;
+$screen-xs: 480px;
 
-@mixin screen-sizes($md: 1000px, $sm: 780px) {
+@mixin screen-sizes($md: 1000px, $sm: 780px, $xs: 480px) {
   --screen-md: #{$md};
   --screen-sm: #{$sm};
+  --screen-xs: #{$xs};
 }
 
 // Maximum full height of view container (avoiding vertical overflow)

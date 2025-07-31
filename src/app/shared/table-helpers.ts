@@ -1,4 +1,5 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
+import { FuzzySearchService } from './fuzzy-search.service';
 
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
@@ -55,6 +56,24 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
         return typeof fieldValue === 'string' &&
                fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
       });
+    });
+  };
+};
+
+// Enhanced version that combines exact and fuzzy search
+export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
+  return (data: any, filter: string) => {
+    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (!normalizedFilter) { return true; }
+
+    return filterFields.some(field => {
+      const fieldValue = getProperty(data, field);
+      if (typeof fieldValue !== 'string') { return false; }
+
+      // Try exact match first, then fuzzy if available
+      const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return normalizedFieldValue.includes(normalizedFilter) ||
+             (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
     });
   };
 };
@@ -178,6 +197,12 @@ export const deepSortingDataAccessor = (item: any, property: string) => {
 };
 
 export const trackById = (index, item) => item._id;
+
+export const trackByCategory = (index, item: { category: string }) => item.category;
+
+export const trackByFormId = (index, item: { id: string }) => item.id;
+
+export const trackByIndex = (index: number) => index;
 
 export const showFormErrors = (controls: { [key: string]: AbstractControl }) => {
   Object.values(controls).forEach(control => {

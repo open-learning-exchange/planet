@@ -2,16 +2,20 @@ import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild }
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
+import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
 import { addDateAndTime, styleVariables } from './utils';
 import { AuthService } from './auth-guard.service';
+import { TasksService } from '../tasks/tasks.service';
+import { DialogsFormService } from './dialogs/dialogs-form.service';
+import { PlanetMessageService } from './planet-message.service';
+import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-calendar',
@@ -48,7 +52,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
   events: any[] = [ {} ];
-  calendarPlugins = [ dayGridPlugin, timeGridPlugin, interactionPlugin ];
+  calendarPlugins = [ dayGridPlugin, interactionPlugin ];
   buttons = {};
   eventTimeFormat = {
     hour: '2-digit',
@@ -85,7 +89,11 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     @Inject(DOCUMENT) private document: Document,
     private dialog: MatDialog,
     private couchService: CouchService,
-    private authService: AuthService
+    private authService: AuthService,
+    private tasksService: TasksService,
+    private dialogsFormService: DialogsFormService,
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -176,7 +184,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   weeklyEvents(meetup) {
-    if (meetup.day.length === 0 || meetup.recurringNumber === undefined) {
+    if (!Array.isArray(meetup.day) || meetup.day.length === 0 || meetup.recurringNumber === undefined) {
       return this.eventObject(meetup);
     }
     const events = [];
@@ -184,7 +192,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     while (events.length < meetup.recurringNumber) {
       const startDay = meetup.startDate + (i * millisecondsToDay);
       const date = new Date(startDay);
-      if (meetup.day.indexOf(days[date.getDay()]) !== -1) {
+      if (meetup.day.includes(days[date.getDay()])) {
         events.push(this.eventObject(meetup, startDay, meetup.endDate + (i * millisecondsToDay)));
       }
       i++;
@@ -217,16 +225,74 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   eventClick({ event }) {
+    const eventData = event.extendedProps.meetup;
+
+    if (eventData.isTask) {
+      this.openTaskDialog(eventData);
+    } else {
+      this.dialog.open(DialogsAddMeetupsComponent, {
+        data: {
+          meetup: eventData,
+          view: 'view',
+          link: this.link,
+          sync: this.sync,
+          editable: this.editable,
+          onMeetupsChange: this.onMeetupsChange.bind(this)
+        }
+      });
+    }
+  }
+
+  openTaskDialog(task) {
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: {
-        meetup: event.extendedProps.meetup,
+        meetup: task,
         view: 'view',
         link: this.link,
         sync: this.sync,
         editable: this.editable,
-        onMeetupsChange: this.onMeetupsChange.bind(this)
+        isTask: true,
+        onEditTask: () => this.openTaskEditDialog(task),
+        onDeleteTask: () => this.openTaskDeleteDialog(task)
       }
     });
   }
 
+  openTaskEditDialog(task) {
+    const { fields, formGroup } = this.tasksService.addDialogForm(task);
+    this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
+      onSubmit: (newTask) => {
+        if (newTask) {
+          this.tasksService.addDialogSubmit({ link: this.link, sync: this.sync }, task, newTask, () => {
+            this.getTasks();
+            this.planetMessageService.showMessage($localize`Task updated successfully`);
+            this.dialogsFormService.closeDialogsForm();
+          });
+        }
+      },
+      autoFocus: true
+    });
+  }
+
+  openTaskDeleteDialog(task) {
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.tasksService.archiveTask(task)(),
+          onNext: () => {
+            this.getTasks();
+            this.planetMessageService.showMessage($localize`Task deleted successfully`);
+            dialogRef.close();
+          },
+          onError: () => {
+            this.planetMessageService.showAlert($localize`There was an error deleting this task`);
+            dialogRef.close();
+          }
+        },
+        changeType: 'delete',
+        type: 'task',
+        displayName: task.title
+      }
+    });
+  }
 }

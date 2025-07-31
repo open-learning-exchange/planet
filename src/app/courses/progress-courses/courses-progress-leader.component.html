@@ -7,9 +7,7 @@
 </mat-toolbar>
 
 <mat-toolbar class="primary-color font-size-1">
-  <h3 class="ellipsis-title margin-lr-3">
-    {{ headingStart | slice:0:140 }}
-  </h3>
+  <h3 class="ellipsis-title margin-lr-3">{{ headingStart | truncateText:140 }}</h3>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
     <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterSelectors"></ng-container>
@@ -41,5 +39,12 @@
 <div class="view-container view-full-height">
   <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
   </planet-courses-progress-chart>
-  <ng-template #noProgress i18n>No Progress record available</ng-template>
+  <ng-template #noProgress>
+    <div class="view-container" *ngIf="isLoading" i18n>
+      Loading Progress...
+    </div>
+    <div class="view-container" *ngIf="!isLoading" i18n>
+      No Progress record available
+    </div>
+  </ng-template>
 </div>

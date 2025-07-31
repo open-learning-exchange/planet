@@ -20,12 +20,14 @@
 
   .cards-container {
     display: flex;
-    gap: 16px; 
+    flex-direction: row;
+    gap: 16px;
     margin-top: 10px;
-  
+
     mat-card {
       flex: 1;
-      min-width: 300px; 
+      width: 100%;
+      min-width: 300px;
     }
   }
 
@@ -59,6 +61,26 @@
       white-space: normal;
       word-break: break-word;
     }
+
+    .view-container {
+      overflow-x: auto;
+    }
+
+    .cards-container {
+      flex-direction: column;
+    }
+
+    .profile-list-lt, .profile-list-rt {
+      min-width: 0;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    mat-list-item {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
   }
 
 }

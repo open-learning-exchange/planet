@@ -1,4 +1,5 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
+ChangeDetectorRef, HostBinding, HostListener, OnInit } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -6,6 +7,7 @@ import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -13,30 +15,64 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
   templateUrl: './dashboard-tile.component.html',
   styleUrls: [ './dashboard-tile.scss' ]
 })
-export class DashboardTileComponent implements AfterViewChecked {
+export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() cardTitle: string;
-  @Input() cardType: string;
+  private _cardType: string;
+  @Input() set cardType(value: string) {
+    this._cardType = value;
+    if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+      this.isExpanded = true;
+    }
+  }
+  get cardType(): string {
+    return this._cardType;
+  }
   @Input() color: string;
   @Input() itemData;
   @Input() link;
   @Input() emptyLink;
   @Input() shelfName: string;
+  @Input() isLoading = false;
   @Output() teamRemoved = new EventEmitter<any>();
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
+  recentlyDragged = false;
+  isExpanded = false;
+  deviceType: DeviceType;
+
+  @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
+  @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
+  @HostListener('window:resize')
+  onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
+      this.isExpanded = true;
+    }
+  }
 
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private cd: ChangeDetectorRef
-  ) { }
+    private cd: ChangeDetectorRef,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  ngOnInit() {
+    if (this.cardType === 'myLife' && (this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE)) {
+      this.isExpanded = true;
+    }
+  }
 
   ngAfterViewChecked() {
-    const divHeight = this.itemDiv.nativeElement.offsetHeight;
-    const itemStyle = window.getComputedStyle(this.itemDiv.nativeElement.querySelector('.dashboard-item'));
+    const divHeight = this.itemDiv?.nativeElement.offsetHeight;
+    const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
+    if (!dashboardItem) { return; }
+    const itemStyle = window.getComputedStyle(dashboardItem);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
@@ -46,6 +82,21 @@ export class DashboardTileComponent implements AfterViewChecked {
       this.tileLines = tileLines;
       this.cd.detectChanges();
     }
+  }
+
+  toggleAccordion(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isExpanded = !this.isExpanded;
+    if (this.isExpanded) {
+      setTimeout(() => {
+        this.cd.detectChanges();
+      }, 100);
+    }
+  }
+
+  get isAccordionMode(): boolean {
+    return this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   removeFromShelf(event, item: any) {
@@ -84,9 +135,20 @@ export class DashboardTileComponent implements AfterViewChecked {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    this.recentlyDragged = true;
     moveItemInArray(this.itemData, event.previousIndex, event.currentIndex);
-    const ids = [ ...this.userService.shelf[this.shelfName] ];
-    ids.splice(event.currentIndex, 0, ids.splice(event.previousIndex, 1)[0]);
+    const uniqueItems = [];
+    const seen = new Set();
+    for (const item of this.itemData) {
+      if (item && item._id && !seen.has(item._id)) {
+        seen.add(item._id);
+        uniqueItems.push(item);
+      }
+    }
+    this.itemData = uniqueItems;
+    const ids = this.itemData
+      .filter(item => item !== null && item !== undefined)
+      .map(item => item._id || item);
     this.userService.updateShelf(ids, this.shelfName).subscribe(
       () => {},
       () => {
@@ -94,6 +156,10 @@ export class DashboardTileComponent implements AfterViewChecked {
         moveItemInArray(this.itemData, event.currentIndex, event.previousIndex);
       }
     );
+    this.userService.skipNextShelfRefresh = true;
+    setTimeout(() => {
+      this.recentlyDragged = false;
+    }, 300);
   }
 }
 

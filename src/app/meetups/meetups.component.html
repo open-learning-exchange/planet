@@ -65,7 +65,7 @@
                 <span *ngIf="element.participate; else joinMeetup"><mat-icon>clear</mat-icon><span i18n>Leave</span></span>
                 <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
               </a>
-              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'meetups', 'item': element._id, name: element.doc.title}" i18n-title title="Feedback">
+              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'meetups', 'item': element._id, name: element.title}" i18n-title title="Feedback">
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>

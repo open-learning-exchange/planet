@@ -7,7 +7,6 @@ import { CovalentMarkdownModule } from '@covalent/markdown';
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
 import { SubmitDirective } from './submit.directive';
-import { ClickOutsideDirective } from './clickoutside.directive';
 import { LowercaseDirective } from '../shared/lowercase.directive';
 import { PlanetLanguageComponent } from './planet-language.component';
 import { ResourcesMenuComponent } from '../resources/view-resources/resources-menu.component';
@@ -25,6 +24,8 @@ import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
 import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 @NgModule({
   imports: [
@@ -35,7 +36,6 @@ import { ChatOutputDirective } from './chat-output.directive';
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
@@ -53,13 +53,14 @@ import { ChatOutputDirective } from './chat-output.directive';
     RestrictDiacriticsDirective,
     ChatOutputDirective,
     OverlayModule,
+    TruncateTextPipe,
+    TimeAgoPipe
   ],
   declarations: [
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
-    ClickOutsideDirective,
     LowercaseDirective,
     AuthorizedRolesDirective,
     PlanetBetaDirective,
@@ -76,7 +77,9 @@ import { ChatOutputDirective } from './chat-output.directive';
     TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
-    ChatOutputDirective
+    ChatOutputDirective,
+    TruncateTextPipe,
+    TimeAgoPipe
   ]
 })
 export class SharedComponentsModule {}

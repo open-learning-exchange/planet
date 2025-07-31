@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin
+  filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
 } from '../shared/table-helpers';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
@@ -70,6 +70,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this.usersTable;
   }
   @Input() shouldOpenProfileDialog = false;
+  @Input() isLoading = false;
   @Output() tableStateChange = new EventEmitter<TableState>();
   @Output() tableDataChange = new EventEmitter<any[]>();
   @ViewChild(MatSort) sort: MatSort;
@@ -84,6 +85,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
+  trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
@@ -185,15 +187,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.router.navigate([ 'profile', userName, optParams ], { relativeTo: this.route });
   }
 
-  trackByFn(index, item) {
-    return item._id;
-  }
-
   filterPredicate() {
     return (data, filter) => composeFilterFunctions([
       filterDropdowns({ ...this.filter, 'doc.roles': this.filter['doc.roles'] === 'admin' ? '' : this.filter['doc.roles'] }),
       filterFieldExists([ 'doc.requestId' ], this.filterType === 'associated'),
-      filterSpecificFieldsByWord([ 'fullName' ]),
+      filterSpecificFieldsByWord([ 'fullName' , 'doc.name' ]),
       () => this.filter['doc.roles'] === 'admin' ? filterAdmin(data, filter) : true
     ])(data, filter);
   }

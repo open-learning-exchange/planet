@@ -10,12 +10,12 @@
   }
 
   .actions-container {
-    align-self: center;
+    align-self: flex-start;
   }
 
   .form-spacing {
     width: auto;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .header-label {
@@ -36,7 +36,6 @@
     .form-container {
       width: auto;
     }
-
 
     .filename {
       white-space: nowrap;

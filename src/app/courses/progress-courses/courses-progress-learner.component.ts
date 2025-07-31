@@ -21,6 +21,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   chartData: any[];
   onDestroy$ = new Subject<void>();
   yAxisLength = 0;
+  isLoading = true;
 
   constructor(
     private router: Router,
@@ -31,9 +32,11 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.coursesService.progressLearnerListener$().pipe(takeUntil(this.onDestroy$)).subscribe((courses: any[]) => {
       if (courses === undefined) {
         return;
+        this.isLoading = false;
       }
       this.courses = courses;
       this.createChart(courses, this.submissions);
@@ -41,6 +44,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     this.submissionsService.submissionsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((submissions: any[]) => {
       this.submissions = submissions;
       this.createChart(this.courses, submissions);
+      this.isLoading = false;
     });
     this.submissionsService.updateSubmissions({ query: { 'selector': { 'user.name': this.user.name } } });
     this.coursesService.requestCourses();

@@ -10,9 +10,9 @@ import { HealthListComponent } from '../health/health-list.component';
 import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
-import { LandingComponent } from '../landing/landing.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
@@ -58,7 +58,7 @@ const alwaysGuardedRoutes = [
     loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { myTeams: true }
   },
   { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
-  { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent },
+  { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent, canDeactivate: [UnsavedChangesGuard]  },
   { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
   {
     path: dashboardPath('myCourses'),
@@ -85,9 +85,7 @@ const routes: Routes = [
     path: '',
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]
-  },
-  { path: 'landing', component: LandingComponent, data: { requiresAuth: false } },
-  { path: 'landing', loadChildren: () => import('../landing/landing.module').then(m => m.LandingModule), data: { requiresAuth: false } }
+  }
 ];
 
 @NgModule({

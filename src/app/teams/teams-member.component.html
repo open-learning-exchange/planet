@@ -1,16 +1,15 @@
 <mat-card-header>
   <img mat-card-avatar [src]="member?.avatar" class="cursor-pointer" (click)="openMemberDialog(member)">
-  <a mat-card-title class="cursor-pointer member-name" (click)="openMemberDialog(member)">{{ truncateText( member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name ) }}</a>
+  <a mat-card-title class="cursor-pointer member-name" (click)="openMemberDialog(member)">{{member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name | truncateText:70}}</a>
   <mat-card-subtitle>
     <p class="primary-text-color" *ngIf="member?.userPlanetCode !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
     <span i18n *ngIf="member?.userId === user._id && member?.userPlanetCode === planetCode">(You)</span>{{' '}}
     <span i18n *ngIf="member?.userId === teamLeader?.userId && member?.userPlanetCode === teamLeader?.userPlanetCode">(Team Leader)</span>{{' '}}<span *ngIf="visits">({{ visits?.count || 0 }} <ng-container i18n>visits</ng-container>)</span>
     <p *ngIf="visits && (userStatus === 'member' || user.isUserAdmin)"><ng-container i18n>Last visit:</ng-container> {{ visits?.recentTime | date }}</p>
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">
-      {{ member?.doc?.leadershipTitle | slice:0:40 }}
-      <span *ngIf="member?.doc?.leadershipTitle.length > 40">...</span>
+      {{member?.doc?.leadershipTitle | truncateText:40}}
     </p>
-    <p class="primary-text-color role-text" *ngIf="member?.role">{{ truncateText(member?.role) }}</p>
+    <p class="primary-text-color role-text" *ngIf="member?.role">{{member?.role | truncateText:70}}</p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
     <mat-icon>more_vert</mat-icon>

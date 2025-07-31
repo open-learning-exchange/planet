@@ -73,6 +73,7 @@
       grid-template-areas: "txt dt";
       grid-template-columns: auto max-content;
       align-items: center;
+      margin-bottom: 0.75rem;
 
       .achievement-text {
         grid-area: txt;
@@ -103,6 +104,8 @@
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
+    display:block;
+    margin-top: 0.75rem;
   }
 
   .styled-link:hover {

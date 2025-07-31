@@ -7,8 +7,8 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
     <div>
-      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
-      <ng-template #elseBlock>{{ user.name }}</ng-template>
+      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
+      <ng-template #elseBlock>{{ user.name | truncateText:40 }}</ng-template>
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
@@ -32,7 +32,7 @@
       <div *ngIf="achievements !== undefined" class="achievements-container">
         <div class="user-info">
           <img class="profile-image" [src]="profileImg">
-          <h2>{{user.firstName}} {{user.middleName}} {{user.lastName}}</h2>
+          <h2>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</h2>
           <div class="birth-info" *ngIf="!publicView">
             <ng-container *ngIf="user.birthDate"><span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span></ng-container><br/><br/>
             <span *ngIf="user.birthplace" i18n>Birthplace: {{' ' + user.birthplace}} </span>
@@ -74,7 +74,7 @@
           <h3 i18n>My Achievements</h3>
           <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
           <mat-list>
-            <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="toggleOpenAchievementIndex(i)">
+            <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="onAchievementClick(achievement, i)">
               <p class="achievement-header" mat-line>
                 <span class="achievement-text">{{achievement.title || achievement}}
                   <ng-container *ngIf="isClickable(achievement)">

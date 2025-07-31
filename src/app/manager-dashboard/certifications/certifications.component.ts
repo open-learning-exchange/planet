@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
 @Component({
   templateUrl: './certifications.component.html',
@@ -13,14 +14,9 @@ import { SelectionModel } from '@angular/cdk/collections';
       min-width: 100px;
       width: 100px;
     }
-    .truncate-text {
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      word-break: break-word;
-      max-width: 100%;
+    .mat-column-action {
+      max-width: 300px;
+      align-self: end;
     }
   ` ]
 })
@@ -34,10 +30,20 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  showFiltersRow = false;
 
   constructor(
-    private certificationsService: CertificationsService
-  ) { }
+    private certificationsService: CertificationsService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   ngOnInit() {
     this.getCertifications();

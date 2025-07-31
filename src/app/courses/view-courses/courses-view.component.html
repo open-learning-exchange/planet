@@ -18,7 +18,7 @@
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </mat-menu>
     </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
       <span class="toolbar-fill"></span>
         <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
           <mat-icon>more_vert</mat-icon>
@@ -62,7 +62,7 @@
         <planet-courses-detail *ngIf="currentView==='details'" [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
       </div>
       <div class="course-view">
-        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackBySteps">
+        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackByFn">
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title class="step-title" i18n>

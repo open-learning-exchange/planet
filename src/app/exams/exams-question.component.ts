@@ -1,22 +1,20 @@
 import {
-  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import {
-  FormGroup,
-  FormArray
-} from '@angular/forms';
+import { FormGroup, FormArray } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { trackByFormId } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
-export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
+export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
   @Input() question: FormGroup;
   @Output() questionChange = new EventEmitter<any>();
@@ -27,6 +25,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
   questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;
+  trackByFn = trackByFormId;
   private onDestroy$ = new Subject<void>();
   get choices(): FormArray {
     return (<FormArray>this.questionForm.controls.choices);
@@ -46,6 +45,9 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     };
     this.questionForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
     this.questionForm.controls.choices.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(onFormChange);
+    this.questionForm.controls.hasOtherOption.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      onFormChange();
+    });
   }
 
   ngOnChanges() {
@@ -59,6 +61,11 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
       this.choiceAdded = false;
       this.cdRef.detectChanges();
     }
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   addChoice() {
@@ -94,10 +101,6 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     this.questionForm.controls.choices.value.forEach(({ id }) => {
       this.correctCheckboxes[id] = correctChoices.indexOf(id) > -1;
     });
-  }
-
-  choiceTrackByFn(index, item) {
-    return item.id;
   }
 
   clearChoices() {

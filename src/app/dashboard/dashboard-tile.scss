@@ -53,6 +53,9 @@
           padding: 1rem 0.5rem;
           position: relative;
           word-break: break-word;
+          &:nth-child(even):last-child {
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+          }
           .delete-item {
             position: absolute;
             top: -0.25rem;
@@ -82,6 +85,83 @@
     background-color: $grey;
     border-radius: 0;
     border: 0;
+  }
+}
+
+@media (max-width: $screen-sm) {
+  :host {
+    .dashboard-card {
+      grid-template-areas: "lt" "rt";
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr;
+      
+      
+      .left-tile {
+        border-radius: 2px 2px 0 0;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.75rem;
+        
+        &.accordion-toggle {
+          cursor: pointer;
+          
+          planet-dashboard-tile-title {
+            flex-direction: row;
+          }
+        }
+      }
+      
+      .right-tile {
+        max-height: 0;
+        transition: max-height 0.3s ease-in-out;
+        overflow-y: auto;
+        overflow-x: hidden;
+        
+        .dashboard-items {
+          &.accordion-list {
+            display: flex;
+            flex-direction: column;
+            grid-auto-columns: unset;
+          }
+          
+          .dashboard-item {
+            &.accordion-item {
+              flex-direction: row;
+              justify-content: flex-start;
+              text-align: left;
+              padding: 0.75rem 1rem;
+              
+              p {
+                margin-right: 0.5rem;
+
+                &[matBadgePosition="before"] {
+                  margin-left: 8px;
+                }
+              }
+              
+              .dashboard-text {
+                width: auto;
+                flex: 1;
+              }
+            }
+            
+            .delete-item {
+              position: relative;
+              top: 0;
+              right: 0;
+            }
+            
+            .dashboard-text {
+              width: auto;
+            }
+          }
+        }
+      }
+    }
+    
+    &.accordion-expanded .dashboard-card .right-tile {
+      max-height: 300px;
+    }
   }
 
 }

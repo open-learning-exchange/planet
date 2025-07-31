@@ -11,7 +11,7 @@
     </a>
     <div class="dashboard-name" style="margin-left: 16px;">
       <a [routerLink]="['/users/profile', user.name]" class="profile-link">
-        <h1 class="mat-title">{{displayName}} ({{visits | number}})</h1>
+        <h1 class="mat-title">{{displayName | truncateText:(isMobile ? 20 : 40)}} <span *ngIf="!isLoading">({{visits | number}})</span></h1>
       </a>
       <h1 class="mat-title">
         <span class="mat-subheading-2">
@@ -46,7 +46,8 @@
   [itemData]="data.resources"
   [link]="'myLibrary'"
   [emptyLink]="'/resources'"
-  [shelfName]="'resourceIds'">
+  [shelfName]="'resourceIds'"
+  [isLoading]="isLoading">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="cardTitles.myCourses"
@@ -55,7 +56,8 @@
   [itemData]="data.courses"
   [link]="'myCourses'"
   [emptyLink]="'/courses'"
-  [shelfName]="'courseIds'">
+  [shelfName]="'courseIds'"
+  [isLoading]="isLoading">
 </planet-dashboard-tile>
 <planet-dashboard-tile
   [cardTitle]="cardTitles.myTeams"
@@ -65,6 +67,7 @@
   [link]="'myTeams'"
   [emptyLink]="'/teams'"
   [shelfName]="'myTeamIds'"
+  [isLoading]="isLoading"
   (teamRemoved)="teamRemoved($event)">
 </planet-dashboard-tile>
 <planet-dashboard-tile

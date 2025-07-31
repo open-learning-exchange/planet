@@ -35,6 +35,13 @@ export class CustomValidators {
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
+  static nonNegativeNumberValidator(ac: AbstractControl): ValidationErrors {
+    if (!ac.value) {
+      return null;
+    }
+    return (ac.value >= 0) ? null : { invalidPositive: true };
+  }
+
   static choiceSelected(requireCorrect: boolean) {
     return (ac: AbstractControl): ValidationErrors => {
       if (!ac.parent || !requireCorrect) {

@@ -21,7 +21,7 @@
         <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
       </mat-toolbar-row>
     </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
       <mat-toolbar-row *ngIf="showFiltersRow">
         <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
       </mat-toolbar-row>
@@ -71,7 +71,7 @@
         <mat-cell *matCellDef="let element">
           <span class="ellipsis-title" matTooltip="{{ element.title || element.type + ' regarding ' + element.url }}">{{ element.title || element.type + ' regarding ' + element.url }}</span>
         </mat-cell>
-      </ng-container>      
+      </ng-container>
       <!-- Type Column -->
       <ng-container matColumnDef="type">
         <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>

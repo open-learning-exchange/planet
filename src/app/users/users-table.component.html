@@ -1,5 +1,5 @@
 <div [ngClass]="containerClass">
-  <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
+  <mat-table #table [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -27,7 +27,7 @@
     </ng-container>
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.fullName}}</mat-cell>
+      <mat-cell *matCellDef="let element" class="mat-column-name"><span>{{element.fullName}}</span></mat-cell>
     </ng-container>
     <ng-container matColumnDef="planet">
       <mat-header-cell *matHeaderCellDef mat-sort-header="planet" i18n>Planet</mat-header-cell>
@@ -110,12 +110,12 @@
               </button>
               <button mat-raised-button color="primary" *ngIf="element.doc.roles.length > 0" (click)="setRoles(element.doc, [], $event)">
                 <mat-icon>lock</mat-icon>
-                <label *ngIf="!isMobile">Deactivate</label>
+                <label *ngIf="!isMobile" i18n>Deactivate</label>
               </button>
             </span>
-            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0" i18n>
+            <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)" *ngIf="!element.doc.isUserAdmin || element.doc.roles.length > 0">
               <mat-icon>delete</mat-icon>
-              <label *ngIf="!isMobile"> Delete </label>
+              <label *ngIf="!isMobile" i18n> Delete </label>
             </button>
             <button *ngIf="!element.doc.isUserAdmin && filterType === 'local'" (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary" i18n>
               <mat-icon>vertical_align_top</mat-icon>
@@ -127,9 +127,9 @@
               <label *ngIf="!isMobile"> Demote </label>
             </button>
           </span>
-          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary" i18n>
+          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary">
             <mat-icon>visibility</mat-icon>
-            <label *ngIf="!isMobile"> View Profile </label>
+            <label *ngIf="!isMobile" i18n>View Profile</label>
           </button>
         </div>
       </mat-cell>
@@ -137,7 +137,14 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:isSelected(row.doc)}"></mat-row>
     <tr class="mat-row" *matNoDataRow>
-      <td><div class="view-container" i18n>No User Found</div></td>
+      <td>
+        <div class="view-container" *ngIf="isLoading" i18n>
+          Loading Users...
+        </div>
+        <div class="view-container" *ngIf="!isLoading" i18n>
+          No User Found
+        </div>
+      </td>
     </tr>
   </mat-table>
   <mat-paginator #paginator

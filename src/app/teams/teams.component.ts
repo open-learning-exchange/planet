@@ -18,7 +18,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { toProperCase } from '../shared/utils';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
@@ -41,6 +40,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
@@ -68,6 +68,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   get tableData() {
     return this.teams;
   }
+  showUserTeamsFilter = false;
 
   constructor(
     private userService: UserService,
@@ -82,7 +83,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   ngOnInit() {
@@ -91,7 +92,16 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item: any, property) => deepSortingDataAccessor(item, property);
+    this.teams.sortingDataAccessor = (item, property) => {
+      if (property === 'membership') {
+        switch (item.userStatus) {
+          case 'member': return 2;
+          case 'requesting': return 1;
+          default: return 0;
+        }
+      }
+      return deepSortingDataAccessor(item, property);
+    };
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
@@ -100,10 +110,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   getTeams() {
+    this.isLoading = true;
     const thirtyDaysAgo = time => {
       const date = new Date(time);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
@@ -121,7 +132,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
-        return (team.type === this.mode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
+        const teamMode = this.myTeamsFilter === 'on' ? (team.type === 'team' || team.type === 'enterprise') : team.type === this.mode;
+        return (teamMode || (team.type === undefined && this.mode === 'team')) && this.excludeIds.indexOf(team._id) === -1;
       }));
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
@@ -129,6 +141,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.userService.addImageForReplication(true).subscribe(() => {});
       }
       this.dialogsLoadingService.stop();
+      this.isLoading = false;
+      this.showUserTeamsFilter = this.myTeamsFilter === 'off' && this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -141,6 +155,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       console.log(error);
+      this.isLoading = false;
     });
   }
 
@@ -292,6 +307,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
+  }
+
+  sortbyUserTeams() {
+    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) { return; }
+
+    this.sort.active = 'membership';
+    this.sort.direction = 'desc';
+    this.sort.sortChange.emit({
+      active: this.sort.active,
+      direction: this.sort.direction
+    });
   }
 
 }

@@ -1,13 +1,14 @@
 import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { truncateText } from '../../shared/utils';
 
 @Component({
   template: `
     <span [ngSwitch]="selectedIds.length" class="small margin-lr-5">
       <span *ngSwitchCase="0" i18n>No collections selected</span>
       <span *ngSwitchCase="1"><span i18n>Selected:</span>
-        {{ truncatedTooltip }}
+        {{ getTruncatedTooltip() }}
     </span>
     <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
@@ -40,12 +41,10 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
     this.tooltipLabels = tagsNames.join(', ');
   }
 
-  get truncatedTooltip(): string {
+  getTruncatedTooltip(): string {
     const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 :
                       this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
-    return this.tooltipLabels.length > maxLength
-      ? this.tooltipLabels.slice(0, maxLength) + '...'
-      : this.tooltipLabels;
+    return truncateText(this.tooltipLabels, maxLength);
   }
 
 }

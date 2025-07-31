@@ -52,13 +52,24 @@ export const getDomainParams = (configuration, isHub) => isHub ?
   { planetCode: configuration.parentCode, domain: configuration.parentDomain } :
   { planetCode: undefined, domain: undefined };
 
-export const setMonths = () => {
+export const setMonths = (dateRange) => {
   // Added this in as a minimum for reporting to ignore incorrect data, should be deleted after resolved
   const planetLaunchDate = new Date(2018, 6, 1).valueOf();
-  const now = new Date();
-  return Array(12).fill(1)
-    .map((val, index: number) => new Date(now.getFullYear(), now.getMonth() - 11 + index, 1).valueOf())
-    .filter((month: number) => month > planetLaunchDate);
+  const startDate = new Date(dateRange.startDate);
+  const endDate = new Date(dateRange.endDate);
+  const startMonth = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const endMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  const months = [];
+  let currentMonth = new Date(startMonth);
+
+  while (currentMonth <= endMonth) {
+    const monthValue = currentMonth.valueOf();
+    if (monthValue > planetLaunchDate) {
+      months.push(monthValue);
+    }
+    currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1);
+  }
+  return months;
 };
 
 export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => {
@@ -90,7 +101,8 @@ export const titleOfChartName = (chartName: string) => {
     visitChart: $localize`Total Member Visits by Month`,
     uniqueVisitChart: $localize`Unique Member Visits by Month`,
     stepCompletedChart: $localize`Steps Completed by Month`,
-    chatUsageChart: $localize`Chats Created by Month`
+    chatUsageChart: $localize`Chats Created by Month`,
+    voicesCreatedChart: $localize`Voices Created by Month`,
   };
   return chartNames[chartName];
 };

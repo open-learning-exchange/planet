@@ -13,4 +13,11 @@
     }
   }
 
+  .button-group-right {
+    display: flex;
+    
+    button {
+      margin-right: 4px;
+    }
+  }
 }

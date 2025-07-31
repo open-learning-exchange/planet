@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { debug } from '../../debug-operator';
@@ -20,19 +19,6 @@ import * as constants from '../resources-constants';
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private stateService: StateService,
-    private resourcesService: ResourcesService,
-    private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
 
   private dbName = 'resources';
   private onDestroy$ = new Subject<void>();
@@ -62,6 +48,19 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   languageOptions = languages;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+    private stateService: StateService,
+    private resourcesService: ResourcesService,
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -122,9 +121,15 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * If returnState is set in history, it will navigate to that page.(teams/enterprises)
    * Returns routing to previous parent page
    */
   goBack() {
+    const returnState = history.state?.returnState;
+    if (returnState) {
+      this.router.navigate([ `${returnState.route}` ]);
+      return;
+    }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 }
