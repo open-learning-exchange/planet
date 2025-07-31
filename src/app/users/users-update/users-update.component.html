@@ -114,7 +114,7 @@
             </mat-form-field>
           </ng-container>
           <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
-            {{ showAdditionalFields ? 'Hide Additional Fields' : 'Show Additional Fields' }}
+            <span>{{ additionalFieldsButtonText }}</span>
           </button>
         </ng-container>
         <div class="action-buttons">
@@ -123,20 +123,31 @@
         </div>
       </form>
     </div>
-    <div *ngIf="!submissionMode" class="profile-image-section">
+    <div *ngIf="!submissionMode">
       <div style="text-align: center;">
-        <img class="profile-image-update" [src]="previewSrc"><br>
+        <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
         <div class="action-buttons">
           <button mat-raised-button color="secondary" (click)="fileInput.click()">
             Choose Image
           </button>
-          <button *ngIf="uploadImage && currentImgKey" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
+          <button *ngIf="imageChangedEvent || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()">Reset Selection</button>
+          <button *ngIf="uploadImage && currentImgKey && !imageChangedEvent && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()">Remove</button>
         </div>
-        <input #fileInput id="fileInput" type="file" accept="image/*" (change)="fileChangeEvent($event)" style="display: none;" />
-      </div>
-      <div class="profile-image-upload">
-        <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" (imageCropped)="onImageSelect($event)"></image-cropper>
+        <input #fileInput id="fileInput" type="file" accept="image/*" (change)="openImageEditDialog($event)" style="display: none;" />
       </div>
     </div>
   </div>
 </div>
+<ng-template #imageEditDialog>
+  <mat-dialog-content class="profile-image-section">
+    <img class="profile-image-update" [src]="previewSrc"/>
+    <div class="profile-image-upload">
+      <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" (imageCropped)="onImageSelect($event)"></image-cropper>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close (click)="resetSelection()" i18n>Cancel</button>
+    <button mat-button mat-dialog-close i18n>Confirm</button>
+  </mat-dialog-actions>
+</ng-template>
+

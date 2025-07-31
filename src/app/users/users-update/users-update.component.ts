@@ -1,7 +1,6 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UserService } from '../../shared/user.service';
@@ -13,8 +12,10 @@ import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
+import { MatDialog } from '@angular/material/dialog';
+import { TemplateRef, ViewChild } from '@angular/core';
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -42,10 +43,12 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
+  attachmentDeleted = false;
+  originalAttachments: any = null;
   isFormInitialized = false;
-  private isNavigating = false;
-  private subscriptions: Subscription = new Subscription();
   imageChangedEvent: Event | null = null;
+  showImagePreview = true;
+  @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
     private fb: FormBuilder,
@@ -55,14 +58,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private userService: UserService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private unsavedChangesService: UnsavedChangesService
+    private dialog: MatDialog
   ) {
     this.userData();
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.isNavigating = true;
-      }
-    });
   }
 
   ngOnInit() {
@@ -86,6 +84,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
           this.uploadImage = true;
+          this.originalAttachments = { ...data._attachments };
         }
         this.previewSrc = this.currentProfileImg;
         console.log('data: ', data);
@@ -118,12 +117,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   setupFormValueChanges() {
     this.editForm.valueChanges.subscribe(() => {
-      if (this.isFormInitialized && !this.isFormPristine()) {
-        this.hasUnsavedChanges = true;
-        this.unsavedChangesService.setHasUnsavedChanges(true);
-      } else {
-        this.hasUnsavedChanges = false;
-        this.unsavedChangesService.setHasUnsavedChanges(false);
+      if (this.isFormInitialized) {
+        this.hasUnsavedChanges = this.getHasUnsavedChanges();
       }
     });
   }
@@ -137,9 +132,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       showFormErrors(this.editForm.controls);
       return;
     }
-    this.hasUnsavedChanges = false;
+    this.hasUnsavedChanges = this.getHasUnsavedChanges();
     this.submitUser();
-
   }
 
   submitUser() {
@@ -153,7 +147,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.avatarChanged = false;
         this.editForm.markAsPristine();
         this.initialFormValues = { ...this.editForm.value };
-        this.unsavedChangesService.setHasUnsavedChanges(false);
+        this.hasUnsavedChanges = false;
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -182,13 +176,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   goBack() {
-    if (this.canDeactivate()) {
-      this.editForm.reset(this.user);
-      this.hasUnsavedChanges = false;
-      this.avatarChanged = false;
-      this.unsavedChangesService.setHasUnsavedChanges(false);
-      this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
-    }
+    this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
   fileChangeEvent(event: Event): void {
@@ -200,19 +188,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.file = event.base64;
     this.uploadImage = true;
     this.avatarChanged = true;
-    this.unsavedChangesService.setHasUnsavedChanges(true);
+    this.hasUnsavedChanges = true;
   }
 
   removeImageFile() {
-    // required to prevent this from being called automatically when navigating away from the page
-    if (this.isNavigating) {
-      return;
-    }
     this.previewSrc = this.currentProfileImg;
     this.file = null;
     this.uploadImage = false;
     this.avatarChanged = true;
-    this.unsavedChangesService.setHasUnsavedChanges(true);
+    this.hasUnsavedChanges = true;
     this.imageChangedEvent = null;
   }
 
@@ -228,9 +212,29 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.currentProfileImg = 'assets/image.png';
     this.removeImageFile();
     this.avatarChanged = true;
-    this.unsavedChangesService.setHasUnsavedChanges(true);
+    this.attachmentDeleted = true;
+    this.hasUnsavedChanges = true;
   }
 
+  resetSelection() {
+    if (this.attachmentDeleted && this.originalAttachments) {
+      this.user._attachments = { ...this.originalAttachments };
+      this.currentImgKey = Object.keys(this.originalAttachments)[0];
+      this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
+      this.uploadImage = true;
+      this.attachmentDeleted = false;
+      this.previewSrc = this.currentProfileImg;
+      this.file = null;
+      this.imageChangedEvent = null;
+    } else {
+      this.previewSrc = this.currentProfileImg;
+      this.file = null;
+      this.uploadImage = this.currentProfileImg !== 'assets/image.png';
+      this.imageChangedEvent = null;
+    }
+    this.avatarChanged = false;
+    this.hasUnsavedChanges = this.isFormPristine() ? false : true;
+  }
 
   appendToSurvey(user) {
     const submissionId = this.route.snapshot.params.id;
@@ -242,10 +246,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges || this.avatarChanged) {
-      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
-    }
-    return true;
+    return !this.getHasUnsavedChanges();
   }
 
   isFormPristine(): boolean {
@@ -254,9 +255,28 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedChanges || this.avatarChanged) {
-      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+    if (this.getHasUnsavedChanges()) {
+      $event.returnValue = warningMsg;
     }
+  }
+
+  private getHasUnsavedChanges(): boolean {
+    return !this.isFormPristine() || this.avatarChanged;
+  }
+
+  get additionalFieldsButtonText(): string {
+    return this.showAdditionalFields ? $localize`Hide Additional Fields` : $localize`Show Additional Fields`;
+  }
+
+  openImageEditDialog(event: Event): void {
+    this.showImagePreview = false;
+    this.imageChangedEvent = event;
+    const dialogRef = this.dialog.open(this.imageEditDialog, {
+      width: '1000px'
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.showImagePreview = true;
+    });
   }
 
 }

@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { ReportsService } from './reports.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { trackById } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -20,12 +21,13 @@ import { takeUntil, switchMap } from 'rxjs/operators';
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 
+  onDestroy$ = new Subject<void>();
   hubs = [];
   sandboxPlanets = [];
   planets = [];
   hubId: string | null = null;
   configuration = this.stateService.configuration;
-  onDestroy$ = new Subject<void>();
+  trackById = trackById;
 
   constructor(
     private couchService: CouchService,
@@ -87,10 +89,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
     this.hubs = hubs;
     this.sandboxPlanets = sandboxPlanets.filter((planet: any) => planet.doc.docType !== 'parentName');
-  }
-
-  trackById(index, item) {
-    return item._id;
   }
 
   viewReport(planet, event) {

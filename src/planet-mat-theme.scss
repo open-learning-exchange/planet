@@ -1,31 +1,32 @@
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 @import './app/_variables';
 
-@include angular-material-theme($planet-app-theme);
+@include mat.all-component-themes($planet-app-theme);
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
-  library: mat-palette($mat-pink, $accent-hue),
-  courses: mat-palette($mat-orange, $accent-hue),
-  meetups: mat-palette($mat-purple, $accent-hue),
-  teams: mat-palette($mat-green, $accent-hue)
+  library: mat.define-palette(mat.$pink-palette, $accent-hue),
+  courses: mat.define-palette(mat.$orange-palette, $accent-hue),
+  meetups: mat.define-palette(mat.$purple-palette, $accent-hue),
+  teams: mat.define-palette(mat.$green-palette, $accent-hue)
 );
 
 @each $section in library, courses, meetups, teams {
   $accent-palette: map-get($accent-map, #{$section});
-  $theme: mat-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
   .planet-#{$section}-theme {
-    @include angular-material-theme($theme);
+    @include mat.all-component-themes($theme);
 
     .accent-color {
-      background-color: mat-color($accent-palette, $accent-hue);
-      color: mat-contrast($accent-palette, $accent-hue);
+      background-color: mat.get-color-from-palette($accent-palette, $accent-hue);
+      color: mat.get-contrast-color-from-palette($accent-palette, $accent-hue);
     }
   }
 }
@@ -33,14 +34,14 @@ $accent-map: (
 // Custom themed material styles below
 
 .mat-button-toggle-checked {
-  background-color: mat-color($planet-app-primary, $light-hue);
-  color: mat-contrast($planet-app-primary, $light-hue);
+  background-color: mat.get-color-from-palette($planet-app-primary, $light-hue);
+  color: mat.get-contrast-color-from-palette($planet-app-primary, $light-hue);
 }
 
 .mat-raised-button[color="primary"] {
   transition: background-color 0.3s ease;
   &:hover {
-    background-color: mat-color($planet-app-primary, $dark-hue);
+    background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
   }
 }
 

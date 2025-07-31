@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.component';
 
 @Component({
   selector: 'planet-courses-step',
@@ -25,6 +26,15 @@ export class CoursesStepComponent implements OnDestroy {
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
+  @ViewChild(PlanetStepListComponent) stepListComponent: PlanetStepListComponent;
+
+  get examButtonLabel(): string {
+    return this.activeStep?.exam ? $localize`Update Test` : $localize`Add Test`;
+  }
+
+  get surveyButtonLabel(): string {
+    return this.activeStep?.survey ? $localize`Update Survey` : $localize`Add Survey`;
+  }
 
   constructor(
     private router: Router,
@@ -98,6 +108,12 @@ export class CoursesStepComponent implements OnDestroy {
 
   addStep() {
     this.addStepEvent.emit();
+  }
+
+  toList() {
+    if (this.stepListComponent) {
+      this.stepListComponent.toList();
+    }
   }
 
 }

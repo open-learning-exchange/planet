@@ -11,7 +11,7 @@ import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
-  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterSpecificFieldsByWord, filterTags,
+  filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
   commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
@@ -465,20 +465,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     ).subscribe(() => {
       this.getCourses();
       this.planetMessageService.showMessage($localize`Collections updated`);
-    });
-  }
-
-  openCourseViewDialog(courseId) {
-    if (!this.isDialog && !this.isForm) { return; }
-    const dialogRef = this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId },
-      minWidth: '600px',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      autoFocus: false
-    });
-    dialogRef.afterClosed().subscribe(() => {
-      this.dialog.closeAll();
     });
   }
 

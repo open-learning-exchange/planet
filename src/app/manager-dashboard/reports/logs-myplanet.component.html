@@ -35,8 +35,8 @@
         <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
-      Clear
+    <button mat-raised-button (click)="clearFilters()" color="primary" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
+      <span i18n>Clear</span>
     </button>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1">
@@ -95,7 +95,7 @@
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && !selectedType && disableShowAllTime" class="margin-lr-5">
-        Clear
+        <span i18n>Clear</span>
       </button>
       <mat-icon>search</mat-icon>
       <mat-form-field class="font-size-1">
@@ -110,7 +110,7 @@
       <span i18n>myPlanet</span>
       <span class="toolbar-fill"></span>
       <button mat-raised-button color="accent" (click)="exportAll()" *ngIf="!isEmpty">
-        Export All
+        <span i18n>Export All</span>
       </button>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -122,7 +122,7 @@
         </mat-expansion-panel-header>
         <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
         <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;" *ngIf="!isEmpty">
-          Export
+          <span i18n>Export</span>
         </button>
       </mat-expansion-panel>
     </ng-container>

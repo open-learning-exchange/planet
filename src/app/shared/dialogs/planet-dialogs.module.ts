@@ -15,7 +15,6 @@ import { ChangePasswordDirective } from './change-password.directive';
 import { SharedComponentsModule } from '../shared-components.module';
 import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { DialogsImagesComponent } from './dialogs-images.component';
-import { DialogsVideoComponent } from './dialogs-video.component';
 import { DialogsAnnouncementComponent, DialogsAnnouncementSuccessComponent } from './dialogs-announcement.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 
@@ -37,7 +36,6 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
-    DialogsVideoComponent,
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
@@ -51,7 +49,6 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsListComponent,
     DialogsLoadingComponent,
     DialogsImagesComponent,
-    DialogsVideoComponent,
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,

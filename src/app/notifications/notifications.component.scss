@@ -5,18 +5,23 @@
 }
 
 @media (max-width: $screen-sm) {
-	.responsive-toolbar {
+  .responsive-toolbar {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     width: 100%;
     height: auto;
-		padding: 16px 16px 0px 16px;
-	}
-	
-	.responsive-toolbar div, 
-  .responsive-toolbar mat-form-field, 
-  .responsive-toolbar button {
-    margin-bottom: 8px;
+    padding: 16px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 12px;
+
+      span {
+        text-align: center;
+      }
+    }
   }
 }

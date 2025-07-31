@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule), data: { parent: true } },
   { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { parent: true } },
   { path: 'surveys', loadChildren: () => import('../surveys/surveys.module').then(m => m.SurveysModule) },
+  { path: 'surveys/:surveyId', loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule) },
   { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { parent: true } },
   { path: 'configuration', component: ManagerDashboardConfigurationComponent, data: { update: true } },
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },

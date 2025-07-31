@@ -10,6 +10,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
+import { trackById } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-news-list',
@@ -25,6 +26,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
+  @Output() viewChange = new EventEmitter<any>();
+  @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
   @ViewChild('anchor', { static: true }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
@@ -34,7 +37,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
-  @Output() viewChange = new EventEmitter<any>();
   isLoadingMore = false;
   hasMoreNews = false;
   pageSize = 10;
@@ -44,6 +46,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageEnd = { root: 10 };
   // store the last opened thread’s root post id
   lastRootPostId: string;
+  trackById = trackById;
 
   constructor(
     private dialog: MatDialog,
@@ -253,15 +256,13 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     }
   }
 
-  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' }) {
+  changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
+    this.changeLabelsFilter.emit({ label, action });
+    if (action === 'select') { return; }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
-  }
-
-  trackById(index, item) {
-    return item._id;
   }
 
   getCurrentItems(): any[] {

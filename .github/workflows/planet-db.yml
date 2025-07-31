@@ -49,8 +49,9 @@ jobs:
 
       - name: Build image
         run: |
-          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$GITHUB_REF_NAME"
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build -f './docker/db-init/${{ matrix.arch }}-Dockerfile' -t $repo .
           docker images
@@ -71,17 +72,18 @@ jobs:
 
       - name: Multiarch Deploy
         run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
-          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_db-init_latest.yaml
@@ -90,18 +92,19 @@ jobs:
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
         run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
           versiontag="$DOCKER_ORG/$DOCKER_REPO:db-init-$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
           yq e '.tags |= . + ["db-init"] ' - | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_db-init_versioned.yaml

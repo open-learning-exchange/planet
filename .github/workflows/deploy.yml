@@ -35,14 +35,15 @@ jobs:
 
       - name: deploy
         run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
           if [[ "${{ github.event.inputs.hostname }}" == "" ]]; then
-            SERVER_HOST="planet.dev.ole.org"  
+            SERVER_HOST="planet.dev.ole.org"
           else
             SERVER_HOST="${{ github.event.inputs.hostname }}"
           fi
           PLANET_VERSION=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           if [[ "${{ github.event.inputs.buildname }}" == "" ]]; then
-            BUILD="$PLANET_VERSION-$GITHUB_REF_NAME-${GITHUB_SHA::8}"
+            BUILD="$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
             # BUILD="0.13.4-deploy-d6b59441"
           else
             SERVER_HOST="${{ github.event.inputs.hostname }}"

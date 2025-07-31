@@ -32,7 +32,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
+  @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
   showExpand = false;
@@ -125,8 +125,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     if (this.item.doc.news?.conversations.length > 1) {
       this.showExpand = true;
     } else {
-      this.showExpand = this.item.doc.message.length > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit)
-        || this.item.doc.images.length > 0;
+      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
+      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
     }
   }
 

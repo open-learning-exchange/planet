@@ -5,6 +5,14 @@
   margin: 0;
 }
 
+.select-container {
+  display: flex;
+}
+
+.select-item {
+  min-width: 100px;
+}
+
 @media only screen and (max-width: $screen-md) {
   .titlebar {
     display: none;

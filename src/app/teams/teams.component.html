@@ -39,13 +39,14 @@
   </mat-toolbar>
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
+    <div class="mobile-scroll-wrapper">
     <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
             {{element.doc.name | truncateText:150}}
-            <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus=='member'">check</mat-icon>
+            <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true" *ngIf="element.userStatus === 'member'">check</mat-icon>
             <span *ngIf="myTeamsFilter==='on'" class="team-type-label" i18n>
               ({{ element.doc.type === 'enterprise' ? 'enterprise' : 'team' }})
             </span>
@@ -143,6 +144,7 @@
         </td>
       </tr>
     </mat-table>
+  </div>
     <div *ngIf="userNotInShelf" i18n style="text-align: center;">
       Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
     </div>
