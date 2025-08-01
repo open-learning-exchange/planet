@@ -9,9 +9,24 @@
     <span class="ellipsis-title" *ngIf="!isLoading">{{title ? title + ': ' : ''}}</span>
     <span *ngIf="!isLoading">
       <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
-      <span i18n *ngIf="mode === 'grade' || mode === 'view'"> by{{' ' + submittedBy}}</span><span i18n *ngIf="!submittedBy && previewMode">(Preview)</span>
-      <span *ngIf="updatedOn && (updatedOn | date: 'short')" i18n> on {{updatedOn | date: 'short'}}</span>
+      <button *ngIf="mode !== 'take'" mat-icon-button [matMenuTriggerFor]="infoMenu">
+        <mat-icon>info</mat-icon>
+      </button>
     </span>
+    <mat-menu #infoMenu="matMenu">
+      <ng-container>
+        <button mat-menu-item disabled>
+          <mat-icon>person</mat-icon>
+          <span i18n>{{ submittedBy || (previewMode ? '(Preview)' : '') }}</span>
+        </button>
+      </ng-container>
+      <ng-container *ngIf="updatedOn">
+        <button mat-menu-item disabled>
+          <mat-icon>schedule</mat-icon>
+          <span>{{ updatedOn | date:'short' }}</span>
+        </button>
+      </ng-container>
+    </mat-menu>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="isLoading || questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="isLoading || questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
