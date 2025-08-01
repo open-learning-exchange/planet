@@ -30,6 +30,9 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
       overflow: hidden;
       word-break: break-word;
     }
+    .avatar-spacing {
+      margin-right: 5px;
+    }
   ` ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
