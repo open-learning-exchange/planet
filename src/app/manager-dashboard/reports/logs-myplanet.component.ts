@@ -42,6 +42,7 @@ export class LogsMyPlanetComponent implements OnInit {
   selectedTimeFilter = '24h';
   showCustomDateFields = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
+  isLoading = false;
 
   constructor(
     private csvService: CsvService,
@@ -128,10 +129,11 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   getApkLogs() {
+    this.isLoading = true;
     forkJoin([
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
-    ]).subscribe(([ planets, apklogs ]) => {
+    ]).subscribe(([planets, apklogs]) => {
       this.getUniqueVersions(apklogs);
       this.getUniqueTypes(apklogs);
       this.setAllPlanets(
@@ -143,7 +145,11 @@ export class LogsMyPlanetComponent implements OnInit {
       this.apklogs = this.allPlanets;
       this.isEmpty = areNoChildren(this.apklogs);
       this.onTimeFilterChange('24h');
-    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
+      this.isLoading = false;
+    }, (error) => {
+      this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`);
+      this.isLoading = false;
+    });
   }
 
   onVersionChange(version: string) {
