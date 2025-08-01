@@ -48,7 +48,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   isFormInitialized = false;
   imageChangedEvent: Event | null = null;
   showImagePreview = true;
-  isNavigating = false;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
@@ -149,7 +148,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.editForm.markAsPristine();
         this.initialFormValues = { ...this.editForm.value };
         this.hasUnsavedChanges = false;
-        this.isNavigating = true;
         this.goBack();
       }, (err) => {
         // Connect to an error display component to show user that an error has occurred
@@ -178,7 +176,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   goBack() {
-    this.isNavigating = true;
     this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
@@ -244,16 +241,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
       return this.couchService.put('submissions/' + submissionId, { ...submission, user });
     })).subscribe(() => {
+      this.avatarChanged = false;
+      this.initialFormValues = { ...this.editForm.value };
       this.hasUnsavedChanges = false;
-      this.isNavigating = true;
       this.goBack();
     });
   }
 
   canDeactivate(): boolean {
-    if (this.isNavigating) {
-      return true;
-    }
     return !this.getHasUnsavedChanges();
   }
 
