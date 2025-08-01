@@ -54,7 +54,6 @@
               "src/styles/calendar.scss",
               "src/styles/roboto.scss",
               "src/simplemde.scss",
-              "src/app/_variables.scss",
               "src/app/_export.module.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
