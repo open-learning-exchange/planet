@@ -2,10 +2,10 @@ import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@a
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  UntypedFormArray,
   Validators
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -42,7 +42,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
-  meetupForm: FormGroup;
+  meetupForm: UntypedFormGroup;
   readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
   pageType = 'Add new';
@@ -58,7 +58,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private userService: UserService,
     private stateService: StateService
   ) {
@@ -95,7 +95,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     meetup.startDate = new Date(meetup.startDate);
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
     this.meetupForm.patchValue(meetup);
-    meetup.day.forEach(day => (<FormArray>this.meetupForm.controls.day).push(new FormControl(day)));
+    meetup.day.forEach(day => (<UntypedFormArray>this.meetupForm.controls.day).push(new UntypedFormControl(day)));
   }
 
   private captureInitialState() {
@@ -151,7 +151,7 @@ onSubmit() {
     showFormErrors(this.meetupForm.controls);
     return;
   }
-  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  const dayFormArray = this.meetupForm.get('day') as UntypedFormArray;
   dayFormArray.updateValueAndValidity();
   this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
   this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
@@ -230,10 +230,10 @@ onSubmit() {
   }
 
   onDayChange(day: string, isChecked: boolean) {
-    const dayFormArray = <FormArray>this.meetupForm.controls.day;
+    const dayFormArray = <UntypedFormArray>this.meetupForm.controls.day;
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new FormControl(day));
+      dayFormArray.push(new UntypedFormControl(day));
     } else {
         // remove from day array if unchecked
         const index = dayFormArray.controls.findIndex(x => x.value === day);
@@ -245,7 +245,7 @@ onSubmit() {
 }
 
 toggleDaily(val: string, showCheckbox: boolean) {
-  const dayFormArray = this.meetupForm.get('day') as FormArray;
+  const dayFormArray = this.meetupForm.get('day') as UntypedFormArray;
   dayFormArray.clear();
   dayFormArray.clearValidators();
 
@@ -253,7 +253,7 @@ toggleDaily(val: string, showCheckbox: boolean) {
       // add all days to the array if the course is daily
       case 'daily':
           this.days.forEach((day) => {
-              dayFormArray.push(new FormControl(day));
+              dayFormArray.push(new UntypedFormControl(day));
           });
           break;
       case 'weekly':
@@ -263,7 +263,7 @@ toggleDaily(val: string, showCheckbox: boolean) {
               const startDateObj = new Date(startDate);
               const dayOfWeek = this.days[startDateObj.getDay()];
               if (dayOfWeek) {
-                  dayFormArray.push(new FormControl(dayOfWeek));
+                  dayFormArray.push(new UntypedFormControl(dayOfWeek));
               }
           }
           break;

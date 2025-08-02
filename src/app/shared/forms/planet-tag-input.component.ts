@@ -2,7 +2,7 @@ import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ControlValueAccessor, NgControl, FormControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, UntypedFormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -76,7 +76,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   onTouched;
   stateChanges = new Subject<void>();
   tags: string[] = [];
-  inputControl = new FormControl();
+  inputControl = new UntypedFormControl();
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
   tagUrlDelimiter = '_,_';

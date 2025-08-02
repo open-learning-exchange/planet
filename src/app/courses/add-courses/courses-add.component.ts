@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -36,7 +36,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   private _steps = [];
   savedCourse: any = null;
   draftExists: boolean;
-  courseForm: FormGroup;
+  courseForm: UntypedFormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
@@ -66,7 +66,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,

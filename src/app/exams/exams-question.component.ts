@@ -1,7 +1,7 @@
 import {
   Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import { FormGroup, FormArray } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
@@ -16,19 +16,19 @@ import { trackByFormId } from '../shared/table-helpers';
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
-  @Input() question: FormGroup;
+  @Input() question: UntypedFormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};
-  questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
+  questionForm: UntypedFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;
   trackByFn = trackByFormId;
   private onDestroy$ = new Subject<void>();
-  get choices(): FormArray {
-    return (<FormArray>this.questionForm.controls.choices);
+  get choices(): UntypedFormArray {
+    return (<UntypedFormArray>this.questionForm.controls.choices);
   }
 
   constructor(
@@ -110,7 +110,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
   }
 
-  updateQuestion(question: FormGroup) {
+  updateQuestion(question: UntypedFormGroup) {
     this.examsService.updateQuestion(this.questionForm, question);
     if (question.value.correctChoice instanceof Array) {
       question.value.correctChoice.forEach(choiceId => {

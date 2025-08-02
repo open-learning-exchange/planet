@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
@@ -40,9 +40,9 @@ export class ConfigurationComponent implements OnInit {
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
-  loginForm: FormGroup;
-  configurationFormGroup: FormGroup;
-  contactFormGroup: FormGroup;
+  loginForm: UntypedFormGroup;
+  configurationFormGroup: UntypedFormGroup;
+  contactFormGroup: UntypedFormGroup;
   nations = [];
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
@@ -53,7 +53,7 @@ export class ConfigurationComponent implements OnInit {
   languageNames = languages.map(list => list.name);
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,

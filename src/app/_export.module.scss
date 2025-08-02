@@ -1,0 +1,13 @@
+@import '_variables.scss';
+
+:export {
+  primary: $primary;
+  primaryLighter: $primary-lighter;
+  primaryText: $primary-text;
+  accent: $accent;
+  accentLighter: $accent-lighter;
+  accentText: $accent-text;
+  grey: $grey;
+  greyText: $grey-text;
+  lightGrey: $light-grey;
+}

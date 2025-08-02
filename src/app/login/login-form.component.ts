@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -45,7 +45,7 @@ const loginForm = {
   styleUrls: [ './login.scss' ]
 })
 export class LoginFormComponent {
-  public userForm: FormGroup;
+  public userForm: UntypedFormGroup;
   showPassword = false;
   showRepeatPassword = false;
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
@@ -59,7 +59,7 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private syncService: SyncService,
