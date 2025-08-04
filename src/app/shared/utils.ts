@@ -90,9 +90,9 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
 
-export const formatDate = (date: string) => {
-  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
-};
+export const formatStringDate = (date: string) => new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
+
+export const formatDate = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
 export const deepEqual = (item1: any, item2: any) => {
   if (typeof item1 !== typeof item2) {
