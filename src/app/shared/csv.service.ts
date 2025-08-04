@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
-import { markdownToPlainText } from './utils';
+import { markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
@@ -41,68 +41,97 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], planetName: string) {
+  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], chatActivities: any[], planetName: string, startDate: Date, endDate: Date) {
     const options = {
-      title: $localize`Summary report for ${planetName}`,
+      title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
       showTitle: true,
-      showLabels: false,
-      useKeysAsHeaders: false
+      showLabels: true,
+      useKeysAsHeaders: true
     };
     const groupedLogins = this.reportsService.groupLoginActivities(logins).byMonth;
     const groupedResourceViews = this.reportsService.groupDocVisits(resourceViews, 'resourceId').byMonth;
     const groupedCourseViews = this.reportsService.groupDocVisits(courseViews, 'courseId').byMonth;
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
-    const formattedData = this.summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions);
+    const groupedChatData = chatActivities.length > 0 && this.reportsService.groupChatUsage ?
+      this.reportsService.groupChatUsage(chatActivities).byMonth : [];
+    const formattedData = this.buildSummaryTable([
+      { title: $localize`Unique Member Visits`, data: groupedLogins, countUnique: true },
+      { title: $localize`Total Member Visits`, data: groupedLogins, countUnique: false },
+      { title: $localize`Resource Views`, data: groupedResourceViews, countUnique: false },
+      { title: $localize`Course Views`, data: groupedCourseViews, countUnique: false },
+      { title: $localize`Steps Completed`, data: groupedStepCompletions, countUnique: false },
+      { title: $localize`Chats Created`, data: groupedChatData, countUnique: false }
+    ]);
     this.generate(formattedData, options);
   }
 
-  summaryTable(groupedLogins, groupedResourceViews, groupedCourseViews, groupedStepCompletions) {
-    const monthLabels = (data, header: boolean) => data.reduce(
-      (csvObj, { date }) => {
-        const dateLabel = monthDataLabels(date);
-        return { ...csvObj, [dateLabel]: header ? dateLabel : '' };
-      },
-      {}
-    );
-    const blankRow = monthLabels(groupedLogins, false);
-    const headerRow = monthLabels(groupedLogins, true);
-    return [
-      { label: $localize`Unique Member Visits by Month`, ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedLogins, true), headerRow),
-      { label: '', ...blankRow },
-      { label: $localize`Total Member Visits by Month`, ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedLogins), headerRow),
-      { label: '', ...blankRow },
-      { label: $localize`Resource Views by Month`, ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedResourceViews), headerRow),
-      { label: '', ...blankRow },
-      { label: $localize`Course Views by Month`, ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedCourseViews), headerRow),
-      { label: '', ...blankRow },
-      { label: $localize`Steps Completed by Month`, ...headerRow },
-      ...this.fillRows(this.summaryDataToTable(groupedStepCompletions), headerRow)
-    ];
-  }
-
-  summaryDataToTable (data, unique = false) {
-    return data.reduce((table, item) => {
-      const dateLabel = monthDataLabels(item.date);
-      const itemIndex = item.gender === 'male' ? 0 :
-        item.gender === 'female' ? 1 : 2;
-      const value = unique === true ? item.unique.length : item.count;
-      table[itemIndex] = { ...table[itemIndex], [dateLabel]: value };
-      table[3] = { ...table[3], [dateLabel]: (table[3][dateLabel] || 0) + value };
-      return table;
-    }, [ { label: $localize`Male` }, { label: $localize`Female` }, { label: $localize`Did not specify` }, { label: $localize`Total` } ]);
-  }
-
-  fillRows(data: any[], headerRow: any, fillValue = 0) {
-    return data.map(item => {
-      Object.keys(headerRow).forEach(column => {
-        item = { ...item, [column]: item[column] || fillValue };
+  private getMonthlyData(month: string, data: any[], countUnique: boolean): number {
+    const monthData = data.filter(item => item.date === month);
+    if (countUnique && monthData.length > 0) {
+      const uniqueUsers = new Set();
+      monthData.forEach(item => {
+        if (item.unique && item.unique.length) {
+          item.unique.forEach(user => uniqueUsers.add(user));
+        }
       });
-      return item;
+      return uniqueUsers.size;
+    }
+    return monthData.reduce((total, item) => total + (item.count || 0), 0);
+  }
+
+  private buildSummaryTable(sections: Array<{ title: string; data: any[]; countUnique: boolean }>): any[] {
+    const allMonths = new Set<string>();
+    sections.forEach(section => {
+      section.data.forEach(item => allMonths.add(item.date));
+    });
+    const sortedMonths = Array.from(allMonths).sort();
+    const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    const formattedData = [];
+
+    sections.forEach(section => {
+      this.processSection(formattedData, section.title, section.data, section.countUnique, sortedMonths, monthLabels);
+    });
+
+    return formattedData;
+  }
+
+  private processSection(formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]): void {
+    formattedData.push({ Section: title, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    let totalAll = 0;
+    let totalMale = 0;
+    let totalFemale = 0;
+    let totalUnspecified = 0;
+
+    sortedMonths.forEach((month, i) => {
+      const monthLabel = monthLabels[i];
+      const all = this.getMonthlyData(month, groupedData, countUnique);
+      const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
+      const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
+      const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
+
+      totalAll += all;
+      totalMale += male;
+      totalFemale += female;
+      totalUnspecified += unspecified;
+
+      formattedData.push({
+        Section: '',
+        Month: monthLabel,
+        All: all,
+        Male: male,
+        Female: female,
+        Unspecified: unspecified
+      });
+    });
+
+    formattedData.push({
+      Section: '',
+      Month: $localize`Total`,
+      All: totalAll,
+      Male: totalMale,
+      Female: totalFemale,
+      Unspecified: totalUnspecified
     });
   }
 
