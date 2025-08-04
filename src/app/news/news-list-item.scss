@@ -60,6 +60,17 @@ mat-chip {
   cursor: pointer;
 }
 
+.user-name-truncate {
+  flex: 1 1 0;
+}
+
+.user-name-truncate-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
 @media (max-width: $screen-xs) {
   .subtitle-row .label-panel .mat-chip {
     max-width: 80px;
