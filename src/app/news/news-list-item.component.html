@@ -21,7 +21,7 @@
       </div>
       <div class="time-panel">
         <ng-container *ngIf="item.sharedDate; else checkEditTime">
-          <mat-icon *ngIf="isSmallMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
+          <mat-icon *ngIf="isMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
           <ng-template #shareText>
             <span i18n>shared: </span>
           </ng-template>
@@ -29,7 +29,7 @@
         </ng-container>
         <ng-template #checkEditTime>
           <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate; else creationTime">
-            <mat-icon *ngIf="isSmallMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
+            <mat-icon *ngIf="isMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
             <ng-template #editText>
               <span i18n>edited: </span>
             </ng-template>
@@ -37,7 +37,7 @@
           </ng-container>
         </ng-template>
         <ng-template #creationTime>
-          <mat-icon *ngIf="isSmallMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
+          <mat-icon *ngIf="isMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
           <ng-template #postText>
             <span i18n>posted: </span>
           </ng-template>
@@ -66,13 +66,15 @@
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-    <button mat-button type="button" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
-      {{item.doc.user.firstName ?
-        item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
-        item.doc.user.name}}
-    </button>
+      <button mat-button type="button" class="cursor-pointer user-name-truncate" (click)="openMemberDialog(item.doc.user)">
+      <span class="user-name-truncate-text ellipsis">
+        {{item.doc.user.firstName ?
+          item.doc.user.firstName + ((" " + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
+          item.doc.user.name}}
+      </span>
+      </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || isSmallMobile; else actionItems">
+    <ng-container *ngIf="isMobile; else actionItems">
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
