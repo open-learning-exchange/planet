@@ -41,7 +41,8 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
     dbData.aiProvider = aiProvider.name;
   }
 
-  dbData.conversations.push({ 'query': content, 'response': '' });
+  const messageId = Date.now().toString();
+  dbData.conversations.push({ 'id': messageId, 'query': content, 'response': '' });
   const res = await chatDB.insert(dbData);
 
   messages.push({ 'role': 'user', content });
