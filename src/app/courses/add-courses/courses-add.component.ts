@@ -41,6 +41,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
   tags = this.fb.control([]);
+  navigatingToExam = false;
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
@@ -82,6 +83,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   ngOnInit() {
+    this.coursesService.coursesAddComponentRef = this;
+    const currentUrl = this.router.url;
+    if (!currentUrl.includes('/exam/')) {
+      this.coursesService.stepIndex = undefined;
+    }
     const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
@@ -118,6 +124,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     if (this.coursesService.stepIndex === undefined) {
       this.coursesService.reset();
     }
+    if (this.coursesService.coursesAddComponentRef === this) {
+      this.coursesService.coursesAddComponentRef = null;
+    }
+    
     this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -316,6 +326,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   canDeactivate(): boolean {
+    if (this.navigatingToExam) {
+      this.navigatingToExam = false;
+      return true;
+    }
     return !this.hasUnsavedChanges;
   }
 
