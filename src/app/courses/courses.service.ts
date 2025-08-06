@@ -36,6 +36,7 @@ export class CoursesService {
   stepIndex: any;
   returnUrl: string;
   currentParams: any;
+  coursesAddComponentRef: any;
   local = { courses: [], ratings: [], tags: [], courses_progress: [] };
   parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
   isReady = { local: false, parent: false };
