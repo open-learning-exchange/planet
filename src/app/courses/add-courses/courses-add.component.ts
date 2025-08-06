@@ -127,7 +127,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     if (this.coursesService.coursesAddComponentRef === this) {
       this.coursesService.coursesAddComponentRef = null;
     }
-    
+
     this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();

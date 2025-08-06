@@ -98,7 +98,7 @@ export class CoursesStepComponent implements OnDestroy {
     if (parentComponent) {
       parentComponent.navigatingToExam = true;
     }
-    const examUrl = this.activeStep[type] 
+    const examUrl = this.activeStep[type]
       ? [ '/courses/update/exam/', this.activeStep[type]._id, { type } ]
       : [ '/courses/exam/', { type } ];
     this.router.navigate(examUrl);
