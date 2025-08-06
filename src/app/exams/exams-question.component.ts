@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { trackByFormId } from '../shared/table-helpers';
+import { trackByIdVal } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-exam-question',
@@ -25,7 +25,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;
-  trackByFn = trackByFormId;
+  trackByFn = trackByIdVal;
   private onDestroy$ = new Subject<void>();
   get choices(): FormArray {
     return (<FormArray>this.questionForm.controls.choices);

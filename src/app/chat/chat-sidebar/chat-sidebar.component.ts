@@ -10,7 +10,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
 import { SearchService } from '../../shared/forms/search.service';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors, trackById } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 
 @Component({
@@ -40,6 +40,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: { [key: string]: FormGroup } = {};
+  trackByFn = trackById;
 
   constructor(
     private chatService: ChatService,

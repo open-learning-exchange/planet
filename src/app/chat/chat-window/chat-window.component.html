@@ -1,6 +1,6 @@
 <div class="full-container">
   <div class="chat-container" #chat>
-    <div *ngFor="let conversation of conversations; trackBy: trackByMessage">
+    <div *ngFor="let conversation of conversations; trackBy: trackByFn">
       <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
       <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
     </div>

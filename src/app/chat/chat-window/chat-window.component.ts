@@ -6,7 +6,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 
@@ -16,6 +16,11 @@ import { StateService } from '../../shared/state.service';
   styleUrls: [ './chat-window.scss' ],
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() context: any;
+  @Input() isEditing: boolean;
+  @Input() conversations: any[] | null = null;
+  @ViewChild('chatInput') chatInput: ElementRef;
+  @ViewChild('chat') chatContainer: ElementRef;
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   streaming: boolean;
@@ -35,11 +40,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     context: '',
   };
   providers: AIProvider[] = [];
-  @Input() context: any;
-  @Input() isEditing: boolean;
-  @Input() conversations: any[] | null = null;
-  @ViewChild('chatInput') chatInput: ElementRef;
-  @ViewChild('chat') chatContainer: ElementRef;
+  trackByFn = trackByIdVal;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -263,10 +264,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       );
     }
-  }
-
-  trackByMessage(index: number, msg: any) {
-    return msg.id;
   }
 
   focusInput() {
