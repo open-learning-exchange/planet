@@ -49,6 +49,7 @@
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
+    "marked": "^15.0.12",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.3.1",
     "mime": "4.0.0",
