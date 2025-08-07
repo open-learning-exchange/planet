@@ -58,11 +58,11 @@
     <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-name">{{element.parent.name}}</mat-cell>
+        <mat-cell *matCellDef="let element" class="mat-cell-name"><div class="cell-content">{{element.parent.name}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle">{{element.courseTitle || element.parent.courseTitle}}</mat-cell>
+        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle"><div class="cell-content">{{element.courseTitle || element.parent.courseTitle}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="stepNum">
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
