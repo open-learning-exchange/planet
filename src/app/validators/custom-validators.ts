@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -125,7 +125,7 @@ export class CustomValidators {
   // End time becomes required for multi day events with a start time
   static meetupTimeValidator(): ValidatorFn {
 
-    return (formGroup: FormGroup): ValidationErrors => {
+    return (formGroup: UntypedFormGroup): ValidationErrors => {
       if (!formGroup) {
         return null;
       }
@@ -227,7 +227,7 @@ export class CustomValidators {
   }
 
   static requiredMarkdown(ac: AbstractControl) {
-    return CustomValidators.required(new FormControl(ac.value.text));
+    return CustomValidators.required(new UntypedFormControl(ac.value.text));
   }
 
   static fileMatch(ac: AbstractControl, fileList: string[]) {

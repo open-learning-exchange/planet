@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -24,7 +24,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-  promptForm: FormGroup;
+  promptForm: UntypedFormGroup;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -44,7 +44,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
     private userService: UserService
   ) {}
