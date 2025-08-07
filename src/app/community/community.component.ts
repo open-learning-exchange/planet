@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
+import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -64,6 +64,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
   voiceSearch = '';
+  voiceSearch$ = new Subject<string>();
   availableLabels: string[] = [];
   selectedLabel = '';
   pinned = false;
@@ -95,12 +96,22 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().subscribe();
+    this.voiceSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.onDestroy$)
+    ).subscribe(searchValue => {
+      this.voiceSearch = searchValue;
+      this.applyFilters();
+    });
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.news.forEach(item => item.doc.messageLower = item.doc.message?.toLowerCase() || '');
       this.filteredNews = this.news;
       this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
+      this.applyFilters();
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -473,11 +484,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.applyFilters();
   }
 
-  onVoicesSearchChange(searchValue: string): void {
-    this.voiceSearch = searchValue;
-    this.applyFilters();
-  }
-
   applyFilters(): void {
     let filtered = this.news;
     if (this.selectedLabel) {
@@ -489,7 +495,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
+      filtered = filtered.filter(item => item.doc.messageLower.includes(lower));
     }
     this.filteredNews = filtered;
   }

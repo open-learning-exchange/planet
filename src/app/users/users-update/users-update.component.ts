@@ -241,6 +241,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
       return this.couchService.put('submissions/' + submissionId, { ...submission, user });
     })).subscribe(() => {
+      this.avatarChanged = false;
+      this.initialFormValues = { ...this.editForm.value };
+      this.hasUnsavedChanges = false;
       this.goBack();
     });
   }

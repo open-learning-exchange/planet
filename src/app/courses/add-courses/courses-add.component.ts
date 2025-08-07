@@ -18,14 +18,12 @@ import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { warningMsg } from '../../shared/unsaved-changes.component';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class CoursesAddComponent implements OnInit, OnDestroy {
 
   readonly dbName = 'courses'; // make database name a constant
   private onDestroy$ = new Subject<void>();
@@ -48,7 +46,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   // from the languages import
   languageNames = languages.map(list => list.name);
   mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
-  hasUnsavedChanges = false;
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   get steps() {
     return this._steps;
@@ -121,13 +118,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.isDestroyed = true;
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  @HostListener('window:beforeunload', [ '$event' ])
-  unloadNotification($event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedChanges) {
-      $event.returnValue = warningMsg;
-    }
   }
 
   setInitialState() {
@@ -210,7 +200,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
         steps: this.steps,
         tags: this.tags.value
       });
-      this.hasUnsavedChanges = currentState !== this.initialState;
+      // Only auto-save if there are actual changes from the initial state
+      if (currentState !== this.initialState) {
+        this.pouchService.saveDocEditing({ ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId);
+        this.draftExists = true;
+        this.setInitialState();
+      }
     });
   }
 
@@ -243,7 +238,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       showFormErrors(this.courseForm.controls);
       return;
     }
-    this.hasUnsavedChanges = false;
     this.updateCourse(this.courseForm.value, shouldNavigate);
   }
 
@@ -282,16 +276,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.navigateBack();
   }
 
-  saveDraft() {
-    this.coursesStepComponent.toList();
-    const course = this.convertMarkdownImagesText({ ...this.courseForm.value, images: this.images }, this.steps);
-    this.pouchService.saveDocEditing({ ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId);
-    this.draftExists = true;
-    this.hasUnsavedChanges = false;
-    this.setInitialState();
-    this.planetMessageService.showMessage($localize`Draft saved successfully`);
-  }
-
   deleteDraft() {
     if (!this.draftExists) { return; }
     if (this.savedCourse) {
@@ -310,13 +294,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.coursesStepComponent.toList();
     this.setInitialState();
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
-    this.hasUnsavedChanges = false;
+    this.courseForm.markAsPristine();
     this.draftExists = false;
     this.planetMessageService.showMessage($localize`Draft discarded`);
-  }
-
-  canDeactivate(): boolean {
-    return !this.hasUnsavedChanges;
   }
 
   navigateBack() {
