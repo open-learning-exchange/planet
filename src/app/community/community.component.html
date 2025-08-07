@@ -7,7 +7,7 @@
             <div class="toolbar-row">
               <mat-form-field class="search-form-field">
                 <mat-icon class="small-icon" matPrefix>search</mat-icon>
-                <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="onVoicesSearchChange($event)">
+                <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
               </mat-form-field>
               <mat-form-field class="label-filter-field">
                 <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
@@ -39,7 +39,7 @@
             <span i18n>Loading voices...</span>
           </ng-container>
           <ng-template #loaded>
-            <ng-container *ngIf="news?.length > 0; else noVoices">
+            <ng-container *ngIf="filteredNews?.length > 0; else noVoices">
               <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)"></planet-news-list>
             </ng-container>
           </ng-template>
