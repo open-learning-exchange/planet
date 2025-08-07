@@ -6,7 +6,7 @@ import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
-import { FormControl, AbstractControl } from '@angular/forms';
+import { UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
@@ -31,7 +31,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   @Input() questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new FormControl(null, this.answerValidator);
+  answer = new UntypedFormControl(null, this.answerValidator);
   statusMessage = '';
   spinnerOn = true;
   title = '';
