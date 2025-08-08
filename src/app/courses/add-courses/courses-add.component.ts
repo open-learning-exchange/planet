@@ -296,7 +296,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.courseForm.markAsPristine();
     this.draftExists = false;
-    this.planetMessageService.showMessage($localize`Draft discarded`);
+    this.planetMessageService.showMessage($localize`:@@draftDiscardedMessage:Draft discarded`);
   }
 
   navigateBack() {
