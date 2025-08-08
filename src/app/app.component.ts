@@ -52,6 +52,12 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'sync',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sync.svg'));
+    iconRegistry.addSvgIcon(
+      'pin',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pin.svg'));
+    iconRegistry.addSvgIcon(
+      'unpin',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/unpin.svg'));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {

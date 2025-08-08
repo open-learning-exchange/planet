@@ -29,7 +29,7 @@
         <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-raised-button (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && disableShowAllTime" class="margin-lr-5">
+    <button mat-raised-button (click)="clearFilters()" color="primary" [disabled]="!searchValue && !selectedVersion && disableShowAllTime" class="margin-lr-5">
       <span i18n>Clear</span>
     </button>
     <mat-icon>search</mat-icon>
@@ -133,7 +133,10 @@
         </button>
       </mat-expansion-panel>
     </ng-container>
-    <ng-container *ngIf="isEmpty">
+    <ng-container *ngIf="isLoading">
+      <mat-panel-title i18n="@@loadingReports">Loading reports...</mat-panel-title>
+    </ng-container>
+    <ng-container *ngIf="!isLoading && isEmpty">
       <mat-panel-title i18n>No record was found</mat-panel-title>
     </ng-container>
   </div>

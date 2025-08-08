@@ -11,7 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { formatDate, pdfMake, pdfFonts } from '../../shared/utils';
+import { formatStringDate, pdfMake, pdfFonts } from '../../shared/utils';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -28,7 +28,7 @@ export class UsersAchievementsComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
-  publicView = this.route.snapshot.data.requiresAuth === false;
+  publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
   constructor(
@@ -138,7 +138,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate) : '';
+    const formattedBirthDate = this.user.birthDate ? formatStringDate(this.user.birthDate) : '';
     let contentArray = [
       {
         text: $localize`${`${this.user.firstName}'s achievements`}`,
@@ -190,7 +190,7 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
-          const formattedDate = achievement.date ? formatDate(achievement.date) : '';
+          const formattedDate = achievement.date ? formatStringDate(achievement.date) : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
             { text: achievement.date ? formattedDate : '', marginLeft: 40 },

@@ -1,5 +1,5 @@
 import { Directive, Host, ElementRef, AfterViewInit } from '@angular/core';
-import { FormControlName, FormControl, Validators } from '@angular/forms';
+import { FormControlName, UntypedFormControl, Validators } from '@angular/forms';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -11,7 +11,7 @@ export class PlanetNumberValidatorDirective implements AfterViewInit {
 
   ngAfterViewInit() {
 
-    const control: FormControl = this.controlName.control;
+    const control: UntypedFormControl = this.controlName.control;
     const numberValidator = () => !this.elementRef.nativeElement.validity.valid ? { 'invalidInt': true } : null;
     const existingValidator = control.validator;
 

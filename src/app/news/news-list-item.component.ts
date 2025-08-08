@@ -32,7 +32,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
-  @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add', news: any }>();
+  @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
   showExpand = false;
@@ -44,8 +44,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   teamLabels = [];
   previewLimit = 500;
   deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
-  isSmallMobile: boolean;
+  isMobile: boolean;
 
   constructor(
     private router: Router,
@@ -60,7 +59,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private deviceInfoService: DeviceInfoService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
+    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnInit() {
@@ -89,7 +88,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isSmallMobile = this.deviceType === this.deviceTypes.SMALL_MOBILE;
+    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnDestroy() {

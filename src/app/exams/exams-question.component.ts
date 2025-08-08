@@ -1,35 +1,34 @@
 import {
-  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import {
-  FormGroup,
-  FormArray
-} from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
+import { trackByFormId } from '../shared/table-helpers';
 
 @Component({
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
-export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewChecked {
+export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
-  @Input() question: FormGroup;
+  @Input() question: UntypedFormGroup;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};
-  questionForm: FormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
+  questionForm: UntypedFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;
+  trackByFn = trackByFormId;
   private onDestroy$ = new Subject<void>();
-  get choices(): FormArray {
-    return (<FormArray>this.questionForm.controls.choices);
+  get choices(): UntypedFormArray {
+    return (<UntypedFormArray>this.questionForm.controls.choices);
   }
 
   constructor(
@@ -62,6 +61,11 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
       this.choiceAdded = false;
       this.cdRef.detectChanges();
     }
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   addChoice() {
@@ -99,10 +103,6 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     });
   }
 
-  choiceTrackByFn(index, item) {
-    return item.id;
-  }
-
   clearChoices() {
     this.questionForm.patchValue({ 'correctChoice': '' });
     while (this.choices.length !== 0) {
@@ -110,7 +110,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, AfterViewCheck
     }
   }
 
-  updateQuestion(question: FormGroup) {
+  updateQuestion(question: UntypedFormGroup) {
     this.examsService.updateQuestion(this.questionForm, question);
     if (question.value.correctChoice instanceof Array) {
       question.value.correctChoice.forEach(choiceId => {

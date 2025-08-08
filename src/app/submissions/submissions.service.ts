@@ -681,35 +681,44 @@ export class SubmissionsService {
     }));
 
     const getResponse = (answer, type) => {
-      if (type === 'select') {
-        return answer.value.text;
+      let result;
+      switch (type) {
+        case 'select':
+          result = answer.value.text;
+          break;
+        case 'selectMultiple':
+          result = answer.value.map(item => item.text).join(', ');
+          break;
+        default:
+          result = answer.value;
       }
-      if (type === 'selectMultiple') {
-        return answer.value.map(item => item.text).join(', ');
-      }
-      return answer.value;
+      return result;
     };
 
     const payload = exam.questions.map((question, questionIndex) => {
       const responses = userSubmissions.map(submission => {
         const answer = submission.answers[questionIndex];
-        return {
+        const responseItem = {
           userInfo: submission.userInfo,
           response: getResponse(answer, question.type)
         };
+        return responseItem;
       });
 
-      return {
+      const payloadItem = {
         question: `Question ${questionIndex + 1} - ${question.body}`,
         type: question.type,
         choices: question.choices,
         responses
       };
+
+      return payloadItem;
     });
 
+    let response;
     try {
       const payloadString = JSON.stringify(payload, null, 2);
-      const response = await this.chatService.getPrompt(
+      response = await this.chatService.getPrompt(
         {
           content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
           aiProvider: { name: 'openai' },
@@ -719,7 +728,6 @@ export class SubmissionsService {
       ).toPromise();
 
       this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
-      return response;
     } catch (error) {
       let message = '';
       if (error && error.status === 0) {
@@ -728,8 +736,9 @@ export class SubmissionsService {
         message = $localize`Error analyzing responses: ${error.message || error}`;
       }
       this.planetMessageService.showAlert(message);
-      return { chat: message };
+      response = { chat: message };
     }
+    return response;
   }
 
 }

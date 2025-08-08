@@ -269,20 +269,27 @@ export class TeamsService {
     const truncatedFullName = truncateText(fullName, 22);
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
+    let message;
     switch (type) {
       case 'message':
-        return $localize`<b>${truncatedFullName}</b> has posted a message on ${teamMessage}`;
+        message = $localize`<b>${truncatedFullName}</b> has posted a message on ${teamMessage}`;
+        break;
       case 'request':
-        return $localize`<b>${truncatedFullName}</b> has requested to join ${teamMessage}`;
+        message = $localize`<b>${truncatedFullName}</b> has requested to join ${teamMessage}`;
+        break;
       case 'added':
-        return $localize`You have been added to ${teamMessage}`;
+        message = $localize`You have been added to ${teamMessage}`;
+        break;
       case 'rejected':
-        return $localize`You have not been accepted to ${teamMessage}`;
+        message = $localize`You have not been accepted to ${teamMessage}`;
+        break;
       case 'removed':
-        return $localize`You have been removed from ${teamMessage}`;
+        message = $localize`You have been removed from ${teamMessage}`;
+        break;
       default:
-        return $localize`${newMembersLength} member(s) has been added to ${teamMessage}`;
+        message = $localize`${newMembersLength} member(s) has been added to ${teamMessage}`;
     }
+    return message;
   }
 
   teamNotification(message, type, user, { team, url }) {

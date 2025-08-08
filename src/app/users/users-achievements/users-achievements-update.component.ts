@@ -1,21 +1,20 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { CouchService } from '../../shared/couchdb.service';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin, Subject, interval, of, race } from 'rxjs';
+import { catchError, takeUntil, debounce } from 'rxjs/operators';
+import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
-import { catchError, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { forkJoin, Subject, interval, of, race } from 'rxjs';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../../shared/unsaved-changes.service';
-import { debounce } from 'rxjs/operators';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -28,24 +27,24 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   achievementNotFound = false;
-  editForm: FormGroup;
-  profileForm: FormGroup;
+  editForm: UntypedFormGroup;
+  profileForm: UntypedFormGroup;
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
-  get achievements(): FormArray {
-    return <FormArray>this.editForm.controls.achievements;
+  get achievements(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.achievements;
   }
-  get references(): FormArray {
-    return <FormArray>this.editForm.controls.references;
+  get references(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.references;
   }
-  get links(): FormArray {
-    return <FormArray>this.editForm.controls.links;
+  get links(): UntypedFormArray {
+    return <UntypedFormArray>this.editForm.controls.links;
   }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -55,8 +54,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService,
-    private unsavedChangesService: UnsavedChangesService
+    private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -119,7 +117,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           profileForm: this.profileForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
 
     this.profileForm.valueChanges
@@ -137,7 +134,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           profileForm: this.profileForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
@@ -248,7 +244,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     };
   }
 
-  updateFormArray(formArray: FormArray, value, index = -1) {
+  updateFormArray(formArray: UntypedFormArray, value, index = -1) {
     if (index === -1) {
       formArray.push(value);
     } else {
@@ -285,7 +281,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     if (this.editForm.valid && this.profileForm.valid) {
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
       this.hasUnsavedChanges = false;
-      this.unsavedChangesService.setHasUnsavedChanges(false);
     } else {
       this.markAsInvalid(this.editForm);
       this.markAsInvalid(this.profileForm);
@@ -313,28 +308,17 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   goBack() {
-    if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-      if (!confirmLeave) {
-        return;
-      }
-    }
-    this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+      $event.returnValue = warningMsg;
     }
   }
 

@@ -45,12 +45,30 @@ mat-card-content {
 
 .chip-outline-accent {
   background-color: $accent-lighter;
-  color: black;
 }
 
 .chip-outline-primary {
   background-color: $primary-lighter;
-  color: black;
+}
+
+.chip-outline-grey {
+  background-color: $light-grey;
+}
+
+mat-chip {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.user-name-truncate {
+  flex: 1 1 0;
+}
+
+.user-name-truncate-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
 }
 
 @media (max-width: $screen-xs) {
