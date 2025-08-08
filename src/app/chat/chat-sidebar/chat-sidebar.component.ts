@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -39,7 +39,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   overlayOpen = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  titleForm: { [key: string]: FormGroup } = {};
+  titleForm: { [key: string]: UntypedFormGroup } = {};
   trackByFn = trackById;
 
   constructor(
@@ -47,7 +47,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private searchService: SearchService,
     private userService: UserService
   ) {

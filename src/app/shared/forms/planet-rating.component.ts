@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
@@ -41,8 +41,8 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() ratingType = '';
   @Input() disabled = false;
 
-  rateForm: FormGroup;
-  popupForm: FormGroup;
+  rateForm: UntypedFormGroup;
+  popupForm: UntypedFormGroup;
   isPopupOpen = false;
   stackedBarData = [];
   enrolled = true;
@@ -56,7 +56,7 @@ export class PlanetRatingComponent implements OnChanges {
   private dbName = 'ratings';
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
