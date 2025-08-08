@@ -249,7 +249,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): boolean {
+
     return !this.getHasUnsavedChanges();
+
   }
 
   isFormPristine(): boolean {
@@ -260,6 +262,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.getHasUnsavedChanges()) {
       $event.returnValue = warningMsg;
+
     }
   }
 

@@ -1,6 +1,6 @@
 <mat-toolbar *ngIf="!isDialog">
   <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
-  <span *ngIf="pageType" i18n>{{ pageType }} Resource</span>
+  <span *ngIf="pageType" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</span>
 </mat-toolbar>
 
 <div [ngClass]="{'space-container':!isDialog}">

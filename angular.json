@@ -228,6 +228,7 @@
           "options": {
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
+            "format": "xlf"
             "format": "xlf",
             "ivy": true
           },

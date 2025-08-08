@@ -67,7 +67,14 @@ export class TeamsService {
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
-    const title = $localize`${team._id ? 'Update' : 'Create'} ${toProperCase(type)}`;
+    // Requires a translation map with $localize and custom message IDs for dialog titles
+    const key = `${team._id ? 'update' : 'create'}-${type === 'enterprise' ? 'enterprise' : 'team'}`;
+    const title = {
+      'create-team': $localize`:@@create-team:Create Team`,
+      'update-team': $localize`:@@update-team:Update Team`,
+      'create-enterprise': $localize`:@@create-enterprise:Create Enterprise`,
+      'update-enterprise': $localize`:@@update-enterprise:Update Enterprise`
+    }[key];
     const nameControl = type !== 'services' ? { name:
       [
         team.name || '', CustomValidators.required,

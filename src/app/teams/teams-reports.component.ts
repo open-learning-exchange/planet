@@ -54,8 +54,8 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
-    const actionType = isEdit ? 'Edit' : 'Add';
-    const dialogTitle = $localize`${actionType} Report`;
+    const actionType = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
+    const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
 
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
@@ -78,7 +78,7 @@ export class TeamsReportsComponent implements DoCheck {
           disableIfInvalid: true,
           onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
             this.dialogsFormService.closeDialogsForm();
-            const action = isEdit ? 'edited' : 'added';
+            const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
             this.planetMessageService.showMessage($localize`Report ${action}`);
           })
         }

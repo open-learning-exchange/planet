@@ -219,9 +219,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
     this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
       this.getTeams();
-      const action = $localize`${team._id ? 'updated' : 'created'}`;
-      const entityType = this.mode === 'enterprise' ? 'Enterprise' : 'Team';
-      const msg = $localize`${entityType} ${action} successfully`;
+      const msg = team._id
+        ? (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
+            : $localize`:@@team-updated-success:Team updated successfully`)
+        : (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-created-success:Enterprise created successfully`
+            : $localize`:@@team-created-success:Team created successfully`);
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -246,8 +250,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           onNext: () => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
-            const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-            const msg = $localize`You have left ${entityType} ${team.name}`;
+            const msg = this.mode === 'enterprise'
+              ? $localize`:@@enterprise-left:You have left enterprise` + ' ' + team.name
+              : $localize`:@@team-left:You have left team` + ' ' + team.name;
             this.planetMessageService.showMessage(msg);
           },
         },
@@ -263,11 +268,18 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       request: this.teamsService.archiveTeam(team)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(team))),
       onNext: () => {
         this.deleteDialog.close();
-        const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-        this.planetMessageService.showMessage($localize`You have deleted ${entityType} ${team.name}.`);
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-deleted:You have deleted enterprise` + ' ' + team.name + '.'
+          : $localize`:@@team-deleted:You have deleted team` + ' ' + team.name + '.';
+        this.planetMessageService.showMessage(msg);
         this.removeTeamFromTable(team);
       },
-      onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this ${this.mode === 'enterprise' ? 'enterprise' : 'team'}.`)
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-delete-error:There was a problem deleting this enterprise.`
+          : $localize`:@@team-delete-error:There was a problem deleting this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
     };
   }
 
@@ -295,8 +307,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      const entityType = this.mode === 'enterprise' ? 'enterprise' : 'team';
-      this.planetMessageService.showMessage($localize`Sent request to join ${entityType} ${team.name}`);
+      const msg = this.mode === 'enterprise'
+        ? $localize`:@@enterprise-join-request:Sent request to join enterprise` + ' ' + team.name
+        : $localize`:@@team-join-request:Sent request to join team` + ' ' + team.name;
+      this.planetMessageService.showMessage(msg);
     });
   }
 
