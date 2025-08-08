@@ -7363,7 +7363,7 @@
           <context context-type="sourcefile">src/app/teams/teams.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="final">Localización</target>
+        <target state="final">Local</target>
       </trans-unit>
       <trans-unit id="ff3ea7f842c957866829b17b70c6b1cdf6e0f3d6" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Connected with Nation} nation {Connected with Earth}}</source>
