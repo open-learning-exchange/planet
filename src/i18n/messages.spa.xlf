@@ -8143,7 +8143,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">304</context>
         </context-group>
-        <target state="final">Tienes <x id="PH" equiv-text="msg"/> <x id="PH_1" equiv-text="team.name"/></target>
+        <target state="final">Has <x id="PH" equiv-text="msg"/> <x id="PH_1" equiv-text="team.name"/></target>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html" approved="yes">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
@@ -15443,6 +15443,54 @@
     <trans-unit id="report-added" datatype="html">
       <source>added</source>
       <target state="final">añadido</target>
+    </trans-unit>
+    <trans-unit id="enterprise-updated-success" datatype="html">
+      <source>Enterprise updated successfully</source>
+      <target state="final">Empresa actualizada con éxito</target>
+    </trans-unit>
+    <trans-unit id="team-updated-success" datatype="html">
+      <source>Team updated successfully</source>
+      <target state="final">Equipo actualizado con éxito</target>
+    </trans-unit>
+    <trans-unit id="enterprise-created-success" datatype="html">
+      <source>Enterprise created successfully</source>
+      <target state="final">Empresa creada con éxito</target>
+    </trans-unit>
+    <trans-unit id="team-created-success" datatype="html">
+      <source>Team created successfully</source>
+      <target state="final">Equipo creado con éxito</target>
+    </trans-unit>
+    <trans-unit id="enterprise-left" datatype="html">
+      <source>You have left enterprise</source>
+      <target state="final">Has dejado la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-left" datatype="html">
+      <source>You have left team</source>
+      <target state="final">Has dejado el equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-deleted" datatype="html">
+      <source>You have deleted enterprise.</source>
+      <target state="final">Has eliminado la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-deleted" datatype="html">
+      <source>You have deleted team.</source>
+      <target state="final">Has eliminado el equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-delete-error" datatype="html">
+      <source>There was a problem deleting this enterprise</source>
+      <target state="final">Hubo un problema al eliminar esta empresa.</target>
+    </trans-unit>
+    <trans-unit id="team-delete-error" datatype="html">
+      <source>There was a problem deleting this team.</source>
+      <target state="final">Hubo un problema al eliminar este equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-join-request" datatype="html">
+      <source>Sent request to join enterprise</source>
+      <target state="final">Solicitud enviada para unirse a la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-join-request" datatype="html">
+      <source>Sent request to join team</source>
+      <target state="final">Solicitud enviada para unirse al equipo</target>
     </trans-unit>
     </body>
   </file>
