@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
@@ -15,12 +15,12 @@ import { StateService } from '../shared/state.service';
 })
 export class ManagerAIServicesComponent implements OnInit {
   configuration: any = {};
-  configForm: FormGroup;
+  configForm: UntypedFormGroup;
   hideKey: { [key: string]: boolean } = {};
   spinnerOn = true;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private clipboard: Clipboard,
     private configurationService: ConfigurationService,
     private couchService: CouchService,

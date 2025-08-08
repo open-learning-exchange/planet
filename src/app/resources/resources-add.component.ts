@@ -3,8 +3,8 @@ import { FileInputComponent } from '../shared/forms/file-input.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
-  FormBuilder,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
@@ -40,7 +40,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachedZipFiles: string[] = [];
   filteredZipFiles: Observable<string[]>;
   deleteAttachment = false;
-  resourceForm: FormGroup;
+  resourceForm: UntypedFormGroup;
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
@@ -69,7 +69,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,

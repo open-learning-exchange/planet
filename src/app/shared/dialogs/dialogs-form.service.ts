@@ -3,8 +3,8 @@ import { DialogsFormComponent } from './dialogs-form.component';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import {
-  FormBuilder,
-  FormGroup
+  UntypedFormBuilder,
+  UntypedFormGroup
 } from '@angular/forms';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class DialogsFormService {
 
   private dialogRef: MatDialogRef<DialogsFormComponent>;
 
-  constructor(private dialog: MatDialog, private fb: FormBuilder) { }
+  constructor(private dialog: MatDialog, private fb: UntypedFormBuilder) { }
 
   public confirm(title: string, fields: any, formGroup: any, autoFocus = false): Observable<boolean> {
     let dialogRef: MatDialogRef<DialogsFormComponent>;
@@ -20,7 +20,7 @@ export class DialogsFormService {
       width: '600px',
       autoFocus: autoFocus
     });
-    if (formGroup instanceof FormGroup) {
+    if (formGroup instanceof UntypedFormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
     } else {
       dialogRef.componentInstance.modalForm = this.fb.group(formGroup);

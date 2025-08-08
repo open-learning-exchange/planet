@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { FormControl, AbstractControl } from '@angular/forms';
+import { UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -31,7 +31,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   question: ExamQuestion;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new FormControl(null, this.answerValidator);
+  answer = new UntypedFormControl(null, this.answerValidator);
   statusMessage = '';
   spinnerOn = true;
   title = '';

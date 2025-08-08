@@ -1,17 +1,16 @@
-@import "../variables";
+@import '../variables.scss';
 
 .mat-column-name,
 .mat-column-courseTitle {
   max-width: 25vw;
+  overflow: hidden;
 }
 
-.mat-cell-name,
-.mat-cell-courseTitle {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+.cell-content {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .mat-column-stepNum {

@@ -1,5 +1,5 @@
 import { Component, Inject, Input, HostListener } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
@@ -32,7 +32,7 @@ export class PlanetTagInputDialogComponent {
     this._selectMany = value;
     this.data.reset(value);
   }
-  addTagForm: FormGroup;
+  addTagForm: UntypedFormGroup;
   newTagInfo: { id: string, parentId?: string };
   isUserAdmin = false;
   isInMap = isInMap;
@@ -47,7 +47,7 @@ export class PlanetTagInputDialogComponent {
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
@@ -227,7 +227,7 @@ export class PlanetTagInputDialogComponent {
     );
   }
 
-  resetValidationAndCheck(form: FormGroup) {
+  resetValidationAndCheck(form: UntypedFormGroup) {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       control?.clearValidators();
