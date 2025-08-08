@@ -13694,6 +13694,12 @@
           <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="share-with-community-panel-title" datatype="html">
+        <source>Share with Community</source>
+      </trans-unit>
+      <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
+        <source>Share with Team/Enterprise</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

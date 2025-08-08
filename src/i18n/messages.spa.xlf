@@ -15428,6 +15428,14 @@
         <source>Update Enterprise</source>
         <target state="final">Actualizar empresa</target>
       </trans-unit>
+      <trans-unit id="share-with-community-panel-title" datatype="html">
+      <source>Share with Community</source>
+      <target state="final">Compartir con la comunidad</target>
+      </trans-unit>
+      <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
+      <source>Share with Team/Enterprise</source>
+      <target state="final">Compartir con un equipo/empresa</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
