@@ -15436,6 +15436,14 @@
       <source>Share with Team/Enterprise</source>
       <target state="final">Compartir con un equipo/empresa</target>
       </trans-unit>
+    <trans-unit id="report-edited" datatype="html">
+      <source>edited</source>
+      <target state="final">editado</target>
+    </trans-unit>
+    <trans-unit id="report-added" datatype="html">
+      <source>added</source>
+      <target state="final">añadido</target>
+    </trans-unit>
     </body>
   </file>
 </xliff>
