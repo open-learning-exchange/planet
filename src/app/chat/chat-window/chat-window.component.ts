@@ -6,7 +6,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 
@@ -16,6 +16,11 @@ import { StateService } from '../../shared/state.service';
   styleUrls: [ './chat-window.scss' ],
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
+  @Input() context: any;
+  @Input() isEditing: boolean;
+  @Input() conversations: any[] | null = null;
+  @ViewChild('chatInput') chatInput: ElementRef;
+  @ViewChild('chat') chatContainer: ElementRef;
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   streaming: boolean;
@@ -35,11 +40,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     context: '',
   };
   providers: AIProvider[] = [];
-  @Input() context: any;
-  @Input() isEditing: boolean;
-  @Input() conversations: any[] | null = null;
-  @ViewChild('chatInput') chatInput: ElementRef;
-  @ViewChild('chat') chatContainer: ElementRef;
+  trackByFn = trackByIdVal;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -183,9 +184,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initializeErrorStream() {
     this.chatService.getErrorStream().subscribe((errorMessage) => {
-      const lastQuery = this.conversations[this.conversations.length - 1]?.query;
+      const lastConversation = this.conversations[this.conversations.length - 1];
       this.conversations[this.conversations.length - 1] = {
-        query: lastQuery,
+        ...lastConversation,
         response: 'Error: ' + errorMessage,
         error: true
       };
@@ -244,12 +245,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.streaming) {
-      this.conversations.push({ role: 'user', query: content, response: '' });
+      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ query: content, response: completion?.chat });
+          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
             '_rev': completion.couchDBResponse?.rev
@@ -257,7 +258,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           this.postSubmit();
         },
         (error: any) => {
-          this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
+          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
           this.spinnerOn = true;
           this.promptForm.controls['prompt'].setValue('');
         }
