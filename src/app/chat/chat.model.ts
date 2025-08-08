@@ -20,6 +20,7 @@ export interface Conversation {
 }
 
 export interface Message {
+  id: string;
   query: string;
   response: string;
 }
