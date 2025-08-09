@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es">
     <body>
       <trans-unit id="f27b58b0eb4ddfcb5ecfddf15e0a34e1f89d0a66" datatype="html">
         <source>Choose Image</source>
@@ -825,32 +825,6 @@
           <context context-type="linenumber">17</context>
         </context-group>
         <target state="final">Aceptar</target>
-      </trans-unit>
-      <trans-unit id="8f2f5d3039de4edea4d293b7e252f97890ba3001" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-        <target state="final">{VAR_SELECT, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a}}</target>
-      </trans-unit>
-      <trans-unit id="60540a18f6f550dae3d7df310404029f4aee2c39" datatype="html" approved="yes">
-        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} survey {survey}}?
-      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
-      }}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">4,35</context>
-        </context-group>
-        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {empresa} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {informe} survey {encuesta}}?} many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?}}</target>
-      </trans-unit>
-      <trans-unit id="1eb1f30f33895723870b11dc0c44b5053cd8c67f" datatype="html" approved="yes">
-        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}       "/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }   "/> </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3,36</context>
-        </context-group>
-        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, aceptar {accept} archivar {archive} rechazar {reject} eliminar {delete} salir {leave} quitar {remove} otorgar liderazgo a {give leadership to}}       "/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single       {el siguiente {data.type, select,         comunidad {community}         nación {nation}         curso {course}         recurso {resource}         documento {document}         reunión {meetup}         miembro {member}         cambio {change}         equipo {team}         empresa {enterprise}         tarea {task}         certificación {certification}         evento {event}         transacción {transaction}         enlace {link}         mensaje {message}         informe {report}         encuesta {survey}}?       }       many       {seleccionados {{data.count}} {data.type, select,         comunidades {communities}         naciones {nations}         cursos {courses}         recursos {resources}         reuniones {meetups}         eventos {events}         encuestas {surveys}}?       }     }   "/> </target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -15523,6 +15497,187 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">[line number]</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="64fb6aa0ce103ff887dc3318ae6b5cc7d487db90" datatype="html">
+        <source>You have unsaved changes.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <target state="final">Tienes cambios sin guardar.</target>
+      </trans-unit>
+      <trans-unit id="unsaved.changes" datatype="html">
+        <source>You have unsaved changes.</source>
+        <target state="final">Tienes cambios sin guardar.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.action" datatype="html">
+        <source>Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}
+      the {data.amount, select, single
+      {following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        document {document}
+        meetup {meetup}
+        user {member}
+        change {change}
+        team {team}
+        enterprise {enterprise}
+        task {task}
+        certification {certification}
+        event {event}
+        transaction {transaction}
+        link {link}
+        news {message}
+        report {report}
+        changes {form}
+        survey {survey}}?
+      }
+      many
+      {selected {{data.count}} {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}
+        event {events}
+        survey {surveys}}?
+      }
+    }</source>
+        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el <x id="ICU_1" equiv-text="{data.amount, select, single
+      {siguiente {data.type, select,
+        community {comunidad}
+        nation {centro}
+        course {curso}
+        resource {recurso}
+        document {documento}
+        meetup {encuentro}
+        user {miembro}
+        change {cambio}
+        team {equipo}
+        enterprise {empresa}
+        task {tarea}
+        certification {certificación}
+        event {evento}
+        transaction {transacción}
+        link {enlace}
+        news {mensaje}
+        report {informe}
+        changes {formulario}
+        survey {encuesta}}?
+      }
+      many
+      {seleccionado {{data.count}} {data.type, select,
+        community {comunidades}
+        nation {centros}
+        course {cursos}
+        resource {recursos}
+        meetup {encuentros}
+        event {eventos}
+        survey {encuestas}}?
+      }
+    }"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">3,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0669cf7b929e7e2bd77ca8a8f7139c50b882cc08" datatype="html">
+        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}"/> the <x id="ICU_1" equiv-text="{data.amount, select, single
+      {following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        document {document}
+        meetup {meetup}
+        user {member}
+        change {change}
+        team {team}
+        enterprise {enterprise}
+        task {task}
+        certification {certification}
+        event {event}
+        transaction {transaction}
+        link {link}
+        news {message}
+        report {report}
+        changes {form}
+        survey {survey}}?
+      }
+      many
+      {selected {{data.count}} {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}
+        event {events}
+        survey {surveys}}?
+      }
+    }"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">3,38</context>
+        </context-group>
+        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {reject} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single
+      {siguiente {data.type, select,
+        community {comunidad}
+        nation {centro}
+        course {curso}
+        resource {recurso}
+        document {documento}
+        meetup {encuentro}
+        user {miembro}
+        change {cambio}
+        team {equipo}
+        enterprise {empresa}
+        task {tarea}
+        certification {certificación}
+        event {evento}
+        transaction {transacción}
+        link {enlace}
+        news {mensaje}
+        report {informe}
+        changes {formulario}
+        survey {encuesta}}?
+      }
+      many
+      {seleccionado {{data.count}} {data.type, select,
+        community {comunidades}
+        nation {centros}
+        course {cursos}
+        resource {recursos}
+        meetup {encuentros}
+        event {eventos}
+        survey {encuestas}}?
+      }
+    }"/> </target>
+      </trans-unit>
+      <trans-unit id="133e6f9a3944e05cebbba067ae698f8913dd9ad5" datatype="html">
+        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <target state="final">{VAR_SELECT, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}</target>
+      </trans-unit>
+      <trans-unit id="54dafe524673730a17951bde9ba36fd59d9086cc" datatype="html">
+        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} survey {survey}}?
+      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
+      }}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">5,37</context>
+        </context-group>
+        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {empresa} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {informe} changes {página} survey {encuesta}}?
+      } many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?
+      }}</target>
       </trans-unit>
     </body>
   </file>
