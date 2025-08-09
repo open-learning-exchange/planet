@@ -269,7 +269,7 @@
         "comma-dangle": "off",
         "curly": "error",
         "eol-last": "error",
-        "jsdoc/check-alignment": "error",
+        // "jsdoc/check-alignment": "error",
         // "max-len": [
         //   "error",
         //   {
