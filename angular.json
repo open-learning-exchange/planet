@@ -229,6 +229,10 @@
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
             "format": "xlf"
+            "format": "xlf",
+            "ivy": true
+          },
+          "ivy": true
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
