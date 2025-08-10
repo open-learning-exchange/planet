@@ -232,7 +232,7 @@ export class TeamsService {
   }
 
   getTeamResources(linkDocs: any[]) {
-    return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
+    return this.stateService.getCouchState('resources', 'local', { 'name': 'asc' }, 4000).pipe(map((resources: any[]) =>
       linkDocs.map(linkDoc => ({
         linkDoc,
         resource: resources.find(resource => resource._id === linkDoc.resourceId) || {}
