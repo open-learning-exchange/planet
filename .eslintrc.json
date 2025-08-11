@@ -182,7 +182,7 @@
         "guard-for-in": "error",
         "id-match": "error",
         "import/no-deprecated": "warn",
-        // "jsdoc/no-types": "error",
+        "jsdoc/no-types": "error",
         "max-classes-per-file": "off",
         "no-bitwise": "error",
         "no-caller": "error",
@@ -269,7 +269,7 @@
         "comma-dangle": "off",
         "curly": "error",
         "eol-last": "error",
-        // "jsdoc/check-alignment": "error",
+        "jsdoc/check-alignment": "error",
         // "max-len": [
         //   "error",
         //   {
