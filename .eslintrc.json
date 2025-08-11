@@ -21,6 +21,7 @@
         "@typescript-eslint",
         "@angular-eslint",
         "eslint-plugin-import",
+        "eslint-plugin-jsdoc",
         "eslint-plugin-prefer-arrow"
       ],
       "extends": [
