@@ -946,7 +946,6 @@
         </context-group>
         <target state="final">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
-      <!-- Removed obsolete button-level translation units for Run Sync and Refresh -->
       <trans-unit id="6441458224198272423" datatype="html" approved="yes">
         <source>Is your feedback Urgent?</source>
         <context-group purpose="location">
@@ -15408,7 +15407,7 @@
       </trans-unit>
       <trans-unit id="update-team" datatype="html" approved="yes">
         <source>Update Team</source>
-        <target state="final">Actualizar equipo</target>
+        <target state="final">Editar equipo</target>
       </trans-unit>
       <trans-unit id="create-enterprise" datatype="html" approved="yes">
         <source>Create Enterprise</source>
@@ -15416,7 +15415,7 @@
       </trans-unit>
       <trans-unit id="update-enterprise" datatype="html" approved="yes">
         <source>Update Enterprise</source>
-        <target state="final">Actualizar empresa</target>
+        <target state="final">Editar empresa</target>
       </trans-unit>
       <trans-unit id="share-with-community-panel-title" datatype="html">
       <source>Share with Community</source>
