@@ -5,14 +5,8 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button planetSync (syncComplete)="getReplicators()" i18n>
-      <mat-icon svgIcon="sync"></mat-icon>
-      Run Sync
-    </button>
-    <button mat-button (click)="getReplicators()" i18n>
-      <mat-icon>refresh</mat-icon>
-      Refresh
-    </button>
+    <button mat-button planetSync (syncComplete)="getReplicators()" i18n><mat-icon svgIcon="sync"></mat-icon>Run Sync</button>
+    <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
