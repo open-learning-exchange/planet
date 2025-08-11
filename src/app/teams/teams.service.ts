@@ -8,7 +8,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
-import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { truncateText } from '../shared/utils';
