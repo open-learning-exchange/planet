@@ -1,7 +1,6 @@
 @import '../variables';
 
 .view-container.community-view {
-
   &.view-full-height {
     height: calc(#{$view-container-height-no-toolbar} + 64px);
   }
@@ -65,7 +64,7 @@ mat-tab-group, mat-tab {
   margin-bottom: 1rem;
 }
 
-.responsive-toolbar {
+.community-view .responsive-toolbar {
   border-radius: 7.5px;
 }
 
@@ -101,7 +100,7 @@ mat-tab-group, mat-tab {
 }
 
 @media only screen and (max-width: $screen-sm) {
-  .responsive-toolbar {
+  .community-view .responsive-toolbar {
     height: auto;
     gap: 0;
   }
