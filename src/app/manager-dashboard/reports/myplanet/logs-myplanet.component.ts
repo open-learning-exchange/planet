@@ -1,48 +1,39 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { CouchService } from '../../../shared/couchdb.service';
+import { FormBuilder } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { StateService } from '../../../shared/state.service';
+import { CouchService } from '../../../shared/couchdb.service';
 import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
 import { CsvService } from '../../../shared/csv.service';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { ReportsService } from '../reports.service';
+import { MyPlanetFiltersBase } from './filter-myplanet.base';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
   styleUrls: [ './shared.scss' ]
 })
-export class LogsMyPlanetComponent implements OnInit {
+export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
+  private allPlanets: any[] = [];
   apklogs: any[] = [];
   isEmpty = false;
-  private allPlanets: any[] = [];
   searchValue = '';
   planetType = this.stateService.configuration.planetType;
-  get childType() {
-    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
-  }
-  startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
-  endDate: Date = new Date();
   selectedChildren: any[] = [];
-  logsForm: UntypedFormGroup;
-  minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
-  today = new Date();
   versions: string[] = [];
-  selectedVersion = '';
   types: string[] = [];
   selectedType = '';
-  disableShowAllTime = true;
   showFiltersRow = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  selectedTimeFilter = '24h';
-  showCustomDateFields = false;
-  timeFilterOptions = this.activityService.standardTimeFilters;
   isLoading = false;
+  get childType() {
+    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
+  }
 
   constructor(
     private csvService: CsvService,
@@ -50,45 +41,21 @@ export class LogsMyPlanetComponent implements OnInit {
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
-    private activityService: ReportsService,
+    fb: FormBuilder,
+    activityService: ReportsService,
   ) {
+    super(fb, activityService, '24h');
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
-    this.logsForm = this.fb.group({
-      startDate: [ this.minDate, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ],
-      endDate: [ this.today, [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ] ]
-    }, {
-      validator: (ac) => {
-        if (ac.get('startDate').value > ac.get('endDate').value) {
-          return { invalidDates: true };
-        }
-        return null;
-      }
-    });
   }
 
   ngOnInit() {
     this.getApkLogs();
-    this.logsForm.valueChanges.subscribe(() => {
-      this.startDate = this.logsForm.get('startDate').value;
-      this.endDate = this.logsForm.get('endDate').value;
-      if (!this.logsForm.errors?.invalidDates) {
-        this.applyFilters();
-      }
-      this.updateShowAllTimeButton();
-    });
   }
 
   @HostListener('window:resize')
   OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
-  }
-
-  updateShowAllTimeButton() {
-    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
-    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
-    this.disableShowAllTime = startIsMin && endIsToday;
   }
 
   filterData(filterValue: string) {
@@ -162,22 +129,6 @@ export class LogsMyPlanetComponent implements OnInit {
     this.applyFilters();
   }
 
-  onTimeFilterChange(timeFilter: string) {
-    this.selectedTimeFilter = timeFilter;
-    const { startDate, endDate, showCustomDateFields } = this.activityService.getDateRange(timeFilter, this.minDate);
-    this.showCustomDateFields = showCustomDateFields;
-    if (timeFilter === 'custom') {
-      return;
-    }
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.logsForm.patchValue({
-      startDate,
-      endDate
-    });
-    this.applyFilters();
-  }
-
   applyFilters() {
     this.apklogs = this.allPlanets.map(planet => ({
       ...planet,
@@ -218,16 +169,10 @@ export class LogsMyPlanetComponent implements OnInit {
     });
   }
 
-  resetDateFilter() {
-    this.onTimeFilterChange('24h');
-  }
-
   clearFilters() {
     this.searchValue = '';
-    this.selectedVersion = '';
     this.selectedType = '';
-    this.resetDateFilter();
-    this.applyFilters();
+    super.clearFilters();
   }
 
 }
