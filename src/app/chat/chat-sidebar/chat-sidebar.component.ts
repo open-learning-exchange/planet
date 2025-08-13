@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,6 +12,10 @@ import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-sha
 import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
+
+interface TitleForm {
+  title: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-chat-sidebar',
@@ -39,14 +43,15 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   overlayOpen = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  titleForm: { [key: string]: UntypedFormGroup } = {};
+
+  titleForm: { [key: string]: FormGroup<TitleForm> } = {};
 
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private searchService: SearchService,
     private userService: UserService
   ) {
@@ -130,7 +135,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   submitTitle(conversation: Conversation) {
     if (this.titleForm[conversation._id].valid) {
-      const title = this.titleForm[conversation._id].get('title').value;
+      const title = this.titleForm[conversation._id].controls.title.value;
       this.updateConversation(conversation, title);
       this.toggleEditTitle();
     } else {
@@ -140,8 +145,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   initializeFormGroups() {
     this.conversations.forEach((conversation: Conversation) => {
-      this.titleForm[conversation._id] = this.formBuilder.group({
-        title: [ conversation?.title, Validators.required ]
+      this.titleForm[conversation._id] = this.formBuilder.nonNullable.group({
+        title: [ conversation?.title ?? '', Validators.required ]
       });
     });
   }

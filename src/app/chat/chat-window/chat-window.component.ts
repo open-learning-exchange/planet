@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -9,6 +9,10 @@ import { ChatService } from '../../shared/chat.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
+
+interface PromptForm {
+  prompt: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-chat-window',
@@ -24,7 +28,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-  promptForm: UntypedFormGroup;
+
+  promptForm: FormGroup<PromptForm>;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -44,7 +49,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private stateService: StateService,
     private userService: UserService
   ) {}
@@ -126,7 +131,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createForm() {
-    this.promptForm = this.formBuilder.group({
+    this.promptForm = this.formBuilder.nonNullable.group({
       prompt: [ '', CustomValidators.required ],
     });
   }
@@ -190,7 +195,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         error: true
       };
       this.spinnerOn = true;
-      this.promptForm.controls['prompt'].setValue('');
+      this.promptForm.controls.prompt.setValue('');
     });
   }
 
@@ -219,7 +224,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
-    this.promptForm.controls['prompt'].setValue('');
+    this.promptForm.controls.prompt.setValue('');
     this.chatService.sendNewChatAddedSignal();
   }
 
@@ -232,7 +237,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
-    const content = this.promptForm.get('prompt').value;
+    const content = this.promptForm.controls.prompt.value;
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
@@ -259,7 +264,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (error: any) => {
           this.conversations.push({ query: content, response: 'Error: ' + error.message, error: true });
           this.spinnerOn = true;
-          this.promptForm.controls['prompt'].setValue('');
+          this.promptForm.controls.prompt.setValue('');
         }
       );
     }
