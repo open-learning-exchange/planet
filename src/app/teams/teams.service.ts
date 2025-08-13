@@ -8,7 +8,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { CustomValidators } from '../validators/custom-validators';
 import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
-import { toProperCase } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { truncateText } from '../shared/utils';
@@ -67,7 +66,13 @@ export class TeamsService {
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
     const configuration = this.stateService.configuration;
-    const title = $localize`${team._id ? 'Update' : 'Create'} ${toProperCase(type)}`;
+    const key = `${team._id ? 'update' : 'create'}-${type === 'enterprise' ? 'enterprise' : 'team'}`;
+    const title = {
+      'create-team': $localize`:@@create-team:Create Team`,
+      'update-team': $localize`:@@update-team:Update Team`,
+      'create-enterprise': $localize`:@@create-enterprise:Create Enterprise`,
+      'update-enterprise': $localize`:@@update-enterprise:Update Enterprise`
+    }[key];
     const nameControl = type !== 'services' ? { name:
       [
         team.name || '', CustomValidators.required,
