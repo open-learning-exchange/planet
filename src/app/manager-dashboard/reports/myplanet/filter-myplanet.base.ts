@@ -2,9 +2,10 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ReportsService } from '../reports.service';
 
 export abstract class MyPlanetFiltersBase {
+
+  private readonly defaultTimeFilter: string;
   selectedVersion = '';
   selectedTimeFilter: string;
-  disableShowAllTime = true;
   showCustomDateFields = false;
   timeFilterOptions: any[] = this.activityService.standardTimeFilters;
   minDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
@@ -12,8 +13,9 @@ export abstract class MyPlanetFiltersBase {
   startDate: Date = this.minDate;
   endDate: Date = this.today;
   filtersForm: FormGroup<{ startDate: FormControl<Date>; endDate: FormControl<Date>; }>;
-
-  private readonly defaultTimeFilter: string;
+  get isDefaultTimeFilter(): boolean {
+    return this.selectedTimeFilter === this.defaultTimeFilter;
+  }
 
   protected constructor(
     protected fb: FormBuilder,
@@ -45,18 +47,11 @@ export abstract class MyPlanetFiltersBase {
       if (!this.filtersForm.errors?.invalidDates) {
         this.applyFilters();
       }
-      this.updateShowAllTimeButton();
     });
   }
 
   resetDateFilter() {
     this.onTimeFilterChange(this.defaultTimeFilter);
-  }
-
-  updateShowAllTimeButton() {
-    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
-    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
-    this.disableShowAllTime = startIsMin && endIsToday;
   }
 
   onTimeFilterChange(timeFilter: string) {
