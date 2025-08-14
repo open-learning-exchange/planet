@@ -121,7 +121,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.showLess = true;
     }
-    if (this.item.doc.news?.conversations.length > 1) {
+    if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
     } else {
       const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
