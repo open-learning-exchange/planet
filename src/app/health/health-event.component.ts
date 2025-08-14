@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
@@ -15,6 +15,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 import { debounce } from 'rxjs/operators';
+import { HealthEventForm, HealthEventFormValue } from './health.forms';
 
 @Component({
   templateUrl: './health-event.component.html',
@@ -22,15 +23,15 @@ import { debounce } from 'rxjs/operators';
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
-  healthForm: UntypedFormGroup;
+  healthForm: FormGroup<HealthEventForm>;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
-  event: any = {};
-  initialFormValues: any;
+  event: Record<string, unknown> = {};
+  initialFormValues: string;
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private healthService: HealthService,
     private router: Router,
     private route: ActivatedRoute,
@@ -40,24 +41,24 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private dialog: MatDialog,
     private planetMessageService: PlanetMessageService
   ) {
-    this.healthForm = this.fb.group({
-      temperature: [ '', Validators.min(1) ],
-      pulse: [ '', Validators.min(1) ],
-      bp: [ '', CustomValidators.bpValidator ],
-      height: [ '', Validators.min(1) ],
-      weight: [ '', Validators.min(1) ],
-      vision: [ '' ],
-      hearing: [ '' ],
-      notes: '',
-      diagnosis: '',
-      treatments: '',
-      medications: '',
-      immunizations: '',
-      allergies: '',
-      xrays: '',
-      tests: '',
-      referrals: '',
-      conditions: {}
+    this.healthForm = this.fb.group<HealthEventForm>({
+      temperature: this.fb.control<number | ''>('', Validators.min(1)),
+      pulse: this.fb.control<number | ''>('', Validators.min(1)),
+      bp: this.fb.control('', CustomValidators.bpValidator),
+      height: this.fb.control<number | ''>('', Validators.min(1)),
+      weight: this.fb.control<number | ''>('', Validators.min(1)),
+      vision: this.fb.control(''),
+      hearing: this.fb.control(''),
+      notes: this.fb.control(''),
+      diagnosis: this.fb.control(''),
+      treatments: this.fb.control(''),
+      medications: this.fb.control(''),
+      immunizations: this.fb.control(''),
+      allergies: this.fb.control(''),
+      xrays: this.fb.control(''),
+      tests: this.fb.control(''),
+      referrals: this.fb.control(''),
+      conditions: this.fb.control<Record<string, boolean>>({})
     });
   }
 
@@ -71,7 +72,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         this.healthService.getHealthData(params.get('id'), { docId: eventId }),
         this.couchService.currentTime()
       ]);
-    })).subscribe(([ [ event ], time ]: [ any[], number ]) => {
+    })).subscribe(([ [ event ], time ]: [ unknown[], number ]) => {
       if (event !== 'new' && (time - event.updatedDate) > 300000) {
         this.planetMessageService.showAlert($localize`This examination can no longer be changed.`);
         this.goBack();
@@ -85,30 +86,30 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   private captureInitialState() {
-    const formValue = this.healthForm.value;
-    const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
-    const processedForm = Object.keys(formValue).reduce((acc, key) => {
+    const formValue = this.healthForm.value as HealthEventFormValue;
+    const numericFields: Array<keyof HealthEventFormValue> = [ 'temperature', 'pulse', 'height', 'weight' ];
+    const processedForm = (Object.keys(formValue) as Array<keyof HealthEventFormValue>).reduce((acc, key) => {
+      const value = formValue[key];
       if (numericFields.includes(key)) {
-        acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+        acc[key] = value === '' || value === null ? undefined : Number(value);
       } else if (key === 'conditions') {
-        acc[key] = this.processConditions(formValue[key] || {});
+        acc[key] = this.processConditions(value || {});
       } else {
-        acc[key] = formValue[key];
+        acc[key] = value;
       }
       return acc;
-    }, {});
+    }, {} as Partial<HealthEventFormValue>);
 
     this.initialFormValues = JSON.stringify(processedForm);
   }
 
-  private processConditions(inputConditions: any) {
-    const processedConditions = Object.keys(inputConditions || {}).reduce((acc, key) => {
+  private processConditions(inputConditions: Record<string, boolean>) {
+    return Object.keys(inputConditions || {}).reduce<Record<string, boolean>>((acc, key) => {
       if (inputConditions[key]) {
         acc[key] = true;
       }
       return acc;
     }, {});
-    return processedConditions;
   }
 
   onFormChanges() {
@@ -117,17 +118,19 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(formValue => {
-        const numericFields = [ 'temperature', 'pulse', 'height', 'weight' ];
-        const processedForm = Object.keys(formValue).reduce((acc, key) => {
+        const value = formValue as HealthEventFormValue;
+        const numericFields: Array<keyof HealthEventFormValue> = [ 'temperature', 'pulse', 'height', 'weight' ];
+        const processedForm = (Object.keys(value) as Array<keyof HealthEventFormValue>).reduce((acc, key) => {
+          const current = value[key];
           if (numericFields.includes(key)) {
-            acc[key] = formValue[key] === '' || formValue[key] === null ? undefined : Number(formValue[key]);
+            acc[key] = current === '' || current === null ? undefined : Number(current);
           } else if (key === 'conditions') {
-            acc[key] = this.processConditions(formValue[key] || {});
+            acc[key] = this.processConditions(current || {});
           } else {
-            acc[key] = formValue[key];
+            acc[key] = current;
           }
           return acc;
-        }, {});
+        }, {} as Partial<HealthEventFormValue>);
 
         const currentState = JSON.stringify(processedForm);
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
@@ -138,7 +141,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     if (!this.healthForm.valid) {
       return;
     }
-    const checkFields = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
+    const checkFields: Array<keyof HealthEventForm> = [ 'temperature', 'pulse', 'bp', 'height', 'weight' ];
     const promptFields = checkFields.filter((field) => !this.isFieldValueExpected(field))
       .map(field => ({ field, value: this.healthForm.controls[field].value }));
     if (promptFields.length) {
@@ -151,10 +154,11 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  isEmptyForm() {
-    const isConditionsEmpty = (values) => typeof values === 'object' && Object.values(values).every(value => !value);
+  isEmptyForm() {
+    const isConditionsEmpty = (values: Record<string, boolean>) =>
+      typeof values === 'object' && Object.values(values).every(v => !v);
     return Object.values(this.healthForm.controls)
-      .every(({ value }) => value === null || /^\s*$/.test(value) || isConditionsEmpty(value));
+      .every(({ value }) => value === null || /^\s*$/.test(String(value)) || isConditionsEmpty(value as Record<string, boolean>));
   }
 
   goBack() {
@@ -162,12 +166,12 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
-  conditionChange(condition) {
+  conditionChange(condition: string) {
     const currentConditions = this.healthForm.controls.conditions.value;
     this.healthForm.controls.conditions.setValue({ ...currentConditions, [condition]: currentConditions[condition] !== true });
   }
 
-  showWarning(invalidFields) {
+  showWarning(invalidFields: Array<{ field: keyof HealthEventForm; value: unknown }>) {
     this.hasUnsavedChanges = false;
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
@@ -189,9 +193,9 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  isFieldValueExpected(field) {
-    const value = this.healthForm.controls[field].value;
-    const limits = {
+  isFieldValueExpected(field: keyof HealthEventForm) {
+    const value = this.healthForm.controls[field].value as number | string | null;
+    const limits: Record<string, { min: number; max: number } | 'n/a'> = {
       'temperature': { min: 30, max: 45 },
       'pulse': { min: 30, max: 300 },
       'height': { min: 30, max: 275 },
