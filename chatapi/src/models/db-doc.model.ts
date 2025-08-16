@@ -1,3 +1,5 @@
+import { ChatItem } from './chat.model';
+
 export interface DbDoc {
   _id: string;
   _rev: string;
@@ -5,7 +7,7 @@ export interface DbDoc {
   title: string;
   createdDate: number;
   aiProvider: string;
-  conversations: [];
+  conversations: ChatItem[];
 }
 
 export interface Attachment {

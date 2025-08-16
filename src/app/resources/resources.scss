@@ -80,7 +80,7 @@ $label-height: 1rem;
   display: inline-block;
 }
 
-:host {
+planet-resources {
   @media(max-width: $screen-md) {
     .resources-list {
       .mat-column-createdDate {

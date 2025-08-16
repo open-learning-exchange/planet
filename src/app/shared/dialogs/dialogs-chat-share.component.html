@@ -2,7 +2,7 @@
   <mat-accordion [multi]="false">
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title> Share with Community </mat-panel-title>
+        <mat-panel-title i18n="@@share-with-community-panel-title">Share with Community</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <i i18n style="margin-right: 1rem;">add note</i>
@@ -25,11 +25,11 @@
     <br>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title>Share with Team/Enterprise</mat-panel-title>
+        <mat-panel-title i18n="@@share-with-team-enterprise-panel-title">Share with Team/Enterprise</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <mat-form-field class="full-width">
-          <mat-label i18n>Team or Entreprise</mat-label>
+          <mat-label i18n>Team or Enterprise</mat-label>
           <mat-select [(ngModel)]="selectedLink">
             <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
           </mat-select>

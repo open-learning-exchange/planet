@@ -200,7 +200,7 @@ export const trackById = (index, item) => item._id;
 
 export const trackByCategory = (index, item: { category: string }) => item.category;
 
-export const trackByFormId = (index, item: { id: string }) => item.id;
+export const trackByIdVal = (index, item: { id: string }) => item.id;
 
 export const trackByIndex = (index: number) => index;
 

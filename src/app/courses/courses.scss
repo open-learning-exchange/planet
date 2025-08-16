@@ -67,7 +67,7 @@ $label-height: 1rem;
   display: inline-block;
 }
 
-:host {
+planet-courses {
   @media(max-width: $screen-md) {
     .mat-column-info {
       max-width: 120px;
