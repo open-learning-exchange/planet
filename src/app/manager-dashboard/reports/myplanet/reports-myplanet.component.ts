@@ -13,6 +13,7 @@ import { findDocuments } from '../../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { CsvService } from '../../../shared/csv.service';
 import { MyPlanetFiltersBase } from './filter-myplanet.base';
+import { exportMyPlanetCsv } from './utils';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
@@ -193,7 +194,9 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
-  private mapToCsvData(children: any[], planetName?: string): any[] {
+  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
+
+  private mapReportsCsv(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { 'Planet Name': planetName } : {}),
       'ID': data.androidId.toString() || data.uniqueAndroidId.toString(),
@@ -206,27 +209,15 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       'Version': data.versionName,
       'No of Visits': data.count,
       'Used Time': this.formatTotalTime(data.totalUsedTime),
-    }));
-  }
+    }))
+  };
 
   exportAll(): void {
-    const csvData: any[] = this.planets.flatMap((planet: any) => {
-      return this.mapToCsvData(planet.children, planet.name);
-    });
-
-    this.csvService.exportCSV({
-      data: csvData,
-      title: 'myPlanet Reports',
-    });
+    this.exportCsvHelper(this.planets, undefined, this.mapReportsCsv, 'myPlanet Reports');
   }
 
   exportSingle(planet: any): void {
-    const csvData = this.mapToCsvData(planet.children);
-
-    this.csvService.exportCSV({
-      data: csvData,
-      title: `myPlanet Reports for ${planet.name}`,
-    });
+    this.exportCsvHelper(planet.children, planet.name, this.mapReportsCsv, `myPlanet Reports for ${planet.name}`);
   }
 
 }

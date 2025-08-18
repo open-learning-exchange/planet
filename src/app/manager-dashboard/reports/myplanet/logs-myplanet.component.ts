@@ -11,6 +11,7 @@ import { CsvService } from '../../../shared/csv.service';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter-myplanet.base';
+import { exportMyPlanetCsv } from './utils';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
@@ -61,6 +62,12 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   filterData(filterValue: string) {
     this.searchValue = filterValue;
     this.apklogs = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
+  }
+
+  clearFilters() {
+    this.searchValue = '';
+    this.selectedType = '';
+    super.clearFilters();
   }
 
   setAllPlanets(planets: any[], apklogs: any[]) {
@@ -137,7 +144,9 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     this.isEmpty = areNoChildren(this.apklogs);
   }
 
-  private mapToCsvData(children: any[], planetName?: string): any[] {
+  private exportCsvHelper = exportMyPlanetCsv(this.csvService);
+
+  private mapLogsCsv(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { 'Planet Name': planetName } : {}),
       'ID': data.androidId,
@@ -145,34 +154,16 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       'Type': data.type,
       'Time': new Date(Number(data.time)),
       'Version': data.version,
-      'Error':  data.error || 'N/A',
-    }));
-  }
+      'Error': data.error || 'N/A',
+    }))
+  };
 
   exportAll(): void {
-    const csvData: any[] = this.apklogs.flatMap((planet: any) => {
-      return this.mapToCsvData(planet.children, planet.name);
-    });
-
-    this.csvService.exportCSV({
-      data: csvData,
-      title: 'myPlanet Logs',
-    });
+    this.exportCsvHelper(this.apklogs, undefined, this.mapLogsCsv, 'myPlanet Logs');
   }
 
   exportSingle(planet: any): void {
-    const csvData = this.mapToCsvData(planet.children);
-
-    this.csvService.exportCSV({
-      data: csvData,
-      title: `myPlanet Logs for ${planet.name}`,
-    });
-  }
-
-  clearFilters() {
-    this.searchValue = '';
-    this.selectedType = '';
-    super.clearFilters();
+    this.exportCsvHelper(planet.children, planet.name, this.mapLogsCsv, `myPlanet Logs for ${planet.name}`);
   }
 
 }
