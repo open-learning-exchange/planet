@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -88,7 +88,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -421,7 +421,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDescriptionDialog() {
-    const formGroup = this.formBuilder.group({
+    const formGroup: FormGroup<{ description: string }> = this.formBuilder.nonNullable.group({
       description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
     });
 
