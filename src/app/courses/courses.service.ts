@@ -11,19 +11,27 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
+import { CourseFormModel } from './courses.model';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
   providedIn: 'root'
 })
+interface CourseDraft {
+  form?: CourseFormModel;
+  steps?: any[];
+  tags?: any[];
+  initialTags?: any[];
+}
+
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  private _course: any = {};
-  get course() {
+  private _course: CourseDraft = {};
+  get course(): CourseDraft {
     return this._course;
   }
-  set course(newCourse: any) {
+  set course(newCourse: CourseDraft) {
     this._course = { ...this._course, ...newCourse };
   }
   progress: any;

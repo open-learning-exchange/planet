@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,13 +15,19 @@ import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.com
   styleUrls: [ 'courses-step.scss' ],
   encapsulation: ViewEncapsulation.None
 })
+interface StepFormModel {
+  id: string;
+  stepTitle: string;
+  description: string;
+}
+
 export class CoursesStepComponent implements OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: UntypedFormGroup;
+  stepForm: FormGroup<StepFormModel>;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
@@ -38,15 +44,15 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
-      id: '',
-      stepTitle: '',
-      description: ''
+    this.stepForm = this.fb.group<StepFormModel>({
+      id: this.fb.control(''),
+      stepTitle: this.fb.control(''),
+      description: this.fb.control('')
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
