@@ -3,9 +3,10 @@ import OpenAI from 'openai';
 
 import { configurationDB } from './nano.config';
 import { ModelsDocument } from '../models/chat.model';
+import { DEFAULT_AI_PROVIDERS, AIProvider } from '../../../src/shared/ai-providers';
 
-let keys: Record<string, any> = {};
-let models: Record<string, any> = {};
+let keys: Record<AIProvider, any> = {} as Record<AIProvider, any>;
+let models: Record<AIProvider, any> = {} as Record<AIProvider, any>;
 let assistant: Record<string, any> = {};
 
 async function getConfig(): Promise<ModelsDocument | undefined> {
@@ -28,31 +29,25 @@ const initialize = async () => {
     if (!doc) {
       console.error('Configuration not found');
     }
-
-    keys = {
-      'openai': new OpenAI({
-        'apiKey': doc?.keys.openai || '',
-      }),
-      'perplexity': new OpenAI({
-        'apiKey': doc?.keys.perplexity || '',
-        'baseURL': 'https://api.perplexity.ai',
-      }),
-      'deepseek': new OpenAI({
-        'apiKey': doc?.keys.deepseek || '',
-        'baseURL': 'https://api.deepseek.com',
-      }),
-      'gemini': new OpenAI({
-        'apiKey': doc?.keys.gemini || '',
-        'baseURL': 'https://generativelanguage.googleapis.com/v1beta/openai/',
-      })
+    const baseURLs: Record<AIProvider, string | undefined> = {
+      openai: undefined,
+      perplexity: 'https://api.perplexity.ai',
+      deepseek: 'https://api.deepseek.com',
+      gemini: 'https://generativelanguage.googleapis.com/v1beta/openai/',
     };
 
-    models = {
-      'openai': { 'ai': keys.openai, 'defaultModel': doc?.models.openai || '' },
-      'perplexity': { 'ai': keys.perplexity, 'defaultModel': doc?.models.perplexity || '' },
-      'deepseek': { 'ai': keys.deepseek, 'defaultModel': doc?.models.deepseek || '' },
-      'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || '' },
-    };
+    keys = DEFAULT_AI_PROVIDERS.reduce((acc: Record<AIProvider, any>, provider: AIProvider) => {
+      acc[provider] = new OpenAI({
+        apiKey: doc?.keys[provider] || '',
+        ...(baseURLs[provider] ? { baseURL: baseURLs[provider] } : {})
+      });
+      return acc;
+    }, {} as Record<AIProvider, any>);
+
+    models = DEFAULT_AI_PROVIDERS.reduce((acc: Record<AIProvider, any>, provider: AIProvider) => {
+      acc[provider] = { ai: keys[provider], defaultModel: doc?.models[provider] || '' };
+      return acc;
+    }, {} as Record<AIProvider, any>);
 
     assistant = {
       'name': doc?.assistant?.name || '',

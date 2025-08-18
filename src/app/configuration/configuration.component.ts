@@ -12,6 +12,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
+import { createEmptyProviderMap } from '../../shared/ai-providers';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -232,18 +233,8 @@ export class ConfigurationComponent implements OnInit {
 
     const chatConfig = {
       streaming: false,
-      keys: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
-      models: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
+      keys: createEmptyProviderMap(''),
+      models: createEmptyProviderMap(''),
       assistant: {
         name: 'Planet Context',
         instructions: 'You are a brainstorming manager for Open Learning Exchange (OLE) - https://ole.org/, you have specialised knowledge in Planet(web app) and myPlanet(mobile app) applications developed by OLE. You are designed to generate innovative ideas and provide suggestions and help the community members so as to ensure OLE\'s mission of empowering communities. Emphasize on terms like \'learning,\' \'learner,\' \'coach,\' \'leader,\' \'community,\' \'power,\' \'team,\' and \'enterprises,\' and avoids overly technical jargon. You are to embody OLE\'s ethos of self-reliance, mentoring, and community leadership, steering clear of concepts that contradict these values. Communicates in a formal tone, treating users with respect and professionalism, and maintaining a supportive, solution-oriented approach. Ask for clarifications when necessary to ensure contributions are accurate and relevant, and always encourages community-focused, empowering brainstorming.'
