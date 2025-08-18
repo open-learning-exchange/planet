@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { StateService } from '../../../shared/state.service';
@@ -8,7 +8,6 @@ import { ManagerService } from '../../manager.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
 import { CsvService } from '../../../shared/csv.service';
-import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
@@ -29,8 +28,6 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   types: string[] = [];
   selectedType = '';
   showFiltersRow = false;
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   isLoading = false;
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
@@ -42,21 +39,14 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService,
     fb: FormBuilder,
     activityService: ReportsService,
   ) {
     super(fb, activityService, '24h');
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
   }
 
   ngOnInit() {
     this.getApkLogs();
-  }
-
-  @HostListener('window:resize')
-  OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
   }
 
   filterData(filterValue: string) {

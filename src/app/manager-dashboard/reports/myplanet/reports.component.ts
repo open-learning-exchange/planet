@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -10,7 +10,6 @@ import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
 import { attachNamesToPlanets, getDomainParams, areNoChildren } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
-import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { CsvService } from '../../../shared/csv.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
@@ -28,8 +27,6 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   isLoading = true;
   isMobile: boolean;
   showFiltersRow = false;
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   hubId: string | null = null;
@@ -47,23 +44,16 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private managerService: ManagerService,
     private reportsService: ReportsService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService,
     fb: FormBuilder,
     activityService: ReportsService,
   ) {
     super(fb, activityService, 'all');
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
   }
 
   ngOnInit() {
     this.resetDateFilter();
     this.isLoading = true;
     this.getMyPlanetList(this.route.snapshot.params.hubId);
-  }
-
-  @HostListener('window:resize')
-  OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
   }
 
   filterData(filterValue: string) {
