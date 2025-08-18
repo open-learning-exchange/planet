@@ -19,7 +19,7 @@ import { ReportsTableComponent } from './reports/reports-table.component';
 import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { PendingTableComponent } from './reports/pending-table.component';
-import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
+import { ReportsMyPlanetComponent } from './reports/myplanet/reports.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activities.component';
 import { ReportsHealthComponent } from './reports/reports-health.component';

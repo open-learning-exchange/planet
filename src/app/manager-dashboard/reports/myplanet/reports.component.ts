@@ -12,11 +12,11 @@ import { attachNamesToPlanets, getDomainParams, areNoChildren } from '../reports
 import { findDocuments } from '../../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { CsvService } from '../../../shared/csv.service';
-import { MyPlanetFiltersBase } from './filter-myplanet.base';
+import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
 
 @Component({
-  templateUrl: './reports-myplanet.component.html',
+  templateUrl: './reports.component.html',
   styleUrls: [ './shared.scss' ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {

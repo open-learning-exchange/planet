@@ -10,11 +10,11 @@ import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.ut
 import { CsvService } from '../../../shared/csv.service';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { ReportsService } from '../reports.service';
-import { MyPlanetFiltersBase } from './filter-myplanet.base';
+import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
 
 @Component({
-  templateUrl: './logs-myplanet.component.html',
+  templateUrl: './logs.component.html',
   styleUrls: [ './shared.scss' ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
