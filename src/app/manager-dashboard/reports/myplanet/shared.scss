@@ -3,7 +3,7 @@
 $screen-md: 1300px;
 
 :host {
-  @include screen-sizes($screen-md, $screen-sm);
+  @include screen-sizes($screen-md);
 }
 
 button {

@@ -94,4 +94,3 @@ export abstract class MyPlanetFiltersBase {
 
   abstract applyFilters(): void;
 }
-

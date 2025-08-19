@@ -13,6 +13,7 @@ import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
+import { TimePipe } from '../time.pipe';
 
 @Component({
   templateUrl: './reports.component.html',
@@ -39,6 +40,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private managerService: ManagerService,
     private reportsService: ReportsService,
     private route: ActivatedRoute,
+    private timePipe: TimePipe,
     fb: FormBuilder,
     activityService: ReportsService,
   ) {
@@ -51,19 +53,12 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.getMyPlanetList(this.route.snapshot.params.hubId);
   }
 
-  // Not sure why this is not exactly similar to the one in logs-myplanet.component.ts, not too sure we need the first part that is different.
   setAllPlanets(planets: any[], myPlanets: any[]) {
-    this.getUniqueVersions(myPlanets);
-    this.minDate = this.getEarliestDate(myPlanets);
-    this.filtersForm.patchValue({
-      startDate: this.minDate
-    });
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.filterMyPlanetData(this.myPlanetGroups(planet, myPlanets)
-        .map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max })))
-    }));
-  }
+      children: this.filterMyPlanetData(this.myPlanetGroups(planet, myPlanets).map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max })))
+    }))
+  };
 
   filterMyPlanetData(data: any[]) {
     return data
@@ -71,28 +66,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       .filter(item => filterByDate([item], item.last_synced ? 'last_synced' : 'time', { startDate: this.startDate, endDate: this.endDate }).length > 0)
   }
 
-  // Fairly similar to the one in logs-myplanet.component.ts
   getUniqueVersions(myPlanets: any[]) {
-    this.versions = Array.from(new Set(myPlanets.map(planet =>
-      planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)
-    ))).filter(version => version).sort();
+    this.versions = Array.from(new Set(myPlanets.map(planet => planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)))).filter(version => version).sort();
   }
 
-  // Not 100% sure we need this, how do we get the earliest date in the logs component?
-  getEarliestDate(myPlanets: any[]): Date {
-    const earliest = Math.min(...myPlanets.flatMap(planet => {
-      const dates = [];
-      if (planet.time) { dates.push(Number(planet.time)); }
-      if (planet.last_synced) { dates.push(Number(planet.last_synced)); }
-      if (planet.usages) {
-        dates.push(...planet.usages.map(usage => Number(usage.time || usage.last_synced)));
-      }
-      return dates;
-    }));
-    return new Date(earliest);
-  }
-
-  // Fairly similar to the one in logs-myplanet.component.ts
   applyFilters() {
     this.planets = this.allPlanets
       .filter(planet => !this.searchValue || planet.name.toLowerCase().includes(this.searchValue.toLowerCase()))
@@ -118,6 +95,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.isLoading = true;
     this.myPlanetRequest(hubId).subscribe(
       ([ planets, myPlanets ]: [ any, any ]) => {
+        this.getUniqueVersions(myPlanets);
         this.setAllPlanets(
           [ { doc: this.configuration } ].concat(
             planets.filter(planet => planet.doc.docType !== 'parentName')
@@ -155,19 +133,6 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     );
   }
 
-  // Should probably have this in the shared utils, not sure if we have a similar implementation elsewhere.
-  private formatTotalTime(totalMilliseconds: number): string {
-    if (!totalMilliseconds || totalMilliseconds === 0) {
-        return '00:00:00';
-    }
-    const totalSeconds = Math.floor(totalMilliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
-
   private exportCsvHelper = exportMyPlanetCsv(this.csvService);
 
   private mapReportsCsv(children: any[], planetName?: string): any[] {
@@ -182,7 +147,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       'N/A',
       'Version': data.versionName,
       'No of Visits': data.count,
-      'Used Time': this.formatTotalTime(data.totalUsedTime),
+      'Used Time': this.timePipe.transform(data.totalUsedTime),
     }))
   };
 

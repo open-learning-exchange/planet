@@ -52,11 +52,9 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   setAllPlanets(planets: any[], apklogs: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.filterLogs(apklogs.filter(myPlanet =>
-        myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code
-      ))
-    }));
-  }
+      children: this.filterLogs(apklogs.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code))
+    }))
+  };
 
   filterLogs(logs: any[]) {
     return logs

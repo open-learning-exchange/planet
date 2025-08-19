@@ -34,12 +34,12 @@ export class MyPlanetToolbarComponent {
   showFiltersRow = false;
 
   constructor(private deviceInfoService: DeviceInfoService) {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
   }
 
   @HostListener('window:resize')
   OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
+    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
   }
 
   onVersionChange(value: string) {

@@ -25,6 +25,7 @@ import { MyPlanetToolbarComponent } from './reports/myplanet/toolbar.component';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activities.component';
 import { ReportsHealthComponent } from './reports/reports-health.component';
+import { TimePipe } from './reports/time.pipe';
 
 @NgModule({
   imports: [
@@ -58,6 +59,9 @@ import { ReportsHealthComponent } from './reports/reports-health.component';
     MyPlanetToolbarComponent,
     ReportsDetailActivitiesComponent,
     ReportsHealthComponent
+  ],
+  providers: [
+    TimePipe
   ]
 })
 export class ManagerDashboardModule {}
