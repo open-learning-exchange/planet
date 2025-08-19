@@ -9,7 +9,6 @@
     <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   </ng-container>
-
   <ng-template #mobileView>
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="backAction"></ng-container>
@@ -40,7 +39,6 @@
   <span>{{title}}</span>
   <span class="toolbar-fill"></span>
 </ng-template>
-
 <ng-template #typeVersionFilters>
   <mat-form-field *ngIf="showTypeFilter" class="margin-lr-5 font-size-1">
     <mat-select i18n-placeholder placeholder="Type" (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
@@ -55,7 +53,6 @@
     </mat-select>
   </mat-form-field>
 </ng-template>
-
 <ng-template #formStartDate>
   <mat-form-field class="margin-lr-5 font-size-1">
     <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="formGroup.get('endDate').value">
@@ -64,7 +61,6 @@
     <mat-error i18n *ngIf="formGroup.errors?.invalidDates">Start date must be before end date</mat-error>
   </mat-form-field>
 </ng-template>
-
 <ng-template #formEndDate>
   <mat-form-field class="margin-lr-5 font-size-1">
     <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="formGroup.get('startDate').value" [max]="today">
@@ -72,7 +68,6 @@
     <mat-datepicker #endPicker></mat-datepicker>
   </mat-form-field>
 </ng-template>
-
 <ng-template #timeFrameFilter>
   <mat-form-field class="margin-lr-5 font-size-1">
     <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
@@ -80,13 +75,12 @@
     </mat-select>
   </mat-form-field>
 </ng-template>
-
 <ng-template #actionButtons>
-  <button mat-raised-button (click)="onClear()" color="primary" [disabled]="!searchValue && !selectedVersion && (!showTypeFilter || !selectedType) && disableShowAllTime" class="margin-lr-5">
-    <span i18n>Clear</span>
-  </button>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
     <input matInput (keyup)="onSearch($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
   </mat-form-field>
+  <button mat-raised-button (click)="onClear()" color="primary" [disabled]="!searchValue && !selectedVersion && (!showTypeFilter || !selectedType) && disableShowAllTime" class="margin-lr-5">
+    <span i18n>Clear</span>
+  </button>
 </ng-template>

@@ -21,7 +21,6 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   private allPlanets: any[] = [];
   apklogs: any[] = [];
   isEmpty = false;
-  searchValue = '';
   planetType = this.stateService.configuration.planetType;
   selectedChildren: any[] = [];
   versions: string[] = [];
@@ -49,13 +48,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     this.getApkLogs();
   }
 
-  filterData(filterValue: string) {
-    this.searchValue = filterValue;
-    this.apklogs = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
-  }
-
   clearFilters() {
-    this.searchValue = '';
     this.selectedType = '';
     super.clearFilters();
   }
@@ -127,10 +120,12 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   }
 
   applyFilters() {
-    this.apklogs = this.allPlanets.map(planet => ({
-      ...planet,
-      children: this.filterLogs(planet.children)
-    }));
+    this.apklogs = this.allPlanets
+      .filter(planet => !this.searchValue || filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .map(planet => ({
+        ...planet,
+        children: this.filterLogs(planet.children)
+      }));
     this.isEmpty = areNoChildren(this.apklogs);
   }
 

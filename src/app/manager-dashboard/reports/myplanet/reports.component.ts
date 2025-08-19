@@ -21,7 +21,6 @@ import { exportMyPlanetCsv } from './utils';
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
   private allPlanets: any[] = [];
-  searchValue = '';
   planets: any[] = [];
   isEmpty = false;
   isLoading = true;
@@ -56,16 +55,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.getMyPlanetList(this.route.snapshot.params.hubId);
   }
 
-  filterData(filterValue: string) {
-    this.searchValue = filterValue;
-    this.applyFilters();
-  }
-
-  clearFilters() {
-    this.searchValue = '';
-    super.clearFilters();
-  }
-
+  // Not sure why this is not exactly similar to the one in logs-myplanet.component.ts
   setAllPlanets(planets: any[], myPlanets: any[]) {
     this.getUniqueVersions(myPlanets);
     this.minDate = this.getEarliestDate(myPlanets);
@@ -82,18 +72,21 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   filterMyPlanetData(data: any[]) {
     return data
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
+      // Maybe use filterByDate from reports.utils
       .filter(item => {
         const itemDate = item.time || item.last_synced;
         return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
       });
   }
 
+  // Fairly similar to the one in logs-myplanet.component.ts
   getUniqueVersions(myPlanets: any[]) {
     this.versions = Array.from(new Set(myPlanets.map(planet =>
       planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)
     ))).filter(version => version).sort();
   }
 
+  // Not 100% sure we need this, how do we get the earliest date in the logs component?
   getEarliestDate(myPlanets: any[]): Date {
     const earliest = Math.min(...myPlanets.flatMap(planet => {
       const dates = [];
@@ -107,16 +100,20 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     return new Date(earliest);
   }
 
+  // Same in the logs-myplanet.component.ts
   onVersionChange(version: string) {
     this.selectedVersion = version;
     this.applyFilters();
   }
 
+  // Fairly similar to the one in logs-myplanet.component.ts
   applyFilters() {
-    this.planets = this.allPlanets.map(planet => ({
-      ...planet,
-      children: this.filterMyPlanetData(planet.children)
-    }));
+    this.planets = this.allPlanets
+      .filter(planet => !this.searchValue || planet.name.toLowerCase().includes(this.searchValue.toLowerCase()))
+      .map(planet => ({
+        ...planet,
+        children: this.filterMyPlanetData(planet.children)
+      }));
     this.isEmpty = areNoChildren(this.planets);
   }
 
@@ -172,6 +169,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     );
   }
 
+  // Should probably have this in the shared utils, not sure if we have a similar implementation elsewhere.
   private formatTotalTime(totalMilliseconds: number): string {
     if (!totalMilliseconds || totalMilliseconds === 0) {
         return '00:00:00';

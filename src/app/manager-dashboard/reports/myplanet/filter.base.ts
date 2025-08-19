@@ -6,6 +6,7 @@ export abstract class MyPlanetFiltersBase {
   private readonly defaultTimeFilter: string;
   selectedVersion = '';
   selectedTimeFilter: string;
+  searchValue = '';
   showCustomDateFields = false;
   timeFilterOptions: any[] = this.activityService.standardTimeFilters;
   minDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
@@ -70,8 +71,14 @@ export abstract class MyPlanetFiltersBase {
     this.applyFilters();
   }
 
+  filterData(filterValue: string) {
+    this.searchValue = filterValue;
+    this.applyFilters();
+  }
+
   clearFilters() {
     this.selectedVersion = '';
+    this.searchValue = '';
     this.resetDateFilter();
     this.applyFilters();
   }
