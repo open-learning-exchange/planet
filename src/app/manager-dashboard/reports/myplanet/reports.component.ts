@@ -8,7 +8,7 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, filterByDate } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { MyPlanetFiltersBase } from './filter.base';
@@ -22,15 +22,11 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
 
   private allPlanets: any[] = [];
   planets: any[] = [];
-  isEmpty = false;
-  isLoading = true;
   isMobile: boolean;
-  showFiltersRow = false;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
   hubId: string | null = null;
   hub = { spokes: [] };
-  versions: string[] = [];
   get childType() {
     return this.planetType === 'center' ? 'Community' : 'Nation';
   }
@@ -55,7 +51,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.getMyPlanetList(this.route.snapshot.params.hubId);
   }
 
-  // Not sure why this is not exactly similar to the one in logs-myplanet.component.ts
+  // Not sure why this is not exactly similar to the one in logs-myplanet.component.ts, not too sure we need the first part that is different.
   setAllPlanets(planets: any[], myPlanets: any[]) {
     this.getUniqueVersions(myPlanets);
     this.minDate = this.getEarliestDate(myPlanets);
@@ -72,11 +68,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   filterMyPlanetData(data: any[]) {
     return data
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
-      // Maybe use filterByDate from reports.utils
-      .filter(item => {
-        const itemDate = item.time || item.last_synced;
-        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
-      });
+      .filter(item => filterByDate([item], item.last_synced ? 'last_synced' : 'time', { startDate: this.startDate, endDate: this.endDate }).length > 0)
   }
 
   // Fairly similar to the one in logs-myplanet.component.ts
@@ -98,12 +90,6 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       return dates;
     }));
     return new Date(earliest);
-  }
-
-  // Same in the logs-myplanet.component.ts
-  onVersionChange(version: string) {
-    this.selectedVersion = version;
-    this.applyFilters();
   }
 
   // Fairly similar to the one in logs-myplanet.component.ts

@@ -20,14 +20,10 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
 
   private allPlanets: any[] = [];
   apklogs: any[] = [];
-  isEmpty = false;
   planetType = this.stateService.configuration.planetType;
   selectedChildren: any[] = [];
-  versions: string[] = [];
   types: string[] = [];
   selectedType = '';
-  showFiltersRow = false;
-  isLoading = false;
   get childType() {
     return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
@@ -70,10 +66,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   }
 
   getUniqueVersions(logs: any[]) {
-    this.versions = Array.from(
-      new Set(logs.map(log => log.version)))
-      .filter(version => version)
-      .sort((a, b) => b.localeCompare(a));
+    this.versions = Array.from(new Set(logs.map(log => log.version))).filter(version => version).sort((a, b) => b.localeCompare(a));
   }
 
   getUniqueTypes(logs: any[]) {
@@ -107,11 +100,6 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`);
       this.isLoading = false;
     });
-  }
-
-  onVersionChange(version: string) {
-    this.selectedVersion = version;
-    this.applyFilters();
   }
 
   onTypeChange(type: string) {
