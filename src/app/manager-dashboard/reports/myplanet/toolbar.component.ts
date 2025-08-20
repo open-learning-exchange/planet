@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class MyPlanetToolbarComponent {
   @Input() showTypeFilter = false;
   @Input() timeFilterOptions: { label: string; value: string }[] = [];
   @Input() selectedTimeFilter = '';
-  @Input() formGroup!: UntypedFormGroup;
+  @Input() formGroup!: FormGroup<{ startDate: FormControl<Date>; endDate: FormControl<Date>; }>;
   @Input() showCustomDateFields = false;
   @Input() minDate!: Date;
   @Input() today!: Date;

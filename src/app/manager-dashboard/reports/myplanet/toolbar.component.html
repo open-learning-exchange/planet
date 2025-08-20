@@ -1,13 +1,15 @@
 <mat-toolbar>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <ng-container *ngTemplateOutlet="backAction"></ng-container>
-    <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
-    <form [formGroup]="formGroup" *ngIf="showCustomDateFields">
-      <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
-      <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
-    </form>
-    <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
-    <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    <mat-toolbar-row>
+      <ng-container *ngTemplateOutlet="backAction"></ng-container>
+      <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
+      <ng-container *ngIf="showCustomDateFields">
+        <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
+        <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
+      </ng-container>
+      <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </mat-toolbar-row>
   </ng-container>
   <ng-template #mobileView>
     <mat-toolbar-row>
@@ -21,10 +23,10 @@
       <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <form [formGroup]="formGroup"><ng-container *ngTemplateOutlet="formStartDate"></ng-container></form>
+      <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <form [formGroup]="formGroup"><ng-container *ngTemplateOutlet="formEndDate"></ng-container></form>
+      <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
@@ -54,19 +56,23 @@
   </mat-form-field>
 </ng-template>
 <ng-template #formStartDate>
-  <mat-form-field class="margin-lr-5 font-size-1">
-    <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="formGroup.get('endDate').value">
-    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-    <mat-datepicker #startPicker></mat-datepicker>
-    <mat-error i18n *ngIf="formGroup.errors?.invalidDates">Start date must be before end date</mat-error>
-  </mat-form-field>
+  <div [formGroup]="formGroup">
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="formGroup.controls.endDate.value">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+      <mat-error i18n *ngIf="formGroup?.errors?.invalidDates">Start date must be before end date</mat-error>
+    </mat-form-field>
+  </div>
 </ng-template>
 <ng-template #formEndDate>
-  <mat-form-field class="margin-lr-5 font-size-1">
-    <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="formGroup.get('startDate').value" [max]="today">
-    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-    <mat-datepicker #endPicker></mat-datepicker>
-  </mat-form-field>
+  <div [formGroup]="formGroup">
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="formGroup.controls.startDate.value" [max]="today">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+  </div>
 </ng-template>
 <ng-template #timeFrameFilter>
   <mat-form-field class="margin-lr-5 font-size-1">

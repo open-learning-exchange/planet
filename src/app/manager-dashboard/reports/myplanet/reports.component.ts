@@ -70,6 +70,17 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.versions = Array.from(new Set(myPlanets.map(planet => planet.versionName || (planet.usages && planet.usages.length > 0 ? planet.usages[0].versionName : null)))).filter(version => version).sort();
   }
 
+  getEarliestDate(myPlanets: any[]): Date {
+    const earliest = Math.min(...myPlanets.flatMap(planet => {
+      const dates = [];
+      if (planet.time) { dates.push(Number(planet.time)); }
+      if (planet.last_synced) { dates.push(Number(planet.last_synced)); }
+      if (planet.usages) { dates.push(...planet.usages.map(usage => Number(usage.time || usage.last_synced))); }
+      return dates;
+    }));
+    return new Date(earliest);
+  }
+
   applyFilters() {
     this.planets = this.allPlanets
       .filter(planet => !this.searchValue || planet.name.toLowerCase().includes(this.searchValue.toLowerCase()))
@@ -95,6 +106,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     this.isLoading = true;
     this.myPlanetRequest(hubId).subscribe(
       ([ planets, myPlanets ]: [ any, any ]) => {
+        this.updateMinDate(this.getEarliestDate(myPlanets));
         this.getUniqueVersions(myPlanets);
         this.setAllPlanets(
           [ { doc: this.configuration } ].concat(
@@ -103,6 +115,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
           myPlanets
         );
         this.planets = this.allPlanets;
+        this.onTimeFilterChange(this.selectedTimeFilter);
         this.isEmpty = areNoChildren(this.planets);
         this.isLoading = false;
       },

@@ -52,8 +52,8 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   setAllPlanets(planets: any[], apklogs: any[]) {
     this.allPlanets = planets.map(planet => ({
       ...planet,
-      children: this.filterLogs(apklogs.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code))
-    }))
+      children: apklogs.filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
+    }));
   };
 
   filterLogs(logs: any[]) {
@@ -72,9 +72,13 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   }
 
   getEarliestDate(logs: any[]): Date {
-    const earliest = Math.min(...logs.map(log => Number(log.time)));
+    const earliest = Math.min(...logs.flatMap(log => {
+      const dates = [];
+      if (log.time) { dates.push(Number(log.time)); }
+      return dates;
+    }));
     return new Date(earliest);
-  }
+  };
 
   getApkLogs() {
     this.isLoading = true;
@@ -82,6 +86,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       this.managerService.getChildPlanets(),
       this.couchService.findAll('apk_logs')
     ]).subscribe(([planets, apklogs]) => {
+      this.updateMinDate(this.getEarliestDate(apklogs));
       this.getUniqueVersions(apklogs);
       this.getUniqueTypes(apklogs);
       this.setAllPlanets(
@@ -91,8 +96,8 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
           apklogs
       );
       this.apklogs = this.allPlanets;
+      this.onTimeFilterChange(this.selectedTimeFilter);
       this.isEmpty = areNoChildren(this.apklogs);
-      this.onTimeFilterChange('24h');
       this.isLoading = false;
     }, (error) => {
       this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`);
