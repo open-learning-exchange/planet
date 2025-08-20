@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { Subject } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { Subject } from 'rxjs';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { trackByIndex } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -30,6 +31,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   examText: 'retake' | 'take' = 'take';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  trackByFn = trackByIndex;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 
   constructor(
@@ -194,10 +196,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-  }
-
-  trackBySteps(index: number) {
-    return index;
   }
 
 }

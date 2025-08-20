@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -8,7 +8,7 @@ import { takeUntil, take } from 'rxjs/operators';
 import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { styleVariables } from '../../shared/utils';
+import { styleVariables, formatDate } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
@@ -60,7 +60,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
-  dateFilterForm: FormGroup;
+  dateFilterForm: UntypedFormGroup;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -92,7 +92,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
   ) {
     this.initDateFilterForm();
@@ -195,9 +195,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.filter = { ...this.filter, startDate, endDate };
 
       if (startDate && endDate && this.minDate && this.today) {
-        const formatDate = (date: Date) => {
-          return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        };
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
 
@@ -734,6 +731,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const resourceData = filterByMember(filterByDate(this.resourceActivities?.total?.data, 'time', dateRange), members);
     const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
     const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
+    const chatData = filterByMember(filterByDate(this.chatActivities?.data, 'createdDate', dateRange), members);
 
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
@@ -749,6 +747,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       resourceData.sort(sortFunction);
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
+      chatData.sort(sortFunction);
     }
 
     this.csvService.exportSummaryCSV(
@@ -756,7 +755,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       resourceData,
       courseData,
       progressData,
-      this.planetName
+      chatData,
+      this.planetName,
+      dateRange.startDate,
+      dateRange.endDate
     );
   }
 

@@ -3,16 +3,17 @@
     <mat-card-subtitle class="subtitle-row">
       <div class="label-panel">
         <mat-chip-list>
-          <mat-chip class="planet-chip-label chip-no-style chip-outline-primary" *ngFor="let label of item.doc.labels">
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-primary" *ngFor="let label of item.doc.labels" (click)="labelClick(label, 'select')">
             <mat-icon class="small-icon">label_important</mat-icon>
             <planet-label [label]="label"></planet-label>
-            <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable && !item.doc.chat" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
+            <mat-icon *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable" matChipRemove (click)="labelClick(label, 'remove')">clear</mat-icon>
           </mat-chip>
-          <mat-chip class="planet-chip-label chip-no-style chip-outline-accent" *ngFor="let teamLabel of teamLabels">
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-accent" *ngFor="let teamLabel of teamLabels" (click)="labelClick(teamLabel, 'select')">
             <mat-icon class="small-icon">group</mat-icon>
-            {{ teamLabel }}
+            <planet-label [label]="teamLabel"></planet-label>
           </mat-chip>
-          <mat-chip class="planet-chip-label chip-no-style chip-outline-primary" *ngIf="item.doc.chat">
+          <mat-chip class="planet-chip-label chip-no-style chip-outline-grey" *ngIf="item.doc.chat" (click)="labelClick('shared chat', 'select')">
+            <mat-icon class="small-icon">question_answer</mat-icon>
             <planet-label [label]="'shared chat'"></planet-label>
           </mat-chip>
         </mat-chip-list>
@@ -20,7 +21,7 @@
       </div>
       <div class="time-panel">
         <ng-container *ngIf="item.sharedDate; else checkEditTime">
-          <mat-icon *ngIf="isSmallMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
+          <mat-icon *ngIf="isMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
           <ng-template #shareText>
             <span i18n>shared: </span>
           </ng-template>
@@ -28,7 +29,7 @@
         </ng-container>
         <ng-template #checkEditTime>
           <ng-container *ngIf="item.doc.updatedDate !== item.doc.time && item.doc.updatedDate; else creationTime">
-            <mat-icon *ngIf="isSmallMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
+            <mat-icon *ngIf="isMobile; else editText" class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
             <ng-template #editText>
               <span i18n>edited: </span>
             </ng-template>
@@ -36,7 +37,7 @@
           </ng-container>
         </ng-template>
         <ng-template #creationTime>
-          <mat-icon *ngIf="isSmallMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
+          <mat-icon *ngIf="isMobile; else postText" class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
           <ng-template #postText>
             <span i18n>posted: </span>
           </ng-template>
@@ -65,13 +66,15 @@
   </mat-card-content>
   <mat-card-actions class="display-flex">
     <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-    <button mat-button type="button" class="cursor-pointer" (click)="openMemberDialog(item.doc.user)">
-      {{item.doc.user.firstName ?
-        item.doc.user.firstName + ((' ' + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
-        item.doc.user.name}}
-    </button>
+      <button mat-button type="button" class="cursor-pointer user-name-truncate" (click)="openMemberDialog(item.doc.user)">
+      <span class="user-name-truncate-text ellipsis">
+        {{item.doc.user.firstName ?
+          item.doc.user.firstName + ((" " + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
+          item.doc.user.name}}
+      </span>
+      </button>
     <span class="toolbar-fill"></span>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || isSmallMobile; else actionItems">
+    <ng-container *ngIf="isMobile; else actionItems">
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -93,7 +96,7 @@
   <ng-container *ngIf="(item.doc.user.name === currentUser.name || currentUser.isUserAdmin)">
     <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
     <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-    <button mat-button i18n *ngIf="editable && !item.doc.chat && labels.listed.length > 0" [matMenuTriggerFor]="labelMenu">Add Label</button>
+    <button mat-button i18n *ngIf="editable && labels.listed.length > 0" [matMenuTriggerFor]="labelMenu">Add Label</button>
     <mat-menu #labelMenu="matMenu">
       <button mat-menu-item *ngFor="let label of labels.listed" (click)="labelClick(label, 'add')"><planet-label [label]="label"></planet-label></button>
     </mat-menu>

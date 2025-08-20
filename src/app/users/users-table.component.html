@@ -1,5 +1,5 @@
 <div [ngClass]="containerClass">
-  <mat-table #table [dataSource]="usersTable" [trackBy]="trackByFn" matSort [matSortActive]="matSortActive" matSortDirection="desc">
+  <mat-table #table [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"

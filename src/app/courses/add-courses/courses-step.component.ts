@@ -1,12 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
+import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.component';
 
 @Component({
   selector: 'planet-courses-step',
@@ -20,11 +21,12 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: FormGroup;
+  stepForm: UntypedFormGroup;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
   private onDestroy$ = new Subject<void>();
+  @ViewChild(PlanetStepListComponent) stepListComponent: PlanetStepListComponent;
 
   get examButtonLabel(): string {
     return this.activeStep?.exam ? $localize`Update Test` : $localize`Add Test`;
@@ -36,7 +38,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
@@ -106,6 +108,12 @@ export class CoursesStepComponent implements OnDestroy {
 
   addStep() {
     this.addStepEvent.emit();
+  }
+
+  toList() {
+    if (this.stepListComponent) {
+      this.stepListComponent.toList();
+    }
   }
 
 }

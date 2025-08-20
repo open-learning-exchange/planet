@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
 import { FileInputComponent } from '../shared/forms/file-input.component';
-import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
-  FormBuilder,
-  FormGroup,
+  UntypedFormBuilder,
+  UntypedFormGroup,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
@@ -26,7 +26,7 @@ import { map, startWith } from 'rxjs/operators';
 import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { warningMsg } from '../shared/unsaved-changes.component';
 
 @Component({
   selector: 'planet-resources-add',
@@ -40,7 +40,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachedZipFiles: string[] = [];
   filteredZipFiles: Observable<string[]>;
   deleteAttachment = false;
-  resourceForm: FormGroup;
+  resourceForm: UntypedFormGroup;
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
@@ -69,7 +69,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   constructor(
     private router: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
@@ -78,7 +78,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private dialogsLoadingService: DialogsLoadingService,
-    private unsavedChangesService: UnsavedChangesService
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -242,7 +241,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   afterResourceUpdate(message, resourceRes?) {
     this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.captureInitialState();
 
     if (this.isDialog) {
@@ -267,7 +265,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.disableDownload = true;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.hasUnsavedChanges = true;
-    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   // Returns a function which takes a file name located in the zip file and returns an observer
@@ -339,7 +336,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.disableDownload = !this.existingResource.doc?._attachments || this.attachmentMarkedForDeletion;
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
-    this.unsavedChangesService.setHasUnsavedChanges(true);
   }
 
   bindFile(event: Event) {
@@ -410,21 +406,17 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       .subscribe(() => {
         const currentState = JSON.stringify(this.getNormalizedState());
         this.hasUnsavedChanges = currentState !== this.initialState;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      $event.returnValue = warningMsg;
     }
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm('You have unsaved changes. Are you sure you want to leave?');
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 }

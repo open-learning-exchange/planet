@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap } from 'rxjs/operators';
+import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -60,10 +60,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isLoading = true;
+  currentTab = 0;
   activeReplyId: string | null = null;
+  lastReplyId: string | null = null;
   voiceSearch = '';
+  voiceSearch$ = new Subject<string>();
   availableLabels: string[] = [];
   selectedLabel = '';
+  pinned = false;
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
@@ -84,7 +88,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -92,12 +96,22 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.configurationCheckService.checkConfiguration().subscribe();
+    this.voiceSearch$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.onDestroy$)
+    ).subscribe(searchValue => {
+      this.voiceSearch = searchValue;
+      this.applyFilters();
+    });
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
+      this.news.forEach(item => item.doc.messageLower = item.doc.message?.toLowerCase() || '');
       this.filteredNews = this.news;
       this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
+      this.applyFilters();
     });
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
@@ -367,7 +381,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   toggleShowButton(data) {
-    this.activeReplyId = data._id;
+    this.activeReplyId = data._id === 'root' ? null : data._id;
     this.showNewsButton = data._id === 'root';
   }
 
@@ -452,21 +466,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   tabChanged({ index }: { index: number }) {
+    // stash reply only on voices tab change
+    if (this.currentTab === 0 && index !== 0) {
+      this.lastReplyId = this.activeReplyId;
+    }
     if (index === 0) {
-      this.router.navigate([ this.activeReplyId ? `/voices/${this.activeReplyId}` : '' ]);
+      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
     } else {
       this.router.navigate([ '' ]);
     }
-    this.resizeCalendar = index === 5;
+    this.resizeCalendar = (index === 5);
+    this.currentTab = index;
   }
 
   onLabelFilterChange(label: string): void {
     this.selectedLabel = label;
-    this.applyFilters();
-  }
-
-  onVoicesSearchChange(searchValue: string): void {
-    this.voiceSearch = searchValue;
     this.applyFilters();
   }
 
@@ -481,7 +495,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
+      filtered = filtered.filter(item => item.doc.messageLower.includes(lower));
     }
     this.filteredNews = filtered;
   }
@@ -507,5 +521,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return label === 'shared chat' ? 'question_answer'
       : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
       : 'label_important';
+  }
+
+  changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
+    this.selectedLabel = action === 'select' ? label : '';
+    this.applyFilters();
   }
 }

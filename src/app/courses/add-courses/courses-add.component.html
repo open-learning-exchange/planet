@@ -1,12 +1,10 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
-  <span i18n>{{ pageType }} Course</span>
+  <span *ngIf="pageType" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
-  </mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</mat-toolbar>
   <div class="view-container view-full-height">
     <div class="form-container">
       <form [formGroup]="courseForm" class="form-spacing" novalidate>
@@ -46,6 +44,7 @@
     </div>
     <div class="actions-container">
       <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
+      <button *ngIf="draftExists" class="margin-lr-2" type="button" mat-raised-button (click)="deleteDraft()" i18n="@@discardDraftButton">Discard Draft</button>
       <button class="margin-lr-2" type="button" mat-raised-button color="warn" (click)="cancel()" i18n>Cancel</button>
       <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
     </div>

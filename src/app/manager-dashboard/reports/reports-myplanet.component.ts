@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   searchValue = '';
   planets: any[] = [];
   isEmpty = false;
+  isLoading = true;
   isMobile: boolean;
   showFiltersRow = false;
   deviceType: DeviceType;
@@ -36,7 +37,7 @@ export class ReportsMyPlanetComponent implements OnInit {
   hub = { spokes: [] };
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   endDate: Date = new Date();
-  reportsForm: FormGroup;
+  reportsForm: UntypedFormGroup;
   minDate = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
   today = new Date();
   versions: string[] = [];
@@ -56,7 +57,7 @@ export class ReportsMyPlanetComponent implements OnInit {
     private activityService: ReportsService,
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
     this.reportsForm = this.fb.group({
@@ -74,6 +75,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   ngOnInit() {
     this.onTimeFilterChange('all');
+    this.isLoading = true;
     this.getMyPlanetList(this.route.snapshot.params.hubId);
     this.reportsForm.valueChanges.subscribe(() => {
       this.startDate = this.reportsForm.get('startDate').value;
@@ -195,16 +197,24 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   getMyPlanetList(hubId) {
-    this.myPlanetRequest(hubId).subscribe(([ planets, myPlanets ]: [ any, any ]) => {
-      this.setAllPlanets(
-        [ { doc: this.configuration } ].concat(
-          planets.filter(planet => planet.doc.docType !== 'parentName')
-        ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
-        myPlanets
-      );
-      this.planets = this.allPlanets;
-      this.isEmpty = areNoChildren(this.planets);
-    }, (error) => this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`));
+    this.isLoading = true;
+    this.myPlanetRequest(hubId).subscribe(
+      ([ planets, myPlanets ]: [ any, any ]) => {
+        this.setAllPlanets(
+          [ { doc: this.configuration } ].concat(
+            planets.filter(planet => planet.doc.docType !== 'parentName')
+          ).map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
+          myPlanets
+        );
+        this.planets = this.allPlanets;
+        this.isEmpty = areNoChildren(this.planets);
+        this.isLoading = false;
+      },
+      (error) => {
+        this.planetMessageService.showAlert($localize`There was a problem getting myPlanet activity.`);
+        this.isLoading = false;
+      }
+    );
   }
 
   myPlanetRequest(hubId) {

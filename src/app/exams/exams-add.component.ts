@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormArray,
-  Validators
-} from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
@@ -29,7 +24,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams'; // make database name a constant
-  examForm: FormGroup;
+  examForm: UntypedFormGroup;
   documentInfo: any = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
@@ -44,24 +39,24 @@ export class ExamsAddComponent implements OnInit {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  private _question: FormGroup;
-  get question(): FormGroup {
+  private _question: UntypedFormGroup;
+  get question(): UntypedFormGroup {
     return this._question;
   }
-  set question(newQuestion: FormGroup) {
-    const question = (<FormGroup>(<FormArray>this.examForm.controls.questions).at(this.activeQuestionIndex));
+  set question(newQuestion: UntypedFormGroup) {
+    const question = (<UntypedFormGroup>(<UntypedFormArray>this.examForm.controls.questions).at(this.activeQuestionIndex));
     this.examsService.updateQuestion(question, newQuestion);
     this._question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
-  get questions(): FormArray {
-    return <FormArray>this.examForm.controls.questions;
+  get questions(): UntypedFormArray {
+    return <UntypedFormArray>this.examForm.controls.questions;
   }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -189,18 +184,18 @@ export class ExamsAddComponent implements OnInit {
     this.activeQuestionIndex = index;
     this.isQuestionsActive = index > -1;
     if (index > -1) {
-      this.question = (<FormGroup>(<FormArray>this.examForm.get('questions')).at(index));
+      this.question = (<UntypedFormGroup>(<UntypedFormArray>this.examForm.get('questions')).at(index));
     }
   }
 
   initializeQuestions(questions: any[]) {
     questions.forEach((question) => {
-      (<FormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
+      (<UntypedFormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
     });
   }
 
   addQuestion(type: string) {
-    const questions = (<FormArray>this.examForm.get('questions'));
+    const questions = (<UntypedFormArray>this.examForm.get('questions'));
     questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
@@ -209,7 +204,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   removeQuestion(index) {
-    (<FormArray>this.examForm.get('questions')).removeAt(index);
+    (<UntypedFormArray>this.examForm.get('questions')).removeAt(index);
   }
 
   plainText(value) {

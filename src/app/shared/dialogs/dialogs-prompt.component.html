@@ -1,6 +1,7 @@
 <mat-dialog-content>
+  <b *ngIf="data.type === 'changes'" i18n>You have unsaved changes.</b>
   <p *ngIf="showMainParagraph" i18n>
-    Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}
+    Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}
       the {data.amount, select, single
       {following {data.type, select,
         community {community}
@@ -20,6 +21,7 @@
         link {link}
         news {message}
         report {report}
+        changes {form}
         survey {survey}}?
       }
       many

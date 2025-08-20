@@ -58,19 +58,19 @@
     <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-name">{{element.parent.name}}</mat-cell>
+        <mat-cell *matCellDef="let element" class="mat-cell-name"><div class="cell-content" style="cursor: pointer">{{element.parent.name}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle">{{element.courseTitle || element.parent.courseTitle}}</mat-cell>
+        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle"><div class="cell-content" style="cursor: pointer">{{element.courseTitle || element.parent.courseTitle}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="stepNum">
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.stepNum || ''}}</mat-cell>
+        <mat-cell *matCellDef="let element" style="cursor: pointer">{{element.stepNum || ''}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element" [ngSwitch]="element.status">
+        <mat-cell *matCellDef="let element" [ngSwitch]="element.status" style="cursor: pointer">
           <mat-chip-list *ngSwitchCase="'pending'"><mat-chip  class="chip-no-style" i18n>pending</mat-chip></mat-chip-list>
           <mat-chip-list *ngSwitchCase="'requires grading'"><mat-chip class="chip-no-style" selected color="accent" i18n>requires grading</mat-chip></mat-chip-list>
           <mat-chip-list *ngSwitchCase="'complete'"><mat-chip class="chip-no-style" selected color="primary" i18n>complete</mat-chip></mat-chip-list>
@@ -79,7 +79,7 @@
       </ng-container>
       <ng-container matColumnDef="grade">
         <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" style="cursor: pointer">
           <ng-container *ngIf="element.status === 'complete'">{{element?.grade}}/{{element.answers.length}}</ng-container>
         </mat-cell>
       </ng-container>
@@ -93,13 +93,13 @@
       <ng-container matColumnDef="lastUpdateTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="lastUpdateTime" i18n>Updated On</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span>{{((isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null) | date: 'medium') || '--'}}</span>
+          <span style="cursor: pointer">{{((isNumber(element.lastUpdateTime) ? element.lastUpdateTime : null) | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="gradeTime">
         <mat-header-cell *matHeaderCellDef mat-sort-header="gradeTime" i18n>Graded On</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span>{{((isNumber(element.gradeTime) ? element.gradeTime : null) | date: 'medium') || '--'}}</span>
+          <span style="cursor: pointer">{{((isNumber(element.gradeTime) ? element.gradeTime : null) | date: 'medium') || '--'}}</span>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>

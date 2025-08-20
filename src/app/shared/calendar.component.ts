@@ -70,6 +70,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ];
 
   calendarOptions: CalendarOptions = {
+    plugins: [
+      dayGridPlugin,
+      interactionPlugin
+    ],
     initialView: 'dayGridMonth',
     contentHeight: 'auto',
     locales: allLocales,

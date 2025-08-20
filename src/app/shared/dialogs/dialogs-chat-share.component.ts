@@ -1,10 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-
 
 import { CouchService } from '../../shared/couchdb.service';
 import { NewsService } from '../../news/news.service';
@@ -28,8 +27,8 @@ export class DialogsChatShareComponent implements OnInit {
   membersInfo: any;
   excludeIds: any[] = [];
   showForm: boolean;
-  teamForm: FormGroup;
-  communityForm: FormGroup;
+  teamForm: UntypedFormGroup;
+  communityForm: UntypedFormGroup;
 
   @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
@@ -42,7 +41,7 @@ export class DialogsChatShareComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogsChatShareComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,

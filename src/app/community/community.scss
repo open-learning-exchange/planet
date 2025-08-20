@@ -1,7 +1,6 @@
 @import '../variables';
 
 .view-container.community-view {
-
   &.view-full-height {
     height: calc(#{$view-container-height-no-toolbar} + 64px);
   }
@@ -65,16 +64,8 @@ mat-tab-group, mat-tab {
   margin-bottom: 1rem;
 }
 
-.responsive-toolbar {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: auto;
-  height: auto;
-  padding: 15px;
-  margin-bottom: 1rem;
+.community-view .responsive-toolbar {
   border-radius: 7.5px;
-  opacity: 0.9;
 }
 
 .toolbar-row {
@@ -94,6 +85,13 @@ mat-tab-group, mat-tab {
     flex: 0 0 auto;
     align-self: center;
   }
+  .pin-btn {
+    align-self: center;
+
+    mat-icon svg {
+      fill: black;
+    }
+  }
 }
 
 .label-icon {
@@ -102,13 +100,29 @@ mat-tab-group, mat-tab {
 }
 
 @media only screen and (max-width: $screen-sm) {
-  .responsive-toolbar {
-    width: 100%
+  .community-view .responsive-toolbar {
+    height: auto;
+    gap: 0;
   }
 
   .toolbar-row {
-    display: flex;
-    align-items: stretch;
-    flex-direction: column;
+    .search-form-field,
+    .label-filter-field {
+      min-width: 0;
+    }
+    .new-voice-btn,
+    .pin-btn {
+      min-width: 0;
+    }
+  }
+}
+
+@media only screen and (max-width: $screen-xs) {
+  .toolbar-row {
+    .search-form-field,
+    .label-filter-field {
+      flex: 1 1 25%;
+      min-width: 0;
+    }
   }
 }

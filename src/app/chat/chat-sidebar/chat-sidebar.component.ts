@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-share.component';
 import { SearchService } from '../../shared/forms/search.service';
-import { showFormErrors } from '../../shared/table-helpers';
+import { showFormErrors, trackById } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 
 @Component({
@@ -39,14 +39,15 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   overlayOpen = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  titleForm: { [key: string]: FormGroup } = {};
+  titleForm: { [key: string]: UntypedFormGroup } = {};
+  trackByFn = trackById;
 
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private searchService: SearchService,
     private userService: UserService
   ) {

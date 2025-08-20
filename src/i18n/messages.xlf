@@ -537,7 +537,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
@@ -631,7 +631,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-list.component.html</context>
@@ -678,25 +678,15 @@
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8f2f5d3039de4edea4d293b7e252f97890ba3001" datatype="html">
-        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}</source>
+      <trans-unit id="64fb6aa0ce103ff887dc3318ae6b5cc7d487db90" datatype="html">
+        <source>You have unsaved changes.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="60540a18f6f550dae3d7df310404029f4aee2c39" datatype="html">
-        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} survey {survey}}?
-      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
-      }}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">4,35</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1eb1f30f33895723870b11dc0c44b5053cd8c67f" datatype="html">
-        <source> Are you sure you want to <x id="ICU" equiv-text="o {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}
-   "/> the <x id="ICU_1" equiv-text="he {data.amount, select, single
+      <trans-unit id="0669cf7b929e7e2bd77ca8a8f7139c50b882cc08" datatype="html">
+        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}"/> the <x id="ICU_1" equiv-text="{data.amount, select, single
       {following {data.type, select,
         community {community}
         nation {nation}
@@ -715,6 +705,7 @@
         link {link}
         news {message}
         report {report}
+        changes {form}
         survey {survey}}?
       }
       many
@@ -725,10 +716,28 @@
         resource {resources}
         meetup {meetups}
         event {events}
-        sur"/> </source>
+        survey {surveys}}?
+      }
+    }"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3,36</context>
+          <context context-type="linenumber">3,38</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="133e6f9a3944e05cebbba067ae698f8913dd9ad5" datatype="html">
+        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="54dafe524673730a17951bde9ba36fd59d9086cc" datatype="html">
+        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} survey {survey}}?
+      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
+      }}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">5,37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html">
@@ -1385,7 +1394,8 @@
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="
 
-  validAnswer(field) {"/>&lt;/b&gt; has
+  validAnswer(field) {
+"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="= undefined &amp;&amp; field !== false &amp;&amp; field !== &apos;&apos; &amp;&amp; field !== n"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="dSubmissionNotification(isR"/>&lt;/b&gt;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
@@ -6336,7 +6346,8 @@
         </context-group>
       </trans-unit>
       <trans-unit id="229103727470276623" datatype="html">
-        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {"/> successfully</source>
+        <source><x id="PH" equiv-text=").subscrib"/> <x id="PH_1" equiv-text=" =&gt; {
+"/> successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">224</context>
@@ -13772,6 +13783,27 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-view.component.html</context>
           <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="loadingReports" datatype="html">
+        <source>Loading reports...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="linenumber">[line number]</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="discardDraftButton" datatype="html">
+        <source>Discard Draft</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">[line number]</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="draftDiscardedMessage" datatype="html">
+        <source>Draft discarded</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">[line number]</context>
         </context-group>
       </trans-unit>
     </body>

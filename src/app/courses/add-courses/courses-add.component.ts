@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -14,31 +14,39 @@ import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
-import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
 })
-export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeactivate {
+export class CoursesAddComponent implements OnInit, OnDestroy {
 
   readonly dbName = 'courses'; // make database name a constant
-  courseForm: FormGroup;
-  documentInfo = { '_rev': undefined, '_id': undefined };
-  courseId = this.route.snapshot.paramMap.get('id') || undefined;
-  pageType: string | null = null;
-  tags = this.fb.control([]);
   private onDestroy$ = new Subject<void>();
   private isDestroyed = false;
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
-  private navigationViaCancel = false;
-  hasUnsavedChanges = false;
   private initialState = '';
   private _steps = [];
+  savedCourse: any = null;
+  draftExists: boolean;
+  courseForm: UntypedFormGroup;
+  documentInfo = { '_rev': undefined, '_id': undefined };
+  courseId = this.route.snapshot.paramMap.get('id') || undefined;
+  pageType: string | null = null;
+  tags = this.fb.control([]);
+  // from the constants import
+  gradeLevels = constants.gradeLevels;
+  subjectLevels = constants.subjectLevels;
+  images: any[] = [];
+  // from the languages import
+  languageNames = languages.map(list => list.name);
+  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
+  @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   get steps() {
     return this._steps;
   }
@@ -52,20 +60,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
     this.stepsChange$.next(value);
   }
 
-  // from the constants import
-  gradeLevels = constants.gradeLevels;
-  subjectLevels = constants.subjectLevels;
-  images: any[] = [];
-
-  // from the languages import
-  languageNames = languages.map(list => list.name);
-
-  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
-
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -78,6 +76,56 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   ) {
     this.createForm();
     this.onFormChanges();
+  }
+
+  ngOnInit() {
+    const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
+    forkJoin([
+      this.pouchService.getDocEditing(this.dbName, this.courseId),
+      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
+      this.stateService.getCouchState('tags', 'local')
+    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
+      if (saved.error !== 'not_found') {
+        this.setDocumentInfo(saved);
+        this.savedCourse = saved;
+        this.pageType = 'Edit';
+      } else {
+        this.pageType = 'Add';
+        this.savedCourse = null;
+      }
+      this.draftExists = draft !== undefined;
+      const doc = draft === undefined ? saved : draft;
+      this.setInitialTags(tags, this.documentInfo, draft);
+      if (!continued) {
+        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
+        this.setInitialState();
+      }
+    });
+    if (continued) {
+      this.setFormAndSteps(this.coursesService.course);
+      this.submitAddedExam();
+    }
+    const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
+    this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
+    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    this.coursesService.stepIndex = undefined;
+  }
+
+  ngOnDestroy() {
+    if (this.coursesService.stepIndex === undefined) {
+      this.coursesService.reset();
+    }
+    this.isDestroyed = true;
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  setInitialState() {
+    this.initialState = JSON.stringify({
+      form: this.courseForm.value,
+      steps: this.steps,
+      tags: this.tags.value
+    });
   }
 
   createForm() {
@@ -100,49 +148,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       resideOn: configuration.code,
       updatedDate: this.couchService.datePlaceholder
     });
-  }
-
-  ngOnInit() {
-    const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
-    forkJoin([
-      this.pouchService.getDocEditing(this.dbName, this.courseId),
-      this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
-      this.stateService.getCouchState('tags', 'local')
-    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
-      if (saved.error !== 'not_found') {
-        this.setDocumentInfo(saved);
-        this.pageType = 'Edit';
-      } else {
-        this.pageType = 'Add';
-      }
-      const doc = draft === undefined ? saved : draft;
-      this.setInitialTags(tags, this.documentInfo, draft);
-      if (!continued) {
-        this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
-        this.initialState = JSON.stringify({
-          form: this.courseForm.value,
-          steps: this.steps,
-          tags: this.tags.value
-        });
-      }
-    });
-    if (continued) {
-      this.setFormAndSteps(this.coursesService.course);
-      this.submitAddedExam();
-    }
-    const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
-    this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
-    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
-    this.coursesService.stepIndex = undefined;
-  }
-
-  ngOnDestroy() {
-    if (this.coursesService.stepIndex === undefined) {
-      this.coursesService.reset();
-    }
-    this.isDestroyed = true;
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
   }
 
   submitAddedExam() {
@@ -190,17 +195,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
       }
       const course = this.convertMarkdownImagesText({ ...value, images: this.images }, steps);
       this.coursesService.course = { form: course, steps: course.steps, tags };
-      this.pouchService.saveDocEditing(
-        { ...course, tags, initialTags: this.coursesService.course.initialTags },
-        this.dbName,
-        this.courseId
-      );
       const currentState = JSON.stringify({
         form: this.courseForm.value,
         steps: this.steps,
         tags: this.tags.value
       });
-      this.hasUnsavedChanges = currentState !== this.initialState;
+      // Only auto-save if there are actual changes from the initial state
+      if (currentState !== this.initialState) {
+        this.pouchService.saveDocEditing({ ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId);
+        this.draftExists = true;
+        this.setInitialState();
+      }
     });
   }
 
@@ -268,23 +273,30 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
   }
 
   cancel() {
-    this.navigationViaCancel = true;
-    if (this.hasUnsavedChanges) {
-      const confirmCancel = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-      if (!confirmCancel) {
-        this.navigationViaCancel = false;
-        return;
-      }
-    }
-    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
     this.navigateBack();
   }
 
-  canDeactivate(): boolean {
-    if (this.navigationViaCancel) {
-      return true;
+  deleteDraft() {
+    if (!this.draftExists) { return; }
+    if (this.savedCourse) {
+      this.setFormAndSteps({
+        form: this.savedCourse,
+        steps: this.savedCourse.steps || [],
+        tags: this.savedCourse.tags || []
+      });
+    } else {
+      this.setFormAndSteps({
+        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '' },
+        steps: [],
+        tags: []
+      });
     }
-    return true;
+    this.coursesStepComponent.toList();
+    this.setInitialState();
+    this.pouchService.deleteDocEditing(this.dbName, this.courseId);
+    this.courseForm.markAsPristine();
+    this.draftExists = false;
+    this.planetMessageService.showMessage($localize`:@@draftDiscardedMessage:Draft discarded`);
   }
 
   navigateBack() {
@@ -300,10 +312,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy, CanComponentDeact
 
   removeStep(pos) {
     this.steps.splice(pos, 1);
-  }
-
-  stepTrackByFn(index, item) {
-    return item.id;
   }
 
   convertMarkdownImagesText(course, steps) {

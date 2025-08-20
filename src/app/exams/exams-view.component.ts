@@ -1,37 +1,37 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { CoursesService } from '../courses/courses.service';
+import { UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
+import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
-import { FormControl, AbstractControl } from '@angular/forms';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
   styleUrls: [ './exams-view.scss' ]
 })
-
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
   @Input() isDialog = false;
   @Input() exam: Exam;
   @Input() submission: any;
   @Input() mode: 'take' | 'grade' | 'view' = 'take';
+  @Input() questionNum = 0;
+  @Input() previewExamType: any;
   previewMode = false;
   onDestroy$ = new Subject<void>();
   question: ExamQuestion;
-  @Input() questionNum = 0;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new FormControl(null, this.answerValidator);
+  answer = new UntypedFormControl(null, this.answerValidator);
   statusMessage = '';
   spinnerOn = true;
   title = '';
@@ -41,7 +41,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   updatedOn = '';
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
-  @Input() previewExamType: any;
   checkboxState: any = {};
   isNewQuestion = true;
   unansweredQuestions: number[];
@@ -336,7 +335,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       case 'grade':
         return { obs: this.submissionsService.submitGrade(this.grade, this.questionNum - 1, this.comment) };
       default:
-        return { obs: of({ nextQuestion: this.questionNum + 1 }) };
+        return { obs: of({ nextQuestion: this.questionNum }) };
     }
   }
 

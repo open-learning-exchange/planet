@@ -85,6 +85,26 @@ li:hover {
   margin-right: 4px;
 }
 
+.full-conversation-label {
+  font-size: small;
+  font-style: italic;
+  word-break: break-word;
+  width: 180px;
+  white-space: normal;
+}
+
+.full-conversation-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.full-conversation-label-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
 @media only screen and (max-width: $screen-md) {
   .expand-button {
     top: 10px;

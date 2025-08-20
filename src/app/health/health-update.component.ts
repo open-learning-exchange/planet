@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
@@ -9,7 +9,7 @@ import { forkJoin } from 'rxjs';
 import { showFormErrors } from '../shared/table-helpers';
 import { languages } from '../shared/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { UnsavedChangesService } from '../shared/unsaved-changes.service';
+import { warningMsg } from '../shared/unsaved-changes.component';
 import { interval, of, race } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
@@ -19,8 +19,8 @@ import { debounce } from 'rxjs/operators';
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: FormGroup;
-  healthForm: FormGroup;
+  profileForm: UntypedFormGroup;
+  healthForm: UntypedFormGroup;
   existingData: any = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
@@ -28,13 +28,12 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
-    private route: ActivatedRoute,
-    private unsavedChangesService: UnsavedChangesService
+    private route: ActivatedRoute
   ) {
     this.initProfileForm();
     this.initHealthForm();
@@ -68,7 +67,6 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
           health: this.healthForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
 
     this.healthForm.valueChanges
@@ -81,7 +79,6 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
           health: this.healthForm.value
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
-        this.unsavedChangesService.setHasUnsavedChanges(this.hasUnsavedChanges);
       });
   }
 
@@ -134,34 +131,22 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       })
     ]).subscribe(() => {
       this.hasUnsavedChanges = false;
-      this.unsavedChangesService.setHasUnsavedChanges(false);
       this.goBack();
     });
   }
 
   goBack() {
-    if (this.hasUnsavedChanges) {
-      const confirmLeave = window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-      if (!confirmLeave) {
-        return;
-      }
-    }
-    this.hasUnsavedChanges = false;
-    this.unsavedChangesService.setHasUnsavedChanges(false);
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
 
   canDeactivate(): boolean {
-    if (this.hasUnsavedChanges) {
-      return window.confirm($localize`You have unsaved changes. Are you sure you want to leave?`);
-    }
-    return true;
+    return !this.hasUnsavedChanges;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
-      $event.returnValue = $localize`You have unsaved changes. Are you sure you want to leave?`;
+      $event.returnValue = warningMsg;
     }
   }
 

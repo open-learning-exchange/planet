@@ -25,7 +25,7 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: [ './submission.component.scss' ],
+  styleUrls: [ './submission.scss' ],
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -33,10 +33,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @Input() parentId: string;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
-  submissions = new MatTableDataSource();
-  onDestroy$ = new Subject<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  submissions = new MatTableDataSource();
+  onDestroy$ = new Subject<void>();
   isMobile: boolean;
   deviceType: DeviceType;
   showFiltersRow = false;

@@ -54,7 +54,7 @@
       <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
     </mat-card>
     <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: feedbackTrackByFn">
+      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: trackById">
         <div class="chat-list-user">
           <span *ngIf="users[message.user]">{{users[message.user] + ', '}}</span><span class="mat-caption">{{message.time | date:'medium'}}</span>
         </div>
