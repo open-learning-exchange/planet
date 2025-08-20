@@ -139,7 +139,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.updateConversation(conversation, title);
       this.toggleEditTitle();
     } else {
-      showFormErrors(this.titleForm[conversation._id].controls);
+      showFormErrors(this.titleForm[conversation._id].controls as any);
     }
   }
 

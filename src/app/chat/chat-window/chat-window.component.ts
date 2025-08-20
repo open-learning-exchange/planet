@@ -28,7 +28,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-
   promptForm: FormGroup<PromptForm>;
   data: ConversationForm = {
     _id: '',
@@ -232,7 +231,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
-      showFormErrors(this.promptForm.controls);
+      showFormErrors(this.promptForm.controls as any);
     }
   }
 
