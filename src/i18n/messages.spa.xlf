@@ -1,7 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es">
     <body>
+      <trans-unit id="f27b58b0eb4ddfcb5ecfddf15e0a34e1f89d0a66" datatype="html">
+        <source>Choose Image</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
+          <context context-type="linenumber">130</context>
+        </context-group>
+        <target state="final">Elegir imagen</target>
+      </trans-unit>
+      <trans-unit id="be524b1b27f78b029186060f4fe54bc5c593d53d" datatype="html">
+        <source>Reset Selection</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
+          <context context-type="linenumber">131</context>
+        </context-group>
+        <target state="final">Restablecer selección</target>
+      </trans-unit>
+      <trans-unit id="upgrade-string" datatype="html">
+        <source>Upgrade</source>
+        <target state="final">Actualizar</target>
+      </trans-unit>
+      <trans-unit id="choose-image-string" datatype="html">
+        <source>Choose Image</source>
+        <target state="final">Elegir imagen</target>
+      </trans-unit>
+      <trans-unit id="reset-selection-string" datatype="html">
+        <source>Reset Selection</source>
+        <target state="final">Restablecer selección</target>
+      </trans-unit>
+      <trans-unit id="remove-string" datatype="html">
+        <source>Remove</source>
+        <target state="final">Eliminar</target>
+      </trans-unit>
+      <trans-unit id="view-profile-string" datatype="html">
+        <source> View Profile</source>
+        <target state="final"> Ver perfil</target>
+      </trans-unit>
+      <trans-unit id="18c764d0476eee6ef89686a85dbd6e682c9a0dac" datatype="html" approved="yes">
+        <source> View Profile</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/home/home.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-table.component.html</context>
+          <context context-type="linenumber">132</context>
+        </context-group>
+        <target state="final"> Ver perfil</target>
+      </trans-unit>
+      <trans-unit id="fetch-items-string" datatype="html">
+        <source>Fetch Items</source>
+        <target state="final">Obtener elementos</target>
+      </trans-unit>
+      <trans-unit id="manage-sync-string" datatype="html">
+        <source>Manage Sync</source>
+        <target state="final">Administrar sincronización</target>
+      </trans-unit>
+      <trans-unit id="members-string" datatype="html">
+        <source>Members</source>
+        <target state="final">Miembros</target>
+      </trans-unit>
+      <trans-unit id="ai-configurations-string" datatype="html">
+        <source>AI Configurations</source>
+        <target state="final">Configuraciones de IA</target>
+      </trans-unit>
+      <trans-unit id="certifications-string" datatype="html">
+        <source>Certifications</source>
+        <target state="final">Certificaciones</target>
+      </trans-unit>
+      <trans-unit id="delete-community-string" datatype="html">
+        <source>Delete Community</source>
+        <target state="final">Eliminar comunidad</target>
+      </trans-unit>
+      <trans-unit id="resend-registration-request-string" datatype="html">
+        <source>Resend Registration Request</source>
+        <target state="final">Reenviar solicitud de registro</target>
+      </trans-unit>
+      <trans-unit id="feedback-string" datatype="html">
+        <source>Feedback</source>
+        <target state="final">Retroalimentación</target>
+      </trans-unit>
+      <trans-unit id="configuration-string" datatype="html">
+        <source>Configuration</source>
+        <target state="final">Configuración</target>
+      </trans-unit>
+      <trans-unit id="reports-string" datatype="html">
+        <source>Reports</source>
+        <target state="final">Informes</target>
+      </trans-unit>
+      <trans-unit id="myplanet-reports-string" datatype="html">
+        <source>myPlanet Reports</source>
+        <target state="final">Informes de myPlanet</target>
+      </trans-unit>
+      <trans-unit id="myplanet-logs-string" datatype="html">
+        <source>myPlanet Logs</source>
+        <target state="final">Registros de myPlanet</target>
+      </trans-unit>
+      <trans-unit id="surveys-string" datatype="html">
+        <source>Surveys</source>
+        <target state="final">Encuestas</target>
+      </trans-unit>
       <trans-unit id="cb33b150a0b9e6b88a9aa5fa79f91888dd06784a" datatype="html" approved="yes">
         <source>ltr</source>
         <context-group purpose="location">
@@ -141,6 +241,10 @@
           <context context-type="linenumber">289</context>
         </context-group>
         <target state="final">Cursos</target>
+      </trans-unit>
+      <trans-unit id="course-string" datatype="html" approved="yes">
+        <source>Course</source>
+        <target state="final">Curso</target>
       </trans-unit>
       <trans-unit id="8a6afcf38cbb3107a31ae8636805be7f65182dc8" datatype="html" approved="yes">
         <source>Teams</source>
@@ -721,32 +825,6 @@
           <context context-type="linenumber">17</context>
         </context-group>
         <target state="final">Aceptar</target>
-      </trans-unit>
-      <trans-unit id="8f2f5d3039de4edea4d293b7e252f97890ba3001" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3</context>
-        </context-group>
-        <target state="final">{VAR_SELECT, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a}}</target>
-      </trans-unit>
-      <trans-unit id="60540a18f6f550dae3d7df310404029f4aee2c39" datatype="html" approved="yes">
-        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} survey {survey}}?
-      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
-      }}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">4,35</context>
-        </context-group>
-        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {organización} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {informe} survey {encuesta}}?} many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?}}</target>
-      </trans-unit>
-      <trans-unit id="1eb1f30f33895723870b11dc0c44b5053cd8c67f" datatype="html" approved="yes">
-        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to}}       "/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }   "/> </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
-          <context context-type="linenumber">3,36</context>
-        </context-group>
-        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, aceptar {accept} archivar {archive} rechazar {reject} eliminar {delete} salir {leave} quitar {remove} otorgar liderazgo a {give leadership to}}       "/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single       {el siguiente {data.type, select,         comunidad {community}         nación {nation}         curso {course}         recurso {resource}         documento {document}         reunión {meetup}         miembro {member}         cambio {change}         equipo {team}         empresa {enterprise}         tarea {task}         certificación {certification}         evento {event}         transacción {transaction}         enlace {link}         mensaje {message}         informe {report}         encuesta {survey}}?       }       many       {seleccionados {{data.count}} {data.type, select,         comunidades {communities}         naciones {nations}         cursos {courses}         recursos {resources}         reuniones {meetups}         eventos {events}         encuestas {surveys}}?       }     }   "/> </target>
       </trans-unit>
       <trans-unit id="6ee2b6d3a08e9e94b5203fdb22deffc8508f282e" datatype="html" approved="yes">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
@@ -7266,7 +7344,7 @@
           <context context-type="sourcefile">src/app/teams/teams.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="final">Localización</target>
+        <target state="final">Local</target>
       </trans-unit>
       <trans-unit id="ff3ea7f842c957866829b17b70c6b1cdf6e0f3d6" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, community {Connected with Nation} nation {Connected with Earth}}</source>
@@ -8046,7 +8124,7 @@
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">304</context>
         </context-group>
-        <target state="final">Tienes <x id="PH" equiv-text="msg"/> <x id="PH_1" equiv-text="team.name"/></target>
+        <target state="final">Has <x id="PH" equiv-text="msg"/> <x id="PH_1" equiv-text="team.name"/></target>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html" approved="yes">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
@@ -10564,7 +10642,7 @@
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {¡Envíos}}</target>
+        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {Envíos}}</target>
       </trans-unit>
       <trans-unit id="81b97b8ea996ad1e4f9fca8415021850214884b1" datatype="html" approved="yes">
         <source>Status</source>
@@ -12112,7 +12190,7 @@
           <context context-type="sourcefile">src/app/courses/courses.component.html</context>
           <context context-type="linenumber">196</context>
         </context-group>
-        <target state="final">Inscribir lista</target>
+        <target state="final">Lista de inscritos</target>
       </trans-unit>
       <trans-unit id="30c21093bd539da428afa90407b8f780c147e64d" datatype="html" approved="yes">
         <source> Information </source>
@@ -12176,7 +12254,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/></target>
+        <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/> Curso</target>
       </trans-unit>
       <trans-unit id="a18b9680aaa88385716e00eef1073df455802fb3" datatype="html" approved="yes">
         <source>Course Title</source>
@@ -12950,7 +13028,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="final">Tus listas actuales de comentarios</target>
+        <target state="final">Tu lista actual de comentarios</target>
       </trans-unit>
       <trans-unit id="e81fe2889a73ea99621380f424f86f5647091025" datatype="html" approved="yes">
         <source>Feedback List</source>
@@ -13438,7 +13516,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro}}</target>
+        <target state="final">{VAR_SELECT, select, community {Nación} nation {Centro}}</target>
       </trans-unit>
       <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}"/>:</source>
@@ -13490,7 +13568,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="final"> Listar todo desde el <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
+        <target state="final"> Listar todo desde la <x id="ICU" equiv-text="{planetType, select, community {Nación} nation {Centro}}"/></target>
       </trans-unit>
       <trans-unit id="917b7901e32a8ae24efb6e798989173042b1a046" datatype="html" approved="yes">
         <source>List Resources</source>
@@ -14572,7 +14650,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">44,46</context>
         </context-group>
-        <target state="final">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas}}}}</target>
+        <target state="final">{VAR_SELECT_1, select, pending {Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {Redes de comunidad conectadas} center {Regiones conectadas}}}}</target>
       </trans-unit>
       <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html" approved="yes">
         <source>
@@ -14666,22 +14744,7 @@
         </context-group>
         <target state="final">Tarea de Sincronización</target>
       </trans-unit>
-      <trans-unit id="d729ab401a97d0712caa5fc38325aeac44cbfe5a" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
-          <context context-type="linenumber">8</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Ejecutar sincronización</target>
-      </trans-unit>
-      <trans-unit id="fb5c601c7ffb4477287a72fea486562a2fb7fab0" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>actualizar<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Actualizar</target>
-      </trans-unit>
+      <!-- Removed obsolete icon-level translation units for Run Sync and Refresh -->
       <trans-unit id="6080b77234e92ad41bb52653b239c4c4f851317d" datatype="html" approved="yes">
         <source>Error</source>
         <context-group purpose="location">
@@ -15309,6 +15372,311 @@
           <context context-type="linenumber">293</context>
         </context-group>
         <target state="final">Mostrar Campos Adicionales</target>
+      </trans-unit>
+      <trans-unit id="080038e8503262160ecb9223c0cc88b22851ec4a" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Run Sync </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
+          <context context-type="linenumber">9,11</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Ejecutar sincronización </target>
+      </trans-unit>
+      <trans-unit id="f44122cb87f0a8e5b9e538f2d6bb8032a0dc2f46" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Refresh </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/manager-sync.component.html</context>
+          <context context-type="linenumber">13,15</context>
+        </context-group>
+        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Actualizar </target>
+      </trans-unit>
+      <trans-unit id="a57b32c730a6bf191d5bd1f6cf86f7d9466589ff" datatype="html">
+        <source> Run Sync</source>
+        <target state="final"> Ejecutar sincronización</target>
+      </trans-unit>s
+      <trans-unit id="c8d1785038d461ec66b5799db21864182b35900a" datatype="html">
+        <source> Refresh</source>
+        <target state="final"> Actualizar</target>
+      </trans-unit>
+      <trans-unit id="addEditCourseToolbar" datatype="html" approved="yes">
+        <source>{this.pageType, select, Add {Add} Edit {Edit}} Course</source>
+        <target state="final">{this.pageType, select, Add {Añadir curso} Edit {Editar curso}}</target>
+      </trans-unit>
+      <trans-unit id="create-team" datatype="html" approved="yes">
+        <source>Create Team</source>
+        <target state="final">Crear equipo</target>
+      </trans-unit>
+      <trans-unit id="update-team" datatype="html" approved="yes">
+        <source>Update Team</source>
+        <target state="final">Editar equipo</target>
+      </trans-unit>
+      <trans-unit id="create-enterprise" datatype="html" approved="yes">
+        <source>Create Enterprise</source>
+        <target state="final">Crear empresa</target>
+      </trans-unit>
+      <trans-unit id="update-enterprise" datatype="html" approved="yes">
+        <source>Update Enterprise</source>
+        <target state="final">Editar empresa</target>
+      </trans-unit>
+      <trans-unit id="share-with-community-panel-title" datatype="html">
+      <source>Share with Community</source>
+      <target state="final">Compartir con la comunidad</target>
+      </trans-unit>
+      <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
+      <source>Share with Team/Enterprise</source>
+      <target state="final">Compartir con un equipo/empresa</target>
+      </trans-unit>
+    <trans-unit id="report-edited" datatype="html">
+      <source>edited</source>
+      <target state="final">editado</target>
+    </trans-unit>
+    <trans-unit id="report-added" datatype="html">
+      <source>added</source>
+      <target state="final">añadido</target>
+    </trans-unit>
+    <trans-unit id="enterprise-updated-success" datatype="html">
+      <source>Enterprise updated successfully</source>
+      <target state="final">Empresa actualizada con éxito</target>
+    </trans-unit>
+    <trans-unit id="team-updated-success" datatype="html">
+      <source>Team updated successfully</source>
+      <target state="final">Equipo actualizado con éxito</target>
+    </trans-unit>
+    <trans-unit id="enterprise-created-success" datatype="html">
+      <source>Enterprise created successfully</source>
+      <target state="final">Empresa creada con éxito</target>
+    </trans-unit>
+    <trans-unit id="team-created-success" datatype="html">
+      <source>Team created successfully</source>
+      <target state="final">Equipo creado con éxito</target>
+    </trans-unit>
+    <trans-unit id="enterprise-left" datatype="html">
+      <source>You have left enterprise</source>
+      <target state="final">Has dejado la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-left" datatype="html">
+      <source>You have left team</source>
+      <target state="final">Has dejado el equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-deleted" datatype="html">
+      <source>You have deleted enterprise.</source>
+      <target state="final">Has eliminado la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-deleted" datatype="html">
+      <source>You have deleted team.</source>
+      <target state="final">Has eliminado el equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-delete-error" datatype="html">
+      <source>There was a problem deleting this enterprise</source>
+      <target state="final">Hubo un problema al eliminar esta empresa.</target>
+    </trans-unit>
+    <trans-unit id="team-delete-error" datatype="html">
+      <source>There was a problem deleting this team.</source>
+      <target state="final">Hubo un problema al eliminar este equipo</target>
+    </trans-unit>
+    <trans-unit id="enterprise-join-request" datatype="html">
+      <source>Sent request to join enterprise</source>
+      <target state="final">Solicitud enviada para unirse a la empresa</target>
+    </trans-unit>
+    <trans-unit id="team-join-request" datatype="html">
+      <source>Sent request to join team</source>
+      <target state="final">Solicitud enviada para unirse al equipo</target>
+    </trans-unit>
+      <trans-unit id="discardDraftButton" datatype="html">
+        <source>Discard Draft</source>
+        <target state="final">Descartar borrador</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">[line number]</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="draftDiscardedMessage" datatype="html">
+        <source>Draft discarded</source>
+        <target state="final">Borrador descartado</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">[line number]</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="64fb6aa0ce103ff887dc3318ae6b5cc7d487db90" datatype="html">
+        <source>You have unsaved changes.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+        <target state="final">Tienes cambios sin guardar.</target>
+      </trans-unit>
+      <trans-unit id="unsaved.changes" datatype="html">
+        <source>You have unsaved changes.</source>
+        <target state="final">Tienes cambios sin guardar.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="confirm.action" datatype="html">
+        <source>Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}
+      the {data.amount, select, single
+      {following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        document {document}
+        meetup {meetup}
+        user {member}
+        change {change}
+        team {team}
+        enterprise {enterprise}
+        task {task}
+        certification {certification}
+        event {event}
+        transaction {transaction}
+        link {link}
+        news {message}
+        report {report}
+        changes {form}
+        survey {survey}}?
+      }
+      many
+      {selected {{data.count}} {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}
+        event {events}
+        survey {surveys}}?
+      }
+    }</source>
+        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el <x id="ICU_1" equiv-text="{data.amount, select, single
+      {siguiente {data.type, select,
+        community {comunidad}
+        nation {centro}
+        course {curso}
+        resource {recurso}
+        document {documento}
+        meetup {encuentro}
+        user {miembro}
+        change {cambio}
+        team {equipo}
+        enterprise {empresa}
+        task {tarea}
+        certification {certificación}
+        event {evento}
+        transaction {transacción}
+        link {enlace}
+        news {mensaje}
+        report {informe}
+        changes {formulario}
+        survey {encuesta}}?
+      }
+      many
+      {seleccionado {{data.count}} {data.type, select,
+        community {comunidades}
+        nation {centros}
+        course {cursos}
+        resource {recursos}
+        meetup {encuentros}
+        event {eventos}
+        survey {encuestas}}?
+      }
+    }"/> </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">3,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0669cf7b929e7e2bd77ca8a8f7139c50b882cc08" datatype="html">
+        <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}"/> the <x id="ICU_1" equiv-text="{data.amount, select, single
+      {following {data.type, select,
+        community {community}
+        nation {nation}
+        course {course}
+        resource {resource}
+        document {document}
+        meetup {meetup}
+        user {member}
+        change {change}
+        team {team}
+        enterprise {enterprise}
+        task {task}
+        certification {certification}
+        event {event}
+        transaction {transaction}
+        link {link}
+        news {message}
+        report {report}
+        changes {form}
+        survey {survey}}?
+      }
+      many
+      {selected {{data.count}} {data.type, select,
+        community {communities}
+        nation {nations}
+        course {courses}
+        resource {resources}
+        meetup {meetups}
+        event {events}
+        survey {surveys}}?
+      }
+    }"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">3,38</context>
+        </context-group>
+        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {reject} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single
+      {siguiente {data.type, select,
+        community {comunidad}
+        nation {centro}
+        course {curso}
+        resource {recurso}
+        document {documento}
+        meetup {encuentro}
+        user {miembro}
+        change {cambio}
+        team {equipo}
+        enterprise {empresa}
+        task {tarea}
+        certification {certificación}
+        event {evento}
+        transaction {transacción}
+        link {enlace}
+        news {mensaje}
+        report {informe}
+        changes {formulario}
+        survey {encuesta}}?
+      }
+      many
+      {seleccionado {{data.count}} {data.type, select,
+        community {comunidades}
+        nation {centros}
+        course {cursos}
+        resource {recursos}
+        meetup {encuentros}
+        event {eventos}
+        survey {encuestas}}?
+      }
+    }"/> </target>
+      </trans-unit>
+      <trans-unit id="133e6f9a3944e05cebbba067ae698f8913dd9ad5" datatype="html">
+        <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <target state="final">{VAR_SELECT, select, accept {aceptar} archive {archivar} reject {rechazar} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}</target>
+      </trans-unit>
+      <trans-unit id="54dafe524673730a17951bde9ba36fd59d9086cc" datatype="html">
+        <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} survey {survey}}?
+      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
+      }}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
+          <context context-type="linenumber">5,37</context>
+        </context-group>
+        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {empresa} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {informe} changes {página} survey {encuesta}}?
+      } many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?
+      }}</target>
       </trans-unit>
     </body>
   </file>

@@ -29,6 +29,7 @@ export interface ChatMessage {
 }
 
 export interface ChatItem {
+  id: string;
   query: string;
   response: string;
 }

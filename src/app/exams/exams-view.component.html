@@ -9,6 +9,7 @@
     <span class="ellipsis-title" *ngIf="!isLoading">{{title ? title + ': ' : ''}}</span>
     <span *ngIf="!isLoading">
       <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
+      <span *ngIf="previewMode" i18n>(Preview)</span>
       <button *ngIf="mode !== 'take'" mat-icon-button [matMenuTriggerFor]="infoMenu">
         <mat-icon>info</mat-icon>
       </button>
@@ -17,7 +18,7 @@
       <ng-container>
         <button mat-menu-item disabled>
           <mat-icon>person</mat-icon>
-          <span i18n>{{ submittedBy || (previewMode ? '(Preview)' : '') }}</span>
+          <span i18n>{{ submittedBy || 'Unknown' }}</span>
         </button>
       </ng-container>
       <ng-container *ngIf="updatedOn">

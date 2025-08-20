@@ -97,20 +97,17 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addReply(news) {
-    const label = this.formLabel(news);
+    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
+    const patchedNews = { ...news, viewableBy };
+    const label = this.formLabel(patchedNews);
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
         title: $localize`Reply to ${label}`,
         placeholder:  $localize`Your ${label}`,
         initialValue: '',
-        news: {
-          replyTo: news._id,
-          messagePlanetCode: news.messagePlanetCode,
-          messageType: news.messageType,
-          viewIn: news.viewIn
-        }
+        news: { ...patchedNews, replyTo: news._id }
       });
-      this.sendNewsNotifications(news);
+      this.sendNewsNotifications(patchedNews);
     });
   }
 
@@ -121,7 +118,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.showLess = true;
     }
-    if (this.item.doc.news?.conversations.length > 1) {
+    if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
     } else {
       const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
@@ -151,18 +148,21 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   editNews(news) {
-    const label = this.formLabel(news);
+    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
+    const patchedNews = { ...news, viewableBy };
+    const label = this.formLabel(patchedNews);
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
       initialValue,
-      news
+      news: patchedNews
     });
   }
 
   formLabel(news) {
-    return news.viewableBy === 'teams' ? $localize`Message` : $localize`Voice`;
+    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
+    return [ 'team', 'teams' ].includes(viewableBy) ? $localize`Message` : $localize`Voice`;
   }
 
   showReplies(news) {

@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.19.95",
+  "version": "0.20.8",
   "myplanet": {
-    "latest": "v0.28.9",
-    "min": "v0.27.9"
+    "latest": "v0.29.10",
+    "min": "v0.28.10"
   },
   "scripts": {
     "ng": "ng",
@@ -49,6 +49,7 @@
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
+    "marked": "^15.0.12",
     "material-design-icons": "^3.0.1",
     "material-icons": "^0.3.1",
     "mime": "4.0.0",
@@ -82,9 +83,9 @@
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
     "eslint": "^8.23.0",
-    "eslint-plugin-import": "latest",
-    "eslint-plugin-jsdoc": "latest",
-    "eslint-plugin-prefer-arrow": "latest",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsdoc": "^46.10.1",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "htmlhint-ng2": "0.0.13",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
