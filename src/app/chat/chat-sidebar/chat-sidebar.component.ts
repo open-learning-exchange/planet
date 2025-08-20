@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,6 +15,7 @@ import { UserService } from '../../shared/user.service';
 
 interface TitleForm {
   title: FormControl<string>;
+  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
@@ -139,7 +140,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.updateConversation(conversation, title);
       this.toggleEditTitle();
     } else {
-      showFormErrors(this.titleForm[conversation._id].controls as any);
+      showFormErrors(this.titleForm[conversation._id].controls);
     }
   }
 

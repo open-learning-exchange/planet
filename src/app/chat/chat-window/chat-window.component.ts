@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
@@ -12,6 +11,7 @@ import { StateService } from '../../shared/state.service';
 
 interface PromptForm {
   prompt: FormControl<string>;
+  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
@@ -231,7 +231,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.promptForm.valid) {
       this.submitPrompt();
     } else {
-      showFormErrors(this.promptForm.controls as any);
+      showFormErrors(this.promptForm.controls);
     }
   }
 
