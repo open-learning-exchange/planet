@@ -5,18 +5,16 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import {
-  filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter
-} from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { SelectionModel } from '@angular/cdk/collections';
 import { findByIdInArray, filterById } from '../shared/utils';
 import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -415,8 +413,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validator: (ac: FormGroup<SurveyFilterForm>) =>
-            Object.values(ac.controls).some(control => control.value) ? null : { required: true }
+          validator: (ac: FormGroup<SurveyFilterForm>) => Object.values(ac.controls).some(control => control.value) ? null : { required: true }
         }
       }
     );
