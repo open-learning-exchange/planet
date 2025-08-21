@@ -1,0 +1,51 @@
+<planet-myplanet-toolbar i18n-title title="Logs"
+  [types]="types"
+  [showTypeFilter]="true"
+  [versions]="versions"
+  [selectedVersion]="selectedVersion"
+  [selectedType]="selectedType"
+  [timeFilterOptions]="timeFilterOptions"
+  [selectedTimeFilter]="selectedTimeFilter"
+  [formGroup]="filtersForm"
+  [showCustomDateFields]="showCustomDateFields"
+  [minDate]="minDate"
+  [today]="today"
+  [searchValue]="searchValue"
+  [disableShowAllTime]="isDefaultTimeFilter"
+  (typeChange)="onTypeChange($event)"
+  (versionChange)="onVersionChange($event)"
+  (timeFilterChange)="onTimeFilterChange($event)"
+  (search)="filterData($event)"
+  (clear)="clearFilters()"
+  (resetDateFilter)="resetDateFilter()"
+></planet-myplanet-toolbar>
+<div class="space-container">
+  <mat-toolbar>
+    <mat-toolbar-row class="primary-color font-size-1">
+      <span i18n>myPlanet</span>
+      <span class="toolbar-fill"></span>
+      <button mat-raised-button color="accent" (click)="exportAll()" *ngIf="!isEmpty">
+        <span i18n>Export All</span>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <ng-container *ngFor="let planet of apklogs">
+      <mat-expansion-panel *ngIf="planet.children.length">
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{planet.nameDoc?.name || planet.doc?.name}} ({{planet.children.length}})</mat-panel-title>
+        </mat-expansion-panel-header>
+        <planet-myplanet-table dataType="logs" [data]="planet.children"></planet-myplanet-table>
+        <button mat-raised-button color="accent" (click)="exportSingle(planet)" style="margin-right: 2rem;" *ngIf="!isEmpty">
+          <span i18n>Export</span>
+        </button>
+      </mat-expansion-panel>
+    </ng-container>
+    <ng-container *ngIf="isLoading">
+      <mat-panel-title i18n="@@loadingLogs">Loading logs...</mat-panel-title>
+    </ng-container>
+    <ng-container *ngIf="!isLoading && isEmpty">
+      <mat-panel-title i18n>No record was found</mat-panel-title>
+    </ng-container>
+  </div>
+</div>
