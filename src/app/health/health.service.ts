@@ -7,17 +7,23 @@ import { UsersService } from '../users/users.service';
 import { stringToHex, ageFromBirthDate } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
 
+interface EncryptionDoc { key?: string; iv?: string; createdOn?: number }
+interface SecurityDoc { members?: { roles?: string[] } }
+interface HealthDoc { userKey?: string; lastExamination?: number; [key: string]: unknown }
+interface UserDoc { birthDate: number; gender: string; [key: string]: unknown }
+interface EventData { selfExamination?: boolean; [key: string]: unknown }
+
 @Injectable({
   providedIn: 'root'
 })
 export class HealthService {
 
-  healthData: any = {};
+  healthData: Record<string, unknown> = {};
   readonly encryptedFields = [
     'events', 'profile', 'lastExamination', 'userKey',
     'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
    ];
-   private eventDetail = new BehaviorSubject({});
+   private eventDetail = new BehaviorSubject<Record<string, unknown>>({});
    shareEventDetail = this.eventDetail.asObservable();
 
   constructor(
@@ -32,55 +38,58 @@ export class HealthService {
 
   getUserKey(userDb: string, createIfNone = false) {
     return this.couchService.findAll(userDb).pipe(
-      switchMap((docs: any[]) => {
-        const first = docs.reduce((minDoc, doc) => doc.createdOn < minDoc.createdOn ? doc : minDoc, { createdOn: Infinity });
+      switchMap((docs: EncryptionDoc[]) => {
+        const first: EncryptionDoc = docs.reduce(
+          (minDoc, doc) => doc.createdOn! < (minDoc.createdOn || Infinity) ? doc : minDoc,
+          { createdOn: Infinity }
+        );
         return first.key && first.iv ?
           of({ doc: first }) :
           createIfNone ?
           this.createUserKey(userDb) :
-          of({ doc: {} });
+          of({ doc: {} as EncryptionDoc });
       })
     );
   }
 
-  nextEvent(events) {
+  nextEvent(events: Record<string, unknown>) {
     this.eventDetail.next(events);
   }
 
-  createUserKey(userDb) {
+  createUserKey(userDb: string) {
     return this.couchService.updateDocument(
       userDb,
       { key: this.generateKey(32), iv: this.generateKey(16), createdOn: this.couchService.datePlaceholder }
     );
   }
 
-  userHealthSecurity(userDb) {
-    return this.couchService.get(`${userDb}/_security`).pipe(switchMap((securityDoc: any) => {
+  userHealthSecurity(userDb: string) {
+    return this.couchService.get(`${userDb}/_security`).pipe(switchMap((securityDoc: SecurityDoc) => {
       const securityHasHealth = securityDoc.members === undefined || securityDoc.members.roles === undefined ||
         securityDoc.members.roles.indexOf('health') === -1;
       const securityPost = securityHasHealth ?
         this.couchService.put(`${userDb}/_security`, {
           ...securityDoc,
-          members: { ...securityDoc.members, roles: [ ...(securityDoc.members.roles || []), 'health' ] }
+          members: { ...securityDoc.members, roles: [ ...(securityDoc.members?.roles || []), 'health' ] }
         }) :
         of({});
       return securityPost;
     }));
   }
 
-  getHealthData(userId, { docId = userId, createKeyIfNone = false } = {}) {
+  getHealthData(userId: string, { docId = userId, createKeyIfNone = false }: { docId?: string; createKeyIfNone?: boolean } = {}) {
     return this.getUserKey(this.userDatabaseName(userId), createKeyIfNone).pipe(
-      switchMap(({ doc }: any) => forkJoin([ this.getHealthDoc(docId, doc), of(doc) ]))
+      switchMap(({ doc }: { doc: EncryptionDoc }) => forkJoin([ this.getHealthDoc(docId, doc), of(doc) ]))
     );
   }
 
-  private getHealthDoc(userId, { key, iv }) {
+  private getHealthDoc(userId: string, { key, iv }: EncryptionDoc) {
     return this.couchService.post(`health/_design/health/_show/decrypt/${userId}`, { key, iv }).pipe(
-      catchError(() => of({ _id: userId, profile: {}, events: [] }))
+      catchError(() => of<HealthDoc>({ _id: userId, profile: {}, events: [] }))
     );
   }
 
-  private postHealthDoc(oldDoc, newDoc, keyDoc) {
+  private postHealthDoc(oldDoc: Record<string, unknown>, newDoc: Record<string, unknown>, keyDoc: EncryptionDoc) {
     const { encryptData, ...newHealthDoc } = Object.entries({ ...oldDoc, ...newDoc }).reduce((healthObj, [ key, value ]) => {
       const isEncryptField = this.encryptedFields.indexOf(key) > -1;
       return {
@@ -94,7 +103,7 @@ export class HealthService {
     );
   }
 
-  addEvent(userId: string, creatorId: string, oldEvent: any, newEvent: any) {
+  addEvent(userId: string, creatorId: string, oldEvent: Record<string, unknown>, newEvent: EventData) {
     this.usersService.requestUsers();
     return forkJoin([
       this.getHealthData(userId, { createKeyIfNone: true }),
@@ -102,7 +111,7 @@ export class HealthService {
       this.couchService.get(`_users/${userId}`),
       this.couchService.currentTime()
     ]).pipe(
-      switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], user, time ]: [ any, any, any, number ]) => {
+      switchMap(([ [ healthDoc, keyDoc ], [ creatorHealthDoc, creatorKeyDoc ], user, time ]: [ [HealthDoc, EncryptionDoc], [HealthDoc, EncryptionDoc], UserDoc, number ]) => {
         const userKey = healthDoc.userKey || this.generateKey(32);
         const creatorKey = newEvent.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
         const age = ageFromBirthDate(time, user.birthDate);
@@ -118,7 +127,7 @@ export class HealthService {
     );
   }
 
-  newEventDoc(oldEvent: any, newEvent: any, time: number) {
+  newEventDoc(oldEvent: Record<string, unknown>, newEvent: EventData, time: number) {
     return {
       ...oldEvent,
       ...newEvent,
@@ -127,13 +136,13 @@ export class HealthService {
     };
   }
 
-  postHealthProfileData(data) {
+  postHealthProfileData(data: { _id: string; _rev?: string; profile: Record<string, unknown> }) {
     return this.getHealthData(data._id, { createKeyIfNone: true }).pipe(
-      switchMap(([ healthDoc, keyDoc ]: any[]) => this.postHealthDoc(healthDoc, data, keyDoc))
+      switchMap(([ healthDoc, keyDoc ]: [HealthDoc, EncryptionDoc]) => this.postHealthDoc(healthDoc, data, keyDoc))
     );
   }
 
-  generateKey(size: number) {
+  generateKey(size: number): string | undefined {
     if (size % 16 !== 0) {
       console.error('Invalid key size');
       return;
@@ -145,7 +154,7 @@ export class HealthService {
     return keyArray.reduce((hexString, number) => `${hexString}${hexDigits[Math.floor(number / 16)]}${hexDigits[number % 16]}`, '');
   }
 
-  getExaminations(planetCode) {
+  getExaminations(planetCode: string) {
     return this.couchService.findAll('health', findDocuments({ planetCode }));
   }
 
