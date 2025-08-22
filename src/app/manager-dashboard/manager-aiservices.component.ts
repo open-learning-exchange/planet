@@ -8,6 +8,7 @@ import { ConfigurationService } from '../configuration/configuration.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
+import { createEmptyProviderMap } from '../../shared/ai-providers';
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
@@ -37,7 +38,14 @@ export class ManagerAIServicesComponent implements OnInit {
 
   ngOnInit() {
     this.configuration = this.stateService.configuration;
-    this.configuration.keys = this.stateService.keys;
+    this.configuration.keys = {
+      ...createEmptyProviderMap(''),
+      ...this.stateService.keys
+    };
+    this.configuration.models = {
+      ...createEmptyProviderMap(''),
+      ...this.configuration.models
+    };
     this.initForm();
   }
 
