@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
-import { combineLatest, Subject, of } from 'rxjs';
+import { combineLatest, Subject, of, forkJoin } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
 import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
 import { ReportsService } from './reports.service';
@@ -16,7 +16,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap
+  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap, arrangePlanetsIntoHubs
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -26,6 +26,7 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { ManagerService } from '../manager.service';
 
 Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip);
 
@@ -41,6 +42,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   parentCode = '';
   planetCode = '';
   planetName = '';
+  planetType = this.stateService.configuration.planetType;
   reports: any = {};
   charts: Chart[] = [];
   users: any[] = [];
@@ -79,6 +81,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   voicesLoading = true;
   healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
+  hubs: { hubs: any[], sandboxPlanets: any[] } = { hubs: [], sandboxPlanets: [] };
+  selectedCommunity: any = 'All';
+  communityFilterOptions: { label: string, value: any }[] = [];
 
   constructor(
     private activityService: ReportsService,
@@ -94,6 +99,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
+    private managerService: ManagerService
   ) {
     this.initDateFilterForm();
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
@@ -138,7 +144,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         this.initializeData(!this.codeParam);
       });
     });
-
+    this.getHubs();
     this.stateService.requestData(dbName, 'local');
   }
 
@@ -402,6 +408,49 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       return of([]);
     }
     return this.couchService.findAll('teams', findDocuments({ teamId: team._id, docType: 'membership' }));
+  }
+
+  getHubs() {
+    forkJoin([
+      this.managerService.getChildPlanets(),
+      this.couchService.findAll('hubs')
+    ]).subscribe(([ data, hubs ]) => {
+      this.hubs = arrangePlanetsIntoHubs(attachNamesToPlanets(data), hubs);
+      this.setCommunityFilterOptions();
+    }, (error) => console.log(error));
+  }
+
+  onCommunityFilterChange(selectedCommunity) {
+    this.selectedCommunity = selectedCommunity;
+
+    if (selectedCommunity === 'All') {
+      // Reset to nation-level
+      this.planetCode = this.stateService.configuration.code;
+      this.parentCode = this.stateService.configuration.parentCode;
+      this.planetName = this.stateService.configuration.planetName || '';
+      // Navigate to nation-level URL
+      this.router.navigate(['../../'], { relativeTo: this.route });
+    } else {
+      // Set codes for the selected community
+      this.planetCode = selectedCommunity.code;
+      this.parentCode = selectedCommunity.parentCode;
+      this.planetName = selectedCommunity.name || '';
+      // Navigate to community-specific URL with parentCode and code
+      this.router.navigate(['../../', this.parentCode, this.planetCode], { relativeTo: this.route, queryParamsHandling: 'preserve' });
+    }
+  }
+
+  setCommunityFilterOptions() {
+    this.communityFilterOptions = [
+      { label: $localize`All`, value: 'All' },
+      ...this.hubs.hubs.map(hub => ({ label: hub.name, value: hub })),
+      ...this.hubs.sandboxPlanets.map(planet => ({ label: planet.name, value: planet }))
+    ];
+    // Set the selected community based on current planetCode
+    const currentCommunity = this.communityFilterOptions.find(option =>
+      option.value !== 'All' && option.value.code === this.planetCode
+    );
+    this.selectedCommunity = currentCommunity ? currentCommunity.value : 'All';
   }
 
   onTeamsFilterChange(filterValue) {
