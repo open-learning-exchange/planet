@@ -1,6 +1,6 @@
 FROM treehouses/nginx-tags:arm
 RUN rm -rf /usr/share/nginx/html/*
-RUN apk add --no-cache \
+RUN apk add --no-cache --update\
       fcgi \
     fcgiwrap \
     spawn-fcgi \
@@ -13,7 +13,8 @@ RUN apk add --no-cache \
     jq \
       openssl \
     libintl \
-    gettext
+    gettext \
+    nodejs
 
 COPY ./docker/planet/default.conf.template /etc/nginx/templates/
 COPY package.json ./
