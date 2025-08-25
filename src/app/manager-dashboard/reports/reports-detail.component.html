@@ -8,9 +8,6 @@
       </ng-container>
       <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
       <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-      <ng-container *ngIf="planetType === 'nation' &&  communityFilterOptions.length !== 0">
-        <ng-container *ngTemplateOutlet="communityFilterSelect"></ng-container>
-      </ng-container>
       <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
       <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
     </mat-toolbar-row>
@@ -39,9 +36,6 @@
     <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
     </mat-toolbar-row>
-    <ng-container *ngIf="planetType === 'nation' &&  communityFilterOptions.length !== 0">
-      <ng-container *ngTemplateOutlet="communityFilterSelect"></ng-container>
-    </ng-container>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
       <span class="toolbar-fill"></span>
@@ -73,13 +67,6 @@
       <mat-optgroup label="Enterprises" i18n-label>
         <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
       </mat-optgroup>
-    </mat-select>
-  </mat-form-field>
-</ng-template>
-<ng-template #communityFilterSelect>
-  <mat-form-field class="margin-lr-5 font-size-1">
-    <mat-select i18n-placeholder placeholder="Filter Community" (selectionChange)="onCommunityFilterChange($event.value)" [value]="selectedCommunity">
-      <mat-option *ngFor="let option of communityFilterOptions" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
 </ng-template>
