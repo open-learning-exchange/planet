@@ -1,137 +1,107 @@
 <mat-toolbar>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <button class="btnBack" mat-icon-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span i18n>Reports</span>
-    <span class="toolbar-fill"></span>
-    <form [formGroup]="dateFilterForm" *ngIf="showCustomDateFields">
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <mat-label i18n>Start Date</mat-label>
-        <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-        <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
-      </mat-form-field>
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <mat-label i18n>End Date</mat-label>
-        <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-    </form>
-    <mat-form-field class="margin-lr-5 font-size-1">
-      <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-        <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="font-size-1 margin-lr-5">
-      <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
-        <mat-option i18n value="All">All Members</mat-option>
-        <mat-optgroup label="Teams" i18n-label>
-          <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
-        </mat-optgroup>
-        <mat-optgroup label="Enterprises" i18n-label>
-          <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
-        </mat-optgroup>
-      </mat-select>
-    </mat-form-field>
-    <mat-button-toggle-group
-      class="font-size-1 margin-lr-5"
-      (change)="onFilterChange($event.value)"
-      #filterGroup="matButtonToggleGroup">
-      <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
-        Planet
-      </mat-button-toggle>
-      <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
-        myPlanet
-      </mat-button-toggle>
-      <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
-        Both
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-    <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
-      <span i18n>Clear</span>
-    </button>
+    <mat-toolbar-row>
+      <ng-container *ngTemplateOutlet="backBtn"></ng-container>
+      <ng-container *ngIf="showCustomDateFields">
+        <ng-container *ngTemplateOutlet="startDateField"></ng-container>
+        <ng-container *ngTemplateOutlet="endDateField"></ng-container>
+      </ng-container>
+      <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
+      <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
+      <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
+      <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
+    </mat-toolbar-row>
   </ng-container>
 
   <ng-template #mobileView>
     <mat-toolbar-row>
-      <button class="btnBack" mat-icon-button (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <span i18n>Reports</span>
-      <span class="toolbar-fill"></span>
+      <ng-container *ngTemplateOutlet="backBtn"></ng-container>
       <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
         <mat-icon>filter_list</mat-icon>
       </button>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-          <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-toolbar-row>
-    <!-- Start date row -->
-    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <form [formGroup]="dateFilterForm" class="date-form">
-        <mat-form-field class="start-date full-width">
-          <mat-label i18n>Start Date</mat-label>
-          <input matInput formControlName="startDate" [matDatepicker]="startDateMobile" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
-          <mat-datepicker-toggle matSuffix [for]="startDateMobile"></mat-datepicker-toggle>
-          <mat-datepicker #startDateMobile></mat-datepicker>
-          <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
-        </mat-form-field>
-      </form>
+      <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <form [formGroup]="dateFilterForm" class="date-form">
-        <mat-form-field class="end-date full-width">
-    <!-- End date row -->
-        <mat-label i18n>End Date</mat-label>
-          <input matInput formControlName="endDate" [matDatepicker]="endDateMobile" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
-          <mat-datepicker-toggle matSuffix [for]="endDateMobile"></mat-datepicker-toggle>
-          <mat-datepicker #endDateMobile></mat-datepicker>
-        </mat-form-field>
-      </form>
+      <div class="full-width">
+        <ng-container *ngTemplateOutlet="startDateField"></ng-container>
+      </div>
+    </mat-toolbar-row>
+    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
+      <div class="full-width">
+        <ng-container *ngTemplateOutlet="endDateField"></ng-container>
+      </div>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
-      <mat-form-field class="font-size-1">
-        <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
-          <mat-option i18n value="All">All Members</mat-option>
-          <mat-optgroup label="Teams" i18n-label>
-            <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
-          </mat-optgroup>
-          <mat-optgroup label="Enterprises" i18n-label>
-            <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
-          </mat-optgroup>
-        </mat-select>
-      </mat-form-field>
+      <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
     </mat-toolbar-row>
-    <!-- App filter toggle group row -->
     <mat-toolbar-row *ngIf="showFiltersRow">
-      <mat-button-toggle-group
-        class="font-size-1"
-        (change)="onFilterChange($event.value)"
-        #filterGroup="matButtonToggleGroup">
-        <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>
-          Planet
-        </mat-button-toggle>
-        <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>
-          myPlanet
-        </mat-button-toggle>
-        <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>
-          Both
-        </mat-button-toggle>
-      </mat-button-toggle-group>
+      <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
       <span class="toolbar-fill"></span>
-      <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5">
-        <span i18n>Clear</span>
-      </button>
+      <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
     </mat-toolbar-row>
   </ng-template>
 </mat-toolbar>
+
+<!-- Shared templates -->
+<ng-template #backBtn>
+  <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  <span i18n>Reports</span>
+  <span class="toolbar-fill"></span>
+</ng-template>
+<ng-template #timeFilterSelect>
+  <mat-form-field class="margin-lr-5 font-size-1">
+    <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+      <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</ng-template>
+<ng-template #teamsFilterSelect>
+  <mat-form-field class="font-size-1 margin-lr-5">
+    <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
+      <mat-option i18n value="All">All Members</mat-option>
+      <mat-optgroup label="Teams" i18n-label>
+        <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
+      </mat-optgroup>
+      <mat-optgroup label="Enterprises" i18n-label>
+        <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
+      </mat-optgroup>
+    </mat-select>
+  </mat-form-field>
+</ng-template>
+<ng-template #planetToggleGroup>
+  <mat-button-toggle-group class="font-size-1 margin-lr-5" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
+    <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>Planet</mat-button-toggle>
+    <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>myPlanet</mat-button-toggle>
+    <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>Both</mat-button-toggle>
+  </mat-button-toggle-group>
+</ng-template>
+<ng-template #clearBtn>
+  <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5"><span i18n>Clear</span></button>
+</ng-template>
+<ng-template #startDateField>
+  <div [formGroup]="dateFilterForm">
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-label i18n>Start Date</mat-label>
+      <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
+      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+      <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
+    </mat-form-field>
+    </div>
+</ng-template>
+<ng-template #endDateField>
+  <div [formGroup]="dateFilterForm">
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-label i18n>End Date</mat-label>
+      <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
+      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+  </div>
+</ng-template>
+
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">

@@ -3,7 +3,7 @@
 $screen-md: 1200px;
 
 :host {
-  @include screen-sizes($screen-md, $screen-sm);
+  @include screen-sizes($screen-md);
 }
 
 mat-toolbar mat-form-field {
@@ -11,10 +11,6 @@ mat-toolbar mat-form-field {
   &.mat-form-field-type-no-underline {
     margin-top: inherit;
   }
-}
-
-.diagnosis-trend {
-  line-height: 3.7em;
 }
 
 .subheading {
@@ -49,27 +45,15 @@ mat-toolbar mat-form-field {
   }
 }
 
-.mobile-view-styles {
-  display: none;
-}
-
 @media(max-width: #{$screen-md}) {
-  .mobile-view-styles {
-    display: block;
-  }
-
   .mat-form-field {
-    width: 100%;
-  }
-
-  .date-form {
     width: 100%;
   }
 
   mat-button-toggle-group {
     width: 100%;
     display: flex;
-    
+
     .mat-button-toggle {
       flex: 1;
     }
