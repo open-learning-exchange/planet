@@ -93,7 +93,7 @@ export class LogsMyPlanetComponent implements OnInit {
 
   filterData(filterValue: string) {
     this.searchValue = filterValue;
-    this.apklogs = this.allPlanets.filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, filterValue));
+    this.applyFilters();
   }
 
   setAllPlanets(planets: any[], apklogs: any[]) {
@@ -179,10 +179,12 @@ export class LogsMyPlanetComponent implements OnInit {
   }
 
   applyFilters() {
-    this.apklogs = this.allPlanets.map(planet => ({
-      ...planet,
-      children: this.filterLogs(planet.children)
-    }));
+    this.apklogs = this.allPlanets
+      .filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .map(planet => ({
+        ...planet,
+        children: this.filterLogs(planet.children)
+      }));
     this.isEmpty = areNoChildren(this.apklogs);
   }
 
