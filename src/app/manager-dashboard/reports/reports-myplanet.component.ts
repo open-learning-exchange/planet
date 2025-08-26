@@ -19,6 +19,7 @@ import { CsvService } from '../../shared/csv.service';
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
+  private readonly defaultTimeFilter: string = 'all';
   private allPlanets: any[] = [];
   searchValue = '';
   planets: any[] = [];
@@ -30,9 +31,6 @@ export class ReportsMyPlanetComponent implements OnInit {
   deviceTypes: typeof DeviceType = DeviceType;
   planetType = this.stateService.configuration.planetType;
   configuration = this.stateService.configuration;
-  get childType() {
-    return this.planetType === 'center' ? 'Community' : 'Nation';
-  }
   hubId: string | null = null;
   hub = { spokes: [] };
   startDate: Date = new Date(new Date().setFullYear(new Date().getFullYear() - 1));
@@ -42,10 +40,15 @@ export class ReportsMyPlanetComponent implements OnInit {
   today = new Date();
   versions: string[] = [];
   selectedVersion = '';
-  disableShowAllTime = true;
   selectedTimeFilter = 'all';
   timeFilterOptions = this.activityService.standardTimeFilters;
   showCustomDateFields = false;
+  get childType() {
+    return this.planetType === 'center' ? 'Community' : 'Nation';
+  }
+  get isDefaultTimeFilter(): boolean {
+    return this.selectedTimeFilter === this.defaultTimeFilter;
+  }
 
   constructor(
     private csvService: CsvService,
@@ -83,7 +86,6 @@ export class ReportsMyPlanetComponent implements OnInit {
       if (!this.reportsForm.errors?.invalidDates) {
         this.applyFilters();
       }
-      this.updateShowAllTimeButton();
     });
   }
 
@@ -144,12 +146,6 @@ export class ReportsMyPlanetComponent implements OnInit {
       return dates;
     }));
     return new Date(earliest);
-  }
-
-  updateShowAllTimeButton() {
-    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
-    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
-    this.disableShowAllTime = startIsMin && endIsToday;
   }
 
   onVersionChange(version: string) {
