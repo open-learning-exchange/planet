@@ -2,10 +2,10 @@ export const environment = {
   production: false,
   test: false,
   chatAddress: window.location.protocol + '//' + window.location.hostname + ':{{CHAT_PORT}}',
-  couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
+  couchAddress: window.location.protocol + '//' + window.location.hostname + ':{{COUCH_PORT}}',
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
-  parentProtocol: 'https',
+  parentProtocol: '{{PARENT_PROTOCOL}}',
   upgradeAddress: window.location.origin + '/upgrade',
   syncAddress: window.location.protocol + '//localhost:5984'
 };
