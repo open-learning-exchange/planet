@@ -97,17 +97,20 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addReply(news) {
-    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
-    const patchedNews = { ...news, viewableBy };
-    const label = this.formLabel(patchedNews);
+    const label = this.formLabel(news);
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
         title: $localize`Reply to ${label}`,
         placeholder:  $localize`Your ${label}`,
         initialValue: '',
-        news: { ...patchedNews, replyTo: news._id }
+        news: {
+          replyTo: news._id,
+          messagePlanetCode: news.messagePlanetCode,
+          messageType: news.messageType,
+          viewIn: news.viewIn
+        }
       });
-      this.sendNewsNotifications(patchedNews);
+      this.sendNewsNotifications(news);
     });
   }
 
@@ -148,21 +151,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   editNews(news) {
-    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
-    const patchedNews = { ...news, viewableBy };
-    const label = this.formLabel(patchedNews);
+    const label = this.formLabel(news);
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
       title: $localize`Edit ${label}`,
       placeholder: $localize`Your ${label}`,
       initialValue,
-      news: patchedNews
+      news
     });
   }
 
   formLabel(news) {
-    const viewableBy = news.viewableBy || (this.item && this.item.doc && this.item.doc.viewableBy) || this['viewableBy'] || 'community';
-    return [ 'team', 'teams' ].includes(viewableBy) ? $localize`Message` : $localize`Voice`;
+    return news.viewableBy === 'teams' ? $localize`Message` : $localize`Voice`;
   }
 
   showReplies(news) {
