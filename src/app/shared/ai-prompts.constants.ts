@@ -4,7 +4,7 @@ export const surveyAnalysisPrompt = (examType, examName, examDescription, payloa
   Please generate a detailed AI Analysis for PDF export, organized into 4 sections:
 
   1. INDIVIDUAL QUESTION ANALYSIS
-    If the question is a **Closed-ended questions(type - select or selectMultiple):**
+    If the question is a **Closed-ended questions(type - select or selectMultiple or matrix[1-9 choices]):**
         - List the top three answer choices with absolute counts and percentages.
         - In addition to the top three, highlight any answer choice with fewer than 10% of responses and suggest why it might be under-selected
         - Create a hypothesis for the selections

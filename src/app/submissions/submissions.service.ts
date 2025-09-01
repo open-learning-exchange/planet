@@ -352,7 +352,7 @@ export class SubmissionsService {
     this.setHeader(docContent, 'Charts');
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
-      if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
+      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'matrix') { continue; }
       question.index = i;
       docContent.push({ text: `Q${i + 1}: ${question.body}` });
       if (question.type === 'selectMultiple') {
@@ -387,6 +387,16 @@ export class SubmissionsService {
               margin: [ 0, 5, 0, 10 ]
             },
             { text: `*Percentage of users who selected the choice. Users may select multiple options` },
+          ],
+          alignment: 'center'
+        });
+      } else if (question.type === 'matrix') {
+        const matrixAgg = this.aggregateMatrixResponses(question, updatedSubmissions);
+        const matrixImg = await this.generateChartImage(matrixAgg);
+        docContent.push({
+          stack: [
+            { image: matrixImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
+            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' }
           ],
           alignment: 'center'
         });
@@ -555,16 +565,18 @@ export class SubmissionsService {
     canvas.width = 300;
     canvas.height = 400;
     const isBar = data.chartType === 'bar';
+    const isMatrix = data.isMatrix || false;
     const ctx = canvas.getContext('2d');
 
     return new Promise<string>((resolve) => {
+      const maxCount = Math.max(...data.data);
       const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
         type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isBar ? '% of responders/selection' : undefined,
+            label: isMatrix ? 'choices(1-9)/selection' : (isBar ? '% of responders/selection' : undefined),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -573,23 +585,46 @@ export class SubmissionsService {
         options: {
           responsive: false,
           maintainAspectRatio: false,
-          indexAxis: 'x',
-          scales: isBar ? {
+          indexAxis: isMatrix ? 'y' : 'x',
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                boxWidth: isBar ? 0 : 50,
+                boxHeight: isBar ? 0 : 20
+              }
+            }
+          },
+          scales: isBar ? (isMatrix ? {
+            x: {
+              type: 'linear',
+              beginAtZero: true,
+              max: maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10,
+              ticks: { stepSize: 5 }
+            },
+            y: {
+              type: 'category'
+            }
+          } : {
             y: {
               type: 'linear',
               beginAtZero: true,
               max: 100,
               ticks: { precision: 0 }
             }
-          } : {},
+          }) : {},
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
                 this.getDatasetMeta(0).data.forEach((bar, index) => {
-                  const percentage = data.data[index];
-                  const userCount = data.userCounts[index];
-                  if (percentage > 0) {
-                    ctx.fillText(`${userCount}`, bar.x - 2.5 , bar.y);
+                  const count = data.userCounts[index];
+                  if (count > 0) {
+                    if (isMatrix) {
+                      ctx.fillText(`${count}`, bar.x + 5, bar.y + 4);
+                    } else {
+                      const percentage = data.data[index];
+                      ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
+                    }
                   }
                 });
               } else if (!isBar) {
@@ -671,6 +706,38 @@ export class SubmissionsService {
     };
   }
 
+  aggregateMatrixResponses(question, submissions) {
+    const totalUsers = submissions.length;
+    const counts = {};
+
+    for (let i = 1; i <= 9; i++) {
+      counts[i.toString()] = 0;
+    }
+
+    submissions.forEach((sub, submissionIndex) => {
+      const ans = sub.answers[question.index];
+      if (ans && ans.value) {
+        const value = ans.value.toString();
+        if (counts.hasOwnProperty(value)) {
+          counts[value]++;
+        }
+      }
+    });
+
+    const labels = Object.keys(counts);
+    const data = Object.values(counts) as number[];
+    const userCounts = data;
+    return {
+      labels,
+      data,
+      userCounts,
+      totalUsers,
+      totalSelections: data.reduce((sum, count) => sum + count, 0),
+      chartType: 'bar',
+      isMatrix: true
+    };
+  }
+
   async analyseResponses(exam: any, submissions: any) {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
@@ -688,6 +755,9 @@ export class SubmissionsService {
           break;
         case 'selectMultiple':
           result = answer.value.map(item => item.text).join(', ');
+          break;
+        case 'matrix':
+          result = `Rating: ${answer.value} (on 1-9 scale)`;
           break;
         default:
           result = answer.value;
