@@ -25,6 +25,7 @@
         <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
+        <button *ngIf="examType !== 'exam'" mat-menu-item type="button" (click)="addQuestion('matrix')" i18n>Matrix - Number keypad</button>
       </mat-menu>
       <mat-accordion class="exam-inputs" *ngIf="!isCourseContent">
         <mat-expansion-panel [expanded]="!isQuestionsActive">

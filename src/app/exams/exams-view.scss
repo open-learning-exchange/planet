@@ -1,3 +1,5 @@
+@import '../variables';
+
 :host {
 
   .view-container {
@@ -48,4 +50,40 @@
     outline: none;
     max-width: 50%;
   }
+
+  .matrix-keypad {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px 0;
+  }
+
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    max-width: 100px;
+    width: 100%;
+  }
+
+  .matrix-button {
+    height: 50px;
+    font-size: 24px;
+    font-weight: 500;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    &.selected {
+      background-color: $primary;
+      color: white;
+      border-color: $primary;
+      box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+    }
+  }
+
 }
