@@ -57,19 +57,19 @@
         </mat-autocomplete>
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Currency" formControlName="currencySelection" (selectionChange)="currencyChange($event.value)" required>
+        <mat-select [placeholder]="currencyLabel" formControlName="currencySelection" (selectionChange)="currencyChange($event.value)" required>
           <mat-option *ngFor="let currency of currencies" [value]="currency.code">{{currency.label}} ({{currency.symbol}})</mat-option>
-          <mat-option value="other" i18n>Other</mat-option>
+          <mat-option value="other">{{otherLabel}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.currencySelection"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div formGroupName="currency" *ngIf="useOtherCurrency">
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Currency Code" formControlName="code">
+          <input matInput [placeholder]="currencyCodeLabel" formControlName="code">
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.get('currency').get('code')"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Currency Symbol" formControlName="symbol">
+          <input matInput [placeholder]="currencySymbolLabel" formControlName="symbol">
           <mat-error><planet-form-error-messages [control]="configurationFormGroup.get('currency').get('symbol')"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </div>
