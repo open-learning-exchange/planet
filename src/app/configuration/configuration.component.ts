@@ -52,10 +52,6 @@ export class ConfigurationComponent implements OnInit {
   configuration: any = {};
   useOtherCurrency = false;
   currencies = currencies;
-  currencyLabel = $localize`:@@configuration.currency.label:Currency`;
-  otherLabel = $localize`:@@configuration.currency.other:Other`;
-  currencyCodeLabel = $localize`:@@configuration.currency.code.label:Currency Code`;
-  currencySymbolLabel = $localize`:@@configuration.currency.symbol.label:Currency Symbol`;
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
   languageNames = languages.map(list => list.name);
 
