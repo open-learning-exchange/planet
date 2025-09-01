@@ -172,7 +172,7 @@ export class ConfigurationComponent implements OnInit {
 
   confirmConfigurationFormGroup() {
     this.markFormGroupTouched(this.configurationFormGroup);
-    
+
     if (this.configurationFormGroup.valid) {
       if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
         this.stepper.next();
@@ -302,7 +302,7 @@ export class ConfigurationComponent implements OnInit {
   }
 
   private markFormGroupTouched(formGroup: UntypedFormGroup) {
-    if (!formGroup) return;
+    if (!formGroup) {return;}
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
       control.markAsTouched();
