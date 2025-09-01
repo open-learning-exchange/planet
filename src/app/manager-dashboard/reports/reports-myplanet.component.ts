@@ -12,6 +12,7 @@ import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { CsvService } from '../../shared/csv.service';
+import { filterSpecificFields } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
@@ -170,10 +171,12 @@ export class ReportsMyPlanetComponent implements OnInit {
   }
 
   applyFilters() {
-    this.planets = this.allPlanets.map(planet => ({
-      ...planet,
-      children: this.filterMyPlanetData(planet.children)
-    }));
+    this.planets = this.allPlanets
+      .filter(planet => filterSpecificFields([ 'name', 'doc.code' ])(planet, this.searchValue))
+      .map(planet => ({
+        ...planet,
+        children: this.filterMyPlanetData(planet.children)
+      }));
     this.isEmpty = areNoChildren(this.planets);
   }
 
