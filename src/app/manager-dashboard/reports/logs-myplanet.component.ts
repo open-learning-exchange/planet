@@ -1,13 +1,13 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { CouchService } from '../../shared/couchdb.service';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
+import { CouchService } from '../../shared/couchdb.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
 import { CsvService } from '../../shared/csv.service';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { ReportsService } from './reports.service';
 
@@ -17,14 +17,12 @@ import { ReportsService } from './reports.service';
 })
 export class LogsMyPlanetComponent implements OnInit {
 
+  private readonly defaultTimeFilter: string = '24h';
+  private allPlanets: any[] = [];
   apklogs: any[] = [];
   isEmpty = false;
-  private allPlanets: any[] = [];
   searchValue = '';
   planetType = this.stateService.configuration.planetType;
-  get childType() {
-    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
-  }
   startDate: Date = new Date(new Date().setFullYear(new Date().getDate() - 1));
   endDate: Date = new Date();
   selectedChildren: any[] = [];
@@ -35,7 +33,6 @@ export class LogsMyPlanetComponent implements OnInit {
   selectedVersion = '';
   types: string[] = [];
   selectedType = '';
-  disableShowAllTime = true;
   showFiltersRow = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
@@ -43,6 +40,12 @@ export class LogsMyPlanetComponent implements OnInit {
   showCustomDateFields = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
   isLoading = false;
+  get childType() {
+    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
+  }
+  get isDefaultTimeFilter(): boolean {
+    return this.selectedTimeFilter === this.defaultTimeFilter;
+  }
 
   constructor(
     private csvService: CsvService,
@@ -76,19 +79,12 @@ export class LogsMyPlanetComponent implements OnInit {
       if (!this.logsForm.errors?.invalidDates) {
         this.applyFilters();
       }
-      this.updateShowAllTimeButton();
     });
   }
 
   @HostListener('window:resize')
   OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1350 });
-  }
-
-  updateShowAllTimeButton() {
-    const startIsMin = new Date(this.startDate).setHours(0, 0, 0, 0) === new Date(this.minDate).setHours(0, 0, 0, 0);
-    const endIsToday = new Date(this.endDate).setHours(0, 0, 0, 0) === new Date(this.today).setHours(0, 0, 0, 0);
-    this.disableShowAllTime = startIsMin && endIsToday;
   }
 
   filterData(filterValue: string) {
