@@ -352,7 +352,7 @@ export class SubmissionsService {
     this.setHeader(docContent, 'Charts');
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
-      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'matrix') { continue; }
+      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
       docContent.push({ text: `Q${i + 1}: ${question.body}` });
       if (question.type === 'selectMultiple') {
@@ -390,12 +390,12 @@ export class SubmissionsService {
           ],
           alignment: 'center'
         });
-      } else if (question.type === 'matrix') {
-        const matrixAgg = this.aggregateMatrixResponses(question, updatedSubmissions);
-        const matrixImg = await this.generateChartImage(matrixAgg);
+      } else if (question.type === 'ratingScale') {
+        const ratingScaleAgg = this.aggregateRatingScaleResponses(question, updatedSubmissions);
+        const ratingScaleImg = await this.generateChartImage(ratingScaleAgg);
         docContent.push({
           stack: [
-            { image: matrixImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
+            { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
             { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' }
           ],
           alignment: 'center'
@@ -565,7 +565,7 @@ export class SubmissionsService {
     canvas.width = 300;
     canvas.height = 400;
     const isBar = data.chartType === 'bar';
-    const isMatrix = data.isMatrix || false;
+    const isRatingScale = data.isRatingScale || false;
     const ctx = canvas.getContext('2d');
 
     return new Promise<string>((resolve) => {
@@ -576,7 +576,7 @@ export class SubmissionsService {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isMatrix ? 'choices(1-9)/selection' : (isBar ? '% of responders/selection' : undefined),
+            label: isRatingScale ? 'choices(1-9)/selection' : (isBar ? '% of responders/selection' : undefined),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -585,7 +585,7 @@ export class SubmissionsService {
         options: {
           responsive: false,
           maintainAspectRatio: false,
-          indexAxis: isMatrix ? 'y' : 'x',
+          indexAxis: isRatingScale ? 'y' : 'x',
           plugins: {
             legend: {
               display: true,
@@ -595,7 +595,7 @@ export class SubmissionsService {
               }
             }
           },
-          scales: isBar ? (isMatrix ? {
+          scales: isBar ? (isRatingScale ? {
             x: {
               type: 'linear',
               beginAtZero: true,
@@ -619,7 +619,7 @@ export class SubmissionsService {
                 this.getDatasetMeta(0).data.forEach((bar, index) => {
                   const count = data.userCounts[index];
                   if (count > 0) {
-                    if (isMatrix) {
+                    if (isRatingScale) {
                       ctx.fillText(`${count}`, bar.x + 5, bar.y + 4);
                     } else {
                       const percentage = data.data[index];
@@ -706,7 +706,7 @@ export class SubmissionsService {
     };
   }
 
-  aggregateMatrixResponses(question, submissions) {
+  aggregateRatingScaleResponses(question, submissions) {
     const totalUsers = submissions.length;
     const counts = {};
 
@@ -734,7 +734,7 @@ export class SubmissionsService {
       totalUsers,
       totalSelections: data.reduce((sum, count) => sum + count, 0),
       chartType: 'bar',
-      isMatrix: true
+      isRatingScale: true
     };
   }
 
@@ -756,7 +756,7 @@ export class SubmissionsService {
         case 'selectMultiple':
           result = answer.value.map(item => item.text).join(', ');
           break;
-        case 'matrix':
+        case 'ratingScale':
           result = `Rating: ${answer.value} (on 1-9 scale)`;
           break;
         default:

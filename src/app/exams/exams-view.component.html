@@ -77,9 +77,9 @@
                 </div>
               </ng-container>
             </div>
-            <div *ngSwitchCase="'matrix'" class="matrix-keypad">
-              <div class="matrix-grid">
-                <button type="button" mat-raised-button class="matrix-button" *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [class.selected]="answer.value === num.toString()" (click)="setMatrixAnswer(num)">
+            <div *ngSwitchCase="'ratingScale'" class="rating-scale-keypad">
+              <div class="rating-scale-grid">
+                <button type="button" mat-raised-button class="rating-scale-button" *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [class.selected]="answer.value === num.toString()" (click)="setRatingScaleAnswer(num)">
                   {{num}}
                 </button>
               </div>

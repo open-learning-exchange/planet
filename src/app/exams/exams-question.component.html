@@ -6,7 +6,7 @@
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
         <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
-        <mat-option *ngIf="examType !== 'exam'" value="matrix" i18n>Matrix - Number keypad</mat-option>
+        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale - 1 to 9</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -21,7 +21,7 @@
         You must add a choice
       </span>
     </div>
-    <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched && questionForm.controls.type.value !== 'matrix'">
+    <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched && questionForm.controls.type.value !== 'ratingScale'">
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
     </div>
     <div *ngFor="let choice of choices.controls; index as i; trackBy: trackByFn">

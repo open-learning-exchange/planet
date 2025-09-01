@@ -51,13 +51,13 @@
     max-width: 50%;
   }
 
-  .matrix-keypad {
+  .rating-scale-keypad {
     display: flex;
     justify-content: flex-start;
     margin: 20px 0;
   }
 
-  .matrix-grid {
+  .rating-scale-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
@@ -65,7 +65,7 @@
     width: 100%;
   }
 
-  .matrix-button {
+  .rating-scale-button {
     height: 50px;
     font-size: 24px;
     font-weight: 500;

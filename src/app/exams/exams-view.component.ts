@@ -309,7 +309,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.checkboxState[option.id] = event.checked;
   }
 
-  setMatrixAnswer(number: number) {
+  setRatingScaleAnswer(number: number) {
     this.answer.setValue(number.toString());
     this.answer.updateValueAndValidity();
   }
