@@ -576,7 +576,7 @@ export class SubmissionsService {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isRatingScale ? 'choices(1-9)/selection' : (isBar ? '% of responders/selection' : undefined),
+            label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -585,7 +585,7 @@ export class SubmissionsService {
         options: {
           responsive: false,
           maintainAspectRatio: false,
-          indexAxis: isRatingScale ? 'y' : 'x',
+          indexAxis: 'x',
           plugins: {
             legend: {
               display: true,
@@ -595,24 +595,14 @@ export class SubmissionsService {
               }
             }
           },
-          scales: isBar ? (isRatingScale ? {
-            x: {
-              type: 'linear',
-              beginAtZero: true,
-              max: maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10,
-              ticks: { stepSize: 5 }
-            },
-            y: {
-              type: 'category'
-            }
-          } : {
+          scales: isBar ? {
             y: {
               type: 'linear',
               beginAtZero: true,
-              max: 100,
-              ticks: { precision: 0 }
+              max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
+              ticks: { precision: 0, stepSize: 5 }
             }
-          }) : {},
+          } : {},
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
@@ -622,12 +612,11 @@ export class SubmissionsService {
                     if (isRatingScale) {
                       ctx.fillText(`${count}`, bar.x + 5, bar.y + 4);
                     } else {
-                      const percentage = data.data[index];
                       ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
                     }
                   }
                 });
-              } else if (!isBar) {
+              } else {
                 const total = data.data.reduce((sum, val) => sum + val, 0);
                 this.getDatasetMeta(0).data.forEach((element, index) => {
                   const count = data.data[index];
