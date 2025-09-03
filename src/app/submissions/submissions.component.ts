@@ -19,8 +19,8 @@ const columnsByFilterAndMode = {
     grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'teamName', 'status', 'user', 'lastUpdateTime' ],
-    survey: [ 'name', 'courseTitle', 'stepNum', 'teamName', 'status', 'lastUpdateTime' ]
+    grade: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime' ],
+    survey: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'lastUpdateTime' ]
   }
 };
 
@@ -33,7 +33,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
-  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'teamName', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
+  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -235,7 +235,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   appendTeamInfo$(submission): Observable<any> {
     if (!submission.team) { return of({ ...submission, teamName: '' }); }
-    return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
+    return this.teamsService.getTeamName(submission.team).pipe(map((teamInfo: any) => ({ ...submission, teamInfo })));
   }
 
 }

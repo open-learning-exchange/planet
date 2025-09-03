@@ -375,17 +375,13 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
-  getTeamName(teamId: string): Observable<string> {
+  getTeamName(teamId: string): Observable<Object> {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
       map((team: any) => {
-        if (team && team.name) {
-          if (team.type && team.type === 'enterprise') {
-            return `Enterprise: ${team.name}`;
-          } else {
-            return `Team: ${team.name}`;
-          }
+        if (team) {
+          return { 'name': team.name, 'type': team.type };
         }
-        return teamId;
+        return { id: teamId };
       }),
     );
   }
