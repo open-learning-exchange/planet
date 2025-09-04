@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';

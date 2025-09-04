@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';

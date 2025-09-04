@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
