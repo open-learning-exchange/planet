@@ -240,6 +240,57 @@
           </div>
         </div>
       </mat-tab>
+      <mat-tab i18n-label label="Comparison Trend">
+        <div class="comparison-container">
+          <mat-toolbar class="comparison-toolbar">
+            <mat-form-field class="margin-lr-5">
+              <mat-label i18n>Week 1 End Date</mat-label>
+              <input matInput [matDatepicker]="week1Picker" [(ngModel)]="comparisonWeek1End" (dateChange)="onComparisonDateChange()">
+              <mat-datepicker-toggle matSuffix [for]="week1Picker"></mat-datepicker-toggle>
+              <mat-datepicker #week1Picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="margin-lr-5">
+              <mat-label i18n>Week 2 End Date</mat-label>
+              <input matInput [matDatepicker]="week2Picker" [(ngModel)]="comparisonWeek2End" (dateChange)="onComparisonDateChange()">
+              <mat-datepicker-toggle matSuffix [for]="week2Picker"></mat-datepicker-toggle>
+              <mat-datepicker #week2Picker></mat-datepicker>
+            </mat-form-field>
+            <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
+          </mat-toolbar>
+          <div *ngIf="comparisonLoading" class="view-container view-full-height" i18n>
+            Loading comparison data...
+          </div>
+          <div *ngIf="!comparisonLoading && comparisonTableData.length > 0" class="comparison-table-container">
+            <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width">
+              <ng-container matColumnDef="metric">
+                <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
+                <td mat-cell *matCellDef="let row">{{row.metric}}</td>
+              </ng-container>
+              <ng-container matColumnDef="week1">
+                <th mat-header-cell *matHeaderCellDef>{{week1Label}}</th>
+                <td mat-cell *matCellDef="let row">{{row.week1}}</td>
+              </ng-container>
+              <ng-container matColumnDef="week2">
+                <th mat-header-cell *matHeaderCellDef>{{week2Label}}</th>
+                <td mat-cell *matCellDef="let row">{{row.week2}}</td>
+              </ng-container>
+              <ng-container matColumnDef="change">
+                <th mat-header-cell *matHeaderCellDef i18n>Net Change</th>
+                <td mat-cell *matCellDef="let row">
+                  <span [ngClass]="{'positive-change': row.changeValue > 0, 'negative-change': row.changeValue < 0}">
+                    {{row.change}}
+                  </span>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="comparisonColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: comparisonColumns;"></tr>
+            </table>
+          </div>
+          <div *ngIf="!comparisonLoading && comparisonTableData.length === 0" class="view-container view-full-height loading-message" i18n>
+            Select dates and click Compare to view comparison data
+          </div>
+        </div>
+      </mat-tab>
       <mat-tab i18n-label label="Resources">
         <div *ngIf="resourcesLoading" class="view-container view-full-height" i18n>
           Reports loading...
