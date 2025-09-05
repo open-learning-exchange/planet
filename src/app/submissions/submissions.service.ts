@@ -275,9 +275,7 @@ export class SubmissionsService {
       return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
-              return this.teamsService.getTeamName(submission.team).pipe(
-                map(teamName => ({ ...submission, teamName }))
-              );
+              return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
             }
             return of(submission);
           })
@@ -292,7 +290,8 @@ export class SubmissionsService {
             'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
             'Planet': submission.source,
             'Date': submission.lastUpdateTime,
-            'Team/Enterprise': submission.teamName || 'N/A',
+            'Group': submission.teamInfo?.name || 'N/A',
+            'Group Type': submission.teamInfo?.type || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
               [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
@@ -453,7 +452,7 @@ export class SubmissionsService {
           return forkJoin(
             submissionsWithPlanetName.map(submission => {
               if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
+                return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
               }
               return of(submission);
             })
@@ -504,20 +503,18 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime);
-      const userAge = submission.user.birthDate
-        ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate)
-        : submission.user.age;
+      const userAge = submission.user.birthDate ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) : submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
-      const teamName = submission.teamName
-      ? submission.teamName.replace(/^(Team|Enterprise):/, (match) => `<strong>${match}</strong>`)
-      : '';
+      const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
+      const teamName = submission.teamInfo?.name || '';
+      const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
         `<h3>Submission ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>Date:</strong> ${shortDate}</li>`,
-        teamName ? `<li>${teamName}</li>` : '',
+        teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
         `</ul>`,
