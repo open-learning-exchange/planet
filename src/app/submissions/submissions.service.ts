@@ -391,7 +391,7 @@ export class SubmissionsService {
           alignment: 'center'
         });
       } else if (question.type === 'ratingScale') {
-        const ratingScaleAgg = this.aggregateRatingScaleResponses(question, updatedSubmissions);
+        const ratingScaleAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
         const ratingScaleImg = await this.generateChartImage(ratingScaleAgg);
         docContent.push({
           stack: [
@@ -600,7 +600,7 @@ export class SubmissionsService {
               type: 'linear',
               beginAtZero: true,
               max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
-              ticks: { precision: 0, stepSize: 5 }
+              ticks: { precision: 0, stepSize: 2 }
             }
           } : {},
           animation: {
@@ -609,11 +609,7 @@ export class SubmissionsService {
                 this.getDatasetMeta(0).data.forEach((bar, index) => {
                   const count = data.userCounts[index];
                   if (count > 0) {
-                    if (isRatingScale) {
-                      ctx.fillText(`${count}`, bar.x + 5, bar.y + 4);
-                    } else {
-                      ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
-                    }
+                    ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
                   }
                 });
               } else {
@@ -636,18 +632,19 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(
-    question,
-    submissions,
-    mode: 'percent' | 'count' = 'percent',
-    calculationMode: 'users' | 'selections' = 'users'
-  ) {
+  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users') {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
-    question.choices.forEach(c => { counts[c.text] = new Set(); });
-    if (question.hasOtherOption) {
-      counts['Other'] = new Set();
+    if (question.type === 'ratingScale') {
+      for (let i = 1; i <= 9; i++) {
+        counts[i.toString()] = new Set();
+      }
+    } else {
+      question.choices.forEach(c => { counts[c.text] = new Set(); });
+      if (question.hasOtherOption) {
+        counts['Other'] = new Set();
+      }
     }
 
     submissions.forEach((sub, submissionIndex) => {
@@ -655,18 +652,27 @@ export class SubmissionsService {
       if (!ans) { return; }
 
       const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
-      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
-      selections.forEach(selection => {
-        if (selection.isOther || selection.id === 'other') {
-          counts['Other']?.add(userId);
-        } else {
-          const txt = selection.text ?? selection;
-          counts[txt]?.add(userId);
+      if (question.type === 'ratingScale') {
+        if (ans.value) {
+          const value = ans.value.toString();
+          if (counts[value]) {
+            counts[value].add(userId);
+          }
         }
-      });
+      } else {
+        const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+        selections.forEach(selection => {
+          if (selection.isOther || selection.id === 'other') {
+            counts['Other']?.add(userId);
+          } else {
+            const txt = selection.text ?? selection;
+            counts[txt]?.add(userId);
+          }
+        });
+      }
     });
 
-    const labels = Object.keys(counts);
+    const labels = question.type === 'ratingScale' ? Array.from({length: 9}, (_, i) => (i + 1).toString()) : Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
     const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
     let data: number[];
@@ -691,39 +697,8 @@ export class SubmissionsService {
       userCounts,
       totalUsers,
       totalSelections,
-      chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
-    };
-  }
-
-  aggregateRatingScaleResponses(question, submissions) {
-    const totalUsers = submissions.length;
-    const counts = {};
-
-    for (let i = 1; i <= 9; i++) {
-      counts[i.toString()] = 0;
-    }
-
-    submissions.forEach((sub, submissionIndex) => {
-      const ans = sub.answers[question.index];
-      if (ans && ans.value) {
-        const value = ans.value.toString();
-        if (counts.hasOwnProperty(value)) {
-          counts[value]++;
-        }
-      }
-    });
-
-    const labels = Object.keys(counts);
-    const data = Object.values(counts) as number[];
-    const userCounts = data;
-    return {
-      labels,
-      data,
-      userCounts,
-      totalUsers,
-      totalSelections: data.reduce((sum, count) => sum + count, 0),
-      chartType: 'bar',
-      isRatingScale: true
+      chartType: question.type === 'ratingScale' ? 'bar' : (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'),
+      isRatingScale: question.type === 'ratingScale'
     };
   }
 
