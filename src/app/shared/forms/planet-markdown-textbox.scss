@@ -26,6 +26,10 @@ planet-markdown-textbox {
     max-height: 15vh;
   }
 
+  .CodeMirror-sizer {
+    margin-bottom: 0 !important;
+  }
+
   .CodeMirror.CodeMirror-fullscreen {
     box-sizing: border-box;
   }
