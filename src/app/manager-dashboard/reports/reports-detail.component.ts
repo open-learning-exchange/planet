@@ -732,6 +732,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const courseData = filterByMember(filterByDate(this.courseActivities?.total?.data, 'time', dateRange), members);
     const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
     const chatData = filterByMember(filterByDate(this.chatActivities?.data, 'createdDate', dateRange), members);
+    const voicesData = filterByMember(filterByDate(this.voicesActivities?.data, 'time', dateRange), members);
 
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
@@ -748,6 +749,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData.sort(sortFunction);
       progressData.sort(sortFunction);
       chatData.sort(sortFunction);
+      voicesData.sort(sortFunction);
     }
 
     this.csvService.exportSummaryCSV(
@@ -756,6 +758,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       courseData,
       progressData,
       chatData,
+      voicesData,
       this.planetName,
       dateRange.startDate,
       dateRange.endDate
