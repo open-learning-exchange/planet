@@ -1,16 +1,11 @@
-type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+import { AIProvider as ProviderName } from '../../../src/shared/ai-providers';
 
 export interface AIProvider {
   name: ProviderName;
   model?: string;
 }
 
-interface Providers {
-  openai?: string;
-  perplexity?: string;
-  deepseek?: string;
-  gemini?: string;
-}
+type Providers = Partial<Record<ProviderName, string>>;
 
 interface Assistant {
   name: string;
