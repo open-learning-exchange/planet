@@ -13,7 +13,7 @@ export interface Exam {
 
 export interface ExamQuestion {
   body: string;
-  type: 'input' | 'textarea' | 'select' | 'selectMultiple';
+  type: 'input' | 'textarea' | 'select' | 'selectMultiple' | 'ratingScale';
   correctChoice: string[];
   marks: number;
   choices: { text: string, id: string }[];

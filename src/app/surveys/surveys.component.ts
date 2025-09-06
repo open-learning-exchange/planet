@@ -384,9 +384,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const hasChartableData = survey.questions.some(
-      (question) => question.type === 'select' || question.type === 'selectMultiple'
-    );
+    const hasChartableData = survey.questions.some((question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
     this.dialogsFormService.openDialogsForm(
