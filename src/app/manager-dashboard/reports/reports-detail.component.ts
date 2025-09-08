@@ -478,7 +478,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts.push(new Chart(chartName, chartConfig));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
+  openExportDialog(
+    reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' |
+     'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat'
+  ) {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {

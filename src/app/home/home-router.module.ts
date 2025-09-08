@@ -37,7 +37,9 @@ const alwaysGuardedRoutes = [
   { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
   { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
   { path: 'health', component: HealthListComponent, data: { roles: [ '_admin', 'health' ] } },
-  { path: 'health/profile/:id', loadChildren: () => import('../health/health.module').then(m => m.HealthModule), data: { roles: [ '_admin', 'health' ] } },
+  {
+    path: 'health/profile/:id',
+    loadChildren: () => import('../health/health.module').then(m => m.HealthModule), data: { roles: [ '_admin', 'health' ] } },
   { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
   { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
   { path: myDashboardRoute, component: DashboardComponent },
