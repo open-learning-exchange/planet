@@ -56,23 +56,6 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field>
-        <mat-select i18n-placeholder="@@currency.select.placeholder:Currency" placeholder="Currency" formControlName="currencySelection" (selectionChange)="currencyChange($event.value)" required>
-          <mat-option *ngFor="let currency of currencies" [value]="currency.code">{{currency.label}} ({{currency.symbol}})</mat-option>
-          <mat-option value="other" i18n="@@currency.other:Other">Other</mat-option>
-        </mat-select>
-        <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.currencySelection"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <div formGroupName="currency" *ngIf="useOtherCurrency">
-        <mat-form-field>
-          <input matInput i18n-placeholder="@@currency.code:Currency Code" placeholder="Currency Code" formControlName="code">
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.get('currency').get('code')"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput i18n-placeholder="@@currency.symbol:Currency Symbol" placeholder="Currency Symbol" formControlName="symbol">
-          <mat-error><planet-form-error-messages [control]="configurationFormGroup.get('currency').get('symbol')"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-      </div>
       <div class="full-width" *ngIf="showAdvancedOptions">
         <span i18n>Advanced Options:</span>
         <ng-container *ngIf="showAdvancedOptions">

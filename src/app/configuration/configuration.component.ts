@@ -5,7 +5,6 @@ import { MatStepper } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { languages } from '../shared/languages';
-import { currencies } from '../shared/currencies';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -50,8 +49,7 @@ export class ConfigurationComponent implements OnInit {
   isAdvancedOptionConfirmed = false;
   spinnerOn = true;
   configuration: any = {};
-  useOtherCurrency = false;
-  currencies = currencies;
+  // currency configuration moved to dedicated manager page
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
   languageNames = languages.map(list => list.name);
 
@@ -102,12 +100,7 @@ export class ConfigurationComponent implements OnInit {
       ],
       parentDomain: [ '', Validators.required ],
       parentCode: [ '', Validators.required ],
-      preferredLang: [ '', Validators.required ],
-      currencySelection: [ '', Validators.required ],
-      currency: this.formBuilder.group({
-        code: [ '' ],
-        symbol: [ '' ]
-      }),
+  preferredLang: [ '', Validators.required ],
       code: [
         '',
         Validators.required,
@@ -141,15 +134,7 @@ export class ConfigurationComponent implements OnInit {
     .subscribe((data: any) => {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
-      this.configurationFormGroup.patchValue({ ...data, currency: data.currency });
-      const cur = data.currency || {};
-      const existing = this.currencies.find(c => c.code === cur.code);
-      const selection = existing ? cur.code : 'other';
-      this.configurationFormGroup.get('currencySelection').setValue(selection);
-      this.currencyChange(selection);
-      if (!existing) {
-        this.configurationFormGroup.get('currency').patchValue(cur);
-      }
+  this.configurationFormGroup.patchValue({ ...data });
       this.contactFormGroup.patchValue(data);
     }, error => {
       console.log(error);
@@ -236,23 +221,6 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  currencyChange(selected: string) {
-    const currencyGroup = this.configurationFormGroup.get('currency');
-    if (selected === 'other') {
-      this.useOtherCurrency = true;
-      currencyGroup.get('code').setValidators([ Validators.required ]);
-      currencyGroup.get('symbol').setValidators([ Validators.required ]);
-      currencyGroup.reset();
-    } else {
-      this.useOtherCurrency = false;
-      const cur = this.currencies.find(c => c.code === selected) || { code: '', symbol: '' };
-      currencyGroup.patchValue(cur);
-      currencyGroup.get('code').clearValidators();
-      currencyGroup.get('symbol').clearValidators();
-    }
-    currencyGroup.get('code').updateValueAndValidity();
-    currencyGroup.get('symbol').updateValueAndValidity();
-  }
 
   allValid() {
     return (this.configurationType === 'update' || this.loginForm.valid) &&
@@ -286,7 +254,7 @@ export class ConfigurationComponent implements OnInit {
       }
     };
 
-    const { currencySelection, currency, ...configForm } = this.configurationFormGroup.value;
+  const configForm = this.configurationFormGroup.value;
     const configuration = Object.assign(
       {
         registrationRequest: 'pending',
@@ -294,7 +262,7 @@ export class ConfigurationComponent implements OnInit {
       },
       this.configuration,
       configForm,
-      { currency },
+  // currency retained if present but not editable here
       this.contactFormGroup.value,
       this.configurationType === 'new' ? chatConfig : {}
     );
