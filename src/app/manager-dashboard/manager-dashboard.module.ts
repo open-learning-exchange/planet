@@ -54,8 +54,8 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
     PendingTableComponent,
     ReportsMyPlanetComponent,
     ReportsDetailActivitiesComponent,
-  ReportsHealthComponent,
-  ManagerCurrencyComponent
+    ReportsHealthComponent,
+    ManagerCurrencyComponent
   ]
 })
 export class ManagerDashboardModule {}

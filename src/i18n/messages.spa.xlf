@@ -15678,222 +15678,56 @@
       } many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?
       }}</target>
       </trans-unit>
-      <trans-unit id="currency.us.dollar" datatype="html" approved="yes">
-        <source>US Dollar</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Dólar Estadounidense</target>
-      </trans-unit>
-      <trans-unit id="currency.euro" datatype="html" approved="yes">
-        <source>Euro</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Euro</target>
-      </trans-unit>
-      <trans-unit id="currency.british.pound" datatype="html" approved="yes">
-        <source>British Pound</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Libra Esterlina</target>
-      </trans-unit>
-      <trans-unit id="currency.indian.rupee" datatype="html" approved="yes">
-        <source>Indian Rupee</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Rupia India</target>
-      </trans-unit>
-      <trans-unit id="currency.japanese.yen" datatype="html" approved="yes">
-        <source>Japanese Yen</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Yen Japonés</target>
-      </trans-unit>
-      <trans-unit id="currency.chinese.yuan" datatype="html" approved="yes">
-        <source>Chinese Yuan</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Yuan Chino</target>
-      </trans-unit>
-      <trans-unit id="currency.guatemalan.quetzal" datatype="html" approved="yes">
-        <source>Guatemalan Quetzal</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Quetzal Guatemalteco</target>
-      </trans-unit>
-      <trans-unit id="currency.canadian.dollar" datatype="html" approved="yes">
-        <source>Canadian Dollar</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Dólar Canadiense</target>
-      </trans-unit>
-      <trans-unit id="currency.australian.dollar" datatype="html" approved="yes">
-        <source>Australian Dollar</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Dólar Australiano</target>
-      </trans-unit>
-      <trans-unit id="currency.brazilian.real" datatype="html" approved="yes">
-        <source>Brazilian Real</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Real Brasileño</target>
-      </trans-unit>
-      <trans-unit id="currency.mexican.peso" datatype="html" approved="yes">
-        <source>Mexican Peso</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Peso Mexicano</target>
-      </trans-unit>
-      <trans-unit id="currency.swiss.franc" datatype="html" approved="yes">
-        <source>Swiss Franc</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Franco Suizo</target>
-      </trans-unit>
-      <trans-unit id="currency.south.korean.won" datatype="html" approved="yes">
-        <source>South Korean Won</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Won Surcoreano</target>
-      </trans-unit>
-      <trans-unit id="currency.russian.ruble" datatype="html" approved="yes">
-        <source>Russian Ruble</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Rublo Ruso</target>
-      </trans-unit>
-      <trans-unit id="currency.south.african.rand" datatype="html" approved="yes">
-        <source>South African Rand</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Rand Sudafricano</target>
-      </trans-unit>
-      <trans-unit id="currency.nigerian.naira" datatype="html" approved="yes">
-        <source>Nigerian Naira</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Naira Nigeriano</target>
-      </trans-unit>
-      <trans-unit id="currency.egyptian.pound" datatype="html" approved="yes">
-        <source>Egyptian Pound</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Libra Egipcia</target>
-      </trans-unit>
-      <trans-unit id="currency.kenyan.shilling" datatype="html" approved="yes">
-        <source>Kenyan Shilling</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Chelín Keniano</target>
-      </trans-unit>
-      <trans-unit id="currency.ghanaian.cedi" datatype="html" approved="yes">
-        <source>Ghanaian Cedi</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Cedi Ghanés</target>
-      </trans-unit>
-      <trans-unit id="currency.argentine.peso" datatype="html" approved="yes">
-        <source>Argentine Peso</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Peso Argentino</target>
-      </trans-unit>
-      <trans-unit id="currency.colombian.peso" datatype="html" approved="yes">
-        <source>Colombian Peso</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Peso Colombiano</target>
-      </trans-unit>
-      <trans-unit id="currency.chilean.peso" datatype="html" approved="yes">
-        <source>Chilean Peso</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Peso Chileno</target>
-      </trans-unit>
-      <trans-unit id="currency.peruvian.sol" datatype="html" approved="yes">
-        <source>Peruvian Sol</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/currencies.ts</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Sol Peruano</target>
-      </trans-unit>
-      <trans-unit id="currency.select.placeholder" datatype="html" approved="yes">
-        <source>Currency</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Moneda</target>
-      </trans-unit>
-      <trans-unit id="currency.other" datatype="html" approved="yes">
-        <source>Other</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Otra</target>
-      </trans-unit>
-      <trans-unit id="currency.code" datatype="html" approved="yes">
-        <source>Currency Code</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Código de Moneda</target>
-      </trans-unit>
-      <trans-unit id="currency.symbol" datatype="html" approved="yes">
-        <source>Currency Symbol</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
-          <context context-type="linenumber">1</context>
-        </context-group>
-        <target state="final">Símbolo de Moneda</target>
-      </trans-unit>
+          <!-- Currency Configuration Page -->
+          <trans-unit id="currency.configuration.title" datatype="html">
+            <source>Currency Configuration</source>
+            <target state="final">Configuración de Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.card.title" datatype="html">
+            <source>Currency</source>
+            <target state="final">Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.code.label" datatype="html">
+            <source>Code</source>
+            <target state="final">Código</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.symbol.label" datatype="html">
+            <source>Symbol</source>
+            <target state="final">Símbolo</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.hint" datatype="html">
+            <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
+            <target state="final">Introduce el código ISO (por ejemplo, USD, EUR) y el símbolo utilizado en los informes financieros.</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.save" datatype="html">
+            <source>Save Currency</source>
+            <target state="final">Actualizar Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.nav.link" datatype="html">
+            <source>Currency</source>
+            <target state="final">Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
+            </context-group>
+          </trans-unit>
     </body>
   </file>
 </xliff>

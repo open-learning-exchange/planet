@@ -49,7 +49,6 @@ export class ConfigurationComponent implements OnInit {
   isAdvancedOptionConfirmed = false;
   spinnerOn = true;
   configuration: any = {};
-  // currency configuration moved to dedicated manager page
   defaultLocal = environment.couchAddress.indexOf('http') > -1 ? removeProtocol(environment.couchAddress) : environment.couchAddress;
   languageNames = languages.map(list => list.name);
 
@@ -100,7 +99,7 @@ export class ConfigurationComponent implements OnInit {
       ],
       parentDomain: [ '', Validators.required ],
       parentCode: [ '', Validators.required ],
-  preferredLang: [ '', Validators.required ],
+      preferredLang: [ '', Validators.required ],
       code: [
         '',
         Validators.required,
@@ -134,7 +133,7 @@ export class ConfigurationComponent implements OnInit {
     .subscribe((data: any) => {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
-  this.configurationFormGroup.patchValue({ ...data });
+      this.configurationFormGroup.patchValue(data);
       this.contactFormGroup.patchValue(data);
     }, error => {
       console.log(error);
@@ -156,8 +155,6 @@ export class ConfigurationComponent implements OnInit {
   }
 
   confirmConfigurationFormGroup() {
-    this.markFormGroupTouched(this.configurationFormGroup);
-
     if (this.configurationFormGroup.valid) {
       if (!this.isAdvancedOptionsChanged || this.isAdvancedOptionConfirmed) {
         this.stepper.next();
@@ -221,7 +218,6 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-
   allValid() {
     return (this.configurationType === 'update' || this.loginForm.valid) &&
       this.configurationFormGroup.valid &&
@@ -254,30 +250,17 @@ export class ConfigurationComponent implements OnInit {
       }
     };
 
-  const configForm = this.configurationFormGroup.value;
     const configuration = Object.assign(
       {
         registrationRequest: 'pending',
-        adminName: credentials.name + '@' + configForm.code
+        adminName: credentials.name + '@' + this.configurationFormGroup.controls.code.value
       },
       this.configuration,
-      configForm,
-  // currency retained if present but not editable here
+      this.configurationFormGroup.value,
       this.contactFormGroup.value,
       this.configurationType === 'new' ? chatConfig : {}
     );
     return { credentials, configuration };
-  }
-
-  private markFormGroupTouched(formGroup: UntypedFormGroup) {
-    if (!formGroup) {return;}
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control.markAsTouched();
-      if (control instanceof UntypedFormGroup) {
-        this.markFormGroupTouched(control);
-      }
-    });
   }
 
   onSubmitConfiguration() {
