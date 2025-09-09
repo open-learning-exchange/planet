@@ -13,7 +13,7 @@ import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
@@ -107,18 +107,6 @@ export class SubmissionsService {
       }
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
-    });
-  }
-
-  private formatShortDate(timestamp: number): string {
-    return new Date(timestamp).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZoneName: 'short'
     });
   }
 
@@ -524,7 +512,7 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
-      const shortDate = this.formatShortDate(submission.lastUpdateTime);
+      const shortDate = fullLabel(submission.lastUpdateTime);
       const userAge = submission.user.birthDate ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) : submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
