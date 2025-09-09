@@ -60,14 +60,14 @@
   .rating-scale-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    max-width: 100px;
+    gap: 12px;
+    max-width: 240px;
     width: 100%;
   }
 
   .rating-scale-button {
-    height: 50px;
-    font-size: 24px;
+    height: 60px;
+    font-size: 28px;
     font-weight: 500;
     border: 2px solid #ddd;
     border-radius: 8px;
