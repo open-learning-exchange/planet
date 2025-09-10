@@ -126,4 +126,23 @@ export class CommunityLinkDialogComponent {
     }
     routeCtrl.updateValueAndValidity();
   }
+
+  getPlatformIcon(platform: string): string {
+    const map: any = {
+      instagram: 'instagram',
+      facebook: 'facebook',
+      whatsapp: 'whatsapp',
+      discord: 'discord',
+      x: 'x',
+      youtube: 'youtube',
+      tiktok: 'tiktok',
+      website: 'web'
+    };
+    return map[platform] || 'web';
+  }
+
+  platformLabel(platform?: string): string {
+    const match = this.socialPlatforms.find(p => p.value === platform);
+    return match ? match.label : '';
+  }
 }
