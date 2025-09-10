@@ -27,11 +27,17 @@
       <mat-label i18n>Platform</mat-label>
       <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)">
         <mat-select-trigger>
-          <mat-icon *ngIf="linkForm.value.platform" [svgIcon]="getPlatformIcon(linkForm.value.platform)" class="margin-r-5"></mat-icon>
+          <ng-container [ngSwitch]="linkForm.value.platform">
+            <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(linkForm.value.platform)" class="margin-r-5"></mat-icon>
+          </ng-container>
           {{ platformLabel(linkForm.value.platform) }}
         </mat-select-trigger>
         <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">
-          <mat-icon [svgIcon]="getPlatformIcon(p.value)" class="margin-r-5"></mat-icon>
+          <ng-container [ngSwitch]="p.value">
+            <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(p.value)" class="margin-r-5"></mat-icon>
+          </ng-container>
           {{ p.label }}
         </mat-option>
       </mat-select>

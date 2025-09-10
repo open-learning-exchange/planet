@@ -26,9 +26,6 @@ export class AppComponent {
       'myLife',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/selfimprovement.svg'));
     iconRegistry.addSvgIcon(
-      'myTeams',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/group.svg'));
-    iconRegistry.addSvgIcon(
       'feedback',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
     iconRegistry.addSvgIcon(
@@ -76,9 +73,6 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'youtube',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/youtube.svg'));
-    iconRegistry.addSvgIcon(
-      'web',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/web.svg'));
     iconRegistry.addSvgIcon(
       'tiktok',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/tiktok.svg'));
