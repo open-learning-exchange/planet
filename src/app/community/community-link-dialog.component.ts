@@ -17,9 +17,20 @@ export class CommunityLinkDialogComponent {
   selectedLink: { db, title, selector? };
   links: { db, title, selector? }[] = [
     { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
-    { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } }
+    { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } },
+  { db: 'social', title: $localize`Web & Social` }
   ];
   linkForm: UntypedFormGroup;
+  socialPlatforms = [
+    { value: 'instagram', label: 'Instagram' },
+    { value: 'facebook', label: 'Facebook' },
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'discord', label: 'Discord' },
+  { value: 'x', label: 'X (Twitter)' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'website', label: 'Website' }
+  ];
 
   constructor(
     private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,
@@ -33,7 +44,9 @@ export class CommunityLinkDialogComponent {
       title: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
       route: [ '', CustomValidators.required ],
       linkId: '',
-      teamType: ''
+      teamType: '',
+      icon: '',
+      platform: ''
     });
   }
 
@@ -68,5 +81,49 @@ export class CommunityLinkDialogComponent {
 
   cancelForm() {
     this.dialogRef.close();
+  }
+
+  onPlatformSelect(platform: string) {
+    // Set sensible defaults for social links
+    const defaults = {
+      instagram: { title: 'Instagram', icon: 'instagram', route: 'https://instagram.com/' },
+      facebook: { title: 'Facebook', icon: 'facebook', route: 'https://facebook.com/' },
+  whatsapp: { title: 'WhatsApp', icon: 'whatsapp', route: 'https://wa.me/' },
+  discord: { title: 'Discord', icon: 'discord', route: 'https://discord.com/invite/' },
+  x: { title: 'X', icon: 'x', route: 'https://twitter.com/' },
+  youtube: { title: 'YouTube', icon: 'youtube', route: 'https://youtube.com/' },
+  tiktok: { title: 'TikTok', icon: 'tiktok', route: 'https://tiktok.com/@' },
+  website: { title: 'Website', icon: 'web', route: 'https://' }
+    } as any;
+    const def = defaults[platform] || {};
+    if (!this.linkForm.get('title')?.value) {
+      this.linkForm.controls.title.setValue(def.title || '');
+    }
+    this.linkForm.controls.icon.setValue(def.icon || '');
+    if (!this.linkForm.get('route')?.value) {
+      this.linkForm.controls.route.setValue(def.route || '');
+    }
+    this.linkForm.controls.teamType.setValue('social');
+
+    // Apply URL validator only for generic Website entries
+    const routeCtrl = this.linkForm.controls.route;
+    if (platform === 'website') {
+      routeCtrl.setAsyncValidators([ CustomValidators.validLink ]);
+    } else {
+      routeCtrl.setAsyncValidators([]);
+    }
+    routeCtrl.updateValueAndValidity();
+  }
+
+  onLinkTypeChange(linkType: { db; title; selector? }) {
+    this.selectedLink = linkType;
+    const routeCtrl = this.linkForm.controls.route;
+    // For teams/enterprises, clear URL async validation; for Web & Social, keep it only if platform is website
+    if (linkType?.db === 'teams') {
+      routeCtrl.setAsyncValidators([]);
+    } else {
+      routeCtrl.setAsyncValidators(this.linkForm.get('platform')?.value === 'website' ? [ CustomValidators.validLink ] : []);
+    }
+    routeCtrl.updateValueAndValidity();
   }
 }

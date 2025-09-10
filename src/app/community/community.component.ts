@@ -530,4 +530,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.selectedLabel = action === 'select' ? label : '';
     this.applyFilters();
   }
+
+  // Icon helpers for links
+  isTeamLink(link: any): boolean {
+    return (link?.route || '').startsWith('/teams');
+  }
+
+  isEnterpriseLink(link: any): boolean {
+    return (link?.route || '').startsWith('/enterprises');
+  }
 }

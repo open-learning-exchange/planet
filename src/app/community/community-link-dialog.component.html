@@ -1,7 +1,7 @@
 <div mat-dialog-title>
   <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
-    <mat-select [(ngModel)]="selectedLink">
+  <mat-select [(ngModel)]="selectedLink" (selectionChange)="onLinkTypeChange($event.value)">
       <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -19,6 +19,26 @@
         </mat-form-field>
       </mat-step>
     </mat-horizontal-stepper>
+  </form>
+</mat-dialog-content>
+<mat-dialog-content *ngIf="selectedLink?.db === 'social'">
+  <form [formGroup]="linkForm">
+    <mat-form-field class="full-width">
+      <mat-label i18n>Platform</mat-label>
+      <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)">
+        <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">{{ p.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Title</mat-label>
+      <input matInput formControlName="title" required>
+      <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Link URL</mat-label>
+      <input matInput formControlName="route" placeholder="https://..." required>
+      <mat-error><planet-form-error-messages [control]="linkForm.controls.route"></planet-form-error-messages></mat-error>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
