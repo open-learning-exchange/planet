@@ -193,7 +193,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
-        // Set loading flag while fetching links/finances
         this.financesLoading = true;
         return this.getLinks(this.planetCode);
       }),
