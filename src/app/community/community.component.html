@@ -80,9 +80,8 @@
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
               <mat-nav-list>
                 <ng-container *ngFor="let link of links">
-                  <!-- External social links -->
                   <a mat-list-item *ngIf="link.teamType === 'social'" [href]="link.route" target="_blank" rel="noopener">
-                    <mat-icon *ngIf="link.icon" svgIcon="{{link.icon}}" matListIcon></mat-icon>
+                    <mat-icon *ngIf="link.icon" [svgIcon]="link.icon" matListIcon></mat-icon>
                     <span matLine>{{ link.title }}</span>
                     <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
                       <mat-icon>delete</mat-icon>
@@ -92,7 +91,7 @@
                   <mat-list-item *ngIf="link.teamType !== 'social'" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                     <mat-icon *ngIf="isTeamLink(link)" svgIcon="myTeams" matListIcon></mat-icon>
                     <mat-icon *ngIf="isEnterpriseLink(link)" matListIcon>work</mat-icon>
-                    <mat-icon *ngIf="link.icon && !isTeamLink(link) && !isEnterpriseLink(link)" svgIcon="{{link.icon}}" matListIcon></mat-icon>
+                    <mat-icon *ngIf="link.icon && !isTeamLink(link) && !isEnterpriseLink(link)" [svgIcon]="link.icon" matListIcon></mat-icon>
                     <span matLine>{{ link.title }}</span>
                     <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
                       <mat-icon>delete</mat-icon>
