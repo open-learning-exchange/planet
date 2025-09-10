@@ -26,7 +26,14 @@
     <mat-form-field class="full-width">
       <mat-label i18n>Platform</mat-label>
       <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)">
-        <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">{{ p.label }}</mat-option>
+        <mat-select-trigger>
+          <mat-icon *ngIf="linkForm.value.platform" [svgIcon]="getPlatformIcon(linkForm.value.platform)" class="margin-r-5"></mat-icon>
+          {{ platformLabel(linkForm.value.platform) }}
+        </mat-select-trigger>
+        <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">
+          <mat-icon [svgIcon]="getPlatformIcon(p.value)" class="margin-r-5"></mat-icon>
+          {{ p.label }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="full-width">
