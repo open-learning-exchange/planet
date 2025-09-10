@@ -58,6 +58,30 @@ export class AppComponent {
     iconRegistry.addSvgIcon(
       'unpin',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/unpin.svg'));
+    iconRegistry.addSvgIcon(
+      'instagram',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/instagram.svg'));
+    iconRegistry.addSvgIcon(
+      'facebook',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/facebook.svg'));
+    iconRegistry.addSvgIcon(
+      'whatsapp',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/whatsapp.svg'));
+    iconRegistry.addSvgIcon(
+      'discord',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/discord.svg'));
+    iconRegistry.addSvgIcon(
+      'x',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/x.svg'));
+    iconRegistry.addSvgIcon(
+      'youtube',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/youtube.svg'));
+    iconRegistry.addSvgIcon(
+      'web',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/web.svg'));
+    iconRegistry.addSvgIcon(
+      'tiktok',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/tiktok.svg'));
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
