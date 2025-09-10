@@ -84,7 +84,6 @@ export class CommunityLinkDialogComponent {
   }
 
   onPlatformSelect(platform: string) {
-    // Set sensible defaults for social links
     const defaults = {
       instagram: { title: 'Instagram', icon: 'instagram', route: 'https://instagram.com/' },
       facebook: { title: 'Facebook', icon: 'facebook', route: 'https://facebook.com/' },
@@ -105,7 +104,7 @@ export class CommunityLinkDialogComponent {
     }
     this.linkForm.controls.teamType.setValue('social');
 
-    // Apply URL validator only for generic Website entries
+    // Apply URL validator for generic Website entries
     const routeCtrl = this.linkForm.controls.route;
     if (platform === 'website') {
       routeCtrl.setAsyncValidators([ CustomValidators.validLink ]);
@@ -118,7 +117,6 @@ export class CommunityLinkDialogComponent {
   onLinkTypeChange(linkType: { db; title; selector? }) {
     this.selectedLink = linkType;
     const routeCtrl = this.linkForm.controls.route;
-    // For teams/enterprises, clear URL async validation; for Web & Social, keep it only if platform is website
     if (linkType?.db === 'teams') {
       routeCtrl.setAsyncValidators([]);
     } else {

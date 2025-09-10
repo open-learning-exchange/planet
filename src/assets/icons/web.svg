@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Web" fill="currentColor">
+  <!-- Minimal globe icon using currentColor -->
+  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+  <path d="M2 12h20M12 2c3 3.5 3 16.5 0 20M12 2c-3 3.5-3 16.5 0 20" stroke="currentColor" stroke-width="2" fill="none"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-60q20-23 37.5-49.5T552-248H408q13 32 30.5 58.5T480-140Zm-98-188h196q11-33 17.5-66t8.5-66H373q2 33 8.5 66t17.5 66Zm-24-192h244q-2-33-8.5-66T576-652H384q-11 33-17.5 66T358-520Zm62-186h120q-14-27-31.5-53.5T480-820q-20 23-37.5 49.5T420-706Zm-222 186q0 57 20 108t56 93q8-29 14.5-58.5T300-520h-102Zm564 0H660q3 32 9.5 61.5T684-319q36-42 57-93t21-108Zm-84-171q-16-13-33.5-23.5T613-736q13 32 20 61t13 61h102q-13-32-30.5-60T618-691ZM342-736q-19 9-36 19.5T273-693q-18 27-29.5 55T212-576h102q6-32 13-61t15-61Z"/></svg>
