@@ -514,7 +514,7 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
-      const shortDate = this.formatShortDate(submission.lastUpdateTime);
+      const shortDate = fullLabel(submission.lastUpdateTime);
       const userAge = submission.user.birthDate ?
        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
        submission.user.age;
