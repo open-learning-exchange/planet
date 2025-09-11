@@ -6,6 +6,11 @@
 
 .mat-column-taken, .mat-column-createdDate {
   max-width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 16px;
 }
 
 .course-title, .mat-column-name span {
@@ -14,6 +19,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+  
 }
 
 .mat-cell button, .mat-cell div button[mat-raised-button] {
