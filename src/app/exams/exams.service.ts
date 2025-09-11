@@ -30,7 +30,9 @@ export class ExamsService {
 
   choiceRequiredValidator(ac) {
     const questionType = ac.get('type').value;
-    return questionType === 'select' || questionType === 'selectMultiple' ? Validators.required(ac.get('choices')) && { noChoices: true } : null;
+    return questionType === 'select' || questionType === 'selectMultiple' ?
+     Validators.required(ac.get('choices')) && { noChoices: true } :
+     null;
   }
 
   newQuestionChoice(newId, intialValue?) {

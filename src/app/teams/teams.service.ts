@@ -266,7 +266,9 @@ export class TeamsService {
     const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
     const truncatedFullName = truncateText(fullName, 22);
     const teamType = team.type || 'team';
-    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
+    const teamMessage = team.type === 'services' ?
+      'the <b>Community Services Directory</b>' :
+      `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
     let message;
     switch (type) {
       case 'message':

@@ -323,7 +323,9 @@ export class SubmissionsService {
     if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
-    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ? '<pre>'.concat(answerText, '</pre>') : answerText;
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
+      '<pre>'.concat(answerText, '</pre>') :
+      answerText;
   }
 
   setHeader(docContent, name) {
@@ -513,7 +515,9 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime);
-      const userAge = submission.user.birthDate ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) : submission.user.age;
+      const userAge = submission.user.birthDate ?
+       ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
+       submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
       const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
@@ -617,7 +621,9 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users') {
+  aggregateQuestionResponses(
+    question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
+  ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
@@ -682,7 +688,8 @@ export class SubmissionsService {
       userCounts,
       totalUsers,
       totalSelections,
-      chartType: question.type === 'ratingScale' ? 'bar' : (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'),
+      chartType: question.type === 'ratingScale' ? 'bar' :
+        (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') :'pie'),
       isRatingScale: question.type === 'ratingScale'
     };
   }
