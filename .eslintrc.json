@@ -271,12 +271,12 @@
         "curly": "error",
         "eol-last": "error",
         "jsdoc/check-alignment": "error",
-        // "max-len": [
-        //   "error",
-        //   {
-        //     "code": 140
-        //   }
-        // ],
+        "max-len": [
+          "error",
+          {
+            "code": 140
+          }
+        ],
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",

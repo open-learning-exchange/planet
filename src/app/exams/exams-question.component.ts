@@ -1,5 +1,6 @@
 import {
-  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef, ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
+  Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef,
+  ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
 import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
 import { Subject } from 'rxjs';

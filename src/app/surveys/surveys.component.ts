@@ -384,7 +384,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const hasChartableData = survey.questions.some((question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
+    const hasChartableData = survey.questions.some(
+      (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
     this.dialogsFormService.openDialogsForm(
@@ -411,7 +412,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validator: (ac: FormGroup<SurveyFilterForm>) => Object.values(ac.controls).some(control => control.value) ? null : { required: true }
+          validator: (ac: FormGroup<SurveyFilterForm>) =>
+            Object.values(ac.controls).some(control => control.value) ? null : { required: true }
         }
       }
     );

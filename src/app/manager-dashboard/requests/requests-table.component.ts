@@ -231,7 +231,9 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         this.planetMessageService.showMessage($localize`${this.reportsService.planetTypeText(doc.planetType)} name updated.`);
         this.requestUpdate.emit();
       },
-      () => this.planetMessageService.showAlert($localize`There was an error updating ${this.reportsService.planetTypeText(doc.planetType)} name`));
+      () => this.planetMessageService.showAlert(
+        $localize`There was an error updating ${this.reportsService.planetTypeText(doc.planetType)} name`)
+      );
     };
   }
 
