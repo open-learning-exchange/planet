@@ -5,7 +5,9 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import {
+  MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
+} from '@angular/material/legacy-dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
