@@ -16,7 +16,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap
+  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -79,6 +79,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   voicesLoading = true;
   healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
+  comparisonWeek1End: Date = new Date();
+  comparisonWeek2End: Date = new Date();
+  comparisonLoading = false;
+  comparisonTableData: any[] = [];
+  comparisonColumns = ['metric', 'week1', 'week2', 'change'];
+  week1Label = 'Week 1';
+  week2Label = 'Week 2';
+  comparisonData1: any = {};
+  comparisonData2: any = {};
 
   constructor(
     private activityService: ReportsService,
@@ -104,6 +113,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((currentTime: number) => {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
+      this.initializeComparisonDates();
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
@@ -860,6 +870,88 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   onHealthNoDataChange(noData: boolean) {
     this.healthNoData = noData;
+  }
+
+  initializeComparisonDates() {
+    this.comparisonWeek2End = lastThursday(this.today || new Date());
+    const prevThu = new Date(this.comparisonWeek2End);
+    prevThu.setDate(prevThu.getDate() - 7);
+    this.comparisonWeek1End = prevThu;
+
+    this.onComparisonDateChange();
+  }
+
+  onComparisonDateChange() {
+    this.comparisonWeek1End = startOfDay(new Date(this.comparisonWeek1End));
+    this.comparisonWeek2End = startOfDay(new Date(this.comparisonWeek2End));
+    const w1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
+    const w2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
+    this.week1Label = `Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
+    this.week2Label = `Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
+  }
+
+  loadComparisonData() {
+    if (!this.comparisonWeek1End || !this.comparisonWeek2End) { return };
+
+    this.comparisonLoading = true;
+    this.comparisonTableData = [];
+
+    this.comparisonData1 = this.getMetricsForDateRange(thursdayWeekRangeFromEnd(this.comparisonWeek1End));
+    this.comparisonData2 = this.getMetricsForDateRange(thursdayWeekRangeFromEnd(this.comparisonWeek2End));
+
+    this.generateComparisonTable();
+    this.comparisonLoading = false;
+  }
+
+  private getMetricsForDateRange(range: { startDate: Date, endDate: Date }) {
+    const loginData = filterByDate(this.loginActivities.filteredData, 'loginTime', range);
+    const loginProcessed = this.activityService.groupLoginActivities(loginData);
+    const resourceProcessed = this.activityService.groupDocVisits(filterByDate(this.resourceActivities.total.filteredData, 'time', range), 'resourceId');
+    const courseProcessed = this.activityService.groupDocVisits(filterByDate(this.courseActivities.total.filteredData, 'time', range), 'courseId');
+    const stepProcessed = this.activityService.groupStepCompletion(filterByDate(this.progress.steps.filteredData, 'time', range));
+    const chatProcessed = this.activityService.groupChatUsage(filterByDate(this.chatActivities.filteredData, 'createdDate', range));
+    const voicesProcessed = this.activityService.groupVoicesCreated(filterByDate(this.voicesActivities.filteredData, 'time', range));
+
+    return {
+      totalMemberVisits: loginProcessed.byUser.reduce((t, u) => t + u.count, 0),
+      uniqueVisitors: new Set(loginData.map(l => l.user)).size,
+      totalResourceViews: resourceProcessed.byDoc.reduce((t, d) => t + d.count, 0),
+      totalCourseViews: courseProcessed.byDoc.reduce((t, d) => t + d.count, 0),
+      totalStepCompleted: stepProcessed.byMonth.reduce((t, m) => t + m.count, 0),
+      totalChatUsage: chatProcessed.byMonth.reduce((t, m) => t + m.count, 0),
+      totalVoicesCreated: voicesProcessed.byMonth.reduce((t, m) => t + m.count, 0),
+    };
+  }
+
+  generateComparisonTable() {
+    const metrics = [
+      { key: 'uniqueVisitors', label: $localize`Unique Member Visits` },
+      { key: 'totalMemberVisits', label: $localize`Total Member Visits` },
+      { key: 'totalResourceViews', label: $localize`Resource Views` },
+      { key: 'totalCourseViews', label: $localize`Course Views` },
+      { key: 'totalStepCompleted', label: $localize`Steps Completed` },
+      { key: 'totalChatUsage', label: $localize`Chat Usage` },
+      { key: 'totalVoicesCreated', label: $localize`Voices Created` }
+    ];
+
+    this.comparisonTableData = metrics.map(metric => {
+      const week1Value = this.comparisonData1[metric.key] || 0;
+      const week2Value = this.comparisonData2[metric.key] || 0;
+      const changeValue = week2Value - week1Value;
+      const percentageChange = week1Value > 0 ? Math.round((changeValue / week1Value) * 100 * 10) / 10 : 0;
+      const changeText = week1Value === 0 ?
+       (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
+        (changeValue >= 0 ? `+${changeValue} (+${percentageChange}%)` :
+        `${changeValue} (${percentageChange}%)`);
+
+      return {
+        metric: metric.label,
+        week1: week1Value,
+        week2: week2Value,
+        change: changeText,
+        changeValue: changeValue
+      };
+    });
   }
 
 }
