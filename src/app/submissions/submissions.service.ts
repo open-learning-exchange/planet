@@ -382,10 +382,12 @@ export class SubmissionsService {
       } else if (question.type === 'ratingScale') {
         const ratingScaleAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
         const ratingScaleImg = await this.generateChartImage(ratingScaleAgg);
+        const averageRating = this.calculateAverageRating(question, updatedSubmissions);
         docContent.push({
           stack: [
             { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' }
+            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: `The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });
@@ -619,6 +621,12 @@ export class SubmissionsService {
       };
       return new Chart(ctx, chartConfig);
     });
+  }
+
+  calculateAverageRating(question, submissions): number {
+    const validRatings = submissions.map(sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
+    const sum = validRatings.reduce((total, rating) => total + rating, 0);
+    return parseFloat((sum / validRatings.length).toFixed(1));
   }
 
   aggregateQuestionResponses(
