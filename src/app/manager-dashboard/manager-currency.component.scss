@@ -1,0 +1,50 @@
+@import "../variables.scss";
+
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.card {
+  width: 95%;
+  margin: 0 auto;
+}
+
+.list-item-content {
+  display: grid;
+  grid-template-columns: 1.5fr 4fr;
+  width: 100%;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.update-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.hint { font-size: 12px; color: rgba(0,0,0,0.6); margin-top: 8px; }
+
+@media (max-width: $screen-md) {
+  .container { padding: 15px; }
+  .card { width: 100%; margin: 0; }
+  .list-item-content { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .list-item-content > span { flex-basis: 30%; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; }
+  mat-form-field { flex-basis: 70%; }
+  input { width: 100%; }
+}
+
+@media (max-width: $screen-sm) {
+  .container { padding: 10px; }
+  .card { width: 100%; margin: 0; }
+  .list-item-content { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 10px; max-width: 70%; overflow-x: hidden; }
+  .list-item-content > span { flex-basis: 35%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+  mat-form-field { flex-basis: 80%; min-width: 0; }
+  .update-button-container { justify-content: flex-start; }
+}
