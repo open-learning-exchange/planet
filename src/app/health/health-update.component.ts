@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
@@ -12,6 +12,7 @@ import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 import { interval, of, race } from 'rxjs';
 import { debounce } from 'rxjs/operators';
+import { HealthProfileForm, UserProfileForm } from './health.forms';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -19,16 +20,16 @@ import { debounce } from 'rxjs/operators';
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: UntypedFormGroup;
-  healthForm: UntypedFormGroup;
-  existingData: any = {};
+  profileForm: FormGroup<UserProfileForm>;
+  healthForm: FormGroup<HealthProfileForm>;
+  existingData: { _id?: string; _rev?: string; profile?: Record<string, unknown> } = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
-  initialFormValues: any;
+  initialFormValues: string;
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
@@ -41,7 +42,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   ngOnInit() {
     this.profileForm.patchValue(this.userService.get());
-    this.healthService.getHealthData(this.userService.get()._id).subscribe(([ data ]: any[]) => {
+    this.healthService.getHealthData(this.userService.get()._id).subscribe(([ data ]: [Record<string, unknown>]) => {
       this.existingData = data;
       this.healthForm.patchValue(data.profile);
       this.captureInitialState();
@@ -83,32 +84,31 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   initProfileForm() {
-    this.profileForm = this.fb.group({
-      name: '',
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', CustomValidators.required ],
-      birthDate: [
-        '',
-        CustomValidators.dateValidRequired,
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+    this.profileForm = this.fb.group<UserProfileForm>({
+      name: this.fb.control(''),
+      firstName: this.fb.control('', CustomValidators.required),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', CustomValidators.required),
+      email: this.fb.control('', [ Validators.required, Validators.email ]),
+      language: this.fb.control('', Validators.required),
+      phoneNumber: this.fb.control('', CustomValidators.required),
+      birthDate: this.fb.control('', {
+        validators: [ CustomValidators.dateValidRequired ],
+        asyncValidators: [ ac => this.validatorService.notDateInFuture$(ac) ]
+      }),
+      birthplace: this.fb.control('')
     });
   }
 
   initHealthForm() {
-    this.healthForm = this.fb.group({
-      emergencyContactName: '',
-      emergencyContactType: '',
-      emergencyContact: '',
-      specialNeeds: '',
-      immunizations: '',
-      allergies: '',
-      notes: ''
+    this.healthForm = this.fb.group<HealthProfileForm>({
+      emergencyContactName: this.fb.control(''),
+      emergencyContactType: this.fb.control(''),
+      emergencyContact: this.fb.control(''),
+      specialNeeds: this.fb.control(''),
+      immunizations: this.fb.control(''),
+      allergies: this.fb.control(''),
+      notes: this.fb.control('')
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);
