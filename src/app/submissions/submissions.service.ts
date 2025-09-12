@@ -323,7 +323,9 @@ export class SubmissionsService {
     if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
-    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ? '<pre>'.concat(answerText, '</pre>') : answerText;
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
+      '<pre>'.concat(answerText, '</pre>') :
+      answerText;
   }
 
   setHeader(docContent, name) {
@@ -380,10 +382,12 @@ export class SubmissionsService {
       } else if (question.type === 'ratingScale') {
         const ratingScaleAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
         const ratingScaleImg = await this.generateChartImage(ratingScaleAgg);
+        const averageRating = this.calculateAverageRating(question, updatedSubmissions);
         docContent.push({
           stack: [
             { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' }
+            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: `The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });
@@ -513,7 +517,9 @@ export class SubmissionsService {
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime);
-      const userAge = submission.user.birthDate ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) : submission.user.age;
+      const userAge = submission.user.birthDate ?
+       ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
+       submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
       const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
@@ -617,7 +623,15 @@ export class SubmissionsService {
     });
   }
 
-  aggregateQuestionResponses(question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users') {
+  calculateAverageRating(question, submissions): number {
+    const validRatings = submissions.map(sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
+    const sum = validRatings.reduce((total, rating) => total + rating, 0);
+    return parseFloat((sum / validRatings.length).toFixed(1));
+  }
+
+  aggregateQuestionResponses(
+    question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
+  ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
@@ -682,7 +696,8 @@ export class SubmissionsService {
       userCounts,
       totalUsers,
       totalSelections,
-      chartType: question.type === 'ratingScale' ? 'bar' : (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'),
+      chartType: question.type === 'ratingScale' ? 'bar' :
+        (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') :'pie'),
       isRatingScale: question.type === 'ratingScale'
     };
   }

@@ -12,7 +12,10 @@ import { UsersProfileComponent } from './users-profile.component';
     </mat-dialog-content>
     <mat-dialog-actions>
       <button mat-raised-button mat-dialog-close i18n>Close</button>
-      <button color="primary" *ngIf="editable" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}" mat-raised-button mat-dialog-close i18n>View full profile</button>
+      <button color="primary" *ngIf="editable" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}"
+       mat-raised-button mat-dialog-close i18n>
+        View full profile
+      </button>
     </mat-dialog-actions>
   `
 })

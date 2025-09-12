@@ -41,7 +41,10 @@ export class CsvService {
     this.generate(formattedData, options);
   }
 
-  exportSummaryCSV(logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[], chatActivities: any[], voicesActivities: any[], planetName: string, startDate: Date, endDate: Date) {
+  exportSummaryCSV(
+    logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
+    chatActivities: any[], voicesActivities: any[], planetName: string, startDate: Date, endDate: Date
+  ) {
     const options = {
       title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
       filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
@@ -97,7 +100,9 @@ export class CsvService {
     return formattedData;
   }
 
-  private processSection(formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]): void {
+  private processSection(
+    formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
+  ): void {
     formattedData.push({ Section: title, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
     let totalAll = 0;
     let totalMale = 0;

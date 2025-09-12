@@ -11,7 +11,9 @@ import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
-import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../../shared/dialogs/dialogs-announcement.component';
+import {
+  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
+} from '../../shared/dialogs/dialogs-announcement.component';
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 
 @Component({
