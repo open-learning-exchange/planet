@@ -149,7 +149,7 @@ export class SubmissionsService {
 
   updateStatus(submission: any) {
     if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
-      return 'requires grading';
+      return $localize`requires grading`;
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
@@ -159,7 +159,7 @@ export class SubmissionsService {
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
       }, submission.user._id);
     }, error => console.log(error));
-    return 'complete';
+    return $localize`complete`;
   }
 
   calcTotalGrade(submission: any) {
@@ -282,19 +282,21 @@ export class SubmissionsService {
         ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
-        const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
+        const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            'Gender': submission.user.gender || 'N/A',
-            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
+            [$localize`Gender`]: submission.user.gender || 'N/A',
+            [$localize`Age (years)`]: submission.user.birthDate ?
+              ageFromBirthDate(time, submission.user.birthDate) :
+              submission.user.age || 'N/A',
             'Planet': submission.source,
-            'Date': submission.lastUpdateTime,
-            'Group': submission.teamInfo?.name || 'N/A',
-            'Group Type': submission.teamInfo?.type || 'N/A',
+            [$localize`Date`]: fullLabel(submission.lastUpdateTime),
+            [$localize`Group`]: submission.teamInfo?.name || 'N/A',
+            [$localize`Group Type`]: submission.teamInfo?.type || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              [`"${$localize`Question`} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
@@ -338,19 +340,19 @@ export class SubmissionsService {
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
-    this.setHeader(docContent, 'Charts');
+    this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
-      docContent.push({ text: `Q${i + 1}: ${question.body}` });
+      docContent.push({ text: `${$localize`Question `} ${i + 1}: ${question.body}` });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          [ 'Option', 'User Count', '% of Users*', 'Selections count', '% of All Selections' ],
+          [ $localize`Option`, $localize`User Count`, $localize`% of Users*`, $localize`Selections count`, $localize`% of All Selections` ],
           ...barAgg.labels.map((label, index) => [
             label,
             `${barAgg.userCounts[index].toString()} / ${barAgg.totalUsers}`,
@@ -363,9 +365,9 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: 'Selection Breakdown', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}` },
-            { text: `Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
+            { text: $localize`Selection Breakdown`, style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            { text: $localize`Total respondents:` + ` ${updatedSubmissions.length}` },
+            { text: $localize`Total selections:` + ` ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
             {
               table: {
                 headerRows: 1,
@@ -375,7 +377,7 @@ export class SubmissionsService {
               layout: 'lightHorizontalLines',
               margin: [ 0, 5, 0, 10 ]
             },
-            { text: `*Percentage of users who selected the choice. Users may select multiple options` },
+            { text: $localize`*Percentage of users who selected the choice. Users may select multiple options` },
           ],
           alignment: 'center'
         });
@@ -386,8 +388,8 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
-            { text: `The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
+            { text: $localize`Total respondents` + `: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: $localize`The Score` + `: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });
@@ -402,7 +404,7 @@ export class SubmissionsService {
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
-    this.setHeader(docContent, 'AI Analysis');
+    this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
       stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
       margin: [ 0, 10, 0, 10 ]
@@ -422,7 +424,7 @@ export class SubmissionsService {
       { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
       { text: exam.description || '' },
       { text: '\n' },
-      { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
+      { text: $localize`Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
       { text: '', pageBreak: 'after' },
       ...submissionContents
     ];
@@ -526,25 +528,25 @@ export class SubmissionsService {
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
-        `<h3>Submission ${index + 1}</h3>`,
+        `<h3>${$localize`Submission`} ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
-        `<li><strong>Date:</strong> ${shortDate}</li>`,
+        `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
-        userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
+        userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
+        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         `</ul>`,
         `<hr>`
       ].filter(Boolean).join('\n');
     } else {
-      return `### ${exam.name} Questions\n`;
+      return `### ${exam.name} ${$localize`Questions`} \n`;
     }
   }
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
-      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${text}</div>`;
+      return `<div style="text-align: ${alignment};"><strong>${$localize`${label}`} ${index + 1}:</strong><br>${text}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
@@ -567,7 +569,7 @@ export class SubmissionsService {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
+            label: isRatingScale ? $localize`selection/choices(1-9)` : (isBar ? $localize`% of responders/selection` : undefined),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -624,7 +626,8 @@ export class SubmissionsService {
   }
 
   calculateAverageRating(question, submissions): number {
-    const validRatings = submissions.map(sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
+    const validRatings = submissions.map(sub =>
+      parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
     const sum = validRatings.reduce((total, rating) => total + rating, 0);
     return parseFloat((sum / validRatings.length).toFixed(1));
   }
@@ -642,7 +645,7 @@ export class SubmissionsService {
     } else {
       question.choices.forEach(c => { counts[c.text] = new Set(); });
       if (question.hasOtherOption) {
-        counts['Other'] = new Set();
+        counts[$localize`Other`] = new Set();
       }
     }
 
@@ -662,7 +665,7 @@ export class SubmissionsService {
         const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
         selections.forEach(selection => {
           if (selection.isOther || selection.id === 'other') {
-            counts['Other']?.add(userId);
+            counts[$localize`Other`]?.add(userId);
           } else {
             const txt = selection.text ?? selection;
             counts[txt]?.add(userId);
