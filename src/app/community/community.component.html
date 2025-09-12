@@ -78,18 +78,12 @@
           <ng-container>
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
-              <mat-nav-list>
-                <ng-container *ngFor="let link of links">
-                  <a mat-list-item *ngIf="link.teamType === 'social'" [href]="link.route" target="_blank" rel="noopener">
-                    <mat-icon *ngIf="link.icon === 'web'" matListIcon>public</mat-icon>
-                    <mat-icon *ngIf="link.icon && link.icon !== 'web'" [svgIcon]="link.icon" matListIcon></mat-icon>
-                    <span matLine>{{ link.title }}</span>
-                    <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </a>
-                  <!-- Internal routes -->
-                  <mat-list-item *ngIf="link.teamType !== 'social'" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
+            <mat-nav-list *ngIf="links?.length > 0">
+              <!-- Local Links Section -->
+              <ng-container *ngIf="localLinks.length > 0">
+                <h3 mat-subheader i18n>Local</h3>
+                <ng-container *ngFor="let link of localLinks">
+                  <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                     <mat-icon *ngIf="isTeamLink(link)" matListIcon>groups</mat-icon>
                     <mat-icon *ngIf="isEnterpriseLink(link)" matListIcon>work</mat-icon>
                     <mat-icon *ngIf="link.icon && !isTeamLink(link) && !isEnterpriseLink(link) && link.icon === 'web'" matListIcon>public</mat-icon>
@@ -100,7 +94,23 @@
                     </button>
                   </mat-list-item>
                 </ng-container>
-              </mat-nav-list>
+              </ng-container>
+
+              <!-- Social & Web Links Section -->
+              <ng-container *ngIf="socialWebLinks.length > 0">
+                <h3 mat-subheader i18n>Social & Web</h3>
+                <ng-container *ngFor="let link of socialWebLinks">
+                  <a mat-list-item [href]="link.route" target="_blank" rel="noopener">
+                    <mat-icon *ngIf="link.icon === 'web'" matListIcon>public</mat-icon>
+                    <mat-icon *ngIf="link.icon && link.icon !== 'web'" [svgIcon]="link.icon" matListIcon></mat-icon>
+                    <span matLine>{{ link.title }}</span>
+                    <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </a>
+                </ng-container>
+              </ng-container>
+            </mat-nav-list>
           </ng-container>
           <ng-template #noLinks>
             <p i18n>No links available.</p>
