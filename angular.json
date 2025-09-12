@@ -295,6 +295,6 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ],
+    ]
   }
 }
