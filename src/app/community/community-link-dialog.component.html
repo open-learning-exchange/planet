@@ -25,7 +25,7 @@
   <form [formGroup]="linkForm">
     <mat-form-field class="full-width">
       <mat-label i18n>Platform</mat-label>
-      <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)">
+  <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)" required>
         <mat-select-trigger>
           <ng-container [ngSwitch]="linkForm.value.platform">
             <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
@@ -40,7 +40,8 @@
           </ng-container>
           {{ p.label }}
         </mat-option>
-      </mat-select>
+  </mat-select>
+  <mat-error *ngIf="linkForm.controls.platform.invalid && linkForm.controls.platform.touched" i18n>Platform is required.</mat-error>
     </mat-form-field>
     <mat-form-field class="full-width">
       <mat-label i18n>Title</mat-label>

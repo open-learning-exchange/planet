@@ -117,11 +117,16 @@ export class CommunityLinkDialogComponent {
   onLinkTypeChange(linkType: { db; title; selector? }) {
     this.selectedLink = linkType;
     const routeCtrl = this.linkForm.controls.route;
+    const platformCtrl = this.linkForm.controls.platform;
     if (linkType?.db === 'teams') {
       routeCtrl.setAsyncValidators([]);
+      platformCtrl.clearValidators();
+      platformCtrl.setValue('');
     } else {
+      platformCtrl.setValidators([ CustomValidators.required ]);
       routeCtrl.setAsyncValidators(this.linkForm.get('platform')?.value === 'website' ? [ CustomValidators.validLink ] : []);
     }
+    platformCtrl.updateValueAndValidity();
     routeCtrl.updateValueAndValidity();
   }
 
