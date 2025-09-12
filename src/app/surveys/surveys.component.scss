@@ -6,6 +6,11 @@
 
 .mat-column-taken, .mat-column-createdDate {
   max-width: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 32px;
 }
 
 .course-title, .mat-column-name span {
