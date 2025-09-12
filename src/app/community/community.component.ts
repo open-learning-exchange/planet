@@ -70,7 +70,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   selectedLabel = '';
   pinned = false;
 
-  // Computed groups for rendering link sections
   get localLinks(): any[] {
     return (this.links || []).filter(link => link.teamType !== 'social' && (this.isTeamLink(link) || this.isEnterpriseLink(link)));
   }

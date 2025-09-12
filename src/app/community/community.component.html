@@ -79,7 +79,6 @@
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
             <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
             <mat-nav-list *ngIf="links?.length > 0">
-              <!-- Local Links Section -->
               <ng-container *ngIf="localLinks.length > 0">
                 <h3 mat-subheader i18n>Local</h3>
                 <ng-container *ngFor="let link of localLinks">
@@ -95,8 +94,6 @@
                   </mat-list-item>
                 </ng-container>
               </ng-container>
-
-              <!-- Social & Web Links Section -->
               <ng-container *ngIf="socialWebLinks.length > 0">
                 <h3 mat-subheader i18n>Social & Web</h3>
                 <ng-container *ngFor="let link of socialWebLinks">
