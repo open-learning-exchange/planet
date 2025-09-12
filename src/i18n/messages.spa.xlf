@@ -228,7 +228,7 @@
           <context context-type="sourcefile">src/app/chat/chat-window/chat-window.component.html</context>
           <context context-type="linenumber">20</context>
         </context-group>
-        <target state="needs-translation">chat is disabled, contact community admin</target>
+        <target state="translated">el chat está desactivado, contacta al administrador de la comunidad</target>
       </trans-unit>
       <trans-unit id="8cc94913d43d220fc54b9c06d3dda56ac3497d34" datatype="html" approved="yes">
         <source>AI Chat</source>
@@ -2709,7 +2709,7 @@
           <context context-type="sourcefile">src/app/courses/enroll-courses/courses-enroll.component.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="needs-translation">username</target>
+        <target state="translated">nombre de usuario</target>
       </trans-unit>
       <trans-unit id="4269495761666988308" datatype="html" approved="yes">
         <source>Date Started</source>
@@ -2733,7 +2733,7 @@
           <context context-type="sourcefile">src/app/courses/enroll-courses/courses-enroll.component.ts</context>
           <context context-type="linenumber">100</context>
         </context-group>
-        <target state="needs-translation">Course Enrollment Data - <x id="PH" equiv-text="this.course"/></target>
+        <target state="translated">Datos de Inscripción del Curso - <x id="PH" equiv-text="this.course"/></target>
       </trans-unit>
       <trans-unit id="86115ad60b7ce4af831b92927f338007ce7dd2f5" datatype="html" approved="yes">
         <source>Total Errors</source>
@@ -2879,7 +2879,7 @@
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">248</context>
         </context-group>
-        <target state="needs-translation">Step <x id="PH" equiv-text="index + 1"/></target>
+        <target state="translated">Paso <x id="PH" equiv-text="index + 1"/></target>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html" approved="yes">
         <source>Username</source>
@@ -2895,7 +2895,7 @@
           <context context-type="sourcefile">src/app/courses/progress-courses/courses-progress-leader.component.ts</context>
           <context context-type="linenumber">253</context>
         </context-group>
-        <target state="needs-translation">Success Percentage</target>
+        <target state="translated">Porcentaje de éxito</target>
       </trans-unit>
       <trans-unit id="6696846078432037567" datatype="html" approved="yes">
         <source>Total Errors</source>
@@ -7605,7 +7605,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
           <context context-type="linenumber">253</context>
         </context-group>
-        <target state="needs-translation">Planet Name</target>
+        <target state="translated">Nombre de Planet</target>
       </trans-unit>
       <trans-unit id="8040881171107393560" datatype="html" approved="yes">
         <source>ID</source>
@@ -7709,7 +7709,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
           <context context-type="linenumber">215</context>
         </context-group>
-        <target state="needs-translation">myPlanet Logs for <x id="PH" equiv-text="planet.name"/></target>
+        <target state="translated">Registros de myPlanet para <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html" approved="yes">
         <source>ID</source>
@@ -8497,7 +8497,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">609</context>
         </context-group>
-        <target state="needs-translation">Exams</target>
+        <target state="translated">Exámenes</target>
       </trans-unit>
       <trans-unit id="1924937354164431567" datatype="html">
         <source>Enrollments</source>
@@ -8505,7 +8505,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">610</context>
         </context-group>
-        <target state="needs-translation">Enrollments</target>
+        <target state="translated">Inscripciones</target>
       </trans-unit>
       <trans-unit id="2123659921722214537" datatype="html" approved="yes">
         <source>Views</source>
@@ -8541,7 +8541,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">613</context>
         </context-group>
-        <target state="needs-translation">Completions</target>
+        <target state="translated">Completos</target>
       </trans-unit>
       <trans-unit id="8504351943068329874" datatype="html" approved="yes">
         <source>Average Rating</source>
@@ -8633,7 +8633,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">734</context>
         </context-group>
-        <target state="needs-translation">Has Attachments</target>
+        <target state="translated">Tiene adjuntos</target>
       </trans-unit>
       <trans-unit id="7990167846685918034" datatype="html" approved="yes">
         <source>Chat Usage</source>
@@ -8853,7 +8853,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
           <context context-type="linenumber">283</context>
         </context-group>
-        <target state="needs-translation">myPlanet Reports for <x id="PH" equiv-text="planet.name"/></target>
+        <target state="translated">Informes de myPlanet para <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html" approved="yes">
         <source>Pending Report</source>
@@ -11399,7 +11399,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
           <context context-type="linenumber">67</context>
         </context-group>
-        <target state="needs-translation">Event</target>
+        <target state="translated">Evento</target>
       </trans-unit>
       <trans-unit id="2058019742098696745" datatype="html">
         <source>Uncompleted Task</source>
@@ -11407,7 +11407,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
           <context context-type="linenumber">68</context>
         </context-group>
-        <target state="needs-translation">Uncompleted Task</target>
+        <target state="translated">Tarea Incompleta</target>
       </trans-unit>
       <trans-unit id="586988182581968519" datatype="html">
         <source>Completed Task</source>
@@ -11415,7 +11415,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/calendar.component.ts</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="needs-translation">Completed Task</target>
+        <target state="translated">Tarea completada</target>
       </trans-unit>
       <trans-unit id="7071035765699070035" datatype="html" approved="yes">
         <source>Add Event</source>
@@ -11537,7 +11537,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">108</context>
         </context-group>
-        <target state="needs-translation">Section</target>
+        <target state="translated">Sección</target>
       </trans-unit>
       <trans-unit id="5403684285319082289" datatype="html">
         <source>Month</source>
@@ -11545,7 +11545,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">109</context>
         </context-group>
-        <target state="needs-translation">Month</target>
+        <target state="translated">Mes</target>
       </trans-unit>
       <trans-unit id="1616102757855967475" datatype="html" approved="yes">
         <source>All</source>
@@ -11561,7 +11561,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">113</context>
         </context-group>
-        <target state="needs-translation">Unspecified</target>
+        <target state="translated">No especificado</target>
       </trans-unit>
       <trans-unit id="2397816345463091163" datatype="html" approved="yes">
         <source>Old Password</source>
@@ -12983,7 +12983,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
           <context context-type="linenumber">391</context>
         </context-group>
-        <target state="needs-translation">Total respondents: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">Total de encuestados: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="8242048480439700696" datatype="html">
         <source>Total selections: <x id="PH" equiv-text="selectionAgg.totalSelections"/></source>
@@ -12991,7 +12991,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
           <context context-type="linenumber">370</context>
         </context-group>
-        <target state="needs-translation">Total selections: <x id="PH" equiv-text="selectionAgg.totalSelections"/></target>
+        <target state="translated">Total de selecciones: <x id="PH" equiv-text="selectionAgg.totalSelections"/></target>
       </trans-unit>
       <trans-unit id="8898648218118868158" datatype="html">
         <source>*Percentage of users who selected the choice. Users may select multiple options</source>
@@ -13007,7 +13007,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
           <context context-type="linenumber">392</context>
         </context-group>
-        <target state="needs-translation">The Score: <x id="PH" equiv-text="averageRating"/></target>
+        <target state="translated">La Puntuación: <x id="PH" equiv-text="averageRating"/></target>
       </trans-unit>
       <trans-unit id="5907067804507215484" datatype="html">
         <source>AI Analysis</source>
@@ -13915,7 +13915,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-reports.component.ts</context>
           <context context-type="linenumber">173</context>
         </context-group>
-        <target state="needs-translation">Updated Date</target>
+        <target state="translated">Fecha de actualización</target>
       </trans-unit>
       <trans-unit id="8279659101806790636" datatype="html">
         <source>Wages</source>
@@ -13923,7 +13923,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-reports.component.ts</context>
           <context context-type="linenumber">177</context>
         </context-group>
-        <target state="needs-translation">Wages</target>
+        <target state="translated">Salarios</target>
       </trans-unit>
       <trans-unit id="1426475745601890846" datatype="html">
         <source>Other Expenses</source>
@@ -13931,7 +13931,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-reports.component.ts</context>
           <context context-type="linenumber">178</context>
         </context-group>
-        <target state="needs-translation">Other Expenses</target>
+        <target state="translated">Otros gastos</target>
       </trans-unit>
       <trans-unit id="8590004670630383086" datatype="html" approved="yes">
         <source>Profit/Loss</source>
@@ -14139,7 +14139,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">196</context>
         </context-group>
-        <target state="needs-translation">date</target>
+        <target state="translated">fecha</target>
       </trans-unit>
       <trans-unit id="6777974573583289938" datatype="html">
         <source>description</source>
@@ -14147,7 +14147,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">197</context>
         </context-group>
-        <target state="needs-translation">description</target>
+        <target state="translated">descripción</target>
       </trans-unit>
       <trans-unit id="1660800252915157371" datatype="html">
         <source>credit</source>
@@ -14155,7 +14155,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">198</context>
         </context-group>
-        <target state="needs-translation">credit</target>
+        <target state="translated">crédito</target>
       </trans-unit>
       <trans-unit id="1408084053192649257" datatype="html">
         <source>debit</source>
@@ -14163,7 +14163,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">199</context>
         </context-group>
-        <target state="needs-translation">debit</target>
+        <target state="translated">débito</target>
       </trans-unit>
       <trans-unit id="5452881409775077105" datatype="html">
         <source>balance</source>
@@ -14171,7 +14171,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">200</context>
         </context-group>
-        <target state="needs-translation">balance</target>
+        <target state="translated">equilibrio</target>
       </trans-unit>
       <trans-unit id="188408324951035066" datatype="html">
         <source>Unnamed</source>
@@ -14179,7 +14179,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
           <context context-type="linenumber">202</context>
         </context-group>
-        <target state="needs-translation">Unnamed</target>
+        <target state="translated">Sin nombre</target>
       </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html" approved="yes">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
