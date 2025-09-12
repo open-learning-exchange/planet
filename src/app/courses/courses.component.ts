@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -27,6 +27,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
 import { StateService } from '../shared/state.service';
+import { CourseFormModel } from './courses.model';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
@@ -70,8 +71,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
-  fb: UntypedFormBuilder;
-  courseForm: UntypedFormGroup;
+  courseForm!: FormGroup<CourseFormModel>;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -100,7 +100,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
   isAuthorized = false;
-  tagFilter = new UntypedFormControl([]);
+  tagFilter = new FormControl<string[]>([]);
   tagFilterValue = [];
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
