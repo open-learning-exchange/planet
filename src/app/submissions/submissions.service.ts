@@ -286,15 +286,15 @@ export class SubmissionsService {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            [$localize`Gender`]: $localize`${submission.user.gender}` || 'N/A',
+            [$localize`Gender`]: submission.user.gender || 'N/A',
             [$localize`Age (years)`]: submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
             'Planet': submission.source,
-            [$localize`Date`]: submission.lastUpdateTime,
+            [$localize`Date`]: fullLabel(submission.lastUpdateTime),
             [$localize`Group`]: submission.teamInfo?.name || 'N/A',
-            [$localize`Group Type`]: $localize`${submission.teamInfo?.type}` || 'N/A',
+            [$localize`Group Type`]: submission.teamInfo?.type || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"${$localize`Question `} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              [`"${$localize`Question`} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
