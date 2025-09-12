@@ -250,17 +250,17 @@ export class ReportsMyPlanetComponent implements OnInit {
 
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
-      ...(planetName ? { 'Planet Name': planetName } : {}),
-      'ID': data.androidId.toString() || data.uniqueAndroidId.toString(),
-      'Name': data.deviceName || data.customDeviceName,
-      'Last Synced': data.time && data.time !== 0 ?
-      new Date(data.time).toDateString() :
-      data.last_synced && data.last_synced !== 0 ?
-      new Date(data.last_synced).toDateString() :
-      'N/A',
-      'Version': data.versionName,
-      'No of Visits': data.count,
-      'Used Time': this.formatTotalTime(data.totalUsedTime),
+      ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
+      [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
+      [$localize`Name`]: data.deviceName || data.customDeviceName,
+      [$localize`Last Synced`]: data.time && data.time !== 0 ?
+        new Date(data.time).toDateString() :
+        data.last_synced && data.last_synced !== 0 ?
+        new Date(data.last_synced).toDateString() :
+        'N/A',
+      [$localize`Version`]: data.versionName,
+      [$localize`No of Visits`]: data.count,
+      [$localize`Used Time`]: this.formatTotalTime(data.totalUsedTime),
     }));
   }
 
@@ -271,7 +271,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
     this.csvService.exportCSV({
       data: csvData,
-      title: 'myPlanet Reports',
+      title: $localize`myPlanet Reports`,
     });
   }
 
@@ -280,7 +280,7 @@ export class ReportsMyPlanetComponent implements OnInit {
 
     this.csvService.exportCSV({
       data: csvData,
-      title: `myPlanet Reports for ${planet.name}`,
+      title: $localize`myPlanet Reports for ${planet.name}`,
     });
   }
 

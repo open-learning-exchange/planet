@@ -186,13 +186,13 @@ export class LogsMyPlanetComponent implements OnInit {
 
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
-      ...(planetName ? { 'Planet Name': planetName } : {}),
-      'ID': data.androidId,
-      'Name': data.deviceName || data.customDeviceName,
-      'Type': data.type,
-      'Time': new Date(Number(data.time)),
-      'Version': data.version,
-      'Error':  data.error || 'N/A',
+      ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
+      [$localize`ID`]: data.androidId,
+      [$localize`Name`]: data.deviceName || data.customDeviceName,
+      [$localize`Type`]: data.type,
+      [$localize`Time`]: new Date(Number(data.time)),
+      [$localize`Version`]: data.version,
+      [$localize`Error`]:  data.error || 'N/A',
     }));
   }
 
@@ -203,7 +203,7 @@ export class LogsMyPlanetComponent implements OnInit {
 
     this.csvService.exportCSV({
       data: csvData,
-      title: 'myPlanet Logs',
+      title: $localize`myPlanet Logs`,
     });
   }
 
@@ -212,7 +212,7 @@ export class LogsMyPlanetComponent implements OnInit {
 
     this.csvService.exportCSV({
       data: csvData,
-      title: `myPlanet Logs for ${planet.name}`,
+      title: $localize`myPlanet Logs for ${planet.name}`,
     });
   }
 

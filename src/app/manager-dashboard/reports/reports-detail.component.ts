@@ -603,15 +603,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                             'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
     const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
-      'Title': course.title,
-      'Link': baseUrl + courseId,
-      'Steps': course.steps,
-      'Exams': course.exams,
-      'Enrollments': course.enrollments,
-      'Views': course.count,
-      'Steps Completed': course.stepsCompleted,
-      'Completions': course.completions,
-      'Average Rating': course.averageRating
+      [$localize`Title`]: course.title,
+      [$localize`Link`]: baseUrl + courseId,
+      [$localize`Steps`]: course.steps,
+      [$localize`Exams`]: course.exams,
+      [$localize`Enrollments`]: course.enrollments,
+      [$localize`Views`]: course.count,
+      [$localize`Steps Completed`]: course.stepsCompleted,
+      [$localize`Completions`]: course.completions,
+      [$localize`Average Rating`]: course.averageRating
     }));
 
     this.csvService.exportCSV({
@@ -652,10 +652,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                           'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
     const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
-      'Title': resource.title,
-      'Link': baseUrl + resourceId,
-      'Views': resource.count,
-      'Average Rating': resource.averageRating
+      [$localize`Title`]: resource.title,
+      [$localize`Link`]: baseUrl + resourceId,
+      [$localize`Views`]: resource.count,
+      [$localize`Average Rating`]: resource.averageRating
     }));
     this.csvService.exportCSV({
       data: csvData,
@@ -725,13 +725,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data = this.sortData(data, sortBy);
     }
     const exportData = data.map(activity => ({
-      'User': activity.user || '',
-      'AI Provider': activity.aiProvider || '',
-      'Timestamp': new Date(activity.createdDate).toLocaleString(),
-      'Chat Responses': activity.conversations?.length || 0,
-      'Assistant': activity.assistant ? 'Yes' : 'No',
-      'Shared': activity.shared ? 'Yes' : 'No',
-      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+      [$localize`User`]: activity.user || '',
+      [$localize`AI Provider`]: activity.aiProvider || '',
+      [$localize`Timestamp`]: new Date(activity.createdDate).toLocaleString(),
+      [$localize`Chat Responses`]: activity.conversations?.length || 0,
+      [$localize`Assistant`]: activity.assistant ? 'Yes' : 'No',
+      [$localize`Shared`]: activity.shared ? 'Yes' : 'No',
+      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
     }));
     this.csvService.exportCSV({
       data: exportData,

@@ -366,8 +366,8 @@ export class SubmissionsService {
           stack: [
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
             { text: $localize`Selection Breakdown`, style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
-            { text: $localize`Total respondents:` + ` ${updatedSubmissions.length}` },
-            { text: $localize`Total selections:` + ` ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
+            { text: $localize`Total respondents: ${updatedSubmissions.length}` },
+            { text: $localize`Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
             {
               table: {
                 headerRows: 1,
@@ -388,8 +388,8 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: $localize`Total respondents` + `: ${updatedSubmissions.length}`, alignment: 'center' },
-            { text: $localize`The Score` + `: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
+            { text: $localize`Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: $localize`The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });

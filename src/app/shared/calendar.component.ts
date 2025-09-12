@@ -64,9 +64,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   tasks: any[] = [];
   showLegend = true;
   eventLegend = [
-    { color: styleVariables.primary, label: 'Event' },
-    { color: 'orange', label: 'Uncompleted Task', type: 'team' },
-    { color: 'grey', label: 'Completed Task', type: 'team' }
+    { color: styleVariables.primary, label: $localize`Event` },
+    { color: 'orange', label: $localize`Uncompleted Task`, type: 'team' },
+    { color: 'grey', label: $localize`Completed Task`, type: 'team' }
   ];
 
   calendarOptions: CalendarOptions = {
