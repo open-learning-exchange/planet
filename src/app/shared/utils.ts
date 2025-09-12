@@ -1,5 +1,3 @@
-import styles from '../_export.module.scss';
-
 export const showdown = require('showdown');
 export const pdfMake = require('pdfmake/build/pdfmake');
 export const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -29,7 +27,25 @@ export const addToArray = (startArray = [], addArray = []) => {
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
-export const styleVariables: any = styles;
+/*
+ * styleVariables was previously imported from SCSS files as an ECMA module
+ * Angular as of v14 throws an error when trying to do this
+ * There might be a way to rework this, but with the low frequency of change
+ * working on other priorities for now.
+ * See https://github.com/angular/angular-cli/issues/23273
+ */
+
+export const styleVariables: any = {
+  primary: '#2196f3',
+  primaryLighter: '#bbdefb',
+  primaryText: 'white',
+  accent: '#ffc107',
+  accentLighter: '#ffecb3',
+  accentText: 'rgba(0, 0, 0, 0.87)',
+  grey: '#bdbdbd',
+  greyText: 'rgba(0, 0, 0, 0.54)',
+  lightGrey: 'whitesmoke'
+};;
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 

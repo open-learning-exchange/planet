@@ -87,7 +87,10 @@ export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-U
 
 export const weekDataLabels = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
 
-export const fullLabel = (date) => new Date(date).toLocaleString('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' });
+export const fullLabel = (date) => new Date(date).toLocaleString(
+  'en-US',
+  { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
+);
 
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),

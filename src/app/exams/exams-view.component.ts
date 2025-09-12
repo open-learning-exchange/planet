@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';

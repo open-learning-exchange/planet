@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
