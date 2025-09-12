@@ -69,6 +69,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
   pinned = false;
+  
+  // Computed groups for rendering link sections
+  get localLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType !== 'social' && (this.isTeamLink(link) || this.isEnterpriseLink(link)));
+  }
+
+  get socialWebLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType === 'social');
+  }
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
