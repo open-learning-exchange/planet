@@ -897,8 +897,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.comparisonWeek2End = startOfDay(new Date(this.comparisonWeek2End));
     const w1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
     const w2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
-    this.week1Label = `Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
-    this.week2Label = `Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
+    this.week1Label = $localize`Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
+    this.week2Label = $localize`Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
   }
 
   loadComparisonData() {

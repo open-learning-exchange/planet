@@ -207,8 +207,9 @@ export class ExamsAddComponent implements OnInit {
     (<UntypedFormArray>this.examForm.get('questions')).removeAt(index);
   }
 
-  plainText(value) {
-    markdownToPlainText(value);
+  getQuestionLabel(value: any, index: number): string {
+    const questionText = markdownToPlainText(value);
+    return questionText || $localize`Question ${index + 1}`;
   }
 
   goBack() {
