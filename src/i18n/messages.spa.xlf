@@ -8349,7 +8349,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">88</context>
         </context-group>
-        <target state="needs-translation">Week 1</target>
+        <target state="translated">Semana 1</target>
       </trans-unit>
       <trans-unit id="7270430498511171250" datatype="html">
         <source>Week 2</source>
@@ -8357,7 +8357,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">89</context>
         </context-group>
-        <target state="needs-translation">Week 2</target>
+        <target state="translated">Semana 2</target>
       </trans-unit>
       <trans-unit id="8012344910054029733" datatype="html" approved="yes">
         <source>Male</source>
@@ -10301,7 +10301,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">Read</target>
+        <target state="translated">Leer</target>
       </trans-unit>
       <trans-unit id="5339845689623432357" datatype="html">
         <source>Unread</source>
@@ -10309,7 +10309,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/notifications/notifications.component.ts</context>
           <context context-type="linenumber">28</context>
         </context-group>
-        <target state="needs-translation">Unread</target>
+        <target state="translated">No leído</target>
       </trans-unit>
       <trans-unit id="5440840105958609583" datatype="html" approved="yes">
         <source>There was a problem marking all as read</source>
@@ -11605,7 +11605,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="needs-translation">Items per page</target>
+        <target state="translated">Artículos por página</target>
       </trans-unit>
       <trans-unit id="3337301694210287595" datatype="html">
         <source>Next page</source>
@@ -11613,7 +11613,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">11</context>
         </context-group>
-        <target state="needs-translation">Next page</target>
+        <target state="translated">Página siguiente</target>
       </trans-unit>
       <trans-unit id="3629960544875360046" datatype="html">
         <source>Previous page</source>
@@ -11621,7 +11621,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">12</context>
         </context-group>
-        <target state="needs-translation">Previous page</target>
+        <target state="translated">Página anterior</target>
       </trans-unit>
       <trans-unit id="8642445555713453888" datatype="html">
         <source>First page</source>
@@ -11629,7 +11629,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
-        <target state="needs-translation">First page</target>
+        <target state="translated">Primera página</target>
       </trans-unit>
       <trans-unit id="6784758141439994527" datatype="html">
         <source>Last page</source>
@@ -11637,7 +11637,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
-        <target state="needs-translation">Last page</target>
+        <target state="translated">Última página</target>
       </trans-unit>
       <trans-unit id="3522470007354852946" datatype="html">
         <source>0 of <x id="PH" equiv-text="length"/></source>
@@ -11645,7 +11645,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">22</context>
         </context-group>
-        <target state="needs-translation">0 of <x id="PH" equiv-text="length"/></target>
+        <target state="translated">0 de <x id="PH" equiv-text="longitud"/></target>
       </trans-unit>
       <trans-unit id="6254244813559792688" datatype="html">
         <source><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
@@ -11653,7 +11653,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/custom-mat-paginator-intl.service.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></target>
+        <target state="translated"><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> de <x id="PH_2" equiv-text="length"/></target>
       </trans-unit>
       <trans-unit id="2397816345463091163" datatype="html" approved="yes">
         <source>Old Password</source>
@@ -12181,7 +12181,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/file-input.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="needs-translation">No file chosen</target>
+        <target state="translated">No se seleccionó archivo</target>
       </trans-unit>
       <trans-unit id="9825058dc1be7aaea3c79cc215c309d10c8a6340" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, required {This field is required} min {The number cannot be below} max {The number cannot exceed} matDatepickerMin {The date cannot be before} matDatepickerMax {The date cannot be after} matDatepickerParse {Invalid date} duplicate {Value already exists} duplicateUser {User already exists} email {Please enter a valid email} matchPassword {Passwords must match} unmatchPassword {Passwords must not match} invalidInt {Please enter a number} invalidPositive {The number cannot be negative} invalidHex {Hex is not valid} invalidTime {Time is invalid} invalidDateFormat {Date is in incorrect format} invalidTimeFormat {Time is in incorrect format} invalidDate {Date is invalid} invalidEndDate {End date cannot be before start date} invalidEndTime {End time cannot be before start time} dateInPast {Cannot be before current date} invalidPassword {Password is not valid} pattern {Invalid input. Hover for more info} invalidFirstCharacter {Must start with letter or number} invalidFutureDate {Cannot be after current date} dateRequired {This field requires a valid date} noUnderscore {Cannot include an underscore} whitespace {Cannot include space in password} bp {Blood Pressure should be systolic/diastolic} notFileMatch {File not found in list} invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}}</source>
@@ -12213,7 +12213,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">120</context>
         </context-group>
-        <target state="needs-translation">Bold</target>
+        <target state="translated">Negrita</target>
       </trans-unit>
       <trans-unit id="266505507282188406" datatype="html">
         <source>Italic</source>
@@ -12221,7 +12221,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">126</context>
         </context-group>
-        <target state="needs-translation">Italic</target>
+        <target state="translated">Cursiva</target>
       </trans-unit>
       <trans-unit id="6317126528752584322" datatype="html">
         <source>Heading</source>
@@ -12229,7 +12229,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">132</context>
         </context-group>
-        <target state="needs-translation">Heading</target>
+        <target state="translated">Título</target>
       </trans-unit>
       <trans-unit id="1103299628984958400" datatype="html">
         <source>Quote</source>
@@ -12237,7 +12237,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">139</context>
         </context-group>
-        <target state="needs-translation">Quote</target>
+        <target state="translated">Cita</target>
       </trans-unit>
       <trans-unit id="3263559669212223472" datatype="html">
         <source>Unordered List</source>
@@ -12245,7 +12245,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">145</context>
         </context-group>
-        <target state="needs-translation">Unordered List</target>
+        <target state="translated">Lista desordenada</target>
       </trans-unit>
       <trans-unit id="702220727672438878" datatype="html">
         <source>Ordered List</source>
@@ -12253,7 +12253,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">151</context>
         </context-group>
-        <target state="needs-translation">Ordered List</target>
+        <target state="translated">Lista ordenada</target>
       </trans-unit>
       <trans-unit id="1295614462098694869" datatype="html">
         <source>Preview</source>
@@ -12261,7 +12261,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">165</context>
         </context-group>
-        <target state="needs-translation">Preview</target>
+        <target state="translated">Vista previa</target>
       </trans-unit>
       <trans-unit id="6193671119554408029" datatype="html">
         <source>Side by Side</source>
@@ -12269,7 +12269,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">171</context>
         </context-group>
-        <target state="needs-translation">Side by Side</target>
+        <target state="translated">Lado a Lado</target>
       </trans-unit>
       <trans-unit id="489844404897890427" datatype="html">
         <source>Fullscreen</source>
@@ -12277,7 +12277,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">177</context>
         </context-group>
-        <target state="needs-translation">Fullscreen</target>
+        <target state="translated">Pantalla completa</target>
       </trans-unit>
       <trans-unit id="1524295519084989120" datatype="html">
         <source>Markdown Guide</source>
@@ -12285,7 +12285,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/forms/planet-markdown-textbox.component.ts</context>
           <context context-type="linenumber">184</context>
         </context-group>
-        <target state="needs-translation">Markdown Guide</target>
+        <target state="translated">Guía de Markdown</target>
       </trans-unit>
       <trans-unit id="00d5eb6141a80092d2258e8ebc59531fff788b57" datatype="html" approved="yes">
         <source>
@@ -13025,7 +13025,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">339</context>
         </context-group>
-        <target state="needs-translation">enterprise</target>
+        <target state="translated">empresa</target>
       </trans-unit>
       <trans-unit id="6743174526740667520" datatype="html">
         <source>team</source>
@@ -13037,7 +13037,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams.component.ts</context>
           <context context-type="linenumber">339</context>
         </context-group>
-        <target state="needs-translation">team</target>
+        <target state="translated">equipo</target>
       </trans-unit>
       <trans-unit id="1264708356061957564" datatype="html" approved="yes">
         <source>requires grading</source>
@@ -13295,7 +13295,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
           <context context-type="linenumber">549</context>
         </context-group>
-        <target state="needs-translation">Response</target>
+        <target state="translated">Respuesta</target>
       </trans-unit>
       <trans-unit id="8326905436264541271" datatype="html">
         <source>selection/choices(1-9)</source>
@@ -13563,7 +13563,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">392</context>
         </context-group>
-        <target state="needs-translation">Records to Export</target>
+        <target state="translated">Registros para exportar</target>
       </trans-unit>
       <trans-unit id="272476219454502710" datatype="html" approved="yes">
         <source>Include Questions</source>
@@ -13643,7 +13643,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">501</context>
         </context-group>
-        <target state="needs-translation">This is a team created survey</target>
+        <target state="translated">Esta es una encuesta creada por el equipo</target>
       </trans-unit>
       <trans-unit id="7541790190401441000" datatype="html">
         <source>This is a community survey</source>
@@ -13659,7 +13659,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">502</context>
         </context-group>
-        <target state="needs-translation">This is a community survey</target>
+        <target state="translated">Esta es una encuesta comunitaria</target>
       </trans-unit>
       <trans-unit id="8990277771151296291" datatype="html">
         <source>Survey is archived and cannot be edited</source>
@@ -13667,7 +13667,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">481</context>
         </context-group>
-        <target state="needs-translation">Survey is archived and cannot be edited</target>
+        <target state="translated">La encuesta está archivada y no se puede editar</target>
       </trans-unit>
       <trans-unit id="6414593516446706844" datatype="html">
         <source>Survey is archived and cannot be sent</source>
@@ -13675,7 +13675,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">487</context>
         </context-group>
-        <target state="needs-translation">Survey is archived and cannot be sent</target>
+        <target state="translated">La encuesta está archivada y no puede ser enviada</target>
       </trans-unit>
       <trans-unit id="3104528070742437813" datatype="html">
         <source>Survey is archived and cannot be recorded</source>
@@ -13683,7 +13683,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">493</context>
         </context-group>
-        <target state="needs-translation">Survey is archived and cannot be recorded</target>
+        <target state="translated">La encuesta está archivada y no se puede registrar</target>
       </trans-unit>
       <trans-unit id="7733906815413075449" datatype="html">
         <source>Record survey information from a person who is not a member of <x id="PH" equiv-text="this.configuration.name"/></source>
@@ -13691,7 +13691,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">495</context>
         </context-group>
-        <target state="needs-translation">Record survey information from a person who is not a member of <x id="PH" equiv-text="this.configuration.name"/></target>
+        <target state="translated">Registrar información de la encuesta de una persona que no es miembro de <x id="PH" equiv-text="this.configuration.name"/></target>
       </trans-unit>
       <trans-unit id="2068924253876022636" datatype="html">
         <source>Record Survey</source>
@@ -13699,7 +13699,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">497</context>
         </context-group>
-        <target state="needs-translation">Record Survey</target>
+        <target state="translated">Registrar Encuesta</target>
       </trans-unit>
       <trans-unit id="2682935427353015050" datatype="html">
         <source>Survey is already archived</source>
@@ -13707,7 +13707,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/surveys/surveys.component.ts</context>
           <context context-type="linenumber">503</context>
         </context-group>
-        <target state="needs-translation">Survey is already archived</target>
+        <target state="translated">La encuesta ya está archivada</target>
       </trans-unit>
       <trans-unit id="f1fb641f599b5ff4f33419ca08dcb02c00822ea5" datatype="html" approved="yes">
         <source>Add a task</source>
@@ -13819,7 +13819,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">200</context>
         </context-group>
-        <target state="needs-translation">Reassign Task</target>
+        <target state="translated">Reasignar Tarea</target>
       </trans-unit>
       <trans-unit id="4336027280028501448" datatype="html">
         <source>Assign Task</source>
@@ -13827,7 +13827,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/tasks/tasks.component.ts</context>
           <context context-type="linenumber">200</context>
         </context-group>
-        <target state="needs-translation">Assign Task</target>
+        <target state="translated">Asignar Tarea</target>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html" approved="yes">
         <source>Task</source>
@@ -15371,7 +15371,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
           <context context-type="linenumber">117</context>
         </context-group>
-        <target state="needs-translation">Connect with nation</target>
+        <target state="translated">Conectar con Nation</target>
       </trans-unit>
       <trans-unit id="6755123663246719541" datatype="html">
         <source>Connect with earth</source>
@@ -15379,7 +15379,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
           <context context-type="linenumber">117</context>
         </context-group>
-        <target state="needs-translation">Connect with earth</target>
+        <target state="translated">Conectar con earth</target>
       </trans-unit>
       <trans-unit id="3339419883396525689" datatype="html" approved="yes">
         <source>Local team</source>
@@ -15963,7 +15963,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements.component.ts</context>
           <context context-type="linenumber">144</context>
         </context-group>
-        <target state="needs-translation"><x id="PH" equiv-text="this.user.firstName"/>'s achievements</target>
+        <target state="translated">Logros de <x id="PH" equiv-text="this.user.firstName"/></target>
       </trans-unit>
       <trans-unit id="4414798384138362687" datatype="html" approved="yes">
         <source>Birthdate: <x id="PH" equiv-text="formattedBirthDate"/></source>
