@@ -178,6 +178,22 @@
         </context-group>
         <target state="needs-translation">Conversation shared</target>
       </trans-unit>
+      <trans-unit id="1d783e38deba8377a91537edbf717083802f5174" datatype="html">
+        <source>Edit title</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/chat/chat-sidebar/chat-sidebar.component.html</context>
+          <context context-type="linenumber">64</context>
+        </context-group>
+        <target state="needs-translation">Edit title</target>
+      </trans-unit>
+      <trans-unit id="9ab2322c9415bc0f21e54861fe6b25b448f58581" datatype="html">
+        <source>Share conversation</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/chat/chat-sidebar/chat-sidebar.component.html</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <target state="needs-translation">Share conversation</target>
+      </trans-unit>
       <trans-unit id="55a1bae2144709a9bdc87d38abab7c8f4682532c" datatype="html">
         <source>No previous conversations.</source>
         <context-group purpose="location">
@@ -3743,16 +3759,6 @@
         </context-group>
         <target state="needs-translation">Survey Description</target>
       </trans-unit>
-      <trans-unit id="9e60ae27adff66fbb52d5f7d98fc1ef1f3750bed" datatype="html">
-        <source>
-          <x id="INTERPOLATION" equiv-text="{{ plainText(question.value.body) || &apos;Question &apos; + (i+1) }}"/>
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/exams/exams-add.component.html</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{ plainText(question.value.body) || 'Question ' + (i+1) }}"/></target>
-      </trans-unit>
       <trans-unit id="a40ff9fd87d3c03893f09210e921b9984ddeef81" datatype="html">
         <source>There are missing fields on this question</source>
         <context-group purpose="location">
@@ -3800,6 +3806,14 @@
           <context context-type="linenumber">97</context>
         </context-group>
         <target state="needs-translation">Test updated successfully</target>
+      </trans-unit>
+      <trans-unit id="4508132121719270186" datatype="html">
+        <source>Question <x id="PH" equiv-text="index + 1"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/exams/exams-add.component.ts</context>
+          <context context-type="linenumber">212</context>
+        </context-group>
+        <target state="needs-translation">Question <x id="PH" equiv-text="index + 1"/></target>
       </trans-unit>
       <trans-unit id="7caa77b9307c9832b37ecdbbda1ade7cf7e6c3d3" datatype="html">
         <source>Close Preview</source>
@@ -8711,6 +8725,22 @@
           <context context-type="linenumber">803</context>
         </context-group>
         <target state="needs-translation">Courses Progress</target>
+      </trans-unit>
+      <trans-unit id="5694549662546854335" datatype="html">
+        <source>Week 1 (<x id="PH" equiv-text="weekDataLabels(w1Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w1Range.endDate)"/>)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
+          <context context-type="linenumber">900</context>
+        </context-group>
+        <target state="needs-translation">Week 1 (<x id="PH" equiv-text="weekDataLabels(w1Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w1Range.endDate)"/>)</target>
+      </trans-unit>
+      <trans-unit id="4376553154348641580" datatype="html">
+        <source>Week 2 (<x id="PH" equiv-text="weekDataLabels(w2Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w2Range.endDate)"/>)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
+          <context context-type="linenumber">901</context>
+        </context-group>
+        <target state="needs-translation">Week 2 (<x id="PH" equiv-text="weekDataLabels(w2Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w2Range.endDate)"/>)</target>
       </trans-unit>
       <trans-unit id="8778525357359342901" datatype="html">
         <source>Unique Member Visits</source>
