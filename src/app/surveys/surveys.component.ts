@@ -389,7 +389,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const chatDisabled = this.availableAIProviders.length === 0;
 
     this.dialogsFormService.openDialogsForm(
-      'Records to Export',
+      $localize`Records to Export`,
       [
         { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
         { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
@@ -466,6 +466,42 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   viewSurveySubmissions(survey: any): void {
     this.router.navigate([ survey._id, { type: 'survey' } ], { relativeTo: this.route });
+  }
+
+  // Action buttons tooltips for translation purposes
+  getCheckboxTooltip(survey: any): string {
+    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
+    if (!survey.teamId && !this.isManagerRoute) { return $localize`This is a community survey`; }
+    return '';
+  }
+
+  getEditTooltip(survey: any): string {
+    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
+    if (!this.isManagerRoute && !survey.teamId) { return $localize`This is a community survey`; }
+    if (survey.isArchived) { return $localize`Survey is archived and cannot be edited`; }
+    return '';
+  }
+
+  getSendTooltip(survey: any): string {
+    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
+    if (survey.isArchived) { return $localize`Survey is archived and cannot be sent`; }
+    return '';
+  }
+
+  getRecordTooltip(survey: any): string {
+    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
+    if (survey.isArchived) { return $localize`Survey is archived and cannot be recorded`; }
+    if (this.isManagerRoute) {
+      return $localize`Record survey information from a person who is not a member of ${this.configuration.name}`;
+    }
+    return $localize`Record Survey`;
+  }
+
+  getArchiveTooltip(survey: any): string {
+    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
+    if (!this.isManagerRoute && !survey.teamId) { return $localize`This is a community survey`; }
+    if (survey.isArchived) { return $localize`Survey is already archived`; }
+    return '';
   }
 
 }

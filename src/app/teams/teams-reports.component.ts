@@ -13,6 +13,7 @@ import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -167,10 +168,10 @@ export class TeamsReportsComponent implements DoCheck {
 
   exportReports() {
     const exportData = this.reports.map(report => ({
-      [$localize`Start Date`]: report.startDate,
-      [$localize`End Date`]: report.endDate,
-      [$localize`Created Date`]: report.createdDate,
-      [$localize`Updated Date`]: report.updatedDate,
+      [$localize`Start Date`]: fullLabel(report.startDate),
+      [$localize`End Date`]: fullLabel(report.endDate),
+      [$localize`Created Date`]: fullLabel(report.createdDate),
+      [$localize`Updated Date`]: fullLabel(report.updatedDate),
       [$localize`Beginning Balance`]: report.beginningBalance,
       [$localize`Sales`]: report.sales,
       [$localize`Other Income`]: report.otherIncome,

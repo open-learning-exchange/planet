@@ -15,8 +15,9 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
-  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
+  xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -84,8 +85,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonLoading = false;
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
-  week1Label = 'Week 1';
-  week2Label = 'Week 2';
+  week1Label = $localize`Week 1`;
+  week2Label = $localize`Week 2`;
   comparisonData1: any = {};
   comparisonData2: any = {};
 
@@ -806,7 +807,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+        .map(activity => {
+          const baseActivity = {
+            ...activity,
+            androidId: activity.androidId || '',
+            deviceName: activity.deviceName || ''
+          };
+          if (reportType === 'health' && activity.updatedDate) {
+            baseActivity.updatedDate = fullLabel(activity.updatedDate);
+          }
+          return baseActivity;
+        }),
       title
     });
   }

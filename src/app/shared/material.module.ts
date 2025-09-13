@@ -31,6 +31,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { CustomMatPaginatorIntl } from './custom-mat-paginator-intl.service';
 
 /** Adapts the native JS Date for use with cdk-based components that work with dates. */
 @Injectable()
@@ -75,6 +77,9 @@ export class CustomDateAdapter extends NativeDateAdapter {
     MatToolbarModule,
     MatTooltipModule,
   ],
-  providers: [ { provide: DateAdapter, useClass: CustomDateAdapter } ]
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntl }
+  ]
 })
 export class MaterialModule {}

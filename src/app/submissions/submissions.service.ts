@@ -546,7 +546,8 @@ export class SubmissionsService {
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
-      return `<div style="text-align: ${alignment};"><strong>${$localize`${label}`} ${index + 1}:</strong><br>${text}</div>`;
+      const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
+      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${text}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +

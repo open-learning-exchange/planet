@@ -196,6 +196,10 @@ export class TasksComponent implements OnInit {
       { data: { member: { name: assignee.name, userPlanetCode: assignee.teamPlanetCode } }, autoFocus: false });
   }
 
+  getAssignTooltip(task: any): string {
+    return task.assignee ? $localize`Reassign Task` : $localize`Assign Task`;
+  }
+
 }
 
 @Pipe({

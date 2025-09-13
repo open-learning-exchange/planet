@@ -113,11 +113,76 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       ...(this.imageGroup ?
         {
           toolbar: [
-            'bold', 'italic', 'heading', '|',
-            'quote', 'unordered-list', 'ordered-list', '|',
-            'link', imageToolbarIcon, '|',
-            'preview', 'side-by-side', 'fullscreen', '|',
-            'guide'
+            {
+              name: 'bold',
+              action: (editor: any) => editor.toggleBold(),
+              className: 'fa fa-bold',
+              title: $localize`Bold`
+            },
+            {
+              name: 'italic',
+              action: (editor: any) => editor.toggleItalic(),
+              className: 'fa fa-italic',
+              title: $localize`Italic`
+            },
+            {
+              name: 'heading',
+              action: (editor: any) => editor.toggleHeadingSmaller(),
+              className: 'fa fa-header',
+              title: $localize`Heading`
+            },
+            '|',
+            {
+              name: 'quote',
+              action: (editor: any) => editor.toggleBlockquote(),
+              className: 'fa fa-quote-left',
+              title: $localize`Quote`
+            },
+            {
+               name: 'unordered-list',
+               action: (editor: any) => editor.toggleUnorderedList(),
+               className: 'fa fa-list-ul',
+               title: $localize`Unordered List`
+            },
+            {
+              name: 'ordered-list',
+              action: (editor: any) => editor.toggleOrderedList(),
+              className: 'fa fa-list-ol',
+              title: $localize`Ordered List`
+            },
+            '|',
+            {
+              name: 'link',
+              action: (editor: any) => editor.drawLink(),
+              className: 'fa fa-link',
+              title: $localize`Link`
+            },
+            imageToolbarIcon, '|',
+            {
+              name: 'preview',
+              action: (editor: any) => editor.togglePreview(),
+              className: 'fa fa-eye',
+              title: $localize`Preview`
+            },
+            {
+              name: 'side-by-side',
+              action: (editor: any) => editor.toggleSideBySide(),
+              className: 'fa fa-columns',
+              title: $localize`Side by Side`
+            },
+            {
+              name: 'fullscreen',
+              action: (editor: any) => editor.toggleFullScreen(),
+              className: 'fa fa-arrows-alt',
+              title: $localize`Fullscreen`
+            },
+            '|',
+            {
+              name: 'guide',
+              action: 'https://www.markdownguide.org/basic-syntax/',
+              className: 'fa fa-question-circle',
+              title: $localize`Markdown Guide`
+            }
           ]
         } :
         {}

@@ -28,7 +28,7 @@
     <ng-container *ngIf="editable">
       <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
-      <button mat-icon-button [matTooltip]="task.assignee ? 'Reassign Task' : 'Assign Task'" i18n-matTooltip [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
+      <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
     </ng-container>
     <mat-menu #assigneeMenu="matMenu">
       <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee | assigneeName}}</button>

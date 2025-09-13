@@ -12,6 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
+import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -36,6 +37,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
   planetName: any;
+
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -193,7 +195,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     updatedData.shift();
 
     updatedData = updatedData.map(row => ({
-      [$localize`date`]: row.date,
+      [$localize`date`]: fullLabel(row.date),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
       [$localize`debit`]: row.debit,
