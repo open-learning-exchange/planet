@@ -544,8 +544,7 @@ export class SubmissionsService {
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
-      const processedText = label === 'Question' ? converter.makeHtml(text) : text;
-      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${processedText}</div>`;
+      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
