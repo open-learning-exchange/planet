@@ -343,7 +343,7 @@ export class SubmissionsService {
       const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
-      docContent.push({ text: `Q${i + 1}: ${question.body}` });
+      docContent.push({ stack: htmlToPdfmake(`<strong>Q${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
