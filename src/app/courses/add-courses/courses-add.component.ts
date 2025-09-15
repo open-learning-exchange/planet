@@ -202,7 +202,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       });
       // Only auto-save if there are actual changes from the initial state
       if (currentState !== this.initialState) {
-        this.pouchService.saveDocEditing({ ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags }, this.dbName, this.courseId);
+        this.pouchService.saveDocEditing({
+          ...course, tags: this.tags.value, initialTags: this.coursesService.course.initialTags
+        }, this.dbName, this.courseId);
         this.draftExists = true;
         this.setInitialState();
       }

@@ -42,7 +42,8 @@ export class ChatOutputDirective implements OnChanges {
 
     escapedText = escapedText.replace(/```([\s\S]*?)```/g, (match, p1) => {
       const codeBlockId = 'code-' + Math.random().toString(36).substr(2, 9);
-      return `<pre class="code-block" id="${codeBlockId}"><code>${p1}</code><button class="copy-btn" onclick="copyToClipboard('${codeBlockId}', this)">Copy</button></pre>`;
+      return `<pre class="code-block" id="${codeBlockId}"><code>${p1}</code>
+        <button class="copy-btn" onclick="copyToClipboard('${codeBlockId}', this)">Copy</button></pre>`;
     });
 
     // Replace double new lines with paragraphs

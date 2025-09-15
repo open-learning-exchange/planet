@@ -10,7 +10,9 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import {
+  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
+} from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 
 @Component({

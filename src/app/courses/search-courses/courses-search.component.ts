@@ -1,4 +1,6 @@
-import { Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import {
+  Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
+} from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
 import * as constants from '../constants';
 import { languages } from '../../shared/languages';
