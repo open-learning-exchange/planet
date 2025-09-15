@@ -625,7 +625,8 @@ export class SubmissionsService {
   }
 
   calculateAverageRating(question, submissions): number {
-    const validRatings = submissions.map(sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
+    const validRatings = submissions.map(sub =>
+      parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
     const sum = validRatings.reduce((total, rating) => total + rating, 0);
     return parseFloat((sum / validRatings.length).toFixed(1));
   }
