@@ -1,112 +1,20 @@
-<mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <button class="btnBack" mat-icon-button routerLink="/manager">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span i18n>myPlanet Report</span>
-    <span class="toolbar-fill"></span>
-    <mat-form-field class="margin-lr-5 font-size-1">
-      <mat-select i18n-placeholder placeholder="Version" (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
-        <mat-option [value]="" i18n>All Versions</mat-option>
-        <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <form [formGroup]="reportsForm" *ngIf="showCustomDateFields">
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="reportsForm.get('endDate').value">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-        <mat-error i18n *ngIf="reportsForm.errors?.invalidDates">Start date must be before end date</mat-error>
-      </mat-form-field>
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="reportsForm.get('startDate').value" [max]="today">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-    </form>
-    <mat-form-field class="margin-lr-5 font-size-1">
-      <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-        <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <button mat-raised-button (click)="clearFilters()" color="primary" [disabled]="!searchValue && !selectedVersion && isDefaultTimeFilter" class="margin-lr-5">
-      <span i18n>Clear</span>
-    </button>
-    <mat-icon>search</mat-icon>
-    <mat-form-field class="font-size-1">
-      <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
-    </mat-form-field>
-  </ng-container>
-
-  <ng-template #mobileView>
-    <mat-toolbar-row>
-      <button class="btnBack" mat-icon-button routerLink="/manager">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <span i18n>myPlanet Report</span>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow"><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <mat-select i18n-placeholder placeholder="Version" (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
-          <mat-option [value]="" i18n>All Versions</mat-option>
-          <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <mat-form-field class="margin-lr-5 font-size-1">
-        <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-          <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <form [formGroup]="reportsForm" *ngIf="showCustomDateFields">
-        <mat-form-field class="margin-lr-5 font-size-1" style="width: 100%;">
-          <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="reportsForm.get('endDate').value">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-          <mat-error i18n *ngIf="reportsForm.errors?.invalidDates">Start date must be before end date</mat-error>
-        </mat-form-field>
-        <mat-form-field class="margin-lr-5 font-size-1" style="width: 100%;">
-          <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="reportsForm.get('startDate').value" [max]="today">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-      </form>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <form [formGroup]="reportsForm">
-        <mat-form-field class="margin-lr-5 font-size-1" style="width: 100%;">
-          <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="reportsForm.get('endDate').value">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-          <mat-error i18n *ngIf="reportsForm.errors?.invalidDates">Start date must be before end date</mat-error>
-        </mat-form-field>
-      </form>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <form [formGroup]="reportsForm">
-        <mat-form-field class="margin-lr-5 font-size-1" style="width: 100%;">
-          <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="reportsForm.get('startDate').value" [max]="today">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-      </form>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <button mat-raised-button color="primary" (click)="clearFilters()" [disabled]="!searchValue && !selectedVersion && isDefaultTimeFilter" class="margin-lr-5">
-        <span i18n>Clear</span>
-      </button>
-      <mat-icon>search</mat-icon>
-      <mat-form-field class="font-size-1">
-        <input matInput (keyup)="filterData($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
-      </mat-form-field>
-    </mat-toolbar-row>
-  </ng-template>
-</mat-toolbar>
+<planet-myplanet-toolbar i18n-title title="myPlanet Report"
+  [versions]="versions"
+  [selectedVersion]="selectedVersion"
+  [timeFilterOptions]="timeFilterOptions"
+  [selectedTimeFilter]="selectedTimeFilter"
+  [formGroup]="filtersForm"
+  [showCustomDateFields]="showCustomDateFields"
+  [minDate]="minDate"
+  [today]="today"
+  [searchValue]="searchValue"
+  [disableShowAllTime]="isDefaultTimeFilter"
+  (versionChange)="onVersionChange($event)"
+  (timeFilterChange)="onTimeFilterChange($event)"
+  (search)="filterData($event)"
+  (clear)="clearFilters()"
+  (resetDateFilter)="resetDateFilter()"
+></planet-myplanet-toolbar>
 
 <div class="space-container">
   <mat-toolbar>
