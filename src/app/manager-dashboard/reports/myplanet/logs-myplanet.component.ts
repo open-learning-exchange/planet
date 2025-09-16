@@ -13,7 +13,7 @@ import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from './utils';
 
 @Component({
-  templateUrl: './logs.component.html',
+  templateUrl: './logs-myplanet.component.html',
   styleUrls: [ './shared.scss' ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {

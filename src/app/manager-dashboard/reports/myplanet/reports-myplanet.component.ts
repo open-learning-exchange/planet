@@ -16,7 +16,7 @@ import { exportMyPlanetCsv } from './utils';
 import { TimePipe } from '../time.pipe';
 
 @Component({
-  templateUrl: './reports.component.html',
+  templateUrl: './reports-myplanet.component.html',
   styleUrls: [ './shared.scss' ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
