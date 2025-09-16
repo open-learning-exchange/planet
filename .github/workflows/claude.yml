@@ -51,8 +51,18 @@ jobs:
 
           # Direct prompt for review
           direct_prompt: |
-            Please review this pull request and provide feedback on:
-            - Code quality and best practices
-            - Potential bugs or issues
-            - Performance considerations
-            - Security concerns
+            Please review this pull request with the following structure:
+
+            1. **Issues Found**  
+               - List only concrete problems or risks (bugs, security, performance, maintainability).  
+               - Assign a priority to each: HIGH (must fix), MEDIUM (should fix), LOW (nice to fix).  
+               - If you’re unsure, don’t speculate, leave it blank.
+               - Consult the `Style-Guide.md` to ensure that the project style is adhered to.
+            
+            2. **Final Recommendation**  
+               - Choose one: APPROVE or REQUEST CHANGES.  
+               - Justify in 1–2 sentences based on the issues above.
+               - If no issues found, explicitly state ‘No issues found’ before approving.
+            
+            Do not include verbose summaries, comparisons to past reviews, or re-descriptions of the code. Only raise actionable feedback.
+
