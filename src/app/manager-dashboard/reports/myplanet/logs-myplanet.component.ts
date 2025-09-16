@@ -13,7 +13,7 @@ import { ReportsService } from '../reports.service';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
-  styleUrls: [ './logs-myplanet.component.scss' ]
+  styleUrls: [ './shared.scss' ]
 })
 export class LogsMyPlanetComponent implements OnInit {
 

@@ -16,7 +16,7 @@ import { filterSpecificFields } from '../../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
-  styleUrls: [ './reports-myplanet.component.scss' ]
+  styleUrls: [ './shared.scss' ]
 })
 export class ReportsMyPlanetComponent implements OnInit {
 
