@@ -9,4 +9,4 @@ RUN apk add --update \
     build-base \
     jq
 
-RUN npm i --silient
+RUN npm i --silent
