@@ -41,13 +41,13 @@ export class ManagerCurrencyComponent implements OnInit {
     const updatedConfig = { ...this.configuration, keys: this.stateService.keys, currency: { ...this.form.value } };
     this.configurationService.updateConfiguration(updatedConfig)
       .pipe(finalize(() => this.spinnerOn = false))
-      .subscribe(
-        () => this.stateService.requestData('configurations', 'local'),
-        () => this.planetMessageService.showAlert($localize`There was an error updating the configuration`),
-        () => {
+      .subscribe({
+        next: () => {
+          this.stateService.requestData('configurations', 'local');
           this.router.navigate([ '/manager' ]);
           this.planetMessageService.showMessage($localize`Currency Updated Successfully`);
-        }
-      );
+        },
+        error: () => this.planetMessageService.showAlert($localize`There was an error updating the configuration`)
+      });
   }
 }
