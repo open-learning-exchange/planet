@@ -110,7 +110,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       ],
       birthYear: [ '', [
         Validators.min(1900),
-        Validators.max(new Date().getFullYear()),
+        Validators.max(new Date().getFullYear() - 1),
         Validators.pattern(/^\d{4}$/)
       ]],
       age: [ '' ],
@@ -133,7 +133,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit() {
-    // backwards compatibility: calculate age from for validation and remove birthYear field
+    // exports don't break: calculate age from birthYear form validation
     const birthYear = this.editForm.get('birthYear')?.value;
     if (birthYear && birthYear.toString().length === 4) {
       const calculatedAge = new Date().getFullYear() - parseInt(birthYear, 10);
