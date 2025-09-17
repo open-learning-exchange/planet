@@ -161,8 +161,7 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container> ({{ financesCount }})
           </ng-template>
-          <p *ngIf="financesLoading" i18n>Loading finances...</p>
-          <planet-teams-view-finances *ngIf="!financesLoading" [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
+          <planet-teams-view-finances [isLoading]="financesLoading" [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
