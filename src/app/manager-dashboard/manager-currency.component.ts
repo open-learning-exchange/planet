@@ -38,7 +38,7 @@ export class ManagerCurrencyComponent implements OnInit {
   save() {
     if (this.form.invalid) { return; }
     this.spinnerOn = true;
-    const updatedConfig = { ...this.configuration, currency: { ...this.form.value } };
+    const updatedConfig = { ...this.configuration, keys: this.stateService.keys, currency: { ...this.form.value } };
     this.configurationService.updateConfiguration(updatedConfig)
       .pipe(finalize(() => this.spinnerOn = false))
       .subscribe(
