@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { ConfigurationService } from '../configuration/configuration.service';
@@ -11,20 +11,20 @@ import { StateService } from '../shared/state.service';
   styleUrls: [ './manager-currency.component.scss' ]
 })
 export class ManagerCurrencyComponent implements OnInit {
-  form: UntypedFormGroup;
+  form: FormGroup<{ code: FormControl<string>; symbol: FormControl<string> }>;
   configuration: any = {};
   spinnerOn = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private router: Router
   ) {
     this.form = this.fb.group({
-      code: [ '', [ Validators.required, Validators.maxLength(6) ] ],
-      symbol: [ '', [ Validators.required, Validators.maxLength(5) ] ]
+      code: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(6) ] }),
+      symbol: this.fb.control('', { validators: [ Validators.required, Validators.maxLength(5) ] })
     });
   }
 
