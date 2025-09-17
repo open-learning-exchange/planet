@@ -35,34 +35,26 @@ jobs:
 
       - name: Run Claude Code
         id: claude
-        uses: anthropics/claude-code-action@beta
+        uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # This is an optional setting that allows Claude to read CI results on PRs
-          additional_permissions: |
-            actions: read
-
-          # Optional: Specify model (defaults to Claude Sonnet 4, uncomment for Claude Opus 4.1)
-          model: "claude-opus-4-1-20250805"
-
-          # Optional: Add custom instructions for Claude to customize its behavior for your project
-          custom_instructions: Follow our coding standards according to the project's CONTRIBUTING.md, README.md, Style-Guide.md, and other relevant files
-
-          # Direct prompt for review
-          direct_prompt: |
+          prompt: |
             Please review this pull request with the following structure:
 
-            1. **Issues Found**  
-               - List only concrete problems or risks (bugs, security, performance, maintainability).  
-               - Assign a priority to each: HIGH (must fix), MEDIUM (should fix), LOW (nice to fix).  
-               - If you’re unsure, don’t speculate, leave it blank.
+            1. **Issues Found**
+               - List only concrete problems or risks (bugs, security, performance, maintainability).
+               - Assign a priority to each: HIGH (must fix), MEDIUM (should fix), LOW (nice to fix).
+               - If you're unsure, don't speculate, leave it blank.
                - Consult the `Style-Guide.md` to ensure that the project style is adhered to.
-            
-            2. **Final Recommendation**  
-               - Choose one: APPROVE or REQUEST CHANGES.  
+
+            2. **Final Recommendation**
+               - Choose one: APPROVE or REQUEST CHANGES.
                - Justify in 1–2 sentences based on the issues above.
-               - If no issues found, explicitly state ‘No issues found’ before approving.
-            
+               - If no issues found, explicitly state 'No issues found' before approving.
+
             Do not include verbose summaries, comparisons to past reviews, or re-descriptions of the code. Only raise actionable feedback.
 
+          claude_args: |
+            --model claude-opus-4-1-20250805
+            --system-prompt "Follow our coding standards according to the project's CONTRIBUTING.md, README.md, Style-Guide.md, and other relevant files"
