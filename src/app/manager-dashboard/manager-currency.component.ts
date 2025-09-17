@@ -8,7 +8,7 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-currency.component.html',
-  styleUrls: [ './manager-currency.component.scss' ]
+  styleUrls: [ './manager-settings.shared.scss' ]
 })
 export class ManagerCurrencyComponent implements OnInit {
   form: FormGroup<{ code: FormControl<string>; symbol: FormControl<string> }>;
