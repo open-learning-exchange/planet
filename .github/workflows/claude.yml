@@ -18,8 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write
       id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
@@ -52,8 +51,6 @@ jobs:
                - If no issues found, explicitly state 'No issues found' before approving.
             Do not include verbose summaries, comparisons to past reviews, or re-descriptions of the code. Only raise actionable feedback.
 
-            Use `gh pr comment` with your Bash tool to leave your review as a comment on the PR.
-
           claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
 
   claude-on-demand:
@@ -65,8 +62,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
-      issues: read
+      pull-requests: write
+      issues: write
       id-token: write
       actions: read
     steps:
