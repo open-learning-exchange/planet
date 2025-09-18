@@ -488,7 +488,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts.push(new Chart(chartName, chartConfig));
   }
 
-  openExportDialog(reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' | 'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat') {
+  openExportDialog(
+    reportType: 'logins' | 'resourceViews' | 'courseViews' | 'summary' | 'health' |
+     'stepCompletions' | 'coursesOverview' | 'resourcesOverview' | 'chat'
+  ) {
     const minDate = new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0);
     const commonProps = { type: 'date', required: true, min: new Date(minDate), max: new Date(this.today) };
     if (reportType === 'coursesOverview' || reportType === 'resourcesOverview') {
@@ -903,8 +906,14 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   private getMetricsForDateRange(range: { startDate: Date, endDate: Date }) {
     const loginData = filterByDate(this.loginActivities.filteredData, 'loginTime', range);
     const loginProcessed = this.activityService.groupLoginActivities(loginData);
-    const resourceProcessed = this.activityService.groupDocVisits(filterByDate(this.resourceActivities.total.filteredData, 'time', range), 'resourceId');
-    const courseProcessed = this.activityService.groupDocVisits(filterByDate(this.courseActivities.total.filteredData, 'time', range), 'courseId');
+    const resourceProcessed = this.activityService.groupDocVisits(
+      filterByDate(this.resourceActivities.total.filteredData, 'time', range),
+      'resourceId'
+    );
+    const courseProcessed = this.activityService.groupDocVisits(
+      filterByDate(this.courseActivities.total.filteredData, 'time', range),
+      'courseId'
+    );
     const stepProcessed = this.activityService.groupStepCompletion(filterByDate(this.progress.steps.filteredData, 'time', range));
     const chatProcessed = this.activityService.groupChatUsage(filterByDate(this.chatActivities.filteredData, 'createdDate', range));
     const voicesProcessed = this.activityService.groupVoicesCreated(filterByDate(this.voicesActivities.filteredData, 'time', range));

@@ -280,7 +280,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
         successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
       resource: {
-        request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
+        request: this.removeResource(item), name: item.resource &&
+        item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
       course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: $localize`removed`, errorMsg: $localize`removing` },
       remove: {
@@ -394,7 +395,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage((this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      this.planetMessageService.showMessage(
+        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
     });
   }
 

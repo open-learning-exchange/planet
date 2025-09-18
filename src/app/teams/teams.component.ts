@@ -142,7 +142,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       this.isLoading = false;
-      this.showUserTeamsFilter = this.myTeamsFilter === 'off' && this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
+      this.showUserTeamsFilter = this.myTeamsFilter === 'off' &&
+       this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];

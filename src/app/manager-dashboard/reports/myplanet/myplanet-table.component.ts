@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
+import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.component';
 
 @Component({
   selector: 'planet-myplanet-table',
