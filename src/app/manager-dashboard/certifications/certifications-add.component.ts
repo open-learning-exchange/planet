@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
 import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';

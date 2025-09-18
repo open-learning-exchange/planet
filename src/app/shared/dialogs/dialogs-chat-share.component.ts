@@ -1,7 +1,9 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import {
+  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
+} from '@angular/material/legacy-dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
