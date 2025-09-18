@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../../variables';
 
 $screen-md: 1300px;
 
@@ -10,16 +10,16 @@ button {
     flex-shrink: 0;
     margin: 4px;
   }
-  
+
   @media(max-width: #{$screen-md}) {
     .mat-form-field {
       width: 100%;
     }
-  
+
     mat-toolbar-row {
       form {
         width: 100%;
-  
+
         .mat-form-field {
           width: 100%;
         }

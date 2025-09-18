@@ -3,16 +3,16 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { ManagerService } from '../manager.service';
-import { ReportsService } from './reports.service';
-import { CouchService } from '../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren } from './reports.utils';
-import { findDocuments } from '../../shared/mangoQueries';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { CsvService } from '../../shared/csv.service';
-import { filterSpecificFields } from '../../shared/table-helpers';
+import { StateService } from '../../../shared/state.service';
+import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { ManagerService } from '../../manager.service';
+import { ReportsService } from '../reports.service';
+import { CouchService } from '../../../shared/couchdb.service';
+import { attachNamesToPlanets, getDomainParams, areNoChildren } from '../reports.utils';
+import { findDocuments } from '../../../shared/mangoQueries';
+import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
+import { CsvService } from '../../../shared/csv.service';
+import { filterSpecificFields } from '../../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',

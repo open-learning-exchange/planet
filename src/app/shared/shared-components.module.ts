@@ -18,7 +18,7 @@ import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
 import { LabelComponent } from './label.component';
-import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet-table.component';
+import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
