@@ -1,7 +1,7 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
