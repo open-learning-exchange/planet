@@ -25,7 +25,7 @@
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Date</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="narrow-column date">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
+    <mat-cell *matCellDef="let element" class="narrow-column narrow-column-date">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="description">
     <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
