@@ -3,7 +3,7 @@ import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-pag
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
+import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.component';
 
 @Component({
   selector: 'planet-myplanet-table',
