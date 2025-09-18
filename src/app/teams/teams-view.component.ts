@@ -59,6 +59,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[] = [];
+  financesLoading = true;
   reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
@@ -195,8 +196,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
+      this.financesLoading = false;
       return of([]);
     }
+    this.financesLoading = true;
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
@@ -220,7 +223,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(resources => this.resources = resources));
+    }), map(resources => this.resources = resources), finalize(() => this.financesLoading = false));
   }
 
   setTasks(tasks = []) {
