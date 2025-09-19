@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
@@ -918,9 +918,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const loginData = filterByDate(this.loginActivities.filteredData, 'loginTime', range);
     const loginProcessed = this.activityService.groupLoginActivities(loginData);
     const resourceProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.resourceActivities.total.filteredData, 'time', range), 'resourceId');
+      filterByDate(this.resourceActivities.total.filteredData, 'time', range),
+      'resourceId'
+    );
     const courseProcessed = this.activityService.groupDocVisits(
-      filterByDate(this.courseActivities.total.filteredData, 'time', range), 'courseId');
+      filterByDate(this.courseActivities.total.filteredData, 'time', range),
+      'courseId'
+    );
     const stepProcessed = this.activityService.groupStepCompletion(filterByDate(this.progress.steps.filteredData, 'time', range));
     const chatProcessed = this.activityService.groupChatUsage(filterByDate(this.chatActivities.filteredData, 'createdDate', range));
     const voicesProcessed = this.activityService.groupVoicesCreated(filterByDate(this.voicesActivities.filteredData, 'time', range));

@@ -100,7 +100,7 @@
           <planet-community-list></planet-community-list>
         </mat-tab>
         <mat-tab i18n-label label="Finances" *ngIf="isLoggedIn">
-          <planet-teams-view-finances [finances]="finances" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [isLoading]="financesLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
         <mat-tab i18n-label label="Reports" *ngIf="isLoggedIn">
           <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -47,6 +47,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
+  financesLoading = false;
   councillors: any[] = [];
   reports: any[] = [];
   showNewsButton = true;
@@ -192,6 +193,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
+        this.financesLoading = true;
         return this.getLinks(this.planetCode);
       }),
       switchMap((res) => {
@@ -301,6 +303,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;
+  this.financesLoading = false;
   }
 
   dataChanged() {

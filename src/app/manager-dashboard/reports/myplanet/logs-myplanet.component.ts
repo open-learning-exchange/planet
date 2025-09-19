@@ -1,15 +1,15 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { forkJoin } from 'rxjs';
-import { CouchService } from '../../shared/couchdb.service';
-import { StateService } from '../../shared/state.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
-import { ManagerService } from '../manager.service';
-import { filterSpecificFields } from '../../shared/table-helpers';
-import { attachNamesToPlanets, areNoChildren, filterByDate } from './reports.utils';
-import { CsvService } from '../../shared/csv.service';
-import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { ReportsService } from './reports.service';
+import { CouchService } from '../../../shared/couchdb.service';
+import { StateService } from '../../../shared/state.service';
+import { PlanetMessageService } from '../../../shared/planet-message.service';
+import { ManagerService } from '../../manager.service';
+import { filterSpecificFields } from '../../../shared/table-helpers';
+import { attachNamesToPlanets, areNoChildren, filterByDate } from '../reports.utils';
+import { CsvService } from '../../../shared/csv.service';
+import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
+import { ReportsService } from '../reports.service';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',

@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -25,6 +25,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() team: any = {};
   @Input() getMembers;
   @Input() editable = true;
+  @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
@@ -61,8 +62,9 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
         transactions[0] = this.setTransactionsTable(transactions)[0];
       }
-      this.showBalanceWarning = (this.finances && this.finances.length) === (this.table.filteredData.length - 1) &&
-        transactions[0].balance < 0;
+      const hasRows = this.table.filteredData && this.table.filteredData.length > 0;
+      this.showBalanceWarning = hasRows && (this.finances && this.finances.length) === (this.table.filteredData.length - 1) &&
+        this.table.filteredData[0].balance < 0;
     });
   }
 
@@ -70,7 +72,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
       this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
     }
-    if (this.finances) {
+    if (!this.isLoading && this.finances) {
       this.table.data = this.setTransactionsTable(this.finances);
     }
   }

@@ -345,7 +345,7 @@ export class SubmissionsService {
       const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
-      docContent.push({ text: `${$localize`Question `} ${i + 1}: ${question.body}` });
+      docContent.push({ stack: htmlToPdfmake(`<strong>${$localize`Question `} ${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
@@ -547,7 +547,7 @@ export class SubmissionsService {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
-      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${text}</div>`;
+      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
@@ -627,8 +627,9 @@ export class SubmissionsService {
   }
 
   calculateAverageRating(question, submissions): number {
-    const validRatings = submissions.map(sub =>
-      parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9);
+    const validRatings = submissions.map(
+      sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9
+    );
     const sum = validRatings.reduce((total, rating) => total + rating, 0);
     return parseFloat((sum / validRatings.length).toFixed(1));
   }
