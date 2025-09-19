@@ -296,3 +296,5 @@
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]
+  }
+}
