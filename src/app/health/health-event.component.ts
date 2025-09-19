@@ -7,7 +7,7 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { switchMap } from 'rxjs/operators';
 import { of, forkJoin, interval, race } from 'rxjs';

@@ -1,5 +1,5 @@
 import { Component, Inject, Directive, Input, HostListener } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 @Component({
   templateUrl: './dialogs-ratings.component.html'
