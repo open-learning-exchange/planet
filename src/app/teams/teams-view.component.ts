@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTab } from '@angular/material/tabs';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -59,6 +59,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[] = [];
+  financesLoading = true;
   reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
@@ -195,8 +196,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
+      this.financesLoading = false;
       return of([]);
     }
+    this.financesLoading = true;
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
@@ -220,7 +223,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(resources => this.resources = resources));
+    }), map(resources => this.resources = resources), finalize(() => this.financesLoading = false));
   }
 
   setTasks(tasks = []) {
@@ -277,7 +280,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       archive: { request: () => this.teamsService.archiveTeam(item)().pipe(switchMap(() => this.teamsService.deleteCommunityLink(item))),
         successMsg: $localize`deleted`, errorMsg: $localize`deleting` },
       resource: {
-        request: this.removeResource(item), name: item.resource && item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
+        request: this.removeResource(item), name: item.resource &&
+        item.resource.title, successMsg: $localize`removed`, errorMsg: $localize`removing`
       },
       course: { request: this.removeCourse(item), name: item.courseTitle, successMsg: $localize`removed`, errorMsg: $localize`removing` },
       remove: {
@@ -391,7 +395,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateTeam() {
     this.teamsService.addTeamDialog(this.user._id, this.mode, this.team).subscribe((updatedTeam) => {
       this.team = updatedTeam;
-      this.planetMessageService.showMessage((this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
+      this.planetMessageService.showMessage(
+        (this.team.name || $localize`${this.configuration.name} Services Directory`) + $localize` updated successfully`);
     });
   }
 

@@ -266,7 +266,9 @@ export class TeamsService {
     const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
     const truncatedFullName = truncateText(fullName, 22);
     const teamType = team.type || 'team';
-    const teamMessage = team.type === 'services' ? 'the <b>Community Services Directory</b>' : `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
+    const teamMessage = team.type === 'services' ?
+      'the <b>Community Services Directory</b>' :
+      `<b>"${truncateText(team.name, 22)}"</b> ${teamType}.`;
     let message;
     switch (type) {
       case 'message':
@@ -375,17 +377,13 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
-  getTeamName(teamId: string): Observable<string> {
+  getTeamName(teamId: string): Observable<Object> {
     return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
       map((team: any) => {
-        if (team && team.name) {
-          if (team.type && team.type === 'enterprise') {
-            return `Enterprise: ${team.name}`;
-          } else {
-            return `Team: ${team.name}`;
-          }
+        if (team) {
+          return { 'name': team.name, 'type': team.type };
         }
-        return teamId;
+        return { id: teamId };
       }),
     );
   }

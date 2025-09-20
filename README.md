@@ -169,13 +169,6 @@ Restart the app:
 ng serve
 `
 
-### Mime.getType does not exist (Windows)
-Use Mime 3.0.0
-```
-npm i mime@3.0.0
-npm i @types/mime@3.0.0
-```
-
 ### Error on initial npm install
 
 If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.

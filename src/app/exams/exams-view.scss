@@ -1,3 +1,5 @@
+@import '../variables';
+
 :host {
 
   .view-container {
@@ -48,4 +50,50 @@
     outline: none;
     max-width: 50%;
   }
+
+  .rating-scale-keypad {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px 0;
+  }
+
+  .rating-scale-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 240px;
+    width: 100%;
+  }
+
+  .rating-scale-button {
+    height: 60px;
+    font-size: 28px;
+    font-weight: 500;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &[data-rating="1"] { background-color: #ffeaea; }
+    &[data-rating="2"] { background-color: #ffeeea; }
+    &[data-rating="3"] { background-color: #fff2ea; }
+    &[data-rating="4"] { background-color: #fff6ea; }
+    &[data-rating="5"] { background-color: #fffaea; }
+    &[data-rating="6"] { background-color: #f6faea; }
+    &[data-rating="7"] { background-color: #f2faea; }
+    &[data-rating="8"] { background-color: #eefaea; }
+    &[data-rating="9"] { background-color: #eafaea; }
+
+    &:hover {
+      border-color: $primary;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    &.selected {
+      background-color: $primary;
+      color: white;
+      border-color: $primary;
+      box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+    }
+  }
+
 }

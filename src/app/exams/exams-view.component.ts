@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
@@ -10,7 +10,9 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
+import {
+  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
+} from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 
 @Component({
@@ -307,6 +309,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.setValue(value.length > 0 ? value : null);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
+  }
+
+  setRatingScaleAnswer(number: number) {
+    this.answer.setValue(number.toString());
+    this.answer.updateValueAndValidity();
   }
 
   calculateCorrect() {

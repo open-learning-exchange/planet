@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -21,8 +21,19 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
 
-const registerForm = {
-  name: [],
+interface RegisterForm {
+  name: [ string, ValidatorFn[]?, AsyncValidatorFn? ],
+  password: [ string, ValidatorFn ],
+  repeatPassword: [ string, ValidatorFn ]
+}
+
+interface LoginForm {
+  name: [ string, ValidatorFn ],
+  password: [ string, ValidatorFn ]
+}
+
+const registerForm: RegisterForm = {
+  name: [ '' ],
   password: [ '', Validators.compose([
     Validators.required,
     CustomValidators.spaceValidator,
@@ -34,7 +45,7 @@ const registerForm = {
   ]) ]
 };
 
-const loginForm = {
+const loginForm: LoginForm = {
   name: [ '', CustomValidators.required ],
   password: [ '', Validators.required ]
 };
@@ -45,7 +56,7 @@ const loginForm = {
   styleUrls: [ './login.scss' ]
 })
 export class LoginFormComponent {
-  public userForm: UntypedFormGroup;
+  public userForm: FormGroup;
   showPassword = false;
   showRepeatPassword = false;
   notificationDialog: MatDialogRef<DashboardNotificationsDialogComponent>;
@@ -59,7 +70,7 @@ export class LoginFormComponent {
     private route: ActivatedRoute,
     private dialog: MatDialog,
     private userService: UserService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private syncService: SyncService,
@@ -87,7 +98,7 @@ export class LoginFormComponent {
   );
 
   initUserForm() {
-    const formObj = this.createMode ? registerForm : loginForm;
+    const formObj: RegisterForm | LoginForm = this.createMode ? registerForm : loginForm;
     this.userForm = this.formBuilder.group(formObj);
   }
 

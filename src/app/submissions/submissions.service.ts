@@ -13,7 +13,7 @@ import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
@@ -107,18 +107,6 @@ export class SubmissionsService {
       }
       this.submissionAttempts = attempts;
       this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
-    });
-  }
-
-  private formatShortDate(timestamp: number): string {
-    return new Date(timestamp).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-      timeZoneName: 'short'
     });
   }
 
@@ -287,9 +275,7 @@ export class SubmissionsService {
       return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
-              return this.teamsService.getTeamName(submission.team).pipe(
-                map(teamName => ({ ...submission, teamName }))
-              );
+              return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
             }
             return of(submission);
           })
@@ -304,7 +290,8 @@ export class SubmissionsService {
             'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
             'Planet': submission.source,
             'Date': submission.lastUpdateTime,
-            'Team/Enterprise': submission.teamName || 'N/A',
+            'Group': submission.teamInfo?.name || 'N/A',
+            'Group Type': submission.teamInfo?.type || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
               [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
@@ -336,7 +323,9 @@ export class SubmissionsService {
     if (!submission.parent || !Array.isArray(submission.parent.questions) || !submission.parent.questions[index]) {
       return answerText;
     }
-    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ? '<pre>'.concat(answerText, '</pre>') : answerText;
+    return submission.parent.questions[index] && submission.parent.questions[index].type !== 'textarea' ?
+      '<pre>'.concat(answerText, '</pre>') :
+      answerText;
   }
 
   setHeader(docContent, name) {
@@ -352,9 +341,9 @@ export class SubmissionsService {
     this.setHeader(docContent, 'Charts');
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
-      if (question.type !== 'select' && question.type !== 'selectMultiple') { continue; }
+      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
-      docContent.push({ text: `Q${i + 1}: ${question.body}` });
+      docContent.push({ stack: htmlToPdfmake(`<strong>Q${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
@@ -387,6 +376,18 @@ export class SubmissionsService {
               margin: [ 0, 5, 0, 10 ]
             },
             { text: `*Percentage of users who selected the choice. Users may select multiple options` },
+          ],
+          alignment: 'center'
+        });
+      } else if (question.type === 'ratingScale') {
+        const ratingScaleAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'count');
+        const ratingScaleImg = await this.generateChartImage(ratingScaleAgg);
+        const averageRating = this.calculateAverageRating(question, updatedSubmissions);
+        docContent.push({
+          stack: [
+            { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
+            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: `The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });
@@ -465,7 +466,7 @@ export class SubmissionsService {
           return forkJoin(
             submissionsWithPlanetName.map(submission => {
               if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(map(teamName => ({ ...submission, teamName })));
+                return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
               }
               return of(submission);
             })
@@ -515,21 +516,21 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
-      const shortDate = this.formatShortDate(submission.lastUpdateTime);
-      const userAge = submission.user.birthDate
-        ? ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate)
-        : submission.user.age;
+      const shortDate = fullLabel(submission.lastUpdateTime);
+      const userAge = submission.user.birthDate ?
+       ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
+       submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
-      const teamName = submission.teamName
-      ? submission.teamName.replace(/^(Team|Enterprise):/, (match) => `<strong>${match}</strong>`)
-      : '';
+      const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
+      const teamName = submission.teamInfo?.name || '';
+      const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
         `<h3>Submission ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>Date:</strong> ${shortDate}</li>`,
-        teamName ? `<li>${teamName}</li>` : '',
+        teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
         `</ul>`,
@@ -543,7 +544,7 @@ export class SubmissionsService {
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
-      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${text}</div>`;
+      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
@@ -555,16 +556,18 @@ export class SubmissionsService {
     canvas.width = 300;
     canvas.height = 400;
     const isBar = data.chartType === 'bar';
+    const isRatingScale = data.isRatingScale || false;
     const ctx = canvas.getContext('2d');
 
     return new Promise<string>((resolve) => {
+      const maxCount = Math.max(...data.data);
       const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
         type: isBar ? 'bar' : 'doughnut',
         data: {
           labels: data.labels,
           datasets: [ {
             data: data.data,
-            label: isBar ? '% of responders/selection' : undefined,
+            label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
             backgroundColor: [
               '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
             ],
@@ -574,25 +577,33 @@ export class SubmissionsService {
           responsive: false,
           maintainAspectRatio: false,
           indexAxis: 'x',
+          plugins: {
+            legend: {
+              display: true,
+              labels: {
+                boxWidth: isBar ? 0 : 50,
+                boxHeight: isBar ? 0 : 20
+              }
+            }
+          },
           scales: isBar ? {
             y: {
               type: 'linear',
               beginAtZero: true,
-              max: 100,
-              ticks: { precision: 0 }
+              max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
+              ticks: { precision: 0, stepSize: 2 }
             }
           } : {},
           animation: {
             onComplete: function() {
               if (isBar && data.userCounts) {
                 this.getDatasetMeta(0).data.forEach((bar, index) => {
-                  const percentage = data.data[index];
-                  const userCount = data.userCounts[index];
-                  if (percentage > 0) {
-                    ctx.fillText(`${userCount}`, bar.x - 2.5 , bar.y);
+                  const count = data.userCounts[index];
+                  if (count > 0) {
+                    ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
                   }
                 });
-              } else if (!isBar) {
+              } else {
                 const total = data.data.reduce((sum, val) => sum + val, 0);
                 this.getDatasetMeta(0).data.forEach((element, index) => {
                   const count = data.data[index];
@@ -612,18 +623,29 @@ export class SubmissionsService {
     });
   }
 
+  calculateAverageRating(question, submissions): number {
+    const validRatings = submissions.map(
+      sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9
+    );
+    const sum = validRatings.reduce((total, rating) => total + rating, 0);
+    return parseFloat((sum / validRatings.length).toFixed(1));
+  }
+
   aggregateQuestionResponses(
-    question,
-    submissions,
-    mode: 'percent' | 'count' = 'percent',
-    calculationMode: 'users' | 'selections' = 'users'
+    question, submissions, mode: 'percent' | 'count' = 'percent', calculationMode: 'users' | 'selections' = 'users'
   ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
 
-    question.choices.forEach(c => { counts[c.text] = new Set(); });
-    if (question.hasOtherOption) {
-      counts['Other'] = new Set();
+    if (question.type === 'ratingScale') {
+      for (let i = 1; i <= 9; i++) {
+        counts[i.toString()] = new Set();
+      }
+    } else {
+      question.choices.forEach(c => { counts[c.text] = new Set(); });
+      if (question.hasOtherOption) {
+        counts['Other'] = new Set();
+      }
     }
 
     submissions.forEach((sub, submissionIndex) => {
@@ -631,18 +653,27 @@ export class SubmissionsService {
       if (!ans) { return; }
 
       const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
-      const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
-      selections.forEach(selection => {
-        if (selection.isOther || selection.id === 'other') {
-          counts['Other']?.add(userId);
-        } else {
-          const txt = selection.text ?? selection;
-          counts[txt]?.add(userId);
+      if (question.type === 'ratingScale') {
+        if (ans.value) {
+          const value = ans.value.toString();
+          if (counts[value]) {
+            counts[value].add(userId);
+          }
         }
-      });
+      } else {
+        const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
+        selections.forEach(selection => {
+          if (selection.isOther || selection.id === 'other') {
+            counts['Other']?.add(userId);
+          } else {
+            const txt = selection.text ?? selection;
+            counts[txt]?.add(userId);
+          }
+        });
+      }
     });
 
-    const labels = Object.keys(counts);
+    const labels = question.type === 'ratingScale' ? Array.from({length: 9}, (_, i) => (i + 1).toString()) : Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
     const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
     let data: number[];
@@ -667,7 +698,9 @@ export class SubmissionsService {
       userCounts,
       totalUsers,
       totalSelections,
-      chartType: question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') : 'pie'
+      chartType: question.type === 'ratingScale' ? 'bar' :
+        (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') :'pie'),
+      isRatingScale: question.type === 'ratingScale'
     };
   }
 
@@ -688,6 +721,9 @@ export class SubmissionsService {
           break;
         case 'selectMultiple':
           result = answer.value.map(item => item.text).join(', ');
+          break;
+        case 'ratingScale':
+          result = `Rating: ${answer.value} (on 1-9 scale)`;
           break;
         default:
           result = answer.value;

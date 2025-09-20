@@ -5,7 +5,7 @@ import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 @Injectable()

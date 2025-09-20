@@ -43,6 +43,35 @@ mat-toolbar mat-form-field {
   canvas {
     max-height: 30vh;
   }
+
+  .comparison-container {
+    padding: 1rem;
+
+    .comparison-toolbar {
+      background: transparent;
+      padding: 1rem 0;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 2rem;
+    }
+
+    .comparison-table-container {
+      table {
+        th {
+          background-color: $primary;
+          color: white;
+          font-weight: 600;
+        }
+
+        .positive-change {
+          color: green;
+        }
+
+        .negative-change {
+          color: red;
+        }
+      }
+    }
+  }
 }
 
 @media(max-width: #{$screen-md}) {

@@ -87,6 +87,11 @@ export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-U
 
 export const weekDataLabels = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
 
+export const fullLabel = (date) => new Date(date).toLocaleString(
+  'en-US',
+  { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
+);
+
 export const xyChartData = (data, unique) => data.map((visit: any) => ({
   x: monthDataLabels(visit.date),
   y: unique ? visit.unique.length : visit.count || 0
@@ -167,4 +172,22 @@ export const sortingOptionsMap = {
     { name: $localize`AI Provider (A-Z)`, value: 'aiProviderAsc' },
     { name: $localize`AI Provider (Z-A)`, value: 'aiProviderDesc' }
   ]
+};
+
+export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+
+export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
+export const lastThursday = (date: Date) => {
+  const d = new Date(date);
+  const back = (d.getDay() - 4 + 7) % 7;
+  d.setDate(d.getDate() - back);
+  return startOfDay(d);
+};
+
+export const thursdayWeekRangeFromEnd = (endDate: Date) => {
+  const end = startOfDay(endDate);
+  const start = new Date(end);
+  start.setDate(start.getDate() - 6);
+  return { startDate: startOfDay(start), endDate: end };
 };
