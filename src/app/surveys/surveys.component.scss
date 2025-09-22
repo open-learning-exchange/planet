@@ -4,7 +4,7 @@
   max-width: 44px;
 }
 
-.mat-column-taken, .mat-column-createdDate {
+.mat-column-taken {
   max-width: 150px;
   display: flex;
   justify-content: center;
@@ -13,6 +13,16 @@
   padding: 0 32px;
 }
 
+.mat-column-createdDate{
+  max-width: 130px;
+  text-align: left;
+  padding: 0 20px;
+  margin-left: 20px;
+}
+
+.mat-column-name, .mat-column-courseTitle {
+  max-width: 250px;
+}
 .course-title, .mat-column-name span {
   max-width: 250px;
   white-space: nowrap;
@@ -28,6 +38,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.mat-column-action{
+  margin-left: 40px;
 }
 
 /* Targeting tablet screens */
