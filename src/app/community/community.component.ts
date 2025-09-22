@@ -2,8 +2,10 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder } from '@angular/forms';
-import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subject, forkJoin, iif, of, throwError } from 'rxjs';
+import {
+  takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, shareReplay, take
+} from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -69,6 +71,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
   pinned = false;
+  attachments$?: Observable<any[]>;
+  attachmentMap: Record<string, any> = {};
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
@@ -290,9 +294,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getLinks(planetCode?) {
     return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
-      const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => ({
-        ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
-      }), { link: [], transaction: [] });
+      const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => {
+        if (!docObject[doc.docType]) {
+          docObject[doc.docType] = [];
+        }
+        docObject[doc.docType].push(doc);
+        return docObject;
+      }, { link: [], transaction: [], report: [] });
       return { links, finances, reports };
     }));
   }
@@ -309,15 +317,31 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.getLinks().subscribe(res => this.setLinksAndFinances(res));
   }
 
+  getAttachments(): Observable<any[]> {
+    if (!this.attachments$) {
+      this.attachments$ = this.couchService.findAll('attachments').pipe(
+        tap((attachments: any[]) => {
+          this.attachmentMap = attachments.reduce((acc, attachment) => {
+            acc[attachment._id] = attachment;
+            return acc;
+          }, {} as Record<string, any>);
+        }),
+        shareReplay(1)
+      );
+    }
+
+    return this.attachments$;
+  }
+
   setCouncillors(users) {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
-    this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
+    this.getAttachments().pipe(take(1)).subscribe(() => {
       this.councillors = users
         .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1)
         .map(user => {
           const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
           const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
-          const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
+          const attachmentDoc: any = this.attachmentMap[attachmentId];
           const avatar = attachmentDoc ?
             `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
             (user.imageSrc || 'assets/image.png');
@@ -497,7 +521,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
+      filtered = filtered.filter(item => {
+        if (typeof item.doc.messageLower !== 'string') {
+          item.doc.messageLower = (item.doc.message || '').toLowerCase();
+        }
+        return item.doc.messageLower.includes(lower);
+      });
     }
     this.filteredNews = filtered;
   }
