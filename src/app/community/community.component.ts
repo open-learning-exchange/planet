@@ -108,7 +108,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.news.forEach(item => item.doc.messageLower = item.doc.message?.toLowerCase() || '');
       this.filteredNews = this.news;
       this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
@@ -498,7 +497,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => item.doc.messageLower.includes(lower));
+      filtered = filtered.filter(item => item.doc.message?.toLowerCase().includes(lower));
     }
     this.filteredNews = filtered;
   }
