@@ -32,16 +32,17 @@ export class NewsService {
     forkJoin([
       this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
       this.couchService.findAll('attachments')
-    ]).subscribe(([ newsItems, avatars ]) => {
+    ]).subscribe(([ newsItems, avatars ]: [ any[], any[] ]) => {
+      const avatarMap = new Map<string, any>(avatars.map((avatar: any) => [ avatar._id, avatar ]));
       this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id }
+        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
       )));
     });
   }
 
-  findAvatar(user: any, attachments: any[]) {
+  findAvatar(user: any, attachments: Map<string, any>) {
     const attachmentId = `${user._id}@${user.planetCode}`;
-    const attachment = attachments.find(avatar => avatar._id === attachmentId);
+    const attachment = attachments.get(attachmentId);
     const extractFilename = (object) => Object.keys(object._attachments)[0];
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
