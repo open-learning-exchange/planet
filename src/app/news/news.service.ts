@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -19,6 +19,9 @@ export class NewsService {
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
+  private requestSequence = 0;
+  private latestNewsItems: any[] = [];
+  private cachedAvatarMap = new Map<string, any>();
 
   constructor(
     private couchService: CouchService,
@@ -29,19 +32,29 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
-      switchMap((newsItems: any[]) =>
-        this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
-          map((attachments: any[]) => ({
-            newsItems,
-            avatarMap: new Map<string, any>(attachments.map((attachment: any) => [ attachment._id, attachment ]))
-          }))
-        )
-      )
-    ).subscribe(({ newsItems, avatarMap }) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
-      )));
+    const requestId = ++this.requestSequence;
+    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).subscribe(newsItems => {
+      if (this.requestSequence !== requestId) {
+        return;
+      }
+      this.latestNewsItems = newsItems;
+      this.newsUpdated$.next(this.formatNewsItems(newsItems, viewId, this.cachedAvatarMap));
+      const attachmentIds = this.collectAttachmentIds(newsItems).filter(id => !this.cachedAvatarMap.has(id));
+      if (attachmentIds.length === 0) {
+        return;
+      }
+      this.couchService.findAttachmentsByIds(attachmentIds).subscribe({
+        next: (attachments: any[]) => {
+          if (this.requestSequence !== requestId) {
+            return;
+          }
+          if (attachments.length === 0) {
+            return;
+          }
+          this.cachedAvatarMap = this.mergeAvatarMaps(attachments);
+          this.newsUpdated$.next(this.formatNewsItems(this.latestNewsItems, viewId, this.cachedAvatarMap));
+        }
+      });
     });
   }
 
@@ -69,6 +82,22 @@ export class NewsService {
       }
     });
     return Array.from(ids);
+  }
+
+  private mergeAvatarMaps(attachments: any[]): Map<string, any> {
+    const mapClone = new Map(this.cachedAvatarMap);
+    attachments.forEach((attachment: any) => {
+      if (attachment && attachment._id) {
+        mapClone.set(attachment._id, attachment);
+      }
+    });
+    return mapClone;
+  }
+
+  private formatNewsItems(newsItems: any[], viewId: string, avatarMap: Map<string, any>) {
+    return newsItems.map((item: any) => (
+      { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
+    ));
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
