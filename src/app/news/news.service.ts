@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -29,11 +29,16 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
-      this.couchService.findAll('attachments')
-    ]).subscribe(([ newsItems, avatars ]: [ any[], any[] ]) => {
-      const avatarMap = new Map<string, any>(avatars.map((avatar: any) => [ avatar._id, avatar ]));
+    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
+      switchMap((newsItems: any[]) =>
+        this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
+          map((attachments: any[]) => ({
+            newsItems,
+            avatarMap: new Map<string, any>(attachments.map((attachment: any) => [ attachment._id, attachment ]))
+          }))
+        )
+      )
+    ).subscribe(({ newsItems, avatarMap }) => {
       this.newsUpdated$.next(newsItems.map((item: any) => (
         { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
       )));
@@ -53,6 +58,17 @@ export class NewsService {
 
   findShareDate(item, viewId) {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
+  }
+
+  private collectAttachmentIds(newsItems: any[]): string[] {
+    const ids = new Set<string>();
+    newsItems.forEach((item: any) => {
+      const user = item?.user;
+      if (user && user._id && user.planetCode) {
+        ids.add(`${user._id}@${user.planetCode}`);
+      }
+    });
+    return Array.from(ids);
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {

@@ -2,10 +2,8 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder } from '@angular/forms';
-import { Observable, Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import {
-  takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, shareReplay, take
-} from 'rxjs/operators';
+import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
+import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -71,7 +69,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
   pinned = false;
-  attachments$?: Observable<any[]>;
   attachmentMap: Record<string, any> = {};
 
   get leadersTabLabel(): string {
@@ -317,37 +314,40 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.getLinks().subscribe(res => this.setLinksAndFinances(res));
   }
 
-  getAttachments(): Observable<any[]> {
-    if (!this.attachments$) {
-      this.attachments$ = this.couchService.findAll('attachments').pipe(
-        tap((attachments: any[]) => {
-          this.attachmentMap = attachments.reduce((acc, attachment) => {
-            acc[attachment._id] = attachment;
-            return acc;
-          }, {} as Record<string, any>);
-        }),
-        shareReplay(1)
-      );
-    }
-
-    return this.attachments$;
-  }
-
   setCouncillors(users) {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
-    this.getAttachments().pipe(take(1)).subscribe(() => {
-      this.councillors = users
-        .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1)
-        .map(user => {
-          const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
-          const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
-          const attachmentDoc: any = this.attachmentMap[attachmentId];
-          const avatar = attachmentDoc ?
-            `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
-            (user.imageSrc || 'assets/image.png');
-          return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
-        });
+    const councillorUsers = users
+      .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1);
+    const attachmentIds = councillorUsers
+      .map(user => `org.couchdb.user:${user.doc.name}@${user.doc.planetCode}`)
+      .filter(id => !!id);
+
+    this.fetchMissingAttachments(attachmentIds).pipe(take(1)).subscribe(() => {
+      this.councillors = councillorUsers.map(user => {
+        const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
+        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+        const attachmentDoc: any = this.attachmentMap[attachmentId];
+        const avatar = attachmentDoc ?
+          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
+          (user.imageSrc || 'assets/image.png');
+        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
+      });
     });
+  }
+
+  private fetchMissingAttachments(ids: string[]) {
+    const missing = ids.filter(id => !this.attachmentMap[id]);
+    if (missing.length === 0) {
+      return of(undefined);
+    }
+    return this.couchService.findAttachmentsByIds(missing).pipe(
+      tap((attachments: any[]) => {
+        attachments.forEach(attachment => {
+          this.attachmentMap[attachment._id] = attachment;
+        });
+      }),
+      map(() => undefined)
+    );
   }
 
   openAddLinkDialog() {
