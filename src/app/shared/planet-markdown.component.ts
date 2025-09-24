@@ -1,25 +1,23 @@
-import { Component, Input, ViewEncapsulation, OnChanges, ChangeDetectionStrategy } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
-import { truncateText, calculateMdAdjustedLimit, converter } from './utils';
+import { truncateText, calculateMdAdjustedLimit } from './utils';
 
 @Component({
   selector: 'planet-markdown',
   template: `
     <ng-container *ngIf="previewMode; else noPreview">
-      <div [innerHTML]="previewHtml" class="markdown"></div>
+      <td-markdown [content]="limitedContent"></td-markdown>
       <div class="image-gallery" *ngIf="images?.length">
         <img *ngFor="let image of images" [src]="image" class="minified-image" alt="Preview Image" />
       </div>
     </ng-container>
     <ng-template #noPreview>
-      <div [innerHTML]="fullHtml" class="markdown"></div>
+      <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
   styleUrls: [ './planet-markdown.scss' ],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  encapsulation: ViewEncapsulation.None
 })
 export class PlanetMarkdownComponent implements OnChanges {
 
@@ -29,61 +27,32 @@ export class PlanetMarkdownComponent implements OnChanges {
   @Input() limit: number;
   couchAddress: string;
   images: string[] = [];
-  fullHtml: SafeHtml;
-  previewHtml?: SafeHtml;
-  private imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
-  private cachedContent?: string;
-  private cachedPreviewMode?: boolean;
-  private cachedLimit?: number;
-  private cachedImageSource?: 'parent' | 'local';
+  limitedContent: string;
+  imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
 
   constructor(
     private stateService: StateService,
-    private sanitizer: DomSanitizer
   ) {}
 
   ngOnChanges() {
-    const normalizedContent = this.content || '';
-    const preview = !!this.previewMode;
-    const limit = typeof this.limit === 'number' ? this.limit : normalizedContent.length;
-    const imageSource = this.imageSource || 'local';
-
-    const contentChanged = this.cachedContent !== normalizedContent;
-    const previewChanged = this.cachedPreviewMode !== preview;
-    const limitChanged = this.cachedLimit !== limit;
-    const sourceChanged = this.cachedImageSource !== imageSource;
-
-    if (!contentChanged && !previewChanged && !limitChanged && !sourceChanged) {
-      return;
-    }
-
-    this.couchAddress = imageSource === 'parent' ?
+    this.couchAddress = this.imageSource === 'parent' ?
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
-    if (contentChanged || sourceChanged) {
-      this.images = this.extractImageUrls(normalizedContent);
-      this.fullHtml = this.sanitizer.bypassSecurityTrustHtml(converter.makeHtml(normalizedContent));
-    }
+    this.images = this.extractImageUrls(this.content);
+    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
 
-    if (preview && (contentChanged || limitChanged || previewChanged || sourceChanged)) {
-      const textOnly = normalizedContent.replace(this.imageMarkdownRegex, '');
+    if (this.previewMode) {
       const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
-      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, limit);
-      const truncated = truncateText(scaledContent, adjustedLimit);
-      this.previewHtml = this.sanitizer.bypassSecurityTrustHtml(converter.makeHtml(truncated));
-    } else if (!preview) {
-      this.previewHtml = undefined;
-    }
+      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, this.limit);
 
-    this.cachedContent = normalizedContent;
-    this.cachedPreviewMode = preview;
-    this.cachedLimit = limit;
-    this.cachedImageSource = imageSource;
+      this.limitedContent = truncateText(scaledContent, adjustedLimit);
+    } else {
+      this.limitedContent = truncateText(textOnly, this.limit);
+    }
   }
 
   extractImageUrls(content: string): string[] {
-    this.imageMarkdownRegex.lastIndex = 0;
     const matches: string[] = [];
     let match: RegExpExecArray | null;
     while ((match = this.imageMarkdownRegex.exec(content)) !== null) {

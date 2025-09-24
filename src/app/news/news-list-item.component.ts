@@ -9,6 +9,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { calculateMdAdjustedLimit } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -41,6 +42,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   targetLocalPlanet = true;
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
   teamLabels = [];
+  previewLimit = 500;
   deviceType: DeviceType;
   isMobile: boolean;
 
@@ -113,10 +115,19 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   handleItemExpansion() {
-    this.showLess = !this.item.latestMessage;
-    const hasMultipleConversations = this.item.doc.news?.conversations?.length > 1;
-    const hasImages = Array.isArray(this.item.doc.images) && this.item.doc.images.length > 0;
-    this.showExpand = !!this.item.latestMessage || !!this.item.previewTruncated || hasMultipleConversations || hasImages;
+    if (this.item.latestMessage) {
+      this.showExpand = true;
+      this.showLess = false;
+    } else {
+      this.showLess = true;
+    }
+    if (this.item.doc.news?.conversations?.length > 1) {
+      this.showExpand = true;
+    } else {
+      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
+      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
+    }
   }
 
   sendNewsNotifications(news: any = '') {
