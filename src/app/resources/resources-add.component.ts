@@ -183,6 +183,15 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit() {
+    // If no title typed yet, ask for one (default to "Financial Report")
+    if (!this.resourceForm.value.title || !this.resourceForm.value.title.trim()) {
+      const proposed = window.prompt('Name this report', 'Financial Report');
+      if (proposed === null) {
+        return; // user canceled -> stay on form
+      }
+      const name = (proposed || '').trim() || 'Financial Report';
+      this.resourceForm.patchValue({ title: name });
+    }
     if (this.attachmentMarkedForDeletion) {
       delete this.existingResource.doc._attachments;
     }
