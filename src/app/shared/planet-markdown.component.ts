@@ -1,4 +1,4 @@
-import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
 import { truncateText, calculateMdAdjustedLimit } from './utils';
@@ -17,7 +17,8 @@ import { truncateText, calculateMdAdjustedLimit } from './utils';
     </ng-template>
   `,
   styleUrls: [ './planet-markdown.scss' ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlanetMarkdownComponent implements OnChanges {
 
@@ -29,27 +30,55 @@ export class PlanetMarkdownComponent implements OnChanges {
   images: string[] = [];
   limitedContent: string;
   imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
+  private cachedContent?: string;
+  private cachedPreviewMode?: boolean;
+  private cachedLimit?: number;
+  private cachedImageSource?: 'parent' | 'local';
 
   constructor(
     private stateService: StateService,
   ) {}
 
   ngOnChanges() {
-    this.couchAddress = this.imageSource === 'parent' ?
+    const normalizedContent = this.content || '';
+    const currentPreview = !!this.previewMode;
+    const currentLimit = this.limit;
+    const imageSource = this.imageSource || 'local';
+
+    const contentChanged = this.cachedContent !== normalizedContent;
+    const previewChanged = this.cachedPreviewMode !== currentPreview;
+    const limitChanged = this.cachedLimit !== currentLimit;
+    const imageSourceChanged = this.cachedImageSource !== imageSource;
+
+    if (!contentChanged && !previewChanged && !limitChanged && !imageSourceChanged) {
+      return;
+    }
+
+    this.couchAddress = imageSource === 'parent' ?
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
-    this.images = this.extractImageUrls(this.content);
-    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
-
-    if (this.previewMode) {
-      const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
-      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, this.limit);
-
-      this.limitedContent = truncateText(scaledContent, adjustedLimit);
-    } else {
-      this.limitedContent = truncateText(textOnly, this.limit);
+    if (contentChanged || imageSourceChanged) {
+      this.images = this.extractImageUrls(normalizedContent);
     }
+
+    if (contentChanged || previewChanged || limitChanged) {
+      const textOnly = normalizedContent.replace(this.imageMarkdownRegex, '');
+
+      if (currentPreview) {
+        const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+        const adjustedLimit = calculateMdAdjustedLimit(scaledContent, currentLimit);
+
+        this.limitedContent = truncateText(scaledContent, adjustedLimit);
+      } else {
+        this.limitedContent = truncateText(textOnly, currentLimit);
+      }
+    }
+
+    this.cachedContent = normalizedContent;
+    this.cachedPreviewMode = currentPreview;
+    this.cachedLimit = currentLimit;
+    this.cachedImageSource = imageSource;
   }
 
   extractImageUrls(content: string): string[] {

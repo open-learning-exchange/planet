@@ -10,6 +10,13 @@ import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
+interface NewsItemViewModel {
+  _id: string;
+  doc: any;
+  sharedDate?: string;
+  avatar: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
