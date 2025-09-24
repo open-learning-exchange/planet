@@ -1,7 +1,5 @@
-planet-markdown.img-resize td-markdown.td-markdown {
-  & > div {
-    overflow: auto;
-  }
+planet-markdown.img-resize .markdown {
+  overflow: auto;
 
   img {
     max-width: 25%;
