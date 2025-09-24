@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
-import { dedupeObjectArray } from '../shared/utils';
+import { dedupeObjectArray, converter, truncateText, calculateMdAdjustedLimit } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
@@ -24,7 +25,8 @@ export class NewsService {
     private couchService: CouchService,
     private stateService: StateService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private sanitizer: DomSanitizer
   ) {}
 
   requestNews({ selectors, viewId } = this.currentOptions) {
@@ -39,9 +41,10 @@ export class NewsService {
         )
       )
     ).subscribe(({ newsItems, avatarMap }) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
-      )));
+      this.newsUpdated$.next(newsItems.map((item: any) => {
+        this.cacheMarkdownHtml(item);
+        return { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id };
+      }));
     });
   }
 
@@ -144,6 +147,31 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
+  }
+
+  private cacheMarkdownHtml(item: any): void {
+    const rawMessage = typeof item.message === 'string' ? item.message : '';
+
+    if (!item.renderedHtml || item.renderedSource !== rawMessage) {
+      item.renderedSource = rawMessage;
+      const trimmed = rawMessage.trimEnd();
+      const html = converter.makeHtml(trimmed);
+      item.renderedHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+      item.previewHtml = this.buildPreview(trimmed);
+    }
+  }
+
+  private buildPreview(content: string, limit: number = 500): SafeHtml {
+    if (!content) {
+      return this.sanitizer.bypassSecurityTrustHtml('');
+    }
+
+    const scaledContent = content.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+    const adjustedLimit = calculateMdAdjustedLimit(scaledContent, limit);
+    const truncated = truncateText(scaledContent, adjustedLimit);
+    const html = converter.makeHtml(truncated);
+
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
 }
