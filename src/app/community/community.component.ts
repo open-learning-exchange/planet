@@ -125,6 +125,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
+    this.communityChallenge();
     iif(
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
