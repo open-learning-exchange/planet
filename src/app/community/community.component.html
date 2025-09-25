@@ -70,7 +70,7 @@
               <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
               </button>
-              <button (click)="confirmDeleteDescription()" mat-stroked-button>
+              <button (click)="confirmDeleteDescription()" mat-stroked-button [disabled]="!(team?.description?.trim()?.length)">
                 <span i18n>Remove Description</span>
               </button>
             </div>
