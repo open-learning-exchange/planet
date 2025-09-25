@@ -61,10 +61,10 @@
             <button *ngIf="conversation.shared" mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
               <mat-icon>done_all</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" matTooltip="Edit title">
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" i18n-matTooltip matTooltip="Edit title">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" matTooltip="Share conversation">
+            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" i18n-matTooltip matTooltip="Share conversation">
               <mat-icon>share</mat-icon>
             </button>
           </ng-template>

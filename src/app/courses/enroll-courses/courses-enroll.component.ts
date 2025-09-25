@@ -84,21 +84,20 @@ export class CoursesEnrollComponent {
   }
 
   exportCSV() {
-    // Prepare CSV data
     const csvData = this.members.map((user: any) => {
       return {
-        username: user.doc.name,
-        dateStarted: user.activityDates.createdDate
+        [$localize`username`]: user.doc.name,
+        [$localize`Date Started`]: user.activityDates.createdDate
           ? new Date(user.activityDates.createdDate).toLocaleDateString()
           : 'N/A',
-        mostRecentActivity: user.activityDates.updatedDate
+        [$localize`Most Recent Activity`]: user.activityDates.updatedDate
           ? new Date(user.activityDates.updatedDate).toLocaleDateString()
           : 'N/A',
       };
     });
     this.csvService.exportCSV({
       data: csvData,
-      title: `Course Enrollment Data - ${this.course}`,
+      title: $localize`Course Enrollment Data - ${this.course}`,
     });
   }
 }

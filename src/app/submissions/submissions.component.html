@@ -71,7 +71,7 @@
       <ng-container matColumnDef="teamInfo">
         <mat-header-cell *matHeaderCellDef mat-sort-header="teamInfo" i18n>Team/Enterprise</mat-header-cell>
         <mat-cell *matCellDef="let element" style="cursor: pointer">
-          <ng-container *ngIf="element.teamInfo">{{element.teamInfo?.name}} ({{element.teamInfo?.type}})</ng-container>
+          <ng-container *ngIf="element.teamInfo">{{element.teamInfo?.name}} ({{getTeamTypeLabel(element.teamInfo?.type)}})</ng-container>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
