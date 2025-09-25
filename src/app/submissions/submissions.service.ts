@@ -149,7 +149,7 @@ export class SubmissionsService {
 
   updateStatus(submission: any) {
     if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
-      return $localize`requires grading`;
+      return 'requires grading';
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
@@ -159,7 +159,7 @@ export class SubmissionsService {
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
       }, submission.user._id);
     }, error => console.log(error));
-    return $localize`complete`;
+    return 'complete';
   }
 
   calcTotalGrade(submission: any) {

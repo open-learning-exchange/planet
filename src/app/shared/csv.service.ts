@@ -62,7 +62,7 @@ export class CsvService {
       { title: $localize`Unique Member Visits`, data: groupedLogins, countUnique: true },
       { title: $localize`Total Member Visits`, data: groupedLogins, countUnique: false },
       { title: $localize`Resource Views`, data: groupedResourceViews, countUnique: false },
-      { title: $localize`Course Views`, data: groupedCourseViews, countUnique: false },
+      { title: $localize`Course Views@@course-views-multiple`, data: groupedCourseViews, countUnique: false },
       { title: $localize`Steps Completed`, data: groupedStepCompletions, countUnique: false },
       { title: $localize`Chats Created`, data: groupedChatData, countUnique: false },
       { title: $localize`Voices Created`, data: groupedVoicesData, countUnique: false }

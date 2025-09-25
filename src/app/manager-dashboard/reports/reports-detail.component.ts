@@ -798,7 +798,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[reportType];
     const title = {
       'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`Course Views`,
+      'courseViews': $localize`Course Views@@course-views-single`,
       'health': $localize`Community Health`,
       'stepCompletions': $localize`Courses Progress` }[reportType];
     if (sortBy) {
@@ -945,7 +945,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       { key: 'uniqueVisitors', label: $localize`Unique Member Visits` },
       { key: 'totalMemberVisits', label: $localize`Total Member Visits` },
       { key: 'totalResourceViews', label: $localize`Resource Views` },
-      { key: 'totalCourseViews', label: $localize`Course Views` },
+      { key: 'totalCourseViews', label: $localize`Course Views@@course-views-multiple` },
       { key: 'totalStepCompleted', label: $localize`Steps Completed` },
       { key: 'totalChatUsage', label: $localize`Chat Usage` },
       { key: 'totalVoicesCreated', label: $localize`Voices Created` }
