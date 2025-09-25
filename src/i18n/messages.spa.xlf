@@ -25,19 +25,19 @@
           <context context-type="linenumber">13</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">43</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">102</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">105</context>
         </context-group>
         <context-group purpose="location">
@@ -110,7 +110,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">118,119</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-form.component.html</context>
@@ -324,7 +324,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">12,13</context>
+          <context context-type="linenumber">12</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
@@ -360,7 +360,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">119,123</context>
+          <context context-type="linenumber">119</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-add-resources.component.html</context>
@@ -392,11 +392,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">147</context>
+          <context context-type="linenumber">148</context>
         </context-group>
         <target state="final">Cancelar</target>
       </trans-unit>
@@ -468,7 +468,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-chat-share.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <target state="final">Equipos</target>
       </trans-unit>
@@ -484,7 +484,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-chat-share.component.ts</context>
-          <context context-type="linenumber">37</context>
+          <context context-type="linenumber">39</context>
         </context-group>
         <target state="final">Empresas</target>
       </trans-unit>
@@ -669,13 +669,13 @@
                 <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Editar} Add {Añadir}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Comunidad} nation {Nación} center {Earth}}"/> Descripción
               </target>
       </trans-unit>
-      <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html" approved="yes">
+      <trans-unit id="185db144040cb5b95b3b3bad6bf4fb4387351e57" datatype="html">
         <source>{VAR_SELECT, select, Edit {Edit} Add {Add}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.html</context>
           <context context-type="linenumber">71</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, Edit {Editar} Add {Añadir}}</target>
+        <target state="translated">{VAR_SELECT, select, Edit {Editar} Add {Añadir}}</target>
       </trans-unit>
       <trans-unit id="e4008749c2b97caaae8b1bd72c089089aff9c8e8" datatype="html" approved="yes">
         <source>Remove Description</source>
@@ -797,7 +797,7 @@
         <source>Nation Leaders</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
         <target state="final">Líderes de la nación</target>
       </trans-unit>
@@ -805,7 +805,7 @@
         <source>Community Leaders</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
         <target state="final">Líderes de la comunidad</target>
       </trans-unit>
@@ -813,7 +813,7 @@
         <source>Add Voice</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">227</context>
+          <context context-type="linenumber">229</context>
         </context-group>
         <target state="final">Añadir Voz</target>
       </trans-unit>
@@ -821,7 +821,7 @@
         <source>Your Voice</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">228</context>
+          <context context-type="linenumber">230</context>
         </context-group>
         <target state="final">Tu Voz</target>
       </trans-unit>
@@ -829,11 +829,11 @@
         <source>Message has been posted successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">240</context>
+          <context context-type="linenumber">242</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">479</context>
+          <context context-type="linenumber">482</context>
         </context-group>
         <target state="final">El mensaje se ha publicado con éxito</target>
       </trans-unit>
@@ -841,7 +841,7 @@
         <source>&lt;b&gt;<x id="PH" equiv-text="currentUser.split(&apos;:&apos;)[1]"/>&lt;/b&gt; posted a &lt;b&gt;new story&lt;/b&gt;.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">273</context>
+          <context context-type="linenumber">275</context>
         </context-group>
         <target state="final">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(':')[1]"/>&lt;/b&gt; publicó una &lt;b&gt;nueva noticia&lt;/b&gt;.</target>
       </trans-unit>
@@ -849,7 +849,7 @@
         <source> Deleted link: <x id="PH" equiv-text="link.title"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">345</context>
+          <context context-type="linenumber">348</context>
         </context-group>
         <target state="final"> Enlace eliminado: <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
@@ -857,7 +857,7 @@
         <source>There was an error deleting <x id="PH" equiv-text="link.title"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">348</context>
+          <context context-type="linenumber">351</context>
         </context-group>
         <target state="final">Hubo un error al eliminar <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
@@ -865,7 +865,7 @@
         <source>Description deleted successfully.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">369</context>
+          <context context-type="linenumber">372</context>
         </context-group>
         <target state="final">Descripción eliminada con éxito.</target>
       </trans-unit>
@@ -873,7 +873,7 @@
         <source>There was an error deleting the description.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">373</context>
+          <context context-type="linenumber">376</context>
         </context-group>
         <target state="final">Hubo un error al eliminar la descripción.</target>
       </trans-unit>
@@ -881,7 +881,7 @@
         <source>Community Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">378</context>
+          <context context-type="linenumber">381</context>
         </context-group>
         <target state="final">Descripción de la comunidad</target>
       </trans-unit>
@@ -889,7 +889,7 @@
         <source>Change Leader Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">394</context>
+          <context context-type="linenumber">397</context>
         </context-group>
         <target state="final">Cambiar título del líder</target>
       </trans-unit>
@@ -897,7 +897,7 @@
         <source>Add Leader Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">394</context>
+          <context context-type="linenumber">397</context>
         </context-group>
         <target state="final">Añadir título de líder</target>
       </trans-unit>
@@ -905,7 +905,7 @@
         <source>Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">395</context>
+          <context context-type="linenumber">398</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
@@ -925,7 +925,7 @@
         <source>Title deleted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">412</context>
+          <context context-type="linenumber">415</context>
         </context-group>
         <target state="final">Título eliminado</target>
       </trans-unit>
@@ -933,7 +933,7 @@
         <source>Title added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">414</context>
+          <context context-type="linenumber">417</context>
         </context-group>
         <target state="final">Título añadido</target>
       </trans-unit>
@@ -941,7 +941,7 @@
         <source>Title updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">415</context>
+          <context context-type="linenumber">418</context>
         </context-group>
         <target state="final">Título actualizado</target>
       </trans-unit>
@@ -949,7 +949,7 @@
         <source>Edit Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">429</context>
+          <context context-type="linenumber">432</context>
         </context-group>
         <target state="final">Editar descripción</target>
       </trans-unit>
@@ -957,7 +957,7 @@
         <source>Add Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">429</context>
+          <context context-type="linenumber">432</context>
         </context-group>
         <target state="final">Añadir descripción</target>
       </trans-unit>
@@ -965,7 +965,7 @@
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">433</context>
+          <context context-type="linenumber">436</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/tasks/tasks.service.ts</context>
@@ -981,7 +981,7 @@
         <source>Description cannot be empty.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">445</context>
+          <context context-type="linenumber">448</context>
         </context-group>
         <target state="final">La descripción no puede estar vacía.</target>
       </trans-unit>
@@ -989,7 +989,7 @@
         <source>Description edited successfully.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">457</context>
+          <context context-type="linenumber">460</context>
         </context-group>
         <target state="final">Descripción editada con éxito.</target>
       </trans-unit>
@@ -997,7 +997,7 @@
         <source>Description added successfully.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/community/community.component.ts</context>
-          <context context-type="linenumber">458</context>
+          <context context-type="linenumber">461</context>
         </context-group>
         <target state="final">Descripción añadida con éxito.</target>
       </trans-unit>
@@ -1079,7 +1079,7 @@
           <context context-type="sourcefile">src/app/configuration/configuration.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, new {Configuración de configuración} update {Configuración de Actualización}}</target>
+        <target state="final">{VAR_SELECT, select, new {Configurar} update {Actualizar configuración}}</target>
       </trans-unit>
       <trans-unit id="d0095ad8ca4a7caabe4c3be7e9f7b5df9f630ed1" datatype="html" approved="yes">
         <source>Select Nation/Community</source>
@@ -1164,7 +1164,7 @@
           <context context-type="linenumber">50</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">7</context>
         </context-group>
         <context-group purpose="location">
@@ -1225,7 +1225,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">29,30</context>
+          <context context-type="linenumber">29</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-profile/users-profile.component.html</context>
@@ -1613,11 +1613,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">3,6</context>
+          <context context-type="linenumber">3</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">7,8</context>
+          <context context-type="linenumber">7</context>
         </context-group>
         <target state="final">{VAR_SELECT, select, Add {Añadir} Edit {Editar}}</target>
       </trans-unit>
@@ -1693,7 +1693,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">26,28</context>
+          <context context-type="linenumber">26</context>
         </context-group>
         <target state="final">Etiquetas</target>
       </trans-unit>
@@ -1789,7 +1789,7 @@
           <context context-type="sourcefile">src/app/courses/add-courses/courses-step.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
-        <target state="final">Titulo del paso</target>
+        <target state="final">Título del paso</target>
       </trans-unit>
       <trans-unit id="f9a1f574266549405afb276f92f836d93c2e2bad" datatype="html" approved="yes">
         <source>Attached Resources: </source>
@@ -2110,24 +2110,24 @@
           <context context-type="linenumber">9</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">39</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">98</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">101</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">81</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">33</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">101</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources.component.html</context>
@@ -2236,6 +2236,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/pending-table.component.html</context>
           <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">48</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/meetups.component.html</context>
@@ -2677,7 +2681,7 @@
           <context context-type="sourcefile">src/app/courses/courses.service.ts</context>
           <context context-type="linenumber">216</context>
         </context-group>
-        <target state="final">Curso añadido a miTablero: <x id="PH" equiv-text="title"/></target>
+        <target state="final">Añadido a misCursos <x id="PH" equiv-text="title"/></target>
       </trans-unit>
       <trans-unit id="4478983912693286511" datatype="html" approved="yes">
         <source><x id="PH" equiv-text="countChanged"/> courses</source>
@@ -2836,11 +2840,11 @@
           <context context-type="linenumber">31</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">125</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">129</context>
         </context-group>
         <target state="final">Exportar</target>
@@ -3041,7 +3045,7 @@
           <context context-type="sourcefile">src/app/courses/step-view-courses/courses-step-view.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, take {Toma la prueba} continue {¡Continúa la prueba} retake {¡Reinicia la prueba}}</target>
+        <target state="final">{VAR_SELECT, select, take {Toma la prueba} continue {Continúa la prueba} retake {Reinicia la prueba}}</target>
       </trans-unit>
       <trans-unit id="fb90c4904a8b04c19372034c2e4a58634ce65e21" datatype="html" approved="yes">
         <source> Take Survey </source>
@@ -3443,7 +3447,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">336,335</context>
+          <context context-type="linenumber">336</context>
         </context-group>
         <target state="final"><x id="PH" equiv-text="name"/></target>
       </trans-unit>
@@ -3454,6 +3458,14 @@
           <context context-type="linenumber">155</context>
         </context-group>
         <target state="final">Hubo un error al reordenar <x id="PH" equiv-text="lf(ids, this.s"/></target>
+      </trans-unit>
+      <trans-unit id="6939437711014493943" datatype="html">
+        <source>Remove from <x id="PH" equiv-text="cardTitle"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/dashboard/dashboard-tile.component.ts</context>
+          <context context-type="linenumber">166</context>
+        </context-group>
+        <target state="translated">Eliminar de <x id="PH" equiv-text="cardTitle"/></target>
       </trans-unit>
       <trans-unit id="f5bd81356d570a501130b18beb261d10c4e17a04" datatype="html" approved="yes">
         <source>Please complete your profile to enjoy full features!</source>
@@ -3633,7 +3645,7 @@
           <context context-type="sourcefile">src/app/manager-dashboard/certifications/certifications-add.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
-        <target state="final">Guardar &amp; Devolución</target>
+        <target state="final">Guardar &amp; devolver</target>
       </trans-unit>
       <trans-unit id="4188ef67a196ca21d68f20405b99fb6b2f6476c7" datatype="html" approved="yes">
         <source>Add Question</source>
@@ -3834,15 +3846,15 @@
           <context context-type="linenumber">77</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">58</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">19</context>
         </context-group>
         <context-group purpose="location">
@@ -4301,7 +4313,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.component.html</context>
           <context context-type="linenumber">62</context>
         </context-group>
-        <target state="final">Tus listas actuales de comentarios</target>
+        <target state="final">Tu lista actual de comentarios</target>
       </trans-unit>
       <trans-unit id="b74af38005e8a8914e45af2ec412e11ceafef8b6" datatype="html" approved="yes">
         <source>Priority</source>
@@ -4392,6 +4404,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
+          <context context-type="linenumber">21</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
@@ -4593,7 +4609,7 @@
           <context context-type="sourcefile">src/app/feedback/feedback.service.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
-        <target state="final">Has vuelto a abrir este comentario.</target>
+        <target state="final">Has reabierto este comentario.</target>
       </trans-unit>
       <trans-unit id="2403361110765782799" datatype="html" approved="yes">
         <source>You closed this feedback.</source>
@@ -5083,7 +5099,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/health/health.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
-        <target state="final">Detalles de la actualización</target>
+        <target state="final">Actualizar detalles</target>
       </trans-unit>
       <trans-unit id="0180ec3230bdfd5215eb38dbed6758f3a149ea00" datatype="html" approved="yes">
         <source>Add Examination</source>
@@ -6349,11 +6365,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Become a member</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">27</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
-          <context context-type="linenumber">32,35</context>
+          <context context-type="linenumber">32</context>
         </context-group>
         <target state="final">Regístrate</target>
       </trans-unit>
@@ -6361,7 +6377,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>SIGN-IN</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">28</context>
         </context-group>
         <target state="final">INICIA SESIÓN</target>
       </trans-unit>
@@ -6369,7 +6385,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Already have an account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.html</context>
-          <context context-type="linenumber">31,32</context>
+          <context context-type="linenumber">31</context>
         </context-group>
         <target state="final">¿Ya tienes una cuenta?</target>
       </trans-unit>
@@ -6377,7 +6393,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
-          <context context-type="linenumber">120,118</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <target state="final">Damos la bienvenida a &lt;b&gt;<x id="PH" equiv-text="eNotification(userId) {     const data"/>&lt;/b&gt; a Planet Learning</target>
       </trans-unit>
@@ -6437,7 +6453,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>New member &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; has joined.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/login/login-form.component.ts</context>
-          <context context-type="linenumber">240,238</context>
+          <context context-type="linenumber">240</context>
         </context-group>
         <target state="final">El nuevo miembro <x id="PH" equiv-text=");       t"/> se ha unido.</target>
       </trans-unit>
@@ -6641,7 +6657,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">47</context>
         </context-group>
         <target state="final">Acciones</target>
       </trans-unit>
@@ -6775,7 +6791,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/manager-aiservices.component.html</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="final">Configuraciones IA</target>
+        <target state="final">Configuraciones del chat</target>
       </trans-unit>
       <trans-unit id="9314b5a3351e7721b75a33589079468b7e010250" datatype="html" approved="yes">
         <source>Chat streaming:</source>
@@ -7007,7 +7023,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
           <context context-type="linenumber">69</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro}}</target>
+        <target state="final">{VAR_SELECT, select, community {Nación} nation {Centro}}</target>
       </trans-unit>
       <trans-unit id="dd8388a323ea19374331d5b0f19b6a6e8becf22a" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}"/>:</source>
@@ -7332,11 +7348,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="eb3d5aefff38a814b76da74371cbf02c0789a1ef" datatype="html" approved="yes">
         <source>Logs</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
         <target state="final">Registros</target>
@@ -7344,11 +7360,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="d61769e8d9b3c2bf95948040557c4a23fc18dd4a" datatype="html" approved="yes">
         <source>All Types</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">59</context>
         </context-group>
         <target state="final">Todos tipos</target>
@@ -7356,23 +7372,23 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="8fe73a4787b8068b2ba61f54ab7e0f9af2ea1fc9" datatype="html" approved="yes">
         <source>Version</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">64</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">23</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">52</context>
         </context-group>
         <target state="final">Versión</target>
@@ -7380,19 +7396,19 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="433ad946882247ae337766aaee6e50526a7a0259" datatype="html" approved="yes">
         <source>All Versions</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">16</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">65</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">10</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">53</context>
         </context-group>
         <target state="final">Todas versiones</target>
@@ -7400,28 +7416,28 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="3e6acd589d8b82cafd8546409da0a36469d297a0" datatype="html" approved="yes">
         <source>Start Date</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">22</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">80</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">86</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">68</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">83</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
@@ -7432,28 +7448,28 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="5415bb1654b741c140b1d107d9a1cbb35ad468b4" datatype="html" approved="yes">
         <source>Start date must be before end date</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">25</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">83</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">86</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">90</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">19</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">86</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
@@ -7464,28 +7480,28 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="0f551576faafbd2806d4af653469655f1b35afe1" datatype="html" approved="yes">
         <source>End Date</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">28</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">90</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">93</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">97</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">74</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">93</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
@@ -7496,31 +7512,31 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="f9c0bd516f925ba83a16a76365b60f1384a2a31d" datatype="html" approved="yes">
         <source>Time Frame</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">34</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">72</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">60</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">55</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">28</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">60</context>
         </context-group>
         <target state="final">Marco de tiempo</target>
       </trans-unit>
       <trans-unit id="d410b5622382d4ff02dace3b5b92005fdbff528f" datatype="html" approved="yes">
         <source>myPlanet</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">110</context>
         </context-group>
         <context-group purpose="location">
@@ -7532,11 +7548,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="f803aec5cdb9fd537b82c0246355f74eceabb405" datatype="html" approved="yes">
         <source>Export All</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">113</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">117</context>
         </context-group>
         <target state="final">Exportar todos</target>
@@ -7544,7 +7560,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="loadingLogs" datatype="html" approved="yes">
         <source>Loading logs...</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">130</context>
         </context-group>
         <target state="final">Cargando registros...</target>
@@ -7552,11 +7568,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="7089c868ffec47d3b921f87f3921c1bfa6513d25" datatype="html" approved="yes">
         <source>No record was found</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.html</context>
           <context context-type="linenumber">133</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
           <context context-type="linenumber">137</context>
         </context-group>
         <target state="final">No se encontraron registros</target>
@@ -7564,7 +7580,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="1274247756500564795" datatype="html" approved="yes">
         <source>Community</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
@@ -7573,14 +7589,14 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">205</context>
+          <context context-type="linenumber">207</context>
         </context-group>
         <target state="final">Comunidad</target>
       </trans-unit>
       <trans-unit id="8186245387967147088" datatype="html" approved="yes">
         <source>Nation</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
@@ -7589,18 +7605,18 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">205</context>
+          <context context-type="linenumber">207</context>
         </context-group>
         <target state="final">Nación</target>
       </trans-unit>
       <trans-unit id="2046393182777009949" datatype="html" approved="yes">
         <source>There was a problem getting myPlanet activity.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">146</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
           <context context-type="linenumber">213</context>
         </context-group>
         <target state="final">Hubo un problema al obtener la actividad de myPlanet.</target>
@@ -7608,11 +7624,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="5395358025969946986" datatype="html" approved="yes">
         <source>Planet Name</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">189</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
           <context context-type="linenumber">253</context>
         </context-group>
         <target state="final">Nombre de Planet</target>
@@ -7620,11 +7636,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="8040881171107393560" datatype="html" approved="yes">
         <source>ID</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">190</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
           <context context-type="linenumber">254</context>
         </context-group>
         <target state="final">Identificador</target>
@@ -7632,11 +7648,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="8953033926734869941" datatype="html" approved="yes">
         <source>Name</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">191</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
           <context context-type="linenumber">255</context>
         </context-group>
         <context-group purpose="location">
@@ -7653,7 +7669,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams.service.ts</context>
@@ -7668,19 +7684,19 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="8650499415827640724" datatype="html" approved="yes">
         <source>Type</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">192</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <target state="final">Tipo</target>
       </trans-unit>
       <trans-unit id="8497528947328199741" datatype="html" approved="yes">
         <source>Time</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">193</context>
         </context-group>
         <target state="final">Tiempo</target>
@@ -7688,11 +7704,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="2724055831234181057" datatype="html" approved="yes">
         <source>Version</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">194</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
           <context context-type="linenumber">261</context>
         </context-group>
         <target state="final">Versión</target>
@@ -7700,7 +7716,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="1519954996184640001" datatype="html" approved="yes">
         <source>Error</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">195</context>
         </context-group>
         <target state="final">Error</target>
@@ -7708,7 +7724,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="6371322876423950103" datatype="html" approved="yes">
         <source>myPlanet Logs</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">206</context>
         </context-group>
         <target state="final">Registros de myPlanet</target>
@@ -7716,7 +7732,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="4402395569979982001" datatype="html" approved="yes">
         <source>myPlanet Logs for <x id="PH" equiv-text="planet.name"/></source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/logs-myplanet.component.ts</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/logs-myplanet.component.ts</context>
           <context context-type="linenumber">215</context>
         </context-group>
         <target state="final">Registros de myPlanet para <x id="PH" equiv-text="planet.name"/></target>
@@ -7724,7 +7740,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="45cc8ca94b5a50842a9a8ef804a5ab089a38ae5c" datatype="html" approved="yes">
         <source>ID</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">3</context>
         </context-group>
         <target state="final">Identificador</target>
@@ -7732,7 +7748,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="dbf317c1cf220ebe88387d1debd5fa1e36f8bc44" datatype="html" approved="yes">
         <source>Last Synced</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">11</context>
         </context-group>
         <target state="final">Última sincronización</target>
@@ -7740,7 +7756,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="b24f1cd32cbc1ec9537af28c4fe1b8204097714b" datatype="html" approved="yes">
         <source>Time</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">15</context>
         </context-group>
         <target state="final">Tiempo</target>
@@ -7748,7 +7764,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="7ae7814bc0d4339fb5ff68a37494b48dac6dacc1" datatype="html" approved="yes">
         <source>No of Visits</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">27</context>
         </context-group>
         <target state="final">Número de visitas</target>
@@ -7756,11 +7772,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="4f8b2bb476981727ab34ed40fde1218361f92c45" datatype="html" approved="yes">
         <source>Details</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">33</context>
         </context-group>
         <context-group purpose="location">
@@ -7772,10 +7788,86 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
       <trans-unit id="6623257de867bbe8003919a76d9e5daaec6c3023" datatype="html" approved="yes">
         <source>Used Time</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet-table.component.html</context>
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/myplanet-table.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
         <target state="final">Tiempo de uso</target>
+      </trans-unit>
+      <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html" approved="yes">
+        <source>myPlanet Report</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+        <target state="final">Reporte de myPlanet</target>
+      </trans-unit>
+      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html" approved="yes">
+        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">114</context>
+        </context-group>
+        <target state="final">myPlanet en <x id="ICU" equiv-text="{ planetType, select, center {Naciones} other {Comunidades} }"/></target>
+      </trans-unit>
+      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
+        <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">114</context>
+        </context-group>
+        <target state="final">{VAR_SELECT, select, center {Naciones} other {Comunidades}}</target>
+      </trans-unit>
+      <trans-unit id="loadingReports" datatype="html" approved="yes">
+        <source>Loading reports...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.html</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+        <target state="final">Cargando reportes...</target>
+      </trans-unit>
+      <trans-unit id="339223107539510693" datatype="html" approved="yes">
+        <source>Last Synced</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
+          <context context-type="linenumber">256</context>
+        </context-group>
+        <target state="final">Última sincronización</target>
+      </trans-unit>
+      <trans-unit id="1746799098747812104" datatype="html" approved="yes">
+        <source>No of Visits</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
+          <context context-type="linenumber">262</context>
+        </context-group>
+        <target state="final">Número de visitas</target>
+      </trans-unit>
+      <trans-unit id="7732492494394604276" datatype="html" approved="yes">
+        <source>Used Time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
+          <context context-type="linenumber">263</context>
+        </context-group>
+        <target state="final">Tiempo de uso</target>
+      </trans-unit>
+      <trans-unit id="2519868160519292067" datatype="html" approved="yes">
+        <source>myPlanet Reports</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
+          <context context-type="linenumber">274</context>
+        </context-group>
+        <target state="final">Reportes myPlanet</target>
+      </trans-unit>
+      <trans-unit id="6980242770932623268" datatype="html" approved="yes">
+        <source>myPlanet Reports for <x id="PH" equiv-text="planet.name"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/myplanet/reports-myplanet.component.ts</context>
+          <context context-type="linenumber">283</context>
+        </context-group>
+        <target state="final">Reportes de myPlanet para <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="1bd5e17c9582661e20763a7634ef07881e33bbd7" datatype="html" approved="yes">
         <source>Action</source>
@@ -8027,7 +8119,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">116</context>
         </context-group>
-        <target state="final">Ver Informe de cursos</target>
+        <target state="final">Reporte de vista de cursos</target>
       </trans-unit>
       <trans-unit id="1f7b6ce85022b0633fe1f059cb0d080c836d3c73" datatype="html" approved="yes">
         <source>Course Progress Report</source>
@@ -8035,7 +8127,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">117</context>
         </context-group>
-        <target state="final">Reporte de progreso del curso</target>
+        <target state="final">Reporte de progreso de cursos</target>
       </trans-unit>
       <trans-unit id="e5146d25810fd7e2853a30412580f078f3e0e84c" datatype="html" approved="yes">
         <source>Health Report</source>
@@ -8059,7 +8151,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">120</context>
         </context-group>
-        <target state="final">Informe general de recursos</target>
+        <target state="final">Reporte general de recursos</target>
       </trans-unit>
       <trans-unit id="5c53ed1897d3476b4cd06340404677584d0d1490" datatype="html" approved="yes">
         <source>Courses Overview Report</source>
@@ -8067,7 +8159,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.html</context>
           <context context-type="linenumber">121</context>
         </context-group>
-        <target state="final">Informe general de cursos</target>
+        <target state="final">Reporte general de cursos</target>
       </trans-unit>
       <trans-unit id="a8233de047500bf0f0d9f9f1712ddb071501a283" datatype="html" approved="yes">
         <source>Summary</source>
@@ -8417,15 +8509,15 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">87</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">89</context>
+          <context context-type="linenumber">91</context>
         </context-group>
         <target state="final">Total</target>
       </trans-unit>
@@ -8557,7 +8649,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">945</context>
+          <context context-type="linenumber">949</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
@@ -8673,7 +8765,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">946</context>
+          <context context-type="linenumber">950</context>
         </context-group>
         <target state="final">Uso del chat</target>
       </trans-unit>
@@ -8685,7 +8777,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">943</context>
+          <context context-type="linenumber">947</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
@@ -8693,21 +8785,13 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <target state="final">Vistas de recursos</target>
       </trans-unit>
-      <trans-unit id="2102187567920963737" datatype="html" approved="yes">
+      <trans-unit id="course-views-single" datatype="html" approved="yes">
         <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">801</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">944</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
-          <context context-type="linenumber">65</context>
-        </context-group>
-        <target state="final">Vistas del curso</target>
+        <target state="final">Vistas de curso</target>
       </trans-unit>
       <trans-unit id="7636767686765305289" datatype="html" approved="yes">
         <source>Community Health</source>
@@ -8745,7 +8829,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Unique Member Visits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">941</context>
+          <context context-type="linenumber">945</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
@@ -8757,7 +8841,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Total Member Visits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">942</context>
+          <context context-type="linenumber">946</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
@@ -8765,11 +8849,23 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <target state="final">Visitas totales de miembros</target>
       </trans-unit>
+      <trans-unit id="2102187567920963737" datatype="html" approved="yes">
+        <source>Course Views</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
+          <context context-type="linenumber">948</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <target state="final">Vistas de curso</target>
+      </trans-unit>
       <trans-unit id="4256634874656434098" datatype="html" approved="yes">
         <source>Voices Created</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
-          <context context-type="linenumber">947</context>
+          <context context-type="linenumber">951</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
@@ -8824,82 +8920,6 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="linenumber">28</context>
         </context-group>
         <target state="final">Datos semanales</target>
-      </trans-unit>
-      <trans-unit id="9a1128da70d2bd440f3633c3fce70b54289665e5" datatype="html" approved="yes">
-        <source>myPlanet Report</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">46</context>
-        </context-group>
-        <target state="final">Reporte de myPlanet</target>
-      </trans-unit>
-      <trans-unit id="7e9f8b1807b1e274e8d80e1a12cb8eef719be6ad" datatype="html" approved="yes">
-        <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">114</context>
-        </context-group>
-        <target state="final">myPlanet en <x id="ICU" equiv-text="{ planetType, select, center {Naciones} other {Comunidades} }"/></target>
-      </trans-unit>
-      <trans-unit id="1355c45f74e661185f93901c7bf059f99222ce9f" datatype="html" approved="yes">
-        <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">114</context>
-        </context-group>
-        <target state="final">{VAR_SELECT, select, center {Naciones} other {Comunidades}}</target>
-      </trans-unit>
-      <trans-unit id="loadingReports" datatype="html" approved="yes">
-        <source>Loading reports...</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.html</context>
-          <context context-type="linenumber">134</context>
-        </context-group>
-        <target state="final">Cargando reportes...</target>
-      </trans-unit>
-      <trans-unit id="339223107539510693" datatype="html" approved="yes">
-        <source>Last Synced</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
-          <context context-type="linenumber">256</context>
-        </context-group>
-        <target state="final">Última sincronización</target>
-      </trans-unit>
-      <trans-unit id="1746799098747812104" datatype="html" approved="yes">
-        <source>No of Visits</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
-          <context context-type="linenumber">262</context>
-        </context-group>
-        <target state="final">Número de visitas</target>
-      </trans-unit>
-      <trans-unit id="7732492494394604276" datatype="html" approved="yes">
-        <source>Used Time</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
-          <context context-type="linenumber">263</context>
-        </context-group>
-        <target state="final">Tiempo de uso</target>
-      </trans-unit>
-      <trans-unit id="2519868160519292067" datatype="html" approved="yes">
-        <source>myPlanet Reports</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
-          <context context-type="linenumber">274</context>
-        </context-group>
-        <target state="final">Reportes myPlanet</target>
-      </trans-unit>
-      <trans-unit id="6980242770932623268" datatype="html" approved="yes">
-        <source>myPlanet Reports for <x id="PH" equiv-text="planet.name"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-myplanet.component.ts</context>
-          <context context-type="linenumber">283</context>
-        </context-group>
-        <target state="final">Informes de myPlanet para <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="5ca560193c762090e39d5d677cf3c79173673ef5" datatype="html" approved="yes">
         <source>Pending Report</source>
@@ -9081,7 +9101,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Resource Views by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">104</context>
         </context-group>
         <target state="final">Vistas de recursos por mes</target>
       </trans-unit>
@@ -9089,15 +9109,15 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Course Views by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">105</context>
         </context-group>
-        <target state="final">Vistas del curso por mes</target>
+        <target state="final">Vistas de curso por mes</target>
       </trans-unit>
       <trans-unit id="5754271872143949281" datatype="html" approved="yes">
         <source>Total Member Visits by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">106</context>
         </context-group>
         <target state="final">Visitas totales de miembros por mes</target>
       </trans-unit>
@@ -9105,7 +9125,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Unique Member Visits by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">107</context>
         </context-group>
         <target state="final">Visitas únicas de miembros por mes</target>
       </trans-unit>
@@ -9113,7 +9133,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Steps Completed by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">108</context>
         </context-group>
         <target state="final">Pasos completados por el mes</target>
       </trans-unit>
@@ -9121,7 +9141,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Chats Created by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">108</context>
+          <context context-type="linenumber">109</context>
         </context-group>
         <target state="final">Chats creados por mes</target>
       </trans-unit>
@@ -9129,7 +9149,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Voices Created by Month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">109</context>
+          <context context-type="linenumber">110</context>
         </context-group>
         <target state="final">Voces creados por mes</target>
       </trans-unit>
@@ -9137,7 +9157,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Login Time Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">132</context>
         </context-group>
         <target state="final">Hora de inicio ascendente</target>
       </trans-unit>
@@ -9145,7 +9165,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Login Time Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">133</context>
         </context-group>
         <target state="final">Hora de inicio descendente</target>
       </trans-unit>
@@ -9153,7 +9173,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Logout Time Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">134</context>
         </context-group>
         <target state="final">Tiempo de salida ascendente</target>
       </trans-unit>
@@ -9161,7 +9181,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Logout Time Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">135</context>
         </context-group>
         <target state="final">Hora de salida descendente</target>
       </trans-unit>
@@ -9169,7 +9189,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>User Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">135</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <target state="final">Usuario ascendente</target>
       </trans-unit>
@@ -9177,28 +9197,12 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>User Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">137</context>
         </context-group>
         <target state="final">Usuario descendente</target>
       </trans-unit>
       <trans-unit id="6142274755245982826" datatype="html" approved="yes">
         <source>Username Ascending</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">139</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">147</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">155</context>
-        </context-group>
-        <target state="final">Nombre de usuario ascendente</target>
-      </trans-unit>
-      <trans-unit id="4544829051231040276" datatype="html" approved="yes">
-        <source>Username Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">140</context>
@@ -9211,10 +9215,10 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">156</context>
         </context-group>
-        <target state="final">Nombre de usuario descendente</target>
+        <target state="final">Nombre de usuario ascendente</target>
       </trans-unit>
-      <trans-unit id="4089167260596419096" datatype="html" approved="yes">
-        <source>Time Ascending</source>
+      <trans-unit id="4544829051231040276" datatype="html" approved="yes">
+        <source>Username Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">141</context>
@@ -9227,10 +9231,10 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">157</context>
         </context-group>
-        <target state="final">Tiempo ascendente</target>
+        <target state="final">Nombre de usuario descendente</target>
       </trans-unit>
-      <trans-unit id="4318052847776651594" datatype="html" approved="yes">
-        <source>Time Descending</source>
+      <trans-unit id="4089167260596419096" datatype="html" approved="yes">
+        <source>Time Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">142</context>
@@ -9243,10 +9247,10 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">158</context>
         </context-group>
-        <target state="final">Tiempo descendente</target>
+        <target state="final">Tiempo ascendente</target>
       </trans-unit>
-      <trans-unit id="9040716339512989598" datatype="html" approved="yes">
-        <source>Title Ascending</source>
+      <trans-unit id="4318052847776651594" datatype="html" approved="yes">
+        <source>Time Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">143</context>
@@ -9259,10 +9263,10 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">159</context>
         </context-group>
-        <target state="final">Título ascendente</target>
+        <target state="final">Tiempo descendente</target>
       </trans-unit>
-      <trans-unit id="4029487879566686883" datatype="html" approved="yes">
-        <source>Title Descending</source>
+      <trans-unit id="9040716339512989598" datatype="html" approved="yes">
+        <source>Title Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">144</context>
@@ -9275,13 +9279,29 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
           <context context-type="linenumber">160</context>
         </context-group>
+        <target state="final">Título ascendente</target>
+      </trans-unit>
+      <trans-unit id="4029487879566686883" datatype="html" approved="yes">
+        <source>Title Descending</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
+          <context context-type="linenumber">145</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
+          <context context-type="linenumber">161</context>
+        </context-group>
         <target state="final">Título descendente</target>
       </trans-unit>
       <trans-unit id="9051777878662352153" datatype="html" approved="yes">
         <source>Month/Year Ascending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">163</context>
+          <context context-type="linenumber">164</context>
         </context-group>
         <target state="final">Mes/año ascendente</target>
       </trans-unit>
@@ -9289,7 +9309,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Month/Year Descending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">165</context>
         </context-group>
         <target state="final">Mes / año descendente</target>
       </trans-unit>
@@ -9297,7 +9317,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>User (A-Z)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">167</context>
+          <context context-type="linenumber">168</context>
         </context-group>
         <target state="final">Usuario (A-Z)</target>
       </trans-unit>
@@ -9305,7 +9325,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>User (Z-A)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">168</context>
+          <context context-type="linenumber">169</context>
         </context-group>
         <target state="final">Usuario (Z-A)</target>
       </trans-unit>
@@ -9313,7 +9333,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Date (Oldest first)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">169</context>
+          <context context-type="linenumber">170</context>
         </context-group>
         <target state="final">Fecha (más antigua primero)</target>
       </trans-unit>
@@ -9321,7 +9341,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Date (Newest first)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">170</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <target state="final">Fecha (más nueva primero)</target>
       </trans-unit>
@@ -9329,7 +9349,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>AI Provider (A-Z)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">171</context>
+          <context context-type="linenumber">172</context>
         </context-group>
         <target state="final">Proveedor de IA (A-Z)</target>
       </trans-unit>
@@ -9337,7 +9357,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>AI Provider (Z-A)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports.utils.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">173</context>
         </context-group>
         <target state="final">Proveedor de IA (Z-A)</target>
       </trans-unit>
@@ -9356,14 +9376,6 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="linenumber">15</context>
         </context-group>
         <target state="final">Fecha de Creación</target>
-      </trans-unit>
-      <trans-unit id="eaebb124d7ffdf04dd68096db97d64fcf4cb0b4a" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>visibility<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> View</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>visibility<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Ver</target>
       </trans-unit>
       <trans-unit id="0d8404a8182ca11d7c901bf329f9ddea263b2816" datatype="html" approved="yes">
         <source> Communities </source>
@@ -9389,7 +9401,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
           <context context-type="linenumber">27,30</context>
         </context-group>
-        <target state="final">{VAR_SELECT_2, select, sandbox {Añade a {VAR_SELECT, select, nation {Red} center {Región}}} other {Mover {VAR_SELECT_1, select, nation {Redes} center {Regiones}}}}</target>
+        <target state="final">{VAR_SELECT_2, select, sandbox {Añadir a {VAR_SELECT, select, nation {Red} center {Región}}} other {Mover {VAR_SELECT_1, select, nation {Redes} center {Regiones}}}}</target>
       </trans-unit>
       <trans-unit id="dd3bd7470f4cc7ebe3cff22ad8458c51231bd31d" datatype="html" approved="yes">
         <source> Edit Name </source>
@@ -9399,21 +9411,17 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <target state="final"> Editar nombre </target>
       </trans-unit>
-      <trans-unit id="6a5dc9ef5dc9696b284c9a8e22b6c17be506f202" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Accept </source>
+      <trans-unit id="6fc5e65900ae1415d3170d5d2842f0dcae1b6645" datatype="html" approved="yes">
+        <source>Accept</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">44,45</context>
+          <context context-type="linenumber">44</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>link<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Aceptar </target>
-      </trans-unit>
-      <trans-unit id="da6a199f9d566a94598155ef50b6f14f785ca24e" datatype="html" approved="yes">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Delete </source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/manager-dashboard/requests/requests-table.component.html</context>
-          <context context-type="linenumber">48,49</context>
+          <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
+          <context context-type="linenumber">117</context>
         </context-group>
-        <target state="final"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Eliminar </target>
+        <target state="final">Aceptar</target>
       </trans-unit>
       <trans-unit id="d9b9979281299d602aec1989ca81ca60b0782030" datatype="html" approved="yes">
         <source>No Requests Found</source>
@@ -9485,7 +9493,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">44,46</context>
         </context-group>
-        <target state="final">{VAR_SELECT_1, select, pending {¡Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {¡Redes de comunidad conectadas} center {¡Regiones conectadas}}}}</target>
+        <target state="final">{VAR_SELECT_1, select, pending {Tu lista actual de peticiones} accepted {{VAR_SELECT, select, nation {Redes de comunidad conectadas} center {Regiones conectadas}}}}</target>
       </trans-unit>
       <trans-unit id="fda55fcfda6ee9032f2f9025444a847fefa294b8" datatype="html" approved="yes">
         <source>
@@ -9513,7 +9521,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/requests/requests.component.html</context>
           <context context-type="linenumber">50</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, nation {Añade la red} center {Añade la región}}</target>
+        <target state="final">{VAR_SELECT, select, nation {Añadir la red} center {Añadir la región}}</target>
       </trans-unit>
       <trans-unit id="1cfd9fe8004228440a1a5f18d8525c2d8873b749" datatype="html" approved="yes">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </source>
@@ -9593,7 +9601,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/meetups/add-meetups/meetups-add.component.html</context>
           <context context-type="linenumber">8</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, Add new {Añadir nueva} Update {¡Actualiza}}</target>
+        <target state="final">{VAR_SELECT, select, Add new {Añadir nueva} Update {Actualiza}}</target>
       </trans-unit>
       <trans-unit id="c3a952338a0241c0efc10f58525323cf28efed8c" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}"/> Meetup</source>
@@ -9843,11 +9851,11 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">103</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">276</context>
+          <context context-type="linenumber">279</context>
         </context-group>
         <target state="final">salió</target>
       </trans-unit>
@@ -9859,7 +9867,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">103</context>
         </context-group>
         <target state="final">se unió</target>
       </trans-unit>
@@ -9871,7 +9879,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">105</context>
         </context-group>
         <target state="final">Tienes <x id="PH" equiv-text="msg"/> reuniones.</target>
       </trans-unit>
@@ -10027,7 +10035,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Invitation<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;"/> sent successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">136</context>
         </context-group>
         <target state="final">Invitación<x id="PH" equiv-text="invites.length &gt; 1 ? 's' : ''"/> enviada con éxito</target>
       </trans-unit>
@@ -10036,7 +10044,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/meetups/view-meetups/meetups-view.component.ts</context>
-          <context context-type="linenumber">141,142</context>
+          <context context-type="linenumber">143,144</context>
         </context-group>
         <target state="final">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; desea que te unas a &lt;b&gt;"<x id="PH_1" equiv-text="meetupDetail.title"/>"&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? ' en ' + meetupDetail.meetupLocation : ''"/></target>
@@ -10181,7 +10189,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">467</context>
+          <context context-type="linenumber">470</context>
         </context-group>
         <target state="final">Mensaje</target>
       </trans-unit>
@@ -10381,7 +10389,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Author</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">16,18</context>
+          <context context-type="linenumber">16</context>
         </context-group>
         <target state="final">Autor</target>
       </trans-unit>
@@ -10389,7 +10397,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Year</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">19,21</context>
+          <context context-type="linenumber">19</context>
         </context-group>
         <target state="final">Año</target>
       </trans-unit>
@@ -10397,7 +10405,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Publisher/Attribution</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">34,36</context>
+          <context context-type="linenumber">34</context>
         </context-group>
         <target state="final">Editor/Fuente</target>
       </trans-unit>
@@ -10405,7 +10413,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Link to License</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">37,39</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <target state="final">Enlace a la Licencia</target>
       </trans-unit>
@@ -10413,7 +10421,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Subject(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">40,41</context>
+          <context context-type="linenumber">40</context>
         </context-group>
         <target state="final">Asignatura(s)</target>
       </trans-unit>
@@ -10421,7 +10429,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Level(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">46</context>
         </context-group>
         <target state="final">Nivel(es)</target>
       </trans-unit>
@@ -10429,7 +10437,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">52,53</context>
+          <context context-type="linenumber">52</context>
         </context-group>
         <target state="final">Abrir</target>
       </trans-unit>
@@ -10437,7 +10445,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Resource For</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">59,60</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <target state="final">Recurso para</target>
       </trans-unit>
@@ -10445,7 +10453,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Media</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">64,65</context>
+          <context context-type="linenumber">64</context>
         </context-group>
         <target state="final">Medio</target>
       </trans-unit>
@@ -10453,7 +10461,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Resource Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">71,72</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <target state="final">Tipo de Recurso</target>
       </trans-unit>
@@ -10461,7 +10469,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Added By</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">78,80</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <target state="final">Añadido por</target>
       </trans-unit>
@@ -10469,7 +10477,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Open Which File</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">81,82</context>
+          <context context-type="linenumber">81</context>
         </context-group>
         <target state="final">Abrir que Archivo</target>
       </trans-unit>
@@ -10477,7 +10485,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>File Upload:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">90,92</context>
+          <context context-type="linenumber">90</context>
         </context-group>
         <target state="final">Subir archivo:</target>
       </trans-unit>
@@ -10485,7 +10493,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Remove new attachment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">93,95</context>
+          <context context-type="linenumber">93</context>
         </context-group>
         <target state="final">Recurso añadido:</target>
       </trans-unit>
@@ -10493,7 +10501,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>File size cannot exceed more than 512 MB</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">97,98</context>
+          <context context-type="linenumber">97</context>
         </context-group>
         <target state="final">El tamaño del archivo no puede exceder los 512 MB</target>
       </trans-unit>
@@ -10501,7 +10509,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Warning: Existing Resource/file will be replaced</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">99,102</context>
+          <context context-type="linenumber">99</context>
         </context-group>
         <target state="final">Advertencia: El recurso/archivo existente será reemplazado</target>
       </trans-unit>
@@ -10509,7 +10517,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Existing Resource/file:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">103,105</context>
+          <context context-type="linenumber">103</context>
         </context-group>
         <target state="final">Recurso/Archivo existente:</target>
       </trans-unit>
@@ -10517,7 +10525,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Remove existing attachment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">106,108</context>
+          <context context-type="linenumber">106</context>
         </context-group>
         <target state="final">Eliminar archivo adjunto existente</target>
       </trans-unit>
@@ -10525,7 +10533,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>File downloadable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">112,113</context>
+          <context context-type="linenumber">112</context>
         </context-group>
         <target state="final">Archivo descargable</target>
       </trans-unit>
@@ -10533,7 +10541,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>If checked, resource will only be viewable by this team</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">113,116</context>
+          <context context-type="linenumber">113</context>
         </context-group>
         <target state="final">Si está marcado, el recurso solo será visible por este equipo</target>
       </trans-unit>
@@ -10541,7 +10549,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         <source>Private Resource</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/resources/resources-add.component.html</context>
-          <context context-type="linenumber">113,117</context>
+          <context context-type="linenumber">113</context>
         </context-group>
         <target state="final">Recurso Privado</target>
       </trans-unit>
@@ -11594,7 +11602,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">49</context>
         </context-group>
-        <target state="final">Informe resumido de <x id="PH" equiv-text="planetName"/>
+        <target state="final">Reporte resumido de <x id="PH" equiv-text="planetName"/>
 <x id="PH_1" equiv-text="formatDate(startDate)"/> - <x id="PH_2" equiv-text="formatDate(endDate)"/></target>
       </trans-unit>
       <trans-unit id="4686826078497318545" datatype="html" approved="yes">
@@ -11867,7 +11875,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-chat-share.component.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">133</context>
         </context-group>
         <target state="final">El chat ha sido compartido con <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></target>
       </trans-unit>
@@ -11875,7 +11883,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Chat has been successfully shared to community</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-chat-share.component.ts</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">147</context>
         </context-group>
         <target state="final">El chat se ha compartido con éxito a la comunidad</target>
       </trans-unit>
@@ -11989,7 +11997,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">3,38</context>
         </context-group>
-        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {reject} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single       {siguiente {data.type, select,         community {comunidad}         nation {centro}         course {curso}         resource {recurso}         document {documento}         meetup {encuentro}         user {miembro}         change {cambio}         team {equipo}         enterprise {empresa}         task {tarea}         certification {certificación}         event {evento}         transaction {transacción}         link {enlace}         news {mensaje}         report {informe}         changes {formulario}         survey {encuesta}}?       }       many       {seleccionado {{data.count}} {data.type, select,         community {comunidades}         nation {centros}         course {cursos}         resource {recursos}         meetup {encuentros}         event {eventos}         survey {encuestas}}?       }     }"/> </target>
+        <target state="final"> ¿Estás seguro de que deseas <x id="ICU" equiv-text="{data.changeType, select, accept {aceptar} archive {archivar} reject {reject} delete {eliminar} leave {salir} remove {quitar} leader {dar liderazgo a} exit {salir}}"/> el/la <x id="ICU_1" equiv-text="{data.amount, select, single       {siguiente {data.type, select,         community {comunidad}         nation {centro}         course {curso}         resource {recurso}         document {documento}         meetup {encuentro}         user {miembro}         change {cambio}         team {equipo}         enterprise {empresa}         task {tarea}         certification {certificación}         event {evento}         transaction {transacción}         link {enlace}         news {mensaje}         report {reporte}         changes {formulario}         survey {encuesta}}?       }       many       {seleccionado {{data.count}} {data.type, select,         community {comunidades}         nation {centros}         course {cursos}         resource {recursos}         meetup {encuentros}         event {eventos}         survey {encuestas}}?       }     }"/> </target>
       </trans-unit>
       <trans-unit id="133e6f9a3944e05cebbba067ae698f8913dd9ad5" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave}}</source>
@@ -12007,7 +12015,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-prompt.component.html</context>
           <context context-type="linenumber">5,37</context>
         </context-group>
-        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {empresa} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {informe} changes {página} survey {encuesta}}?
+        <target state="final">{VAR_SELECT_2, select, single {siguiente {VAR_SELECT, select, community {comunidad} nation {centro} course {curso} resource {recurso} document {documento} meetup {encuentro} user {miembro} change {cambio} team {equipo} enterprise {empresa} task {tarea} certification {certificación} event {evento} transaction {transacción} link {enlace} news {mensaje} report {reporte} changes {página} survey {encuesta}}?
       } many {seleccionado <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {comunidades} nation {centros} course {cursos} resource {recursos} meetup {encuentros} event {eventos} survey {encuestas}}?
       }}</target>
       </trans-unit>
@@ -12097,7 +12105,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/shared/dialogs/dialogs-view.component.html</context>
           <context context-type="linenumber">9</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, community {¡Nación} nation {¡Centro}}</target>
+        <target state="final">{VAR_SELECT, select, community {Nación} nation {Centro}}</target>
       </trans-unit>
       <trans-unit id="4a6770b15dac93402d82185064355eb78d53d233" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -12571,7 +12579,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>New collection added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">138</context>
+          <context context-type="linenumber">140</context>
         </context-group>
         <target state="final">Nueva colección añadida</target>
       </trans-unit>
@@ -12579,7 +12587,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Collection updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">155</context>
         </context-group>
         <target state="final">Colección actualizada</target>
       </trans-unit>
@@ -12587,7 +12595,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Subcollection of...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <target state="final">Subcolección de...</target>
       </trans-unit>
@@ -12595,7 +12603,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Collection deleted: <x id="PH" equiv-text="tag.name"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">203</context>
         </context-group>
         <target state="final">Colección eliminada: <x id="PH" equiv-text="tag.name"/></target>
       </trans-unit>
@@ -12603,7 +12611,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>There was a problem deleting this collection.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/forms/planet-tag-input-dialog.component.ts</context>
-          <context context-type="linenumber">204</context>
+          <context context-type="linenumber">206</context>
         </context-group>
         <target state="final">Hubo un problema al eliminar esta colección.</target>
       </trans-unit>
@@ -12893,7 +12901,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/submissions/submissions.component.html</context>
           <context context-type="linenumber">6</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {¡Envíos}}</target>
+        <target state="final">{VAR_SELECT, select, survey {misEncuestas} grade {Envíos}}</target>
       </trans-unit>
       <trans-unit id="04e1785ffcaef17aff22a0f19f3853a61cf8f27a" datatype="html" approved="yes">
         <source> Tests </source>
@@ -13069,28 +13077,12 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final">equipo</target>
       </trans-unit>
-      <trans-unit id="1264708356061957564" datatype="html" approved="yes">
-        <source>requires grading</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">152</context>
-        </context-group>
-        <target state="final">requiere calificación</target>
-      </trans-unit>
-      <trans-unit id="5344676889627590206" datatype="html" approved="yes">
-        <source>complete</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">162</context>
-        </context-group>
-        <target state="final">completo</target>
-      </trans-unit>
       <trans-unit id="1159671860655828397" datatype="html" approved="yes">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">243,242</context>
+          <context context-type="linenumber">243,244</context>
         </context-group>
         <target state="final">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; tiene
         <x id="PH_1" equiv-text="isUpdated ? 'actualizado' : isRecorded ? 'grabado' : 'terminado'"/> la encuesta &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
@@ -13119,7 +13111,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">126</context>
+          <context context-type="linenumber">128</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-achievements/users-achievements-update.component.ts</context>
@@ -13347,11 +13339,11 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Other</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">649</context>
+          <context context-type="linenumber">650</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">669</context>
+          <context context-type="linenumber">670</context>
         </context-group>
         <target state="final">Otro</target>
       </trans-unit>
@@ -13359,7 +13351,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>AI analysis completed successfully.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">768</context>
+          <context context-type="linenumber">769</context>
         </context-group>
         <target state="final">El análisis de IA se completó con éxito.</target>
       </trans-unit>
@@ -13367,7 +13359,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Error analyzing responses: Chat API is not available.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">772</context>
+          <context context-type="linenumber">773</context>
         </context-group>
         <target state="final">Error al analizar las respuestas: la API de chat no está disponible.</target>
       </trans-unit>
@@ -13375,7 +13367,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Error analyzing responses: <x id="PH" equiv-text="error.message || error"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/submissions/submissions.service.ts</context>
-          <context context-type="linenumber">774</context>
+          <context context-type="linenumber">775</context>
         </context-group>
         <target state="final">Error al analizar las respuestas: <x id="PH" equiv-text="error.message || error"/></target>
       </trans-unit>
@@ -13807,7 +13799,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">132</context>
+          <context context-type="linenumber">133</context>
         </context-group>
         <target state="final">Eliminar</target>
       </trans-unit>
@@ -13929,7 +13921,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-member.component.html</context>
           <context context-type="linenumber">30</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, Add {Añade el título} Change {Cambia el título}}</target>
+        <target state="final">{VAR_SELECT, select, Add {Añadir el título} Change {Cambiar el título}}</target>
       </trans-unit>
       <trans-unit id="bf6dd19b542b56633db84ff59788d210d2acf79f" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, true {Change Role} false {Add Role}}</source>
@@ -13937,7 +13929,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-member.component.html</context>
           <context context-type="linenumber">31</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, true {Cambia el rol} false {Añade el rol}}</target>
+        <target state="final">{VAR_SELECT, select, true {Cambiar el rol} false {Añadir el rol}}</target>
       </trans-unit>
       <trans-unit id="586a5fd72602b5b14ec0c55f84814de47bb21e3a" datatype="html" approved="yes">
         <source>Tasks</source>
@@ -14023,13 +14015,13 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final">Saldo final</target>
       </trans-unit>
-      <trans-unit id="311dd84b33aeffc1a1804f1a25db9fe0157caace" datatype="html" approved="yes">
+      <trans-unit id="311dd84b33aeffc1a1804f1a25db9fe0157caace" datatype="html">
         <source>Report Summary</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-reports-detail.component.html</context>
           <context context-type="linenumber">17</context>
         </context-group>
-        <target state="final">Resumen del informe</target>
+        <target state="translated">Resumen del reporte</target>
       </trans-unit>
       <trans-unit id="c759a6ea5c8d492303747e2421cd6d1bd152a737" datatype="html" approved="yes">
         <source>Report created on:</source>
@@ -14121,7 +14113,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-reports.component.ts</context>
           <context context-type="linenumber">59</context>
         </context-group>
-        <target state="final">Editar informe</target>
+        <target state="final">Editar reporte</target>
       </trans-unit>
       <trans-unit id="add-report-dialog-title" datatype="html" approved="yes">
         <source>Add Report</source>
@@ -14363,7 +14355,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">26</context>
+          <context context-type="linenumber">27</context>
         </context-group>
         <target state="final">Fecha</target>
       </trans-unit>
@@ -14371,7 +14363,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Note</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">31</context>
         </context-group>
         <target state="final">Nota</target>
       </trans-unit>
@@ -14379,7 +14371,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Credits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <target state="final">Créditos</target>
       </trans-unit>
@@ -14387,7 +14379,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Debits</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">39</context>
         </context-group>
         <target state="final">Débitos</target>
       </trans-unit>
@@ -14395,15 +14387,23 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">43</context>
         </context-group>
         <target state="final">Equilibrio</target>
+      </trans-unit>
+      <trans-unit id="e2702f695680f278ed0f824855f3e1bcc5e43e2f" datatype="html">
+        <source>Loading transactions...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
+          <context context-type="linenumber">60</context>
+        </context-group>
+        <target state="translated">Cargando transacciones...</target>
       </trans-unit>
       <trans-unit id="b5917c9b7750d9d798ed14018dc288af7bb2851d" datatype="html" approved="yes">
         <source>There are no transactions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.html</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">63</context>
         </context-group>
         <target state="final">No hay transacciones</target>
       </trans-unit>
@@ -14411,7 +14411,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Edit Transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <target state="final">Editar transacción</target>
       </trans-unit>
@@ -14419,7 +14419,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Add Transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">118</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <target state="final">Añadir transacción</target>
       </trans-unit>
@@ -14427,7 +14427,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Credit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">124</context>
         </context-group>
         <target state="final">Crédito</target>
       </trans-unit>
@@ -14435,7 +14435,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Debit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">122</context>
+          <context context-type="linenumber">124</context>
         </context-group>
         <target state="final">Débito</target>
       </trans-unit>
@@ -14443,7 +14443,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Note</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">124</context>
+          <context context-type="linenumber">126</context>
         </context-group>
         <target state="final">Nota</target>
       </trans-unit>
@@ -14451,7 +14451,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Amount</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">127</context>
         </context-group>
         <target state="final">Cantidad</target>
       </trans-unit>
@@ -14459,7 +14459,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Transaction Updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <target state="final">Transacción actualizada</target>
       </trans-unit>
@@ -14467,7 +14467,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Transaction Added</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">136</context>
+          <context context-type="linenumber">138</context>
         </context-group>
         <target state="final">Transacción añadida</target>
       </trans-unit>
@@ -14475,7 +14475,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>You have deleted a transaction.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">180</context>
+          <context context-type="linenumber">182</context>
         </context-group>
         <target state="final">Has eliminado una tarea.</target>
       </trans-unit>
@@ -14483,7 +14483,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>There was a problem deleting this transaction.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">184</context>
         </context-group>
         <target state="final">Hubo un problema al eliminar esta transacción.</target>
       </trans-unit>
@@ -14491,7 +14491,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">198</context>
+          <context context-type="linenumber">200</context>
         </context-group>
         <target state="final">fecha</target>
       </trans-unit>
@@ -14499,7 +14499,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">199</context>
+          <context context-type="linenumber">201</context>
         </context-group>
         <target state="final">descripción</target>
       </trans-unit>
@@ -14507,7 +14507,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>credit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">200</context>
+          <context context-type="linenumber">202</context>
         </context-group>
         <target state="final">crédito</target>
       </trans-unit>
@@ -14515,7 +14515,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>debit</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">201</context>
+          <context context-type="linenumber">203</context>
         </context-group>
         <target state="final">débito</target>
       </trans-unit>
@@ -14523,7 +14523,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">202</context>
+          <context context-type="linenumber">204</context>
         </context-group>
         <target state="final">saldo</target>
       </trans-unit>
@@ -14531,7 +14531,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Unnamed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">204</context>
+          <context context-type="linenumber">206</context>
         </context-group>
         <target state="final">Sin nombre</target>
       </trans-unit>
@@ -14539,7 +14539,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view-finances.component.ts</context>
-          <context context-type="linenumber">209</context>
+          <context context-type="linenumber">211</context>
         </context-group>
         <target state="final">Transacciones financieras de<x id="PH" equiv-text="titleName"/></target>
       </trans-unit>
@@ -14653,7 +14653,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">78</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {Plan} enterprise {Misión &amp; Servicios} services {¡Servicios}}</target>
+        <target state="final">{VAR_SELECT, select, team {Plan} enterprise {Misión &amp; Servicios} services {Servicios}}</target>
       </trans-unit>
       <trans-unit id="ba4d832d2f3833e5ecfc92ffd81ed2436850f12d" datatype="html" approved="yes">
         <source>What is your enterprise&apos;s Mission?</source>
@@ -14713,13 +14713,13 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final"> <x id="ICU" equiv-text="{ mode, select, team {Añadir Plan} enterprise {Añadir misión &amp; Servicios} services {Añadir Servicios} }           "/> </target>
       </trans-unit>
-      <trans-unit id="8754a9cc9fead73e54c73c9cb0e5e02cdd968565" datatype="html" approved="yes">
+      <trans-unit id="8754a9cc9fead73e54c73c9cb0e5e02cdd968565" datatype="html">
         <source>{VAR_SELECT, select, team {Add Plan} enterprise {Add Mission &amp; Services} services {Add Services}}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">91</context>
         </context-group>
-        <target state="final">{VAR_SELECT, select, team {Añadir un plan} enterprise {Añadir una misión &amp; servicios} services {Añadir servicios}}</target>
+        <target state="translated">{VAR_SELECT, select, team {Añadir un plan} enterprise {Añadir una misión &amp; servicios} services {Añadir servicios}}</target>
       </trans-unit>
       <trans-unit id="1b051734b0ee9021991c91b3ed4e81c244322462" datatype="html" approved="yes">
         <source>Created</source>
@@ -14727,7 +14727,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">94</context>
         </context-group>
-        <target state="final">Creados</target>
+        <target state="final">Creado</target>
       </trans-unit>
       <trans-unit id="b7c444ccad32a9bfe9d1e5d8c3816d0fe328e502" datatype="html" approved="yes">
         <source>Edit Services</source>
@@ -14760,14 +14760,6 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="linenumber">102</context>
         </context-group>
         <target state="final"><x id="ICU" equiv-text="{ mode, select, team {Solicitudes de unión} enterprise {Solicitantes} services {Solicitudes de unión} }"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
-      </trans-unit>
-      <trans-unit id="6fc5e65900ae1415d3170d5d2842f0dcae1b6645" datatype="html" approved="yes">
-        <source>Accept</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
-          <context context-type="linenumber">117</context>
-        </context-group>
-        <target state="final">Aceptar</target>
       </trans-unit>
       <trans-unit id="20c3d69c0b67a74df0aa3920485016b2080578f6" datatype="html" approved="yes">
         <source>Reject</source>
@@ -14831,7 +14823,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/teams/teams-view.component.html</context>
           <context context-type="linenumber">178</context>
         </context-group>
-        <target state="final">No hay ningún <x id="ICU" equiv-text="{ mode, select, team {recursos} enterprise {documentos} } "/> asociado con este <x id="ICU_1" equiv-text="{ mode, select, team {equipo} enterprise {empresa} }"/>.</target>
+        <target state="final">No hay <x id="ICU" equiv-text="{ mode, select, team {recursos} enterprise {documentos} } "/> asociado con este <x id="ICU_1" equiv-text="{ mode, select, team {equipo} enterprise {empresa} }"/>.</target>
       </trans-unit>
       <trans-unit id="4cf11cbbe9af25da66fcf03f6ad3723119bc6647" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, team {resources} enterprise {documents}}</source>
@@ -14861,7 +14853,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>leaving</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">276</context>
+          <context context-type="linenumber">279</context>
         </context-group>
         <target state="final">saliendo</target>
       </trans-unit>
@@ -14869,7 +14861,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>deleted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">278</context>
+          <context context-type="linenumber">281</context>
         </context-group>
         <target state="final">eliminado</target>
       </trans-unit>
@@ -14877,7 +14869,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>deleting</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">278</context>
+          <context context-type="linenumber">281</context>
         </context-group>
         <target state="final">eliminando</target>
       </trans-unit>
@@ -14885,15 +14877,15 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>removed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">281</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">284</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">286</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
+          <context context-type="linenumber">289</context>
         </context-group>
         <target state="final">eliminado</target>
       </trans-unit>
@@ -14901,15 +14893,15 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>removing</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">281</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">283</context>
+          <context context-type="linenumber">284</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
           <context context-type="linenumber">286</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
+          <context context-type="linenumber">289</context>
         </context-group>
         <target state="final">eliminando</target>
       </trans-unit>
@@ -14917,7 +14909,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>given leadership to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">288</context>
+          <context context-type="linenumber">291</context>
         </context-group>
         <target state="final">otorgó liderazgo a</target>
       </trans-unit>
@@ -14925,7 +14917,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>giving leadership to</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">288</context>
+          <context context-type="linenumber">291</context>
         </context-group>
         <target state="final">dando liderazgo a</target>
       </trans-unit>
@@ -14933,7 +14925,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>You have <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">305</context>
+          <context context-type="linenumber">308</context>
         </context-group>
         <target state="final">Has <x id="PH" equiv-text="msg"/> <x id="PH_1" equiv-text="team.name"/></target>
       </trans-unit>
@@ -14941,7 +14933,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">311</context>
+          <context context-type="linenumber">314</context>
         </context-group>
         <target state="final">Hubo un problema <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
       </trans-unit>
@@ -14949,7 +14941,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Role has been updated.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">326</context>
+          <context context-type="linenumber">329</context>
         </context-group>
         <target state="final">El rol ha sido actualizado.</target>
       </trans-unit>
@@ -14957,7 +14949,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Change Role</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">334</context>
+          <context context-type="linenumber">337</context>
         </context-group>
         <target state="final">Cambiar rol</target>
       </trans-unit>
@@ -14965,7 +14957,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Add Role</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">334</context>
+          <context context-type="linenumber">337</context>
         </context-group>
         <target state="final">Añadir rol</target>
       </trans-unit>
@@ -14973,7 +14965,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Role</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">335</context>
+          <context context-type="linenumber">338</context>
         </context-group>
         <target state="final">Rol</target>
       </trans-unit>
@@ -14981,7 +14973,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Request to join team sent</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">372</context>
+          <context context-type="linenumber">375</context>
         </context-group>
         <target state="final">Solicitud de unirse al equipo enviada</target>
       </trans-unit>
@@ -14989,7 +14981,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Removed: {memberName}</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">377</context>
+          <context context-type="linenumber">380</context>
         </context-group>
         <target state="final">Eliminado: {memberName}</target>
       </trans-unit>
@@ -14997,7 +14989,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Accepted: <x id="PH" equiv-text="memberName"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">382</context>
+          <context context-type="linenumber">385</context>
         </context-group>
         <target state="final">Aceptado: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
@@ -15005,7 +14997,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Rejected: <x id="PH" equiv-text="memberName"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">387</context>
+          <context context-type="linenumber">390</context>
         </context-group>
         <target state="final">Rechazado: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
@@ -15013,7 +15005,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source><x id="PH" equiv-text="this.configuration.name"/> Services Directory</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">396</context>
+          <context context-type="linenumber">399</context>
         </context-group>
         <target state="final"><x id="PH" equiv-text="this.configuration.name"/> Directorio de servicios</target>
       </trans-unit>
@@ -15021,7 +15013,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source> updated successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">396</context>
+          <context context-type="linenumber">399</context>
         </context-group>
         <target state="final"> actualizado correctamente</target>
       </trans-unit>
@@ -15029,7 +15021,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Member<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;"/> added successfully</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">432</context>
+          <context context-type="linenumber">435</context>
         </context-group>
         <target state="final">Miembro<x id="PH" equiv-text="selected.length &gt; 1 ? 's' : ''"/> añadido correctamente</target>
       </trans-unit>
@@ -15037,7 +15029,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Add message</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">466</context>
+          <context context-type="linenumber">469</context>
         </context-group>
         <target state="final">Añadir mensaje</target>
       </trans-unit>
@@ -15045,7 +15037,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>This team was not found</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/teams/teams-view.component.ts</context>
-          <context context-type="linenumber">525</context>
+          <context context-type="linenumber">528</context>
         </context-group>
         <target state="final">Este equipo no fue encontrado</target>
       </trans-unit>
@@ -16457,19 +16449,27 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final"> Activar características beta </target>
       </trans-unit>
-      <trans-unit id="2e6be334a2152f179a557167f98ce4459ff9a2f9" datatype="html" approved="yes">
-        <source>Age</source>
+      <trans-unit id="80d491814911f84f716b66b43934133d36739dc6" datatype="html">
+        <source>Birth Year</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
           <context context-type="linenumber">110</context>
         </context-group>
-        <target state="final">Edad</target>
+        <target state="translated">Año de nacimiento</target>
+      </trans-unit>
+      <trans-unit id="92f43d9aef05c6f15f2c7213bd40d8246a976cf1" datatype="html">
+        <source>Enter year (e.g., 1995)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
+          <context context-type="linenumber">111</context>
+        </context-group>
+        <target state="translated">Ingrese el año (p. ej., 1995)</target>
       </trans-unit>
       <trans-unit id="047f50bc5b5d17b5bec0196355953e1a5c590ddb" datatype="html" approved="yes">
         <source>Update</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">122</context>
         </context-group>
         <target state="final">Actualizar</target>
       </trans-unit>
@@ -16477,7 +16477,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Choose Image</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">130</context>
+          <context context-type="linenumber">131</context>
         </context-group>
         <target state="final">Elegir imagen</target>
       </trans-unit>
@@ -16485,7 +16485,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Reset Selection</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">132</context>
         </context-group>
         <target state="final">Restablecer selección</target>
       </trans-unit>
@@ -16493,7 +16493,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Confirm</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.html</context>
-          <context context-type="linenumber">148</context>
+          <context context-type="linenumber">149</context>
         </context-group>
         <target state="translated">Confirmar</target>
       </trans-unit>
@@ -16501,7 +16501,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Hide Additional Fields</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">285</context>
         </context-group>
         <target state="final">Ocultar Campos Adicionales</target>
       </trans-unit>
@@ -16509,7 +16509,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         <source>Show Additional Fields</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/users/users-update/users-update.component.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">285</context>
         </context-group>
         <target state="final">Mostrar Campos Adicionales</target>
       </trans-unit>
