@@ -945,7 +945,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       { key: 'uniqueVisitors', label: $localize`Unique Member Visits` },
       { key: 'totalMemberVisits', label: $localize`Total Member Visits` },
       { key: 'totalResourceViews', label: $localize`Resource Views` },
-      { key: 'totalCourseViews', label: $localize`:@@course-views-multiple:Course Views` },
+      { key: 'totalCourseViews', label: $localize`Course Views` },
       { key: 'totalStepCompleted', label: $localize`Steps Completed` },
       { key: 'totalChatUsage', label: $localize`Chat Usage` },
       { key: 'totalVoicesCreated', label: $localize`Voices Created` }
