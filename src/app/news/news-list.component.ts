@@ -59,7 +59,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ) {}
 
   ngOnInit() {
-
     this.router.events.subscribe(() => {
       this.initNews();
     });
@@ -68,17 +67,22 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnChanges() {
+    this.isLoadingMore = false;
     let isLatest = true;
     this.replyObject = {};
     this.items.forEach(item => {
-      this.replyObject[item.doc.replyTo || 'root'] = [ ...(this.replyObject[item.doc.replyTo || 'root'] || []), item ];
+      const key = item.doc.replyTo || 'root';
+      if (!this.replyObject[key]) {
+        this.replyObject[key] = [];
+      }
+      this.replyObject[key].push(item);
       if (!item.doc.replyTo && isLatest) {
         item.latestMessage = true;
         isLatest = false;
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
-    this.loadPagedItems(true);
+    this.updateDisplayedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
     }
@@ -146,7 +150,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
-    this.loadPagedItems(true);
+    this.updateDisplayedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
       (
@@ -282,27 +286,38 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     };
   }
 
-  loadPagedItems(initial = true) {
-    let pageSize = this.pageSize;
-    if (initial) {
-      this.displayedItems = [];
-      this.nextStartIndex = 0;
-      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
-      pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
+  loadMoreItems() {
+    if (this.isLoadingMore) {
+      return;
     }
-    const news = this.getCurrentItems();
-    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
-
-    this.displayedItems = [ ...this.displayedItems, ...items ];
-    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
-    this.nextStartIndex = endIndex;
-    this.hasMoreNews = hasMore;
-    this.isLoadingMore = false;
-    this.totalReplies = news.length;
+    this.updateDisplayedItems();
   }
 
-  loadMoreItems() {
-    this.isLoadingMore = true;
-    this.loadPagedItems(false);
+  private updateDisplayedItems(reset = false) {
+    const news = this.getCurrentItems();
+    if (reset) {
+      this.displayedItems = [];
+      this.nextStartIndex = 0;
+    }
+
+    const pageSize = reset ? Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize) : this.pageSize;
+    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
+
+    this.displayedItems = reset ? items : [ ...this.displayedItems, ...items ];
+    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
+    this.nextStartIndex = endIndex;
+    this.totalReplies = news.length;
+
+    const reachedLocalEnd = endIndex >= news.length;
+    const shouldFetchRemote = reachedLocalEnd && !hasMore && this.newsService.canLoadMore();
+
+    if (shouldFetchRemote) {
+      this.isLoadingMore = true;
+      this.newsService.loadMoreNews();
+    } else {
+      this.isLoadingMore = false;
+    }
+
+    this.hasMoreNews = hasMore || shouldFetchRemote || this.newsService.canLoadMore();
   }
 }

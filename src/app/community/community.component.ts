@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
-import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { NewsService } from '../news/news.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -69,6 +69,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   availableLabels: string[] = [];
   selectedLabel = '';
   pinned = false;
+  attachmentMap: Record<string, any> = {};
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
@@ -108,7 +109,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     const newsSortValue = (item: any) => item.sharedDate || item.doc.time;
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(news => {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
-      this.news.forEach(item => item.doc.messageLower = item.doc.message?.toLowerCase() || '');
       this.filteredNews = this.news;
       this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
@@ -291,9 +291,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   getLinks(planetCode?) {
     return this.teamsService.getTeamMembers(this.team || this.teamObject(planetCode), true).pipe(map((docs) => {
-      const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => ({
-        ...docObject, [doc.docType]: [ ...(docObject[doc.docType] || []), doc ]
-      }), { link: [], transaction: [] });
+      const { link: links, transaction: finances, report: reports } = docs.reduce((docObject, doc) => {
+        if (!docObject[doc.docType]) {
+          docObject[doc.docType] = [];
+        }
+        docObject[doc.docType].push(doc);
+        return docObject;
+      }, { link: [], transaction: [], report: [] });
       return { links, finances, reports };
     }));
   }
@@ -312,19 +316,38 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   setCouncillors(users) {
     const planetCode = this.planetCode ? this.planetCode : this.stateService.configuration.code;
-    this.couchService.findAll('attachments').subscribe((attachments: any[]) => {
-      this.councillors = users
-        .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1)
-        .map(user => {
-          const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
-          const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
-          const attachmentDoc: any = attachments.find(attachment => attachment._id === attachmentId);
-          const avatar = attachmentDoc ?
-            `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
-            (user.imageSrc || 'assets/image.png');
-          return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
-        });
+    const councillorUsers = users
+      .filter(user => planetCode === user.doc.planetCode && (user.doc.isUserAdmin || user.doc.roles.indexOf('leader')) !== -1);
+    const attachmentIds = councillorUsers
+      .map(user => `org.couchdb.user:${user.doc.name}@${user.doc.planetCode}`)
+      .filter(id => !!id);
+
+    this.fetchMissingAttachments(attachmentIds).pipe(take(1)).subscribe(() => {
+      this.councillors = councillorUsers.map(user => {
+        const { _id: userId, planetCode: userPlanetCode, name } = user.doc;
+        const attachmentId = `org.couchdb.user:${name}@${userPlanetCode}`;
+        const attachmentDoc: any = this.attachmentMap[attachmentId];
+        const avatar = attachmentDoc ?
+          `${environment.couchAddress}/attachments/${attachmentId}/${Object.keys(attachmentDoc._attachments)[0]}` :
+          (user.imageSrc || 'assets/image.png');
+        return { avatar, userDoc: user, userId, name: user.doc.name, userPlanetCode: user.doc.planetCode, ...user };
+      });
     });
+  }
+
+  private fetchMissingAttachments(ids: string[]) {
+    const missing = ids.filter(id => !this.attachmentMap[id]);
+    if (missing.length === 0) {
+      return of(undefined);
+    }
+    return this.couchService.findAttachmentsByIds(missing).pipe(
+      tap((attachments: any[]) => {
+        attachments.forEach(attachment => {
+          this.attachmentMap[attachment._id] = attachment;
+        });
+      }),
+      map(() => undefined)
+    );
   }
 
   openAddLinkDialog() {
@@ -498,7 +521,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
-      filtered = filtered.filter(item => item.doc.messageLower.includes(lower));
+      filtered = filtered.filter(item => {
+        if (typeof item.doc.messageLower !== 'string') {
+          item.doc.messageLower = (item.doc.message || '').toLowerCase();
+        }
+        return item.doc.messageLower.includes(lower);
+      });
     }
     this.filteredNews = filtered;
   }
