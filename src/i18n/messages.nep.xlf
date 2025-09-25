@@ -8850,7 +8850,7 @@
         </context-group>
         <target state="needs-translation">Total Member Visits</target>
       </trans-unit>
-      <trans-unit id="course-views-multiple" datatype="html">
+      <trans-unit id="2102187567920963737" datatype="html">
         <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
