@@ -7932,8 +7932,8 @@
           <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5984678829552749397" datatype="html">
-        <source>Course Views@@course-views-single</source>
+      <trans-unit id="course-views-single" datatype="html">
+        <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">801</context>
@@ -7989,8 +7989,8 @@
           <context context-type="linenumber">63</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5054760243809385672" datatype="html">
-        <source>Course Views@@course-views-multiple</source>
+      <trans-unit id="course-views-multiple" datatype="html">
+        <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">948</context>
