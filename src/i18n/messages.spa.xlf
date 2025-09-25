@@ -8791,7 +8791,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
           <context context-type="linenumber">801</context>
         </context-group>
-        <target state="final">Vistas del curso</target>
+        <target state="final">Vistas de curso</target>
       </trans-unit>
       <trans-unit id="7636767686765305289" datatype="html" approved="yes">
         <source>Community Health</source>
@@ -8849,7 +8849,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
         </context-group>
         <target state="final">Visitas totales de miembros</target>
       </trans-unit>
-      <trans-unit id="course-views-multiple" datatype="html" approved="yes">
+      <trans-unit id="2102187567920963737" datatype="html" approved="yes">
         <source>Course Views</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/manager-dashboard/reports/reports-detail.component.ts</context>
@@ -8859,7 +8859,7 @@ Haz clic en &lt;b&gt;Cancelar&lt;/b&gt; para corregir o en &lt;b&gt;OK&lt;/b&gt;
           <context context-type="sourcefile">src/app/shared/csv.service.ts</context>
           <context context-type="linenumber">65</context>
         </context-group>
-        <target state="final">Vistas del curso</target>
+        <target state="final">Vistas de curso</target>
       </trans-unit>
       <trans-unit id="4256634874656434098" datatype="html" approved="yes">
         <source>Voices Created</source>
