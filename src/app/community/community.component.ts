@@ -70,6 +70,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   selectedLabel = '';
   pinned = false;
 
+  get localLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType !== 'social' && (this.isTeamLink(link) || this.isEnterpriseLink(link)));
+  }
+
+  get socialWebLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType === 'social');
+  }
+
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
@@ -529,5 +537,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
     this.selectedLabel = action === 'select' ? label : '';
     this.applyFilters();
+  }
+
+  isTeamLink(link: any): boolean {
+    return (link?.route || '').startsWith('/teams');
+  }
+
+  isEnterpriseLink(link: any): boolean {
+    return (link?.route || '').startsWith('/enterprises');
   }
 }
