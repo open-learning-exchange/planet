@@ -11,7 +11,7 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
-  styleUrls: [ './manager-aiservices.component.scss' ],
+  styleUrls: [ './manager-settings.shared.scss' ],
 })
 export class ManagerAIServicesComponent implements OnInit {
   configuration: any = {};
