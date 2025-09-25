@@ -321,7 +321,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(filterValue: string) {
-    this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
+    const normalizedFilter = filterValue ? filterValue.trim().toLowerCase() : '';
+    this.teams.filter = normalizedFilter || (this.myTeamsFilter ? ' ' : '');
+
+    if (this.teams.paginator) {
+      this.teams.paginator.firstPage();
+    }
   }
 
   sortbyUserTeams() {
