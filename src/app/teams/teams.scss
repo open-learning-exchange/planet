@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use '../_variables.scss' as *;
 
 :host {
   .mat-column-doc-teamType {
