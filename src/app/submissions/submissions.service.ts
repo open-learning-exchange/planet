@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import type { ChartConfiguration } from 'chart.js';
+import type { Chart as ChartType, ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -25,16 +25,7 @@ let chartJsPromise: Promise<ChartJsModule> | null = null;
 async function loadChart(): Promise<ChartJsModule> {
   if (!chartJsPromise) {
     chartJsPromise = import('chart.js').then((module) => {
-      const {
-        Chart,
-        BarController,
-        DoughnutController,
-        BarElement,
-        ArcElement,
-        LinearScale,
-        CategoryScale
-      } = module;
-
+      const { Chart, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } = module;
       Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
       return module;
@@ -585,68 +576,83 @@ export class SubmissionsService {
     const isRatingScale = data.isRatingScale || false;
     const ctx = canvas.getContext('2d');
 
-    return new Promise<string>((resolve) => {
-      const maxCount = Math.max(...data.data);
-      const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
-        type: isBar ? 'bar' : 'doughnut',
-        data: {
-          labels: data.labels,
-          datasets: [ {
-            data: data.data,
-            label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
-            backgroundColor: [
-              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-            ],
-          } ]
-        },
-        options: {
-          responsive: false,
-          maintainAspectRatio: false,
-          indexAxis: 'x',
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                boxWidth: isBar ? 0 : 50,
-                boxHeight: isBar ? 0 : 20
-              }
-            }
-          },
-          scales: isBar ? {
-            y: {
-              type: 'linear',
-              beginAtZero: true,
-              max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
-              ticks: { precision: 0, stepSize: 2 }
-            }
-          } : {},
-          animation: {
-            onComplete: function() {
-              if (isBar && data.userCounts) {
-                this.getDatasetMeta(0).data.forEach((bar, index) => {
-                  const count = data.userCounts[index];
-                  if (count > 0) {
-                    ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
-                  }
-                });
-              } else {
-                const total = data.data.reduce((sum, val) => sum + val, 0);
-                this.getDatasetMeta(0).data.forEach((element, index) => {
-                  const count = data.data[index];
-                  const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-                  if (count > 0) {
-                    const pos = element.tooltipPosition();
-                    ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
-                  }
-                });
-              }
-              resolve(this.toBase64Image());
+    if (!ctx) { return ''; }
+    const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
+
+    if (!hasData) {
+      ctx.fillStyle = '#666666';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+      return canvas.toDataURL('image/png');
+    }
+
+    const maxCount = Math.max(...data.data);
+    const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
+      type: isBar ? 'bar' : 'doughnut',
+      data: {
+        labels: data.labels,
+        datasets: [ {
+          data: data.data,
+          label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
+          ],
+        } ]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        indexAxis: 'x',
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: isBar ? 0 : 50,
+              boxHeight: isBar ? 0 : 20
             }
           }
-        }
-      };
-      return new Chart(ctx, chartConfig);
-    });
+        },
+        scales: isBar ? {
+          y: {
+            type: 'linear',
+            beginAtZero: true,
+            max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
+            ticks: { precision: 0, stepSize: 2 }
+          }
+        } : {},
+        animation: false
+      }
+    };
+
+    const chart = new Chart<'bar' | 'doughnut', number[], string>(ctx, chartConfig);
+    try {
+      chart.update();
+
+      if (isBar && data.userCounts) {
+        chart.getDatasetMeta(0).data.forEach((bar, index) => {
+          const count = data.userCounts[index];
+          if (count > 0) {
+            ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
+          }
+        });
+      } else {
+        const total = data.data.reduce((sum, val) => sum + val, 0);
+        chart.getDatasetMeta(0).data.forEach((element, index) => {
+          const count = data.data[index];
+          const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+          if (count > 0) {
+            const pos = element.tooltipPosition();
+            ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
+          }
+        });
+      }
+
+      return chart.toBase64Image();
+    } finally {
+      chart.destroy();
+    }
   }
 
   calculateAverageRating(question, submissions): number {
