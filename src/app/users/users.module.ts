@@ -12,12 +12,13 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { UsersAchievementsModule } from './users-achievements/users-achievements.module';
-import { UsersTableComponent } from './users-table.component';
+import { UsersTableModule } from './users-table.module';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 
 @NgModule({
   exports: [
-    UsersTableComponent, UsersComponent
+    UsersComponent,
+    UsersTableModule
   ],
   imports: [
     UsersRouterModule,
@@ -29,14 +30,14 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     MaterialModule,
     SharedComponentsModule,
     UsersAchievementsModule,
-    ImageCropperModule
+    ImageCropperModule,
+    UsersTableModule
   ],
   declarations: [
     UsersComponent,
     UsersArchiveComponent,
     UsersProfileComponent,
     UsersUpdateComponent,
-    UsersTableComponent,
     UserProfileDialogComponent
   ]
 })
