@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Subject, of, forkJoin, throwError } from 'rxjs';
+import { Subject, of, forkJoin, throwError, from } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } from 'chart.js';
-import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, pdfMake, pdfFonts, converter } from '../shared/utils';
+import {
+  dedupeShelfReduce,
+  toProperCase,
+  ageFromBirthDate,
+  markdownToPlainText,
+  loadPdfMake,
+  loadHtmlToPdfmake,
+  loadConverter
+} from '../shared/utils';
+import type showdown from 'showdown';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,7 +26,6 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
 @Injectable({
@@ -35,6 +42,9 @@ export class SubmissionsService {
   private submissionUpdated = new Subject<any>();
   submissionUpdated$ = this.submissionUpdated.asObservable();
   submissionAttempts = 0;
+  private pdfMakeInstance: any;
+  private htmlToPdfmakeInstance: any;
+  private converterInstance: showdown.Converter | null = null;
 
   constructor(
     private couchService: CouchService,
@@ -48,6 +58,24 @@ export class SubmissionsService {
     private teamsService: TeamsService,
     private chatService: ChatService
   ) { }
+
+  private async ensurePdfToolchain() {
+    if (!this.pdfMakeInstance || !this.htmlToPdfmakeInstance || !this.converterInstance) {
+      const [ pdfMake, htmlToPdfmake, converter ] = await Promise.all([
+        loadPdfMake(),
+        loadHtmlToPdfmake(),
+        loadConverter()
+      ]);
+      this.pdfMakeInstance = pdfMake;
+      this.htmlToPdfmakeInstance = htmlToPdfmake;
+      this.converterInstance = converter;
+    }
+    return {
+      pdfMake: this.pdfMakeInstance,
+      htmlToPdfmake: this.htmlToPdfmakeInstance,
+      converter: this.converterInstance
+    };
+  }
 
   updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
     forkJoin([
@@ -263,45 +291,63 @@ export class SubmissionsService {
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-      const normalizedSubmissions = submissions.map(sub => ({
-        ...sub,
-        parent: {
-          ...sub.parent,
-          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
-        }
-      }));
-      const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
-      return forkJoin(
+    return this.getSubmissionsExport(exam, type).pipe(
+      switchMap(([ submissions, time, questionTexts ]: [ any[], number, string[] ]) => {
+        const normalizedSubmissions = submissions.map(sub => ({
+          ...sub,
+          parent: {
+            ...sub.parent,
+            questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+          }
+        }));
+        const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
+        return forkJoin(
           filteredSubmissions.map(submission => {
             if (submission.team) {
               return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
             }
             return of(submission);
           })
-        ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
+        ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ]));
       }),
-      tap(([ updatedSubmissions, time, questionTexts ]) => {
-        const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
-        const data = updatedSubmissions.map(submission => {
-          const answerIndexes = this.answerIndexes(questionTexts, submission);
-          return {
-            'Gender': submission.user.gender || 'N/A',
-            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
-            'Planet': submission.source,
-            'Date': submission.lastUpdateTime,
-            'Group': submission.teamInfo?.name || 'N/A',
-            'Group Type': submission.teamInfo?.type || 'N/A',
-            ...questionTexts.reduce((answerObj, text, index) => ({
-              ...answerObj,
-              [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
-                this.getAnswerText(submission.answers, index, answerIndexes)
-            }), {})
-          };
-        });
-        this.csvService.exportCSV({ data, title });
-      })
+      switchMap(([ updatedSubmissions, time, questionTexts ]) =>
+        from(this.buildCsvExport(updatedSubmissions, time, questionTexts, type, exam)).pipe(
+          switchMap(({ data, title, submissions }) =>
+            from(this.csvService.exportCSV({ data, title })).pipe(map(() => submissions))
+          )
+        )
+      )
     );
+  }
+
+  private async buildCsvExport(
+    updatedSubmissions: any[],
+    time: number,
+    questionTexts: string[],
+    type: 'exam' | 'survey',
+    exam: any
+  ): Promise<{ data: any[], title: string, submissions: any[] }> {
+    await this.ensurePdfToolchain();
+    const plainQuestionTexts = await Promise.all(questionTexts.map(text => markdownToPlainText(text)));
+    const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
+    const data = updatedSubmissions.map(submission => {
+      const answerIndexes = this.answerIndexes(questionTexts, submission);
+      const questionEntries = plainQuestionTexts.reduce((answerObj, text, index) => ({
+        ...answerObj,
+        [`"Q${index + 1}: ${String(text ?? '').replace(/"/g, '""')}"`]:
+          this.getAnswerText(submission.answers, index, answerIndexes)
+      }), {});
+      return {
+        'Gender': submission.user.gender || 'N/A',
+        'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
+        'Planet': submission.source,
+        'Date': submission.lastUpdateTime,
+        'Group': submission.teamInfo?.name || 'N/A',
+        'Group Type': submission.teamInfo?.type || 'N/A',
+        ...questionEntries
+      };
+    });
+    return { data, title, submissions: updatedSubmissions };
   }
 
   answerIndexes(questionTexts: string[], submission: any) {
@@ -337,7 +383,7 @@ export class SubmissionsService {
     });
   }
 
-  async buildChartSection(exam, updatedSubmissions, docContent) {
+  async buildChartSection(exam, updatedSubmissions, docContent, htmlToPdfmake, converter: showdown.Converter) {
     this.setHeader(docContent, 'Charts');
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
@@ -400,7 +446,7 @@ export class SubmissionsService {
     }
   }
 
-  async buildAnalysisSection(exam, updatedSubmissions, docContent) {
+  async buildAnalysisSection(exam, updatedSubmissions, docContent, htmlToPdfmake, converter: showdown.Converter) {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, 'AI Analysis');
     docContent.push({
@@ -409,8 +455,8 @@ export class SubmissionsService {
     });
   }
 
-  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
-    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
+  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions, htmlToPdfmake, converter: showdown.Converter) {
+    const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions, converter);
     const submissionContents = markdownSubmissions.map((markdown, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
       return {
@@ -475,13 +521,14 @@ export class SubmissionsService {
         })
       ).subscribe(async tuple => {
         if (!tuple) { return; }
-        const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const [ updatedSubmissions, , questionTexts ] = tuple as [any[], number, string[]];
+        const { pdfMake, htmlToPdfmake, converter } = await this.ensurePdfToolchain();
+        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions, htmlToPdfmake, converter);
         if (exportOptions.includeCharts) {
-          await this.buildChartSection(exam, updatedSubmissions, docContent);
+          await this.buildChartSection(exam, updatedSubmissions, docContent, htmlToPdfmake, converter);
         }
         if (exportOptions.includeAnalysis) {
-          await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
+          await this.buildAnalysisSection(exam, updatedSubmissions, docContent, htmlToPdfmake, converter);
         }
         pdfMake.createPdf({
           content: docContent,
@@ -506,11 +553,11 @@ export class SubmissionsService {
       });
   }
 
-  preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }) {
+  preparePDF(exam, submissions, questionTexts, { includeQuestions, includeAnswers }, converter: showdown.Converter) {
     return (includeAnswers ? submissions : [ { parent: exam } ]).map((submission, index) => {
       const answerIndexes = this.answerIndexes(questionTexts, submission);
       return this.surveyHeader(includeAnswers, exam, index, submission) +
-        questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers)).join('  \n');
+        questionTexts.map(this.questionOutput(submission, answerIndexes, includeQuestions, includeAnswers, converter)).join('  \n');
     });
   }
 
@@ -541,7 +588,7 @@ export class SubmissionsService {
     }
   }
 
-  questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
+  questionOutput(submission, answerIndexes, includeQuestions, includeAnswers, converter: showdown.Converter) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
       return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;

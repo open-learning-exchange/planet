@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
-import { markdownToPlainText, formatDate } from './utils';
+import { markdownToPlainText, formatDate, loadConverter } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
 @Injectable({
@@ -26,14 +26,24 @@ export class CsvService {
     }
   }
 
-  exportCSV({ data, title }: { data: any[], title: string }) {
+  async exportCSV({ data, title }: { data: any[], title: string }) {
+    await loadConverter();
     const options = { title, filename: $localize`Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
-    const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
-      return Object.entries(dataToDisplay).reduce(
-        (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
-        {}
-      );
-    });
+    const formattedData = await Promise.all(
+      data.map(async ({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
+        const entries = await Promise.all(
+          Object.entries(dataToDisplay).map(async ([ key, value ]: [ string, any ]) => {
+            const formattedKey = await markdownToPlainText(key);
+            const formattedValue = await this.formatValue(key, value);
+            return [ formattedKey, formattedValue ] as [ string, any ];
+          })
+        );
+        return entries.reduce(
+          (object, [ key, value ]) => ({ ...object, [ key ]: value }),
+          {}
+        );
+      })
+    );
     if (formattedData.length === 0) {
       this.planetMessageService.showAlert($localize`There was no data during that period to export`);
       return;
@@ -141,13 +151,13 @@ export class CsvService {
     });
   }
 
-  formatValue(key: string, value: any) {
+  private async formatValue(key: string, value: any) {
     const dateString = (date: number | undefined) => date ? new Date(date).toString() : '';
     return key === 'conditions' ?
       this.formatHealthConditions(value) :
       this.isDateKey(key) ?
       dateString(value) :
-      markdownToPlainText(value);
+      await markdownToPlainText(value);
   }
 
   isDateKey(key: string) {
