@@ -24,7 +24,6 @@ import { PlanetCalendarModule } from '../shared/calendar.module';
 import { CommunityLinkDialogComponent } from '../community/community-link-dialog.component';
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
-import { PlanetComponent } from './planet.component';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
 import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
@@ -61,7 +60,6 @@ import { SurveysModule } from '../surveys/surveys.module';
     LogsMyPlanetComponent,
     CommunityComponent,
     CommunityLinkDialogComponent,
-    PlanetComponent,
     HealthListComponent,
   ]
 })
