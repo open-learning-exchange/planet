@@ -1,0 +1,11 @@
+@import '../../variables';
+
+.display-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.margin-tb {
+  margin: 5px 0;
+}

@@ -71,6 +71,72 @@ mat-chip {
   text-align: left;
 }
 
+.display-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.conversation-query {
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: $primary;
+  color: $primary-text;
+}
+
+.conversation-response {
+  margin: 8px 16px;
+}
+
+.conversation-error {
+  color: #ff0000;
+  font-style: italic;
+}
+
+:host ::ng-deep .chat-link {
+  color: #1e88e5 !important;
+  text-decoration: none;
+}
+
+:host ::ng-deep .chat-link:hover {
+  text-decoration: underline;
+}
+
+:host ::ng-deep .conversation-query .chat-link {
+  color: $primary-text !important;
+
+  &:visited {
+    color: $primary-text !important;
+  }
+}
+
+:host ::ng-deep .code-block {
+  position: relative;
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+:host ::ng-deep .copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: #f8f8f2;
+  transition: color 0.3s;
+}
+
+:host ::ng-deep .copy-btn.copied {
+  color: $primary;
+}
+
 @media (max-width: $screen-xs) {
   .subtitle-row .label-panel .mat-chip {
     max-width: 80px;

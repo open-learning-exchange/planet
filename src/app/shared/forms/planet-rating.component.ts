@@ -28,9 +28,7 @@ const popupFormFields = [
 
 @Component({
   templateUrl: './planet-rating.component.html',
-  styles: [ ` .list-item-rating {
-    max-width: 225px;
-  } ` ],
+  styleUrls: [ './planet-rating.component.scss' ],
   selector: 'planet-rating'
 })
 export class PlanetRatingComponent implements OnChanges {

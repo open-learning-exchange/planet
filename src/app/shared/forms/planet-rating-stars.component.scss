@@ -1,0 +1,38 @@
+@import '../../variables';
+
+$stars-margin: 1px;
+$stars-width: calc(120px + (10 * #{$stars-margin}));
+
+:host {
+  display: inline-block;
+}
+
+.stars {
+  display: inline-block;
+  color: $grey;
+  position: relative;
+  width: $stars-width;
+
+  mat-icon {
+    padding: 0 $stars-margin;
+    cursor: default;
+  }
+
+  &.stars-enabled mat-icon {
+    cursor: pointer;
+  }
+
+  span {
+    color: $accent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    display: inline-flex;
+
+    * {
+      display: inline;
+      flex-shrink: 0;
+    }
+  }
+}

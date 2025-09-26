@@ -1,7 +1,15 @@
 @import '../variables';
+@import '../shared/styles/collection-layout';
 
 $toolbar-height: 25vh;
 $label-height: 1rem;
+$list-title-height: 36px;
+
+@include collection-utilities($list-title-height);
+
+.margin-lr {
+  margin: 0 5px;
+}
 
 .resources-list {
   /* Column Widths */
@@ -48,18 +56,6 @@ $label-height: 1rem;
   }
 }
 
-.list-content-menu {
-  &.list-content-menu-auto {
-    .header {
-      word-break: break-word;
-      max-width: 100%;
-      a {
-        display: inline-block;
-      }
-    }
-  }
-}
-
 .ellipsis-menu {
   text-align: center;
 }
@@ -78,6 +74,14 @@ $label-height: 1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   display: inline-block;
+}
+
+.mat-row.expanded-row {
+  border: none;
+}
+
+.mat-row.expanded-row td {
+  padding: 0;
 }
 
 planet-resources {

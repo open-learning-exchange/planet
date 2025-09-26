@@ -8,14 +8,7 @@ import { UserService } from '../user.service';
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
-  styles: [ `
-    .stars mat-icon {
-      cursor: default;
-    }
-    .stars.stars-enabled mat-icon {
-      cursor: pointer;
-    }
-  ` ],
+  styleUrls: [ './planet-rating-stars.component.scss' ],
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
   ]
