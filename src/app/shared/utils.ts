@@ -1,7 +1,18 @@
-export const showdown = require('showdown');
-export const pdfMake = require('pdfmake/build/pdfmake');
-export const pdfFonts = require('pdfmake/build/vfs_fonts');
-export const converter = new showdown.Converter();
+import { getCachedPdfToolchain, loadPdfToolchain } from './pdf-utils.loader';
+
+const getToolchainOrThrow = () => {
+  const toolchain = getCachedPdfToolchain();
+  if (!toolchain) {
+    throw new Error('PDF toolchain has not been loaded yet. Call loadPdfToolchain() before using this helper.');
+  }
+  return toolchain;
+};
+
+export const loadPdfMake = async () => (await loadPdfToolchain()).pdfMake;
+export const loadHtmlToPdfmake = async () => (await loadPdfToolchain()).htmlToPdfmake;
+export const loadConverter = async () => (await loadPdfToolchain()).converter;
+
+export const markdownConverter = () => getToolchainOrThrow().converter;
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -118,10 +129,11 @@ export const deepEqual = (item1: any, item2: any) => {
   return item1 === item2;
 };
 
-export const markdownToPlainText = (markdown: any) => {
+export const markdownToPlainText = async (markdown: any) => {
   if (typeof markdown !== 'string') {
     return markdown;
   }
+  const converter = await loadConverter();
   const html = document.createElement('div');
   html.innerHTML = converter.makeHtml(markdown);
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
