@@ -41,6 +41,10 @@
 
   }
 
+  .gradient-background {
+    background: linear-gradient(to bottom, #000000, $primary);
+  }
+
   .header-nav::before {
     height: 3px;
     background: linear-gradient(to bottom, $shadow, rgba($shadow, 0.2) 25%, rgba($shadow, 0.12) 75%, rgba($shadow, 0));

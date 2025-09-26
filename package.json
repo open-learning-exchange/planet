@@ -74,6 +74,7 @@
     "@angular/compiler-cli": "15.2.10",
     "@angular/language-service": "15.2.10",
     "@fortawesome/fontawesome-free": "^5.13.0",
+    "@fullhuman/postcss-purgecss": "^4.1.3",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.8",
     "@types/ms": "0.7.34",

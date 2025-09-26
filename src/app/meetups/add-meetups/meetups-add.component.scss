@@ -1,0 +1,22 @@
+@import '../../variables';
+
+form.form-spacing {
+  width: inherit;
+}
+
+.view-container form {
+  min-width: 385px;
+  max-width: 750px;
+}
+
+.margin-lr {
+  margin: 0 5px;
+}
+
+.margin-tblr {
+  margin: 5px;
+}
+
+.margin-tb {
+  margin: 5px 0;
+}

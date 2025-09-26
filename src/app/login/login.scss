@@ -11,6 +11,10 @@
     padding: 10vh;
     overflow: hidden;
 
+    &.gradient-background {
+      background: linear-gradient(to bottom, #000000, $primary);
+    }
+
     h1 {
       margin-bottom: 0;
     }

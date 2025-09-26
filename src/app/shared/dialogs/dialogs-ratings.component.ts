@@ -2,7 +2,8 @@ import { Component, Inject, Directive, Input, HostListener } from '@angular/core
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 @Component({
-  templateUrl: './dialogs-ratings.component.html'
+  templateUrl: './dialogs-ratings.component.html',
+  styleUrls: [ './dialogs-ratings.component.scss' ]
 })
 export class DialogsRatingsComponent {
 
