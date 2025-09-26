@@ -1,67 +1,11 @@
 @import '../variables';
+@import '../shared/styles/collection-layout';
 
 $toolbar-height: 25vh;
 $label-height: 1rem;
 $list-title-height: 36px;
 
-.list-content-menu,
-.table-selection-top {
-  align-self: start;
-}
-
-.table-selection-top {
-  height: $list-title-height;
-  min-height: $list-title-height;
-}
-
-.list-content-menu {
-  display: grid;
-  grid-template-areas:
-    'hd mn'
-    'progress .'
-    'tags .'
-    'cn .';
-  grid-template-columns: auto 50px;
-  grid-template-rows: $list-title-height 1fr min-content min-content;
-
-  .header {
-    grid-area: hd;
-    margin: 8px 0;
-  }
-
-  .content {
-    grid-area: cn;
-    text-align: justify;
-    text-justify: inter-word;
-    max-height: 15rem;
-    overflow-y: auto;
-    margin: 0.5rem 0;
-  }
-
-  .menu {
-    grid-area: mn;
-  }
-
-  .tags-list {
-    grid-area: tags;
-  }
-
-  .course-progress {
-    grid-area: progress;
-    margin-bottom: 0.5rem;
-  }
-
-  &.list-content-menu-auto {
-    .header {
-      word-break: break-word;
-      max-width: 100%;
-
-      a {
-        display: inline-block;
-      }
-    }
-  }
-}
+@include collection-utilities($list-title-height);
 
 /* Column Widths */
 .mat-column-select {
