@@ -1,5 +1,18 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
+  Component,
+  Input,
+  Optional,
+  Self,
+  OnDestroy,
+  HostBinding,
+  EventEmitter,
+  Output,
+  OnInit,
+  ViewEncapsulation,
+  ElementRef,
+  DoCheck,
+  ViewChild,
+  ChangeDetectorRef
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -10,6 +23,24 @@ import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 
 interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
+
+let easymdeLoader: Promise<void> | null;
+
+function ensureEasyMDELoaded(): Promise<void> {
+  if (!easymdeLoader) {
+    easymdeLoader = import('easymde')
+      .then((module) => {
+        const easyMdeConstructor = module.default ?? module;
+        (globalThis as any).EasyMDE = easyMdeConstructor;
+      })
+      .catch((error) => {
+        easymdeLoader = null;
+        throw error;
+      });
+  }
+
+  return easymdeLoader;
+}
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -27,6 +58,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
   @ViewChild('editor') editor;
+  editorReady = false;
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
     return this._value;
@@ -81,12 +113,14 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   focused = false;
   errorState = false;
   options: any = { hideIcons: [ 'image' ] };
+  private destroyed = false;
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -102,6 +136,15 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   ngOnInit() {
+    ensureEasyMDELoaded().then(() => {
+      if (!this.destroyed) {
+        this.editorReady = true;
+        this.changeDetectorRef.markForCheck();
+      }
+    });
+    if ((globalThis as any).EasyMDE) {
+      this.editorReady = true;
+    }
     const imageToolbarIcon = {
       name: 'custom',
       action: this.addImage.bind(this),
@@ -128,6 +171,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   ngOnDestroy() {
     this.stateChanges.complete();
+    this.destroyed = true;
   }
 
   writeValue(val: string) {
