@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } from 'chart.js';
+import type { ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -18,8 +18,33 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 
+type ChartJsModule = typeof import('chart.js');
+
+let chartJsPromise: Promise<ChartJsModule> | null = null;
+
+async function loadChart(): Promise<ChartJsModule> {
+  if (!chartJsPromise) {
+    chartJsPromise = import('chart.js').then((module) => {
+      const {
+        Chart,
+        BarController,
+        DoughnutController,
+        BarElement,
+        ArcElement,
+        LinearScale,
+        CategoryScale
+      } = module;
+
+      Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
+
+      return module;
+    });
+  }
+
+  return chartJsPromise;
+}
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
 @Injectable({
   providedIn: 'root'
@@ -552,6 +577,7 @@ export class SubmissionsService {
   }
 
   async generateChartImage(data: any): Promise<string> {
+    const { Chart } = await loadChart();
     const canvas = document.createElement('canvas');
     canvas.width = 300;
     canvas.height = 400;
