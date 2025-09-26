@@ -9,7 +9,7 @@ import { MeetupsRouterModule } from './meetups-router.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({

@@ -6,9 +6,9 @@ import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NotificationsService } from './notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';

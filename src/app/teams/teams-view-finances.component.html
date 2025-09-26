@@ -21,14 +21,15 @@
 <mat-card class="margin-lr" *ngIf="showBalanceWarning">
   <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
 </mat-card>
+<ng-container *ngIf="!isLoading; else loadingTpl">
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Date</mat-header-cell>
-    <mat-cell *matCellDef="let element" class="narrow-column">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
+    <mat-cell *matCellDef="let element" class="narrow-column narrow-column-date">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="description">
     <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+    <mat-cell *matCellDef="let element"><i>{{ element.description }}</i></mat-cell>
   </ng-container>
   <ng-container matColumnDef="credit">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Credits</mat-header-cell>
@@ -53,7 +54,11 @@
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
+  </mat-table>
+</ng-container>
+<ng-template #loadingTpl>
+  <p i18n>Loading transactions...</p>
+</ng-template>
 <ng-template #emptyMessage>
   <p i18n>There are no transactions</p>
 </ng-template>
