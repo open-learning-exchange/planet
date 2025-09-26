@@ -10,6 +10,7 @@ import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { PulsateIconDirective } from './pulsate-icon.directive';
+import { CommunitySharedModule } from '../community/community-shared.module';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     PlanetFormsModule,
     MaterialModule,
     SharedComponentsModule,
+    CommunitySharedModule,
     HttpClientModule,
     HttpClientJsonpModule,
   ],
