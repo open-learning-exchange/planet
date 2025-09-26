@@ -1,25 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from '../dashboard/dashboard.component';
-import { NotificationsComponent } from '../notifications/notifications.component';
-import { UpgradeComponent } from '../upgrade/upgrade.component';
-import { UsersAchievementsComponent } from '../users/users-achievements/users-achievements.component';
-import { UsersAchievementsUpdateComponent } from '../users/users-achievements/users-achievements-update.component';
-import { TeamsViewComponent } from '../teams/teams-view.component';
-import { HealthListComponent } from '../health/health-list.component';
-import { CommunityComponent } from '../community/community.component';
 import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
-import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
-import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
 export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
 }
 
 const alwaysGuardedRoutes = [
-  { path: 'community/:code', component: CommunityComponent },
+  { path: 'community', loadChildren: () => import('../community/community-viewer.module').then(m => m.CommunityViewerModule) },
   { path: 'users', loadChildren: () => import('../users/users.module').then(m => m.UsersModule) },
   {
     path: 'manager',
@@ -31,18 +21,17 @@ const alwaysGuardedRoutes = [
   { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
   { path: 'chat', loadChildren: () => import('../chat/chat.module').then(m => m.ChatModule) },
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
-  { path: 'notifications', component: NotificationsComponent },
-  { path: 'upgrade', component: UpgradeComponent },
-  { path: 'upgrade/myplanet', component: UpgradeComponent, data: { myPlanet: true } },
+  { path: 'notifications', loadChildren: () => import('../notifications/notifications.module').then(m => m.NotificationsModule) },
+  { path: 'upgrade', loadChildren: () => import('../upgrade/upgrade.module').then(m => m.UpgradeModule) },
   { path: 'teams', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule) },
   { path: 'enterprises', loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { mode: 'enterprise' } },
-  { path: 'health', component: HealthListComponent, data: { roles: [ '_admin', 'health' ] } },
+  { path: 'health', loadChildren: () => import('../health/health-list.module').then(m => m.HealthListModule), data: { roles: [ '_admin', 'health' ] } },
   {
     path: 'health/profile/:id',
     loadChildren: () => import('../health/health.module').then(m => m.HealthModule), data: { roles: [ '_admin', 'health' ] } },
-  { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
-  { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
-  { path: myDashboardRoute, component: DashboardComponent },
+  { path: 'nation', loadChildren: () => import('../teams/teams-services.module').then(m => m.TeamsServicesModule), data: { mode: 'services' } },
+  { path: 'earth', loadChildren: () => import('../teams/teams-services.module').then(m => m.TeamsServicesModule), data: { mode: 'services' } },
+  { path: myDashboardRoute, loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardModule) },
   {
     path: dashboardPath('mySurveys'),
     loadChildren: () => import('../submissions/submissions.module').then(m => m.SubmissionsModule), data: { mySurveys: true }
@@ -59,8 +48,8 @@ const alwaysGuardedRoutes = [
     path: dashboardPath('myTeams'),
     loadChildren: () => import('../teams/teams.module').then(m => m.TeamsModule), data: { myTeams: true }
   },
-  { path: dashboardPath('myAchievements'), component: UsersAchievementsComponent },
-  { path: dashboardPath('myAchievements/update'), component: UsersAchievementsUpdateComponent, canDeactivate: [UnsavedChangesGuard]  },
+  { path: dashboardPath('myAchievements'), loadChildren: () => import('../users/users-achievements/users-achievements.module').then(m => m.UsersAchievementsModule) },
+  { path: dashboardPath('myAchievements/update'), loadChildren: () => import('../users/users-achievements/users-achievements.module').then(m => m.UsersAchievementsModule) },
   { path: dashboardPath('myHealth'), loadChildren: () => import('../health/health.module').then(m => m.HealthModule) },
   {
     path: dashboardPath('myCourses'),
@@ -80,8 +69,7 @@ const alwaysGuardedRoutes = [
 const routes: Routes = [
   {
     path: '',
-    component: CommunityComponent,
-    children: [ { path: 'voices/:id', component: NewsListComponent } ]
+    loadChildren: () => import('../community/community-home.module').then(m => m.CommunityHomeModule)
   },
   {
     path: '',
