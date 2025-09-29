@@ -13,7 +13,7 @@ import { truncateText, calculateMdAdjustedLimit } from './utils';
       </div>
     </ng-container>
     <ng-template #noPreview>
-      <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
+      <td-markdown [content]="sanitizedContent" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
   styleUrls: [ './planet-markdown.scss' ],
@@ -28,6 +28,7 @@ export class PlanetMarkdownComponent implements OnChanges {
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
+  sanitizedContent: string;
   imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
 
   constructor(
@@ -39,8 +40,9 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
-    this.images = this.extractImageUrls(this.content);
-    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
+    this.sanitizedContent = this.normalizeWhitespace(this.content || '');
+    this.images = this.extractImageUrls(this.sanitizedContent);
+    const textOnly = this.sanitizedContent.replace(this.imageMarkdownRegex, '');
 
     if (this.previewMode) {
       const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
@@ -50,6 +52,15 @@ export class PlanetMarkdownComponent implements OnChanges {
     } else {
       this.limitedContent = truncateText(textOnly, this.limit);
     }
+  }
+
+  normalizeWhitespace(content: string): string {
+    // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
+    // Replace sequences of tabs/spaces with max 2 spaces
+    content = content.replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
+    // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
+    content = content.replace(/\n{3,}/g, '\n\n');
+    return content.trim();
   }
 
   extractImageUrls(content: string): string[] {
