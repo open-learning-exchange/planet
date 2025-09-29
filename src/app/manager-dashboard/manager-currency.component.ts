@@ -36,18 +36,27 @@ export class ManagerCurrencyComponent implements OnInit {
   }
 
   save() {
-    if (this.form.invalid) { return; }
+    const spinnerOff = () => this.spinnerOn = false;
+    if (this.spinnerOn) { return; }
+    if (this.form.invalid) {
+      spinnerOff();
+      return;
+    }
     this.spinnerOn = true;
     const updatedConfig = { ...this.configuration, keys: this.stateService.keys, currency: { ...this.form.value } };
     this.configurationService.updateConfiguration(updatedConfig)
-      .pipe(finalize(() => this.spinnerOn = false))
-      .subscribe({
-        next: () => {
+      .pipe(finalize(spinnerOff))
+      .subscribe(
+        () => {
           this.stateService.requestData('configurations', 'local');
-          this.router.navigate([ '/manager' ]);
-          this.planetMessageService.showMessage($localize`Currency Updated Successfully`);
         },
-        error: () => this.planetMessageService.showAlert($localize`There was an error updating the configuration`)
-      });
+        (err) => {
+          this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
+        },
+        () => {
+          this.router.navigate(['/manager']);
+          this.planetMessageService.showMessage($localize`Currency Updated Successfully`);
+        }
+      );
   }
 }
