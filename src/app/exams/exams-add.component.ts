@@ -207,8 +207,8 @@ export class ExamsAddComponent implements OnInit {
     (<UntypedFormArray>this.examForm.get('questions')).removeAt(index);
   }
 
-  plainText(value) {
-    markdownToPlainText(value);
+  plainText(value): Promise<string> {
+    return markdownToPlainText(value);
   }
 
   goBack() {

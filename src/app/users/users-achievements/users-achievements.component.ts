@@ -11,9 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { formatStringDate, pdfMake, pdfFonts } from '../../shared/utils';
-
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import { formatStringDate, loadPdfMake } from '../../shared/utils';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -137,7 +135,8 @@ export class UsersAchievementsComponent implements OnInit {
     this.clipboard.copy(link);
   }
 
-  generatePDF() {
+  async generatePDF() {
+    const pdfMake = await loadPdfMake();
     const formattedBirthDate = this.user.birthDate ? formatStringDate(this.user.birthDate) : '';
     let contentArray = [
       {
