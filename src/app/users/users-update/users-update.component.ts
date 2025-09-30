@@ -108,7 +108,12 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
         this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
         ac => this.validatorService.notDateInFuture$(ac)
       ],
-      age: [ '', [ Validators.min(0), Validators.max(120) ] ],
+      birthYear: [ '', [
+        Validators.min(1900),
+        Validators.max(new Date().getFullYear() - 1),
+        Validators.pattern(/^\d{4}$/)
+      ]],
+      age: [ '' ],
       gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
       betaEnabled: false
@@ -128,6 +133,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   onSubmit() {
+    // exports don't break: calculate age from birthYear form validation
+    const birthYear = this.editForm.get('birthYear')?.value;
+    if (birthYear && birthYear.toString().length === 4) {
+      const calculatedAge = new Date().getFullYear() - parseInt(birthYear, 10);
+      this.editForm.patchValue({ age: calculatedAge }, { emitEvent: false });
+    }
+
     if (!this.editForm.valid) {
       showFormErrors(this.editForm.controls);
       return;
@@ -138,7 +150,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   submitUser() {
     if (this.submissionMode) {
-      this.appendToSurvey(this.editForm.value);
+      // Remove birthYear from submitted data
+      const { birthYear, ...cleanUserData } = this.editForm.value;
+      this.appendToSurvey(cleanUserData);
     } else {
       const attachment = this.file ? this.createAttachmentObj() : {};
       this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).pipe(
