@@ -7,7 +7,7 @@
 
 <form class="container" [formGroup]="form">
   <mat-card class="card">
-  <mat-card-title i18n="@@currency.card.title">Currency</mat-card-title>
+    <mat-card-title i18n="@@currency.card.title">Currency</mat-card-title>
     <mat-card-content>
       <mat-list>
         <mat-list-item>
@@ -29,10 +29,10 @@
           </div>
         </mat-list-item>
       </mat-list>
-  <div class="hint" i18n="@@currency.hint">Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</div>
+      <div class="hint" i18n="@@currency.hint">Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</div>
     </mat-card-content>
   </mat-card>
   <div class="update-button-container">
-  <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="save()" [disabled]="spinnerOn || form.invalid" i18n="@@currency.save">Save Currency</button>
+    <button [planetSubmit]="spinnerOn" mat-raised-button color="primary" (click)="save()" i18n="@@currency.save">Save Currency</button>
   </div>
 </form>

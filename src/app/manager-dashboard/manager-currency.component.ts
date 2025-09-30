@@ -13,7 +13,7 @@ import { StateService } from '../shared/state.service';
 export class ManagerCurrencyComponent implements OnInit {
   form: FormGroup<{ code: FormControl<string>; symbol: FormControl<string> }>;
   configuration: any = {};
-  spinnerOn = false;
+  spinnerOn = true;
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -37,7 +37,6 @@ export class ManagerCurrencyComponent implements OnInit {
 
   save() {
     const spinnerOff = () => this.spinnerOn = false;
-    if (this.spinnerOn) { return; }
     if (this.form.invalid) {
       spinnerOff();
       return;
