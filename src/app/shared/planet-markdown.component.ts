@@ -13,7 +13,7 @@ import { truncateText, calculateMdAdjustedLimit } from './utils';
       </div>
     </ng-container>
     <ng-template #noPreview>
-      <td-markdown [content]="sanitizedContent" [hostedUrl]="couchAddress"></td-markdown>
+      <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
   styleUrls: [ './planet-markdown.scss' ],
@@ -28,7 +28,6 @@ export class PlanetMarkdownComponent implements OnChanges {
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
-  sanitizedContent: string;
   imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
 
   constructor(
@@ -40,9 +39,10 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
-    this.sanitizedContent = this.normalizeWhitespace(this.content || '');
-    this.images = this.extractImageUrls(this.sanitizedContent);
-    const textOnly = this.sanitizedContent.replace(this.imageMarkdownRegex, '');
+    this.content = this.normalizeWhitespace(this.content || '');
+
+    this.images = this.extractImageUrls(this.content);
+    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
 
     if (this.previewMode) {
       const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
