@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -18,7 +19,7 @@ import { CsvService } from '../shared/csv.service';
   styleUrls: [ './teams-view-finances.scss' ],
   templateUrl: './teams-view-finances.component.html',
 })
-export class TeamsViewFinancesComponent implements OnInit, OnChanges {
+export class TeamsViewFinancesComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
@@ -27,7 +28,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
   table = new MatTableDataSource<any>();
-  displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
+  displayedColumns = [ 'date', 'updatedDate', 'description', 'credit', 'debit', 'balance' ];
+  private matSort: MatSort;
+  private readonly defaultSortData = this.table.sortData.bind(this.table);
+  private sortInitialized = false;
   deleteDialog: any;
   dateNow: any;
   startDate: Date;
@@ -66,6 +70,36 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     });
   }
 
+  @ViewChild(MatSort)
+  set sort(sort: MatSort) {
+    this.matSort = sort;
+    this.initializeSort();
+  }
+
+  ngAfterViewInit() {
+    this.initializeSort();
+  }
+
+  private initializeSort() {
+    if (!this.matSort) {
+      return;
+    }
+    this.table.sort = this.matSort;
+    if (this.sortInitialized) {
+      return;
+    }
+    this.table.sortData = (data, sort) => {
+      const totalRows = data.filter(row => row.date === 'Total');
+      const sortableRows = data.filter(row => row.date !== 'Total');
+      if (!sort.active || sort.direction === '') {
+        return [ ...totalRows, ...sortableRows ];
+      }
+      const sortedRows = this.defaultSortData(sortableRows, sort);
+      return [ ...totalRows, ...sortedRows ];
+    };
+    this.sortInitialized = true;
+  }
+
   ngOnChanges() {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
       this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
@@ -78,7 +112,13 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   private setTransactionsTable(transactions: any[]): any[] {
     const financeData = transactions.filter(transaction => transaction.status !== 'archived' && transaction.date !== 'Total')
       // Overwrite values for credit and debit from early document versions on database
-      .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
+      .map(transaction => ({
+        ...transaction,
+        credit: 0,
+        debit: 0,
+        updatedDate: transaction.updatedDate || transaction.date,
+        [transaction.type]: transaction.amount
+      }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
     if (financeData.length === 0) {
       this.emptyTable = true;

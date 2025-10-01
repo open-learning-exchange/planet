@@ -22,10 +22,14 @@
   <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
 </mat-card>
 <ng-container *ngIf="!isLoading; else loadingTpl">
-<mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
+<mat-table [dataSource]="table" matSort *ngIf="!emptyTable; else emptyMessage">
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef class="narrow-column" i18n>Date</mat-header-cell>
     <mat-cell *matCellDef="let element" class="narrow-column narrow-column-date">{{ element.date === 'Total' ? element.date : (element.date | date) }}</mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="updatedDate">
+    <mat-header-cell *matHeaderCellDef class="narrow-column" mat-sort-header i18n>Date Modified</mat-header-cell>
+    <mat-cell *matCellDef="let element" class="narrow-column narrow-column-date">{{ element.date === 'Total' ? '' : (element.updatedDate | date:'medium') }}</mat-cell>
   </ng-container>
   <ng-container matColumnDef="description">
     <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
