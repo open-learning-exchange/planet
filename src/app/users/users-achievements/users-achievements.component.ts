@@ -139,11 +139,55 @@ export class UsersAchievementsComponent implements OnInit {
 
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatStringDate(this.user.birthDate) : '';
+    const sectionMargin = [ 0, 24, 0, 0 ];
+    const bodyMargin = [ 0, 0, 0, 12 ];
+    const detailMargin = [ 0, 2, 0, 6 ];
+    const titleMargin = [ 0, 0, 0, 8 ];
+    const tableLayout = {
+      hLineWidth: () => 0,
+      vLineWidth: () => 0,
+      paddingLeft: () => 0,
+      paddingRight: () => 0,
+      paddingTop: () => 4,
+      paddingBottom: () => 4,
+    };
+
+    const createSection = (title, sectionContent = []) => ({
+      margin: sectionMargin,
+      stack: [
+        { text: title, style: 'sectionHeader' },
+        ...sectionContent
+      ],
+    });
+
+    const createTable = (rows, widths) => ({
+      margin: bodyMargin,
+      table: {
+        widths,
+        body: rows,
+      },
+      layout: tableLayout,
+    });
+
+    const createDetailStack = (values: any[]) => {
+      const stack = values
+        .filter((value) => !!value)
+        .map((value) => ({
+          ...value,
+          margin: value && value.margin ? value.margin : detailMargin,
+        }));
+
+      if (!stack.length) {
+        stack.push({ text: '', margin: detailMargin });
+      }
+
+      return { stack };
+    };
+
     let contentArray = [
       {
         text: $localize`${`${this.user.firstName}'s achievements`}`,
         style: 'header',
-        alignment: 'center',
       },
       {
         text: `
@@ -151,98 +195,127 @@ export class UsersAchievementsComponent implements OnInit {
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           `,
+        style: 'sectionBody',
         alignment: 'center',
       },
     ];
 
     const optionals = [];
-    const sectionSpacer = { text: '', margin: [ 0, 10 ] };
 
     if (this.achievements.purpose) {
       optionals.push(
-        { text: $localize`My Purpose`, style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.purpose, alignment: 'left', margin: [ 20, 5 ] },
-        sectionSpacer
+        createSection($localize`My Purpose`, [
+          { text: this.achievements.purpose, style: 'sectionBody' },
+        ]),
       );
     }
 
     if (this.achievements.goals) {
       optionals.push(
-        { text: $localize`My Goals`, style: 'subHeader', alignment: 'center' },
-        { text: this.achievements.goals, alignment: 'left', margin: [ 20, 5 ] },
-        sectionSpacer
+        createSection($localize`My Goals`, [
+          { text: this.achievements.goals, style: 'sectionBody' },
+        ]),
       );
     }
 
     if (this.certifications && this.certifications.length > 0) {
       optionals.push(
-        { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
-          return [
-            { text: certification.name, bold: true, margin: [ 20, 5 ] },
-          ];
-        }),
-        sectionSpacer
+        createSection($localize`My Certifications`, [
+          createTable(
+            this.certifications.map((certification) => [
+              { text: certification.name, bold: true, margin: titleMargin },
+            ]),
+            [ '*' ]
+          ),
+        ]),
       );
     }
 
     if (this.achievements.achievements && this.achievements.achievements.length > 0) {
       optionals.push(
-        { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.achievements.map((achievement) => {
-          const formattedDate = achievement.date ? formatStringDate(achievement.date) : '';
-          return [
-            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.date ? formattedDate : '', marginLeft: 40 },
-            { text: achievement.link, marginLeft: 40 },
-            { text: achievement.description, marginLeft: 40 },
-          ];
-        }),
-        sectionSpacer
+        createSection($localize`My Achievements`, [
+          createTable(
+            this.achievements.achievements.map((achievement) => {
+              const formattedDate = achievement.date ? formatStringDate(achievement.date) : '';
+              const detailStack = createDetailStack([
+                achievement.date ? { text: formattedDate, style: 'sectionDetail' } : null,
+                achievement.link ? { text: achievement.link, style: 'sectionDetail' } : null,
+                achievement.description ? { text: achievement.description, style: 'sectionDetail' } : null,
+              ]);
+
+              return [
+                { text: achievement.title, bold: true, margin: titleMargin },
+                detailStack,
+              ];
+            }),
+            [ 'auto', '*' ]
+          ),
+        ]),
       );
     }
 
     if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
-        { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.links.map((achievement) => {
-          return [
-            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.url, marginLeft: 40 },
-          ];
-        }),
-        sectionSpacer
+        createSection($localize`My Links`, [
+          createTable(
+            this.achievements.links.map((achievement) => [
+              { text: achievement.title, bold: true, margin: titleMargin },
+              createDetailStack([
+                achievement.url ? { text: achievement.url, style: 'sectionDetail' } : null,
+              ]),
+            ]),
+            [ 'auto', '*' ]
+          ),
+        ]),
       );
     }
 
     if (this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
-        { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.references.map((achievement) => {
-          return [
-            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.relationship, marginLeft: 40 },
-            { text: achievement.phone, marginLeft: 40 },
-            { text: achievement.email, marginLeft: 40 },
-          ];
-        }),
-        sectionSpacer
+        createSection($localize`My References`, [
+          createTable(
+            this.achievements.references.map((achievement) => [
+              { text: achievement.name, bold: true, margin: titleMargin },
+              createDetailStack([
+                achievement.relationship ? { text: achievement.relationship, style: 'sectionDetail' } : null,
+                achievement.phone ? { text: achievement.phone, style: 'sectionDetail' } : null,
+                achievement.email ? { text: achievement.email, style: 'sectionDetail' } : null,
+              ]),
+            ]),
+            [ 'auto', '*' ]
+          ),
+        ]),
       );
     }
 
     contentArray = contentArray.concat(optionals);
 
     const documentDefinition = {
+      pageMargins: [ 40, 48, 40, 48 ],
       content: contentArray,
       styles: {
         header: {
           fontSize: 18,
           bold: true,
+          alignment: 'center',
+          margin: [ 0, 0, 0, 16 ],
         },
-        subHeader: {
+        sectionHeader: {
           fontSize: 16,
-          bold: true
-        }
+          bold: true,
+          alignment: 'center',
+          margin: [ 0, 0, 0, 12 ],
+        },
+        sectionBody: {
+          fontSize: 11,
+          margin: bodyMargin,
+        },
+        sectionDetail: {
+          fontSize: 10,
+        },
+      },
+      defaultStyle: {
+        lineHeight: 1.3,
       },
     };
 
