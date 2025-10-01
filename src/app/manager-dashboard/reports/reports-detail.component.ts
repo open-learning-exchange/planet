@@ -5,7 +5,8 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
-import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
+import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
+import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { styleVariables, formatDate } from '../../shared/utils';
@@ -27,7 +28,7 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
-Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip);
+type ChartModule = typeof import('chart.js');
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -42,7 +43,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   planetCode = '';
   planetName = '';
   reports: any = {};
-  charts: Chart[] = [];
+  charts: ChartJs[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
@@ -88,6 +89,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   week2Label = 'Week 2';
   comparisonData1: any = {};
   comparisonData2: any = {};
+  private chartModule: ChartModule | null = null;
 
   constructor(
     private activityService: ReportsService,
@@ -155,6 +157,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.charts.forEach((chart) => chart.destroy());
+    this.charts = [];
   }
 
   @HostListener('window:resize')
@@ -459,22 +463,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  setChart({ data, labels, chartName }) {
-    const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
+  async setChart({ data, labels, chartName }) {
+    const { Chart } = await loadChart([
+      'BarController', 'DoughnutController', 'CategoryScale', 'LinearScale', 'BarElement', 'Title', 'Legend', 'Tooltip'
+    ]);
+    const updateChart = this.charts.find(newChart => newChart.canvas.id === chartName);
     if (updateChart) {
       updateChart.data = { ...data, labels };
-      updateChart.update();
+      updateChart.update('none');
       return;
     }
     const chartConfig: ChartConfiguration<'bar'> = {
       type: 'bar',
-      data,
+      data: { ...data, labels },
       options: {
         plugins: {
           title: { display: true, text: titleOfChartName(chartName), font: { size: 16 } },
           legend: { position: 'bottom' }
         },
         maintainAspectRatio: false,
+        animation: false,
         scales: {
           x: { type: 'category' },
           y: {
