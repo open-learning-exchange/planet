@@ -64,6 +64,7 @@ export class TeamsReportsComponent implements DoCheck {
       this.dialogsFormService.openDialogsForm(
         dialogTitle,
         [
+          { name: 'name', placeholder: $localize`:@@financial-report-name:Report Name`, type: 'textbox', required: true },
           { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
           { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
@@ -87,12 +88,15 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   openDeleteReportDialog(report) {
+    const start = new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' });
+    const end = new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' });
+    const rangeLabel = `${$localize`Report from`} ${start} ${$localize`to`} ${end}`;
+    const displayName = report.name ? `${report.name} (${rangeLabel})` : rangeLabel;
     const deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
-          ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
+        displayName,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
@@ -112,6 +116,7 @@ export class TeamsReportsComponent implements DoCheck {
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
     const initialValues = {
+      name: '',
       description: '',
       beginningBalance: 0,
       sales: 0,
@@ -167,6 +172,7 @@ export class TeamsReportsComponent implements DoCheck {
 
   exportReports() {
     const exportData = this.reports.map(report => ({
+      'Name': report.name || '',
       'Start Date': report.startDate,
       'End Date': report.endDate,
       'Created Date': report.createdDate,

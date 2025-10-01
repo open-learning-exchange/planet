@@ -11,8 +11,15 @@
   <mat-grid-tile *ngFor="let report of reports" (click)="openReportDialog(report)">
     <mat-card>
       <mat-card-header>
-        <mat-card-title i18n>Financial Report</mat-card-title>
-        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</mat-card-subtitle>
+        <ng-template #dateRange>
+          {{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}
+        </ng-template>
+        <mat-card-title>
+          <ng-container *ngIf="report.name; else dateRange">{{ report.name }}</ng-container>
+        </mat-card-title>
+        <mat-card-subtitle *ngIf="report.name">
+          <ng-container *ngTemplateOutlet="dateRange"></ng-container>
+        </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
