@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -8,7 +9,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { dedupeObjectArray } from '../shared/utils';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +19,6 @@ export class NewsService {
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
-  private currentBookmark: string | undefined;
-  private hasMoreResults = true;
-  private isLoading = false;
-  private pageSize = 50;
-  private accumulatedNews: any[] = [];
-  private avatarCache: Record<string, any> = {};
 
   constructor(
     private couchService: CouchService,
@@ -35,22 +29,25 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    this.resetPagination();
-    this.fetchNewsPage(true);
+    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
+      switchMap((newsItems: any[]) =>
+        this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
+          map((attachments: any[]) => ({
+            newsItems,
+            avatarMap: new Map<string, any>(attachments.map((attachment: any) => [ attachment._id, attachment ]))
+          }))
+        )
+      )
+    ).subscribe(({ newsItems, avatarMap }) => {
+      this.newsUpdated$.next(newsItems.map((item: any) => (
+        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
+      )));
+    });
   }
 
-  loadMoreNews() {
-    if (!this.canLoadMore()) { return; }
-    this.fetchNewsPage(false);
-  }
-
-  canLoadMore(): boolean {
-    return this.hasMoreResults && !this.isLoading;
-  }
-
-  findAvatar(user: any, attachments: Record<string, any>) {
+  findAvatar(user: any, attachments: Map<string, any>) {
     const attachmentId = `${user._id}@${user.planetCode}`;
-    const attachment = attachments ? attachments[attachmentId] : undefined;
+    const attachment = attachments.get(attachmentId);
     const extractFilename = (object) => Object.keys(object._attachments)[0];
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
@@ -72,75 +69,6 @@ export class NewsService {
       }
     });
     return Array.from(ids);
-  }
-
-  private resetPagination() {
-    this.currentBookmark = undefined;
-    this.hasMoreResults = true;
-    this.isLoading = false;
-    this.accumulatedNews = [];
-    this.avatarCache = {};
-  }
-
-  private fetchNewsPage(reset: boolean) {
-    const { selectors } = this.currentOptions;
-    const baseQuery = findDocuments(selectors, 0, [ { 'time': 'desc' } ], this.pageSize);
-    const query: any = { ...baseQuery };
-    if (!reset && this.currentBookmark) {
-      query.bookmark = this.currentBookmark;
-    }
-    this.isLoading = true;
-    this.couchService.post(`${this.dbName}/_find`, query).subscribe({
-      next: (response: any) => {
-        const docs = response?.docs ?? [];
-        const bookmark = response?.bookmark;
-        this.isLoading = false;
-        this.currentBookmark = bookmark;
-        if (reset) {
-          this.accumulatedNews = [];
-        }
-        if (docs.length === 0) {
-          this.hasMoreResults = false;
-          this.emitNews();
-          return;
-        }
-        this.hasMoreResults = docs.length === this.pageSize && !!bookmark;
-        this.accumulatedNews = [ ...this.accumulatedNews, ...docs ];
-        this.emitNews();
-        this.loadMissingAttachments(docs);
-      },
-      error: () => {
-        this.isLoading = false;
-        this.hasMoreResults = false;
-      }
-    });
-  }
-
-  private loadMissingAttachments(newsItems: any[]) {
-    const missingIds = this.collectAttachmentIds(newsItems).filter(id => !(id in this.avatarCache));
-    if (missingIds.length === 0) {
-      return;
-    }
-    this.couchService.findAttachmentsByIds(missingIds).subscribe((attachments: any[]) => {
-      if (!attachments || attachments.length === 0) { return; }
-      attachments.forEach((attachment: any) => {
-        if (attachment && attachment._id) {
-          this.avatarCache[attachment._id] = attachment;
-        }
-      });
-      this.emitNews();
-    });
-  }
-
-  private emitNews() {
-    const viewId = this.currentOptions.viewId;
-    const formatted = this.accumulatedNews.map((item: any) => ({
-      doc: item,
-      sharedDate: this.findShareDate(item, viewId),
-      avatar: this.findAvatar(item.user, this.avatarCache),
-      _id: item._id
-    }));
-    this.newsUpdated$.next([ ...formatted ]);
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
