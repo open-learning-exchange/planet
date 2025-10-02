@@ -1,4 +1,5 @@
 import { millisecondsToDay } from '../../meetups/constants';
+import { CsvService } from '../../shared/csv.service';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
@@ -190,4 +191,14 @@ export const thursdayWeekRangeFromEnd = (endDate: Date) => {
   const start = new Date(end);
   start.setDate(start.getDate() - 6);
   return { startDate: startOfDay(start), endDate: end };
+};
+
+export const exportMyPlanetCsv = (csvService: CsvService) => (
+  children: any[],
+  planetName: string | undefined,
+  mapFn: (children: any[], planetName?: string) => any[],
+  title: string
+): void => {
+  const csvData = planetName ? mapFn(children, planetName) : children.flatMap((planet: any) => mapFn(planet.children, planet.name));
+  csvService.exportCSV({ data: csvData, title });
 };

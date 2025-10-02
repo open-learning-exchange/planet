@@ -18,7 +18,6 @@ import { PlanetRoleComponent } from './planet-role.component';
 import { PlanetMarkdownComponent } from './planet-markdown.component';
 import { CommunityListComponent } from '../community/community-list.component';
 import { LabelComponent } from './label.component';
-import { MyPlanetTableComponent } from '../manager-dashboard/reports/myplanet/myplanet-table.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
 import { LanguageLabelComponent } from './language-label.component';
@@ -48,7 +47,7 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    MyPlanetTableComponent,
+    TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
     ChatOutputDirective,
@@ -73,13 +72,15 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
-    MyPlanetTableComponent,
     TimePipe,
     AvatarComponent,
     RestrictDiacriticsDirective,
     ChatOutputDirective,
     TruncateTextPipe,
     TimeAgoPipe
+  ],
+  providers: [
+    TimePipe
   ]
 })
 export class SharedComponentsModule {}
