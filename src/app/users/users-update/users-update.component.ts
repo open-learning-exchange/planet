@@ -35,6 +35,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   urlName = '';
   redirectUrl = '/';
   file: any;
+  title = '';
   roles: string[] = [];
   languages = languages;
   submissionMode = false;
@@ -61,6 +62,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private dialog: MatDialog
   ) {
     this.userData();
+    const nav = this.router.getCurrentNavigation();
+    this.title = nav?.extras?.state?.['title'] || '';
   }
 
   ngOnInit() {
