@@ -29,7 +29,18 @@ $accent-map: (
 
 @each $section in library, courses, meetups, teams {
   $accent-palette: map-get($accent-map, #{$section});
-  $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  $section-color-config: map-merge(
+    map-get($planet-app-theme-config, color),
+    (
+      accent: $accent-palette,
+    )
+  );
+  $section-theme-config: (
+    color: $section-color-config,
+    typography: null,
+    density: null,
+  );
+  $theme: mat.define-light-theme($section-theme-config);
   .planet-#{$section}-theme {
     @include mat.all-legacy-component-themes($theme);
 
