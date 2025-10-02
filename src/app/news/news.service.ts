@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -29,19 +29,25 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])),
-      this.couchService.findAll('attachments')
-    ]).subscribe(([ newsItems, avatars ]) => {
+    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
+      switchMap((newsItems: any[]) =>
+        this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
+          map((attachments: any[]) => ({
+            newsItems,
+            avatarMap: new Map<string, any>(attachments.map((attachment: any) => [ attachment._id, attachment ]))
+          }))
+        )
+      )
+    ).subscribe(({ newsItems, avatarMap }) => {
       this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatars), _id: item._id }
+        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
       )));
     });
   }
 
-  findAvatar(user: any, attachments: any[]) {
+  findAvatar(user: any, attachments: Map<string, any>) {
     const attachmentId = `${user._id}@${user.planetCode}`;
-    const attachment = attachments.find(avatar => avatar._id === attachmentId);
+    const attachment = attachments.get(attachmentId);
     const extractFilename = (object) => Object.keys(object._attachments)[0];
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
@@ -52,6 +58,17 @@ export class NewsService {
 
   findShareDate(item, viewId) {
     return ((item.viewIn || []).find(view => view._id === viewId) || {}).sharedDate;
+  }
+
+  private collectAttachmentIds(newsItems: any[]): string[] {
+    const ids = new Set<string>();
+    newsItems.forEach((item: any) => {
+      const user = item?.user;
+      if (user && user._id && user.planetCode) {
+        ids.add(`${user._id}@${user.planetCode}`);
+      }
+    });
+    return Array.from(ids);
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
