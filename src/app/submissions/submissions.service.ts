@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import type { Chart as ChartType, ChartConfiguration } from 'chart.js';
+import type { ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,23 +17,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
-
-type ChartJsModule = typeof import('chart.js');
-
-let chartJsPromise: Promise<ChartJsModule> | null = null;
-
-async function loadChart(): Promise<ChartJsModule> {
-  if (!chartJsPromise) {
-    chartJsPromise = import('chart.js').then((module) => {
-      const { Chart, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } = module;
-      Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
-
-      return module;
-    });
-  }
-
-  return chartJsPromise;
-}
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -571,24 +555,18 @@ export class SubmissionsService {
   }
 
   async generateChartImage(data: any): Promise<string> {
-    const { Chart } = await loadChart();
-    const canvas = document.createElement('canvas');
-    canvas.width = 300;
-    canvas.height = 400;
+    const { Chart } = await loadChart([
+      'BarController', 'DoughnutController', 'BarElement', 'ArcElement', 'LinearScale', 'CategoryScale', 'Legend', 'Tooltip', 'Title'
+    ]);
+    const { canvas, ctx } = createChartCanvas(300, 400);
     const isBar = data.chartType === 'bar';
     const isRatingScale = data.isRatingScale || false;
-    const ctx = canvas.getContext('2d');
 
     if (!ctx) { return ''; }
     const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
 
     if (!hasData) {
-      ctx.fillStyle = '#666666';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = '16px sans-serif';
-      ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
-      return canvas.toDataURL('image/png');
+      renderNoDataPlaceholder(ctx, canvas, 'No data available');
     }
 
     const maxCount = Math.max(...data.data);
@@ -599,9 +577,7 @@ export class SubmissionsService {
         datasets: [ {
           data: data.data,
           label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
-          backgroundColor: [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-          ],
+          backgroundColor: CHART_COLORS
         } ]
       },
       options: {
