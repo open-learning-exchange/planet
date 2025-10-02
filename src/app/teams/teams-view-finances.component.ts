@@ -12,6 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
+import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -37,6 +38,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
   planetName: any;
+
   constructor(
     private csvService: CsvService,
     private couchService: CouchService,
@@ -86,7 +88,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     }
     this.emptyTable = false;
     const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    return [ { date: 'Total', credit, debit, balance, filter: this.filterString() }, ...financeData ];
+    return [ { date: $localize`Total`, credit, debit, balance, filter: this.filterString() }, ...financeData ];
   }
 
   private filterString() {
@@ -195,14 +197,14 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     updatedData.shift();
 
     updatedData = updatedData.map(row => ({
-      date: row.date,
-      description: row.description,
-      credit: row.credit,
-      debit: row.debit,
-      balance: row.balance
+      [$localize`date`]: fullLabel(row.date),
+      [$localize`description`]: row.description,
+      [$localize`credit`]: row.credit,
+      [$localize`debit`]: row.debit,
+      [$localize`balance`]: row.balance
     }));
-    const planetName = this.stateService.configuration.name || 'Unnamed';
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const planetName = this.stateService.configuration.name || $localize`Unnamed`;
+    const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
     this.csvService.exportCSV({
       data: updatedData,

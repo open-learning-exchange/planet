@@ -22,7 +22,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
   private onDestroy$ = new Subject<void>();
-  notificationStatus = [ 'All', 'Read', 'Unread' ];
+  notificationStatus = [
+    { value: 'all', label: $localize`All` },
+    { value: 'read', label: $localize`Read` },
+    { value: 'unread', label: $localize`Unread` }
+  ];
   filter = { 'status': '' };
   anyUnread = true;
 
