@@ -24,15 +24,7 @@ import { debounce } from 'rxjs/operators';
 @Component({
   selector: 'planet-meetups-add',
   templateUrl: './meetups-add.component.html',
-  styles: [ `
-    form.form-spacing {
-      width: inherit;
-    }
-    .view-container form {
-      min-width: 385px;
-      max-width: 750px;
-    }
-  ` ]
+  styleUrls: ['./meetups-add.scss']
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
