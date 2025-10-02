@@ -26,6 +26,7 @@ import { MyPlanetTableComponent } from './reports/myplanet/myplanet-table.compon
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activities.component';
 import { ReportsHealthComponent } from './reports/reports-health.component';
+import { ManagerCurrencyComponent } from './manager-currency.component';
 
 @NgModule({
   imports: [
@@ -59,7 +60,8 @@ import { ReportsHealthComponent } from './reports/reports-health.component';
     MyPlanetToolbarComponent,
     MyPlanetTableComponent,
     ReportsDetailActivitiesComponent,
-    ReportsHealthComponent
+    ReportsHealthComponent,
+    ManagerCurrencyComponent
   ]
 })
 export class ManagerDashboardModule {}
