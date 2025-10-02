@@ -16610,6 +16610,56 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final">validateDates(): el control de la fecha de inicio no se encuentra en el grupo padre</target>
       </trans-unit>
+          <!-- Currency Configuration Page -->
+          <trans-unit id="currency.configuration.title" datatype="html">
+            <source>Currency Configuration</source>
+            <target state="final">Configuración de Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.card.title" datatype="html">
+            <source>Currency</source>
+            <target state="final">Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.code.label" datatype="html">
+            <source>Code</source>
+            <target state="final">Código</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.symbol.label" datatype="html">
+            <source>Symbol</source>
+            <target state="final">Símbolo</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.hint" datatype="html">
+            <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
+            <target state="final">Introduce el código ISO (por ejemplo, USD, EUR) y el símbolo utilizado en los informes financieros.</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.save" datatype="html">
+            <source>Save Currency</source>
+            <target state="final">Actualizar Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-currency.component.html</context>
+            </context-group>
+          </trans-unit>
+          <trans-unit id="currency.nav.link" datatype="html">
+            <source>Currency</source>
+            <target state="final">Moneda</target>
+            <context-group purpose="location">
+              <context context-type="sourcefile">src/app/manager-dashboard/manager-dashboard.component.html</context>
+            </context-group>
+          </trans-unit>
     </body>
   </file>
 </xliff>
