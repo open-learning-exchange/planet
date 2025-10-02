@@ -66,11 +66,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   filterMyPlanetData(data: any[]) {
     return data
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
-      .filter(item => filterByDate(
-        [item],
-        item.last_synced ? 'last_synced' : 'time',
-        { startDate: this.startDate, endDate: this.endDate }).length > 0
-      )
+      .filter(item => {
+        const itemDate = item.time || item.last_synced;
+        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
+      });
   }
 
   getUniqueVersions(myPlanets: any[]) {
