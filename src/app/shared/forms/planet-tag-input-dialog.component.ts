@@ -22,8 +22,8 @@ export class PlanetTagInputDialogComponent {
 
   deleteDialog: any;
   tags: any[] = [];
-  selected: Map<string, boolean> = new Map(this.data.tags.map(value => [ value, false ] as [ string, boolean ]));
-  indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
+  selected: Map<string, boolean> = new Map();
+  indeterminate: Map<string, boolean> = new Map();
   filterValue = '';
   mode = 'filter';
   _selectMany = true;
@@ -83,6 +83,17 @@ export class PlanetTagInputDialogComponent {
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
+    this.initializeSelectionMaps();
+    if (Array.isArray(this.data.startingTags)) {
+      this.data.startingTags
+        .filter((tag: any) => tag)
+        .forEach((tag: any) => {
+          const tagId = tag.tagId || tag;
+          const isIndeterminate = !!tag.indeterminate;
+          this.selected.set(tagId, true);
+          this.indeterminate.set(tagId, isIndeterminate);
+        });
+    }
     if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
       const { parentId, id } = this.newTagInfo;
       const parentTag = parentId.length > 0 ? this.data.tags.find(tag => tag._id === parentId) : undefined;
@@ -91,9 +102,29 @@ export class PlanetTagInputDialogComponent {
     this.newTagInfo = undefined;
   }
 
+  private initializeSelectionMaps() {
+    const selected = new Map<string, boolean>();
+    const indeterminate = new Map<string, boolean>();
+    if (Array.isArray(this.data.tags)) {
+      this.data.tags.forEach((tag: any) => {
+        const tagId = tag._id || tag.name;
+        selected.set(tagId, false);
+        indeterminate.set(tagId, false);
+        (tag.subTags || []).forEach((subTag: any) => {
+          const subTagId = subTag._id || subTag.name;
+          selected.set(subTagId, false);
+          indeterminate.set(subTagId, false);
+        });
+      });
+    }
+    this.selected = selected;
+    this.indeterminate = indeterminate;
+  }
+
   resetSelection() {
     this.data.tagUpdate('', false, true);
     this.selected.clear();
+    this.indeterminate.clear();
     this.data.reset(this._selectMany);
   }
 

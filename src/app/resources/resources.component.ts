@@ -8,7 +8,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest, Subscription } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -68,6 +68,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
   tagFilterValue = [];
+  activeTagFilters: { id: string, name: string }[] = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
@@ -105,6 +106,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
+  private tagInputStateSub?: Subscription;
 
   constructor(
     private couchService: CouchService,
@@ -157,7 +159,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
-      this.tagFilterValue = tags;
+      this.tagFilterValue = tags || [];
+      this.updateActiveTagFilters();
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
@@ -190,7 +193,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.sort = this.sort;
     this.resources.paginator = this.paginator;
     if (this.tagInputComponent) {
+      this.tagInputStateSub = this.tagInputComponent.stateChanges.subscribe(() => this.updateActiveTagFilters());
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+      this.updateActiveTagFilters();
     }
   }
 
@@ -198,6 +203,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.recordSearch(true);
+    this.tagInputStateSub?.unsubscribe();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -325,11 +331,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resetFilter() {
     this.tagFilter.setValue([]);
     this.tagFilterValue = [];
+    this.updateActiveTagFilters();
     Object.keys(this.searchSelection).forEach(key => this.searchSelection[key] = []);
     if (this.searchComponent) {
       this.searchComponent.reset();
     }
     this.titleSearch = '';
+  }
+
+  removeTagFilter(tagId: string) {
+    const currentValue = Array.isArray(this.tagFilter.value) ? this.tagFilter.value : [];
+    const updated = currentValue.filter((tag: string) => tag !== tagId);
+    if (updated.length !== currentValue.length) {
+      this.tagFilter.setValue(updated);
+    }
   }
 
   recordSearch(complete = false) {
@@ -349,6 +364,29 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       Object.entries(this.searchSelection).findIndex(([ field, val ]: any[]) => val.length > 0) > -1 ||
       this.myView !== undefined ?
       ' ' : '';
+  }
+
+  private updateActiveTagFilters() {
+    const selectedTags = Array.isArray(this.tagFilterValue) ? this.tagFilterValue : [];
+    if (!selectedTags.length) {
+      this.activeTagFilters = [];
+      return;
+    }
+    const tagNames = new Map<string, string>();
+    if (this.tagInputComponent && Array.isArray(this.tagInputComponent.tags)) {
+      this.tagInputComponent.tags.forEach((tag: any) => {
+        const tagId = tag._id || tag.name;
+        tagNames.set(tagId, tag.name);
+        (tag.subTags || []).forEach((subTag: any) => {
+          const subTagId = subTag._id || subTag.name;
+          const displayName = tag.name && subTag.name ? `${tag.name} › ${subTag.name}` : subTag.name;
+          tagNames.set(subTagId, displayName || subTagId);
+        });
+      });
+    }
+    this.activeTagFilters = selectedTags
+      .filter((id: string) => !!id)
+      .map((id: string) => ({ id, name: tagNames.get(id) || id }));
   }
 
   addTag(tag: string) {

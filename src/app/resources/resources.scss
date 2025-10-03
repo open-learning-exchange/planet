@@ -39,6 +39,17 @@ $label-height: 1rem;
     min-width: auto;
   }
 
+  .active-filter-chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 8px;
+
+    .mat-chip {
+      margin: 2px 4px;
+    }
+  }
+
   .column {
     display: flex;
     flex-direction: column;
