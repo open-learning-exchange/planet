@@ -66,47 +66,55 @@ $label-height: 1rem;
   white-space: nowrap;
   display: inline-block;
 }
-
 planet-courses {
-  @media(max-width: $screen-md) {
+  @media (max-width: $screen-md) {
     .mat-column-info {
-      max-width: 120px;
+      max-width: 140px;
     }
 
     .mat-column-createdDate {
-      max-width: 70px;
+      max-width: 80px;
     }
   }
 
-  @media(max-width: $screen-sm) {
+  @media (max-width: $screen-sm) {
     .created-label {
       display: inline-block;
+      font-weight: 600;
+      margin-right: 4px;
     }
 
-    .mat-column-info {
-      max-width: fit-content;
-    }
-
+    .mat-column-info,
     .mat-column-createdDate {
-      max-width: fit-content;
+      max-width: 100%; 
+      flex: 1 1 auto;  
     }
 
     .mat-header-row {
-      display: none;
+      display: flex;
     }
 
     .mat-row {
       flex-direction: column;
-      align-items: start;
-      padding: 8px 24px;
+      align-items: flex-start;
+      padding: 8px 16px;
+      border-bottom: 1px solid #e0e0e0; 
+    }
+
+    .mat-cell {
+      width: 100%; 
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
     }
 
     .table-selection-top {
-      display: none;
+      display: flex;
     }
 
     .rating-cell {
       align-self: flex-end;
+      margin-top: 4px;
     }
   }
 }
