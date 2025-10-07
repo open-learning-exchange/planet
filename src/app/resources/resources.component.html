@@ -11,7 +11,12 @@
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
       <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+      <button
+        mat-icon-button
+        (click)="this.showFiltersRow = !this.showFiltersRow"
+      >
+        <mat-icon>filter_list</mat-icon>
+      </button>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="showFiltersRow">
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
@@ -19,44 +24,109 @@
   </ng-template>
 
   <mat-toolbar-row class="search-bar" *ngIf="showFilters">
-    <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
+    <planet-resources-search
+      [filteredData]="resources.filteredData"
+      [startingSelection]="searchSelection"
+      (searchChange)="onSearchChange($event)"
+    ></planet-resources-search>
   </mat-toolbar-row>
 </mat-toolbar>
 
 <ng-template #collectionRow>
-  <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
-  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
-    <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
+  <button mat-icon-button (click)="goBack()" *ngIf="!isDialog">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span i18n
+    >{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other
+    {Library}}</span
+  >
+  <mat-form-field
+    class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr"
+    *ngIf="myView !== 'myPersonals'"
+  >
+    <planet-tag-input
+      [formControl]="tagFilter"
+      [db]="dbName"
+      [parent]="parent"
+      [filteredData]="resources.filteredData"
+      [helperText]="false"
+      [largeFont]="true"
+      mode="filter"
+      [selectMany]="false"
+    ></planet-tag-input>
   </mat-form-field>
 </ng-template>
 
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
+  <button
+    mat-stroked-button
+    i18n
+    (click)="this.showFilters = !this.showFilters"
+    *ngIf="myView !== 'myPersonals'"
+  >
+    Filter
+  </button>
   <mat-form-field class="font-size-1 margin-lr-4">
-    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+    <input
+      matInput
+      i18n-placeholder
+      placeholder="Title"
+      [(ngModel)]="titleSearch"
+    />
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="resetFilter()"
+    [disabled]="
+      resources.filter.trim() === '' &&
+      tagFilter.value.length === 0 &&
+      searchSelection._empty
+    "
+  >
+    <span i18n>Clear</span>
+  </button>
 </ng-template>
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <ng-container *ngIf="isAuthorized">
-      <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+      <button
+        *ngIf="!parent && myView !== 'myPersonals'"
+        mat-mini-fab
+        routerLink="add"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
       <div class="column margin-lr-5">
         <planet-filtered-amount [table]="resources"></planet-filtered-amount>
-        <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
+        <planet-tag-selected-input
+          *ngIf="myView !== 'myPersonals'"
+          [selectedIds]="tagFilter.value"
+          [allTags]="tagInputComponent?.tags"
+        ></planet-tag-selected-input>
       </div>
       <span class="toolbar-fill"></span>
       <ng-container *ngIf="myView !== 'myPersonals'">
         <span *ngIf="parent">
-          <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
-            <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
+          <button
+            mat-button
+            [disabled]="!selection.selected.length"
+            (click)="shareResource('pull', selection.selected)"
+          >
+            <mat-icon aria-hidden="true" class="margin-lr-3"
+              >cloud_download</mat-icon
+            ><span i18n>Get resource</span>
           </button>
         </span>
         <span *ngIf="!parent && isTablet">
-          <button *ngIf="!isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+          <button
+            *ngIf="!isDialog"
+            class="menu"
+            mat-icon-button
+            [matMenuTriggerFor]="actionsMenu"
+          >
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
@@ -72,104 +142,266 @@
 
   <ng-template #actionButtons>
     <ng-container *planetAuthorizedRoles="'manager'">
-      <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
-        <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
+      <mat-form-field
+        class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search"
+      >
+        <planet-tag-input
+          [db]="dbName"
+          [disabled]="selection?.selected?.length === 0"
+          mode="add"
+          labelType="change"
+          [helperText]="false"
+          [filteredData]="resources.data"
+          [selectedIds]="selection.selected"
+          (finalTags)="addTagsToSelected($event)"
+        ></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedNotAdded === 0" (click)="libraryToggle(selection.selected, 'add')">
-      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Add to myLibrary</span>
-      <span *ngIf="selectedNotAdded > 0"> ({{selectedNotAdded}})</span>
+    <button
+      mat-button
+      [ngClass]="{ 'mat-menu-item': isTablet }"
+      [disabled]="selectedNotAdded === 0"
+      (click)="libraryToggle(selection.selected, 'add')"
+    >
+      <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon
+      ><span i18n>Add to myLibrary</span>
+      <span *ngIf="selectedNotAdded > 0"> ({{ selectedNotAdded }})</span>
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [disabled]="selectedAdded === 0" (click)="libraryToggle(selection.selected, 'remove')">
-      <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Remove from myLibrary</span>
-      <span *ngIf="selectedAdded > 0"> ({{selectedAdded}})</span>
+    <button
+      mat-button
+      [ngClass]="{ 'mat-menu-item': isTablet }"
+      [disabled]="selectedAdded === 0"
+      (click)="libraryToggle(selection.selected, 'remove')"
+    >
+      <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon
+      ><span i18n>Remove from myLibrary</span>
+      <span *ngIf="selectedAdded > 0"> ({{ selectedAdded }})</span>
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': isTablet }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+    <button
+      mat-button
+      [ngClass]="{ 'mat-menu-item': isTablet }"
+      [matMenuTriggerFor]="managerMenu"
+      *planetAuthorizedRoles="''"
+      [disabled]="!selection.selected.length"
+      i18n
+    >
+      Manager Actions
+    </button>
     <mat-menu #managerMenu="matMenu">
-      <button *ngIf="planetConfiguration.registrationRequest === 'accepted'" mat-menu-item [disabled]="!selectedSync?.length" (click)="shareResource('push', selectedSync)">
+      <button
+        *ngIf="planetConfiguration.registrationRequest === 'accepted'"
+        mat-menu-item
+        [disabled]="!selectedSync?.length"
+        (click)="shareResource('push', selectedSync)"
+      >
         <mat-icon aria-hidden="true" class="margin-lr-3">cloud_upload</mat-icon>
         <span i18n>Send Resources</span>
-        <span *ngIf="selectedSync?.length"> ({{selectedSync.length}})</span>
+        <span *ngIf="selectedSync?.length"> ({{ selectedSync.length }})</span>
       </button>
-      <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendResourceDialog()" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
-        <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
-        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+      <button
+        *ngIf="planetType !== 'community'"
+        mat-menu-item
+        (click)="openSendResourceDialog()"
+        [disabled]="!selection.selected.length"
+      >
+        <mat-icon aria-hidden="true" class="margin-lr-3"
+          >compare_arrows</mat-icon
+        >
+        <span i18n
+          >Push To {planetType, select, center {Nation} other {Community}}</span
+        >
+        <span *ngIf="selection?.selected?.length">
+          ({{ selection?.selected?.length }})</span
+        >
       </button>
-      <button mat-menu-item (click)="deleteSelected()" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon><span i18n>Delete</span>
-        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
+      <button
+        mat-menu-item
+        (click)="deleteSelected()"
+        [disabled]="!selection.selected.length"
+      >
+        <mat-icon aria-hidden="true" class="margin-lr-3"
+          >delete_forever</mat-icon
+        ><span i18n>Delete</span>
+        <span *ngIf="selection?.selected?.length">
+          ({{ selection?.selected?.length }})</span
+        >
       </button>
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
-    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
+  <div
+    class="view-container view-full-height view-table"
+    [ngClass]="{ 'view-with-search': showFilters }"
+  >
+    <mat-table
+      #table
+      [dataSource]="resources"
+      [matSortActive]="initialSort"
+      matSortDirection="desc"
+      matSort
+      [matSortDisableClear]="true"
+      [trackBy]="trackById"
+      multiTemplateDataRows
+    >
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
+          <mat-checkbox
+            (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          >
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row" class="table-selection-top">
-          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
-            [checked]="selection.isSelected(row._id)">
+          <mat-checkbox
+            (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)"
+          >
           </mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="title">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n
+          >Title</mat-header-cell
+        >
+        <mat-cell
+          *matCellDef="let element"
+          class="list-content-menu"
+          [ngClass]="{
+            'list-content-menu-auto': element.doc.title.length > 50
+          }"
+        >
           <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
-              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
-                [checked]="selection.isSelected(element._id)">
+            <ng-container
+              *ngIf="
+                (deviceType === deviceTypes.MOBILE ||
+                  deviceType === deviceTypes.SMALL_MOBILE) &&
+                displayedColumns.indexOf('select') === -1
+              "
+            >
+              <mat-checkbox
+                (change)="$event ? selection.toggle(element._id) : null"
+                [checked]="selection.isSelected(element._id)"
+              >
               </mat-checkbox>
               <span class="margin-lr-5"></span>
             </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
-              <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
-                {{ element.doc.title | truncateText:180 }}
+              <a
+                [routerLink]="
+                  isDialog
+                    ? ['resources/view', element._id]
+                    : ['view', element._id]
+                "
+                [target]="isDialog ? '_blank' : null"
+              >
+                {{ element.doc.title | truncateText : 180 }}
               </a>
-              <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
-                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
-                <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
+              <ng-container
+                *ngIf="!parent && !isDialog && myView !== 'myPersonals'"
+              >
+                <mat-icon
+                  class="margin-lr-3 cursor-pointer"
+                  i18n-matTooltip
+                  matTooltip="In myLibrary"
+                  [inline]="true"
+                  *ngIf="element.libraryInfo"
+                  (click)="libraryToggle([element._id], 'remove')"
+                  >bookmark</mat-icon
+                >
+                <mat-icon
+                  class="margin-lr-3 cursor-pointer"
+                  i18n-matTooltip
+                  matTooltip="Not in myLibrary"
+                  [inline]="true"
+                  *ngIf="!element.libraryInfo"
+                  (click)="libraryToggle([element._id], 'add')"
+                  >bookmark_border</mat-icon
+                >
               </ng-container>
             </ng-template>
           </h3>
           <mat-chip-list #tagsList class="tags-list">
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
+              <mat-chip
+                *ngIf="tag.isMainTag"
+                (click)="addTag(tag._id)"
+                color="primary"
+                selected
+              >
+                {{ tag.name }}
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
+              <mat-chip
+                *ngFor="let subTag of tag.subTags"
+                (click)="addTag(subTag._id)"
+              >
+                {{ subTag.name }}
               </mat-chip>
             </ng-container>
           </mat-chip-list>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
-            <div *ngIf="showPreviewExpand(element.doc)"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <planet-markdown
+              *ngIf="!isExpanded(element)"
+              [content]="element.doc.description"
+              [imageSource]="parent ? 'parent' : 'local'"
+              [previewMode]="!isExpanded(element)"
+              [limit]="previewLimit"
+            ></planet-markdown>
+            <div
+              *ngIf="showPreviewExpand(element.doc)"
+              style="text-align: center"
+              (click)="toggleRow(element); $event.stopPropagation()"
+            >
               <button mat-icon-button>
-                <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+                <mat-icon>{{
+                  isExpanded(element)
+                    ? "keyboard_arrow_up"
+                    : "keyboard_arrow_down"
+                }}</mat-icon>
               </button>
             </div>
           </div>
-          <planet-local-status [status]="element.localStatus"></planet-local-status>
-          <button *ngIf="!parent && !isDialog" class="menu" mat-icon-button [matMenuTriggerFor]="resourceMenu">
+          <planet-local-status
+            [status]="element.localStatus"
+          ></planet-local-status>
+          <button
+            *ngIf="!parent && !isDialog"
+            class="menu"
+            mat-icon-button
+            [matMenuTriggerFor]="resourceMenu"
+          >
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #resourceMenu="matMenu">
             <ng-container *ngIf="myView !== 'myPersonals'">
-              <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
-                <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
+              <a
+                *ngIf="!element.libraryInfo"
+                mat-menu-item
+                (click)="libraryToggle([element._id], 'add')"
+              >
+                <mat-icon>library_add</mat-icon
+                ><span i18n>Add to myLibrary</span>
               </a>
-              <a mat-menu-item *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">
-                <mat-icon>clear</mat-icon><span i18n>Remove from myLibrary</span>
+              <a
+                mat-menu-item
+                *ngIf="element.libraryInfo"
+                (click)="libraryToggle([element._id], 'remove')"
+              >
+                <mat-icon>clear</mat-icon
+                ><span i18n>Remove from myLibrary</span>
               </a>
-              <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'resources', 'item': element._id, name: element.doc.title}" i18n-title title="Feedback">
+              <a
+                mat-menu-item
+                planetFeedback
+                [feedbackOf]="{
+                  state: 'resources',
+                  item: element._id,
+                  name: element.doc.title
+                }"
+                i18n-title
+                title="Feedback"
+              >
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
@@ -184,11 +416,22 @@
                 <span i18n>Delete</span>
               </button>
             </ng-container>
-            <button mat-menu-item [planetDialogsRatings]="element" [disabled]="element.rating.totalRating === 0">
+            <button
+              mat-menu-item
+              [planetDialogsRatings]="element"
+              [disabled]="element.rating.totalRating === 0"
+            >
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
+            <a
+              href="{{ urlPrefix + element._id + '/' + element.doc.filename }}"
+              mat-menu-item
+              download
+              [disabled]="
+                !(myView === 'myPersonals') && !element.doc.isDownloadable
+              "
+            >
               <mat-icon>file_download</mat-icon>
               <span i18n>Download file</span>
             </a>
@@ -196,45 +439,104 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="createdDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" start="desc" i18n>Created On</mat-header-cell>
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="createdDate"
+          start="desc"
+          i18n
+          >Created On</mat-header-cell
+        >
         <mat-cell *matCellDef="let element">
           <span class="created-label" i18n>Created: </span>
-          {{element.doc.createdDate | date}}
+          {{ element.doc.createdDate | date }}
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="info">
         <mat-header-cell *matHeaderCellDef i18n>Information</mat-header-cell>
         <mat-cell *matCellDef="let element" class="info-cell">
           <div class="resource-info">
-            <p *ngIf="element.doc.medium"><ng-container i18n>Medium:</ng-container>{{ " " }}{{element.doc.medium}}</p>
-            <p *ngIf="element.doc.language"><ng-container i18n>Language:</ng-container>{{ " " }}{{element.doc.language}}</p>
-            <p *ngIf="element.doc.level" class="resource-level"><ng-container i18n>Level:</ng-container>{{ " " }}{{formatLevels(element.doc.level)}}</p>
-            <p *ngIf="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet"><ng-container i18n>Source: </ng-container>{{ element.doc.sourcePlanet }}</p>
+            <p *ngIf="element.doc.medium">
+              <ng-container i18n>Medium:</ng-container>{{ " "
+              }}{{ element.doc.medium }}
+            </p>
+            <p *ngIf="element.doc.language">
+              <ng-container i18n>Language:</ng-container>{{ " "
+              }}{{ element.doc.language }}
+            </p>
+            <p *ngIf="element.doc.level" class="resource-level">
+              <ng-container i18n>Level:</ng-container>{{ " "
+              }}{{ formatLevels(element.doc.level) }}
+            </p>
+            <p
+              *ngIf="
+                element.doc.sourcePlanet !== planetConfiguration.code &&
+                element.doc.sourcePlanet
+              "
+            >
+              <ng-container i18n>Source: </ng-container
+              >{{ element.doc.sourcePlanet }}
+            </p>
           </div>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="rating">
-        <mat-header-cell *matHeaderCellDef class="rating-header" mat-sort-header="rating" start="desc" i18n>Rating</mat-header-cell>
+        <mat-header-cell
+          *matHeaderCellDef
+          class="rating-header"
+          mat-sort-header="rating"
+          start="desc"
+          i18n
+          >Rating</mat-header-cell
+        >
         <mat-cell *matCellDef="let element" class="rating-cell">
-          <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
+          <planet-rating
+            class="rating-item compress-rating"
+            [rating]="element.rating"
+            [item]="element.doc"
+            [parent]="parent"
+            [ratingType]="'resource'"
+            [disabled]="isDialog"
+          ></planet-rating>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="expandedDetail">
-        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
+        <mat-cell
+          *matCellDef="let element"
+          [attr.colspan]="displayedColumns.length"
+        >
+          <div
+            [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'"
+            (@detailExpand.done)="onExpansionDone($event, element)"
+          >
             <ng-container *ngIf="element.renderContent && isExpanded(element)">
               <td-markdown
-                [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
+                [content]="
+                  element.doc.sourcePlanet !== planetConfiguration.code &&
+                  element.doc.sourcePlanet
+                    ? '(source: ' +
+                      element.doc.sourcePlanet +
+                      ') ' +
+                      element.doc.description
+                    : element.doc.description
+                "
+              >
               </td-markdown>
             </ng-container>
           </div>
         </mat-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
-      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
+      <mat-header-row
+        *matHeaderRowDef="displayedColumns"
+        class="hide"
+      ></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        [class.expanded-row]="isExpanded(row)"
+      ></mat-row>
+      <mat-row
+        *matRowDef="let row; columns: ['expandedDetail']"
+        [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"
+      ></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td>
           <div class="view-container" *ngIf="isLoading" i18n>
@@ -246,10 +548,12 @@
         </td>
       </tr>
     </mat-table>
-    <mat-paginator #paginator
+    <mat-paginator
+      #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
+      (page)="onPaginateChange($event)"
+    >
     </mat-paginator>
   </div>
 </div>
