@@ -186,11 +186,9 @@ export class LoginFormComponent {
         return;
       }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap((userCtx) => (this.isDialog ?
-          this.userService.setUserAndShelf(userCtx) :
-          isCreate ?
+        switchMap((userCtx) => (isCreate && !this.isDialog ?
           from(this.router.navigate([ 'users/update/' + name ])) :
-          from(this.reRoute())
+          this.isDialog ? this.userService.setUserAndShelf(userCtx).pipe(switchMap(() => from(this.reRoute()))) : from(this.reRoute())
         )),
         switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
         switchMap(this.createSession(name, password)),
