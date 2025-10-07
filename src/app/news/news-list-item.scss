@@ -62,13 +62,13 @@ mat-chip {
 
 .user-name-truncate {
   flex: 1 1 0;
+  justify-content: start;
 }
 
 .user-name-truncate-text {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: left;
 }
 
 @media (max-width: $screen-xs) {
