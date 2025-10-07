@@ -227,10 +227,8 @@
           "options": {
             "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
-            "format": "xlf",
-            "ivy": true
-          },
-          "ivy": true
+            "format": "xlf"
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
@@ -300,6 +298,7 @@
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": false
   }
 }
