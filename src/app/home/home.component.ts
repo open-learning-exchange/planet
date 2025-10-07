@@ -205,7 +205,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       catchError(errorCatch)
     ).subscribe((response: any) => {
       this.userService.unset();
-      this.router.navigate([ '/' ], {});
+      this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ], {});
     });
   }
 
