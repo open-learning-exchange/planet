@@ -47,7 +47,7 @@ export class AuthService {
             // directly pasting in a link to a guarded route. Need to reroute to the appropriate default page
             // before closing the dialog.
             if (this.router.routerState.snapshot.url === '') {
-              this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/myDashboard/myLibrary' : '/' ]);
+              this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ]);
             }
             return of(false);
           }
