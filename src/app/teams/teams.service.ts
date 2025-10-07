@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of, empty, forkJoin, Observable } from 'rxjs';
-import { switchMap, map, take } from 'rxjs/operators';
+import { switchMap, map, take, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -388,6 +388,7 @@ export class TeamsService {
         }
         return { id: teamId };
       }),
+      catchError(() => of({ id: teamId, missing: true }))
     );
   }
 

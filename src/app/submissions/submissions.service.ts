@@ -330,7 +330,7 @@ export class SubmissionsService {
   }
 
   getAnswerText(answers: any[], index, answerIndexes: number[]) {
-    const answer = answerIndexes[index] > -1 ? answers[index].value : undefined;
+    const answer = answerIndexes[index] > -1 && answers[index] ? answers[index].value : undefined;
     return answer && (
       Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
     );
