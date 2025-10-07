@@ -103,7 +103,18 @@ export class CsvService {
   private processSection(
     formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
   ): void {
-    formattedData.push({ Section: title, Month: '', All: '', Male: '', Female: '', Unspecified: '' });
+    const pushRow = (section, month, all, male, female, unspecified) => {
+      formattedData.push({
+        [$localize`Section`]: section,
+        [$localize`Month`]: month,
+        [$localize`All`]: all,
+        [$localize`Male`]: male,
+        [$localize`Female`]: female,
+        [$localize`Unspecified`]: unspecified
+      });
+    };
+
+    pushRow(title, '', '', '', '', '');
     let totalAll = 0;
     let totalMale = 0;
     let totalFemale = 0;
@@ -120,25 +131,10 @@ export class CsvService {
       totalMale += male;
       totalFemale += female;
       totalUnspecified += unspecified;
-
-      formattedData.push({
-        Section: '',
-        Month: monthLabel,
-        All: all,
-        Male: male,
-        Female: female,
-        Unspecified: unspecified
-      });
+      pushRow('', monthLabel, all, male, female, unspecified);
     });
 
-    formattedData.push({
-      Section: '',
-      Month: $localize`Total`,
-      All: totalAll,
-      Male: totalMale,
-      Female: totalFemale,
-      Unspecified: totalUnspecified
-    });
+    pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalUnspecified);
   }
 
   formatValue(key: string, value: any) {

@@ -112,7 +112,10 @@ export class TeamsService {
       'name': 'teamType',
       'placeholder': $localize`Team Type`,
       'options': [
-        { 'value': 'sync', 'name': $localize`${configuration.planetType === 'community' ? 'Connect with nation' : 'Connect with earth'}` },
+        {
+          'value': 'sync',
+          'name': configuration.planetType === 'community' ? $localize`Connect with nation` : $localize`Connect with earth`
+        },
         { 'value': 'local', 'name': $localize`Local team` }
       ]
     };
