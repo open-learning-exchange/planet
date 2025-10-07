@@ -138,6 +138,7 @@
     display: inline;
 
     li {
+      text-align: left;
       a {
         border-radius: 0;
       }
@@ -170,11 +171,24 @@
   a {
     width: 100%;
     min-width: 0;
+    display: inline-block;
     text-align: left;
+    white-space: nowrap;
     // Fixed height so text visibility doesn't add pixel
     height: 36px;
     // align with top mat-icon-button
     padding: 0 24px;
+    color: $white;
+
+    > * {
+      vertical-align: middle;
+    }
+
+    .mat-icon {
+      height: 24px;
+      width: 24px;
+      margin: 0;
+    }
 
     label {
       cursor: pointer;
@@ -184,6 +198,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: 0;
     }
   }
 
