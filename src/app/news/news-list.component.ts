@@ -82,7 +82,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
     });
     this.displayedItems = this.replyObject[this.replyViewing._id];
-    // this.loadPagedItems(true);
     this.updateDisplayedItems(true);
     if (this.replyViewing._id !== 'root') {
       this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
@@ -151,7 +150,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
     this.replyViewing = news;
     this.displayedItems = this.replyObject[news._id];
-    // this.loadPagedItems(true);
     this.updateDisplayedItems(true);
     this.isMainPostShared = this.replyViewing._id === 'root' || this.newsService.postSharedWithCommunity(this.replyViewing);
     this.showMainPostShare = !this.replyViewing.doc || !this.replyViewing.doc.replyTo ||
