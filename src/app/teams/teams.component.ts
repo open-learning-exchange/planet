@@ -335,4 +335,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  getTeamTypeLabel(team: any): string {
+    return team.doc.type === 'enterprise' ? $localize`enterprise` : $localize`team`;
+  }
+
 }

@@ -16,8 +16,9 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
-  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
+  xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -85,8 +86,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonLoading = false;
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
-  week1Label = 'Week 1';
-  week2Label = 'Week 2';
+  week1Label = $localize`Week 1`;
+  week2Label = $localize`Week 2`;
   comparisonData1: any = {};
   comparisonData2: any = {};
   private chartModule: ChartModule | null = null;
@@ -611,15 +612,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                             'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
     const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
-      'Title': course.title,
-      'Link': baseUrl + courseId,
-      'Steps': course.steps,
-      'Exams': course.exams,
-      'Enrollments': course.enrollments,
-      'Views': course.count,
-      'Steps Completed': course.stepsCompleted,
-      'Completions': course.completions,
-      'Average Rating': course.averageRating
+      [$localize`Title`]: course.title,
+      [$localize`Link`]: baseUrl + courseId,
+      [$localize`Steps`]: course.steps,
+      [$localize`Exams`]: course.exams,
+      [$localize`Enrollments`]: course.enrollments,
+      [$localize`Views`]: course.count,
+      [$localize`Steps Completed`]: course.stepsCompleted,
+      [$localize`Completions`]: course.completions,
+      [$localize`Average Rating`]: course.averageRating
     }));
 
     this.csvService.exportCSV({
@@ -660,10 +661,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                           'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
     const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
-      'Title': resource.title,
-      'Link': baseUrl + resourceId,
-      'Views': resource.count,
-      'Average Rating': resource.averageRating
+      [$localize`Title`]: resource.title,
+      [$localize`Link`]: baseUrl + resourceId,
+      [$localize`Views`]: resource.count,
+      [$localize`Average Rating`]: resource.averageRating
     }));
     this.csvService.exportCSV({
       data: csvData,
@@ -733,13 +734,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data = this.sortData(data, sortBy);
     }
     const exportData = data.map(activity => ({
-      'User': activity.user || '',
-      'AI Provider': activity.aiProvider || '',
-      'Timestamp': new Date(activity.createdDate).toLocaleString(),
-      'Chat Responses': activity.conversations?.length || 0,
-      'Assistant': activity.assistant ? 'Yes' : 'No',
-      'Shared': activity.shared ? 'Yes' : 'No',
-      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+      [$localize`User`]: activity.user || '',
+      [$localize`AI Provider`]: activity.aiProvider || '',
+      [$localize`Timestamp`]: new Date(activity.createdDate).toLocaleString(),
+      [$localize`Chat Responses`]: activity.conversations?.length || 0,
+      [$localize`Assistant`]: activity.assistant ? 'Yes' : 'No',
+      [$localize`Shared`]: activity.shared ? 'Yes' : 'No',
+      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
     }));
     this.csvService.exportCSV({
       data: exportData,
@@ -805,7 +806,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[reportType];
     const title = {
       'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`Course Views`,
+      'courseViews': $localize`:@@course-views-single:Course Views`,
       'health': $localize`Community Health`,
       'stepCompletions': $localize`Courses Progress` }[reportType];
     if (sortBy) {
@@ -814,7 +815,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+        .map(activity => {
+          const baseActivity = {
+            ...activity,
+            androidId: activity.androidId || '',
+            deviceName: activity.deviceName || ''
+          };
+          if (reportType === 'health' && activity.updatedDate) {
+            baseActivity.updatedDate = fullLabel(activity.updatedDate);
+          }
+          return baseActivity;
+        }),
       title
     });
   }
@@ -894,8 +905,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.comparisonWeek2End = startOfDay(new Date(this.comparisonWeek2End));
     const w1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
     const w2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
-    this.week1Label = `Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
-    this.week2Label = `Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
+    this.week1Label = $localize`Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
+    this.week2Label = $localize`Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
   }
 
   loadComparisonData() {
