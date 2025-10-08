@@ -76,7 +76,7 @@ export class AuthService {
     return this.getSession$().pipe(
       map((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
-          this.router.navigate([ '' ]);
+          this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/myDashboard' : '' ]);
           return false;
         }
         return true;
