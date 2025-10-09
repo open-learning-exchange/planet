@@ -171,6 +171,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.titleSearch = this.titleSearch;
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
@@ -180,6 +181,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.couchService.checkAuthorization('courses').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.tagFilter.valueChanges.subscribe((tags) => {
       this.tagFilterValue = tags;
+      this.courses.filter = this.dropdownsFill();
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
