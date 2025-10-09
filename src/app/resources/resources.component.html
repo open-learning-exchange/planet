@@ -18,6 +18,20 @@
     </mat-toolbar-row>
   </ng-template>
 
+  <mat-toolbar-row class="filters-indicator-row" *ngIf="activeFilters.length">
+    <span class="filters-indicator-label mat-caption" i18n>Active filters:</span>
+    <div class="filters-chip-container" role="status" aria-live="polite" [attr.aria-label]="filtersAriaLabel || null">
+      <mat-chip-list class="filters-chip-list">
+        <mat-chip *ngFor="let filter of activeFilters" color="primary" selected>
+          <span class="filters-chip-text">
+            <span class="filters-chip-category">{{ filter.label }}:</span>
+            <span class="filters-chip-value">{{ filter.value }}</span>
+          </span>
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+  </mat-toolbar-row>
+
   <mat-toolbar-row class="search-bar" *ngIf="showFilters">
     <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
   </mat-toolbar-row>
