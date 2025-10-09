@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { of, empty, forkJoin, Observable } from 'rxjs';
 import { switchMap, map, take, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -87,18 +88,30 @@ export class TeamsService {
       services: team.services || '',
       rules: team.rules || '',
       requests: [ team.requests || [] ],
-      teamType: [ { value: team.teamType || 'local', disabled: team._id !== undefined } ],
+      teamType: [ team.teamType || 'local', [ this.teamTypeTransitionValidator(team, configuration, type) ] ],
       public: [ team.public || false ]
     };
     return this.dialogsFormService.confirm(title, this.addTeamFields(configuration, type), formGroup, true)
       .pipe(
-        switchMap((response: any) => response !== undefined ?
-          this.updateTeam(
-            { limit: 12, status: 'active', createdDate: this.couchService.datePlaceholder, teamPlanetCode: configuration.code,
-              parentCode: configuration.parentCode, createdBy: userId, ...team, ...response, type }
-          ) :
-          empty()
-        ),
+        switchMap((response: any) => {
+          if (response === undefined) {
+            return empty();
+          }
+          const payload = {
+            limit: 12,
+            status: 'active',
+            createdDate: this.couchService.datePlaceholder,
+            teamPlanetCode: configuration.code,
+            parentCode: configuration.parentCode,
+            createdBy: userId,
+            ...team,
+            ...response,
+            type
+          };
+          return this.updateTeam(payload).pipe(
+            switchMap((updatedTeam) => this.applyTeamTypeChange(team, updatedTeam))
+          );
+        }),
         switchMap((response) => !team._id ?
           this.toggleTeamMembership(response, false, { userId, userPlanetCode: configuration.code, isLeader: true }) :
           of(response)
@@ -127,10 +140,37 @@ export class TeamsService {
     ].flat();
   }
 
+  private teamTypeTransitionValidator(team: any, configuration, mode: 'team' | 'enterprise' | 'services'): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (mode !== 'team' || !team || !team._id) {
+        return null;
+      }
+      const originalType = team.teamType || 'local';
+      const nextType = control.value;
+      if (originalType === nextType) {
+        return null;
+      }
+      const planetCode = team.teamPlanetCode || configuration.code;
+      if (nextType === 'local' && planetCode !== configuration.code) {
+        return { invalidTeamTypeTransition: true };
+      }
+      return null;
+    };
+  }
+
   updateTeam(team: any) {
     return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
       return of({ ...team, _rev: res.rev, _id: res.id });
     }));
+  }
+
+  private applyTeamTypeChange(originalTeam: any, updatedTeam: any) {
+    const originalType = (originalTeam && originalTeam.teamType) || 'local';
+    const updatedType = (updatedTeam && updatedTeam.teamType) || 'local';
+    if (!originalTeam || !originalTeam._id || originalType === updatedType) {
+      return of(updatedTeam);
+    }
+    return this.syncTeamTypeDocuments({ ...originalTeam, ...updatedTeam });
   }
 
   requestToJoinTeam(team, user) {
@@ -179,6 +219,39 @@ export class TeamsService {
         this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
       ))
     );
+  }
+
+  private syncTeamTypeDocuments(team: any) {
+    if (!team || !team._id) {
+      return of(team);
+    }
+    const selector = findDocuments({ teamId: team._id, docType: { '$in': [ 'membership', 'request' ] } });
+    const membership$ = this.couchService.findAll(this.dbName, selector).pipe(
+      catchError(() => of([])),
+      map((docs: any[]) => docs.filter(doc => doc.teamType !== team.teamType)
+        .map(doc => ({ ...doc, teamType: team.teamType }))),
+      switchMap((docs) => docs.length ? this.couchService.bulkDocs(this.dbName, docs) : of([]))
+    );
+    const shelfSelector = findDocuments({ myTeamIds: { '$in': [ team._id ] } }, 0);
+    const shelf$ = this.couchService.findAll('shelf', shelfSelector).pipe(
+      catchError(() => of([])),
+      map((docs: any[]) => docs.map((doc: any) => {
+        if (!Array.isArray(doc.myTeams)) {
+          return null;
+        }
+        let changed = false;
+        const updatedMyTeams = doc.myTeams.map((entry: any) => {
+          if (entry.teamId === team._id && entry.teamType !== team.teamType) {
+            changed = true;
+            return { ...entry, teamType: team.teamType };
+          }
+          return entry;
+        });
+        return changed ? { ...doc, myTeams: updatedMyTeams } : null;
+      }).filter(doc => !!doc)),
+      switchMap((docs) => docs.length ? this.couchService.bulkDocs('shelf', docs) : of([]))
+    );
+    return forkJoin([ membership$, shelf$ ]).pipe(map(() => team));
   }
 
   updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
