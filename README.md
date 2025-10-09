@@ -90,6 +90,18 @@ For chatapi development instructions, refer to the [chatapi README](chatapi/READ
 * To work on an issue, create a new branch with a descriptive title.
 * Please wait for at least two positive reviews before merging a PR into the master branch
 
+## Claude Code GitHub Action Configuration
+
+We rely on the [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) workflow for automated reviews and on-demand responses. The workflow has been updated to use the stable `@beta` tag and requires an Anthropic API key instead of the legacy OAuth token.
+
+To provision credentials:
+
+1. Request access to the shared Anthropic account from the platform team and generate an API key scoped for GitHub automation.
+2. In the repository settings, navigate to **Settings → Secrets and variables → Actions** and create or update the repository secret named `ANTHROPIC_API_KEY` with the newly generated key.
+3. No other configuration changes are needed; the workflow jobs automatically consume this secret when the `Review requested` label is applied or when users mention `@claude`.
+
+After updating the secret, label a pull request with `Review requested` to ensure Claude leaves review comments as expected.
+
 ## Locale Configuration
 
 To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
