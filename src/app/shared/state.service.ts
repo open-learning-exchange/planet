@@ -14,13 +14,13 @@ export class StateService {
   private inProgress = { local: new Map(), parent: new Map() };
 
   get configuration(): any {
-    const config = this.state.local.configurations.docs[0] || {};
+    const config = this.state.local.configurations?.docs[0] || {};
     const { keys, ...safeConfig } = config;
     return safeConfig;
   }
 
   get keys(): any {
-    return this.state.local.configurations.docs[0]?.keys || {};
+    return this.state.local.configurations?.docs[0]?.keys || {};
   }
 
   constructor(

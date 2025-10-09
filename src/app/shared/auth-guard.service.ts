@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UserService } from './user.service';
 import { Observable, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn } from '@angular/router';
 import { PouchAuthService } from './database/pouch-auth.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { LoginDialogComponent } from '../login/login-dialog.component';
+import { StateService } from './state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private pouchAuthService: PouchAuthService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private stateService: StateService
   ) { }
 
   private getSession$() {
@@ -42,10 +44,10 @@ export class AuthService {
         return dialogRef.afterClosed().pipe(switchMap(loginState => {
           if (loginState === undefined) {
             // If the current routerState snapshot url is a blank string, the user got here via
-            // directly pasting in a link to a guarded route. Need to reroute to the community page
+            // directly pasting in a link to a guarded route. Need to reroute to the appropriate default page
             // before closing the dialog.
             if (this.router.routerState.snapshot.url === '') {
-              this.router.navigate([ '/' ]);
+              this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/login' : '/' ]);
             }
             return of(false);
           }
@@ -74,7 +76,7 @@ export class AuthService {
     return this.getSession$().pipe(
       map((sessionInfo) => {
         if (sessionInfo.userCtx.name) {
-          this.router.navigate([ '' ]);
+          this.router.navigate([ this.stateService.configuration.planetType === 'center' ? '/myDashboard' : '' ]);
           return false;
         }
         return true;
@@ -92,5 +94,17 @@ export class AuthService {
       })
     );
   }
+
+  static centerLandingGuard: CanActivateFn = () => {
+    const router = inject(Router);
+    const stateService = inject(StateService);
+
+    // Only redirect on first navigation for center planets
+    if (!router.navigated && stateService.configuration.planetType === 'center') {
+      router.navigate(['/login']);
+      return false;
+    }
+    return true;
+  };
 
 }
