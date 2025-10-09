@@ -8,3 +8,5 @@ declare module '*.scss' {
   const content: string;
   export = content;
 }
+
+declare const $localize: any;

@@ -6,6 +6,7 @@
       <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
+      <span class="font-size-1 margin-lr-4 select-collection-helper" *ngIf="showSelectCollectionHelper">{{ selectCollectionHelperText }}</span>
       <span class="toolbar-fill"></span>
       <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
     </mat-toolbar-row>
@@ -18,6 +19,7 @@
       <mat-form-field class="font-size-1 margin-lr-4 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
+      <span class="font-size-1 margin-lr-4 select-collection-helper" *ngIf="showSelectCollectionHelper">{{ selectCollectionHelperText }}</span>
       <span class="toolbar-fill"></span>
       <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
     </mat-toolbar-row>
