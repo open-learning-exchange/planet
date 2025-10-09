@@ -135,9 +135,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => this.news = news.map(post => ({
-        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      })));
+      .subscribe(news => {
+        if (this.newsService.currentOptions.viewId !== teamId) {
+          return;
+        }
+        this.news = news.map(post => ({
+          ...post,
+          public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+        }));
+      });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
@@ -160,6 +166,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
       });
       this.setStatus(teamId, this.leader, this.userService.get());
+      this.news = [];
+      this.isRoot = true;
       this.requestTeamNews(teamId);
     });
   }
