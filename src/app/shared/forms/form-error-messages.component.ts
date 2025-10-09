@@ -44,6 +44,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
       invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
+      invalidTeamTypeTransition {Team type can only be changed for teams created on this planet}
     }</span>{{number === undefined ? '' : ' ' + number}}
     <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
       {{date === undefined ? '' : ' ' + (date | date)}}
