@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard.component';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 describe('Dashboard', () => {
 

@@ -6,13 +6,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { By } from '@angular/platform-browser';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
+import { Observable, of, throwError } from 'rxjs';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
