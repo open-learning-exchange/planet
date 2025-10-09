@@ -16,7 +16,17 @@ $planet-app-primary: mat.define-palette($planet-primary, $primary-hue);
 $planet-app-accent: mat.define-palette($planet-accent, $accent-hue);
 $planet-app-warn: mat.define-palette($planet-warn, $warn-hue);
 
-$planet-app-theme: mat.define-light-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+$planet-app-theme-config: (
+  color: (
+    primary: $planet-app-primary,
+    accent: $planet-app-accent,
+    warn: $planet-app-warn,
+  ),
+  typography: mat.define-legacy-typography-config(),
+  density: 0,
+);
+
+$planet-app-theme: mat.define-light-theme($planet-app-theme-config);
 
 $primary: mat.get-color-from-palette($planet-app-primary, $primary-hue);
 $accent: mat.get-color-from-palette($planet-app-accent, $accent-hue);
