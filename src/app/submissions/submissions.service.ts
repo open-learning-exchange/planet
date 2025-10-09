@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Chart, ChartConfiguration, BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale } from 'chart.js';
+import type { ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,9 +17,9 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
+import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-Chart.register(BarController, DoughnutController, BarElement, ArcElement, LinearScale, CategoryScale);
 
 @Injectable({
   providedIn: 'root'
@@ -282,19 +282,21 @@ export class SubmissionsService {
         ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
       }),
       tap(([ updatedSubmissions, time, questionTexts ]) => {
-        const title = `${toProperCase(type)} - ${exam.name} (${updatedSubmissions.length})`;
+        const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            'Gender': submission.user.gender || 'N/A',
-            'Age (years)': submission.user.birthDate ? ageFromBirthDate(time, submission.user.birthDate) : submission.user.age || 'N/A',
+            [$localize`Gender`]: submission.user.gender || 'N/A',
+            [$localize`Age (years)`]: submission.user.birthDate ?
+              ageFromBirthDate(time, submission.user.birthDate) :
+              submission.user.age || 'N/A',
             'Planet': submission.source,
-            'Date': submission.lastUpdateTime,
-            'Group': submission.teamInfo?.name || 'N/A',
-            'Group Type': submission.teamInfo?.type || 'N/A',
+            [$localize`Date`]: fullLabel(submission.lastUpdateTime),
+            [$localize`Group`]: submission.teamInfo?.name || 'N/A',
+            [$localize`Group Type`]: submission.teamInfo?.type || 'N/A',
             ...questionTexts.reduce((answerObj, text, index) => ({
               ...answerObj,
-              [`"Q${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
+              [`"${$localize`Question`} ${index + 1}: ${markdownToPlainText(text).replace(/"/g, '""')}"`]:
                 this.getAnswerText(submission.answers, index, answerIndexes)
             }), {})
           };
@@ -312,7 +314,7 @@ export class SubmissionsService {
   }
 
   getAnswerText(answers: any[], index, answerIndexes: number[]) {
-    const answer = answerIndexes[index] > -1 ? answers[index].value : undefined;
+    const answer = answerIndexes[index] > -1 && answers[index] ? answers[index].value : undefined;
     return answer && (
       Array.isArray(answer) ? answer.reduce((ans, v) => ans + v.text + ',', '').slice(0, -1) : answer.text || answer
     );
@@ -338,19 +340,19 @@ export class SubmissionsService {
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
-    this.setHeader(docContent, 'Charts');
+    this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
       question.index = i;
-      docContent.push({ stack: htmlToPdfmake(`<strong>Q${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
+      docContent.push({ stack: htmlToPdfmake(`<strong>${$localize`Question `} ${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
       if (question.type === 'selectMultiple') {
         const barAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'users');
         const barImg = await this.generateChartImage(barAgg);
 
         const selectionAgg = this.aggregateQuestionResponses(question, updatedSubmissions, 'percent', 'selections');
         const tableData = [
-          [ 'Option', 'User Count', '% of Users*', 'Selections count', '% of All Selections' ],
+          [ $localize`Option`, $localize`User Count`, $localize`% of Users*`, $localize`Selections count`, $localize`% of All Selections` ],
           ...barAgg.labels.map((label, index) => [
             label,
             `${barAgg.userCounts[index].toString()} / ${barAgg.totalUsers}`,
@@ -363,9 +365,9 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: barImg, width: 250, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: 'Selection Breakdown', style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}` },
-            { text: `Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
+            { text: $localize`Selection Breakdown`, style: 'chartTitle', margin: [ 0, 15, 0, 5 ] },
+            { text: $localize`Total respondents: ${updatedSubmissions.length}` },
+            { text: $localize`Total selections: ${selectionAgg.totalSelections}`, margin: [ 0, 5, 0, 10 ] },
             {
               table: {
                 headerRows: 1,
@@ -375,7 +377,7 @@ export class SubmissionsService {
               layout: 'lightHorizontalLines',
               margin: [ 0, 5, 0, 10 ]
             },
-            { text: `*Percentage of users who selected the choice. Users may select multiple options` },
+            { text: $localize`*Percentage of users who selected the choice. Users may select multiple options` },
           ],
           alignment: 'center'
         });
@@ -386,8 +388,8 @@ export class SubmissionsService {
         docContent.push({
           stack: [
             { image: ratingScaleImg, width: 300, alignment: 'center', margin: [ 0, 10, 0, 10 ] },
-            { text: `Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
-            { text: `The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
+            { text: $localize`Total respondents: ${updatedSubmissions.length}`, alignment: 'center' },
+            { text: $localize`The Score: ${averageRating}`, alignment: 'center', margin: [ 0, 5, 0, 0 ] }
           ],
           alignment: 'center'
         });
@@ -402,7 +404,7 @@ export class SubmissionsService {
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
-    this.setHeader(docContent, 'AI Analysis');
+    this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
       stack: htmlToPdfmake(converter.makeHtml(analysisPayload.chat)),
       margin: [ 0, 10, 0, 10 ]
@@ -422,7 +424,7 @@ export class SubmissionsService {
       { text: exam.name, style: 'title', margin: [ 0, 10, 0, 10 ] },
       { text: exam.description || '' },
       { text: '\n' },
-      { text: `Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
+      { text: $localize`Number of Submissions: ${updatedSubmissions.length}`, alignment: 'center' },
       { text: '', pageBreak: 'after' },
       ...submissionContents
     ];
@@ -526,25 +528,26 @@ export class SubmissionsService {
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
-        `<h3>Submission ${index + 1}</h3>`,
+        `<h3>${$localize`Submission`} ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
-        `<li><strong>Date:</strong> ${shortDate}</li>`,
+        `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
-        userGender ? `<li><strong>Gender:</strong> ${userGender}</li>` : '',
-        userAge ? `<li><strong>Age:</strong> ${userAge}</li>` : '',
+        userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
+        userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
         `</ul>`,
         `<hr>`
       ].filter(Boolean).join('\n');
     } else {
-      return `### ${exam.name} Questions\n`;
+      return `### ${exam.name} ${$localize`Questions`} \n`;
     }
   }
 
   questionOutput(submission, answerIndexes, includeQuestions, includeAnswers) {
     const exportText = (text, index, label: 'Question' | 'Response') => {
       const alignment = label === 'Response' ? 'right' : 'left';
-      return `<div style="text-align: ${alignment};"><strong>${label} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
+      const localizedLabel = label === 'Question' ? $localize`Question` : $localize`Response`;
+      return `<div style="text-align: ${alignment};"><strong>${localizedLabel} ${index + 1}:</strong><br>${converter.makeHtml(text)}</div>`;
     };
     return (question, questionIndex) =>
       (includeQuestions ? exportText(question, questionIndex, 'Question') : '') +
@@ -552,75 +555,83 @@ export class SubmissionsService {
   }
 
   async generateChartImage(data: any): Promise<string> {
-    const canvas = document.createElement('canvas');
-    canvas.width = 300;
-    canvas.height = 400;
+    const { Chart } = await loadChart([
+      'BarController', 'DoughnutController', 'BarElement', 'ArcElement', 'LinearScale', 'CategoryScale', 'Legend', 'Tooltip', 'Title'
+    ]);
+    const { canvas, ctx } = createChartCanvas(300, 400);
     const isBar = data.chartType === 'bar';
     const isRatingScale = data.isRatingScale || false;
-    const ctx = canvas.getContext('2d');
 
-    return new Promise<string>((resolve) => {
-      const maxCount = Math.max(...data.data);
-      const chartConfig: ChartConfiguration<'bar' | 'doughnut'> = {
-        type: isBar ? 'bar' : 'doughnut',
-        data: {
-          labels: data.labels,
-          datasets: [ {
-            data: data.data,
-            label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
-            backgroundColor: [
-              '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-            ],
-          } ]
-        },
-        options: {
-          responsive: false,
-          maintainAspectRatio: false,
-          indexAxis: 'x',
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                boxWidth: isBar ? 0 : 50,
-                boxHeight: isBar ? 0 : 20
-              }
-            }
-          },
-          scales: isBar ? {
-            y: {
-              type: 'linear',
-              beginAtZero: true,
-              max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
-              ticks: { precision: 0, stepSize: 2 }
-            }
-          } : {},
-          animation: {
-            onComplete: function() {
-              if (isBar && data.userCounts) {
-                this.getDatasetMeta(0).data.forEach((bar, index) => {
-                  const count = data.userCounts[index];
-                  if (count > 0) {
-                    ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
-                  }
-                });
-              } else {
-                const total = data.data.reduce((sum, val) => sum + val, 0);
-                this.getDatasetMeta(0).data.forEach((element, index) => {
-                  const count = data.data[index];
-                  const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
-                  if (count > 0) {
-                    const pos = element.tooltipPosition();
-                    ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
-                  }
-                });
-              }
-              resolve(this.toBase64Image());
+    if (!ctx) { return ''; }
+    const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
+
+    if (!hasData) {
+      renderNoDataPlaceholder(ctx, canvas, 'No data available');
+    }
+
+    const maxCount = Math.max(...data.data);
+    const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
+      type: isBar ? 'bar' : 'doughnut',
+      data: {
+        labels: data.labels,
+        datasets: [ {
+          data: data.data,
+          label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
+          backgroundColor: CHART_COLORS
+        } ]
+      },
+      options: {
+        responsive: false,
+        maintainAspectRatio: false,
+        indexAxis: 'x',
+        plugins: {
+          legend: {
+            display: true,
+            labels: {
+              boxWidth: isBar ? 0 : 50,
+              boxHeight: isBar ? 0 : 20
             }
           }
-        }
-      };
-      return new Chart(ctx, chartConfig);
-    });
+        },
+        scales: isBar ? {
+          y: {
+            type: 'linear',
+            beginAtZero: true,
+            max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
+            ticks: { precision: 0, stepSize: 2 }
+          }
+        } : {},
+        animation: false
+      }
+    };
+
+    const chart = new Chart<'bar' | 'doughnut', number[], string>(ctx, chartConfig);
+    try {
+      chart.update();
+
+      if (isBar && data.userCounts) {
+        chart.getDatasetMeta(0).data.forEach((bar, index) => {
+          const count = data.userCounts[index];
+          if (count > 0) {
+            ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
+          }
+        });
+      } else {
+        const total = data.data.reduce((sum, val) => sum + val, 0);
+        chart.getDatasetMeta(0).data.forEach((element, index) => {
+          const count = data.data[index];
+          const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
+          if (count > 0) {
+            const pos = element.tooltipPosition();
+            ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
+          }
+        });
+      }
+
+      return chart.toBase64Image();
+    } finally {
+      chart.destroy();
+    }
   }
 
   calculateAverageRating(question, submissions): number {
@@ -644,7 +655,7 @@ export class SubmissionsService {
     } else {
       question.choices.forEach(c => { counts[c.text] = new Set(); });
       if (question.hasOtherOption) {
-        counts['Other'] = new Set();
+        counts[$localize`Other`] = new Set();
       }
     }
 
@@ -664,7 +675,7 @@ export class SubmissionsService {
         const selections = question.type === 'selectMultiple' ? ans.value ?? [] : ans.value ? [ ans.value ] : [];
         selections.forEach(selection => {
           if (selection.isOther || selection.id === 'other') {
-            counts['Other']?.add(userId);
+            counts[$localize`Other`]?.add(userId);
           } else {
             const txt = selection.text ?? selection;
             counts[txt]?.add(userId);

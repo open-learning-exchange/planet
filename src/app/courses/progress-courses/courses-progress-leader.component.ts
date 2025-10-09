@@ -245,13 +245,13 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
           successfulSteps++;
         }
         totalErrors += stepErrors;
-        steps[`Step ${(index + 1)}`] = stepErrors;
+        steps[$localize`Step ${(index + 1)}`] = stepErrors;
       });
 
       return {
-        'Username': element.label,
-        'Success Percentage': `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
-        'Total Errors': totalErrors,
+        [$localize`Username`]: element.label,
+        [$localize`Success Percentage`]: `${((successfulSteps / totalSteps) * 100).toFixed(2)}%`,
+        [$localize`Total Errors`]: totalErrors,
         ...steps
       };
     });

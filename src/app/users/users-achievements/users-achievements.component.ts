@@ -141,7 +141,7 @@ export class UsersAchievementsComponent implements OnInit {
     const formattedBirthDate = this.user.birthDate ? formatStringDate(this.user.birthDate) : '';
     let contentArray = [
       {
-        text: $localize`${`${this.user.firstName}'s achievements`}`,
+        text: $localize`${this.user.firstName}'s achievements`,
         style: 'header',
         alignment: 'center',
       },

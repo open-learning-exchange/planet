@@ -36,7 +36,7 @@
                 {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
               </p>
               <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)" *ngIf="cardType!=='myLife' && !item?.canRemove">
-                <mat-icon i18n-matTooltip [matTooltip]="'Remove from ' + cardTitle" [inline]="true">clear</mat-icon>
+                <mat-icon i18n-matTooltip [matTooltip]="getRemoveTooltip(cardTitle)" [inline]="true">clear</mat-icon>
               </button>
             </div>
           </ng-container>

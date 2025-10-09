@@ -238,4 +238,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     return this.teamsService.getTeamName(submission.team).pipe(map((teamInfo: any) => ({ ...submission, teamInfo })));
   }
 
+  getTeamTypeLabel(teamType: string): string {
+    return teamType === 'enterprise' ? $localize`enterprise` : $localize`team`;
+  }
+
 }

@@ -5,7 +5,8 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
-import { Chart, ChartConfiguration, BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip } from 'chart.js';
+import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
+import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
 import { styleVariables, formatDate } from '../../shared/utils';
@@ -15,8 +16,9 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import {
-  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams, xyChartData, datasetObject,
-  titleOfChartName, monthDataLabels, filterByMember, sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
+  xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -27,7 +29,7 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 
-Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Legend, Tooltip);
+type ChartModule = typeof import('chart.js');
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -42,7 +44,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   planetCode = '';
   planetName = '';
   reports: any = {};
-  charts: Chart[] = [];
+  charts: ChartJs[] = [];
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
@@ -84,10 +86,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonLoading = false;
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
-  week1Label = 'Week 1';
-  week2Label = 'Week 2';
+  week1Label = $localize`Week 1`;
+  week2Label = $localize`Week 2`;
   comparisonData1: any = {};
   comparisonData2: any = {};
+  private chartModule: ChartModule | null = null;
 
   constructor(
     private activityService: ReportsService,
@@ -155,6 +158,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
+    this.charts.forEach((chart) => chart.destroy());
+    this.charts = [];
   }
 
   @HostListener('window:resize')
@@ -459,22 +464,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  setChart({ data, labels, chartName }) {
-    const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
+  async setChart({ data, labels, chartName }) {
+    const { Chart } = await loadChart([
+      'BarController', 'DoughnutController', 'CategoryScale', 'LinearScale', 'BarElement', 'Title', 'Legend', 'Tooltip'
+    ]);
+    const updateChart = this.charts.find(newChart => newChart.canvas.id === chartName);
     if (updateChart) {
       updateChart.data = { ...data, labels };
-      updateChart.update();
+      updateChart.update('none');
       return;
     }
     const chartConfig: ChartConfiguration<'bar'> = {
       type: 'bar',
-      data,
+      data: { ...data, labels },
       options: {
         plugins: {
           title: { display: true, text: titleOfChartName(chartName), font: { size: 16 } },
           legend: { position: 'bottom' }
         },
         maintainAspectRatio: false,
+        animation: false,
         scales: {
           x: { type: 'category' },
           y: {
@@ -603,15 +612,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                             'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/courses/view/`;
     const csvData = Object.entries(courseStats).map(([ courseId, course ]: [string, any]) => ({
-      'Title': course.title,
-      'Link': baseUrl + courseId,
-      'Steps': course.steps,
-      'Exams': course.exams,
-      'Enrollments': course.enrollments,
-      'Views': course.count,
-      'Steps Completed': course.stepsCompleted,
-      'Completions': course.completions,
-      'Average Rating': course.averageRating
+      [$localize`Title`]: course.title,
+      [$localize`Link`]: baseUrl + courseId,
+      [$localize`Steps`]: course.steps,
+      [$localize`Exams`]: course.exams,
+      [$localize`Enrollments`]: course.enrollments,
+      [$localize`Views`]: course.count,
+      [$localize`Steps Completed`]: course.stepsCompleted,
+      [$localize`Completions`]: course.completions,
+      [$localize`Average Rating`]: course.averageRating
     }));
 
     this.csvService.exportCSV({
@@ -652,10 +661,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
                           'default').toLowerCase();
     const baseUrl = `https://planet.${planetForLink}.ole.org/resources/view/`;
     const csvData = Object.entries(resourceStats).map(([ resourceId, resource ]: [string, any]) => ({
-      'Title': resource.title,
-      'Link': baseUrl + resourceId,
-      'Views': resource.count,
-      'Average Rating': resource.averageRating
+      [$localize`Title`]: resource.title,
+      [$localize`Link`]: baseUrl + resourceId,
+      [$localize`Views`]: resource.count,
+      [$localize`Average Rating`]: resource.averageRating
     }));
     this.csvService.exportCSV({
       data: csvData,
@@ -725,13 +734,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       data = this.sortData(data, sortBy);
     }
     const exportData = data.map(activity => ({
-      'User': activity.user || '',
-      'AI Provider': activity.aiProvider || '',
-      'Timestamp': new Date(activity.createdDate).toLocaleString(),
-      'Chat Responses': activity.conversations?.length || 0,
-      'Assistant': activity.assistant ? 'Yes' : 'No',
-      'Shared': activity.shared ? 'Yes' : 'No',
-      'Has Attachments': activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+      [$localize`User`]: activity.user || '',
+      [$localize`AI Provider`]: activity.aiProvider || '',
+      [$localize`Timestamp`]: new Date(activity.createdDate).toLocaleString(),
+      [$localize`Chat Responses`]: activity.conversations?.length || 0,
+      [$localize`Assistant`]: activity.assistant ? 'Yes' : 'No',
+      [$localize`Shared`]: activity.shared ? 'Yes' : 'No',
+      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
     }));
     this.csvService.exportCSV({
       data: exportData,
@@ -797,7 +806,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     }[reportType];
     const title = {
       'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`Course Views`,
+      'courseViews': $localize`:@@course-views-single:Course Views`,
       'health': $localize`Community Health`,
       'stepCompletions': $localize`Courses Progress` }[reportType];
     if (sortBy) {
@@ -806,7 +815,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => ({ ...activity, androidId: activity.androidId || '', deviceName: activity.deviceName || '' })),
+        .map(activity => {
+          const baseActivity = {
+            ...activity,
+            androidId: activity.androidId || '',
+            deviceName: activity.deviceName || ''
+          };
+          if (reportType === 'health' && activity.updatedDate) {
+            baseActivity.updatedDate = fullLabel(activity.updatedDate);
+          }
+          return baseActivity;
+        }),
       title
     });
   }
@@ -886,8 +905,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.comparisonWeek2End = startOfDay(new Date(this.comparisonWeek2End));
     const w1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
     const w2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
-    this.week1Label = `Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
-    this.week2Label = `Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
+    this.week1Label = $localize`Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
+    this.week2Label = $localize`Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
   }
 
   loadComparisonData() {
