@@ -7,8 +7,7 @@ import { MaterialModule } from '../shared/material.module';
 import { RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
+import { of, throwError } from 'rxjs';
 
 describe('ResourcesComponent', () => {
   /*
