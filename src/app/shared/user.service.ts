@@ -22,6 +22,7 @@ export class UserService {
   private logsDb = 'login_activities';
   private _shelf: any = { };
   skipNextShelfRefresh = false;
+  private shelfCreationAttempted = false;
 
   get shelf(): any {
     return this._shelf;
@@ -101,11 +102,32 @@ export class UserService {
         }
         return of([ [] ]);
       }),
-      switchMap(([ shelf ]: any[]) => {
-        // Combine with empty shelf in case all fields are not present
-        this.shelf = { ...this.emptyShelf, ...(shelf || {}) };
-        return of(true);
-      }));
+      switchMap(([ shelf ]: any[]) => this.ensureShelfExists(shelf, this.user._id).pipe(
+        tap((resolvedShelf: any) => {
+          // Combine with empty shelf in case all fields are not present
+          this.shelf = { ...this.emptyShelf, ...(resolvedShelf || {}) };
+        }),
+        map(() => true)
+      )));
+  }
+
+  private ensureShelfExists(shelf: any, userId: string): Observable<any> {
+    if ((shelf && Object.keys(shelf).length > 0) || !userId) {
+      return of(shelf);
+    }
+
+    if (this.shelfCreationAttempted) {
+      return of(shelf);
+    }
+
+    this.shelfCreationAttempted = true;
+    return this.couchService.put('shelf/' + userId, this.emptyShelf).pipe(
+      map((res: any) => ({ ...this.emptyShelf, '_id': userId, '_rev': res.rev })),
+      catchError((error) => {
+        console.error(`Failed to create shelf document for user ${userId}`, error);
+        return of(shelf);
+      })
+    );
   }
 
   getUserProperties(user, properties: string[] = [ ...this.userProperties, ...this.additionalProperties ]): any {
@@ -135,6 +157,7 @@ export class UserService {
     this.shelf = {};
     this.credentials = {};
     this.currentSession = undefined;
+    this.shelfCreationAttempted = false;
     this.userChange.next(this.user);
   }
 
