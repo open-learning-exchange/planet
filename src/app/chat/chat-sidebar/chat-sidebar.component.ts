@@ -158,7 +158,19 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       .subscribe(
         (conversations: any) => {
           this.conversations = conversations
-            .filter((conversation) => !conversation?.context)
+            .filter((conversation) => {
+              const context = conversation?.context;
+
+              if (!context) {
+                return true;
+              }
+
+              if (typeof context === 'object' && context?.type === 'global') {
+                return true;
+              }
+
+              return false;
+            })
             .sort((a, b) => {
               const dateA = a.updatedDate || a.createdDate;
               const dateB = b.updatedDate || b.createdDate;
