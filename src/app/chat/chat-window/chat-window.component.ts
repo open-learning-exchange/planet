@@ -58,6 +58,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.conversations === null) {
       this.conversations = this.fallbackConversation;
     }
+    if (this.context == null) {
+      const globalContext = this.getGlobalContext();
+      this.context = globalContext;
+      if (globalContext) {
+        this.data.assistant = true;
+      }
+    }
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
@@ -157,6 +164,19 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       top: target,
       behavior: 'smooth',
     });
+  }
+
+  private getGlobalContext(): { type: 'global'; data: any } | undefined {
+    const instructions = this.stateService.configuration?.assistant?.instructions;
+
+    if (!instructions) {
+      return undefined;
+    }
+
+    return {
+      type: 'global',
+      data: instructions,
+    };
   }
 
   setSelectedConversation(): void {
