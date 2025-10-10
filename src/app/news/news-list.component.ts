@@ -39,11 +39,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   shareDialog: MatDialogRef<CommunityListDialogComponent>;
   isLoadingMore = false;
   hasMoreNews = false;
-  pageSize = 10;
+  pageSize = 25;
   nextStartIndex = 0;
   totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
-  pageEnd = { root: 10 };
+  pageEnd = { root: 25 };
   // store the last opened thread’s root post id
   lastRootPostId: string;
   trackById = trackById;
