@@ -60,7 +60,7 @@ export class CoursesService {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       if (res !== undefined) {
         const planetField = res.parent ? 'parent' : 'local';
-        this[planetField].ratings = res.ratings;
+        this[planetField].ratings = res.ratings.filter((rating: any) => rating.type === 'course');
         this.mergeData(this[planetField], planetField, res.parent);
       }
     });
