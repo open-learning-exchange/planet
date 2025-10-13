@@ -150,13 +150,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   back() {
-    // relative path for /users and /team/users based on depth
-    const userUrl = this.router.url.split('/');
-    let path = userUrl[1] === 'users' ? '../' : '../../';
-    if (userUrl[1] === 'manager') {
-      path = '../';
-    }
-    this.router.navigate([ path ], { relativeTo: this.route });
+    this.router.navigate([ '../' ], { relativeTo: this.route });
   }
 
   updateSelectedRoles(newSelection: string[]) {
