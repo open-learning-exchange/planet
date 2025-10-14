@@ -81,6 +81,7 @@ const routes: Routes = [
   {
     path: '',
     component: CommunityComponent,
+    canActivate: [ AuthService.centerLandingGuard ],
     children: [ { path: 'voices/:id', component: NewsListComponent } ]
   },
   {
