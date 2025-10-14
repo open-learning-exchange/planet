@@ -172,12 +172,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.router.url.startsWith('/manager/surveys')) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-    }
-  }
+  this.router.navigate(['../'], { relativeTo: this.route });
+}
 
   routeToEditSurvey(route, id = '') {
     this.router.navigate([ route + '/' + id, { 'type': 'survey' } ], { relativeTo: this.route });
