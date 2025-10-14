@@ -64,6 +64,12 @@ mat-tab-group, mat-tab {
   margin-bottom: 1rem;
 }
 
+.action-buttons {
+  button {
+    margin-top: 0.5rem;
+  }
+}
+
 .community-view .responsive-toolbar {
   border-radius: 7.5px;
 }

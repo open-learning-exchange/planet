@@ -240,7 +240,8 @@
             "scripts": [],
             "styles": [
               "node_modules/material-design-icons/iconfont/material-icons.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/app/community/community.scss"
             ],
             "assets": [
               "src/assets",
