@@ -1,7 +1,7 @@
 <div mat-dialog-title>
   <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
-    <mat-select [(ngModel)]="selectedLink">
+  <mat-select [(ngModel)]="selectedLink" (selectionChange)="onLinkTypeChange($event.value)">
       <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -19,6 +19,40 @@
         </mat-form-field>
       </mat-step>
     </mat-horizontal-stepper>
+  </form>
+</mat-dialog-content>
+<mat-dialog-content *ngIf="selectedLink?.db === 'social'">
+  <form [formGroup]="linkForm">
+    <mat-form-field class="full-width">
+      <mat-label i18n>Platform</mat-label>
+  <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)" required>
+        <mat-select-trigger>
+          <ng-container [ngSwitch]="linkForm.value.platform">
+            <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(linkForm.value.platform)" class="margin-r-5"></mat-icon>
+          </ng-container>
+          {{ platformLabel(linkForm.value.platform) }}
+        </mat-select-trigger>
+        <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">
+          <ng-container [ngSwitch]="p.value">
+            <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(p.value)" class="margin-r-5"></mat-icon>
+          </ng-container>
+          {{ p.label }}
+        </mat-option>
+  </mat-select>
+  <mat-error *ngIf="linkForm.controls.platform.invalid && linkForm.controls.platform.touched" i18n>Platform is required.</mat-error>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Title</mat-label>
+      <input matInput formControlName="title" required>
+      <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+    <mat-form-field class="full-width">
+      <mat-label i18n>Link URL</mat-label>
+      <input matInput formControlName="route" placeholder="https://..." required>
+      <mat-error><planet-form-error-messages [control]="linkForm.controls.route"></planet-form-error-messages></mat-error>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
