@@ -3,14 +3,17 @@
 :host {
   .mat-column-doc-teamType {
     max-width: 150px;
-    padding-right: 0.5rem;
+    padding: 0 0.5rem;
   }
 
   .mat-column-visitLog-visitCount {
     justify-content: center;
     max-width: 80px;
-    padding-right: 1rem;
-    margin-right: 1rem
+    padding: 0 0.5rem;
+  }
+
+  .mat-column-action {
+    padding-left: 0.5rem;
   }
 
   mat-row {
