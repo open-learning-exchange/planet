@@ -28,7 +28,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() useReplyRoutes = false;
   @Output() viewChange = new EventEmitter<any>();
   @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
-  @ViewChild('anchor', { static: true }) anchor: any;
+  @ViewChild('anchor', { static: false }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
   replyObject: any = {};
@@ -92,6 +92,14 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngAfterViewInit() {
+    this.setupObserver();
+  }
+
+  setupObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+
     this.observer = new IntersectionObserver(
       ([ entry ]) => {
         if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore && this.replyViewing._id !== 'root') {
@@ -101,11 +109,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       { root: null, rootMargin: '0px', threshold: 1.0 }
     );
 
-    this.observer.observe(this.anchor.nativeElement);
+    if (this.anchor?.nativeElement) {
+      this.observer.observe(this.anchor.nativeElement);
+    }
   }
 
   ngOnDestroy() {
-    this.observer.disconnect();
+    if (this.observer) {
+      this.observer.disconnect();
+    }
   }
 
   initNews() {
@@ -169,6 +181,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           el.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }, 0);
+    }
+    // Set up observer for replies view after the anchor element is rendered
+    if (newsId !== 'root') {
+      setTimeout(() => this.setupObserver(), 0);
     }
   }
 
