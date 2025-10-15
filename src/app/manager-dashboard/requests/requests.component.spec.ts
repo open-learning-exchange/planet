@@ -1,28 +1,28 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { RequestsComponent } from './requests.component';
+import { CommunityComponent } from './requests.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../../shared/material.module';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { of } from 'rxjs/observable/of';
 
-describe('RequestsComponent', () => {
-  let component: RequestsComponent;
-  let fixture: ComponentFixture<RequestsComponent>;
+describe('CommunityComponent', () => {
+  let component: CommunityComponent;
+  let fixture: ComponentFixture<CommunityComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ FormsModule, HttpClientModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule ],
-      declarations: [ RequestsComponent ],
+      declarations: [ CommunityComponent ],
       providers: [ CouchService ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RequestsComponent);
+    fixture = TestBed.createComponent(CommunityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

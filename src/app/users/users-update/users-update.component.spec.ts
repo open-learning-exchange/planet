@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
 import { UsersUpdateComponent } from './users-update.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

@@ -9,8 +9,8 @@ import { MaterialModule } from '../../shared/material.module';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { By } from '@angular/platform-browser';
-import { of, throwError } from 'rxjs';
-
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/observable/throw';
 describe('ResourcesViewComponent', () => {
   /*
     let component: ResourcesViewComponent;

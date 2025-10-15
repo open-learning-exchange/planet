@@ -5,8 +5,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../shared/material.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of, throwError } from 'rxjs';
-
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/observable/throw';
 
 describe('MeetupsAddComponent', () => {
   /*

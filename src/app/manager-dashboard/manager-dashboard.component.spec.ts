@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ManagerDashboardComponent } from './manager-dashboard.component';
-import { of } from 'rxjs';
+import { of } from 'rxjs/observable/of';
 
 describe('ManagerDashboardComponent', () => {
   let component: ManagerDashboardComponent;
