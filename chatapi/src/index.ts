@@ -66,7 +66,7 @@ app.post('/', async (req: any, res: any) => {
 
   try {
     if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, data.context, data.assistant, false);
+      const response = await chatNoSave(data.content, data.aiProvider, data.context, false);
       return res.status(200).json({
         'status': 'Success',
         'chat': response

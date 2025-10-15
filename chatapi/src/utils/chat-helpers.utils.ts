@@ -2,15 +2,6 @@ import { models } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
-import {
-  createAssistant,
-  createThread,
-  addToThread,
-  createRun,
-  waitForRunCompletion,
-  retrieveResponse,
-  createAndHandleRunWithStreaming,
-} from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
 /**
@@ -22,8 +13,7 @@ import { extractTextFromDocument } from './text-extraction.utils';
 export async function aiChatStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
-  assistant: boolean,
-  context: any = '',
+  context: any,
   callback?: (response: string) => void
 ): Promise<string> {
   const provider = models[aiProvider.name];
@@ -32,30 +22,15 @@ export async function aiChatStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
-  if (assistant) {
-    try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-
-      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
-
-      return completionText;
-    } catch (error) {
-      throw new Error(`Error processing request ${error}`);
-    }
-  }
-
-  const completion = await provider.ai.chat.completions.create({
+  const stream = await provider.ai.responses.create({
     model,
-    messages,
+    'instructions': context.data || '',
+    'input': messages,
     'stream': true,
   });
 
   let completionText = '';
-  for await (const chunk of completion) {
+  for await (const chunk of stream) {
     if (chunk.choices && chunk.choices.length > 0) {
       const response = chunk.choices[0].delta?.content || '';
       completionText += response;
@@ -78,8 +53,7 @@ export async function aiChatStream(
 export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
-  assistant: boolean,
-  context: any = '',
+  context: any,
 ): Promise<string> {
   const provider = models[aiProvider.name];
   if (!provider) {
@@ -100,31 +74,16 @@ export async function aiChatNonStream(
     }
   }
 
-  if (assistant) {
-    try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-      const run = await createRun(thread.id, asst.id, context.data);
-      await waitForRunCompletion(thread.id, run.id);
-
-      return await retrieveResponse(thread.id);
-    } catch (error) {
-      throw new Error(`Error processing request ${error}`);
-    }
-  }
-
-  const completion = await provider.ai.chat.completions.create({
+  const response = await provider.ai.responses.create({
     model,
-    messages,
+    'instructions': context.data || '',
+    'input': messages,
   });
 
-  const completionText = completion.choices[0]?.message?.content;
-  if (!completionText) {
+  const responseText = response.output_text;
+  if (!responseText) {
     throw new Error('Unexpected API response');
   }
 
-  return completionText;
+  return responseText;
 }
