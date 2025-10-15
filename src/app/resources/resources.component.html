@@ -25,15 +25,15 @@
 
 <ng-template #collectionRow>
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
-  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
+  <span i18n>{myView, select, myLibrary {myLibrary} other {Library}}</span>
+  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr">
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
 </ng-template>
 
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
-  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
+  <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters">Filter</button>
   <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>
@@ -43,13 +43,13 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
     <ng-container *ngIf="isAuthorized">
-      <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
+      <button *ngIf="!parent" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
         <planet-filtered-amount [table]="resources"></planet-filtered-amount>
-        <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
+        <planet-tag-selected-input [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
       </div>
       <span class="toolbar-fill"></span>
-      <ng-container *ngIf="myView !== 'myPersonals'">
+      <ng-container>
         <span *ngIf="parent">
           <button mat-button [disabled]="!selection.selected.length" (click)="shareResource('pull', selection.selected)">
             <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get resource</span>
@@ -133,7 +133,7 @@
               <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
                 {{ element.doc.title | truncateText:180 }}
               </a>
-              <ng-container *ngIf="!parent && !isDialog && myView !== 'myPersonals'">
+              <ng-container *ngIf="!parent && !isDialog">
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="In myLibrary" [inline]="true" *ngIf="element.libraryInfo" (click)="libraryToggle([ element._id ], 'remove')">bookmark</mat-icon>
                 <mat-icon class="margin-lr-3 cursor-pointer" i18n-matTooltip matTooltip="Not in myLibrary" [inline]="true" *ngIf="!element.libraryInfo" (click)="libraryToggle([ element._id ], 'add')">bookmark_border</mat-icon>
               </ng-container>
@@ -162,7 +162,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #resourceMenu="matMenu">
-            <ng-container *ngIf="myView !== 'myPersonals'">
+            <ng-container>
               <a *ngIf="!element.libraryInfo" mat-menu-item (click)="libraryToggle([ element._id ], 'add')">
                 <mat-icon>library_add</mat-icon><span i18n>Add to myLibrary</span>
               </a>
@@ -174,7 +174,7 @@
                 <span i18n>Feedback</span>
               </a>
             </ng-container>
-            <ng-container *ngIf="element.canManage && myView !== 'myPersonals'">
+            <ng-container *ngIf="element.canManage">
               <a mat-menu-item (click)="updateResource(element)">
                 <mat-icon>edit</mat-icon>
                 <span i18n>Edit Resource</span>
@@ -188,7 +188,7 @@
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
+            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!element.doc.isDownloadable">
               <mat-icon>file_download</mat-icon>
               <span i18n>Download file</span>
             </a>
