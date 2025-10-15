@@ -120,10 +120,10 @@
           </div>
         </mat-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="surveys.data.length === 0"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
           <div class="view-container" *ngIf="isLoading" i18n>
             Loading Surveys...
           </div>
