@@ -95,28 +95,27 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.setupObserver();
   }
 
+  ngOnDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
+
   setupObserver() {
     if (this.observer) {
       this.observer.disconnect();
     }
 
-    this.observer = new IntersectionObserver(
-      ([ entry ]) => {
-        if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore && this.replyViewing._id !== 'root') {
-          this.loadMoreItems();
-        }
-      },
-      { root: null, rootMargin: '0px', threshold: 1.0 }
-    );
-
     if (this.anchor?.nativeElement) {
+      this.observer = new IntersectionObserver(
+        ([ entry ]) => {
+          if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore && this.replyViewing._id !== 'root') {
+            this.loadMoreItems();
+          }
+        },
+        { root: null, rootMargin: '0px', threshold: 1.0 }
+      );
       this.observer.observe(this.anchor.nativeElement);
-    }
-  }
-
-  ngOnDestroy() {
-    if (this.observer) {
-      this.observer.disconnect();
     }
   }
 
