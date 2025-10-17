@@ -29,6 +29,11 @@ body {
     color: $accent-text;
   }
 
+  .warn-color {
+    background-color: $warn;
+    color: $white;
+  }
+
   .accent-text-color {
     color: $accent;
   }
@@ -240,14 +245,18 @@ body {
     .stats-ratio {
       grid-area: ratio;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       grid-template-rows: 1.75rem 0.75rem;
-      grid-template-areas: 'm-icon f-icon' 'bar bar';
+      grid-template-areas: 'm-icon o-icon f-icon' 'bar bar bar';
       mat-icon {
         align-self: start;
       }
       .male-icon {
         grid-area: m-icon;
+      }
+      .other-icon {
+        grid-area: o-icon;
+        justify-self: center;
       }
       .female-icon {
         grid-area: f-icon;

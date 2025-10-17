@@ -441,7 +441,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     const labels = months.map(month => monthDataLabels(month));
 
-    const genderFilter = (gender: string) =>
+    const genderFilter = (gender: string | undefined) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
@@ -456,6 +456,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         datasets: [
           datasetObject($localize`Male`, xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
           datasetObject($localize`Female`, xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
+          datasetObject($localize`Other`, xyChartData(genderFilter('other'), unique), styleVariables.warnLighter),
           datasetObject($localize`Did not specify`, xyChartData(genderFilter(undefined), unique), styleVariables.grey),
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
