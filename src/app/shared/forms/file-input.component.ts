@@ -24,7 +24,7 @@ export class FileInputComponent {
 
   getTruncatedFileName(): string {
     if (!this.selectedFile?.name) {
-      return 'No file chosen';
+      return $localize`No file chosen`;
     }
     return truncateText(this.selectedFile.name, 25);
   }

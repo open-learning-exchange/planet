@@ -39,6 +39,8 @@ export class PlanetMarkdownComponent implements OnChanges {
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
+    this.content = this.normalizeWhitespace(this.content || '');
+
     this.images = this.extractImageUrls(this.content);
     const textOnly = this.content.replace(this.imageMarkdownRegex, '');
 
@@ -50,6 +52,15 @@ export class PlanetMarkdownComponent implements OnChanges {
     } else {
       this.limitedContent = truncateText(textOnly, this.limit);
     }
+  }
+
+  normalizeWhitespace(content: string): string {
+    // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
+    // Replace sequences of tabs/spaces with max 2 spaces
+    content = content.replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
+    // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
+    content = content.replace(/\n{3,}/g, '\n\n');
+    return content.trim();
   }
 
   extractImageUrls(content: string): string[] {

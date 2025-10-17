@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Observable, of, empty, throwError } from 'rxjs';
+import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
 import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
@@ -103,6 +103,24 @@ export class CouchService {
 
   findAllStream(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
+  }
+
+  findAttachmentsByIds(ids: string[], opts?: any) {
+    const uniqueIds = Array.from(new Set((ids || []).filter(id => !!id)));
+    if (uniqueIds.length === 0) {
+      return of([]);
+    }
+    const chunkSize = 50;
+    const queries = [];
+    for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+      const chunk = uniqueIds.slice(i, i + chunkSize);
+      queries.push(
+        this.findAll('attachments', findDocuments({ '_id': { '$in': chunk } }, 0, 0, chunk.length), opts)
+      );
+    }
+    return forkJoin(queries).pipe(
+      map((results: any[]) => results.reduce((acc: any[], docs: any[]) => acc.concat(docs), []))
+    );
   }
 
   private findAllRequest(db: string, query: any, opts: any) {

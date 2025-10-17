@@ -198,7 +198,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (this.route.snapshot.data.newUser === true) {
       this.router.navigate(
         [ '/users/submission', { id: this.submissionId } ],
-        { queryParams: { teamId: this.teamId } }
+        { queryParams: { teamId: this.teamId },
+          state: { title: this.title} }
       );
     } else {
       this.goBack();

@@ -13,15 +13,12 @@ export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit 
 
   @Input() data = [];
   @Input() dataType: 'logs' | 'report' = 'report';
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   myPlanets = new MatTableDataSource();
   displayedColumns = [ 'id', 'name' ];
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-
-  constructor(
-    private dialog: MatDialog,
-    ) {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit() {
     this.myPlanets.sortingDataAccessor = (item: any, property) => {

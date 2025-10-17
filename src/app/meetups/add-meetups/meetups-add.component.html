@@ -42,16 +42,14 @@
         <mat-datepicker #datepickerEnd></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      <mat-form-field><input matInput type="time" i18n-placeholder placeholder="Start Time" formControlName="startTime">
-  <mat-error>
-    <planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages>
-  </mat-error>
-</mat-form-field>
-<mat-form-field><input matInput type="time" i18n-placeholder placeholder="End Time" formControlName="endTime">
-  <mat-error>
-    <planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages>
-  </mat-error>
-</mat-form-field>
+      <mat-form-field class="time-picker-field">
+        <input matInput planetTimeMask i18n-placeholder placeholder="Start Time" formControlName="startTime">
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field class="time-picker-field">
+        <input matInput planetTimeMask i18n-placeholder placeholder="End Time" formControlName="endTime">
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
       <div class="full-width">
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">

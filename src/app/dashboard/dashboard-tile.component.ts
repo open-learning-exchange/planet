@@ -161,6 +161,10 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
       this.recentlyDragged = false;
     }, 300);
   }
+
+  getRemoveTooltip(cardTitle: string): string {
+    return $localize`Remove from ${cardTitle}`;
+  }
 }
 
 @Component({

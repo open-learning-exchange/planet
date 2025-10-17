@@ -16,9 +16,9 @@ For development, the following additional tools are required:
 
 * Docker
 * Git
-* NPM v6
-* Node.js v14
-* Angular CLI v10
+* NPM v10
+* Node.js v18
+* Angular CLI v15
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -74,7 +74,9 @@ If port 3000 is in use, try ```ng serve --port 3001```
 
 ## Chatapi Notes
 
-Configure the models(API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or in the `configurations` database directly in CouchDB. Currently we support *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini* models.
+Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB.
+
+Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
 For chatapi development instructions, refer to the [chatapi README](chatapi/README.md).
 
