@@ -117,6 +117,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   showFiltersRow = false;
   expandedElement: any = null;
   previewLimit = 450;
+  readonly selectCollectionHelperText = $localize`:@@courses.selectCollectionHelperText:Select a collection to view your courses.`;
+
+  get showSelectCollectionHelper(): boolean {
+    const tags = this.tagFilter.value;
+    return this.myCoursesFilter.value === 'on' && Array.isArray(tags) && tags.length === 0;
+  }
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
