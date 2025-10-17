@@ -1,103 +1,223 @@
-import { keys } from '../config/ai-providers.config';
-import { assistant } from '../config/ai-providers.config';
+import { assistant, keys } from '../config/ai-providers.config';
+import { ChatMessage } from '../models/chat.model';
 
-/**
- * Creates an assistant with the specified model
- * @param model - Model to use for assistant
- * @returns Assistant object
- */
-export async function createAssistant(model: string) {
-  return await keys.openai.beta.assistants.create({
-    'name': assistant?.name,
-    'instructions': assistant?.instructions,
-    'tools': [ { 'type': 'code_interpreter' } ],
+type ResponseInputMessage = {
+  role: 'system' | 'user' | 'assistant' | 'developer';
+  content: Array<{ type: 'text'; text: string }>;
+};
+
+type AssistantResponseParams = {
+  model: string;
+  input: ResponseInputMessage[];
+  instructions?: string;
+  tools?: Array<Record<string, any>>;
+  response_format?: Record<string, any> | string;
+  parallel_tool_calls?: boolean;
+};
+
+const DEFAULT_ASSISTANT_TOOLS: Array<Record<string, any>> = [ { 'type': 'code_interpreter' } ];
+
+const buildInstructions = (contextData?: string): string | undefined => {
+  const instructions: string[] = [];
+
+  if (assistant?.instructions) {
+    instructions.push(assistant.instructions);
+  }
+
+  if (contextData) {
+    instructions.push(contextData);
+  }
+
+  if (instructions.length === 0) {
+    return undefined;
+  }
+
+  return instructions.join('\n\n');
+};
+
+const toResponseMessage = (message: ChatMessage): ResponseInputMessage => ({
+  'role': message.role,
+  'content': [ { 'type': 'text', 'text': message.content } ]
+});
+
+const extractTextFromOutput = (output: any): string => {
+  if (!output) {
+    return '';
+  }
+
+  if (typeof output === 'string') {
+    return output;
+  }
+
+  if (Array.isArray(output)) {
+    return output.map(extractTextFromOutput).join('');
+  }
+
+  if (output.type === 'output_text' && typeof output.text === 'string') {
+    return output.text;
+  }
+
+  if (Array.isArray(output.content)) {
+    return output.content.map(extractTextFromOutput).join('');
+  }
+
+  if (output.results) {
+    return extractTextFromOutput(output.results);
+  }
+
+  if (output.logs) {
+    return String(output.logs);
+  }
+
+  return '';
+};
+
+const extractResponseText = (response: any): string => {
+  if (!response) {
+    return '';
+  }
+
+  if (typeof response.output_text === 'string') {
+    return response.output_text;
+  }
+
+  if (Array.isArray(response.output_text)) {
+    return response.output_text.join('');
+  }
+
+  if (Array.isArray(response.output)) {
+    return response.output.map(extractTextFromOutput).join('');
+  }
+
+  if (response.response && typeof response.response === 'object') {
+    return extractResponseText(response.response);
+  }
+
+  return '';
+};
+
+const extractDeltaText = (event: any): string => {
+  if (!event) {
+    return '';
+  }
+
+  if (typeof event.delta === 'string') {
+    return event.delta;
+  }
+
+  if (Array.isArray(event.delta)) {
+    return event.delta.map(extractTextFromOutput).join('');
+  }
+
+  if (event.type === 'response.code_interpreter_call.completed') {
+    return extractTextFromOutput(event.code_interpreter_call?.results);
+  }
+
+  if (event.snapshot) {
+    return extractTextFromOutput(event.snapshot);
+  }
+
+  if (event.response) {
+    return extractResponseText(event.response);
+  }
+
+  return '';
+};
+
+export const buildAssistantResponseParams = (
+  messages: ChatMessage[],
+  model: string,
+  contextData?: string
+): AssistantResponseParams => {
+  const instructions = buildInstructions(contextData);
+  const inputMessages = messages.map(toResponseMessage);
+
+  const params: AssistantResponseParams = {
     model,
-  });
-}
+    input: inputMessages,
+  };
 
-export async function createThread() {
-  return await keys.openai.beta.threads.create();
-}
-
-export async function addToThread(threadId: any, message: string) {
-  return await keys.openai.beta.threads.messages.create(
-    threadId,
-    {
-      'role': 'user',
-      'content': message
-    }
-  );
-}
-
-export async function createRun(threadID: any, assistantID: any, instructions?: string) {
-  return await keys.openai.beta.threads.runs.create(
-    threadID,
-    {
-      'assistant_id': assistantID,
-      instructions
-    }
-  );
-}
-
-export async function waitForRunCompletion(threadId: any, runId: any) {
-  let runStatus = await keys.openai.beta.threads.runs.retrieve(threadId, runId);
-  while (runStatus.status !== 'completed') {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    runStatus = await keys.openai.beta.threads.runs.retrieve(threadId, runId);
+  if (instructions) {
+    params.instructions = instructions;
   }
-  return runStatus;
-}
 
-export async function retrieveResponse(threadId: any): Promise<string> {
-  const messages = await keys.openai.beta.threads.messages.list(threadId);
-  for (const msg of messages.data) {
-    if ('text' in msg.content[0] && msg.role === 'assistant') {
-      return msg.content[0].text.value;
-    }
+  if (assistant?.tools?.length) {
+    params.tools = assistant.tools;
+  } else {
+    params.tools = DEFAULT_ASSISTANT_TOOLS;
   }
-  throw new Error('Unable to retrieve response from assistant');
-}
 
-// Run with streaming enabled
-export async function createAndHandleRunWithStreaming(
-  threadID: any, assistantID: any, instructions: string, callback?: (response: string) => void
-): Promise<string> {
+  if (assistant?.response_format) {
+    params.response_format = assistant.response_format;
+  }
+
+  if (assistant?.parallel_tool_calls !== undefined) {
+    params.parallel_tool_calls = assistant.parallel_tool_calls;
+  }
+
+  return params;
+};
+
+export const createAssistantResponse = async (params: AssistantResponseParams): Promise<string> => {
+  const response = await keys.openai.responses.create(params);
+  const text = extractResponseText(response);
+
+  if (!text) {
+    throw new Error('Unable to retrieve response from assistant');
+  }
+
+  return text;
+};
+
+export const createAssistantResponseStream = async (
+  params: AssistantResponseParams,
+  callback?: (response: string) => void
+): Promise<string> => {
+  const stream = await keys.openai.responses.stream(params);
   let completionText = '';
+  let finalResponseText = '';
 
-  return new Promise((resolve, reject) => {
-    keys.openai.beta.threads.runs.stream(threadID, {
-      'assistant_id': assistantID,
-      instructions
-    })
-      .on('textDelta', (textDelta: { value: string }) => {
-        if (textDelta && textDelta.value) {
-          completionText += textDelta.value;
-          if (callback) {
-            callback(textDelta.value);
-          }
+  try {
+    for await (const event of stream) {
+      const deltaText = extractDeltaText(event);
+      if (deltaText) {
+        completionText += deltaText;
+        if (callback) {
+          callback(deltaText);
         }
-      })
-      .on('toolCallDelta', (toolCallDelta: { type: string; code_interpreter: { input: string; outputs: any[] } }) => {
-        if (toolCallDelta.type === 'code_interpreter') {
-          if (toolCallDelta && toolCallDelta.code_interpreter && toolCallDelta.code_interpreter.input) {
-            completionText += toolCallDelta.code_interpreter.input;
-            if (callback) {
-              callback(toolCallDelta.code_interpreter.input);
-            }
-          }
-          if (toolCallDelta && toolCallDelta.code_interpreter && toolCallDelta.code_interpreter.outputs) {
-            toolCallDelta.code_interpreter.outputs.forEach((output) => {
-              if (output.type === 'logs' && output.logs) {
-                completionText += output.logs;
-                if (callback) {
-                  callback(output.logs);
-                }
-              }
-            });
-          }
+      }
+
+      if (!finalResponseText && event.type === 'response.completed') {
+        finalResponseText = extractResponseText(event.response);
+      }
+    }
+
+    if (!finalResponseText) {
+      const response = await stream.finalResponse();
+      finalResponseText = extractResponseText(response);
+    }
+
+    if (finalResponseText) {
+      if (!completionText) {
+        completionText = finalResponseText;
+        if (callback) {
+          callback(finalResponseText);
         }
-      })
-      .on('end', () => resolve(completionText))
-      .on('error', reject);
-  });
-}
+      } else if (finalResponseText.startsWith(completionText)) {
+        const remainder = finalResponseText.slice(completionText.length);
+        if (remainder && callback) {
+          callback(remainder);
+        }
+        completionText = finalResponseText;
+      } else {
+        completionText = finalResponseText;
+      }
+    }
+
+    return completionText;
+  } finally {
+    await stream.done().catch(() => undefined);
+  }
+};
+
+export const parseAssistantResponseText = extractResponseText;
