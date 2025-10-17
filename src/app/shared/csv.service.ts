@@ -103,21 +103,23 @@ export class CsvService {
   private processSection(
     formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
   ): void {
-    const pushRow = (section, month, all, male, female, unspecified) => {
+    const pushRow = (section, month, all, male, female, other, unspecified) => {
       formattedData.push({
         [$localize`Section`]: section,
         [$localize`Month`]: month,
         [$localize`All`]: all,
         [$localize`Male`]: male,
         [$localize`Female`]: female,
+        [$localize`Other`]: other,
         [$localize`Unspecified`]: unspecified
       });
     };
 
-    pushRow(title, '', '', '', '', '');
+    pushRow(title, '', '', '', '', '', '');
     let totalAll = 0;
     let totalMale = 0;
     let totalFemale = 0;
+    let totalOther = 0;
     let totalUnspecified = 0;
 
     sortedMonths.forEach((month, i) => {
@@ -125,16 +127,18 @@ export class CsvService {
       const all = this.getMonthlyData(month, groupedData, countUnique);
       const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
       const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
+      const other = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'other'), countUnique);
       const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
 
       totalAll += all;
       totalMale += male;
       totalFemale += female;
+      totalOther += other;
       totalUnspecified += unspecified;
-      pushRow('', monthLabel, all, male, female, unspecified);
+      pushRow('', monthLabel, all, male, female, other, unspecified);
     });
 
-    pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalUnspecified);
+    pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalOther, totalUnspecified);
   }
 
   formatValue(key: string, value: any) {

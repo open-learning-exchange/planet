@@ -115,9 +115,16 @@ export class ReportsService {
     return ({
       count: users.length,
       byGender: users.reduce((usersByGender: any, user: any) => {
-        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+        const userRecord = user.doc || user;
+        const rawGender = userRecord?.gender;
+        const normalizedGender = typeof rawGender === 'string' ? rawGender.toLowerCase() : '';
+        const hasGender = rawGender !== undefined && rawGender !== null && rawGender !== '';
+        const gender = normalizedGender === 'male' || normalizedGender === 'female' || normalizedGender === 'other'
+          ? normalizedGender
+          : hasGender ? 'other' : 'didNotSpecify';
+        usersByGender[gender] += 1;
         return usersByGender;
-      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      }, { 'male': 0, 'female': 0, 'other': 0, 'didNotSpecify': 0 }),
       byMonth: this.groupByMonth(users, 'joinDate')
     });
   }
@@ -199,9 +206,14 @@ export class ReportsService {
   appendGender(array) {
     return array.map((item: any) => {
       const user = this.users.find((u: any) => u.name === item.user) || {};
+      const rawGender = user.gender;
+      const normalizedGender = typeof rawGender === 'string' ? rawGender.toLowerCase() : '';
+      const gender = normalizedGender === 'male' || normalizedGender === 'female' || normalizedGender === 'other'
+        ? normalizedGender
+        : rawGender ? 'other' : undefined;
       return ({
         ...item,
-        gender: user.gender
+        gender
       });
     });
   }

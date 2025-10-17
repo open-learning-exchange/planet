@@ -286,7 +286,7 @@ export class SubmissionsService {
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
           return {
-            [$localize`Gender`]: submission.user.gender || 'N/A',
+            [$localize`Gender`]: submission.user.gender ? toProperCase(submission.user.gender.toString().toLowerCase()) : 'N/A',
             [$localize`Age (years)`]: submission.user.birthDate ?
               ageFromBirthDate(time, submission.user.birthDate) :
               submission.user.age || 'N/A',
@@ -522,7 +522,9 @@ export class SubmissionsService {
       const userAge = submission.user.birthDate ?
        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
        submission.user.age;
-      const userGender = submission.user.gender;
+      const userGender = submission.user.gender
+        ? toProperCase(submission.user.gender.toString().toLowerCase())
+        : '';
       const communityOrNation = submission.planetName;
       const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
       const teamName = submission.teamInfo?.name || '';

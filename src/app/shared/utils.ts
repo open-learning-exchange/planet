@@ -42,6 +42,8 @@ export const styleVariables: any = {
   accent: '#ffc107',
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
+  warn: '#ed9121',
+  warnLighter: '#ffe1c6',
   grey: '#bdbdbd',
   greyText: 'rgba(0, 0, 0, 0.54)',
   lightGrey: 'whitesmoke'

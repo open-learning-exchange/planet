@@ -1,7 +1,12 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{userDetail.name}}</span>
-    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
+    <ng-container *ngIf="genderIcon(userDetail.gender) as genderIconName">
+      <mat-icon
+        class="margin-lr-5"
+        [svgIcon]="genderIconName"
+        [ngClass]="['gender-icon', genderColorClass(genderIconName)]"></mat-icon>
+    </ng-container>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isMobile; else actionButtons">
       <mat-icon>more_vert</mat-icon>

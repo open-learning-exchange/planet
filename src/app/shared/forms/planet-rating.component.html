@@ -1,6 +1,7 @@
 <div class="list-item-rating">
   <div class="stats-ratio" [ngClass]="{'invisible':rating.totalRating===0}">
     <mat-icon svgIcon="male" class="male-icon primary-text-color"></mat-icon>
+    <mat-icon svgIcon="other" class="other-icon warn-text-color"></mat-icon>
     <mat-icon svgIcon="female" class="female-icon accent-text-color"></mat-icon>
     <planet-stacked-bar [data]="stackedBarData"></planet-stacked-bar>
   </div>

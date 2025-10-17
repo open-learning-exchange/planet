@@ -70,14 +70,21 @@ export class PlanetRatingComponent implements OnChanges {
 
   ngOnChanges() {
     // After any changes to ratings ensures all properties are set
-    this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
+    this.rating = Object.assign({
+      rateSum: 0,
+      totalRating: 0,
+      maleRating: 0,
+      femaleRating: 0,
+      otherRating: 0,
+      userRating: {}
+    }, this.rating);
+    const unspecifiedAmount = this.rating.totalRating === 0
+      ? 1
+      : Math.max(this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating - this.rating.otherRating, 0);
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
-      { class: 'primary-light-color',
-        amount: this.rating.totalRating === 0 ? 1
-          : this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
-        noLabel: true
-      },
+      { class: 'warn-color', amount: this.rating.otherRating },
+      { class: 'primary-light-color', amount: unspecifiedAmount, noLabel: true },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
     this.rateForm.setValue(this.rateFormField);
