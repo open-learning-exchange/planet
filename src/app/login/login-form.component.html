@@ -23,7 +23,7 @@
       <planet-form-error-messages [control]="userForm.controls.repeatPassword"></planet-form-error-messages>
     </mat-error>
   </mat-form-field>
-  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid">
+  <button mat-raised-button color="primary" [planetSubmit]="userForm.valid" [disabled]="!userForm.valid || isProcessing">
     <ng-container *ngIf="createMode; else signIn" i18n>Become a member</ng-container>
     <ng-template #signIn i18n>SIGN-IN</ng-template>
   </button>

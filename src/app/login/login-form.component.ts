@@ -3,8 +3,8 @@ import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UserService } from '../shared/user.service';
-import { switchMap, catchError, map } from 'rxjs/operators';
-import { from, forkJoin, of, throwError } from 'rxjs';
+import { switchMap, catchError, map, tap, finalize } from 'rxjs/operators';
+import { from, forkJoin, of, throwError, Observable } from 'rxjs';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -20,6 +20,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { SubmissionsService } from '../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
+import { LoginProgressService } from './login-progress.service';
 
 interface RegisterForm {
   name: [ string, ValidatorFn[]?, AsyncValidatorFn? ],
@@ -63,6 +64,7 @@ export class LoginFormComponent {
   @Input() createMode: boolean;
   @Input() isDialog = false;
   @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
+  isProcessing = false;
 
   constructor(
     private couchService: CouchService,
@@ -78,7 +80,8 @@ export class LoginFormComponent {
     private stateService: StateService,
     private pouchService: PouchService,
     private healthService: HealthService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private loginProgressService: LoginProgressService
   ) {
     if (!this.isDialog) {
       this.createMode = this.router.url.split('?')[0] === '/login/newmember';
@@ -182,37 +185,115 @@ export class LoginFormComponent {
     const userId = `org.couchdb.user:${name}`;
 
     try {
+      this.isProcessing = true;
+      this.loginProgressService.setState('authenticating');
       if (await this.checkArchiveStatus(name)) {
+        this.isProcessing = false;
+        this.loginProgressService.setState('idle');
         return;
       }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap((userCtx) => (this.isDialog ?
+        switchMap((userCtx) => this.isDialog ?
           this.userService.setUserAndShelf(userCtx) :
-          isCreate ?
-          from(this.router.navigate([ 'users/update/' + name ])) :
-          from(this.reRoute())
-        )),
-        switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
-        switchMap(this.createSession(name, password)),
-        switchMap((sessionData) => {
-          const adminName = configuration.adminName.split('@')[0];
-          return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+          of(userCtx)
+        ),
+        tap(() => this.loginProgressService.setState('syncing')),
+        switchMap(() => this.syncSessionAndReplication(name, password)),
+        switchMap(() => {
+          if (!this.isDialog) {
+            this.loginProgressService.setState('navigating');
+          }
+          return this.navigateAfterSync(name, isCreate);
         }),
-        switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
+        tap(() => {
+          this.loginProgressService.setState('finalizing');
+          this.runPostLoginTasks({ configuration, userId, name, isCreate });
+          this.loginEvent.emit('loggedIn');
+        }),
+        catchError(error => {
+          this.loginProgressService.setState('idle');
+          return throwError(error);
+        }),
+        finalize(() => {
+          this.isProcessing = false;
+        })
+      ).subscribe({
+        error: this.loginError.bind(this)
+      });
+    } catch (error) {
+      this.isProcessing = false;
+      this.loginProgressService.setState('idle');
+      console.error('Error during login:', error);
+    }
+  }
+
+  private syncSessionAndReplication(name: string, password: string) {
+    const replicationTasks = this.pouchService.replicateFromRemoteDBs();
+    const replication$ = replicationTasks.length > 0 ? forkJoin(replicationTasks) : of([]);
+    return forkJoin([
+      replication$,
+      this.createSession(name, password)()
+    ]);
+  }
+
+  private navigateAfterSync(name: string, isCreate: boolean): Observable<unknown> {
+    if (this.isDialog) {
+      return of(true);
+    }
+    return isCreate ?
+      from(this.router.navigate([ 'users/update/' + name ])) :
+      from(this.reRoute());
+  }
+
+  private runPostLoginTasks(
+    { configuration, userId, name, isCreate }:
+    { configuration: any, userId: string, name: string, isCreate: boolean }
+  ) {
+    const adminName = configuration.adminName.split('@')[0];
+    const postLoginTasks: Observable<any>[] = [];
+
+    if (isCreate) {
+      postLoginTasks.push(
+        this.sendNotifications(adminName, name).pipe(
+          catchError(error => this.handlePostLoginError('notifications', error))
+        )
+      );
+    }
+
+    postLoginTasks.push(
+      this.submissionsService.getSubmissions(
+        findDocuments({ type: 'survey', status: 'pending', 'user.name': name })
+      ).pipe(
         map((surveys) => {
           const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
           if (uniqueSurveys.length > 0) {
             this.openNotificationsDialog(uniqueSurveys);
           }
         }),
-        switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
-        catchError(error => error.status === 404 ? of({}) : throwError(error))
-      ).subscribe(() => {
-        this.loginEvent.emit('loggedIn');
-      }, this.loginError.bind(this));
-    } catch (error) {
-      console.error('Error during login:', error);
+        catchError(error => error.status === 404 ? of(null) : this.handlePostLoginError('surveys', error))
+      )
+    );
+
+    postLoginTasks.push(
+      this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId)).pipe(
+        catchError(error => error.status === 404 ? of({}) : this.handlePostLoginError('health', error))
+      )
+    );
+
+    forkJoin(postLoginTasks).pipe(
+      finalize(() => this.loginProgressService.setState('complete'))
+    ).subscribe({ error: (error) => console.error('Post login tasks failed', error) });
+  }
+
+  private handlePostLoginError(context: 'notifications' | 'surveys' | 'health', error: any) {
+    console.error(`Error during post-login ${context} task`, error);
+    if (context === 'health') {
+      this.planetMessageService.showAlert($localize`We were unable to prepare health records. Some features may be unavailable.`);
     }
+    if (context === 'surveys') {
+      this.planetMessageService.showMessage($localize`Pending surveys will continue syncing in the background.`);
+    }
+    return of(null);
   }
 
   loginError() {

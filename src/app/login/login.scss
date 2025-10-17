@@ -60,6 +60,24 @@
     }
   }
 
+  .login-progress {
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 320px;
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+
+    mat-progress-bar {
+      width: 100%;
+    }
+
+    &__message {
+      font-weight: 500;
+      color: $primary;
+    }
+  }
+
   .ole-logo {
     width: 7rem;
     display: block;

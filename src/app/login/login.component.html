@@ -20,6 +20,12 @@
     </div>
     <div class="login-tile right-tile">
       <router-outlet></router-outlet>
+      <ng-container *ngIf="loginProgress$ | async as progress">
+        <div class="login-progress" *ngIf="isProgressActive(progress)" [attr.data-progress]="progress">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span class="login-progress__message">{{ progressMessage(progress) }}</span>
+        </div>
+      </ng-container>
     </div>
   </mat-card>
 </div>
