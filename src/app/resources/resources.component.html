@@ -34,6 +34,14 @@
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
   <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
+  <div class="active-filter-chips" *ngIf="activeTagFilters.length">
+    <mat-chip-list aria-label="Active collection filters">
+      <mat-chip *ngFor="let tag of activeTagFilters" color="primary" selected removable (removed)="removeTagFilter(tag.id)">
+        {{ tag.name }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
   <mat-form-field class="font-size-1 margin-lr-4">
     <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
   </mat-form-field>

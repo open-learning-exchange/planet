@@ -33,6 +33,9 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   set value(tags: string[]) {
     this._value = tags || [];
+    this.indeterminateSelections = new Set(
+      Array.from(this.indeterminateSelections).filter(tag => this._value.indexOf(tag) > -1)
+    );
     if (this.mode === 'filter' && this.updateRouteParam) {
       this.filterReroute(tags);
     }
@@ -80,6 +83,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
   tagUrlDelimiter = '_,_';
+  private indeterminateSelections = new Set<string>();
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -136,12 +140,14 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
       return;
     }
     if (newTag.trim()) {
+      this.indeterminateSelections.delete(newTag.trim());
       this.writeValue(this.value.concat([ newTag.trim() ]));
     }
   }
 
   removeTag(tagToRemove: string) {
     this.writeValue(this.value.filter(tag => tag !== tagToRemove));
+    this.indeterminateSelections.delete(tagToRemove);
   }
 
   writeValue(tags) {
@@ -171,6 +177,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
     this.dialogRef.afterClosed().subscribe((result) => {
       if (result && result.wasOkClicked === true) {
+        this.indeterminateSelections = new Set(result.indeterminate || []);
         this.finalTags.emit({ selected: this.value, indeterminate: result.indeterminate });
       }
     });
@@ -181,8 +188,14 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     if (this.selectedIds && isInit) {
       startingTags = this.tagsInSelection(this.selectedIds, this.filteredData);
       this.writeValue(startingTags.map((tag: any) => tag.tagId));
+      this.indeterminateSelections = new Set(
+        startingTags.filter((tag: any) => tag.indeterminate).map((tag: any) => tag.tagId)
+      );
     } else {
-      startingTags = this.value;
+      startingTags = (this.value || []).map((tag) => ({
+        tagId: tag,
+        indeterminate: this.indeterminateSelections.has(tag)
+      }));
     }
     return ({
       tagUpdate: this.dialogTagUpdate.bind(this),
@@ -218,6 +231,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   dialogTagUpdate(tag, isSelected, tagOne = false) {
     if (tagOne) {
+      this.indeterminateSelections.clear();
       this.value = [];
     }
     if (isSelected) {
