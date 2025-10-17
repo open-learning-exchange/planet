@@ -12,9 +12,22 @@ interface Providers {
   gemini?: string;
 }
 
+export type AssistantResponseFormat = string | {
+  type: string;
+  [key: string]: any;
+};
+
+export interface AssistantToolConfig {
+  type: string;
+  [key: string]: any;
+}
+
 interface Assistant {
   name: string;
   instructions: string;
+  response_format?: AssistantResponseFormat;
+  parallel_tool_calls?: boolean;
+  tools?: AssistantToolConfig[];
 }
 
 export interface ModelsDocument {

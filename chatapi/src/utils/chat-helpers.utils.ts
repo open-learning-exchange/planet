@@ -3,13 +3,9 @@ import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
 import {
-  createAssistant,
-  createThread,
-  addToThread,
-  createRun,
-  waitForRunCompletion,
-  retrieveResponse,
-  createAndHandleRunWithStreaming,
+  buildAssistantResponseParams,
+  createAssistantResponse,
+  createAssistantResponseStream,
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
@@ -32,17 +28,12 @@ export async function aiChatStream(
   }
   const model = aiProvider.model ?? provider.defaultModel;
 
+  const contextData = typeof context === 'string' ? context : context?.data;
+
   if (assistant) {
     try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-
-      const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
-
-      return completionText;
+      const params = buildAssistantResponseParams(messages, model, contextData);
+      return await createAssistantResponseStream(params, callback);
     } catch (error) {
       throw new Error(`Error processing request ${error}`);
     }
@@ -100,17 +91,12 @@ export async function aiChatNonStream(
     }
   }
 
+  const contextData = typeof context === 'string' ? context : context?.data;
+
   if (assistant) {
     try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
-      const run = await createRun(thread.id, asst.id, context.data);
-      await waitForRunCompletion(thread.id, run.id);
-
-      return await retrieveResponse(thread.id);
+      const params = buildAssistantResponseParams(messages, model, contextData);
+      return await createAssistantResponse(params);
     } catch (error) {
       throw new Error(`Error processing request ${error}`);
     }

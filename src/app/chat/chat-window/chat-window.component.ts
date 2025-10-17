@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ConversationForm, AIProvider } from '../chat.model';
-import { ChatService } from '../../shared/chat.service';
+import { ChatService, ChatStreamMessage } from '../../shared/chat.service';
 import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
@@ -203,12 +203,19 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     // Subscribe to WebSocket messages
     this.chatService.getChatStream().subscribe((message) => {
       // Handle incoming messages from the chat stream
-      this.handleIncomingMessage(JSON.parse(message));
+      this.handleIncomingMessage(message);
     });
   }
 
-  handleIncomingMessage(message: any) {
+  handleIncomingMessage(message: ChatStreamMessage) {
     if (message.type === 'final') {
+      const finalResponse = this.extractResponseSegment(message);
+      if (finalResponse) {
+        const lastConversation = this.conversations[this.conversations.length - 1];
+        if (lastConversation) {
+          lastConversation.response = finalResponse;
+        }
+      }
       this.selectedConversationId = {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
@@ -217,9 +224,75 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
-      lastConversation.response += message.response;
+      if (lastConversation) {
+        lastConversation.response += this.extractResponseSegment(message);
+      }
       this.scrollTo('bottom');
     }
+  }
+
+  private extractResponseSegment(message: ChatStreamMessage): string {
+    if (!message) {
+      return '';
+    }
+
+    const payload = message.type === 'final'
+      ? message.completionText ?? message.response
+      : message.response;
+
+    return this.coerceToText(payload);
+  }
+
+  private coerceToText(value: unknown): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((entry) => this.coerceToText(entry)).join('');
+    }
+
+    if (typeof value === 'object') {
+      const record = value as Record<string, unknown>;
+
+      if (typeof record.text === 'string') {
+        return record.text;
+      }
+
+      if (typeof record.value === 'string') {
+        return record.value;
+      }
+
+      if (typeof record.delta === 'string') {
+        return record.delta;
+      }
+
+      if (typeof record.logs === 'string') {
+        return record.logs;
+      }
+
+      if (Array.isArray(record.content)) {
+        return this.coerceToText(record.content);
+      }
+
+      if (Array.isArray(record.output)) {
+        return this.coerceToText(record.output);
+      }
+
+      if (Array.isArray(record.results)) {
+        return this.coerceToText(record.results);
+      }
+
+      if (typeof record.output_text === 'string') {
+        return record.output_text;
+      }
+    }
+
+    return '';
   }
 
   postSubmit() {

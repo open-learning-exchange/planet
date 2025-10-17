@@ -8,6 +8,15 @@ For model choices view:
   - Deepseek: https://api-docs.deepseek.com/quick_start/pricing
   - Gemini: https://deepmind.google/technologies/gemini/
 
+### Assistants to Responses migration checklist
+
+Use `rg "beta.assistants"` to confirm the deprecated helpers have been removed. The migration to the Responses API touched:
+
+1. Backend utilities (`src/utils/chat-assistant.utils.ts`, `src/utils/chat-helpers.utils.ts`) where assistant threads were replaced with `client.responses.create` and streaming wrappers.
+2. Express/websocket wiring (`src/index.ts`) so every event now carries Responses metadata alongside the textual delta.
+3. Angular consumers (`src/app/shared/chat.service.ts`, `src/app/chat/**`) which now normalise structured stream payloads while remaining backward compatible with plain strings.
+4. Automated coverage (`chatapi/src/utils/chat-assistant.utils.spec.ts`, `src/app/chat/chat-window/chat-window.component.spec.ts`) to lock the new contract in place.
+
 ## Development Notes
 Run `cd chatapi` and add a .env file in the `chatapi` directory with the following configs in the .env file(ensure the username & password match your admin credentials):
   ```
@@ -15,6 +24,13 @@ Run `cd chatapi` and add a .env file in the `chatapi` directory with the followi
     COUCHDB_HOST=http://localhost:2200
     COUCHDB_USER=planet
     COUCHDB_PASS=planet
+    # Optional assistant overrides for the Responses API
+    OPENAI_ASSISTANT_NAME="OLE Assistant"
+    OPENAI_ASSISTANT_INSTRUCTIONS="Keep answers short"
+    OPENAI_RESPONSE_FORMAT=text
+    OPENAI_PARALLEL_TOOL_CALLS=false
+    # JSON array describing default tool configuration
+    OPENAI_ASSISTANT_TOOLS='[{"type":"code_interpreter"}]'
   ```
 
 By default(linux), the chatapi uses 5000 as the serve port. For *windows* and *macOS* users we recommend using `5400` as the serve port to avoid conflicts with other services.

@@ -68,14 +68,22 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
-  assistant: boolean,
-  context?: any,
+  assistantOrContext: boolean | any,
+  contextOrAssistant?: any,
   stream?: boolean,
   callback?: (response: string) => void
 ): Promise<string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
+
+  const assistant = typeof assistantOrContext === 'boolean'
+    ? assistantOrContext
+    : typeof contextOrAssistant === 'boolean'
+      ? contextOrAssistant
+      : false;
+
+  const context = typeof assistantOrContext === 'boolean' ? contextOrAssistant : assistantOrContext;
 
   try {
     const completionText = await aiChat(messages, aiProvider, assistant, context, stream, callback);
