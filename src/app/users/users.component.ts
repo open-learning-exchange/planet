@@ -77,7 +77,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.planetType = this.stateService.configuration.planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    this.route.paramMap.pipe(
+    this.route.queryParamMap.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
       this.applyFilter(params.get('search'));
@@ -96,7 +96,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       if (this.isDialog) {
         this.applyFilter(searchText);
       } else {
-        this.router.navigate([ '..', searchText ? { search: searchText } : {} ], { relativeTo: this.route });
+        this.router.navigate([], { relativeTo: this.route, queryParams: { search: searchText || null }});
       }
     });
     this.usersService.requestUserData();
