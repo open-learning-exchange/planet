@@ -122,6 +122,12 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
           <h3 class="header">
+            <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
+              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+                [checked]="selection.isSelected(element._id)">
+              </mat-checkbox>
+              <span class="margin-lr-5"></span>
+            </ng-container>
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
               <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">

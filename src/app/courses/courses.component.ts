@@ -149,9 +149,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.setDisplayedColumns();
   }
 
   ngOnInit() {
+    this.setDisplayedColumns();
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
@@ -208,6 +210,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   getCourses() {
     this.coursesService.requestCourses(this.parent);
+  }
+
+  setDisplayedColumns() {
+    if (this.deviceType === this.deviceTypes.MOBILE || this.deviceType === this.deviceTypes.SMALL_MOBILE) {
+      this.displayedColumns = [ 'courseTitle', 'info', 'createdDate', 'rating' ];
+    } else {
+      this.displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
+    }
   }
 
   ngAfterViewInit() {
