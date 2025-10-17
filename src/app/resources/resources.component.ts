@@ -30,6 +30,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { languages } from '../shared/languages';
+import { subjectList, levelList, media } from './resources-constants';
 
 @Component({
   selector: 'planet-resources',
@@ -68,6 +70,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   currentUser = this.userService.get();
   tagFilter = new FormControl([]);
   tagFilterValue = [];
+  activeFilters: Array<{ key: string; label: string; value: string }> = [];
+  filtersAriaLabel = '';
+  private readonly activeFiltersLabelPrefix = $localize`Active filters:`;
+  private readonly filterCategoryLabels: Record<string, string> = {
+    title: $localize`Title`,
+    tag: $localize`Collection`,
+    subject: $localize`Subject`,
+    language: $localize`Language`,
+    medium: $localize`Medium`,
+    level: $localize`Level`
+  };
+  private readonly searchOptionLabelMap = new Map<string, string>();
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
@@ -78,6 +92,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this._titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
+    this.updateActiveFilters();
   }
   myView = this.route.snapshot.data.view;
   selectedNotAdded = 0;
@@ -125,6 +140,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
+    this.buildSearchOptionLabelMap();
   }
 
   @HostListener('window:resize') OnResize() {
@@ -157,7 +173,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;
     this.tagFilter.valueChanges.subscribe((tags) => {
-      this.tagFilterValue = tags;
+      this.tagFilterValue = tags || [];
       this.titleSearch = this.titleSearch;
       this.removeFilteredFromSelection();
     });
@@ -191,7 +207,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.resources.paginator = this.paginator;
     if (this.tagInputComponent) {
       this.tagInputComponent.addTags(this.route.snapshot.paramMap.get('collections'));
+      this.tagInputComponent.stateChanges.pipe(takeUntil(this.onDestroy$))
+        .subscribe(() => this.updateActiveFilters());
     }
+    this.updateActiveFilters();
   }
 
   ngOnDestroy() {
@@ -394,6 +413,63 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hasAttachment(id: string) {
     return this.resources.data.find((resource: any) => resource._id === id && resource.doc._attachments);
+  }
+
+  private buildSearchOptionLabelMap() {
+    const optionGroups: Record<string, any[]> = {
+      subject: subjectList,
+      language: languages,
+      medium: media,
+      level: levelList
+    };
+    Object.entries(optionGroups).forEach(([ category, options ]) => {
+      options.forEach((option: any) => {
+        const optionLabel = option.label || option.value;
+        this.searchOptionLabelMap.set(`${category}:${option.value}`, optionLabel);
+      });
+    });
+  }
+
+  private updateActiveFilters() {
+    const filters: Array<{ key: string; label: string; value: string }> = [];
+    const trimmedTitle = (this._titleSearch || '').trim();
+    if (trimmedTitle) {
+      filters.push({ key: 'title', label: this.filterCategoryLabels.title, value: trimmedTitle });
+    }
+
+    (this.tagFilterValue || []).forEach((tagId: string) => {
+      const tagLabel = this.getTagLabel(tagId);
+      if (tagLabel) {
+        filters.push({ key: 'tag', label: this.filterCategoryLabels.tag, value: tagLabel });
+      }
+    });
+
+    Object.entries(this.searchSelection || {}).forEach(([ category, values ]) => {
+      if (category === '_empty' || !Array.isArray(values) || values.length === 0) {
+        return;
+      }
+      values.forEach((value: string) => {
+        const label = this.filterCategoryLabels[category] || category;
+        const optionLabel = this.searchOptionLabelMap.get(`${category}:${value}`) || value;
+        filters.push({ key: category, label, value: optionLabel });
+      });
+    });
+
+    this.activeFilters = filters;
+    if (filters.length) {
+      const description = filters.map(({ label, value }) => `${label}: ${value}`).join('; ');
+      this.filtersAriaLabel = `${this.activeFiltersLabelPrefix} ${description}`;
+    } else {
+      this.filtersAriaLabel = '';
+    }
+  }
+
+  private getTagLabel(tagId: string): string {
+    if (!tagId) {
+      return '';
+    }
+    const tag = this.tagInputComponent?.tags?.find((item: any) => item._id === tagId);
+    return tag ? tag.name : tagId;
   }
 
   toggleRow(element: any) {
