@@ -40,8 +40,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
-    assistant: false,
-    context: '',
+    context: {
+      data: '',
+      resource: null
+    },
   };
   providers: AIProvider[] = [];
   trackByFn = trackByIdVal;
@@ -244,7 +246,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setSelectedConversation();
 
     if (this.context) {
-      this.data.assistant = true;
       this.data.context = this.context;
     }
 

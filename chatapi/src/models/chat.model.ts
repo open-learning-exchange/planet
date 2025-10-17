@@ -24,7 +24,7 @@ export interface ModelsDocument {
 }
 
 export interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'developer';
   content: string;
 }
 

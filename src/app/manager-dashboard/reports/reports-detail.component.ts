@@ -738,7 +738,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: new Date(activity.createdDate).toLocaleString(),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
-      [$localize`Assistant`]: activity.assistant ? 'Yes' : 'No',
       [$localize`Shared`]: activity.shared ? 'Yes' : 'No',
       [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
     }));

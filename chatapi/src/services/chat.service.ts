@@ -1,5 +1,6 @@
 import { DocumentInsertResponse } from 'nano';
 
+import { assistant } from '../config/ai-providers.config';
 import { chatDB } from '../config/nano.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
@@ -7,7 +8,7 @@ import { AIProvider, ChatMessage } from '../models/chat.model';
 
 function handleChatError(error: any) {
   if (error.response) {
-    throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
+    throw new Error(`Chatapi Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
   } else {
     throw new Error(error.message);
   }
@@ -39,9 +40,17 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
     dbData.conversations = [];
     dbData.createdDate = Date.now();
     dbData.aiProvider = aiProvider.name;
+    messages.push({
+      'role': 'developer',
+      'content': assistant.instructions || ''
+    });
   }
 
-  dbData.conversations.push({ 'id': Date.now().toString(), 'query': content, 'response': '' });
+  dbData.conversations.push({
+    'id': Date.now().toString(),
+    'query': content,
+    'response': ''
+  });
   const res = await chatDB.insert(dbData);
 
   messages.push({ 'role': 'user', content });

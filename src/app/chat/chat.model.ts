@@ -1,11 +1,15 @@
+interface Context {
+    data: string;
+    resource: any;
+  };
+
 export interface ConversationForm {
   _id: string;
   _rev: string;
   user: string;
   content: string;
   aiProvider: AIProvider;
-  assistant: boolean;
-  context: string;
+  context: Context;
 }
 
 export interface Conversation {
@@ -16,7 +20,7 @@ export interface Conversation {
   title: string;
   createdDate: number;
   updatedDate: number;
-  context?: any;
+  context: Context;
 }
 
 export interface Message {

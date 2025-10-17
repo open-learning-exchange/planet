@@ -10,7 +10,7 @@ const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
   courses: [ 'title', 'steps', 'exams', 'enrollments', 'count', 'stepsCompleted', 'completions', 'averageRating' ],
   health: [ 'weekOf', 'count', 'unique' ],
-  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'assistant', 'shared' ]
+  chat: [ 'aiProvider', 'user', 'createdDate', 'conversationLength', 'shared' ]
 };
 
 @Component({
@@ -56,7 +56,6 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
         ...activity,
         createdDate: new Date(activity.createdDate).getTime(),
         hasAttachments: activity.context?.resource?.attachments ? $localize`True` : '',
-        assistant: activity.assistant ? $localize`True` : '',
         shared: activity.shared ? $localize`True` : '',
         conversationLength: activity?.conversations?.length || 0
       }));

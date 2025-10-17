@@ -58,10 +58,6 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header="conversationLength" i18n>Chat Responses</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.conversationLength}}</mat-cell>
   </ng-container>
-  <ng-container matColumnDef="assistant">
-    <mat-header-cell *matHeaderCellDef mat-sort-header="assistant" i18n>Assistant</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element?.assistant}}</mat-cell>
-  </ng-container>
   <ng-container matColumnDef="shared">
     <mat-header-cell *matHeaderCellDef mat-sort-header="shared" i18n>Shared</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.shared}}</mat-cell>

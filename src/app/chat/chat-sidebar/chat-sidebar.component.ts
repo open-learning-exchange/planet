@@ -158,7 +158,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       .subscribe(
         (conversations: any) => {
           this.conversations = conversations
-            .filter((conversation) => !conversation?.context)
+            .filter((conversation) => !conversation?.context?.resource)
             .sort((a, b) => {
               const dateA = a.updatedDate || a.createdDate;
               const dateB = b.updatedDate || b.createdDate;
@@ -166,9 +166,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
               return dateB - dateA;
             });
           this.filteredConversations = [ ...this.conversations ];
-          if (newChat) {
-            this.selectConversation(this.filteredConversations[0], 0);
-          }
+          // if (newChat) {
+          //   this.selectConversation(this.filteredConversations[0], 0);
+          // }
           this.initializeFormGroups();
         },
         (error) => console.log(error)

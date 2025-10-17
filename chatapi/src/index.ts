@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -53,7 +54,7 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', () => {
-    console.log('WebSocket connection closed'); // eslint-disable-line no-console
+    console.log('WebSocket connection closed');
   });
 });
 
@@ -95,4 +96,4 @@ app.get('/checkproviders', async (req: any, res: any) => {
 
 const port = process.env.SERVE_PORT || 5000;
 
-server.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
+server.listen(port, () => console.log(`Server running on port ${port}`));
