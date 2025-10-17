@@ -36,6 +36,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionLatestApk = '';
   versionLocalApk = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
+  resetPinDialog: MatDialogRef<DialogsPromptComponent>;
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
@@ -248,9 +249,29 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  confirmResetPin() {
+    const confirmationMessage = $localize`:@@managerDashboard.resetPinConfirm:Resetting the PIN may temporarily disrupt connections for devices using this server until they reconnect. Do you want to continue?`;
+
+    this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        showMainParagraph: false,
+        extraMessage: confirmationMessage,
+        okClick: {
+          request: this.resetPin(),
+          onNext: () => {
+            this.resetPinDialog.close();
+            this.getSatellitePin();
+            this.planetMessageService.showMessage($localize`Pin reset successfully`);
+          },
+          onError: () => this.planetMessageService.showAlert($localize`Error to reset pin`)
+        }
+      }
+    });
+  }
+
   resetPin() {
     const userName = 'org.couchdb.user:satellite';
-    this.couchService.get('_users/' + userName)
+    return this.couchService.get('_users/' + userName)
     .pipe(switchMap((data) => {
       const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
       satelliteProfile.password = this.managerService.createPin();
@@ -258,10 +279,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         this.couchService.put('_users/' + userName, satelliteProfile),
         this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
       ]);
-    })).subscribe((res) => {
-      this.getSatellitePin();
-      this.planetMessageService.showMessage($localize`Pin reset successfully`);
-    }, (error) => this.planetMessageService.showAlert($localize`Error to reset pin`));
+    }));
   }
 
   setVersions() {
