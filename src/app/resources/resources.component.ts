@@ -130,12 +130,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
+    this.setDisplayedColumns();
   }
 
   ngOnInit() {
-    if (this.myView !== 'myPersonals') {
-      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
-    }
+    this.setDisplayedColumns();
     this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
@@ -164,6 +163,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
+  }
+
+  setDisplayedColumns() {
+    if (this.myView !== 'myPersonals') {
+      if (this.deviceType === this.deviceTypes.MOBILE || this.deviceType === this.deviceTypes.SMALL_MOBILE) {
+        this.displayedColumns = [ 'title', 'info', 'createdDate', 'rating' ];
+      } else {
+        this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
+      }
+    } else {
+      this.displayedColumns = [ 'title', 'createdDate' ];
+    }
   }
 
   setupList(resourcesRes, myLibrarys) {
