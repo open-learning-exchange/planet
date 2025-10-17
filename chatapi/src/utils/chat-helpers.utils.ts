@@ -1,5 +1,5 @@
 import { models } from '../config/ai-providers.config';
-import { AIProvider, ChatMessage } from '../models/chat.model';
+import { AIProvider, ChatMessage, ChatResponse } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
@@ -54,7 +54,7 @@ export async function aiChatNonStream(
   messages: ChatMessage[],
   aiProvider: AIProvider,
   context: any,
-): Promise<string> {
+): Promise<ChatResponse> {
   const provider = models[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
@@ -85,5 +85,8 @@ export async function aiChatNonStream(
     throw new Error('Unexpected API response');
   }
 
-  return responseText;
+  return {
+    'responseId': response.id,
+    'message': response.output_text
+  };
 }

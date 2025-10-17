@@ -34,3 +34,7 @@ export interface ChatItem {
   response: string;
 }
 
+export interface ChatResponse {
+  responseId: string;
+  message: string;
+}

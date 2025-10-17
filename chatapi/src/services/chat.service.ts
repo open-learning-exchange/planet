@@ -4,7 +4,7 @@ import { assistant } from '../config/ai-providers.config';
 import { chatDB } from '../config/nano.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
-import { AIProvider, ChatMessage } from '../models/chat.model';
+import { AIProvider, ChatMessage, ChatResponse } from '../models/chat.model';
 
 function handleChatError(error: any) {
   if (error.response) {
@@ -22,7 +22,7 @@ function handleChatError(error: any) {
  * @returns Object with completion text and CouchDB save response
  */
 export async function chat(data: any, stream?: boolean, callback?: (response: string) => void): Promise<{
-  completionText: string;
+  completion: string | ChatResponse;
   couchSaveResponse: DocumentInsertResponse;
 } | undefined> {
   const { content, ...dbData } = data;
@@ -56,7 +56,8 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, dbData.context, stream, callback);
+    const completion = await aiChat(messages, aiProvider, dbData.context, stream, callback);
+    const completionText = typeof completion === 'string' ? completion : completion.message;
 
     dbData.conversations[dbData.conversations.length - 1].response = completionText;
 
@@ -66,7 +67,7 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
     const couchSaveResponse = await chatDB.insert(dbData);
 
     return {
-      completionText,
+      completion,
       couchSaveResponse
     };
   } catch (error: any) {
@@ -80,18 +81,19 @@ export async function chatNoSave(
   context?: any,
   stream?: boolean,
   callback?: (response: string) => void
-): Promise<string | undefined> {
+): Promise<ChatResponse | string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, context, stream, callback);
+    const completion = await aiChat(messages, aiProvider, context, stream, callback);
+    const completionText = typeof completion === 'string' ? completion : completion.message;
     messages.push({
       'role': 'assistant', 'content': completionText
     });
 
-    return completionText;
+    return completion;
   } catch (error: any) {
     handleChatError(error);
   }

@@ -1,5 +1,5 @@
 import { aiChatStream, aiChatNonStream } from './chat-helpers.utils';
-import { AIProvider, ChatMessage } from '../models/chat.model';
+import { AIProvider, ChatMessage, ChatResponse } from '../models/chat.model';
 
 export async function aiChat(
   messages: ChatMessage[],
@@ -7,7 +7,7 @@ export async function aiChat(
   context?: any,
   stream?: boolean,
   callback?: (response: string) => void
-): Promise<string> {
+): Promise<ChatResponse | string> {
   if (stream) {
     return await aiChatStream(messages, aiProvider, context, callback);
   } else {

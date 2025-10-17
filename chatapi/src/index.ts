@@ -44,7 +44,7 @@ wss.on('connection', (ws) => {
       if (chatResponse) {
         ws.send(JSON.stringify({
           'type': 'final',
-          'completionText': chatResponse.completionText,
+          'completionText': chatResponse.completion,
           'couchDBResponse': chatResponse.couchSaveResponse
         }));
       }
@@ -76,7 +76,7 @@ app.post('/', async (req: any, res: any) => {
       const response = await chat(data, false);
       return res.status(201).json({
         'status': 'Success',
-        'chat': response?.completionText,
+        'chat': response?.completion,
         'couchDBResponse': response?.couchSaveResponse
       });
     }
