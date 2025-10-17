@@ -36,7 +36,17 @@
     </planet-news-list-item>
   </div>
 </ng-container>
-<div #anchor class="loading-anchor"></div>
-<div class="spinner-container" style="text-align: center;">
-  <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
-</div>
+<mat-paginator *ngIf="replyViewing._id === 'root' && totalItems > 0"
+  [length]="totalItems"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPageChange($event)"
+  showFirstLastButtons>
+</mat-paginator>
+<ng-container *ngIf="replyViewing._id !== 'root'">
+  <div #anchor class="loading-anchor"></div>
+  <div class="spinner-container" style="text-align: center;">
+    <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
+  </div>
+</ng-container>

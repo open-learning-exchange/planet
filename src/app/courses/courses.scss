@@ -91,21 +91,21 @@ planet-courses {
       max-width: fit-content;
     }
 
-    .view-table .mat-header-row {
+    .mat-header-row {
       display: none;
     }
 
-    .view-table .mat-row {
+    .mat-row {
       flex-direction: column;
       align-items: start;
       padding: 8px 24px;
     }
 
-    .view-table .table-selection-top {
+    .table-selection-top {
       display: none;
     }
 
-    .view-table .rating-cell {
+    .rating-cell {
       align-self: flex-end;
     }
   }

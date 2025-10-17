@@ -113,6 +113,7 @@ describe('Users', () => {
       expect(statusElement.textContent).toBe('User created: ' + testModel.name,'Create user message displays correctly');
     });
   });
+
   it('Should reject nonmatching passwords', () => {
     let { fixture, comp, statusElement, couchService, testModel } = setup();
     testModel.repeatPassword = 'passwor';
@@ -120,6 +121,7 @@ describe('Users', () => {
     fixture.detectChanges();
     expect(statusElement.textContent).toBe('Passwords do not match','Create user message displays correctly');
   });
+
   it('Should greet users', () => {
     let { fixture, comp, statusElement, couchService, testModel } = setup();
     spy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({name:testModel.name}));
@@ -129,6 +131,7 @@ describe('Users', () => {
       expect(statusElement.textContent).toBe('Hi, ' + testModel.name + '!','Create user message displays correctly');
     });
   });
+
   it('Should message when user & password do not match', () => {
     let { fixture, comp, statusElement, couchService, testModel } = setup();
     spy = spyOn(couchService, 'post').and.returnValue(Promise.reject({}));
