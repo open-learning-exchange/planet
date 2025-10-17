@@ -139,17 +139,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
     }
 
+    const configuration = this.stateService.configuration;
+    const memberships$ = this.couchService.findAll(
+      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.user._id, docType: 'membership' })
+    ).pipe(
+      catchError(() => of([]))
+    );
+
+    const teamsMap$ = memberships$.pipe(
+      switchMap((memberships: any[]) => this.getTeamsMap([
+        ...userShelf.myTeamIds,
+        ...memberships.map((doc: any) => doc.teamId)
+      ]).pipe(
+        map(teamsMap => ({ memberships, teamsMap }))
+      ))
+    );
+
     forkJoin([
       this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
       this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
-      this.getTeamMembership()
-    ]).subscribe(dashboardItems => {
-      this.data.resources = dashboardItems[0];
-      this.data.courses = dashboardItems[1];
-      this.data.meetups = dashboardItems[2];
-      const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
+      teamsMap$
+    ]).subscribe(([ resources, courses, meetups, { memberships, teamsMap } ]) => {
+      this.data.resources = resources;
+      this.data.courses = courses;
+      this.data.meetups = meetups;
+      const shelfTeams = userShelf.myTeamIds
+        .map(teamId => teamsMap.get(teamId))
+        .filter(team => !!team)
+        .map(team => ({ ...this.decorateTeam(team), fromShelf: true }));
+      const membershipTeams = this.getTeamMembership(memberships, teamsMap);
+      const allTeams = [ ...shelfTeams, ...membershipTeams ];
       this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
         .filter(team => team.status !== 'archived');
       this.isLoading = false;
@@ -168,21 +188,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
   }
 
-  getTeamMembership() {
-    const configuration = this.stateService.configuration;
-    return this.couchService.findAll(
-      'teams', findDocuments({ userPlanetCode: configuration.code, userId: this.user._id, docType: 'membership' })
-    ).pipe(
-      switchMap((memberships) => forkJoin([
-        of(memberships),
-        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/teams/view/', addId: true })
-      ])),
-      map(([ memberships, teams ]: any[]) =>
-        teams.filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise').map(team => ({
-          ...team, canRemove: memberships.some(membership => membership.teamId === team._id && membership.isLeader)
-        }))
-      )
-    );
+  getTeamMembership(memberships: any[], teamsMap: Map<string, any>) {
+    return memberships.reduce((teams, membership) => {
+      const team = teamsMap.get(membership.teamId);
+      if (!team || (team.type && team.type !== 'team' && team.type !== 'enterprise')) {
+        return teams;
+      }
+      return [ ...teams, { ...this.decorateTeam(team), canRemove: !!membership.isLeader } ];
+    }, []);
+  }
+
+  getTeamsMap(teamIds: string[]) {
+    const uniqueTeamIds = Array.from(new Set(teamIds.filter(id => !!id)));
+    if (!uniqueTeamIds.length) {
+      return of(new Map<string, any>());
+    }
+    return this.couchService.bulkGet('teams', uniqueTeamIds)
+      .pipe(
+        catchError(() => of([])),
+        map((docs: any[]) => docs.reduce((teamsMap, team) => teamsMap.set(team._id, team), new Map<string, any>()))
+      );
+  }
+
+  decorateTeam(team: any) {
+    return { ...team, title: team.name, link: `/teams/view/${team._id}` };
   }
 
   get profileImg() {
