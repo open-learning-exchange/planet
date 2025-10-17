@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsul
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
-import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { Subject, forkJoin, of, throwError, asyncScheduler, Observable } from 'rxjs';
+import { takeUntil, switchMap, finalize, map, tap, catchError, observeOn } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -12,7 +12,6 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NewsService } from '../news/news.service';
-import { findDocuments } from '../shared/mangoQueries';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { StateService } from '../shared/state.service';
 import { DialogsAddResourcesComponent } from '../shared/dialogs/dialogs-add-resources.component';
@@ -23,7 +22,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort } from './teams.utils';
+import { memberCompare, memberSort, teamActivitiesSelector } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
@@ -142,7 +141,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.initServices(teamId);
       return;
     }
-    this.getTeam(teamId).pipe(
+    this.trace$('couchService.getTeam', this.getTeam(teamId)).pipe(
       catchError(err => {
         this.goBack(true);
         return throwError(err);
@@ -151,16 +150,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         if (this.team.status === 'archived') {
           this.goBack(true);
         }
-        return this.getMembers();
-      }),
-      switchMap(() => this.userStatus === 'member' ? this.teamsService.teamActivity(this.team, 'teamVisit') : of([])),
-      switchMap(() => this.couchService.findAll('team_activities', findDocuments({ teamId })))
-    ).subscribe((activities) => {
-      this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
-        this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
-      });
-      this.setStatus(teamId, this.leader, this.userService.get());
-      this.requestTeamNews(teamId);
+        return this.trace$('TeamsViewComponent.getMembers', this.getMembers());
+      })
+    ).subscribe(() => {
+      this.traceSync('newsService.requestNews', () => this.requestTeamNews(teamId));
+      this.loadDeferredTeamAnalytics(teamId);
     });
   }
 
@@ -200,7 +194,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       return of([]);
     }
     this.financesLoading = true;
-    return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
+    return this.trace$('teamsService.getTeamMembers', this.teamsService.getTeamMembers(this.team, true)).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
         if (member.attachmentDoc) {
@@ -216,14 +210,67 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
       this.requests = docsWithName.filter(mem => mem.docType === 'request');
       this.disableAddingMembers = this.members.length >= this.team.limit;
-      this.finances = docs.filter(doc => doc.docType === 'transaction');
-      this.financesCount = this.finances.length;
-      this.reports = docs.filter(doc => doc.docType === 'report').sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
-      this.reportsCount = this.reports.length;
+      const finances = docs.filter(doc => doc.docType === 'transaction');
+      const reports = docs
+        .filter(doc => doc.docType === 'report')
+        .sort((a, b) => (b.startDate - a.startDate) || (a.endDate - b.endDate));
+      this.scheduleAnalyticsLoad(finances, reports);
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
-      return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(resources => this.resources = resources), finalize(() => this.financesLoading = false));
+      return this.trace$('teamsService.getTeamResources', this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink')));
+    }), map(resources => this.resources = resources));
+  }
+
+  private scheduleAnalyticsLoad(finances: any[], reports: any[]) {
+    this.trace$(`TeamsViewComponent.analytics`, of({ finances, reports }).pipe(
+      observeOn(asyncScheduler),
+      tap(({ finances: financesDocs, reports: reportDocs }) => {
+        this.finances = financesDocs;
+        this.financesCount = financesDocs.length;
+        this.reports = reportDocs;
+        this.reportsCount = reportDocs.length;
+        this.financesLoading = false;
+      })
+    )).pipe(takeUntil(this.onDestroy$)).subscribe();
+  }
+
+  private loadDeferredTeamAnalytics(teamId: string) {
+    this.trace$(`TeamsViewComponent.deferredAnalytics`, of(null).pipe(
+      observeOn(asyncScheduler),
+      switchMap(() => {
+        const activity$ = this.userStatus === 'member' ?
+          this.trace$('teamsService.teamActivity', this.teamsService.teamActivity(this.team, 'teamVisit')) :
+          of([]);
+        const activities$ = this.trace$('couchService.findTeamActivities', this.couchService.findAll('team_activities', teamActivitiesSelector(teamId)));
+        return forkJoin({ activity: activity$, activities: activities$ });
+      }),
+      map(({ activities }) => activities),
+      tap((activities) => {
+        this.traceSync('reportsService.groupBy', () => {
+          this.reportsService.groupBy(activities, [ 'user' ], { maxField: 'time' }).forEach((visit) => {
+            this.visits[visit.user] = { count: visit.count, recentTime: visit.max && visit.max.time };
+          });
+        });
+        this.setStatus(this.team, this.leader, this.userService.get());
+      })
+    )).pipe(takeUntil(this.onDestroy$)).subscribe();
+  }
+
+  private trace$<T>(label: string, source$: Observable<T>): Observable<T> {
+    console.log(`[TeamsViewComponent] start ${label}`);
+    console.time(label);
+    return source$.pipe(finalize(() => {
+      console.timeEnd(label);
+      console.log(`[TeamsViewComponent] end ${label}`);
+    }));
+  }
+
+  private traceSync(label: string, fn: () => void) {
+    console.log(`[TeamsViewComponent] start ${label}`);
+    console.time(label);
+    fn();
+    console.timeEnd(label);
+    console.log(`[TeamsViewComponent] end ${label}`);
   }
 
   setTasks(tasks = []) {
