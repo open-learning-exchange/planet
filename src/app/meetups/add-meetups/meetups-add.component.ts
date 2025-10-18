@@ -33,7 +33,7 @@ import { debounce } from 'rxjs/operators';
       max-width: 750px;
     }
     .time-picker-field input {
-      padding-top: 5px;
+      height: 2em;
     }
   ` ]
 })
