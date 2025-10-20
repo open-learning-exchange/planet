@@ -22,6 +22,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.getPlanetVersion();
     this.configurationCheckService.checkConfiguration().subscribe(isOnline => {
+      if (!isOnline) {
+        this.online = 'off';
+        return;
+      }
       this.online = isOnline;
     });
   }
