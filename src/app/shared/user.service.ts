@@ -101,10 +101,27 @@ export class UserService {
         }
         return of([ [] ]);
       }),
-      switchMap(([ shelf ]: any[]) => {
-        // Combine with empty shelf in case all fields are not present
-        this.shelf = { ...this.emptyShelf, ...(shelf || {}) };
-        return of(true);
+      switchMap((shelves: any[]) => {
+        const [ shelf ] = shelves;
+
+        if (shelf && shelf._id) {
+          // Combine with empty shelf in case all fields are not present
+          this.shelf = { ...this.emptyShelf, ...shelf };
+          return of(true);
+        }
+
+        if (environment.test) {
+          this.shelf = { ...this.emptyShelf };
+          return of(true);
+        }
+
+        return this.couchService.put('shelf/' + this.user._id, { ...this.emptyShelf, _id: this.user._id }).pipe(
+          switchMap(() => this.couchService.findAll('shelf', { 'selector': { '_id': this.user._id } })),
+          tap(([ createdShelf ]: any[]) => {
+            this.shelf = { ...this.emptyShelf, ...(createdShelf || { _id: this.user._id }) };
+          }),
+          map(() => true)
+        );
       }));
   }
 
