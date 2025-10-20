@@ -27,116 +27,118 @@
       </button>
     </ng-container>
   </mat-toolbar>
-  <div class="view-container view-full-height" [class.view-table]="surveys.data.length > 0">
-    <div *ngIf="surveys.data.length > 0; else noData">
-      <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true">
-        <ng-container matColumnDef="select">
-          <mat-header-cell *matHeaderCellDef>
-            <mat-checkbox (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected()"
-            [indeterminate]="selection.hasValue() && !isAllSelected()">
-            </mat-checkbox>
-          </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
-              [checked]="selection.isSelected(row._id)"
-              [disabled]="(row.teamId && isManagerRoute) || (!isManagerRoute && !row.teamId)"
-              [matTooltip]="getCheckboxTooltip(row)"
-              *ngIf="!row.parent === true">
-            </mat-checkbox>
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
-          <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="taken">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="courseTitle">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Linked</mat-header-cell>
-          <mat-cell *matCellDef="let element"><span class="cursor-pointer course-title" *ngIf="element.course" [routerLink]="['/courses/view', element.course._id]">{{element.courseTitle}}</span></mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="createdDate">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created/Updated on</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            {{element.createdDate | date: 'mediumDate'}}
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="action">
-          <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
-              <div [matTooltip]="getEditTooltip(element)">
+  <div class="view-container view-full-height view-table">
+    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true">
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
+            [checked]="selection.isSelected(row._id)"
+            [disabled]="(row.teamId && isManagerRoute) || (!isManagerRoute && !row.teamId)"
+            [matTooltip]="getCheckboxTooltip(row)"
+            *ngIf="!row.parent === true">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Survey</mat-header-cell>
+        <mat-cell *matCellDef="let element"><span>{{element.name}}</span></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="taken">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="taken" i18n>Number of Times Taken</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.taken}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="courseTitle">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Linked</mat-header-cell>
+        <mat-cell *matCellDef="let element"><span class="cursor-pointer course-title" *ngIf="element.course" [routerLink]="['/courses/view', element.course._id]">{{element.courseTitle}}</span></mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="createdDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="createdDate" i18n>Created/Updated on</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{element.createdDate | date: 'mediumDate'}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
+            <div [matTooltip]="getEditTooltip(element)">
+              <button mat-raised-button color="primary"
+                *ngIf="!teamId"
+                (click)="routeToEditSurvey('update', element._id)"
+                [disabled]="(element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId) || element.isArchived"
+                i18n><mat-icon>edit</mat-icon> Edit
+              </button>
+            </div>
+            <div [matTooltip]="getSendTooltip(element)">
+              <button mat-raised-button color="primary"
+                *ngIf="!teamId && !routeTeamId"
+                [matMenuTriggerFor]="sendMenu"
+                [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
+                i18n><mat-icon>send</mat-icon> Send
+              </button>
+            </div>
+            <mat-menu #sendMenu="matMenu">
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
+              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team</button>
+            </mat-menu>
+            <div [matTooltip]="getRecordTooltip(element)">
+              <button mat-raised-button color="primary"
+                (click)="recordSurvey(element)"
+                [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
+                i18n><mat-icon>fiber_manual_record</mat-icon> Record
+              </button>
+            </div>
+            <ng-container *ngIf="!element.course">
+              <div [matTooltip]="getArchiveTooltip(element)">
                 <button mat-raised-button color="primary"
-                  *ngIf="!teamId"
-                  (click)="routeToEditSurvey('update', element._id)"
-                  [disabled]="(element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId) || element.isArchived"
-                  i18n><mat-icon>edit</mat-icon> Edit
-                </button>
-              </div>
-              <div [matTooltip]="getSendTooltip(element)">
-                <button mat-raised-button color="primary"
-                  *ngIf="!teamId && !routeTeamId"
-                  [matMenuTriggerFor]="sendMenu"
-                  [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
-                  i18n><mat-icon>send</mat-icon> Send
-                </button>
-              </div>
-              <mat-menu #sendMenu="matMenu">
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" i18n>Team</button>
-              </mat-menu>
-              <div [matTooltip]="getRecordTooltip(element)">
-                <button mat-raised-button color="primary"
-                  (click)="recordSurvey(element)"
-                  [disabled]="!element.questions.length || (element.teamId && isManagerRoute) || element.isArchived"
-                  i18n><mat-icon>fiber_manual_record</mat-icon> Record
-                </button>
-              </div>
-              <ng-container *ngIf="!element.course">
-                <div [matTooltip]="getArchiveTooltip(element)">
-                  <button mat-raised-button color="primary"
-                  (click)="archiveSurvey(element)"
-                  [disabled]="element.isArchived || (element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId)"
-                  i18n><mat-icon>archive</mat-icon> Archive</button>
-                </div>
-              </ng-container>
-              <div>
-                <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
-                  <mat-icon>insert_drive_file</mat-icon> Submissions
-                </button>
+                (click)="archiveSurvey(element)"
+                [disabled]="element.isArchived || (element.teamId && isManagerRoute) || (!isManagerRoute && !element.teamId)"
+                i18n><mat-icon>archive</mat-icon> Archive</button>
               </div>
             </ng-container>
-            <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
-            <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
-              <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
-                <mat-icon>move_to_inbox</mat-icon> Export
+            <div>
+              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
+                <mat-icon>insert_drive_file</mat-icon> Submissions
               </button>
-              <mat-menu #exportMenu="matMenu">
-                <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
-                <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
-              </mat-menu>
             </div>
-          </mat-cell>
-        </ng-container>
+          </ng-container>
+          <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
+          <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
+            <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
+              <mat-icon>move_to_inbox</mat-icon> Export
+            </button>
+            <mat-menu #exportMenu="matMenu">
+              <button mat-menu-item (click)="exportCSV(element)" i18n>Excel (CSV)</button>
+              <button mat-menu-item (click)="exportPdf(element)" i18n>Print (PDF)</button>
+            </mat-menu>
+          </div>
+        </mat-cell>
+      </ng-container>
+      <ng-container *ngIf="surveys.data.length > 0">
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      <mat-paginator #paginator
-        [pageSize]="50"
-        [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-        (page)="onPaginateChange($event)">
-      </mat-paginator>
-    </div>
-    <ng-template #noData>
-      <div class="view-container" *ngIf="isLoading" i18n>
-        Loading Surveys...
-      </div>
-      <div class="view-container" *ngIf="!isLoading" i18n>
-        No Survey Found
-      </div>
-    </ng-template>
+      </ng-container>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <tr class="mat-row" *matNoDataRow>
+        <td>
+          <div class="view-container" *ngIf="isLoading" i18n>
+            Loading Surveys...
+          </div>
+          <div class="view-container" *ngIf="!isLoading" i18n>
+            No Survey Found
+          </div>
+        </td>
+      </tr>
+    </mat-table>
+    <mat-paginator #paginator
+      [pageSize]="50"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
+      (page)="onPaginateChange($event)">
+    </mat-paginator>
     </div>
 </div>
