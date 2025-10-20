@@ -19,8 +19,9 @@
 
   .button-container {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 0.5rem;
   }
   .horizontal-align {
     justify-content: center;
@@ -32,9 +33,9 @@
   }
 
   .mat-cell button, .mat-cell div button[mat-raised-button] {
-    width: 150px;
+    width: 120px;
     text-align: center;
-    padding: 8px 12px;
+    padding: 6px 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -47,6 +48,21 @@
   .team-type-label {
     font-size: 12px;
     color: #666;
+  }
+
+  @media (max-width: $screen-md) {
+    .button-container {
+      gap: 0.75rem;
+    }
+
+    .mat-cell button, .mat-cell div button[mat-raised-button] {
+      width: 100px;
+      text-align: center;
+      padding: 6px 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   @media (max-width: $screen-sm) {
@@ -62,6 +78,7 @@
     .button-container {
       flex-direction: column;
       align-items: flex-start;
+      gap: 0.5rem;
     }
   }
 
