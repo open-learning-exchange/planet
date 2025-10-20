@@ -74,11 +74,7 @@ If port 3000 is in use, try ```ng serve --port 3001```
 
 ## Chatapi Notes
 
-<<<<<<< HEAD
-Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB.
-=======
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 
->>>>>>> master
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
