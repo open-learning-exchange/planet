@@ -468,8 +468,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!tagId) {
       return '';
     }
-    const tag = this.tagInputComponent?.tags?.find((item: any) => item._id === tagId);
-    return tag ? tag.name : tagId;
+    const tags: any[] = (this.tagInputComponent?.tags as any[]) || [];
+    const tag = tags.find((item: any) => item && item._id === tagId);
+    if (tag && typeof tag === 'object') {
+      return tag.name || tagId;
+    }
+    return tagId;
   }
 
   toggleRow(element: any) {
