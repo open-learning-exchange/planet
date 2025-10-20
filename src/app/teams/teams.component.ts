@@ -8,8 +8,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, map, finalize, catchError } from 'rxjs/operators';
-import { forkJoin, throwError } from 'rxjs';
+import { switchMap, map, finalize, catchError, shareReplay } from 'rxjs/operators';
+import { forkJoin, throwError, of } from 'rxjs';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
 } from '../shared/table-helpers';
@@ -19,6 +19,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { ManagerService } from '../manager-dashboard/manager.service';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -65,6 +66,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   showFiltersRow = false;
   selection = new SelectionModel(true, []);
   selectedIds: string[] = [];
+  private childPlanets$ = this.managerService.getChildPlanets(
+    true,
+    this.stateService.configuration.code,
+    this.stateService.configuration.parentDomain
+  ).pipe(shareReplay(1));
   get tableData() {
     return this.teams;
   }
@@ -80,7 +86,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private managerService: ManagerService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
@@ -120,15 +127,28 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate() - 30).getTime();
     };
     this.dialogsLoadingService.start();
-    this.couchService.currentTime().pipe(switchMap(time =>
-      forkJoin([
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
-        this.getMembershipStatus(),
-        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
-        this.couchService.findAll('communityregistrationrequests')
-      ])
-    )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
-      this.childPlanets = attachNamesToPlanets(planets);
+    this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).pipe(
+      switchMap((activeTeams: any[]) => {
+        const teamIds = activeTeams.map(team => team._id);
+        const activities$ = teamIds.length ? this.couchService.currentTime().pipe(
+          switchMap(time => this.couchService.findAll('team_activities', {
+            'selector': {
+              'type': 'teamVisit',
+              'teamId': { '$in': teamIds },
+              'time': { '$gte': thirtyDaysAgo(time) }
+            },
+            'fields': [ 'teamId', 'time' ]
+          }))
+        ) : of([]);
+        return forkJoin({
+          teams: of(activeTeams),
+          membership: this.getMembershipStatus(),
+          activities: activities$,
+          childPlanets: this.childPlanets$
+        });
+      })
+    ).subscribe(({ teams, activities, childPlanets, membership: _membership }: any) => {
+      this.childPlanets = attachNamesToPlanets(childPlanets);
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
       this.teams.data = this.teamList(teams.filter(team => {
