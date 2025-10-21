@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'planet-language',
-  templateUrl: './planet-language.component.html'
+  templateUrl: './planet-language.component.html',
+  styleUrls: [ './planet-language.scss' ]
 })
 export class PlanetLanguageComponent implements OnInit {
 
