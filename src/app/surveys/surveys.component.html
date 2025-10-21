@@ -120,9 +120,7 @@
           </div>
         </mat-cell>
       </ng-container>
-      <ng-container *ngIf="surveys.data.length > 0">
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns" [class.hidden]="!surveys.data || surveys.data.length === 0"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td>
