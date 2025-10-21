@@ -49,10 +49,6 @@ export const styleVariables: any = {
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
-export const arraySubField = (array: any[], field: string) => array.map(item => item[field]);
-
-export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
-
 export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
@@ -84,8 +80,6 @@ export const urlToParamObject = (url: string) => url.split(';').reduce((params, 
 export const toProperCase = (string: string) => `${string.slice(0, 1).toUpperCase()}${string.slice(1)}`;
 
 export const stringToHex = (string: string) => string.split('').map(char => char.charCodeAt(0).toString(16)).join('');
-
-export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
 
 export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const now = new Date(currentTime);
