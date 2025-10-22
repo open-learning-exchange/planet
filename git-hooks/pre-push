@@ -19,9 +19,6 @@
 # This sample shows how to prevent push of commits where the log message starts
 # with "WIP" (work in progress).
 
-remote="$1"
-url="$2"
-
 pass=true
 RED='\033[1;31m'
 GREEN='\033[0;32m'
