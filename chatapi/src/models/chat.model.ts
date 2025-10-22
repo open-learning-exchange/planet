@@ -1,4 +1,4 @@
-type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
 
 export interface AIProvider {
   name: ProviderName;

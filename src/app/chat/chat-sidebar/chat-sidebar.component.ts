@@ -38,7 +38,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   selectedConversation: Conversation;
   lastRenderedConversation: number;
   isEditing: boolean;
-  provider: AIProvider;
+  provider: AIProvider = { name: 'openai' };
   fullTextSearch = false;
   searchType: 'questions' | 'responses';
   overlayOpen = false;

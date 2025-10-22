@@ -3,7 +3,7 @@ import { DocumentInsertResponse } from 'nano';
 import { chatDB } from '../config/nano.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
-import { AIProvider, ChatMessage } from '../models/chat.model';
+import { AIProvider, ChatMessage, ProviderName } from '../models/chat.model';
 
 function handleChatError(error: any) {
   if (error.response) {
@@ -26,7 +26,11 @@ export async function chat(data: any, stream?: boolean, callback?: (response: st
 } | undefined> {
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
-  const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
+  const aiProviderDetails = dbData.aiProvider as AIProvider | ProviderName | undefined;
+  const fallbackProvider: ProviderName = 'openai';
+  const aiProvider: AIProvider = typeof aiProviderDetails === 'object' && aiProviderDetails !== null
+    ? { name: aiProviderDetails.name, model: aiProviderDetails.model }
+    : { name: aiProviderDetails ?? fallbackProvider };
 
   if (!content || typeof content !== 'string') {
     throw new Error('"data.content" is a required non-empty string field');

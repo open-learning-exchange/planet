@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices, AIProvider } from '../chat/chat.model';
+import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +20,14 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<string>();
+  private toggleAIService = new Subject<ProviderName>();
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
-  toggleAIService$ = this.toggleAIService.asObservable();
+  toggleAIService$: Observable<ProviderName> = this.toggleAIService.asObservable();
   aiProviders$ = this.aiProvidersSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
@@ -70,7 +70,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
         }),
         map((services: AIServices) => {
           if (services) {
-            return Object.entries(services)
+            return (Object.entries(services) as [ ProviderName, boolean ][])
               .filter(([ _, model ]) => model === true)
               .map(([ key ]) => ({ name: key, model: key }));
           } else {
@@ -129,7 +129,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
     this.newChatSelected.next();
   }
 
-  toggleAIServiceSignal(aiService: string) {
+  toggleAIServiceSignal(aiService: ProviderName) {
     this.toggleAIService.next(aiService);
   }
 

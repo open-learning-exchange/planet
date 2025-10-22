@@ -1,4 +1,4 @@
-import { ChatItem } from './chat.model';
+import { ChatItem, ProviderName } from './chat.model';
 
 export interface DbDoc {
   _id: string;
@@ -6,7 +6,7 @@ export interface DbDoc {
   user: any;
   title: string;
   createdDate: number;
-  aiProvider: string;
+  aiProvider?: ProviderName;
   conversations: ChatItem[];
 }
 

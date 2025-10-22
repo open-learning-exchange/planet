@@ -28,7 +28,7 @@ export interface Message {
 export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
 
 export interface AIProvider {
-  name: string;
+  name: ProviderName;
   model?: string;
 }
 

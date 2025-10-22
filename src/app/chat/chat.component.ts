@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
-import { AIProvider } from './chat.model';
+import { AIProvider, ProviderName } from './chat.model';
 
 @Component({
   selector: 'planet-chat',
@@ -10,7 +10,7 @@ import { AIProvider } from './chat.model';
   styleUrls: [ './chat.scss' ]
 })
 export class ChatComponent implements OnInit {
-  activeService: string;
+  activeService?: ProviderName;
   aiServices: AIProvider[] = [];
   displayToggle: boolean;
 
@@ -23,9 +23,11 @@ export class ChatComponent implements OnInit {
   ngOnInit() {
     this.chatService.listAIProviders().subscribe((providers) => {
       this.aiServices = providers;
-      this.activeService = this.aiServices[0]?.model;
+      this.activeService = this.aiServices[0]?.name;
       this.displayToggle = this.aiServices.length > 0;
-      this.chatService.toggleAIServiceSignal(this.activeService);
+      if (this.activeService) {
+        this.chatService.toggleAIServiceSignal(this.activeService);
+      }
     });
     this.subscribeToAIService();
   }
@@ -45,7 +47,9 @@ export class ChatComponent implements OnInit {
   }
 
   toggleAIService(): void {
-    this.chatService.toggleAIServiceSignal(this.activeService);
+    if (this.activeService) {
+      this.chatService.toggleAIServiceSignal(this.activeService);
+    }
   }
 
 }
