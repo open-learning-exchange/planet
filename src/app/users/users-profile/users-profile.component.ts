@@ -155,4 +155,28 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       this.enterprises = teams.filter((team: any) => team.doc.type === 'enterprise');
     });
   }
+
+  genderIcon(gender: any): 'male' | 'female' | 'other' | null {
+    if (!gender) {
+      return null;
+    }
+    const normalizedGender = gender.toString().toLowerCase();
+    if (normalizedGender === 'male' || normalizedGender === 'female') {
+      return normalizedGender;
+    }
+    return 'other';
+  }
+
+  genderColorClass(icon: string | null): string {
+    switch (icon) {
+      case 'male':
+        return 'gender-icon-male';
+      case 'female':
+        return 'gender-icon-female';
+      case 'other':
+        return 'gender-icon-other';
+      default:
+        return 'gender-icon-other';
+    }
+  }
 }

@@ -47,6 +47,9 @@ export class AppComponent {
       'female',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/female.svg'));
     iconRegistry.addSvgIcon(
+      'other',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/other.svg'));
+    iconRegistry.addSvgIcon(
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
     iconRegistry.addSvgIcon(

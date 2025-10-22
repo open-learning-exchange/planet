@@ -31,6 +31,23 @@
     }
   }
 
+  .gender-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .gender-icon-male {
+    color: $primary;
+  }
+
+  .gender-icon-female {
+    color: $accent;
+  }
+
+  .gender-icon-other {
+    color: $warn;
+  }
+
   @media (max-width: $screen-sm) {
     .profile-image-section {
       grid-area: icon;
