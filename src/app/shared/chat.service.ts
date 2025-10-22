@@ -8,6 +8,15 @@ import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { AIServices, AIProvider } from '../chat/chat.model';
 
+export interface ChatStreamMessage {
+  type: string;
+  response?: unknown;
+  completionText?: string;
+  couchDBResponse?: any;
+  metadata?: Record<string, any>;
+  error?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 }) export class ChatService {
@@ -16,7 +25,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   private baseUrl = environment.chatAddress;
   private socket: WebSocket;
 
-  private chatStreamSubject: Subject<string> = new Subject<string>();
+  private chatStreamSubject: Subject<ChatStreamMessage> = new Subject<ChatStreamMessage>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
@@ -47,11 +56,11 @@ import { AIServices, AIProvider } from '../chat/chat.model';
       };
       this.socket.addEventListener('message', (event) => {
         try {
-          const message = JSON.parse(event.data);
+          const message: ChatStreamMessage = JSON.parse(event.data);
           if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+            this.errorSubject.next(message.error || 'Unknown error');
           } else {
-            this.chatStreamSubject.next(event.data);
+            this.chatStreamSubject.next(message);
           }
         } catch (error) {
           this.errorSubject.next('Invalid message format');
@@ -95,7 +104,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
   }
 
   // Subscribe to stream updates
-  getChatStream(): Observable<string> {
+  getChatStream(): Observable<ChatStreamMessage> {
     return this.chatStreamSubject.asObservable();
   }
 
@@ -105,7 +114,7 @@ import { AIServices, AIProvider } from '../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(data));
     }
   }
