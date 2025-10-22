@@ -88,15 +88,13 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <ng-container *planetAuthorizedRoles="''">
-            <div class="action-buttons">
-              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                <span *ngIf="!deleteMode" i18n>Remove Links</span>
-                <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-              </button>
+           <div *planetAuthorizedRoles="''" class="action-buttons">
+            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+            <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+              <span *ngIf="!deleteMode" i18n>Remove Links</span>
+              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
+            </button>
             </div>
-          </ng-container>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
           <planet-community-list></planet-community-list>
