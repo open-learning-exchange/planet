@@ -22,6 +22,10 @@
 remote="$1"
 url="$2"
 
+if [ -n "$remote" ] || [ -n "$url" ]; then
+  printf 'Preparing to push to remote "%s" (%s)\n' "$remote" "$url"
+fi
+
 pass=true
 RED='\033[1;31m'
 GREEN='\033[0;32m'
