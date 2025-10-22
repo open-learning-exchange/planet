@@ -8,21 +8,14 @@ import { ChatMessage } from '../models/chat.model';
  * @returns Array of chat conversations
  */
 async function getChatDocument(id: string) {
-  try {
-    const res = await chatDB.get(id) as DbDoc;
-    return {
-      'conversations': res.conversations,
-      'title': res.title,
-      'createdDate': res.createdDate,
-      'aiProvider': res.aiProvider
-    };
-    // Should return user, team data as well particularly for the "/conversations" endpoint
-  } catch (error) {
-    return {
-      'conversations': [],
-      'title': ''
-    };
-  }
+  const res = await chatDB.get(id) as DbDoc;
+  return {
+    'conversations': res.conversations,
+    'title': res.title,
+    'createdDate': res.createdDate,
+    'aiProvider': res.aiProvider
+  };
+  // Should return user, team data as well particularly for the "/conversations" endpoint
 }
 
 export async function retrieveChatHistory(dbData: any, messages: ChatMessage[]) {
