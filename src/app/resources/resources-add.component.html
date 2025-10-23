@@ -8,7 +8,7 @@
   <div class="view-container view-full-height">
     <div>
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
-        <mat-form-field>
+        <mat-form-field appearance="outline">
           <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
