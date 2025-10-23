@@ -5,13 +5,13 @@
   <div>
     <span><b i18n>Patients Seen:</b> {{headlineData?.unique.length}}</span>
   </div>
-  <h1 class="mat-title" i18n>Diagnoses</h1>
+  <h1 class="mat-headline-6" i18n>Diagnoses</h1>
   <div>
     <span *ngFor="let condition of conditions">
       <planet-label [label]="condition"></planet-label>: {{headlineData?.conditions[condition]}}
     </span>
   </div>
-  <h1 class="mat-title" i18n>Diagnosis Trend</h1>
+  <h1 class="mat-headline-6" i18n>Diagnosis Trend</h1>
   <div class="trend-filters">
     <span i18n>Select diagnosis to view trend:</span>
     <mat-form-field>
@@ -25,7 +25,7 @@
   <div *ngIf="showChart" class="chart-container">
     <canvas id="diagnosesTrend" #diagnosesChart></canvas>
   </div>
-  <h1 class="mat-title" i18n>Weekly Data</h1>
+  <h1 class="mat-headline-6" i18n>Weekly Data</h1>
   <planet-reports-detail-activities
     [activitiesByDoc]="weeklyHealthData"
     activityType="health"

@@ -75,7 +75,7 @@ mat-toolbar mat-form-field {
 }
 
 @media(max-width: #{$screen-md}) {
-  .mat-form-field {
+  .mat-mdc-form-field {
     width: 100%;
   }
 
