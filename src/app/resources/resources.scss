@@ -31,6 +31,37 @@ $label-height: 1rem;
     height: $toolbar-height;
   }
 
+  .filters-indicator-row {
+    align-items: center;
+    flex-wrap: wrap;
+
+    .filters-indicator-label {
+      margin-right: 8px;
+    }
+
+    .filters-chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filters-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .filters-chip-text {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .filters-chip-category {
+      font-weight: 600;
+    }
+  }
+
   .view-full-height.view-with-search {
     height: calc(#{$view-container-height} - #{$toolbar-height});
   }
