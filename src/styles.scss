@@ -367,10 +367,11 @@ body {
   }
 
   // Remove the underline from mat-form-field for custom fields
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-type-no-underline .mat-form-field-underline {
     display: none;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-dynamic-width .mat-form-field-infix {
     width: auto;
   }
@@ -457,7 +458,7 @@ body {
 
   mat-toolbar:first-child > mat-form-field,
   mat-toolbar:first-child > planet-selector,
-  .mat-toolbar form .mat-form-field,
+  .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
     margin-top: 10px;
     &.mat-form-field-type-no-underline {
@@ -490,9 +491,11 @@ body {
   }
 
   .collections-search {
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-wrapper {
       padding: 0;
     }
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-infix {
       border: 0;
     }
@@ -539,7 +542,7 @@ body {
     }
   }
 
-  .mat-input-element[readonly]{
+  .mat-mdc-input-element[readonly]{
     color: $grey;
   }
 
