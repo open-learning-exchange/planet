@@ -70,10 +70,6 @@ const alwaysGuardedRoutes = [
   {
     path: dashboardPath('myLibrary'),
     loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myLibrary' }
-  },
-  {
-    path: dashboardPath('myPersonals'),
-    loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { view: 'myPersonals' }
   }
 ];
 
