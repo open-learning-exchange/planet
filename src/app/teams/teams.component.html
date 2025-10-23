@@ -92,12 +92,12 @@
             <mat-icon>check</mat-icon>
           </button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class>
-          <div [ngClass]="{'horizontal-align button-container': isMobile}">
+        <mat-cell *matCellDef="let element">
+          <div class="button-container" [ngClass]="{'horizontal-align': isMobile}">
             <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
               <ng-container *ngSwitchCase="'member'">
                 <ng-container *ngIf="!element.isLeader">
-                  <button mat-raised-button color="primary" class="margin-lr-3" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
+                  <button mat-raised-button color="primary" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
                     <mat-icon>remove_circle</mat-icon>
                     <label *ngIf="!isMobile" i18n> Leave </label>
                   </button>
@@ -107,7 +107,7 @@
                   <label *ngIf="!isMobile" i18n> Edit </label>
                 </button>
               </ng-container>
-              <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" class="margin-lr-3" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+              <button *ngSwitchCase="'unrelated'" mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
                 <mat-icon>add_circle</mat-icon>
                 <label *ngIf="!isMobile" i18n> Request to Join </label>
               </button>
@@ -120,7 +120,7 @@
               <mat-icon>feedback</mat-icon>
               <label *ngIf="!isMobile" i18n> Feedback </label>
             </button>
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" class="margin-lr-3" (click)="archiveClick(element.doc); $event.stopPropagation()">
+            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               <label *ngIf="!isMobile" i18n> Delete </label>
             </button>
