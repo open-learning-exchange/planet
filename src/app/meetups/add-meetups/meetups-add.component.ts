@@ -32,6 +32,9 @@ import { debounce } from 'rxjs/operators';
       min-width: 385px;
       max-width: 750px;
     }
+    .time-picker-field input {
+      height: 2em;
+    }
   ` ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
