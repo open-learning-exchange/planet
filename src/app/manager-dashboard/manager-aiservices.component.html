@@ -2,7 +2,7 @@
   <button mat-icon-button routerLink="/manager">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <span i18n>AI API Configurations</span>
+  <span i18n>AI Configurations</span>
 </mat-toolbar>
 
 <form class="container" [formGroup]="configForm">
@@ -10,21 +10,21 @@
     <mat-card-title i18n>API Keys</mat-card-title>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
-        <mat-list-item *ngFor="let key of objectKeys(configuration.keys)">
+        <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
           <div class="list-item-content">
-            <span>{{ key | titlecase }}</span>
+            <span>{{ apiKey.key | titlecase }}</span>
             <mat-form-field>
               <input
                 matInput
-                [type]="hideKey[key] ? 'password' : 'text'"
-                [formControlName]="'keys_' + key"
+                [type]="hideKey[apiKey.key] ? 'password' : 'text'"
+                [formControlName]="'keys_' + apiKey.key"
                 placeholder="Enter API key"
                 i18n-placeholder
               />
-              <button mat-icon-button matSuffix (click)="toggleHideKey(key)">
-                <mat-icon>{{ hideKey[key] ? 'visibility_off' : 'visibility' }}</mat-icon>
+              <button mat-icon-button matSuffix (click)="toggleHideKey(apiKey.key)">
+                <mat-icon>{{ hideKey[apiKey.key] ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <button mat-icon-button matSuffix (click)="copyKey(key)">
+              <button mat-icon-button matSuffix (click)="copyKey(apiKey.key)">
                 <mat-icon>content_copy</mat-icon>
               </button>
             </mat-form-field>
@@ -39,11 +39,11 @@
     <mat-card-title i18n>Models</mat-card-title>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
-        <mat-list-item *ngFor="let model of objectKeys(configuration.models)">
+        <mat-list-item *ngFor="let model of configuration.models | keyvalue">
           <div class="list-item-content">
-            <span>{{ model | titlecase }}</span>
+            <span>{{ model.key | titlecase }}</span>
             <mat-form-field>
-              <input matInput [formControlName]="'models_' + model" placeholder="Enter model" i18n-placeholder />
+              <input matInput [formControlName]="'models_' + model.key" placeholder="Enter model" i18n-placeholder />
             </mat-form-field>
           </div>
         </mat-list-item>
