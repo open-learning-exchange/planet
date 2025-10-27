@@ -14,6 +14,25 @@
     grid-template-columns: 1fr;
     grid-template-areas: "news";
   }
+
+  .toggle-button {
+    margin-bottom: 1rem;
+  }
+
+  .action-buttons {
+    button {
+      margin-top: 0.5rem;
+    }
+  }
+
+  .responsive-toolbar {
+    border-radius: 7.5px;
+  }
+
+  .label-icon {
+    vertical-align: middle;
+    margin-right: 4px;
+  }
 }
 
 .community-news {
@@ -60,20 +79,6 @@ mat-tab-group, mat-tab {
   padding-top: 0.5rem;
 }
 
-.toggle-button {
-  margin-bottom: 1rem;
-}
-
-.action-buttons {
-  button {
-    margin-top: 0.5rem;
-  }
-}
-
-.community-view .responsive-toolbar {
-  border-radius: 7.5px;
-}
-
 .toolbar-row {
   display: flex;
   flex-wrap: wrap;
@@ -98,11 +103,6 @@ mat-tab-group, mat-tab {
       fill: black;
     }
   }
-}
-
-.label-icon {
-  vertical-align: middle;
-  margin-right: 4px;
 }
 
 @media only screen and (max-width: $screen-sm) {
