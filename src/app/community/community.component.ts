@@ -72,7 +72,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   attachmentMap: Record<string, any> = {};
 
   get localLinks(): any[] {
-    return (this.links || []).filter(link => link.teamType !== 'social' && (this.isTeamLink(link) || this.isEnterpriseLink(link)));
+    return (this.links || []).filter(link => link.teamType !== 'social');
   }
 
   get socialWebLinks(): any[] {
@@ -315,7 +315,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;
-  this.financesLoading = false;
+    this.financesLoading = false;
   }
 
   dataChanged() {
@@ -565,13 +565,5 @@ export class CommunityComponent implements OnInit, OnDestroy {
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
     this.selectedLabel = action === 'select' ? label : '';
     this.applyFilters();
-  }
-
-  isTeamLink(link: any): boolean {
-    return (link?.route || '').startsWith('/teams');
-  }
-
-  isEnterpriseLink(link: any): boolean {
-    return (link?.route || '').startsWith('/enterprises');
   }
 }
