@@ -1,7 +1,7 @@
 <div mat-dialog-title>
   <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
-  <mat-select [(ngModel)]="selectedLink" (selectionChange)="onLinkTypeChange($event.value)">
+    <mat-select [(ngModel)]="selectedLink">
       <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
     </mat-select>
   </mat-form-field>
@@ -25,23 +25,23 @@
   <form [formGroup]="linkForm">
     <mat-form-field class="full-width">
       <mat-label i18n>Platform</mat-label>
-  <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)" required>
+      <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)" required>
         <mat-select-trigger>
           <ng-container [ngSwitch]="linkForm.value.platform">
             <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
-            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(linkForm.value.platform)" class="margin-r-5"></mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="linkForm.value.platform" class="margin-r-5"></mat-icon>
           </ng-container>
-          {{ platformLabel(linkForm.value.platform) }}
+          {{getPlatformLabel(linkForm.value.platform)}}
         </mat-select-trigger>
         <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">
           <ng-container [ngSwitch]="p.value">
             <mat-icon *ngSwitchCase="'website'" class="margin-r-5">public</mat-icon>
-            <mat-icon *ngSwitchDefault [svgIcon]="getPlatformIcon(p.value)" class="margin-r-5"></mat-icon>
+            <mat-icon *ngSwitchDefault [svgIcon]="p.value" class="margin-r-5"></mat-icon>
           </ng-container>
           {{ p.label }}
         </mat-option>
-  </mat-select>
-  <mat-error *ngIf="linkForm.controls.platform.invalid && linkForm.controls.platform.touched" i18n>Platform is required.</mat-error>
+      </mat-select>
+      <mat-error *ngIf="linkForm.controls.platform.invalid && linkForm.controls.platform.touched" i18n>Platform is required.</mat-error>
     </mat-form-field>
     <mat-form-field class="full-width">
       <mat-label i18n>Title</mat-label>

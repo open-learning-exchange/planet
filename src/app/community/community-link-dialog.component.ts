@@ -18,18 +18,18 @@ export class CommunityLinkDialogComponent {
   links: { db, title, selector? }[] = [
     { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
     { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } },
-  { db: 'social', title: $localize`Web & Social` }
+    { db: 'social', title: $localize`Web & Social` }
   ];
   linkForm: UntypedFormGroup;
   socialPlatforms = [
     { value: 'instagram', label: 'Instagram' },
     { value: 'facebook', label: 'Facebook' },
-  { value: 'whatsapp', label: 'WhatsApp' },
-  { value: 'discord', label: 'Discord' },
-  { value: 'x', label: 'X (Twitter)' },
-  { value: 'youtube', label: 'YouTube' },
-  { value: 'tiktok', label: 'TikTok' },
-  { value: 'website', label: 'Website' }
+    { value: 'whatsapp', label: 'WhatsApp' },
+    { value: 'discord', label: 'Discord' },
+    { value: 'x', label: 'X (Twitter)' },
+    { value: 'youtube', label: 'YouTube' },
+    { value: 'tiktok', label: 'TikTok' },
+    { value: 'website', label: 'Website' }
   ];
 
   constructor(
@@ -54,6 +54,7 @@ export class CommunityLinkDialogComponent {
     this.linkForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
     this.linkForm.controls.linkId.setValue(teamId);
     this.linkForm.controls.teamType.setValue(teamType);
+    this.linkForm.controls.icon.setValue(mode === 'team' ? 'groups' : 'work');
     this.linkStepper.selected.completed = true;
     this.linkStepper.next();
   }
@@ -84,68 +85,16 @@ export class CommunityLinkDialogComponent {
   }
 
   onPlatformSelect(platform: string) {
-    const defaults = {
-      instagram: { title: 'Instagram', icon: 'instagram', route: 'https://instagram.com/' },
-      facebook: { title: 'Facebook', icon: 'facebook', route: 'https://facebook.com/' },
-  whatsapp: { title: 'WhatsApp', icon: 'whatsapp', route: 'https://wa.me/' },
-  discord: { title: 'Discord', icon: 'discord', route: 'https://discord.com/invite/' },
-  x: { title: 'X', icon: 'x', route: 'https://twitter.com/' },
-  youtube: { title: 'YouTube', icon: 'youtube', route: 'https://youtube.com/' },
-  tiktok: { title: 'TikTok', icon: 'tiktok', route: 'https://tiktok.com/@' },
-  website: { title: 'Website', icon: 'web', route: 'https://' }
-    } as any;
-    const def = defaults[platform] || {};
-    if (!this.linkForm.get('title')?.value) {
-      this.linkForm.controls.title.setValue(def.title || '');
-    }
-    this.linkForm.controls.icon.setValue(def.icon || '');
-    if (!this.linkForm.get('route')?.value) {
-      this.linkForm.controls.route.setValue(def.route || '');
-    }
+    this.linkForm.controls.icon.setValue(this.socialPlatforms.find(p => p.value === platform)?.value || '');
     this.linkForm.controls.teamType.setValue('social');
 
     // Apply URL validator for generic Website entries
     const routeCtrl = this.linkForm.controls.route;
-    if (platform === 'website') {
-      routeCtrl.setAsyncValidators([ CustomValidators.validLink ]);
-    } else {
-      routeCtrl.setAsyncValidators([]);
-    }
+    routeCtrl.setAsyncValidators(platform === 'website' ? [CustomValidators.validLink] : []);
     routeCtrl.updateValueAndValidity();
   }
 
-  onLinkTypeChange(linkType: { db; title; selector? }) {
-    this.selectedLink = linkType;
-    const routeCtrl = this.linkForm.controls.route;
-    const platformCtrl = this.linkForm.controls.platform;
-    if (linkType?.db === 'teams') {
-      routeCtrl.setAsyncValidators([]);
-      platformCtrl.clearValidators();
-      platformCtrl.setValue('');
-    } else {
-      platformCtrl.setValidators([ CustomValidators.required ]);
-      routeCtrl.setAsyncValidators(this.linkForm.get('platform')?.value === 'website' ? [ CustomValidators.validLink ] : []);
-    }
-    platformCtrl.updateValueAndValidity();
-    routeCtrl.updateValueAndValidity();
-  }
-
-  getPlatformIcon(platform: string): string {
-    const map: any = {
-      instagram: 'instagram',
-      facebook: 'facebook',
-      whatsapp: 'whatsapp',
-      discord: 'discord',
-      x: 'x',
-      youtube: 'youtube',
-      tiktok: 'tiktok',
-      website: 'web'
-    };
-    return map[platform] || 'web';
-  }
-
-  platformLabel(platform?: string): string {
-    const match = this.socialPlatforms.find(p => p.value === platform);
-    return match ? match.label : '';
+  getPlatformLabel(platform: string): string {
+    return this.socialPlatforms.find(p => p.value === platform)?.label || '';
   }
 }
