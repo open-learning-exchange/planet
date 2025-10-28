@@ -32,7 +32,7 @@
     overflow: hidden;
   }
 
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .button-container button[mat-raised-button] {
     width: 150px;
     text-align: center;
     padding: 8px 12px;
@@ -54,10 +54,6 @@
     .button-container {
       gap: 0.75rem;
     }
-
-    .mat-cell button, .mat-cell div button[mat-raised-button] {
-      width: 100px;
-    }
   }
 
   @media (max-width: $screen-sm) {
@@ -66,18 +62,12 @@
       padding: 0 3px;
     }
 
-    .mat-cell button, .mat-cell div button[mat-raised-button] {
-      width: 50px;
-    }
-
     .button-container {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;
     }
-  }
 
-  @media (max-width: $screen-sm) {
     .mobile-scroll-wrapper {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -85,6 +75,12 @@
 
     mat-table {
       min-width: 800px;
+    }
+  }
+
+  @media (max-width: $screen-xs) {
+    .button-container button[mat-raised-button] {
+      width: 50px;
     }
   }
 }
