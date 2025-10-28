@@ -248,7 +248,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
+
   confirmResetPin() {
     this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
