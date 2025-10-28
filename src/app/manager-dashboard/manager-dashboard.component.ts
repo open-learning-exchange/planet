@@ -248,24 +248,24 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       });
     }
   }
-
+  
   confirmResetPin() {
-  const confirmationMessage = $localize`:@@managerDashboard.resetPinConfirm:Resetting the PIN may temporarily disrupt connections for devices using this server until they reconnect. Do you want to continue?`;
-  this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
-    data: {
-      mainParagraph: confirmationMessage,
-      okClick: {
-        request: this.resetPin(),
-        onNext: () => {
-          this.resetPinDialog.close();
-          this.getSatellitePin();
-          this.planetMessageService.showMessage($localize`Pin reset successfully`);
-        },
-        onError: () => this.planetMessageService.showAlert($localize`Error to reset pin`)
+    this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        type: 'pin',
+        changeType: 'reset',
+        okClick: {
+          request: this.resetPin(),
+          onNext: () => {
+            this.resetPinDialog.close();
+            this.getSatellitePin();
+            this.planetMessageService.showMessage($localize`PIN reset successfully`);
+          },
+          onError: () => this.planetMessageService.showAlert($localize`There was an error resetting the PIN`)
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   resetPin() {
   const userName = 'org.couchdb.user:satellite';
