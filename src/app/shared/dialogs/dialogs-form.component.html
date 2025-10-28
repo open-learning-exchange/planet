@@ -79,7 +79,6 @@
         <input matInput type="time" [placeholder]="field.placeholder" [formControl]="modalForm.controls[field.name]" [required]="field.required">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
-      
       <!-- Slide Toggle -->
       <mat-slide-toggle *ngIf="field.type === 'toggle'" class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
 
