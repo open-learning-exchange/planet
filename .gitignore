@@ -57,3 +57,7 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
+
+# Gemini CLI configuration
+gemini-extension.json
+.gemini-test/
