@@ -237,7 +237,7 @@
         </mat-tab>
         <mat-tab #surveysTab i18n-label label="Surveys">
           <ng-template mat-tab-label>
-            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
+            <ng-container i18n>Surveys</ng-container> <span *ngIf="surveysTab.isActive">({{surveysCount}})</span>
           </ng-template>
           <planet-surveys *ngIf="surveysTab.isActive" [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
