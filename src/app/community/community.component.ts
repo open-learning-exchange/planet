@@ -71,6 +71,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
   pinned = false;
   attachmentMap: Record<string, any> = {};
 
+  get localLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType !== 'social');
+  }
+
+  get socialWebLinks(): any[] {
+    return (this.links || []).filter(link => link.teamType === 'social');
+  }
+
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
@@ -307,7 +315,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;
-  this.financesLoading = false;
+    this.financesLoading = false;
   }
 
   dataChanged() {

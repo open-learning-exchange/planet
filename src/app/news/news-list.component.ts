@@ -28,7 +28,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() useReplyRoutes = false;
   @Output() viewChange = new EventEmitter<any>();
   @Output() changeLabelsFilter = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select' }>();
-  @ViewChild('anchor', { static: true }) anchor: any;
+  @ViewChild('anchor', { static: false }) anchor: any;
   observer: IntersectionObserver;
   displayedItems: any[] = [];
   replyObject: any = {};
@@ -44,9 +44,13 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalReplies = 0;
   // Key value store for max number of posts viewed per conversation
   pageEnd = { root: 10 };
-  // store the last opened thread’s root post id
+  // store the last opened thread's root post id
   lastRootPostId: string;
   trackById = trackById;
+  // Pagination for main posts
+  pageIndex = 0;
+  pageSizeOptions = [ 5, 10, 25, 50 ];
+  totalItems = 0;
 
   constructor(
     private dialog: MatDialog,
@@ -88,20 +92,31 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngAfterViewInit() {
-    this.observer = new IntersectionObserver(
-      ([ entry ]) => {
-        if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore) {
-          this.loadMoreItems();
-        }
-      },
-      { root: null, rootMargin: '0px', threshold: 1.0 }
-    );
-
-    this.observer.observe(this.anchor.nativeElement);
+    this.setupObserver();
   }
 
   ngOnDestroy() {
-    this.observer.disconnect();
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  }
+
+  setupObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+
+    if (this.anchor?.nativeElement) {
+      this.observer = new IntersectionObserver(
+        ([ entry ]) => {
+          if (entry.isIntersecting && this.hasMoreNews && !this.isLoadingMore && this.replyViewing._id !== 'root') {
+            this.loadMoreItems();
+          }
+        },
+        { root: null, rootMargin: '0px', threshold: 1.0 }
+      );
+      this.observer.observe(this.anchor.nativeElement);
+    }
   }
 
   initNews() {
@@ -165,6 +180,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           el.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }, 0);
+    }
+    // Set up observer for replies view after the anchor element is rendered
+    if (newsId !== 'root') {
+      setTimeout(() => this.setupObserver(), 0);
     }
   }
 
@@ -286,26 +305,46 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   loadPagedItems(initial = true) {
-    let pageSize = this.pageSize;
-    if (initial) {
-      this.displayedItems = [];
-      this.nextStartIndex = 0;
-      // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
-      pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
-    }
-    const news = this.getCurrentItems();
-    const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
+    if (this.replyViewing._id === 'root') {
+      if (initial) {
+        this.pageIndex = 0;
+      }
+      const news = this.getCurrentItems();
+      this.totalItems = news.length;
+      const start = this.pageIndex * this.pageSize;
+      const { items } = this.paginateItems(news, start, this.pageSize);
+      this.displayedItems = items;
+      this.hasMoreNews = false;
+      this.isLoadingMore = false;
+    } else {
+      let pageSize = this.pageSize;
+      if (initial) {
+        this.displayedItems = [];
+        this.nextStartIndex = 0;
+        // Take maximum so if fewer posts than page size adding a post doesn't add a "Load More" button
+        pageSize = Math.max(this.pageEnd[this.replyViewing._id] || this.pageSize, this.pageSize);
+      }
+      const news = this.getCurrentItems();
+      const { items, endIndex, hasMore } = this.paginateItems(news, this.nextStartIndex, pageSize);
 
-    this.displayedItems = [ ...this.displayedItems, ...items ];
-    this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
-    this.nextStartIndex = endIndex;
-    this.hasMoreNews = hasMore;
-    this.isLoadingMore = false;
-    this.totalReplies = news.length;
+      this.displayedItems = [ ...this.displayedItems, ...items ];
+      this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
+      this.nextStartIndex = endIndex;
+      this.hasMoreNews = hasMore;
+      this.isLoadingMore = false;
+      this.totalReplies = news.length;
+    }
   }
 
   loadMoreItems() {
     this.isLoadingMore = true;
     this.loadPagedItems(false);
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadPagedItems(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
