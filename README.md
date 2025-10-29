@@ -131,6 +131,20 @@ This will fix any lint errors that TSLint can automatically fix:
 `Fix Lint: ng lint --fix`
 
 
+## Tracking dependency changes
+
+The previous helper script for checking dependency changes has been removed.
+To confirm whether application dependencies have changed, compare
+`package.json` against the latest mainline reference:
+
+1. `git fetch origin`
+2. `git diff origin/master -- package.json`
+
+If you prefer an install-based check after pulling new changes, run
+`npm outdated` to list any packages that differ from what is defined in
+`package.json`.
+
+
 To serve the app in a different language, use the LNG variable:
 `
 LNG=es npm start
