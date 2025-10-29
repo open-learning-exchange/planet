@@ -79,6 +79,10 @@ planet-courses {
   }
 
   @media(max-width: $screen-sm) {
+    .mat-column-select {
+      display: none;
+    }
+
     .created-label {
       display: inline-block;
     }

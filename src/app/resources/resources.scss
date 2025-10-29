@@ -93,6 +93,10 @@ planet-resources {
   }
 
   @media(max-width: $screen-sm) {
+    .mat-column-select {
+      display: none;
+    }
+
     .resources-list {
       .mat-column-createdDate {
         max-width: fit-content;
