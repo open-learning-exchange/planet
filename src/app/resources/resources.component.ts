@@ -167,11 +167,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setDisplayedColumns() {
     if (this.myView !== 'myPersonals') {
-      if (this.deviceType === this.deviceTypes.MOBILE || this.deviceType === this.deviceTypes.SMALL_MOBILE) {
-        this.displayedColumns = [ 'title', 'info', 'createdDate', 'rating' ];
-      } else {
-        this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
-      }
+      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     } else {
       this.displayedColumns = [ 'title', 'createdDate' ];
     }

@@ -213,11 +213,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   setDisplayedColumns() {
-    if (this.deviceType === this.deviceTypes.MOBILE || this.deviceType === this.deviceTypes.SMALL_MOBILE) {
-      this.displayedColumns = [ 'courseTitle', 'info', 'createdDate', 'rating' ];
-    } else {
-      this.displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
-    }
+    this.displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   }
 
   ngAfterViewInit() {
