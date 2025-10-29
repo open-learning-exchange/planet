@@ -1,18 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesComponent } from './courses.component';
-import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 
-import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { By } from '@angular/platform-browser';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
+import { of } from 'rxjs';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -46,7 +43,7 @@ describe('CoursesComponent', () => {
 
   // test getCourses()
   it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(of(coursedata1).map).and.callThrough();
+    getSpy = spyOn(couchService, 'get').and.returnValue(of(coursedata1)).and.callThrough();
     component.getCourses();
     fixture.whenStable().then(() => {
       fixture.detectChanges();
@@ -84,6 +81,24 @@ describe('CoursesComponent', () => {
       fixture.detectChanges();
       expect(component.courses.data).toBe(component.courses.data.filter((coursedata1)));
     });
+  });
+
+  it('filters courses by selected grade level', () => {
+    const gradeOneCourse: any = {
+      _id: 'grade-one',
+      doc: { gradeLevel: '1', courseTitle: 'Grade 1 Course' },
+      tags: []
+    };
+    const gradeTwelveCourse: any = {
+      _id: 'grade-twelve',
+      doc: { gradeLevel: '12', courseTitle: 'Grade 12 Course' },
+      tags: []
+    };
+
+    component.searchSelection.gradeLevel = [ '1' ];
+
+    expect(component.filterPredicate(gradeOneCourse, '')).toBe(true);
+    expect(component.filterPredicate(gradeTwelveCourse, '')).toBe(false);
   });
   /*
   it('should show There was an error message deleting course', () => {

@@ -103,13 +103,29 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
   };
 };
 
-const matchAllItems = (filterItems: string[], propItems: string[]) => {
-  return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
+const normalizeToArray = (value: any): any[] => {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  return Array.isArray(value) ? value : [ value ];
+};
+
+const matchAllItems = (filterItems: string[], propItems: any) => {
+  const normalizedFilterItems = normalizeToArray(filterItems);
+
+  if (normalizedFilterItems.length === 0) {
+    return true;
+  }
+
+  const normalizedPropItems = normalizeToArray(propItems);
+
+  return normalizedFilterItems.reduce((isMatch, filter) => isMatch && normalizedPropItems.indexOf(filter) > -1, true);
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
   return (data: any, filter: string) => {
-    return matchAllItems(filterItems, getProperty(data, filterField) || []);
+    return matchAllItems(filterItems, getProperty(data, filterField));
   };
 };
 
