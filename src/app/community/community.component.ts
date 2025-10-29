@@ -79,9 +79,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return (this.links || []).filter(link => link.teamType === 'social');
   }
 
-  get leadersTabLabel(): string {
-    return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
-  }
+
 
   constructor(
     private dialog: MatDialog,
@@ -423,36 +421,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.deleteMode = !this.deleteMode;
   }
 
-  openChangeTitleDialog({ member: councillor }) {
-    this.dialogsFormService.openDialogsForm(
-      councillor.doc.leadershipTitle ? $localize`Change Leader Title` : $localize`Add Leader Title`,
-      [ { name: 'leadershipTitle', placeholder: $localize`Title`, type: 'textbox' } ],
-      { leadershipTitle: councillor.doc.leadershipTitle || '' },
-      { autoFocus: true, onSubmit: this.updateTitle(councillor).bind(this) }
-    );
-  }
 
-  updateTitle(councillor) {
-    return ({ leadershipTitle }) => {
-      if (leadershipTitle === councillor.doc.leadershipTitle) {
-        this.dialogsFormService.closeDialogsForm();
-        this.dialogsLoadingService.stop();
-        return;
-      }
-      this.userService.updateUser({ ...councillor.userDoc.doc, leadershipTitle }).pipe(
-        finalize(() => this.dialogsLoadingService.stop())
-      ).subscribe(() => {
-        const msg = !leadershipTitle ?
-          $localize`Title deleted` :
-          !councillor.doc.leadershipTitle ?
-          $localize`Title added` :
-          $localize`Title updated`;
-        this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage(msg);
-        this.usersService.requestUsers();
-      });
-    };
-  }
 
   openDescriptionDialog() {
     const formGroup = this.formBuilder.group({

@@ -47,7 +47,7 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
+        <mat-tab i18n-label label="Information" *ngIf="isLoggedIn">
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
@@ -57,56 +57,6 @@
                 (actionClick)="openChangeTitleDialog($event)">
               </planet-teams-member>
             </mat-card>
-          </div>
-        </mat-tab>
-        <mat-tab i18n-label label="Services" *ngIf="isLoggedIn">
-          <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
-          <ng-container *ngIf="!planetCode">
-          </ng-container>
-          <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
-          <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
-          <ng-container *planetAuthorizedRoles="''">
-            <div *ngIf="!planetCode" class="action-buttons sticky-button">
-              <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
-                { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
-              </button>
-              <button (click)="confirmDeleteDescription()" mat-stroked-button [disabled]="!(team?.description?.trim()?.length)">
-                <span i18n>Remove Description</span>
-              </button>
-            </div>
-          </ng-container>
-          <ng-container>
-            <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
-            <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
-            <mat-nav-list *ngIf="links?.length > 0">
-              <ng-container *ngIf="localLinks.length > 0">
-                <h3 mat-subheader i18n>Local</h3>
-                <mat-list-item *ngFor="let link of localLinks" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
-                  <mat-icon matListIcon>{{link.icon || 'link'}}</mat-icon>
-                  <span matLine>{{link.title}}</span>
-                  <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
-                </mat-list-item>
-              </ng-container>
-              <ng-container *ngIf="socialWebLinks.length > 0">
-                <h3 mat-subheader i18n>Social & Web</h3>
-                <a *ngFor="let link of socialWebLinks" mat-list-item [href]="link.route" target="_blank" rel="noopener">
-                  <mat-icon *ngIf="link.icon === 'web'" matListIcon>public</mat-icon>
-                  <mat-icon *ngIf="link.icon !== 'web'" [svgIcon]="link.icon" matListIcon></mat-icon>
-                  <span matLine>{{link.title}}</span>
-                  <button *ngIf="deleteMode" mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
-                </a>
-              </ng-container>
-            </mat-nav-list>
-          </ng-container>
-          <ng-template #noLinks>
-            <p i18n>No links available.</p>
-          </ng-template>
-          <div *planetAuthorizedRoles="''" class="action-buttons">
-            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-            <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-              <span *ngIf="!deleteMode" i18n>Remove Links</span>
-              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-            </button>
           </div>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
