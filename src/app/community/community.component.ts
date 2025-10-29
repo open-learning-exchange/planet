@@ -79,8 +79,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return (this.links || []).filter(link => link.teamType === 'social');
   }
 
-
-
   constructor(
     private dialog: MatDialog,
     private router: Router,
