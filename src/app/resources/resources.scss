@@ -80,14 +80,14 @@ $label-height: 1rem;
   display: inline-block;
 }
 
-@media(max-width: $screen-sm) {
-  .resources-list {
-    .mat-column-createdDate {
-      max-width: fit-content;
-    }
-    .mat-column-info {
-      max-width: fit-content;
-    }
+  @media(max-width: $screen-sm) {
+    .resources-list {
+      .mat-column-createdDate {
+        max-width: fit-content;
+      }
+      .mat-column-info {
+        max-width: fit-content;
+      }
 
     .created-label {
       display: inline-block;

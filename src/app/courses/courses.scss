@@ -72,9 +72,20 @@ $label-height: 1rem;
     display: inline-block;
   }
 
+<<<<<<< HEAD
   .mat-column-info {
     max-width: fit-content;
   }
+=======
+  @media(max-width: $screen-sm) {
+    .mat-column-select {
+      display: none;
+    }
+
+    .created-label {
+      display: inline-block;
+    }
+>>>>>>> 9162-resources-toggle-ox-nconsistency
 
   .mat-column-createdDate {
     max-width: fit-content;
