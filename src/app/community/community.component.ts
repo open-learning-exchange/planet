@@ -419,8 +419,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.deleteMode = !this.deleteMode;
   }
 
-
-
   openDescriptionDialog() {
     const formGroup = this.formBuilder.group({
       description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
