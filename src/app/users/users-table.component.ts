@@ -19,6 +19,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
+import { itemsShown } from '../shared/utils';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -157,8 +158,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    const visibleItems = itemsShown(this.paginator);
+    return this.selection.selected.length === visibleItems;
   }
 
   onlyManagerSelected() {

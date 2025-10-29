@@ -79,7 +79,26 @@ export const urlToParamObject = (url: string) => url.split(';').reduce((params, 
 
 export const toProperCase = (string: string) => `${string.slice(0, 1).toUpperCase()}${string.slice(1)}`;
 
+export const itemsShown = (paginator?: { length: number; pageIndex: number; pageSize: number }) => {
+  if (!paginator) {
+    return 0;
+  }
+  const remaining = paginator.length - (paginator.pageIndex * paginator.pageSize);
+  return Math.min(Math.max(remaining, 0), paginator.pageSize);
+};
+
 export const stringToHex = (string: string) => string.split('').map(char => char.charCodeAt(0).toString(16)).join('');
+
+export const hexToString = (hex: string) => {
+  if (!hex) {
+    return '';
+  }
+  const matches = hex.match(/.{1,2}/g);
+  if (!matches) {
+    return '';
+  }
+  return matches.map(byte => String.fromCharCode(parseInt(byte, 16))).join('');
+};
 
 export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const now = new Date(currentTime);
