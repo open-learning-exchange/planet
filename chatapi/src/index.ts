@@ -58,7 +58,11 @@ wss.on('connection', (ws) => {
 });
 
 app.post('/', async (req: any, res: any) => {
-  const { data, save } = req.body;
+  const { data, save, stream } = req.body;
+
+  const streamFlag = typeof stream === 'boolean'
+    ? stream
+    : (typeof data?.stream === 'boolean' ? data.stream : false);
 
   if (!isValidData(data)) {
     return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
@@ -66,13 +70,19 @@ app.post('/', async (req: any, res: any) => {
 
   try {
     if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, data.context, data.assistant, false);
+      const response = await chatNoSave(
+        data.content,
+        data.aiProvider,
+        data.assistant,
+        data.context,
+        streamFlag
+      );
       return res.status(200).json({
         'status': 'Success',
         'chat': response
       });
     } else {
-      const response = await chat(data, false);
+      const response = await chat(data, streamFlag);
       return res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
