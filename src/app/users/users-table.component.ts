@@ -158,8 +158,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    const visibleItems = itemsShown(this.paginator);
-    return this.selection.selected.length === visibleItems;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   onlyManagerSelected() {

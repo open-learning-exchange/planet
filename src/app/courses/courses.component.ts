@@ -307,8 +307,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const visibleItems = itemsShown(this.paginator);
-    return this.selection.selected.length === visibleItems;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */

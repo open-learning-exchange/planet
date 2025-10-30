@@ -202,8 +202,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const visibleItems = itemsShown(this.paginator);
-    return this.selection.selected.length === visibleItems;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   applyResFilter(filterResValue: string) {
