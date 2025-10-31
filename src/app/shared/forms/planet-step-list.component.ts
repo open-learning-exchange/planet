@@ -15,8 +15,11 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UntypedFormArray } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
+
+type PlanetStepListFormGroup = FormGroup<Record<string, AbstractControl<unknown>>>;
+type PlanetStepListFormArray = FormArray<PlanetStepListFormGroup | AbstractControl<unknown>>;
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +74,7 @@ export class PlanetStepListItemComponent {
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
-  @Input() steps: any[] | UntypedFormArray;
+  @Input() steps: any[] | PlanetStepListFormArray;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
@@ -122,9 +125,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (listId !== this.listId) {
       return;
     }
-    if (this.steps instanceof Array) {
+    if (Array.isArray(this.steps)) {
       this.moveArrayStep(index, direction, this.steps);
-    } else if (this.steps instanceof UntypedFormArray) {
+    } else if (this.steps instanceof FormArray) {
       this.moveFormArrayStep(index, direction, this.steps);
     }
     if (Array.isArray(this.steps)) {
@@ -139,7 +142,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
-  moveFormArrayStep(index, direction, steps: UntypedFormArray) {
+  moveFormArrayStep(index, direction, steps: PlanetStepListFormArray) {
     const step = steps.at(index);
     steps.removeAt(index);
     if (direction !== 0) {
