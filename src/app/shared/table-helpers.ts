@@ -204,8 +204,11 @@ export const trackByIdVal = (index, item: { id: string }) => item.id;
 
 export const trackByIndex = (index: number) => index;
 
-export const showFormErrors = (controls: { [key: string]: AbstractControl }) => {
-  Object.values(controls).forEach(control => {
+export const showFormErrors = (
+  controls: { [key: string]: AbstractControl } | AbstractControl[]
+) => {
+  const controlList = Array.isArray(controls) ? controls : Object.values(controls);
+  controlList.forEach(control => {
     control.markAsTouched({ onlySelf: true });
   });
 };

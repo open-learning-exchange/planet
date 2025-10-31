@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
@@ -13,14 +13,36 @@ import { warningMsg } from '../shared/unsaved-changes.component';
 import { interval, of, race } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 
+interface ProfileForm {
+  name: FormControl<string>;
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  email: FormControl<string>;
+  language: FormControl<string>;
+  phoneNumber: FormControl<string>;
+  birthDate: FormControl<string>;
+  birthplace: FormControl<string>;
+}
+
+interface HealthForm {
+  emergencyContactName: FormControl<string>;
+  emergencyContactType: FormControl<string>;
+  emergencyContact: FormControl<string>;
+  specialNeeds: FormControl<string>;
+  immunizations: FormControl<string>;
+  allergies: FormControl<string>;
+  notes: FormControl<string>;
+}
+
 @Component({
   templateUrl: './health-update.component.html',
   styleUrls: [ './health-update.scss' ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: UntypedFormGroup;
-  healthForm: UntypedFormGroup;
+  profileForm: FormGroup<ProfileForm>;
+  healthForm: FormGroup<HealthForm>;
   existingData: any = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
@@ -28,7 +50,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
@@ -83,7 +105,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   initProfileForm() {
-    this.profileForm = this.fb.group({
+    this.profileForm = this.fb.nonNullable.group({
       name: '',
       firstName: [ '', CustomValidators.required ],
       middleName: '',
@@ -101,7 +123,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   initHealthForm() {
-    this.healthForm = this.fb.group({
+    this.healthForm = this.fb.nonNullable.group({
       emergencyContactName: '',
       emergencyContactType: '',
       emergencyContact: '',
@@ -118,8 +140,8 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   onSubmit() {
     if (!(this.profileForm.valid && this.healthForm.valid)) {
-      showFormErrors(this.profileForm.controls);
-      showFormErrors(this.healthForm.controls);
+      showFormErrors(Object.values(this.profileForm.controls));
+      showFormErrors(Object.values(this.healthForm.controls));
       return;
     }
     forkJoin([
