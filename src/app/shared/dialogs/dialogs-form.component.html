@@ -68,15 +68,15 @@
 
       <!-- Date Select -->
       <mat-form-field *ngIf="field.type === 'date'" class="full-width" (click)="dp.open()">
-        <input matInput [matDatepicker]="dp" placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
+        <input matInput [matDatepicker]="dp" class="date-picker-input" placeholder="{{field.placeholder}}" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
         <mat-datepicker #dp></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
 
       <!-- Time Select -->
-      <mat-form-field *ngIf="field.type === 'time'" class="full-width" (click)="timeInput.click()">
-        <input #timeInput matInput type="time" [placeholder]="field.placeholder" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+      <mat-form-field *ngIf="field.type === 'time'" class="full-width" (click)="openTimePicker(timeInput)">
+        <input #timeInput matInput type="time" class="time-picker-input" [placeholder]="field.placeholder" [formControl]="modalForm.controls[field.name]" [required]="field.required">
         <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
       </mat-form-field>
       

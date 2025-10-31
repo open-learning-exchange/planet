@@ -10,19 +10,7 @@ import { UserService } from '../user.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
-  styles: [ `
-    .checkbox-wrapper:last-child {
-      margin: 0 0 20px 0;
-    }
-
-    .mat-radio-group.ng-touched.ng-invalid label {
-      border-bottom: 2px solid red;
-    }
-
-    .ng-touched.ng-valid {
-      border: none;
-    }
-  ` ]
+  styleUrls: [ './dialogs-form.component.scss' ]
 })
 export class DialogsFormComponent {
 
@@ -117,6 +105,19 @@ export class DialogsFormComponent {
 
   isDirty() {
     return this.modalForm.dirty;
+  }
+
+  openTimePicker(timeInput: HTMLInputElement) {
+    if (timeInput.showPicker) {
+      try {
+        timeInput.showPicker();
+      } catch (error) {
+        console.error(error);
+        timeInput.click(); // fallback for browsers that don't support showPicker but have it in the prototype chain
+      }
+    } else {
+      timeInput.click();
+    }
   }
 
 }
