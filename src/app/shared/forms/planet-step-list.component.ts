@@ -15,18 +15,28 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UntypedFormArray } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
+
+export type PlanetStepControls = Record<string, AbstractControl<unknown, unknown>>;
+export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
+export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
+
+interface StepMoveEvent {
+  index: number;
+  direction: number;
+  listId: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanetStepListService {
 
-  stepMoveClick$ = new Subject<any>();
+  stepMoveClick$ = new Subject<StepMoveEvent>();
   stepAdded$ = new Subject<number>();
 
-  moveStep(index, direction, listId) {
+  moveStep(index: number, direction: number, listId: string) {
     this.stepMoveClick$.next({ index, direction, listId });
   }
 
@@ -56,7 +66,7 @@ export class PlanetStepListItemComponent {
 
   constructor(private planetStepListService: PlanetStepListService) {}
 
-  moveStep(event, direction = 0) {
+  moveStep(event: Event, direction = 0) {
     event.stopPropagation();
     this.planetStepListService.moveStep(this.index, direction, this.listId);
   }
@@ -71,12 +81,12 @@ export class PlanetStepListItemComponent {
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
-  @Input() steps: any[] | UntypedFormArray;
+  @Input() steps: any[] | PlanetStepFormArray;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
   @Output() stepClicked = new EventEmitter<number>();
-  @Output() stepsChange = new EventEmitter<any[]>();
+  @Output() stepsChange = new EventEmitter<unknown[]>();
 
   @ContentChildren(PlanetStepListItemComponent) stepListItems;
 
@@ -118,29 +128,32 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     this.stepClicked.emit(-1);
   }
 
-  moveStep({ index, direction, listId }) {
+  moveStep({ index, direction, listId }: StepMoveEvent) {
     if (listId !== this.listId) {
       return;
     }
-    if (this.steps instanceof Array) {
-      this.moveArrayStep(index, direction, this.steps);
-    } else if (this.steps instanceof UntypedFormArray) {
-      this.moveFormArrayStep(index, direction, this.steps);
-    }
     if (Array.isArray(this.steps)) {
+      this.moveArrayStep(index, direction, this.steps);
       this.stepsChange.emit(this.steps);
+      return;
+    }
+    if (this.steps instanceof FormArray) {
+      this.moveFormArrayStep(index, direction, this.steps);
     }
   }
 
-  moveArrayStep(index, direction, steps: any[]) {
+  moveArrayStep(index: number, direction: number, steps: unknown[]) {
     const step = steps.splice(index, 1)[0];
     if (direction !== 0) {
       steps.splice(index + direction, 0, step);
     }
   }
 
-  moveFormArrayStep(index, direction, steps: UntypedFormArray) {
+  moveFormArrayStep(index: number, direction: number, steps: PlanetStepFormArray) {
     const step = steps.at(index);
+    if (!step) {
+      return;
+    }
     steps.removeAt(index);
     if (direction !== 0) {
       steps.insert(index + direction, step);
