@@ -105,32 +105,31 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   initProfileForm() {
-    this.profileForm = this.fb.nonNullable.group({
-      name: '',
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', CustomValidators.required ],
-      birthDate: [
-        '',
-        CustomValidators.dateValidRequired,
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+    this.profileForm = this.fb.nonNullable.group<ProfileForm>({
+      name: this.fb.nonNullable.control(''),
+      firstName: this.fb.nonNullable.control('', { validators: CustomValidators.required }),
+      middleName: this.fb.nonNullable.control(''),
+      lastName: this.fb.nonNullable.control('', { validators: CustomValidators.required }),
+      email: this.fb.nonNullable.control('', { validators: [ Validators.required, Validators.email ] }),
+      language: this.fb.nonNullable.control('', { validators: Validators.required }),
+      phoneNumber: this.fb.nonNullable.control('', { validators: CustomValidators.required }),
+      birthDate: this.fb.nonNullable.control('', {
+        validators: CustomValidators.dateValidRequired,
+        asyncValidators: ac => this.validatorService.notDateInFuture$(ac)
+      }),
+      birthplace: this.fb.nonNullable.control('')
     });
   }
 
   initHealthForm() {
-    this.healthForm = this.fb.nonNullable.group({
-      emergencyContactName: '',
-      emergencyContactType: '',
-      emergencyContact: '',
-      specialNeeds: '',
-      immunizations: '',
-      allergies: '',
-      notes: ''
+    this.healthForm = this.fb.nonNullable.group<HealthForm>({
+      emergencyContactName: this.fb.nonNullable.control(''),
+      emergencyContactType: this.fb.nonNullable.control(''),
+      emergencyContact: this.fb.nonNullable.control(''),
+      specialNeeds: this.fb.nonNullable.control(''),
+      immunizations: this.fb.nonNullable.control(''),
+      allergies: this.fb.nonNullable.control(''),
+      notes: this.fb.nonNullable.control('')
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);
@@ -140,8 +139,8 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   onSubmit() {
     if (!(this.profileForm.valid && this.healthForm.valid)) {
-      showFormErrors(Object.values(this.profileForm.controls));
-      showFormErrors(Object.values(this.healthForm.controls));
+      showFormErrors(this.profileForm.controls);
+      showFormErrors(this.healthForm.controls);
       return;
     }
     forkJoin([

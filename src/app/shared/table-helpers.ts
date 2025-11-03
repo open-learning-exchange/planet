@@ -1,4 +1,4 @@
-import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
+import { FormControl, AbstractControl } from '@angular/forms';
 import { FuzzySearchService } from './fuzzy-search.service';
 
 const dropdownString = (fieldValue: any, value: string) => {
