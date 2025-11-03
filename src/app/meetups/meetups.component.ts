@@ -13,7 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, itemsShown } from '../shared/utils';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -88,8 +88,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();

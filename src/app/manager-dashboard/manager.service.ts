@@ -58,7 +58,18 @@ export class ManagerService {
   }
 
   createPin() {
-    return Array(4).fill(0).map(() => Math.floor(Math.random() * 10)).join('');
+    // Use window.crypto.getRandomValues for cryptographically secure random digits
+    const pinArray = new Uint8Array(4);
+    window.crypto.getRandomValues(pinArray);
+    // Map random bytes to digits 0-9 without modulo bias
+    return Array.from(pinArray, byte => {
+      // Discard and retry if value is > 249 to prevent modulo bias
+      let digit = byte;
+      while (digit > 249) {
+        digit = window.crypto.getRandomValues(new Uint8Array(1))[0];
+      }
+      return (digit % 10).toString();
+    }).join('');
   }
 
   getChildPlanets(onlyAccepted = false, parentCode = this.stateService.configuration.code, domain?) {
