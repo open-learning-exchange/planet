@@ -119,7 +119,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           const teamIds = [
             ...new Set([
               survey.teamId,
-              ...relatedSubmissions.map(sub => sub.user?.membershipDoc?.teamId)
+              ...relatedSubmissions.map(sub => sub.team?._id)
             ])
           ].filter(Boolean);
           return {
@@ -129,7 +129,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             taken: this.teamId || this.routeTeamId
               ? relatedSubmissions.filter(
                 (data) => data.status === 'complete' &&
-                (data.team === this.teamId || data.team === this.routeTeamId)).length
+                (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
               : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
@@ -164,7 +164,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ...submission.parent,
           taken: submission.status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId: submission.user?.membershipDoc?.teamId
+          teamId: submission.team?._id
         } ];
       }
       return parentSurveys;
@@ -311,15 +311,22 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.submissionsService.getSubmissions(
       findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
     ).subscribe((submissions: any[]) => {
-      const submissionIds = submissions.map((submission: any) => submission.user.membershipDoc?.teamId);
+      const submissionIds = submissions.map((submission: any) => submission.team?._id).filter(Boolean);
       const excludeIds = survey.teamId ? [ ...submissionIds, survey.teamId ] : submissionIds;
       this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
         width: '80vw',
         data: {
           okClick: (selection: any[]) => {
             this.dialogsLoadingService.start();
-            this.sendSurvey(survey, selection).subscribe(() => {
-              this.dialogsLoadingService.stop();
+            selection.forEach(item => {
+              const teamInfo = {
+                _id: item.doc._id,
+                name: item.doc.name,
+                type: item.doc.type
+              };
+              this.sendSurvey(survey, [], teamInfo).subscribe(() => {
+                this.dialogsLoadingService.stop();
+              });
             });
           },
           excludeIds: [ ...excludeIds ],
@@ -332,11 +339,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   adoptSurvey(survey) {
     this.couchService.get('teams/' + this.routeTeamId).subscribe(
       team => {
-        const selection = {
-          doc: team,
-          membershipDoc: { teamId: this.routeTeamId }
+        const teamInfo = {
+          _id: team._id,
+          name: team.name,
+          type: team.type
         };
-        this.sendSurvey(survey, [ selection ], true).subscribe(() => {
+        this.sendSurvey(survey, [], teamInfo).subscribe(() => {
           this.loadSurveys();
         });
       },
@@ -346,13 +354,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  sendSurvey(survey: any, users: any[], isAdopt: boolean = false): Observable<void> {
+  sendSurvey(survey: any, users: any[], team?: { _id: string, name: string, type: string }): Observable<void> {
     return this.submissionsService.sendSubmissionRequests(users, {
       'parentId': survey._id,
       'parent': survey
-    }).pipe(
+    }, team).pipe(
       tap(() => {
-        const message = isAdopt ? $localize`Survey adopted` : $localize`Survey requests sent`;
+        const message = team ? $localize`Survey adopted` : $localize`Survey requests sent`;
         this.planetMessageService.showMessage(message);
         if (this.dialogRef) {
           this.dialogRef.close();
