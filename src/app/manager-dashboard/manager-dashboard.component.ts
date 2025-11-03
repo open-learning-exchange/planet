@@ -36,6 +36,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionLatestApk = '';
   versionLocalApk = '';
   dialogRef: MatDialogRef<DialogsListComponent>;
+  resetPinDialog: MatDialogRef<DialogsPromptComponent>;
   pin: string;
   activityLogs: any = {};
   private onDestroy$ = new Subject<void>();
@@ -248,21 +249,38 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetPin() {
-    const userName = 'org.couchdb.user:satellite';
-    this.couchService.get('_users/' + userName)
-    .pipe(switchMap((data) => {
-      const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
-      satelliteProfile.password = this.managerService.createPin();
-      return forkJoin([
-        this.couchService.put('_users/' + userName, satelliteProfile),
-        this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
-      ]);
-    })).subscribe((res) => {
-      this.getSatellitePin();
-      this.planetMessageService.showMessage($localize`Pin reset successfully`);
-    }, (error) => this.planetMessageService.showAlert($localize`Error to reset pin`));
+  confirmResetPin() {
+    this.resetPinDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        type: 'pin',
+        changeType: 'reset',
+        okClick: {
+          request: this.resetPin(),
+          onNext: () => {
+            this.resetPinDialog.close();
+            this.getSatellitePin();
+            this.planetMessageService.showMessage($localize`PIN reset successfully`);
+          },
+          onError: () => this.planetMessageService.showAlert($localize`There was an error resetting the PIN`)
+        }
+      }
+    });
   }
+
+  resetPin() {
+  const userName = 'org.couchdb.user:satellite';
+  return this.couchService.get('_users/' + userName)
+    .pipe(
+      switchMap((data) => {
+        const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
+        satelliteProfile.password = this.managerService.createPin();
+        return forkJoin([
+          this.couchService.put('_users/' + userName, satelliteProfile),
+          this.couchService.put('_node/nonode@nohost/_config/satellite/pin', satelliteProfile.password)
+        ]);
+      })
+    );
+}
 
   setVersions() {
     const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
