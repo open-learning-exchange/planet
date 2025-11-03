@@ -77,10 +77,6 @@ export async function chatNoSave(
 
   try {
     const completionText = await aiChat(messages, aiProvider, assistant, context);
-    messages.push({
-      'role': 'assistant', 'content': completionText
-    });
-
     return completionText;
   } catch (error: any) {
     handleChatError(error);
