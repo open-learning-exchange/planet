@@ -226,9 +226,12 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
       return true;
     }
     if (field === 'bp') {
-      return /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value);
+      return typeof value === 'string'
+        ? /^(([6-9])(\d)|([1-2])(\d){2}|(300))\/(([4-9])(\d)|(1)(\d){2}|(200))$/.test(value)
+        : true;
     }
-    return value >= limits[field].min && value <= limits[field].max;
+    const fieldLimit = limits[field] as { min: number; max: number };
+    return (value as number) >= fieldLimit.min && (value as number) <= fieldLimit.max;
   }
 
   saveEvent() {
@@ -252,15 +255,14 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   }
 
   private transformFormValue(formValue: HealthEventFormValue) {
-    const numericFields: Array<keyof Pick<HealthEventFormValue, 'temperature' | 'pulse' | 'height' | 'weight'>> =
-      [ 'temperature', 'pulse', 'height', 'weight' ];
+    const numericFieldSet = new Set<keyof HealthEventFormValue>([ 'temperature', 'pulse', 'height', 'weight' ]);
 
     return (Object.keys(formValue) as Array<keyof HealthEventFormValue>).reduce((acc, key) => {
       const value = formValue[key];
-      if (numericFields.includes(key)) {
+      if (numericFieldSet.has(key)) {
         acc[key] = value === null ? undefined : Number(value);
       } else if (key === 'conditions') {
-        acc[key] = this.processConditions(value);
+        acc[key] = this.processConditions(value as Record<string, boolean> | null | undefined);
       } else {
         acc[key] = value;
       }
