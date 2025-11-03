@@ -2,7 +2,7 @@ import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ControlValueAccessor, NgControl, UntypedFormControl } from '@angular/forms';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -12,6 +12,25 @@ import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
 
+type SelectedDialogTag = { tagId: string; indeterminate: boolean };
+
+type DialogStartingTag = string | SelectedDialogTag;
+
+type TagWithId = { _id: string } & Record<string, unknown>;
+
+type FilteredDataItem = { _id: string; tags?: TagWithId[] };
+
+interface PlanetTagDialogData {
+  tagUpdate: (tag: string, isSelected: boolean, tagOne?: boolean) => void;
+  initTags: (editedId?: string) => void;
+  reset: (selectMany?: boolean) => void;
+  startingTags: DialogStartingTag[];
+  tags: TagWithId[];
+  mode: string;
+  selectMany: boolean;
+  db: unknown;
+}
+
 @Component({
   'selector': 'planet-tag-input',
   'templateUrl': './planet-tag-input.component.html',
@@ -20,6 +39,7 @@ import { dedupeShelfReduce } from '../utils';
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
 })
+
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
   static nextId = 0;
@@ -31,12 +51,12 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   get value() {
     return this._value;
   }
-  set value(tags: string[]) {
-    this._value = tags || [];
+  set value(tags: string[] | null) {
+    this._value = tags ?? [];
     if (this.mode === 'filter' && this.updateRouteParam) {
-      this.filterReroute(tags);
+      this.filterReroute(this._value);
     }
-    this.onChange(tags);
+    this.onChange(this._value);
     this.stateChanges.next();
   }
   @Output() valueChanges = new EventEmitter<string[]>();
@@ -60,23 +80,24 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this._disabled = coerceBooleanProperty(dis);
     this.stateChanges.next();
   }
-  @Input() mode;
+  @Input() mode: string;
   @Input() parent = false;
-  @Input() filteredData = [];
+  @Input() filteredData: FilteredDataItem[] = [];
   @Input() helperText = true;
-  @Input() selectedIds;
-  @Input() labelType;
-  @Input() db;
+  @Input() selectedIds?: string[];
+  @Input() labelType?: string;
+  @Input() db: string;
   @Input() largeFont = false;
   @Input() selectMany = true;
   @Input() updateRouteParam = true;
   @Output() finalTags = new EventEmitter<{ selected: string[], indeterminate: string[] }>();
 
   shouldLabelFloat = false;
-  onTouched;
+  onChange: (value: string[]) => void = () => {};
+  onTouched: () => void = () => {};
   stateChanges = new Subject<void>();
-  tags: string[] = [];
-  inputControl = new UntypedFormControl();
+  tags: TagWithId[] = [];
+  inputControl = new FormControl<string>('', { nonNullable: true });
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
   tagUrlDelimiter = '_,_';
@@ -111,12 +132,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
   }
 
-  onChange(_: any) {}
-
   initTags(editedId?: string) {
-    this.tagsService.getTags(this.db, this.parent).subscribe((tags: any[]) => {
+    this.tagsService.getTags(this.db, this.parent).subscribe((tags: TagWithId[]) => {
       this.tags = tags;
-      const newValue = this.value.concat(editedId).filter(tagId => tags.some(tag => tag._id === tagId)).reduce(dedupeShelfReduce, []);
+      const newValue = this.value
+        .concat(editedId ? [ editedId ] : [])
+        .filter(tagId => tags.some(tag => tag._id === tagId))
+        .reduce(dedupeShelfReduce, []);
       this.value = newValue;
       this.resetDialogData();
     });
@@ -144,15 +166,15 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.writeValue(this.value.filter(tag => tag !== tagToRemove));
   }
 
-  writeValue(tags) {
-    this.value = tags;
+  writeValue(tags: string[] | null = []) {
+    this.value = tags ?? [];
   }
 
-  registerOnChange(fn: (_: any) => void) {
+  registerOnChange(fn: (value: string[]) => void) {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any) {
+  registerOnTouched(fn: () => void) {
     this.onTouched = fn;
   }
 
@@ -176,11 +198,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
-  dialogData(isInit = false) {
-    let startingTags: any[];
-    if (this.selectedIds && isInit) {
+  dialogData(isInit = false): PlanetTagDialogData {
+    let startingTags: DialogStartingTag[];
+    if (Array.isArray(this.selectedIds) && isInit) {
       startingTags = this.tagsInSelection(this.selectedIds, this.filteredData);
-      this.writeValue(startingTags.map((tag: any) => tag.tagId));
+      this.writeValue(startingTags.map((tag) => typeof tag === 'string' ? tag : tag.tagId));
     } else {
       startingTags = this.value;
     }
@@ -196,11 +218,11 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     });
   }
 
-  tagsInSelection(selectedIds, data) {
+  tagsInSelection(selectedIds: string[], data: FilteredDataItem[]): SelectedDialogTag[] {
     const selectedTagsObject = selectedIds
-      .reduce((selectedTags, id) => {
-        const tags = this.filteredData.find((item: any) => item._id === id).tags || [];
-        tags.forEach((tag: any) => {
+      .reduce<Record<string, number>>((selectedTags, id) => {
+        const tags = data.find((item) => item._id === id)?.tags || [];
+        tags.forEach((tag) => {
           selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });
         return selectedTags;
@@ -208,7 +230,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     return Object.entries(selectedTagsObject).map(([ tagId, count ]) => ({ tagId, indeterminate: count !== selectedIds.length }));
   }
 
-  resetDialogData(selectMany = this.selectMany) {
+  resetDialogData(selectMany: boolean = this.selectMany) {
     this.selectMany = selectMany;
     if (this.dialogRef && this.dialogRef.componentInstance) {
       this.dialogRef.componentInstance.data = this.dialogData();
@@ -216,7 +238,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     }
   }
 
-  dialogTagUpdate(tag, isSelected, tagOne = false) {
+  dialogTagUpdate(tag: string, isSelected: boolean, tagOne = false) {
     if (tagOne) {
       this.value = [];
     }
