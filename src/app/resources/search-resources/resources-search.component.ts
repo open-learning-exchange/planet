@@ -50,7 +50,7 @@ export class ResourcesSearchListComponent {
   }
 
   isSelected(item) {
-    return this.selected.indexOf(item) > -1;
+    return this.selected.indexOf(item.value) > -1;
   }
 
 }
