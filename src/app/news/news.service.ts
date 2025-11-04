@@ -18,6 +18,7 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
+  loadingComplete$ = new Subject<{ success: boolean }>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
   private currentBookmark: string | undefined;
   private hasMoreResults = true;
@@ -100,16 +101,18 @@ export class NewsService {
         if (docs.length === 0) {
           this.hasMoreResults = false;
           this.emitNews();
+          this.loadingComplete$.next({ success: true });
           return;
         }
         this.hasMoreResults = docs.length === this.pageSize && !!bookmark;
         this.accumulatedNews = [ ...this.accumulatedNews, ...docs ];
         this.emitNews();
         this.loadMissingAttachments(docs);
+        this.loadingComplete$.next({ success: true });
       },
       error: () => {
         this.isLoading = false;
-        this.hasMoreResults = false;
+        this.loadingComplete$.next({ success: false });
       }
     });
   }

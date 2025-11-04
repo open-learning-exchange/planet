@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -51,6 +51,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  private loadingCompleteSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -68,6 +69,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     });
 
     this.initNews();
+
+    // Subscribe to loading completion to reset isLoadingMore flag
+    this.loadingCompleteSubscription = this.newsService.loadingComplete$.subscribe(() => {
+      this.isLoadingMore = false;
+    });
   }
 
   ngOnChanges() {
@@ -99,6 +105,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ngOnDestroy() {
     if (this.observer) {
       this.observer.disconnect();
+    }
+    if (this.loadingCompleteSubscription) {
+      this.loadingCompleteSubscription.unsubscribe();
     }
   }
 
