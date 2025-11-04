@@ -208,7 +208,6 @@ export class SubmissionsService {
         const sender = this.userService.get().name;
 
         if (team) {
-          // For team surveys, check if submission already exists for this team
           const teamSubmissionExists = submissions.docs.some((s: any) => s.team?._id === team._id && s.parent._rev === parent._rev);
           if (teamSubmissionExists) {
             return this.couchService.updateDocument('submissions/_bulk_docs', { 'docs': [] });
@@ -302,6 +301,7 @@ export class SubmissionsService {
               ageFromBirthDate(time, submission.user.birthDate) :
               submission.user.age || 'N/A',
             'Planet': submission.source,
+            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
             [$localize`Date`]: fullLabel(submission.lastUpdateTime),
             [$localize`Group`]: submission.teamInfo?.name || 'N/A',
             [$localize`Group Type`]: submission.teamInfo?.type || 'N/A',
@@ -528,6 +528,7 @@ export class SubmissionsService {
        submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
+      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
       const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
@@ -535,6 +536,7 @@ export class SubmissionsService {
         `<h3>${$localize`Submission`} ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
+        `<li><strong>${$localize`Source:`}</strong> ${planetSource}</li>`,
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
