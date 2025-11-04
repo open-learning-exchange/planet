@@ -330,10 +330,20 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       const news = this.getCurrentItems();
       this.totalItems = news.length;
       const start = this.pageIndex * this.pageSize;
+      const end = start + this.pageSize;
       const { items } = this.paginateItems(news, start, this.pageSize);
       this.displayedItems = items;
+
+      const shouldFetchRemote = (end >= news.length - this.pageSize) && this.newsService.canLoadMore();
+
+      if (shouldFetchRemote && !this.isLoadingMore) {
+        this.isLoadingMore = true;
+        this.newsService.loadMoreNews();
+      } else {
+        this.isLoadingMore = false;
+      }
+
       this.hasMoreNews = false;
-      this.isLoadingMore = false;
     } else {
       let pageSize = this.pageSize;
       if (initial) {
