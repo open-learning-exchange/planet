@@ -335,7 +335,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.displayedItems = items;
 
       const shouldFetchRemote = (end >= news.length - this.pageSize) && this.newsService.canLoadMore();
-
       if (shouldFetchRemote && !this.isLoadingMore) {
         this.isLoadingMore = true;
         this.newsService.loadMoreNews();
@@ -360,8 +359,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.nextStartIndex = endIndex;
       this.totalReplies = news.length;
 
-      const reachedLocalEnd = endIndex >= news.length;
-      const shouldFetchRemote = reachedLocalEnd && !hasMore && this.newsService.canLoadMore();
+      const shouldFetchRemote = endIndex >= news.length && !hasMore && this.newsService.canLoadMore();
 
       if (shouldFetchRemote) {
         this.isLoadingMore = true;

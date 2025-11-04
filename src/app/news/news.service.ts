@@ -83,9 +83,7 @@ export class NewsService {
   }
 
   private fetchNewsPage(reset: boolean) {
-    const { selectors } = this.currentOptions;
-    const baseQuery = findDocuments(selectors, 0, [ { 'time': 'desc' } ], this.pageSize);
-    const query: any = { ...baseQuery };
+    const query: any = { ...findDocuments(this.currentOptions.selectors, 0, [ { 'time': 'desc' } ], this.pageSize) };
     if (!reset && this.currentBookmark) {
       query.bookmark = this.currentBookmark;
     }
