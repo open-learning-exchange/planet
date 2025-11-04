@@ -375,11 +375,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recordSurvey(survey: any) {
-    this.submissionsService.createSubmission(survey, 'survey', {}, this.teamId || this.routeTeamId || '' ).subscribe((res: any) => {
-      this.router.navigate([
-        this.teamId ? 'surveys/dispense' : 'dispense',
-        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-      ], { relativeTo: this.route });
+    const targetTeamId = this.teamId || this.routeTeamId;
+    const teamObservable = targetTeamId ? this.couchService.get('teams/' + targetTeamId) : of(null);
+
+    teamObservable.subscribe((team: any) => {
+      const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
+      this.submissionsService.createSubmission(survey, 'survey', {}, teamInfo).subscribe((res: any) => {
+        this.router.navigate([
+          this.teamId ? 'surveys/dispense' : 'dispense',
+          { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
+        ], { relativeTo: this.route });
+      });
     });
   }
 
