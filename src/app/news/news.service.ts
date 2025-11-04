@@ -218,4 +218,28 @@ export class NewsService {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
+  getNewsById(newsId: string) {
+    return this.couchService.get(`${this.dbName}/${newsId}`).pipe(
+      switchMap((newsItem: any) => {
+        const attachmentIds = this.collectAttachmentIds([ newsItem ]);
+        return this.couchService.findAttachmentsByIds(attachmentIds).pipe(
+          map((attachments: any[]) => {
+            const avatarMap: Record<string, any> = {};
+            attachments.forEach(attachment => {
+              if (attachment && attachment._id) {
+                avatarMap[attachment._id] = attachment;
+              }
+            });
+            return {
+              doc: newsItem,
+              sharedDate: this.findShareDate(newsItem, this.currentOptions.viewId),
+              avatar: this.findAvatar(newsItem.user, avatarMap),
+              _id: newsItem._id
+            };
+          })
+        );
+      })
+    );
+  }
+
 }

@@ -107,7 +107,24 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   initNews() {
     const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
-    this.filterNewsToShow(newVoiceId);
+
+    // Check if voice is in the current items
+    if (newVoiceId !== 'root' && !this.items.find(item => item._id === newVoiceId)) {
+      this.newsService.getNewsById(newVoiceId).subscribe({
+        next: (newsItem) => {
+          if (!this.items.find(item => item._id === newsItem._id)) {
+            this.items = [ newsItem, ...this.items ];
+            this.ngOnChanges();
+          }
+          this.filterNewsToShow(newVoiceId);
+        },
+        error: () => {
+          this.filterNewsToShow('root');
+        }
+      });
+    } else {
+      this.filterNewsToShow(newVoiceId);
+    }
   }
 
   showReplies(news) {
