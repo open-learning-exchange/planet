@@ -5,7 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { chat, chatNoSave } from './services/chat.service';
-import { keys } from './config/ai-providers.config';
+import { assistant, keys } from './config/ai-providers.config';
 
 dotenv.config();
 
@@ -37,14 +37,25 @@ wss.on('connection', (ws) => {
       }
 
       const chatResponse = await chat(data, true, (response) => {
-        ws.send(JSON.stringify({ 'type': 'partial', response }));
+        ws.send(JSON.stringify({
+          'type': 'partial',
+          'response': response,
+          'metadata': {
+            'source': 'responses',
+            'response_format': assistant?.response_format ?? 'text',
+          }
+        }));
       });
 
       if (chatResponse) {
         ws.send(JSON.stringify({
           'type': 'final',
           'completionText': chatResponse.completionText,
-          'couchDBResponse': chatResponse.couchSaveResponse
+          'couchDBResponse': chatResponse.couchSaveResponse,
+          'metadata': {
+            'source': 'responses',
+            'response_format': assistant?.response_format ?? 'text',
+          }
         }));
       }
     } catch (error: any) {
@@ -73,14 +84,22 @@ app.post('/', async (req: any, res: any) => {
       const response = await chatNoSave(data.content, data.aiProvider, data.context, data.assistant, false);
       return res.status(200).json({
         'status': 'Success',
-        'chat': response
+        'chat': response,
+        'metadata': {
+          'source': 'responses',
+          'response_format': assistant?.response_format ?? 'text',
+        }
       });
     } else {
       const response = await chat(data, false);
       return res.status(201).json({
         'status': 'Success',
         'chat': response?.completionText,
-        'couchDBResponse': response?.couchSaveResponse
+        'couchDBResponse': response?.couchSaveResponse,
+        'metadata': {
+          'source': 'responses',
+          'response_format': assistant?.response_format ?? 'text',
+        }
       });
     }
   } catch (error: any) {
