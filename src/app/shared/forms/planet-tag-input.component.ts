@@ -12,13 +12,13 @@ import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
 
-type SelectedDialogTag = { tagId: string; indeterminate: boolean };
+interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 
 type DialogStartingTag = string | SelectedDialogTag;
 
-type TagWithId = { _id: string } & Record<string, unknown>;
+interface TagWithId extends Record<string, unknown> { _id: string; }
 
-type FilteredDataItem = { _id: string; tags?: TagWithId[] };
+interface FilteredDataItem { _id: string; tags?: TagWithId[]; }
 
 interface PlanetTagDialogData {
   tagUpdate: (tag: string, isSelected: boolean, tagOne?: boolean) => void;
