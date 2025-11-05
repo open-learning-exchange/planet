@@ -52,6 +52,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
   private loadingCompleteSubscription: Subscription;
+  private newsByIdSubscription?: Subscription;
+  private currentVoiceId = 'root';
 
   constructor(
     private dialog: MatDialog,
@@ -109,6 +111,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (this.loadingCompleteSubscription) {
       this.loadingCompleteSubscription.unsubscribe();
     }
+    if (this.newsByIdSubscription) {
+      this.newsByIdSubscription.unsubscribe();
+      this.newsByIdSubscription = undefined;
+    }
   }
 
   setupObserver() {
@@ -131,24 +137,49 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   initNews() {
     const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    this.currentVoiceId = newVoiceId;
 
     // Check if voice is in the current items
     if (newVoiceId !== 'root' && !this.items.find(item => item._id === newVoiceId)) {
-      this.newsService.getNewsById(newVoiceId).subscribe({
+      if (this.newsByIdSubscription) {
+        this.newsByIdSubscription.unsubscribe();
+        this.newsByIdSubscription = undefined;
+      }
+      const requestVoiceId = newVoiceId;
+      this.newsByIdSubscription = this.newsService.getNewsById(newVoiceId).subscribe({
         next: (newsItem) => {
+          if (this.currentVoiceId !== requestVoiceId) {
+            return;
+          }
           if (!this.items.find(item => item._id === newsItem._id)) {
             this.items = [ newsItem, ...this.items ];
             this.ngOnChanges();
           }
           this.filterNewsToShow(newVoiceId);
+          if (this.newsByIdSubscription) {
+            this.newsByIdSubscription.unsubscribe();
+            this.newsByIdSubscription = undefined;
+          }
         },
         error: () => {
-          this.filterNewsToShow('root');
+          if (this.currentVoiceId === requestVoiceId) {
+            this.filterNewsToShow('root');
+          }
+          if (this.newsByIdSubscription) {
+            this.newsByIdSubscription.unsubscribe();
+            this.newsByIdSubscription = undefined;
+          }
+        },
+        complete: () => {
+          if (this.currentVoiceId === requestVoiceId) {
+            this.newsByIdSubscription = undefined;
+          }
         }
       });
-    } else {
-      this.filterNewsToShow(newVoiceId);
+      return;
     }
+
+    this.filterNewsToShow(newVoiceId);
   }
 
   showReplies(news) {
@@ -343,7 +374,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       const { items } = this.paginateItems(news, start, this.pageSize);
       this.displayedItems = items;
 
-      const shouldFetchRemote = (end >= news.length - this.pageSize) && this.newsService.canLoadMore();
+      const shouldFetchRemote = news.length >= this.pageSize && end >= news.length && this.newsService.canLoadMore();
       if (shouldFetchRemote && !this.isLoadingMore) {
         this.isLoadingMore = true;
         this.newsService.loadMoreNews();
