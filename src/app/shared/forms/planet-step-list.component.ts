@@ -15,7 +15,7 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, UntypedFormArray } from '@angular/forms';
 import { uniqueId } from '../utils';
 
 export type PlanetStepControls = Record<string, AbstractControl<unknown, unknown>>;
@@ -79,9 +79,11 @@ export class PlanetStepListItemComponent {
   styleUrls: [ './planet-step-list.scss' ],
   encapsulation: ViewEncapsulation.None
 })
+export type PlanetStepListSteps = unknown[] | PlanetStepFormArray | UntypedFormArray;
+
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
-  @Input() steps: any[] | PlanetStepFormArray;
+  @Input() steps: PlanetStepListSteps;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
