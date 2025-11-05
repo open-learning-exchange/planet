@@ -187,6 +187,13 @@ body {
     letter-spacing: normal;
   }
 
+  // Fix for new MDC icon buttons being used in old style inputs.
+  // May need to change after converting forms to MDC.
+  .mat-form-field-suffix button .mat-icon {
+    font-size: 100%;
+    line-height: 1;
+  }
+
   .mat-row.expanded-row {
     border: none;
   }
