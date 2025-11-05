@@ -183,6 +183,10 @@ body {
 
   }
 
+  .mat-mdc-button, .mdc-button {
+    letter-spacing: normal;
+  }
+
   .mat-row.expanded-row {
     border: none;
   }
