@@ -1,5 +1,3 @@
-import type { Chart } from 'chart.js';
-
 type ChartJsModule = typeof import('chart.js');
 type RegisterableKey = 'ArcElement' | 'BarController' | 'BarElement' | 'CategoryScale' | 'DoughnutController'
   | 'Legend' | 'LinearScale' | 'Title' | 'Tooltip' | 'LineController' | 'PointElement' | 'LineElement';
@@ -39,8 +37,6 @@ export async function loadChart(keys: RegisterableKey[] = []): Promise<ChartJsMo
   }
   return module;
 }
-
-export type ChartJs = Chart;
 
 export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } {
   const canvas = document.createElement('canvas');
