@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatStepper } from '@angular/material/stepper';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
 } from '@angular/material/legacy-dialog';
@@ -22,6 +23,16 @@ import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialog
     }
   ` ]
 })
+interface TeamForm {
+  message: FormControl<string>;
+  linkId: FormControl<string>;
+  teamType: FormControl<string>;
+}
+
+interface CommunityForm {
+  message: FormControl<string>;
+}
+
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();
   conversation: any;
@@ -29,8 +40,8 @@ export class DialogsChatShareComponent implements OnInit {
   membersInfo: any;
   excludeIds: any[] = [];
   showForm: boolean;
-  teamForm: UntypedFormGroup;
-  communityForm: UntypedFormGroup;
+  teamForm: FormGroup<TeamForm>;
+  communityForm: FormGroup<CommunityForm>;
 
   @ViewChild('linkStepper') linkStepper: MatStepper;
   selectedLink: { db, title, selector? };
@@ -43,7 +54,7 @@ export class DialogsChatShareComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogsChatShareComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,
@@ -54,10 +65,10 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.communityForm = this.formBuilder.group({
+    this.communityForm = this.formBuilder.nonNullable.group({
       message: ''
     });
-    this.teamForm = this.formBuilder.group({
+    this.teamForm = this.formBuilder.nonNullable.group({
       message: '',
       linkId: '',
       teamType: ''
@@ -65,16 +76,20 @@ export class DialogsChatShareComponent implements OnInit {
     this.getTeams();
   }
 
-  teamSelect({ teamId, teamType }) {
+  teamSelect({ teamId, teamType }: { teamId: string; teamType: string }) {
     this.teamForm.controls.linkId.setValue(teamId);
     this.teamForm.controls.teamType.setValue(teamType);
     this.linkStepper.selected.completed = true;
     this.linkStepper.next();
   }
 
-  linkStepperChange({ selectedIndex }) {
+  linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
     if (selectedIndex === 0 && this.teamForm.pristine !== true) {
-      this.teamForm.reset();
+      this.teamForm.reset({
+        message: '',
+        linkId: '',
+        teamType: ''
+      });
     }
   }
 
@@ -111,12 +126,13 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   shareWithTeam() {
-    let linkId, teamType;
-    if (this.teamForm.valid) {
-      const team = this.teamForm.value;
-      this.conversation.message = team.message ? team.message : '</br>';
-      ({ linkId, teamType } = team);
+    if (!this.teamForm.valid) {
+      return;
     }
+
+    const team = this.teamForm.getRawValue();
+    this.conversation.message = team.message ? team.message : '</br>';
+    const { linkId, teamType } = team;
 
     this.getTeam(linkId).pipe(
       switchMap((teamData) => {
@@ -139,7 +155,7 @@ export class DialogsChatShareComponent implements OnInit {
 
   shareWithCommunity() {
     if (this.communityForm.valid) {
-      const message = this.communityForm.get('message').value;
+      const message = this.communityForm.controls.message.value;
       this.conversation.message = message ? { text: message, images: [] } : { text: '</br>', images: [] };
     }
     this.conversation.chat = true;
