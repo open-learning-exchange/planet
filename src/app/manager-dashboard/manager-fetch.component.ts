@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { findByIdInArray } from '../shared/utils';
+import { findByIdInArray, itemsShown } from '../shared/utils';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
@@ -62,8 +62,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */

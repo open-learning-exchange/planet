@@ -69,20 +69,14 @@ export async function chatNoSave(
   content: any,
   aiProvider: AIProvider,
   assistant: boolean,
-  context?: any,
-  stream?: boolean,
-  callback?: (response: string) => void
+  context?: any
 ): Promise<string | undefined> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
 
   try {
-    const completionText = await aiChat(messages, aiProvider, assistant, context, stream, callback);
-    messages.push({
-      'role': 'assistant', 'content': completionText
-    });
-
+    const completionText = await aiChat(messages, aiProvider, assistant, context);
     return completionText;
   } catch (error: any) {
     handleChatError(error);
