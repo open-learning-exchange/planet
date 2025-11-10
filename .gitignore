@@ -25,7 +25,6 @@ node_modules/
 !.vscode/extensions.json
 
 # misc
-/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -57,6 +56,3 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
-
-# Gemini CLI configuration
-gemini-extension.json
