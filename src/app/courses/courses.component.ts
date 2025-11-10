@@ -149,11 +149,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.setDisplayedColumns();
   }
 
   ngOnInit() {
-    this.setDisplayedColumns();
     this.titleSearch = '';
     this.getCourses();
     this.userShelf = this.userService.shelf;
