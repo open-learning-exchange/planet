@@ -123,7 +123,7 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
         <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
           <h3 class="header">
-              <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
+              <mat-checkbox class="mobile-checkbox" (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>
               <span class="margin-lr-5"></span>

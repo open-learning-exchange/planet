@@ -133,6 +133,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (this.myView !== 'myPersonals') {
+      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
+    } else {
+      this.displayedColumns = [ 'title', 'createdDate' ];
+    }
     this.titleSearch = '';
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),

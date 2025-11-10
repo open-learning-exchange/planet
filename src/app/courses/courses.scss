@@ -67,7 +67,15 @@ $label-height: 1rem;
   display: inline-block;
 }
 
+.mat-cell .mobile-checkbox {
+  display: none;
+}
+
 @media(max-width: $screen-sm) {
+  .mat-cell .mobile-checkbox {
+    display: inline-block;
+  }
+
   .created-label {
     display: inline-block;
   }
