@@ -13,13 +13,9 @@ import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.compone
 import { dedupeShelfReduce } from '../utils';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
-
 type DialogStartingTag = string | SelectedDialogTag;
-
 interface TagWithId extends Record<string, unknown> { _id: string; }
-
 interface FilteredDataItem { _id: string; tags?: TagWithId[]; }
-
 interface PlanetTagDialogData {
   tagUpdate: (tag: string, isSelected: boolean, tagOne?: boolean) => void;
   initTags: (editedId?: string) => void;
@@ -39,7 +35,6 @@ interface PlanetTagDialogData {
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ]
 })
-
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
   static nextId = 0;
