@@ -212,10 +212,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.coursesService.requestCourses(this.parent);
   }
 
-  setDisplayedColumns() {
-    this.displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
-  }
-
   ngAfterViewInit() {
     this.courses.sort = this.sort;
     this.courses.paginator = this.paginator;
