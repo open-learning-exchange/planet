@@ -139,6 +139,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       addedBy: this.currentUsername,
       openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
       isDownloadable: '',
+      h5pUrl: '',
       sourcePlanet: this.stateService.configuration.code,
       resideOn: this.stateService.configuration.code,
       createdDate: this.couchService.datePlaceholder,
@@ -148,6 +149,16 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     if (this.existingResource.doc) {
       this.setFormValues(this.existingResource);
     }
+    // Add validation for h5pUrl when openWith is H5P
+    this.resourceForm.get('openWith').valueChanges.subscribe(value => {
+      const h5pUrlControl = this.resourceForm.get('h5pUrl');
+      if (value === 'H5P') {
+        h5pUrlControl.setValidators([Validators.required]);
+      } else {
+        h5pUrlControl.setValidators(null);
+      }
+      h5pUrlControl.updateValueAndValidity();
+    });
   }
 
   setFormValues(resource) {
@@ -385,6 +396,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       resourceType: formValue.resourceType || '',
       author: formValue.author || '',
       year: formValue.year || '',
+      h5pUrl: formValue.h5pUrl || '',
       tags: this.tags.value || [],
       attachment: this.file
         ? { name: this.file.name, size: this.file.size, type: this.file.type }

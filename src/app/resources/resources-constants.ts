@@ -50,7 +50,8 @@ export const openWith = [
   { 'label': $localize`MP3`, 'value': 'MP3' },
   { 'label': $localize`Flow Video Player`, 'value': 'Flow Video Player' },
   { 'label': $localize`BeLL Video Book Player`, 'value': 'BeLL Video Book Player' },
-  { 'label': $localize`Native Video`, 'value': 'Native Video' }
+  { 'label': $localize`Native Video`, 'value': 'Native Video' },
+  { 'label': $localize`H5P`, 'value': 'H5P' }
 ];
 
 export const resourceType = [

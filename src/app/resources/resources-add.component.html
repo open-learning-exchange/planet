@@ -55,6 +55,11 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field *ngIf="resourceForm.get('openWith')?.value === 'H5P'">
+          <input matInput i18n-placeholder placeholder="H5P Embed URL" formControlName="h5pUrl" required>
+          <mat-hint i18n>Example: https://h5p.org/h5p/embed/617</mat-hint>
+          <mat-error><planet-form-error-messages [control]="resourceForm.controls.h5pUrl"></planet-form-error-messages></mat-error>
+        </mat-form-field>
         <mat-form-field>
           <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
             <mat-option *ngFor="let role of constants.resourceFor" [value]="role.value">{{role.label}}</mat-option>

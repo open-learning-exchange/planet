@@ -43,7 +43,7 @@
 
   <ng-template #actionButtons>
     <ng-container *ngIf="!parent">
-      <a mat-raised-button *ngIf="resource.doc?._attachments" [href]="resourceSrc" target="_blank" color="accent" i18n class = "toolbar-button margin-lr-3">Open in new tab</a>
+      <a mat-raised-button *ngIf="resource.doc?._attachments || (resource.doc?.openWith === 'H5P' && resource.doc?.h5pUrl)" [href]="resourceSrc" target="_blank" color="accent" i18n class = "toolbar-button margin-lr-3">Open in new tab</a>
       <button mat-raised-button color="accent" (click)="libraryToggle(resource._id, 'add')" i18n class="toolbar-button margin-lr-3" *ngIf="!isUserEnrolled">
         Add to myLibrary
       </button>
@@ -51,7 +51,7 @@
         Remove from myLibrary
       </button>
     </ng-container>
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
+    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable" *ngIf="resource?.doc?.openWith !== 'H5P'">
       <mat-icon>file_download</mat-icon>
     </a>
   </ng-template>
@@ -83,7 +83,7 @@
       </ng-container>
       <ng-template #resourceContent>
         <planet-resources-viewer
-          *ngIf="resource?.doc?._attachments; else noAttachment"
+          *ngIf="resource?.doc?._attachments || (resource?.doc?.openWith === 'H5P' && resource?.doc?.h5pUrl); else noAttachment"
           [resourceId]="resourceId"
           (resourceUrl)="setResourceUrl($event)">
         </planet-resources-viewer>

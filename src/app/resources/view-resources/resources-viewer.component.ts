@@ -87,6 +87,16 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   setResource(resource: any) {
     this.resourceActivity(resource, 'visit');
+
+    // Check if this is an H5P embed resource
+    if (resource.openWith === 'H5P' && resource.h5pUrl) {
+      this.mediaType = 'h5p';
+      this.resourceSrc = resource.h5pUrl;
+      this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
+      this.resourceUrl.emit(this.resourceSrc);
+      return;
+    }
+
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
     this.mediaType = resource.mediaType;
