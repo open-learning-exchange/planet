@@ -1,27 +1,4 @@
-@import '../variables';
-
-.responsive-toolbar button {
-	margin-left: 16px;
-}
-
-@media (max-width: $screen-sm) {
-  .responsive-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    height: auto;
-    padding: 16px;
-
-    > div {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      margin-bottom: 12px;
-
-      span {
-        text-align: center;
-      }
-    }
-  }
+mat-cell {
+  word-wrap: break-word;
+  white-space: normal;
 }
