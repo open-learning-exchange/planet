@@ -276,20 +276,21 @@ export class SubmissionsService {
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-      const normalizedSubmissions = submissions.map(sub => ({
-        ...sub,
-        parent: {
-          ...sub.parent,
-          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
-        }
-      }));
-      const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
-      const submissionsWithTeamInfo = filteredSubmissions.map(submission => ({
-        ...submission,
-        teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
-      }));
-      return of<[any[], number, string[]]>([submissionsWithTeamInfo, time, questionTexts]);
+    return this.getSubmissionsExport(exam, type).pipe(
+      map(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
+        const normalizedSubmissions = submissions.map(sub => ({
+          ...sub,
+          parent: {
+            ...sub.parent,
+            questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+          }
+        }));
+        const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
+        const submissionsWithTeamInfo = filteredSubmissions.map(submission => ({
+          ...submission,
+          teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
+        }));
+        return <[any[], number, string[]]>[submissionsWithTeamInfo, time, questionTexts];
       }),
       tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
@@ -456,7 +457,7 @@ export class SubmissionsService {
           this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
           return throwError(error);
         }),
-        switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
+        map(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
           const normalizedSubmissions = submissions.map(sub => ({
             ...sub,
@@ -469,7 +470,7 @@ export class SubmissionsService {
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);
-            return of(null);
+            return null;
           }
           const planetsWithName = attachNamesToPlanets(planets);
           const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
@@ -477,7 +478,7 @@ export class SubmissionsService {
             planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
             teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
           }));
-          return of<[any[], number, string[]]>([submissionsWithPlanetName, time, questionTexts]);
+          return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
         })
       ).subscribe(async tuple => {
         if (!tuple) { return; }
