@@ -151,6 +151,14 @@ export class PlanetTagInputDialogComponent {
     return value ? [ value ] : [];
   }
 
+  private forEachTagControl(
+    form: TagFormGroup,
+    callback: (key: keyof TagFormControls, control: TagFormControls[keyof TagFormControls]) => void
+  ): void {
+    (Object.entries(form.controls) as [keyof TagFormControls, TagFormControls[keyof TagFormControls]][])
+      .forEach(([ key, control ]) => callback(key, control));
+  }
+
   selectOne(tag) {
     this.data.tagUpdate(tag, true, true);
     this.dialogRef.close();
@@ -161,21 +169,19 @@ export class PlanetTagInputDialogComponent {
   }
 
   addLabel() {
-    const onAllFormControls = (func: (control: TagFormControls[keyof TagFormControls]) => void) =>
-      (Object.values(this.addTagForm.controls) as TagFormControls[keyof TagFormControls][]).forEach(func);
     if (this.addTagForm.valid) {
       const { name, attachedTo }: TagFormValue = this.addTagForm.getRawValue();
       const normalizedAttachedTo = this.normalizeAttachedTo(attachedTo);
       this.tagsService.updateTag({ name, attachedTo: normalizedAttachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: normalizedAttachedTo };
         this.planetMessageService.showMessage($localize`New collection added`);
-        onAllFormControls(control => control.updateValueAndValidity());
+        this.forEachTagControl(this.addTagForm, (_, control) => control.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.controls.name.reset('');
         this.addTagForm.controls.attachedTo.reset([]);
       });
     } else {
-      onAllFormControls(control => control.markAsTouched({ onlySelf: true }));
+      this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
     }
   }
 
@@ -275,19 +281,18 @@ export class PlanetTagInputDialogComponent {
   }
 
   resetValidationAndCheck(form: TagFormGroup) {
-    (Object.entries(form.controls) as [keyof TagFormControls, TagFormControls[keyof TagFormControls]][])
-      .forEach(([ key, control ]) => {
-        control.clearValidators();
-        control.clearAsyncValidators();
+    this.forEachTagControl(form, (key, control) => {
+      control.clearValidators();
+      control.clearAsyncValidators();
 
-        if (key === 'name') {
-          control.setValidators(this.tagNameSyncValidator());
-          control.setAsyncValidators(this.tagNameAsyncValidator());
-        }
+      if (key === 'name') {
+        control.setValidators(this.tagNameSyncValidator());
+        control.setAsyncValidators(this.tagNameAsyncValidator());
+      }
 
-        control.markAsUntouched();
-        control.updateValueAndValidity();
-      });
+      control.markAsUntouched();
+      control.updateValueAndValidity();
+    });
   }
 
   toggleSubcollection(event, tagId) {
