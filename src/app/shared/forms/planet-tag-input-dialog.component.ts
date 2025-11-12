@@ -29,6 +29,7 @@ type TagFormControls = {
 };
 
 type TagFormGroup = FormGroup<TagFormControls>;
+type TagFormValue = { name: string; attachedTo: string[] };
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -84,7 +85,7 @@ export class PlanetTagInputDialogComponent {
         this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
-    this.addTagForm = this.fb.nonNullable.group({
+    this.addTagForm = this.fb.nonNullable.group<TagFormControls>({
       name: this.fb.nonNullable.control('', {
         validators: this.tagNameSyncValidator(),
         asyncValidators: this.tagNameAsyncValidator(),
@@ -143,7 +144,7 @@ export class PlanetTagInputDialogComponent {
     return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
-  private normalizeAttachedTo(value: string[] | string | undefined): string[] {
+  private normalizeAttachedTo(value: string[] | string | undefined | null): string[] {
     if (Array.isArray(value)) {
       return value;
     }
@@ -163,7 +164,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: (control: TagFormControls[keyof TagFormControls]) => void) =>
       (Object.values(this.addTagForm.controls) as TagFormControls[keyof TagFormControls][]).forEach(func);
     if (this.addTagForm.valid) {
-      const { name, attachedTo } = this.addTagForm.getRawValue();
+      const { name, attachedTo }: TagFormValue = this.addTagForm.getRawValue();
       const normalizedAttachedTo = this.normalizeAttachedTo(attachedTo);
       this.tagsService.updateTag({ name, attachedTo: normalizedAttachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: normalizedAttachedTo };
@@ -245,7 +246,7 @@ export class PlanetTagInputDialogComponent {
   tagForm(tag: any = {}): TagFormGroup {
     const existingName = typeof tag.name === 'string' ? tag.name : '';
     const attachedTo = this.normalizeAttachedTo(tag.attachedTo);
-    return this.fb.nonNullable.group({
+    return this.fb.nonNullable.group<TagFormControls>({
       name: this.fb.nonNullable.control(existingName, {
         validators: this.tagNameSyncValidator(),
         asyncValidators: this.tagNameAsyncValidator(existingName)
