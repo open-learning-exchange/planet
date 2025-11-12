@@ -30,7 +30,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   streaming: boolean;
   disabled = false;
   clearChat = true;
-  provider: AIProvider = { name: 'openai' };
+  provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
   promptForm: FormGroup<PromptForm>;
