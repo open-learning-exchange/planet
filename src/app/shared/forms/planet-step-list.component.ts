@@ -21,6 +21,7 @@ import { uniqueId } from '../utils';
 export type PlanetStepControls = Record<string, AbstractControl<unknown, unknown>>;
 export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
 export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
+export type PlanetStepListSteps = unknown[] | PlanetStepFormArray | UntypedFormArray;
 
 interface StepMoveEvent {
   index: number;
@@ -79,8 +80,6 @@ export class PlanetStepListItemComponent {
   styleUrls: [ './planet-step-list.scss' ],
   encapsulation: ViewEncapsulation.None
 })
-export type PlanetStepListSteps = unknown[] | PlanetStepFormArray | UntypedFormArray;
-
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   @Input() steps: PlanetStepListSteps;
