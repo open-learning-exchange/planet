@@ -103,13 +103,8 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
   };
 };
 
-const normalizeToArray = (value: any): any[] => {
-  return Array.isArray(value) ? value : [ value ];
-};
-
 const matchAllItems = (filterItems: string[], propItems: string[]) => {
-  const normalizedPropItems = normalizeToArray(propItems);
-  return filterItems.reduce((isMatch, filter) => isMatch && normalizedPropItems.indexOf(filter) > -1, true);
+  return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
@@ -120,7 +115,6 @@ export const filterArrayField = (filterField: string, filterItems: string[]) => 
     return matchAllItems(filterItems, propItems);
   };
 };
-
 
 export const filterTags = (filterControl: FormControl) => {
   return (data: any, filter: string) => {
