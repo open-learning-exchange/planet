@@ -18,7 +18,8 @@ import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup, UntypedFormArray } from '@angular/forms';
 import { uniqueId } from '../utils';
 
-export type PlanetStepControls = Record<string, AbstractControl<unknown, unknown>>;
+export type PlanetStepControl = AbstractControl<unknown, unknown>;
+export type PlanetStepControls = Record<string, PlanetStepControl>;
 export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
 export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
 export type PlanetStepListSteps = unknown[] | PlanetStepFormArray | UntypedFormArray;
@@ -133,13 +134,14 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (listId !== this.listId) {
       return;
     }
-    if (Array.isArray(this.steps)) {
-      this.moveArrayStep(index, direction, this.steps);
-      this.stepsChange.emit(this.steps);
+    const { steps } = this;
+    if (Array.isArray(steps)) {
+      this.moveArrayStep(index, direction, steps);
+      this.stepsChange.emit(steps);
       return;
     }
-    if (this.steps instanceof FormArray) {
-      this.moveFormArrayStep(index, direction, this.steps);
+    if (steps instanceof FormArray) {
+      this.moveFormArrayStep(index, direction, steps);
     }
   }
 
@@ -150,7 +152,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
-  moveFormArrayStep(index: number, direction: number, steps: PlanetStepFormArray) {
+  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>) {
     const step = steps.at(index);
     if (!step) {
       return;
