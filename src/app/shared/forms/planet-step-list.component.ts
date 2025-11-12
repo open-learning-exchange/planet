@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup, UntypedFormArray } from '@angular/forms';
 import { uniqueId } from '../utils';
 
-export type PlanetStepControl = AbstractControl<unknown, unknown>;
+export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
 export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
 export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
@@ -159,7 +159,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
     steps.removeAt(index);
     if (direction !== 0) {
-      steps.insert(index + direction, step);
+      steps.insert(index + direction, step as TControl);
     }
   }
 
