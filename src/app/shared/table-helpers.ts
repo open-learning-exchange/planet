@@ -104,30 +104,23 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
 };
 
 const normalizeToArray = (value: any): any[] => {
-  if (value === undefined || value === null) {
-    return [];
-  }
-
   return Array.isArray(value) ? value : [ value ];
 };
 
-const matchAllItems = (filterItems: string[], propItems: any) => {
-  const normalizedFilterItems = normalizeToArray(filterItems);
-
-  if (normalizedFilterItems.length === 0) {
-    return true;
-  }
-
+const matchAllItems = (filterItems: string[], propItems: string[]) => {
   const normalizedPropItems = normalizeToArray(propItems);
-
-  return normalizedFilterItems.reduce((isMatch, filter) => isMatch && normalizedPropItems.indexOf(filter) > -1, true);
+  return filterItems.reduce((isMatch, filter) => isMatch && normalizedPropItems.indexOf(filter) > -1, true);
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
-  return (data: any, filter: string) => {
-    return matchAllItems(filterItems, getProperty(data, filterField));
+  return (data: unknown, _filter: string) => {
+    const raw = getProperty(data, filterField);
+    const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+
+    return matchAllItems(filterItems, propItems);
   };
 };
+
 
 export const filterTags = (filterControl: FormControl) => {
   return (data: any, filter: string) => {
