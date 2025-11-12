@@ -3,7 +3,7 @@ import { DocumentInsertResponse } from 'nano';
 import { chatDB } from '../config/nano.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
-import { AIProvider, ChatMessage, ProviderName } from '../models/chat.model';
+import { AIProvider, ChatMessage } from '../models/chat.model';
 
 function handleChatError(error: any) {
   if (error.response) {
