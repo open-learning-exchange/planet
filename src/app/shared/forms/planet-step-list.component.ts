@@ -153,13 +153,13 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   }
 
   moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>) {
-    const step = steps.at(index);
+    const step = steps.controls[index];
     if (!step) {
       return;
     }
     steps.removeAt(index);
     if (direction !== 0) {
-      steps.insert(index + direction, step as TControl);
+      steps.insert(index + direction, step);
     }
   }
 
