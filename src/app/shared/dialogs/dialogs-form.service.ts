@@ -4,7 +4,8 @@ import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from
 import { Injectable } from '@angular/core';
 import {
   UntypedFormBuilder,
-  UntypedFormGroup
+  UntypedFormGroup,
+  FormGroup
 } from '@angular/forms';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class DialogsFormService {
       width: '600px',
       autoFocus: autoFocus
     });
-    if (formGroup instanceof UntypedFormGroup) {
+    if (formGroup instanceof UntypedFormGroup || formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
     } else {
       dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
