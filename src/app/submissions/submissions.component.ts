@@ -5,22 +5,21 @@ import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/materia
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject, zip, forkJoin, of, Observable } from 'rxjs';
+import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { TeamsService } from '../teams/teams.service';
 
 const columnsByFilterAndMode = {
   exam: {
     grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime' ],
-    survey: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'lastUpdateTime' ]
+    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
+    survey: [ 'name', 'courseTitle', 'stepNum', 'status', 'lastUpdateTime' ]
   }
 };
 
@@ -33,7 +32,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
-  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
+  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -61,8 +60,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private userService: UserService,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService,
-    private teamsService: TeamsService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -92,16 +90,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
         }
         return sList;
       }, []).map(submission => this.appendCourseInfo(submission, courses));
-      forkJoin(submissions.map(s => this.appendTeamInfo$(s))).subscribe(subs => {
-        // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
-        subs.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
-        this.submissions.data = subs.map(submission => ({
-          ...submission,
-          submittedBy: this.submissionsService.submissionName(submission.user)
-        }));
-        this.dialogsLoadingService.stop();
-        this.applyFilter('');
-      });
+      // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
+      submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
+      this.submissions.data = submissions.map(submission => ({
+        ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
+      }));
+      this.dialogsLoadingService.stop();
+      this.applyFilter('');
     });
     this.submissionsService.updateSubmissions(this.submissionQuery());
     this.setupTable();
@@ -236,10 +231,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     const stepNum = submissionCourse.doc.steps
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
     return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
-  }
-
-  appendTeamInfo$(submission): Observable<any> {
-    return of({ ...submission, teamInfo: submission.team || null });
   }
 
   getTeamTypeLabel(teamType: string): string {
