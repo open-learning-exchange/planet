@@ -25,7 +25,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
+import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
@@ -307,8 +307,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */

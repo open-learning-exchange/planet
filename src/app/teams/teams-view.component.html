@@ -178,7 +178,7 @@
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #resourceList>
             <div class="card-grid">
-              <mat-card *ngFor="let resource of resources" (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments" [ngClass]="{'cursor-pointer': resource.resource._attachments}">
+              <mat-card *ngFor="let resource of resources" (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
                 <div class="mat-subheading-2">
                   <span *ngIf="resource.resource!==undefined">
                     <b>{{resource.resource.title | truncateText:75}}</b>
@@ -235,11 +235,11 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab i18n-label label="Surveys">
+        <mat-tab #surveysTab i18n-label label="Surveys">
           <ng-template mat-tab-label>
-            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
+            <ng-container i18n>Surveys</ng-container> <span *ngIf="surveysTab.isActive">({{surveysCount}})</span>
           </ng-template>
-          <planet-surveys [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
+          <planet-surveys *ngIf="surveysTab.isActive" [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
       </ng-container>
     </mat-tab-group>
