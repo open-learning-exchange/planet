@@ -234,8 +234,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   appendTeamInfo$(submission): Observable<any> {
-    if (!submission.team) { return of({ ...submission, teamName: '' }); }
-    return this.teamsService.getTeamName(submission.team).pipe(map((teamInfo: any) => ({ ...submission, teamInfo })));
+    return of({ ...submission, teamInfo: submission.team || null });
   }
 
   getTeamTypeLabel(teamType: string): string {

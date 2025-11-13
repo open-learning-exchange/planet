@@ -381,18 +381,6 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
-  getTeamName(teamId: string): Observable<Object> {
-    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
-      map((team: any) => {
-        if (team) {
-          return { 'name': team.name, 'type': team.type };
-        }
-        return { id: teamId };
-      }),
-      catchError(() => of({ id: teamId, missing: true }))
-    );
-  }
-
   getTeamsByUser(userName: string, userPlanetCode: string) {
     const selector = {
       '$or': [
