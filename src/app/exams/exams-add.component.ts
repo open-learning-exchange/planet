@@ -23,7 +23,7 @@ import { findDocuments } from '../shared/mangoQueries';
   styleUrls: [ 'exams-add.scss' ]
 })
 export class ExamsAddComponent implements OnInit {
-  readonly dbName = 'exams'; // make database name a constant
+  readonly dbName = 'exams';
   examForm: UntypedFormGroup;
   documentInfo: any = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
@@ -143,19 +143,12 @@ export class ExamsAddComponent implements OnInit {
   }
 
   addExam(examInfo, reRoute) {
-    const date = this.couchService.datePlaceholder;
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
     this.couchService.findAll(this.dbName,
       { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
     ).pipe(switchMap((exams) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
-      return this.couchService.updateDocument(this.dbName, {
-        createdDate: date,
-        createdBy: this.userService.get().name,
-        ...examInfo,
-        updatedDate: date,
-        sourcePlanet: this.stateService.configuration.code
-      });
+      return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
       if (this.examType === 'exam' || this.isCourseContent) {
