@@ -71,6 +71,8 @@
     grid-area: right;
     justify-self: right;
     align-self: center;
+    display: flex;
+    align-items: center;
   }
 
   .nav-shadow::before {
