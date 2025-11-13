@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, of, forkJoin, throwError } from 'rxjs';
+import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
@@ -49,9 +49,15 @@ export class SubmissionsService {
     private chatService: ChatService
   ) { }
 
-  updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
+  updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
+    onlyBest?: boolean, opts?: any, query?: any, surveyId?: string, type?: 'exam' | 'survey'
+  } = {}) {
+    const submissionsObs = surveyId && type
+      ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')
+      : this.getSubmissions(query, opts);
+
     forkJoin([
-      this.getSubmissions(query, opts),
+      submissionsObs,
       this.courseService.findCourses([], opts)
     ]).subscribe(([ submissions, courses ]: [any, any]) => {
       this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
@@ -270,9 +276,23 @@ export class SubmissionsService {
     }
   }
 
+  getSubmissionsIncludingDerived(surveyId: string, type: 'exam' | 'survey', statusFilter: string): Observable<any[]> {
+    return this.couchService.findAll('exams', findDocuments({ teamSourceSurveyId: surveyId })).pipe(
+      switchMap((teamSurveys: any[]) => {
+        const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
+        const query = findDocuments({ parentId: { '$in': allSurveyIds }, type, status: statusFilter });
+
+        return this.getSubmissions(query);
+      })
+    );
+  }
+
   getSubmissionsExport(exam, type: 'exam' | 'survey') {
-    const query = findDocuments({ 'parent._id': exam._id, type, status: 'complete' });
-    return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
+    return forkJoin([
+      this.getSubmissionsIncludingDerived(exam._id, type, 'complete'),
+      this.couchService.currentTime(),
+      of(exam.questions.map(question => question.body))
+    ]);
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {

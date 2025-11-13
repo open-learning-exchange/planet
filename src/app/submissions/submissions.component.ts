@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Subject, zip, forkJoin, of, Observable } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
@@ -103,7 +103,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
         this.applyFilter('');
       });
     });
-    this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
+    this.submissionsService.updateSubmissions(this.submissionQuery());
     this.setupTable();
   }
 
@@ -136,14 +136,19 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   submissionQuery() {
     if (this.surveyId) {
       this.filter.type = 'survey';
-      return findDocuments({ parentId: this.surveyId, type: 'survey', status: 'complete' });
+      return { surveyId: this.surveyId, type: 'survey' as const };
     }
     switch (this.mode) {
-      case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
-      case 'review': return findDocuments({
-        'user.name': this.userService.get().name, parentId: this.parentId, status: { '$ne': 'pending' }
-      });
-      default: return undefined;
+      case 'survey':
+        return { query: findDocuments({ 'user.name': this.userService.get().name, type: 'survey' }) };
+      case 'review':
+        return { query: findDocuments({
+          'user.name': this.userService.get().name,
+          parentId: this.parentId,
+          status: { '$ne': 'pending' }
+        }) };
+      default:
+        return { query: undefined };
     }
   }
 
