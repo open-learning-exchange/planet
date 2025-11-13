@@ -18,7 +18,14 @@ export class NewsService {
   dbName = 'news';
   imgUrlPrefix = environment.couchAddress;
   newsUpdated$ = new Subject<any[]>();
+  loadingComplete$ = new Subject<{ success: boolean }>();
   currentOptions: { selectors: any, viewId: string } = { selectors: {}, viewId: '' };
+  private currentBookmark: string | undefined;
+  private hasMoreResults = true;
+  private isLoading = false;
+  private pageSize = 50;
+  private accumulatedNews: any[] = [];
+  private avatarCache: Record<string, any> = {};
 
   constructor(
     private couchService: CouchService,
@@ -29,25 +36,22 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
-      switchMap((newsItems: any[]) =>
-        this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
-          map((attachments: any[]) => ({
-            newsItems,
-            avatarMap: new Map<string, any>(attachments.map((attachment: any) => [ attachment._id, attachment ]))
-          }))
-        )
-      )
-    ).subscribe(({ newsItems, avatarMap }) => {
-      this.newsUpdated$.next(newsItems.map((item: any) => (
-        { doc: item, sharedDate: this.findShareDate(item, viewId), avatar: this.findAvatar(item.user, avatarMap), _id: item._id }
-      )));
-    });
+    this.resetPagination();
+    this.fetchNewsPage(true);
   }
 
-  findAvatar(user: any, attachments: Map<string, any>) {
+  loadMoreNews() {
+    if (!this.canLoadMore()) { return; }
+    this.fetchNewsPage(false);
+  }
+
+  canLoadMore(): boolean {
+    return this.hasMoreResults && !this.isLoading;
+  }
+
+  findAvatar(user: any, attachments: Record<string, any>) {
     const attachmentId = `${user._id}@${user.planetCode}`;
-    const attachment = attachments.get(attachmentId);
+    const attachment = attachments ? attachments[attachmentId] : undefined;
     const extractFilename = (object) => Object.keys(object._attachments)[0];
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
@@ -69,6 +73,75 @@ export class NewsService {
       }
     });
     return Array.from(ids);
+  }
+
+  private resetPagination() {
+    this.currentBookmark = undefined;
+    this.hasMoreResults = true;
+    this.isLoading = false;
+    this.accumulatedNews = [];
+    this.avatarCache = {};
+  }
+
+  private fetchNewsPage(reset: boolean) {
+    const query: any = { ...findDocuments(this.currentOptions.selectors, 0, [ { 'time': 'desc' } ], this.pageSize) };
+    if (!reset && this.currentBookmark) {
+      query.bookmark = this.currentBookmark;
+    }
+    this.isLoading = true;
+    this.couchService.post(`${this.dbName}/_find`, query).subscribe({
+      next: (response: any) => {
+        const docs = response?.docs ?? [];
+        const bookmark = response?.bookmark;
+        this.isLoading = false;
+        this.currentBookmark = bookmark;
+        if (reset) {
+          this.accumulatedNews = [];
+        }
+        if (docs.length === 0) {
+          this.hasMoreResults = false;
+          this.emitNews();
+          this.loadingComplete$.next({ success: true });
+          return;
+        }
+        this.hasMoreResults = docs.length === this.pageSize && !!bookmark;
+        this.accumulatedNews = [ ...this.accumulatedNews, ...docs ];
+        this.emitNews();
+        this.loadMissingAttachments(docs);
+        this.loadingComplete$.next({ success: true });
+      },
+      error: () => {
+        this.isLoading = false;
+        this.loadingComplete$.next({ success: false });
+      }
+    });
+  }
+
+  private loadMissingAttachments(newsItems: any[]) {
+    const missingIds = this.collectAttachmentIds(newsItems).filter(id => !(id in this.avatarCache));
+    if (missingIds.length === 0) {
+      return;
+    }
+    this.couchService.findAttachmentsByIds(missingIds).subscribe((attachments: any[]) => {
+      if (!attachments || attachments.length === 0) { return; }
+      attachments.forEach((attachment: any) => {
+        if (attachment && attachment._id) {
+          this.avatarCache[attachment._id] = attachment;
+        }
+      });
+      this.emitNews();
+    });
+  }
+
+  private emitNews() {
+    const viewId = this.currentOptions.viewId;
+    const formatted = this.accumulatedNews.map((item: any) => ({
+      doc: item,
+      sharedDate: this.findShareDate(item, viewId),
+      avatar: this.findAvatar(item.user, this.avatarCache),
+      _id: item._id
+    }));
+    this.newsUpdated$.next([ ...formatted ]);
   }
 
   postNews(post, successMessage = $localize`Thank you for submitting your message`, isMessageEdit = true) {
@@ -144,6 +217,30 @@ export class NewsService {
 
   postSharedWithCommunity(post) {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
+  }
+
+  getNewsById(newsId: string) {
+    return this.couchService.get(`${this.dbName}/${newsId}`).pipe(
+      switchMap((newsItem: any) => {
+        const attachmentIds = this.collectAttachmentIds([ newsItem ]);
+        return this.couchService.findAttachmentsByIds(attachmentIds).pipe(
+          map((attachments: any[]) => {
+            const avatarMap: Record<string, any> = {};
+            attachments.forEach(attachment => {
+              if (attachment && attachment._id) {
+                avatarMap[attachment._id] = attachment;
+              }
+            });
+            return {
+              doc: newsItem,
+              sharedDate: this.findShareDate(newsItem, this.currentOptions.viewId),
+              avatar: this.findAvatar(newsItem.user, avatarMap),
+              _id: newsItem._id
+            };
+          })
+        );
+      })
+    );
   }
 
 }
