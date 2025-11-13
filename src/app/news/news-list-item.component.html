@@ -64,9 +64,9 @@
       </button>
     </div>
   </mat-card-content>
-  <mat-card-actions class="display-flex">
+  <mat-card-actions class="flex-vertical-center">
     <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-      <button mat-button type="button" class="cursor-pointer user-name-truncate" (click)="openMemberDialog(item.doc.user)">
+      <button mat-button type="button" class="cursor-pointer user-name-truncate margin-lr-8" (click)="openMemberDialog(item.doc.user)">
       <span class="user-name-truncate-text ellipsis">
         {{item.doc.user.firstName ?
           item.doc.user.firstName + ((" " + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :

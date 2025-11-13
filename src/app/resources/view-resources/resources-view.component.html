@@ -35,7 +35,7 @@
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView()" i18n>
       {fullView, select, on {Show} off {Hide}} details
     </button>
-    <button mat-stroked-button *ngIf="canManage" (click)="updateResource()">
+    <button mat-stroked-button *ngIf="canManage" (click)="updateResource()" class="planet-icon-button">
       <mat-icon>edit</mat-icon>
     </button>
     <span class="toolbar-fill"></span>

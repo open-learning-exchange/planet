@@ -35,7 +35,7 @@ $label-height: 1rem;
     height: calc(#{$view-container-height} - #{$toolbar-height});
   }
 
-  .mat-button, .mat-stroked-button {
+  .mat-mdc-button, .mat-mdc-outlined-button {
     min-width: auto;
   }
 
