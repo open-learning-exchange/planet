@@ -1,31 +1,21 @@
 import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { interval, of, race } from 'rxjs';
+import { debounce, switchMap } from 'rxjs/operators';
+import * as constants from '../constants';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidatorFn,
-  Validators
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
-import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { interval, of, race } from 'rxjs';
-import { debounce } from 'rxjs/operators';
 
 type MeetupRecurring = 'none' | 'daily' | 'weekly' | string;
 type DatePlaceholderValue = CouchService['datePlaceholder'];
-
 interface MeetupFormControls {
   title: FormControl<string>;
   description: FormControl<string>;
@@ -43,28 +33,7 @@ interface MeetupFormControls {
   createdDate: FormControl<string | DatePlaceholderValue>;
   recurringNumber: FormControl<number | null>;
 }
-
 type MeetupForm = FormGroup<MeetupFormControls>;
-
-interface MeetupFormValue {
-  title: string;
-  description: string;
-  startDate: string | Date | null;
-  endDate: string | Date | null;
-  recurring: MeetupRecurring;
-  day: string[];
-  startTime: string;
-  endTime: string;
-  category: string;
-  meetupLocation: string;
-  meetupLink: string;
-  createdBy: string;
-  sourcePlanet: string;
-  createdDate: string | DatePlaceholderValue;
-  recurringNumber: number | null;
-}
-
-type MeetupSubmitValue = MeetupFormValue & { link: any; sync?: { type: 'local' | 'sync', planetCode: string } };
 
 @Component({
   selector: 'planet-meetups-add',
@@ -97,6 +66,9 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   meetupFrequency: string[] = [];
   initialFormValues = '';
   hasUnsavedChanges = false;
+  get dayFormArray(): FormArray<FormControl<string>> {
+    return this.meetupForm.controls.day;
+  }
 
   constructor(
     private couchService: CouchService,
@@ -108,20 +80,6 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService
   ) {
     this.createForm();
-  }
-
-  private get dayFormArray(): FormArray<FormControl<string>> {
-    return this.meetupForm.controls.day;
-  }
-
-  private parseDateValue(value: string | Date | null): number {
-    if (!value) {
-      return NaN;
-    }
-    if (value instanceof Date) {
-      return value.getTime();
-    }
-    return Date.parse(value);
   }
 
   ngOnInit() {
@@ -145,6 +103,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
+  private parseDateValue(value: string | Date | null): number {
+    if (!value) return NaN;
+    if (value instanceof Date) return value.getTime();
+    return Date.parse(value);
+  }
 
   setMeetupData(meetup: any) {
     this.pageType = 'Update';
@@ -152,25 +115,9 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     this.id = meetup._id;
     const dayValues: string[] = Array.isArray(meetup.day) ? meetup.day : [];
     this.meetupFrequency = meetup.recurring === 'daily' ? [] : dayValues;
-    const startDate: string | Date | null = meetup.startDate ? new Date(meetup.startDate) : null;
-    const endDate: string | Date | null = meetup.endDate ? new Date(meetup.endDate) : null;
-    const patchValue: Partial<MeetupFormValue> = {
-      title: meetup.title ?? '',
-      description: meetup.description ?? '',
-      startDate,
-      endDate,
-      recurring: meetup.recurring ?? 'none',
-      startTime: meetup.startTime ?? '',
-      endTime: meetup.endTime ?? '',
-      category: meetup.category ?? '',
-      meetupLocation: meetup.meetupLocation ?? '',
-      meetupLink: meetup.meetupLink ?? '',
-      createdBy: meetup.createdBy ?? this.userService.get().name,
-      sourcePlanet: meetup.sourcePlanet ?? this.stateService.configuration.code,
-      createdDate: meetup.createdDate ?? this.couchService.datePlaceholder,
-      recurringNumber: typeof meetup.recurringNumber === 'number' ? meetup.recurringNumber : this.meetupForm.controls.recurringNumber.value
-    };
-    this.meetupForm.patchValue(patchValue);
+    meetup.startDate = meetup.startDate ? new Date(meetup.startDate) : null;
+    meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : null;
+    this.meetupForm.patchValue(meetup);
     this.dayFormArray.clear();
     dayValues.forEach(day => this.dayFormArray.push(new FormControl<string>(day)));
   }
@@ -232,7 +179,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     const dayFormArray = this.dayFormArray;
     dayFormArray.updateValueAndValidity();
     const meetupValue = this.meetupForm.getRawValue();
-    const meetup: MeetupSubmitValue = {
+    const meetup = {
       ...meetupValue,
       startTime: this.changeTimeFormat(meetupValue.startTime),
       endTime: this.changeTimeFormat(meetupValue.endTime),
@@ -254,7 +201,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     return time;
   }
 
-  updateMeetup(meetupInfo: MeetupSubmitValue) {
+  updateMeetup(meetupInfo) {
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
       '_id': this.id,
@@ -278,7 +225,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  addMeetup(meetupInfo: MeetupSubmitValue) {
+  addMeetup(meetupInfo) {
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
       'startDate': this.parseDateValue(meetupInfo.startDate),
