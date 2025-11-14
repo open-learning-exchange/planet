@@ -1,0 +1,7 @@
+
+> planet@0.20.78 dev
+> bash dev-env.sh && ng serve --configuration dev
+
+chatapi running on port: 5000
+couchdb running on port: 2200
+parent protocol: https
