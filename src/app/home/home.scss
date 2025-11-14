@@ -111,8 +111,9 @@
 
 .menu-item-notification {
   height: auto;
-  white-space: unset;
-  line-height: 1rem;
+  white-space: normal;
+  line-height: 1.2rem;
+  word-wrap: break-word;
 }
 
 // Top toolbar is smaller on small screens
