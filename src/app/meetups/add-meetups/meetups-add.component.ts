@@ -104,8 +104,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private parseDateValue(value: string | Date | null): number {
-    if (!value) return NaN;
-    if (value instanceof Date) return value.getTime();
+    if (!value) {return NaN;}
+    if (value instanceof Date) {return value.getTime();}
     return Date.parse(value);
   }
 
