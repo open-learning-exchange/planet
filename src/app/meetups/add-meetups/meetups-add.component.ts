@@ -1,25 +1,39 @@
 import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { interval, of, race } from 'rxjs';
+import { debounce, switchMap } from 'rxjs/operators';
+import * as constants from '../constants';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import {
-  UntypedFormBuilder,
-  UntypedFormControl,
-  UntypedFormGroup,
-  UntypedFormArray,
-  Validators
-} from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import * as constants from '../constants';
 import { CustomValidators } from '../../validators/custom-validators';
 import { UserService } from '../../shared/user.service';
-import { switchMap } from 'rxjs/operators';
 import { findDocuments } from '../../shared/mangoQueries';
 import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { interval, of, race } from 'rxjs';
-import { debounce } from 'rxjs/operators';
+
+type MeetupRecurring = 'none' | 'daily' | 'weekly' | string;
+type DatePlaceholderValue = CouchService['datePlaceholder'];
+interface MeetupFormControls {
+  title: FormControl<string>;
+  description: FormControl<string>;
+  startDate: FormControl<string | Date | null>;
+  endDate: FormControl<string | Date | null>;
+  recurring: FormControl<MeetupRecurring>;
+  day: FormArray<FormControl<string>>;
+  startTime: FormControl<string>;
+  endTime: FormControl<string>;
+  category: FormControl<string>;
+  meetupLocation: FormControl<string>;
+  meetupLink: FormControl<string>;
+  createdBy: FormControl<string>;
+  sourcePlanet: FormControl<string>;
+  createdDate: FormControl<string | DatePlaceholderValue>;
+  recurringNumber: FormControl<number | null>;
+}
+type MeetupForm = FormGroup<MeetupFormControls>;
 
 @Component({
   selector: 'planet-meetups-add',
@@ -42,28 +56,31 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
-  meetupForm: UntypedFormGroup;
+  meetupForm: MeetupForm;
   readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
   pageType = 'Add new';
   revision = null;
   id = null;
   days = constants.days;
-  meetupFrequency = [];
-  initialFormValues: any;
+  meetupFrequency: string[] = [];
+  initialFormValues = '';
   hasUnsavedChanges = false;
+  get dayFormArray(): FormArray<FormControl<string>> {
+    return this.meetupForm.controls.day;
+  }
 
   constructor(
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private userService: UserService,
     private stateService: StateService
   ) {
     this.createForm();
-   }
+  }
 
   ngOnInit() {
     if (this.meetup._id) {
@@ -86,24 +103,31 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
+  private parseDateValue(value: string | Date | null): number {
+    if (!value) {return NaN;}
+    if (value instanceof Date) {return value.getTime();}
+    return Date.parse(value);
+  }
 
   setMeetupData(meetup: any) {
     this.pageType = 'Update';
     this.revision = meetup._rev;
     this.id = meetup._id;
-    this.meetupFrequency = meetup.recurring === 'daily' ? [] : meetup.day;
-    meetup.startDate = new Date(meetup.startDate);
-    meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : '';
+    const dayValues: string[] = Array.isArray(meetup.day) ? meetup.day : [];
+    this.meetupFrequency = meetup.recurring === 'daily' ? [] : dayValues;
+    meetup.startDate = meetup.startDate ? new Date(meetup.startDate) : null;
+    meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : null;
     this.meetupForm.patchValue(meetup);
-    meetup.day.forEach(day => (<UntypedFormArray>this.meetupForm.controls.day).push(new UntypedFormControl(day)));
+    this.dayFormArray.clear();
+    dayValues.forEach(day => this.dayFormArray.push(new FormControl<string>(day)));
   }
 
   private captureInitialState() {
-    const formValue = this.meetupForm.value;
+    const formValue = this.meetupForm.getRawValue();
     this.initialFormValues = JSON.stringify({
       ...formValue,
-      startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
-      endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
+      startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
+      endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
       day: formValue.day || []
     });
   }
@@ -116,8 +140,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       .subscribe(formValue => {
         const currentState = JSON.stringify({
           ...formValue,
-          startDate: formValue.startDate ? Date.parse(formValue.startDate) : null,
-          endDate: formValue.endDate ? Date.parse(formValue.endDate) : null,
+          startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
+          endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
           day: formValue.day || []
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
@@ -125,44 +149,50 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createForm() {
-    this.meetupForm = this.fb.group({
-      title: [ '', CustomValidators.required ],
-      description: [ '', CustomValidators.required ],
-      startDate: [ this.meetup?.startDate ? this.meetup.startDate : '', Validators.required ],
-      endDate: [ this.meetup?.endDate ? this.meetup.endDate : '', CustomValidators.endDateValidator() ],
-      recurring: 'none',
-      day: this.fb.array([]),
-      startTime: [ '', CustomValidators.timeValidator() ],
-      endTime: [ '', CustomValidators.timeValidator() ],
-      category: '',
-      meetupLocation: '',
-      meetupLink: [ '', [], CustomValidators.validLink ],
-      createdBy: this.userService.get().name,
-      sourcePlanet: this.stateService.configuration.code,
-      createdDate: this.couchService.datePlaceholder,
-      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
+    const timeValidator = CustomValidators.timeValidator() as unknown as ValidatorFn;
+    this.meetupForm = this.fb.group<MeetupFormControls>({
+      title: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      description: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      startDate: this.fb.control<string | Date | null>(this.meetup?.startDate ?? '', { validators: [ Validators.required ] }),
+      endDate: this.fb.control<string | Date | null>(this.meetup?.endDate ?? '', { validators: [ CustomValidators.endDateValidator() ] }),
+      recurring: this.fb.control<MeetupRecurring>('none'),
+      day: new FormArray<FormControl<string>>([]),
+      startTime: this.fb.control('', { validators: [ timeValidator ] }),
+      endTime: this.fb.control('', { validators: [ timeValidator ] }),
+      category: this.fb.control(''),
+      meetupLocation: this.fb.control(''),
+      meetupLink: this.fb.control('', { asyncValidators: [ CustomValidators.validLink ] }),
+      createdBy: this.fb.control(this.userService.get().name),
+      sourcePlanet: this.fb.control(this.stateService.configuration.code),
+      createdDate: this.fb.control<string | DatePlaceholderValue>(this.couchService.datePlaceholder),
+      recurringNumber: this.fb.control<number | null>(10, { validators: [ Validators.min(2), CustomValidators.integerValidator ] })
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
-}
-
-onSubmit() {
-  if (!this.meetupForm.valid) {
-    showFormErrors(this.meetupForm.controls);
-    return;
   }
-  const dayFormArray = this.meetupForm.get('day') as UntypedFormArray;
-  dayFormArray.updateValueAndValidity();
-  this.meetupForm.value.startTime = this.changeTimeFormat(this.meetupForm.value.startTime);
-  this.meetupForm.value.endTime = this.changeTimeFormat(this.meetupForm.value.endTime);
-  const meetup = { ...this.meetupForm.value, link: this.link, sync: this.sync };
-  if (this.pageType === 'Update') {
+
+  onSubmit() {
+    if (this.meetupForm.invalid) {
+      showFormErrors(this.meetupForm.controls as unknown as Record<string, AbstractControl>);
+      return;
+    }
+    const dayFormArray = this.dayFormArray;
+    dayFormArray.updateValueAndValidity();
+    const meetupValue = this.meetupForm.getRawValue();
+    const meetup = {
+      ...meetupValue,
+      startTime: this.changeTimeFormat(meetupValue.startTime),
+      endTime: this.changeTimeFormat(meetupValue.endTime),
+      link: this.link,
+      sync: this.sync
+    };
+    if (this.pageType === 'Update') {
       this.updateMeetup(meetup);
     } else {
       this.addMeetup(meetup);
+    }
+    this.hasUnsavedChanges = false;
   }
-  this.hasUnsavedChanges = false;
-}
 
   changeTimeFormat(time: string): string {
     if (time && time.length < 5) {
@@ -176,8 +206,8 @@ onSubmit() {
       ...meetupInfo,
       '_id': this.id,
       '_rev': this.revision,
-      'startDate': Date.parse(meetupInfo.startDate),
-      'endDate': Date.parse(meetupInfo.endDate)
+      'startDate': this.parseDateValue(meetupInfo.startDate),
+      'endDate': this.parseDateValue(meetupInfo.endDate)
      }).pipe(switchMap(() => {
         return this.couchService.post('shelf/_find', findDocuments({
           'meetupIds': { '$in': [ this.id ] }
@@ -198,8 +228,8 @@ onSubmit() {
   addMeetup(meetupInfo) {
     this.couchService.updateDocument(this.dbName, {
       ...meetupInfo,
-      'startDate': Date.parse(meetupInfo.startDate),
-      'endDate': Date.parse(meetupInfo.endDate),
+      'startDate': this.parseDateValue(meetupInfo.startDate),
+      'endDate': this.parseDateValue(meetupInfo.endDate),
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
@@ -230,49 +260,49 @@ onSubmit() {
   }
 
   onDayChange(day: string, isChecked: boolean) {
-    const dayFormArray = <UntypedFormArray>this.meetupForm.controls.day;
+    const dayFormArray = this.dayFormArray;
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new UntypedFormControl(day));
+      dayFormArray.push(new FormControl<string>(day));
     } else {
-        // remove from day array if unchecked
-        const index = dayFormArray.controls.findIndex(x => x.value === day);
-        if (index >= 0) {
-            dayFormArray.removeAt(index);
-        }
+      // remove from day array if unchecked
+      const index = dayFormArray.controls.findIndex(control => control.value === day);
+      if (index >= 0) {
+        dayFormArray.removeAt(index);
+      }
     }
     dayFormArray.updateValueAndValidity();
-}
+  }
 
-toggleDaily(val: string, showCheckbox: boolean) {
-  const dayFormArray = this.meetupForm.get('day') as UntypedFormArray;
-  dayFormArray.clear();
-  dayFormArray.clearValidators();
+  toggleDaily(val: string, showCheckbox: boolean) {
+    const dayFormArray = this.dayFormArray;
+    dayFormArray.clear();
+    dayFormArray.clearValidators();
 
-  switch (val) {
+    switch (val) {
       // add all days to the array if the course is daily
       case 'daily':
-          this.days.forEach((day) => {
-              dayFormArray.push(new UntypedFormControl(day));
-          });
-          break;
+        this.days.forEach((day) => {
+          dayFormArray.push(new FormControl<string>(day));
+        });
+        break;
       case 'weekly':
-          dayFormArray.setValidators(CustomValidators.atLeastOneDaySelected());
-          const startDate = this.meetupForm.controls.startDate.value;
-          if (startDate) {
-              const startDateObj = new Date(startDate);
-              const dayOfWeek = this.days[startDateObj.getDay()];
-              if (dayOfWeek) {
-                  dayFormArray.push(new UntypedFormControl(dayOfWeek));
-              }
+        dayFormArray.setValidators(CustomValidators.atLeastOneDaySelected());
+        const startDateValue = this.meetupForm.controls.startDate.value;
+        if (startDateValue) {
+          const startDateObj = startDateValue instanceof Date ? startDateValue : new Date(startDateValue);
+          const dayOfWeek = this.days[startDateObj.getDay()];
+          if (dayOfWeek) {
+            dayFormArray.push(new FormControl<string>(dayOfWeek));
           }
-          break;
+        }
+        break;
 
       default:
-          break;
+        break;
+    }
+    dayFormArray.updateValueAndValidity();
   }
-  dayFormArray.updateValueAndValidity();
-}
 
   meetupChangeNotifications(users, meetupInfo, meetupId) {
     return { docs: users.map((user) => ({
