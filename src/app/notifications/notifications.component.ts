@@ -1,4 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Observable } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -30,7 +33,14 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   filter = { 'status': '' };
   anyUnread = true;
 
+  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+    .pipe(
+      map(result => result.matches),
+      shareReplay()
+    );
+
   constructor(
+    private breakpointObserver: BreakpointObserver,
     private dialog: MatDialog,
     private stateService: StateService,
     private notificationsService: NotificationsService,
