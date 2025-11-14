@@ -20,9 +20,7 @@
     "e2e": "ng e2e --webdriver-update=false",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
     "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
-    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh",
-    "starthub-true": "echo \"true\" > /srv/starthub",
-    "starthub-false": "echo \"false\" > /srv/starthub"
+    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh"
   },
   "private": true,
   "dependencies": {
@@ -76,7 +74,6 @@
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.8",
-    "@types/ms": "0.7.34",
     "@types/node": "^12.11.1",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",
