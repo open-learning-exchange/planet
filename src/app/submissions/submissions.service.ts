@@ -280,7 +280,7 @@ export class SubmissionsService {
     return this.couchService.findAll('exams', findDocuments({ teamSourceSurveyId: surveyId })).pipe(
       switchMap((teamSurveys: any[]) => {
         const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
-        const query = findDocuments({ parentId: { '$in': allSurveyIds }, type, status: statusFilter });
+        const query = findDocuments({ 'parent._id': { '$in': allSurveyIds }, type, status: statusFilter });
 
         return this.getSubmissions(query);
       })

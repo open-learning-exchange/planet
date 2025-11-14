@@ -118,10 +118,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.allSurveys = [
         ...allSurveys.map((survey: any) => {
-          const directSubmissions = submissions.filter(sub => sub.parentId === survey._id);
+          const directSubmissions = submissions.filter(sub => sub.parentId === survey._id || sub.parentId?.startsWith(survey._id + '@'));
           const derivedTeamSurveys = teamSurveys.filter(ts => ts.teamSourceSurveyId === survey._id);
           const derivedSubmissions = derivedTeamSurveys.flatMap(ts =>
-            submissions.filter(sub => sub.parentId === ts._id)
+            submissions.filter(sub => sub.parentId === ts._id || sub.parentId?.startsWith(ts._id + '@'))
           );
           const allSubmissions = [...directSubmissions, ...derivedSubmissions];
           const teamIds = [
@@ -272,7 +272,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   submissionDeleteReq(requests, survey) {
     if (survey.sourcePlanet === this.stateService.configuration.code) {
       requests.push(
-        this.couchService.findAll('submissions', findDocuments({ 'status': 'pending', 'parentId': survey._id }, 0 ))
+        this.couchService.findAll('submissions', findDocuments({
+           'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` }
+          }, 0 ))
         .pipe(switchMap((submissions) => {
           const submissionArray = createDeleteArray(submissions);
           return this.couchService.bulkDocs('submissions', submissionArray);
