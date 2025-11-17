@@ -14,26 +14,23 @@ import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 
-type MeetupRecurring = 'none' | 'daily' | 'weekly' | string;
-type DatePlaceholderValue = CouchService['datePlaceholder'];
 interface MeetupFormControls {
-  title: FormControl<string>;
-  description: FormControl<string>;
-  startDate: FormControl<string | Date | null>;
-  endDate: FormControl<string | Date | null>;
-  recurring: FormControl<MeetupRecurring>;
+  title: [ string, ValidatorFn? ];
+  description: [ string, ValidatorFn? ];
+  startDate: [ string | Date | null, ValidatorFn? ];
+  endDate: [ string | Date | null, ValidatorFn? ];
+  recurring: [ string ];
   day: FormArray<FormControl<string>>;
-  startTime: FormControl<string>;
-  endTime: FormControl<string>;
-  category: FormControl<string>;
-  meetupLocation: FormControl<string>;
-  meetupLink: FormControl<string>;
-  createdBy: FormControl<string>;
-  sourcePlanet: FormControl<string>;
-  createdDate: FormControl<string | DatePlaceholderValue>;
-  recurringNumber: FormControl<number | null>;
+  startTime: [ string, ValidatorFn? ];
+  endTime: [ string, ValidatorFn? ];
+  category: [ string ];
+  meetupLocation: [ string ];
+  meetupLink: [ string ];
+  createdBy: [ string ];
+  sourcePlanet: [ string ];
+  createdDate: [ string ];
+  recurringNumber: [ number | null, ValidatorFn? ];
 }
-type MeetupForm = FormGroup<MeetupFormControls>;
 
 @Component({
   selector: 'planet-meetups-add',
@@ -56,7 +53,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
-  meetupForm: MeetupForm;
+  meetupForm: FormGroup;
   readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
   pageType = 'Add new';
@@ -67,7 +64,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   initialFormValues = '';
   hasUnsavedChanges = false;
   get dayFormArray(): FormArray<FormControl<string>> {
-    return this.meetupForm.controls.day;
+    return this.meetupForm.controls.day as FormArray<FormControl<string>>;
   }
 
   constructor(
@@ -119,7 +116,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : null;
     this.meetupForm.patchValue(meetup);
     this.dayFormArray.clear();
-    dayValues.forEach(day => this.dayFormArray.push(new FormControl<string>(day)));
+    dayValues.forEach(day => this.dayFormArray.push(new FormControl(day)));
   }
 
   private captureInitialState() {
@@ -149,23 +146,22 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createForm() {
-    const timeValidator = CustomValidators.timeValidator() as unknown as ValidatorFn;
-    this.meetupForm = this.fb.group<MeetupFormControls>({
-      title: this.fb.control('', { validators: [ CustomValidators.required ] }),
-      description: this.fb.control('', { validators: [ CustomValidators.required ] }),
-      startDate: this.fb.control<string | Date | null>(this.meetup?.startDate ?? '', { validators: [ Validators.required ] }),
-      endDate: this.fb.control<string | Date | null>(this.meetup?.endDate ?? '', { validators: [ CustomValidators.endDateValidator() ] }),
-      recurring: this.fb.control<MeetupRecurring>('none'),
+    this.meetupForm = this.fb.group({
+      title: [ '', CustomValidators.required ],
+      description: [ '', CustomValidators.required ],
+      startDate: [ this.meetup?.startDate ?? '', Validators.required ],
+      endDate: [ this.meetup?.endDate ?? '', CustomValidators.endDateValidator() ],
+      recurring: [ 'none' ],
       day: new FormArray<FormControl<string>>([]),
-      startTime: this.fb.control('', { validators: [ timeValidator ] }),
-      endTime: this.fb.control('', { validators: [ timeValidator ] }),
-      category: this.fb.control(''),
-      meetupLocation: this.fb.control(''),
-      meetupLink: this.fb.control('', { asyncValidators: [ CustomValidators.validLink ] }),
-      createdBy: this.fb.control(this.userService.get().name),
-      sourcePlanet: this.fb.control(this.stateService.configuration.code),
-      createdDate: this.fb.control<string | DatePlaceholderValue>(this.couchService.datePlaceholder),
-      recurringNumber: this.fb.control<number | null>(10, { validators: [ Validators.min(2), CustomValidators.integerValidator ] })
+      startTime: [ '', CustomValidators.timeValidator() ],
+      endTime: [ '', CustomValidators.timeValidator() ],
+      category: [ '' ],
+      meetupLocation: [ '' ],
+      meetupLink: [ '', [], CustomValidators.validLink ],
+      createdBy: [ this.userService.get().name ],
+      sourcePlanet: [ this.stateService.configuration.code ],
+      createdDate: [ this.couchService.datePlaceholder ],
+      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
@@ -173,7 +169,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   onSubmit() {
     if (this.meetupForm.invalid) {
-      showFormErrors(this.meetupForm.controls as unknown as Record<string, AbstractControl>);
+      showFormErrors(this.meetupForm.controls);
       return;
     }
     const dayFormArray = this.dayFormArray;
@@ -263,7 +259,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     const dayFormArray = this.dayFormArray;
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new FormControl<string>(day));
+      dayFormArray.push(new FormControl(day));
     } else {
       // remove from day array if unchecked
       const index = dayFormArray.controls.findIndex(control => control.value === day);
@@ -283,7 +279,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       // add all days to the array if the course is daily
       case 'daily':
         this.days.forEach((day) => {
-          dayFormArray.push(new FormControl<string>(day));
+          dayFormArray.push(new FormControl(day));
         });
         break;
       case 'weekly':
@@ -293,7 +289,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           const startDateObj = startDateValue instanceof Date ? startDateValue : new Date(startDateValue);
           const dayOfWeek = this.days[startDateObj.getDay()];
           if (dayOfWeek) {
-            dayFormArray.push(new FormControl<string>(dayOfWeek));
+            dayFormArray.push(new FormControl(dayOfWeek));
           }
         }
         break;
