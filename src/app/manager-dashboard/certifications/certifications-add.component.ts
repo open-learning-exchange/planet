@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -10,6 +10,13 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
+interface CertificationFormModel {
+  name: string;
+}
+
+type CertificationFormControls = { name: FormControl<CertificationFormModel['name']>; };
+type CertificationFormGroup = FormGroup<CertificationFormControls>;
+
 @Component({
   templateUrl: './certifications-add.component.html'
 })
@@ -17,14 +24,14 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
-  certificateForm: UntypedFormGroup;
-  courseIds: any[] = [];
+  certificateForm: CertificationFormGroup;
+  courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -33,11 +40,14 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.certificateForm = this.fb.group({ name: [
-      '',
-      CustomValidators.required,
-      ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { selectors: { _id: { '$ne': this.certificateInfo._id || '' } } })
-    ] });
+    this.certificateForm = this.fb.group<CertificationFormControls>({
+      name: this.fb.nonNullable.control('', {
+        validators: CustomValidators.required,
+        asyncValidators: ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
+          selectors: { _id: { '$ne': this.certificateInfo._id || '' } }
+        })
+      })
+    });
   }
 
   ngOnInit() {
@@ -46,7 +56,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       if (id) {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
-          this.certificateForm.patchValue(certification);
+          this.certificateForm.patchValue({ name: certification.name || '' });
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
@@ -71,13 +81,16 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 
-  submitCertificate(reroute) {
+  submitCertificate(reroute: boolean) {
     if (!this.certificateForm.valid) {
       showFormErrors(this.certificateForm.controls);
       return;
     }
+    const certificateFormValue = this.certificateForm.getRawValue();
     this.certificationsService.addCertification({
-      ...this.certificateInfo, ...this.certificateForm.value, courseIds: this.courseIds
+      ...this.certificateInfo,
+      ...certificateFormValue,
+      courseIds: this.courseIds
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
