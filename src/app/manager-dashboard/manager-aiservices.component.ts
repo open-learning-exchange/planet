@@ -28,9 +28,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private stateService: StateService,
   ) {
     this.configForm = this.fb.group({
-      streaming: [false],
-      assistantName: [''],
-      assistantInstructions: ['']
+      streaming: [ false ],
+      assistantName: [ '' ],
+      assistantInstructions: [ '' ]
     });
   }
 
@@ -47,11 +47,11 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.configForm = this.fb.group({
-      streaming: [!!this.configuration.streaming],
+      streaming: [ !!this.configuration.streaming ],
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
-      assistantName: [this.configuration.assistant?.name || ''],
-      assistantInstructions: [this.configuration.assistant?.instructions || '']
+      assistantName: [ this.configuration.assistant?.name || '' ],
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
     });
 
     if (this.configuration.keys) {
@@ -65,7 +65,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     const formGroupObj = {};
     if (configObject) {
       for (const key of Object.keys(configObject)) {
-        formGroupObj[prefix + key] = [configObject[key] || ''];
+        formGroupObj[prefix + key] = [ configObject[key] || '' ];
       }
     }
     return formGroupObj;
