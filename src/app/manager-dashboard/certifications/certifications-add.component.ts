@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -14,9 +14,6 @@ interface CertificationFormModel {
   name: string;
 }
 
-type CertificationFormControls = { name: FormControl<CertificationFormModel['name']>; };
-type CertificationFormGroup = FormGroup<CertificationFormControls>;
-
 @Component({
   templateUrl: './certifications-add.component.html'
 })
@@ -24,7 +21,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
-  certificateForm: CertificationFormGroup;
+  certificateForm: FormGroup;
   courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
@@ -40,7 +37,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private validatorService: ValidatorService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.certificateForm = this.fb.group<CertificationFormControls>({
+    this.certificateForm = this.fb.group({
       name: this.fb.nonNullable.control('', {
         validators: CustomValidators.required,
         asyncValidators: ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
@@ -56,7 +53,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       if (id) {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
-          this.certificateForm.patchValue({ name: certification.name || '' });
+          this.certificateForm.patchValue({ name: certification.name || '' } as Partial<CertificationFormModel>);
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
@@ -86,7 +83,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       showFormErrors(this.certificateForm.controls);
       return;
     }
-    const certificateFormValue = this.certificateForm.getRawValue();
+    const certificateFormValue: CertificationFormModel = this.certificateForm.getRawValue();
     this.certificationsService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
