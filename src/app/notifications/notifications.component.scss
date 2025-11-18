@@ -1,53 +1,27 @@
-mat-cell {
-  word-wrap: break-word;
-  white-space: normal;
+@import '../variables';
+
+.responsive-toolbar button {
+	margin-left: 16px;
 }
 
-@media (max-width: 768px) {
-  .mat-table {
-    display: block;
-  }
-
-  .mat-row {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px 16px;
-    margin-bottom: 16px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-  }
-
-  .mat-header-row {
-    display: none; /* Hide table headers on mobile */
-  }
-
-  .mat-cell {
-    padding: 0;
-    border-bottom: none;
-    width: 100%;
-    text-align: left;
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  .mat-column-message {
-    font-weight: bold;
-    font-size: 1.1em;
-  }
-
-  .mat-column-read {
+@media (max-width: $screen-sm) {
+  .responsive-toolbar {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: stretch;
     width: 100%;
-  }
+    height: auto;
+    padding: 16px;
 
-  :host { /* Target the host element of the component */
-    display: block;
-    margin: 0 auto; /* Center horizontally */
-    width: 90%; /* Adjust width for mobile view */
-    max-width: 600px; /* Optional: limit max width even on mobile */
+    > div {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-bottom: 12px;
+
+      span {
+        text-align: center;
+      }
+    }
   }
 }
