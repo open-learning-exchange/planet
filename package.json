@@ -20,7 +20,9 @@
     "e2e": "ng e2e --webdriver-update=false",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
     "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
-    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh"
+    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh",
+    "starthub-true": "echo \"true\" > /srv/starthub",
+    "starthub-false": "echo \"false\" > /srv/starthub"
   },
   "private": true,
   "dependencies": {
