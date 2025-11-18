@@ -1,0 +1,10 @@
+
+> planet@0.20.78 dev
+> bash dev-env.sh && npm run ng-high-memory -- serve --configuration dev
+
+chatapi running on port: 5000
+couchdb running on port: 2200
+parent protocol: https
+
+> planet@0.20.78 ng-high-memory
+> node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng serve --configuration dev

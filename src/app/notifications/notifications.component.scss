@@ -1,5 +1,15 @@
 @import '../variables';
 
+.notification-element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  gap: 16px;
+  text-align: center;
+}
+
 .responsive-toolbar button {
 	margin-left: 16px;
 }
