@@ -43,4 +43,11 @@ mat-cell {
     justify-content: flex-end;
     width: 100%;
   }
+
+  :host { /* Target the host element of the component */
+    display: block;
+    margin: 0 auto; /* Center horizontally */
+    width: 90%; /* Adjust width for mobile view */
+    max-width: 600px; /* Optional: limit max width even on mobile */
+  }
 }
