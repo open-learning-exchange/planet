@@ -101,6 +101,19 @@
     </mat-form-field>
   </div>
 </ng-template>
+<ng-template #chartWithActions let-chartId="chartId">
+  <div class="chart-wrapper">
+    <div class="chart-actions">
+      <button mat-icon-button (click)="downloadChart(chartId)" matTooltip="Download as image" i18n-matTooltip>
+        <mat-icon>get_app</mat-icon>
+      </button>
+      <button mat-icon-button (click)="copyChartToClipboard(chartId)" matTooltip="Copy to clipboard" i18n-matTooltip>
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </div>
+    <canvas [id]="chartId"></canvas>
+  </div>
+</ng-template>
 
 <div class="space-container">
   <mat-toolbar>
@@ -126,13 +139,13 @@
   <div class="view-container view-full-height">
     <mat-tab-group>
       <mat-tab i18n-label label="Summary">
-        <canvas id="uniqueVisitChart"></canvas>
-        <canvas id="visitChart"></canvas>
-        <canvas id="resourceViewChart"></canvas>
-        <canvas id="courseViewChart"></canvas>
-        <canvas id="stepCompletedChart"></canvas>
-        <canvas id="chatUsageChart"></canvas>
-        <canvas id="voicesCreatedChart"></canvas>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'uniqueVisitChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'visitChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'resourceViewChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'courseViewChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'stepCompletedChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'chatUsageChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'voicesCreatedChart' }"></ng-container>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-title" i18n>Members</h1>
