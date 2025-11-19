@@ -111,9 +111,15 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       notes: ''
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
-      this.healthForm.controls.emergencyContact.setValidators(value === 'email' ? Validators.email : null);
-      this.healthForm.controls.emergencyContact.updateValueAndValidity();
+      this.updateEmergencyContactValidators(value);
     });
+    this.updateEmergencyContactValidators(this.healthForm.controls.emergencyContactType.value);
+  }
+
+  private updateEmergencyContactValidators(contactType: string) {
+    const validators = contactType === 'email' ? [ Validators.email ] : [];
+    this.healthForm.controls.emergencyContact.setValidators(validators);
+    this.healthForm.controls.emergencyContact.updateValueAndValidity({ emitEvent: false });
   }
 
   onSubmit() {
