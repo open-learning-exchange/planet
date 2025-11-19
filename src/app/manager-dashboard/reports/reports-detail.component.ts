@@ -388,6 +388,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatActivities.filter(this.filter);
+      this.setChatUsage();
       this.chatLoading = false;
     });
   }
@@ -400,9 +402,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getVoicesUsage() {
     this.activityService.getVoicesCreated().subscribe((data) => {
       this.voicesActivities.data = data.map(item => ({
-      ...item,
-      user: item.user?.name || '',
-    }));
+        ...item,
+        user: item.user?.name || '',
+      }));
+      this.voicesActivities.filter(this.filter);
+      this.setVoicesUsage();
       this.voicesLoading = false;
     });
   }
