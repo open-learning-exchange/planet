@@ -985,6 +985,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const chart = this.charts.find(c => c.canvas.id === chartId);
     if (!chart) {
       this.planetMessageService.showMessage($localize`Chart not available. Please wait for the chart to load.`);
+      throw new Error(`Chart with id ${chartId} not found`);
     }
 
     const canvas = chart.canvas;
