@@ -207,7 +207,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isRowSelectable(row: any): boolean {
-    const isDisabled = row.teamId && this.isManagerRoute;
+    const isDisabled = (row.teamId && this.isManagerRoute) || this.currentFilter.viewMode === 'adopt';
     return row.parent !== true && !isDisabled;
   }
 
@@ -506,11 +506,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([ survey._id, { type: 'survey' } ], { relativeTo: this.route });
   }
 
-  getActionTooltip(survey: any, action: 'edit' | 'send' | 'record' | 'archive'): string {
-    if (survey.teamId && this.isManagerRoute && action !== 'archive') {
-      return $localize`This is a team created survey`;
-    }
-
+  getActionTooltip(survey: any, action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export'): string {
     if (survey.isArchived) {
       const messages = {
         edit: $localize`Survey is archived and cannot be edited`,
@@ -519,6 +515,27 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         archive: $localize`Survey is already archived`
       };
       return messages[action];
+    }
+
+    if (!survey.taken) {
+      if (action === 'export') {
+        return $localize`There is no data to export`;
+      }
+      if (action === 'submissions') {
+        return $localize`There are no submissions to view`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      return $localize`This is a team created survey`;
+    }
+
+    if (this.currentFilter.viewMode === 'adopt') {
+      return $localize`This is a community survey`;
+    }
+
+    if (!survey.questions?.length) {
+      return $localize`Survey has no questions`;
     }
 
     if (action === 'record') {

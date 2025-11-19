@@ -39,8 +39,8 @@
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)"
-            [disabled]="row.teamId && isManagerRoute"
-            [matTooltip]="row.teamId && isManagerRoute ? 'This is a team created survey' : ''"
+            [disabled]="(row.teamId && isManagerRoute) || currentFilter.viewMode === 'adopt'"
+            [matTooltip]="getActionTooltip(row, 'select')"
             *ngIf="!row.parent === true">
           </mat-checkbox>
         </mat-cell>
@@ -93,14 +93,14 @@
                 </button>
               </div>
             </ng-container>
-            <div>
-              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId"  (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
+            <div [matTooltip]="getActionTooltip(element, 'submissions')">
+              <button mat-raised-button color="primary" *ngIf="!teamId && !routeTeamId" (click)="viewSurveySubmissions(element)" [disabled]="!element.questions.length || !element.taken" i18n>
                 <mat-icon>insert_drive_file</mat-icon> Submissions
               </button>
             </div>
           </ng-container>
           <button mat-raised-button color="primary" *ngIf="routeTeamId && currentFilter.viewMode === 'adopt'" (click)="adoptSurvey(element)" i18n><mat-icon>get_app</mat-icon>  Adopt</button>
-          <div *ngIf="currentFilter.viewMode !== 'adopt'" i18n-matTooltip matTooltip="There is no data to export" [matTooltipDisabled]="!!element.taken">
+          <div *ngIf="currentFilter.viewMode !== 'adopt'" [matTooltip]="getActionTooltip(element, 'export')">
             <button mat-raised-button color="primary" [disabled]="!element.taken" [matMenuTriggerFor]="exportMenu" i18n>
               <mat-icon>move_to_inbox</mat-icon> Export
             </button>
