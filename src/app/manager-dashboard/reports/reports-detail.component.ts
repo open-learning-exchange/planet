@@ -981,9 +981,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  private getChartAsCanvas(chartId: string): HTMLCanvasElement | null {
+  private getChartAsCanvas(chartId: string): HTMLCanvasElement {
     const chart = this.charts.find(c => c.canvas.id === chartId);
-    if (!chart) { return null; }
+    if (!chart) {
+      this.planetMessageService.showMessage($localize`Chart not available. Please wait for the chart to load.`);
+    }
 
     const canvas = chart.canvas;
     const tempCanvas = document.createElement('canvas');
