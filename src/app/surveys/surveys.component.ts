@@ -114,16 +114,16 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
     ]).subscribe(([ allSurveys, submissions, courses ]: any) => {
-      const teamSurveys = allSurveys.filter((survey: any) => survey.teamSourceSurveyId);
+      const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.allSurveys = [
         ...allSurveys.map((survey: any) => {
           const directSubmissions = submissions.filter(sub => sub.parentId === survey._id || sub.parentId?.startsWith(survey._id + '@'));
-          const derivedTeamSurveys = teamSurveys.filter(ts => ts.teamSourceSurveyId === survey._id);
+          const derivedTeamSurveys = teamSurveys.filter(ts => ts.sourceSurveyId === survey._id);
           const derivedSubmissions = derivedTeamSurveys.flatMap(ts =>
             submissions.filter(sub => sub.parentId === ts._id || sub.parentId?.startsWith(ts._id + '@'))
           );
-          const allSubmissions = [...directSubmissions, ...derivedSubmissions];
+          const relatedSubmissions = [...directSubmissions, ...derivedSubmissions];
           const teamIds = [
             ...new Set([
               survey.teamId,
@@ -135,10 +135,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             teamIds: teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
             taken: this.teamId || this.routeTeamId
-              ? allSubmissions.filter(
+              ? relatedSubmissions.filter(
                 (data) => data.status === 'complete' &&
                 (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
-              : allSubmissions.filter(data => data.status === 'complete').length
+              : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
         ...this.createParentSurveys(submissions)
@@ -155,13 +155,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
         // team surveys: created by team, sent or  adopted
-        return targetTeamId ? survey.teamId === targetTeamId : !survey.teamSourceSurveyId;
+        return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
         // community surveys that can be adopted & team hasn't adopted yet
-        return !survey.teamSourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
       }
       // manager view: no team adopted/sent survey
-      return !survey.teamId && !survey.teamSourceSurveyId;
+      return !survey.teamId && !survey.sourceSurveyId;
     });
   }
 
@@ -327,7 +327,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       questions: sourceSurvey.questions,
       type: sourceSurvey.type,
       teamId: team._id,
-      teamSourceSurveyId: sourceSurvey._id,
+      sourceSurveyId: sourceSurvey._id,
     };
     return this.examsService.createExamDocument(teamSurveyData);
   }

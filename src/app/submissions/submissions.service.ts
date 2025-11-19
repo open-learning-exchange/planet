@@ -216,19 +216,19 @@ export class SubmissionsService {
         if (team) {
           const teamSubmissionExists = submissions.docs.some((s: any) => s.team?._id === team._id && s.parent._rev === parent._rev);
           if (teamSubmissionExists) {
-            return this.couchService.updateDocument('submissions/_bulk_docs', { 'docs': [] });
+            return of({});
           }
-          return this.couchService.updateDocument('submissions/_bulk_docs', {
-            'docs': [this.createNewSubmission({ user: {}, parentId, parent, type: 'survey', sender, team })]
-          });
+          return this.couchService.bulkDocs('submissions', [
+            this.createNewSubmission({ user: {}, parentId, parent, type: 'survey', sender, team })
+          ]);
         }
 
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
-        return this.couchService.updateDocument('submissions/_bulk_docs', {
-          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
-        });
+        return this.couchService.bulkDocs('submissions',
+          newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
+        );
       })
     );
   }
@@ -277,7 +277,7 @@ export class SubmissionsService {
   }
 
   getSubmissionsIncludingDerived(surveyId: string, type: 'exam' | 'survey', statusFilter: string): Observable<any[]> {
-    return this.couchService.findAll('exams', findDocuments({ teamSourceSurveyId: surveyId })).pipe(
+    return this.couchService.findAll('exams', findDocuments({ sourceSurveyId: surveyId })).pipe(
       switchMap((teamSurveys: any[]) => {
         const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
         const query = findDocuments({ 'parent._id': { '$in': allSurveyIds }, type, status: statusFilter });
