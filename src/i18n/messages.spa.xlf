@@ -1846,7 +1846,7 @@
           <context context-type="sourcefile">src/app/courses/constants.ts</context>
           <context context-type="linenumber">2</context>
         </context-group>
-        <target state="final">Pre-Kindergarten</target>
+        <target state="final">Prekínder / Preescolar temprano</target>
       </trans-unit>
       <trans-unit id="8563215417047104608" datatype="html" approved="yes">
         <source>Kindergarten</source>
@@ -1854,7 +1854,7 @@
           <context context-type="sourcefile">src/app/courses/constants.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
-        <target state="final">Kindergarten</target>
+        <target state="final">Kínder / Jardín de niños</target>
       </trans-unit>
       <trans-unit id="4863371103643861248" datatype="html" approved="yes">
         <source>1</source>
@@ -1967,6 +1967,14 @@
           <context context-type="linenumber">17</context>
         </context-group>
         <target state="final">Posgraduado</target>
+      </trans-unit>
+      <trans-unit id="881202611843132543" datatype="html">
+        <source>Open</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/constants.ts</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <target state="final">Libre</target>
       </trans-unit>
       <trans-unit id="5754117841832798663" datatype="html" approved="yes">
         <source>Beginner</source>
