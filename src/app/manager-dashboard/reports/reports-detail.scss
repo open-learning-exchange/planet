@@ -40,8 +40,22 @@ mat-toolbar mat-form-field {
     color: $primary;
   }
 
-  canvas {
-    max-height: 30vh;
+  .chart-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+    min-height: 30vh;
+
+    .chart-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &:hover .chart-actions {
+      opacity: 1;
+    }
   }
 
   .comparison-container {
