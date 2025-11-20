@@ -22,6 +22,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
+import { ExamsService } from '../exams/exams.service';
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean | null>;
@@ -71,7 +72,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private examsService: ExamsService
   ) {
     this.dialogsLoadingService.start();
   }
@@ -111,15 +113,21 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       receiveData('exams', 'surveys'),
       receiveData('submissions', 'survey'),
       this.couchService.findAll('courses')
-    ]).subscribe(([ surveys, submissions, courses ]: any) => {
+    ]).subscribe(([ allSurveys, submissions, courses ]: any) => {
+      const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.allSurveys = [
-        ...surveys.map((survey: any) => {
-          const relatedSubmissions = submissions.filter(sub => sub.parentId === survey._id);
+        ...allSurveys.map((survey: any) => {
+          const directSubmissions = submissions.filter(sub => sub.parentId === survey._id || sub.parentId?.startsWith(survey._id + '@'));
+          const derivedTeamSurveys = teamSurveys.filter(ts => ts.sourceSurveyId === survey._id);
+          const derivedSubmissions = derivedTeamSurveys.flatMap(ts =>
+            submissions.filter(sub => sub.parentId === ts._id || sub.parentId?.startsWith(ts._id + '@'))
+          );
+          const relatedSubmissions = [...directSubmissions, ...derivedSubmissions];
           const teamIds = [
             ...new Set([
               survey.teamId,
-              ...relatedSubmissions.map(sub => sub.user?.membershipDoc?.teamId)
+              ...derivedTeamSurveys.map(ts => ts.teamId)
             ])
           ].filter(Boolean);
           return {
@@ -129,7 +137,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             taken: this.teamId || this.routeTeamId
               ? relatedSubmissions.filter(
                 (data) => data.status === 'complete' &&
-                (data.team === this.teamId || data.team === this.routeTeamId)).length
+                (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
               : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
@@ -146,11 +154,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
-        return targetTeamId ? survey.teamId === targetTeamId || survey.teamIds?.includes(targetTeamId) : true;
+        // team surveys: created by team, sent or  adopted
+        return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
-        return survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+        // community surveys that can be adopted & team hasn't adopted yet
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
       }
-      return true;
+      // manager view: no team adopted/sent survey
+      return !survey.teamId && !survey.sourceSurveyId;
     });
   }
 
@@ -164,7 +175,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ...submission.parent,
           taken: submission.status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId: submission.user?.membershipDoc?.teamId
+          teamId: submission.team?._id
         } ];
       }
       return parentSurveys;
@@ -196,7 +207,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isRowSelectable(row: any): boolean {
-    const isDisabled = (row.teamId && this.isManagerRoute) || (!this.isManagerRoute && !row.teamId);
+    const isDisabled = (row.teamId && this.isManagerRoute) || this.currentFilter.viewMode === 'adopt';
     return row.parent !== true && !isDisabled;
   }
 
@@ -261,7 +272,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   submissionDeleteReq(requests, survey) {
     if (survey.sourcePlanet === this.stateService.configuration.code) {
       requests.push(
-        this.couchService.findAll('submissions', findDocuments({ 'status': 'pending', 'parentId': survey._id }, 0 ))
+        this.couchService.findAll('submissions', findDocuments({
+           'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` }
+          }, 0 ))
         .pipe(switchMap((submissions) => {
           const submissionArray = createDeleteArray(submissions);
           return this.couchService.bulkDocs('submissions', submissionArray);
@@ -307,37 +320,57 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private createTeamSurveyFromSource(sourceSurvey: any, team: { _id: string, name: string }): Observable<any> {
+    const teamSurveyData = {
+      name: `${sourceSurvey.name} - ${team.name}`,
+      description: sourceSurvey.description,
+      questions: sourceSurvey.questions,
+      type: sourceSurvey.type,
+      teamId: team._id,
+      sourceSurveyId: sourceSurvey._id,
+    };
+    return this.examsService.createExamDocument(teamSurveyData);
+  }
+
   openSendSurveyToTeamsDialog(survey) {
-    this.submissionsService.getSubmissions(
-      findDocuments({ type: 'survey', 'parent._rev': survey._rev, 'parent._id': survey._id })
-    ).subscribe((submissions: any[]) => {
-      const submissionIds = submissions.map((submission: any) => submission.user.membershipDoc?.teamId);
-      const excludeIds = survey.teamId ? [ ...submissionIds, survey.teamId ] : submissionIds;
-      this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
-        width: '80vw',
-        data: {
-          okClick: (selection: any[]) => {
-            this.dialogsLoadingService.start();
-            this.sendSurvey(survey, selection).subscribe(() => {
-              this.dialogsLoadingService.stop();
+    const excludeIds = survey.teamIds || [];
+    this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
+      width: '80vw',
+      data: {
+        okClick: (selection: any[]) => {
+          this.dialogsLoadingService.start();
+          forkJoin(selection.map(item => {
+            return this.createTeamSurveyFromSource(survey, {
+              _id: item.doc._id,
+              name: item.doc.name
             });
-          },
-          excludeIds: [ ...excludeIds ],
-          mode: 'teams'
-        }
-      });
+          })).subscribe(() => {
+            this.planetMessageService.showMessage($localize`Survey sent to teams`);
+            this.dialogsLoadingService.stop();
+            this.dialogRef.close();
+            this.loadSurveys();
+          }, () => {
+            this.planetMessageService.showAlert($localize`Error sending survey to teams.`);
+            this.dialogsLoadingService.stop();
+          });
+        },
+        excludeIds: excludeIds,
+        mode: 'teams'
+      }
     });
   }
 
   adoptSurvey(survey) {
     this.couchService.get('teams/' + this.routeTeamId).subscribe(
       team => {
-        const selection = {
-          doc: team,
-          membershipDoc: { teamId: this.routeTeamId }
-        };
-        this.sendSurvey(survey, [ selection ], true).subscribe(() => {
+        this.createTeamSurveyFromSource(survey, {
+          _id: team._id,
+          name: team.name
+        }).subscribe(() => {
+          this.planetMessageService.showMessage($localize`Survey adopted`);
           this.loadSurveys();
+        }, () => {
+          this.planetMessageService.showAlert($localize`Error adopting survey.`);
         });
       },
       error => {
@@ -346,14 +379,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  sendSurvey(survey: any, users: any[], isAdopt: boolean = false): Observable<void> {
+  sendSurvey(survey: any, users: any[]): Observable<void> {
     return this.submissionsService.sendSubmissionRequests(users, {
       'parentId': survey._id,
       'parent': survey
     }).pipe(
       tap(() => {
-        const message = isAdopt ? $localize`Survey adopted` : $localize`Survey requests sent`;
-        this.planetMessageService.showMessage(message);
+        this.planetMessageService.showMessage($localize`Survey requests sent`);
         if (this.dialogRef) {
           this.dialogRef.close();
         }
@@ -367,11 +399,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recordSurvey(survey: any) {
-    this.submissionsService.createSubmission(survey, 'survey', {}, this.teamId || this.routeTeamId || '' ).subscribe((res: any) => {
-      this.router.navigate([
-        this.teamId ? 'surveys/dispense' : 'dispense',
-        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-      ], { relativeTo: this.route });
+    const targetTeamId = this.teamId || this.routeTeamId;
+    const teamObservable = targetTeamId ? this.couchService.get('teams/' + targetTeamId) : of(null);
+
+    teamObservable.subscribe((team: any) => {
+      const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
+      this.submissionsService.createSubmission(survey, 'survey', {}, teamInfo).subscribe((res: any) => {
+        this.router.navigate([
+          this.teamId ? 'surveys/dispense' : 'dispense',
+          { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
+        ], { relativeTo: this.route });
+      });
     });
   }
 
@@ -468,39 +506,44 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([ survey._id, { type: 'survey' } ], { relativeTo: this.route });
   }
 
-  // Action buttons tooltips for translation purposes
-  getCheckboxTooltip(survey: any): string {
-    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
-    if (!survey.teamId && !this.isManagerRoute) { return $localize`This is a community survey`; }
-    return '';
-  }
-
-  getEditTooltip(survey: any): string {
-    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
-    if (!this.isManagerRoute && !survey.teamId) { return $localize`This is a community survey`; }
-    if (survey.isArchived) { return $localize`Survey is archived and cannot be edited`; }
-    return '';
-  }
-
-  getSendTooltip(survey: any): string {
-    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
-    if (survey.isArchived) { return $localize`Survey is archived and cannot be sent`; }
-    return '';
-  }
-
-  getRecordTooltip(survey: any): string {
-    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
-    if (survey.isArchived) { return $localize`Survey is archived and cannot be recorded`; }
-    if (this.isManagerRoute) {
-      return $localize`Record survey information from a person who is not a member of ${this.configuration.name}`;
+  getActionTooltip(survey: any, action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export'): string {
+    if (survey.isArchived) {
+      const messages = {
+        edit: $localize`Survey is archived and cannot be edited`,
+        send: $localize`Survey is archived and cannot be sent`,
+        record: $localize`Survey is archived and cannot be recorded`,
+        archive: $localize`Survey is already archived`
+      };
+      return messages[action];
     }
-    return $localize`Record Survey`;
-  }
 
-  getArchiveTooltip(survey: any): string {
-    if (survey.teamId && this.isManagerRoute) { return $localize`This is a team created survey`; }
-    if (!this.isManagerRoute && !survey.teamId) { return $localize`This is a community survey`; }
-    if (survey.isArchived) { return $localize`Survey is already archived`; }
+    if (!survey.taken) {
+      if (action === 'export') {
+        return $localize`There is no data to export`;
+      }
+      if (action === 'submissions') {
+        return $localize`There are no submissions to view`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      return $localize`This is a team created survey`;
+    }
+
+    if (this.currentFilter.viewMode === 'adopt') {
+      return $localize`This is a community survey`;
+    }
+
+    if (!survey.questions?.length) {
+      return $localize`Survey has no questions`;
+    }
+
+    if (action === 'record') {
+      return this.isManagerRoute
+        ? $localize`Record survey information from a person who is not a member of ${this.configuration.name}`
+        : $localize`Record Survey`;
+    }
+
     return '';
   }
 
