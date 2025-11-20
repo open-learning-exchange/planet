@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Injectable } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 @Injectable()
 export class DialogsFormService {
@@ -17,7 +17,7 @@ export class DialogsFormService {
       width: '600px',
       autoFocus: autoFocus
     });
-    if (formGroup instanceof AbstractControl) {
+    if (formGroup instanceof UntypedFormGroup || formGroup instanceof FormGroup) {
       dialogRef.componentInstance.modalForm = formGroup;
     } else {
       dialogRef.componentInstance.modalForm = this.fb.group(formGroup);
