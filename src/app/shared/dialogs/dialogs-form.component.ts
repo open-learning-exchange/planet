@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import {
   MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
 } from '@angular/material/legacy-dialog';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormGroup, UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
@@ -28,14 +28,14 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: any;
-  public modalForm: UntypedFormGroup;
+  public modalForm: FormGroup;
   passwordVisibility = new Map();
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
-  private markFormAsTouched (formGroup: UntypedFormGroup) {
+  private markFormAsTouched (formGroup: FormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
       control.markAsTouched();
       if (control.controls) {
@@ -54,7 +54,7 @@ export class DialogsFormComponent {
     private userService: UserService
   ) {
     if (this.data && this.data.formGroup) {
-      this.modalForm = this.data.formGroup instanceof UntypedFormGroup ?
+      this.modalForm = (this.data.formGroup instanceof UntypedFormGroup || this.data.formGroup instanceof FormGroup) ?
         this.data.formGroup :
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
