@@ -28,6 +28,7 @@ import { ReportsHealthComponent } from './reports-health.component';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 
 type ChartModule = typeof import('chart.js');
 
@@ -106,6 +107,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private fb: UntypedFormBuilder,
     private deviceInfoService: DeviceInfoService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.initDateFilterForm();
     this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
@@ -977,6 +979,29 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         changeValue: changeValue
       };
     });
+  }
+
+  downloadComparisonTableCSV() {
+    if (this.comparisonTableData.length === 0) {
+      this.planetMessageService.showAlert($localize`No comparison data available`);
+      return;
+    }
+    const week1Header = this.week1Label.replace(/,/g, '');
+    const week2Header = this.week2Label.replace(/,/g, '');
+
+    const data = this.comparisonTableData.map(row => ({
+      [$localize`Metric`]: row.metric,
+      [week1Header]: row.week1,
+      [week2Header]: row.week2,
+      [$localize`Net Change`]: row.change
+    }));
+
+    this.csvService.exportCSV({
+      data,
+      title: `${this.planetName || 'Reports'}_Comparison_${formatDate(new Date())}`
+    });
+
+    this.planetMessageService.showMessage($localize`Comparison table downloaded as CSV`);
   }
 
 }

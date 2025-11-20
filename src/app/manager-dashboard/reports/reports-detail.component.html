@@ -256,6 +256,10 @@
               <mat-datepicker #week2Picker></mat-datepicker>
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
+            <span class="toolbar-fill"></span>
+            <button mat-icon-button [disabled]="comparisonTableData.length === 0" (click)="downloadComparisonTableCSV()" matTooltip="Download as CSV" i18n-matTooltip>
+              <mat-icon>get_app</mat-icon>
+            </button>
           </mat-toolbar>
           <div *ngIf="comparisonLoading" class="view-container view-full-height" i18n>
             Loading comparison data...
