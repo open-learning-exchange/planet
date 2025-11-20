@@ -35,7 +35,8 @@ type DialogFieldType =
   | 'dialog'
   | 'date'
   | 'time'
-  | 'toggle';
+  | 'toggle'
+  | string;
 
 interface DialogFieldBase {
   name: string;
@@ -68,7 +69,7 @@ interface DialogSelectboxField extends DialogFieldBase {
   type: 'selectbox';
   multiple?: boolean;
   reset?: boolean;
-  options: DialogFieldOption[];
+  options: DialogFieldOption[] | unknown[];
 }
 
 interface DialogRadioField extends DialogFieldBase {
@@ -86,7 +87,7 @@ interface DialogTextareaField extends DialogFieldBase {
 
 interface DialogMarkdownField extends DialogFieldBase {
   type: 'markdown';
-  imageGroup?: string;
+  imageGroup?: string | Record<string, string>;
 }
 
 interface DialogDialogField extends DialogFieldBase {
@@ -109,6 +110,20 @@ interface DialogToggleField extends DialogFieldBase {
   type: 'toggle';
 }
 
+interface DialogFallbackField extends DialogFieldBase {
+  type: string;
+  options?: unknown;
+  text?: string;
+  db?: string;
+  inputType?: string;
+  step?: string | number;
+  multiple?: boolean;
+  reset?: boolean;
+  min?: Date | string;
+  max?: Date | string;
+  imageGroup?: string | Record<string, string>;
+}
+
 export type DialogField =
   | DialogCheckboxField
   | DialogTextboxField
@@ -121,7 +136,8 @@ export type DialogField =
   | DialogDialogField
   | DialogDateField
   | DialogTimeField
-  | DialogToggleField;
+  | DialogToggleField
+  | DialogFallbackField;
 
 type DialogFieldValue =
   | string
@@ -134,11 +150,7 @@ type DialogFieldValue =
   | null
   | undefined;
 
-interface DialogFormControls {
-  [key: string]: AbstractControl<DialogFieldValue | null>;
-}
-
-export type DialogFormGroup = FormGroup<DialogFormControls>;
+export type DialogFormGroup = FormGroup;
 
 export type DialogFormGroupConfig = Parameters<FormBuilder['group']>[0];
 
@@ -240,7 +252,7 @@ export class DialogsFormComponent {
     const control = this.modalForm.controls[field.name];
     const currentValue = control?.value;
     const initialSelection = Array.isArray(currentValue)
-      ? currentValue
+      ? (currentValue as unknown[])
         .filter((value): value is DialogListSelection => this.isDialogSelection(value))
         .map(value => value._id)
       : [];
