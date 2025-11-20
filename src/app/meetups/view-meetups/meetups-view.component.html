@@ -8,12 +8,12 @@
     <span class="toolbar-fill"></span>
     <div class="button-group-right">
       <ng-container *ngIf="editable === true">
-        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask" 
-                (click)="meetupDetail.isTask ? editTask() : routeToEdit()">
+        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
+                (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask" 
-                (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()">
+        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
+                (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
           <mat-icon>delete</mat-icon>
         </button>
       </ng-container>

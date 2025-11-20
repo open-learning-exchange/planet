@@ -12,12 +12,19 @@
 //  If you specify typography styles for the components you use elsewhere, you should delete this line.
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
+/* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
 @include mat.all-legacy-component-typographies();
+@include mat.all-component-typographies();
+/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
 @include mat.legacy-core();
+@include mat.core();
 @import './app/_variables';
 
+/* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
 @include mat.all-legacy-component-themes($planet-app-theme);
+
+@include mat.all-component-themes($planet-app-theme);
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
@@ -31,7 +38,9 @@ $accent-map: (
   $accent-palette: map-get($accent-map, #{$section});
   $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
   .planet-#{$section}-theme {
+    /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
     @include mat.all-legacy-component-themes($theme);
+    @include mat.all-component-themes($theme);
 
     .accent-color {
       background-color: mat.get-color-from-palette($accent-palette, $accent-hue);
@@ -42,18 +51,19 @@ $accent-map: (
 
 // Custom themed material styles below
 
+/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
 .mat-button-toggle-checked {
   background-color: mat.get-color-from-palette($planet-app-primary, $light-hue);
   color: mat.get-contrast-color-from-palette($planet-app-primary, $light-hue);
 }
 
-.mat-raised-button[color="primary"] {
+.mat-mdc-raised-button[color="primary"] {
   transition: background-color 0.3s ease;
   &:hover {
     background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
   }
 }
 
-.mat-raised-button[color="primary"][disabled] {
+.mat-mdc-raised-button[color="primary"][disabled] {
   pointer-events: none;
 }
