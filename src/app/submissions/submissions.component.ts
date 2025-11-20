@@ -15,11 +15,11 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 const columnsByFilterAndMode = {
   exam: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
+    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
-    survey: [ 'name', 'courseTitle', 'stepNum', 'status', 'lastUpdateTime' ]
+    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
+    survey: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'lastUpdateTime' ]
   }
 };
 
@@ -93,7 +93,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
-        ...submission, submittedBy: this.submissionsService.submissionName(submission.user)
+        ...submission,
+        submittedBy: this.submissionsService.submissionName(submission.user),
+        docSource: submission.androidId ? 'myPlanet' : 'planet'
       }));
       this.dialogsLoadingService.stop();
       this.applyFilter('');
