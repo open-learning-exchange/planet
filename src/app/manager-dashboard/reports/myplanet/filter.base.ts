@@ -1,6 +1,11 @@
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReportsService } from '../reports.service';
 
+export interface MyPlanetFiltersForm {
+  startDate: FormControl<Date>;
+  endDate: FormControl<Date>;
+}
+
 export abstract class MyPlanetFiltersBase {
 
   private readonly defaultTimeFilter: string;
@@ -17,7 +22,7 @@ export abstract class MyPlanetFiltersBase {
   today: Date = new Date();
   startDate: Date = this.minDate;
   endDate: Date = this.today;
-  filtersForm: FormGroup<{ startDate: FormControl<Date>; endDate: FormControl<Date>; }>;
+  filtersForm: FormGroup<MyPlanetFiltersForm>;
   get isDefaultTimeFilter(): boolean {
     return this.selectedTimeFilter === this.defaultTimeFilter;
   }
@@ -30,7 +35,7 @@ export abstract class MyPlanetFiltersBase {
     this.defaultTimeFilter = defaultTimeFilter;
     this.selectedTimeFilter = defaultTimeFilter;
 
-    this.filtersForm = this.fb.group({
+    this.filtersForm = this.fb.group<MyPlanetFiltersForm>({
       startDate: this.fb.control(this.minDate, { nonNullable: true }),
       endDate: this.fb.control(this.today, { nonNullable: true })
     }, {
