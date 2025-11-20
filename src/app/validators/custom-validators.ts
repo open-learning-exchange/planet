@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, ValidationErrors, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -9,9 +9,9 @@ const isStringEdgeCase = (string: string) => {
 export class CustomValidators {
 
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
-  static integerValidator(ac: AbstractControl): ValidationErrors {
+  static integerValidator(ac: AbstractControl<number | string | null>): ValidationErrors | null {
     const error = { invalidInt: true };
-    const isValidInt = (number) => Number.isInteger(number) ? null : error;
+    const isValidInt = (number: number) => Number.isInteger(number) ? null : error;
     // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
     return typeof ac.value !== 'string' ?
       isValidInt(ac.value) :
@@ -20,22 +20,24 @@ export class CustomValidators {
       isValidInt(Number(ac.value));
   }
 
-  static spaceValidator(ac: AbstractControl) {
-    return ac.value.replace(/\s/g, '') === ac.value ? null : { whitespace: true };
+  static spaceValidator(ac: AbstractControl<string | null>): ValidationErrors | null {
+    const value = ac.value ?? '';
+    return value.replace(/\s/g, '') === value ? null : { whitespace: true };
   }
 
-  static bpValidator(ac: AbstractControl) {
-    return !ac.value || /^\d{1,3}\/\d{1,3}$/.test(ac.value) ? null : { bp: true };
+  static bpValidator(ac: AbstractControl<string | null>): ValidationErrors | null {
+    const value = ac.value ?? '';
+    return !value || /^\d{1,3}\/\d{1,3}$/.test(value) ? null : { bp: true };
   }
 
-  static positiveNumberValidator(ac: AbstractControl): ValidationErrors {
+  static positiveNumberValidator(ac: AbstractControl<number | null>): ValidationErrors | null {
     if (!ac.value) {
       return null;
     }
     return (ac.value > 0) ? null : { invalidPositive : true };
   }
 
-  static nonNegativeNumberValidator(ac: AbstractControl): ValidationErrors {
+  static nonNegativeNumberValidator(ac: AbstractControl<number | null>): ValidationErrors | null {
     if (!ac.value) {
       return null;
     }
@@ -43,13 +45,16 @@ export class CustomValidators {
   }
 
   static choiceSelected(requireCorrect: boolean) {
-    return (ac: AbstractControl): ValidationErrors => {
+    // This validator expects a string (single select) or string[] (multi-select) control value.
+    return (ac: AbstractControl<string[] | string | null>): ValidationErrors | null => {
       if (!ac.parent || !requireCorrect) {
         return null;
       }
 
       const inputtype = ac.parent.get('type');
-      if ((inputtype.value === 'select' || inputtype.value === 'selectMultiple') && ac.value.length === 0) {
+      const hasNoSelection = !ac.value || ac.value.length === 0;
+
+      if ((inputtype?.value === 'select' || inputtype?.value === 'selectMultiple') && hasNoSelection) {
         return { required: true };
       } else {
         return null;
@@ -58,21 +63,21 @@ export class CustomValidators {
   }
 
   // Allows us to supply a different errorType for specific patterns
-  static pattern(pattern, errorType = 'pattern') {
-    return (ac: AbstractControl): ValidationErrors => {
+  static pattern(pattern: string | RegExp, errorType = 'pattern') {
+    return (ac: AbstractControl<string | null>): ValidationErrors | null => {
       return Validators.pattern(pattern)(ac) ? { [errorType]: true } : null;
     };
   }
 
   // for validating whether end date comes before start date or not
   static endDateValidator(): ValidatorFn {
-    let startDate: AbstractControl;
-    let endDate: AbstractControl;
+    let startDate: AbstractControl<Date | string | null>;
+    let endDate: AbstractControl<Date | string | null>;
 
     // for unsubscribing from Observables
     const ngUnsubscribe: Subject<void> = new Subject<void>();
 
-    return (ac: AbstractControl): ValidationErrors => {
+    return (ac: AbstractControl<Date | string | null>): ValidationErrors | null => {
       if (!ac.parent) {
         return null;
       }
@@ -103,29 +108,31 @@ export class CustomValidators {
       ) {
         return { invalidEndDate: true };
       }
+
+      return null;
     };
   }
 
-  private static formError(ac: AbstractControl, error: string, newError: boolean) {
-    if (ac.status === 'INVALID' && Object.keys(ac.errors).some(key => key !== error)) {
+  private static formError(ac: AbstractControl, error: string, newError: boolean): ValidationErrors | null {
+    if (ac.status === 'INVALID' && ac.errors && Object.keys(ac.errors).some(key => key !== error)) {
       return ac.errors;
     }
     return newError ? { [error]: newError } : null;
   }
 
-  private static setFormError(ac: AbstractControl, error: string, newError: boolean) {
+  private static setFormError(ac: AbstractControl, error: string, newError: boolean): void {
     ac.setErrors(this.formError(ac, error, newError));
   }
 
-  private static formDateToString(ac: AbstractControl) {
-    return (ac.value || {}).toString();
+  private static formDateToString(ac: AbstractControl<Date | string | null>): string {
+    return (ac.value ?? '').toString();
   }
 
   // Start time becomes required if end time exists
   // End time becomes required for multi day events with a start time
   static meetupTimeValidator(): ValidatorFn {
 
-    return (formGroup: UntypedFormGroup): ValidationErrors => {
+    return (formGroup: FormGroup): ValidationErrors | null => {
       if (!formGroup) {
         return null;
       }
@@ -134,6 +141,10 @@ export class CustomValidators {
       const endTime = formGroup.get('endTime');
       const startDate = formGroup.get('startDate');
       const endDate = formGroup.get('endDate');
+
+      if (!startTime || !endTime || !startDate || !endDate) {
+        return null;
+      }
 
       this.setFormError(startTime, 'required', !!formGroup.get('endTime').value && !startTime.value);
       this.setFormError(endTime, 'required',
@@ -144,12 +155,18 @@ export class CustomValidators {
       );
       this.setFormError(endTime, 'invalidEndTime', this.endTimeValidator(startDate, endDate, startTime, endTime));
 
+      return null;
     };
 
   }
 
   // for validating whether end time comes before start date or not
-  private static endTimeValidator(startDate, endDate, startTime, endTime): boolean {
+  private static endTimeValidator(
+    startDate: AbstractControl<Date | string | null> | null,
+    endDate: AbstractControl<Date | string | null> | null,
+    startTime: AbstractControl<string | null> | null,
+    endTime: AbstractControl<string | null> | null
+  ): boolean {
     // if start time has not been given a value yet return back
     if (!startTime || !endTime.value) {
       return false;
@@ -169,8 +186,8 @@ export class CustomValidators {
     return false;
   }
 
-  static timeValidator(): ValidationErrors {
-    return (ac: AbstractControl): ValidationErrors => {
+  static timeValidator(): ValidatorFn {
+    return (ac: AbstractControl<string | null>): ValidationErrors | null => {
       const timeRegExp = new RegExp('^([0-9]|0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$');
       if (!ac.value) {
         return null;
@@ -187,16 +204,20 @@ export class CustomValidators {
   // match is true by default, for unmatching passwords, match should be false
   static matchPassword(matchField: string, confirm: boolean, match: boolean = true): ValidatorFn {
 
-    return (ac: AbstractControl) => {
+    return (ac: AbstractControl<string | null>): ValidationErrors | null => {
       if (!ac.parent) {
         return null;
       }
 
       const matchControl = ac.parent.get(matchField),
         val1 = ac.value,
-        val2 = matchControl.value,
-        confirmControl: AbstractControl = confirm ? ac : matchControl,
+        val2 = matchControl?.value,
+        confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl,
         errorType = match ? 'matchPassword' : 'unmatchPassword';
+
+      if (!confirmControl || !matchControl) {
+        return null;
+      }
 
       // If passwords do not match when match=true, set error for confirmation field
       // If passwords match when match=false, set error for confirmation field
@@ -216,28 +237,32 @@ export class CustomValidators {
 
   // matDatepicker returns null for date missing or invalid date
   // Use this validator for special date message
-  static dateValidRequired(ac: AbstractControl): ValidationErrors {
+  static dateValidRequired(ac: AbstractControl<Date | string | null>): ValidationErrors | null {
     if (!ac.value) {
       return { dateRequired: true };
     }
+
+    return null;
   }
 
-  static required(ac: AbstractControl) {
-    return /\S/.test(ac.value) ? null : { 'required': true };
+  static required(ac: AbstractControl<string | null>): ValidationErrors | null {
+    const value = ac.value ?? '';
+    return /\S/.test(value) ? null : { 'required': true };
   }
 
-  static requiredMarkdown(ac: AbstractControl) {
-    return CustomValidators.required(new UntypedFormControl(ac.value.text));
+  static requiredMarkdown(ac: AbstractControl<{ text: string }>): ValidationErrors | null {
+    // Markdown editors provide a value object with a text property; coerce to a string control for reuse.
+    return CustomValidators.required(new FormControl<string | null>(ac.value?.text ?? ''));
   }
 
-  static fileMatch(ac: AbstractControl, fileList: string[]) {
-    if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
-      return { 'notFileMatch': true };
+  static fileMatch(ac: AbstractControl<string | null>, fileList: string[]): ValidationErrors | null {
+    if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
+      return { 'notFileMatch': true };
     }
-    return null;
+    return null;
   }
 
-  static validLink(ac: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
+  static validLink(ac: AbstractControl<string | null>): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
     return new Promise((resolve, reject) => {
       if (!ac.value) {
         resolve(null);
@@ -263,7 +288,8 @@ export class CustomValidators {
   }
 
   static atLeastOneDaySelected(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
+    // Control value should be the array of selected weekday identifiers.
+    return (control: AbstractControl<string[] | null>): ValidationErrors | null => {
         if (!control.parent) { return null; }
         const recurringControl = control.parent.get('recurring');
         if (!recurringControl || recurringControl.value !== 'weekly') {
