@@ -40,6 +40,6 @@ envsubst '$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf.template > /etc
 
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 
-nginx -g "daemon off;"
-
 mkdir -p /usr/share/nginx/html/fs
+
+nginx -g "daemon off;"

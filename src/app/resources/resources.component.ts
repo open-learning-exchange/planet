@@ -24,7 +24,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray, calculateMdAdjustedLimit } from '../shared/utils';
+import { findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -202,8 +202,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    const itemsShown = Math.min(this.paginator.length - (this.paginator.pageIndex * this.paginator.pageSize), this.paginator.pageSize);
-    return this.selection.selected.length === itemsShown;
+    return this.selection.selected.length === itemsShown(this.paginator);
   }
 
   applyResFilter(filterResValue: string) {
