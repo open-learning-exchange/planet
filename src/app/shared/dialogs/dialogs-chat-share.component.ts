@@ -15,14 +15,6 @@ import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
 
-@Component({
-  templateUrl: './dialogs-chat-share.component.html',
-  styles: [ `
-    .mat-expansion-panel {
-      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
-    }
-  ` ]
-})
 interface TeamForm {
   message: FormControl<string>;
   linkId: FormControl<string>;
@@ -33,6 +25,14 @@ interface CommunityForm {
   message: FormControl<string>;
 }
 
+@Component({
+  templateUrl: './dialogs-chat-share.component.html',
+  styles: [ `
+    .mat-expansion-panel {
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+    }
+  ` ]
+})
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();
   conversation: any;
