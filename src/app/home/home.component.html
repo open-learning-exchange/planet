@@ -39,8 +39,10 @@
     </ng-container>
   </span>
   <span class="navbar-right">
-    <ng-container *ngIf="planetType === 'community'">
-      <button mat-icon-button *planetAuthorizedRoles="'only,health'" i18n-title title="Health" routerLink="/health"><mat-icon>local_hospital</mat-icon></button>
+    <ng-container *ngIf="isLoggedIn">
+      <ng-container *ngIf="planetType === 'community'">
+        <button mat-icon-button *planetAuthorizedRoles="'only,health'" i18n-title title="Health" routerLink="/health"><mat-icon>local_hospital</mat-icon></button>
+      </ng-container>
     </ng-container>
     <span *ngIf="layout === 'classic' && !forceModern">
       <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>question_answer</mat-icon></button>
