@@ -1,4 +1,4 @@
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReportsService } from '../reports.service';
 
 export abstract class MyPlanetFiltersBase {
@@ -23,7 +23,7 @@ export abstract class MyPlanetFiltersBase {
   }
 
   protected constructor(
-    protected fb: FormBuilder,
+    protected fb: NonNullableFormBuilder,
     protected activityService: ReportsService,
     defaultTimeFilter: string
   ) {
@@ -31,8 +31,8 @@ export abstract class MyPlanetFiltersBase {
     this.selectedTimeFilter = defaultTimeFilter;
 
     this.filtersForm = this.fb.group({
-      startDate: this.fb.control(this.minDate, { nonNullable: true }),
-      endDate: this.fb.control(this.today, { nonNullable: true })
+      startDate: this.fb.control(this.minDate),
+      endDate: this.fb.control(this.today)
     }, {
       validators: (ac) => {
         const { startDate, endDate } = ac.value;
@@ -91,12 +91,17 @@ export abstract class MyPlanetFiltersBase {
   }
 
   private updateFormValidators() {
-    this.filtersForm.get('startDate')?.setValidators(
-      [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ]
-    );
-    this.filtersForm.get('endDate')?.setValidators(
-      [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ]
-    );
+    const { startDate, endDate } = this.filtersForm.controls;
+    startDate.setValidators([
+      Validators.required,
+      Validators.min(this.minDate.getTime()),
+      Validators.max(this.today.getTime())
+    ]);
+    endDate.setValidators([
+      Validators.required,
+      Validators.min(this.minDate.getTime()),
+      Validators.max(this.today.getTime())
+    ]);
     this.filtersForm.updateValueAndValidity();
   }
 
