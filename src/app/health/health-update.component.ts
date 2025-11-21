@@ -1,17 +1,16 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { interval, of, race, forkJoin } from 'rxjs';
+import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
-import { forkJoin } from 'rxjs';
 import { showFormErrors } from '../shared/table-helpers';
 import { languages } from '../shared/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
-import { interval, of, race } from 'rxjs';
-import { debounce } from 'rxjs/operators';
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -113,7 +112,6 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.updateEmergencyContactValidators(value);
     });
-    this.updateEmergencyContactValidators(this.healthForm.controls.emergencyContactType.value);
   }
 
   private updateEmergencyContactValidators(contactType: string) {
