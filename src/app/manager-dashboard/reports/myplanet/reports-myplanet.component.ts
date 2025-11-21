@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
@@ -42,7 +42,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private reportsService: ReportsService,
     private route: ActivatedRoute,
     private timePipe: TimePipe,
-    fb: FormBuilder,
+    fb: NonNullableFormBuilder,
     activityService: ReportsService,
   ) {
     super(fb, activityService, 'all');
