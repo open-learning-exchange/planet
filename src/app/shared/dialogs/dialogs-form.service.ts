@@ -25,7 +25,8 @@ export type DialogFieldType =
   | 'dialog'
   | 'date'
   | 'time'
-  | 'toggle';
+  | 'toggle'
+  | string;
 
 export interface DialogField<TName extends string = string> {
   name: TName;
@@ -106,11 +107,9 @@ export class DialogsFormService {
       width: '600px',
       autoFocus: autoFocus
     });
-    if (formGroup instanceof FormGroup) {
-      dialogRef.componentInstance.modalForm = formGroup;
-    } else {
-      dialogRef.componentInstance.modalForm = this.fb.group<DialogFormControls<T>>(formGroup);
-    }
+    dialogRef.componentInstance.modalForm = formGroup instanceof FormGroup
+      ? formGroup
+      : this.fb.group(formGroup);
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.fields = fields;
     return dialogRef.afterClosed() as Observable<T | undefined>;

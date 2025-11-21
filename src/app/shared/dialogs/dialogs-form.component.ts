@@ -4,17 +4,13 @@ import {
   MatLegacyDialogRef as MatDialogRef,
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
 } from '@angular/material/legacy-dialog';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { UserService } from '../user.service';
 import {
   DialogField,
-  DialogFormControls,
-  DialogFormGroup,
-  DialogFormGroupConfig,
-  DialogFormValueMap,
   DialogsFormData
 } from './dialogs-form.service';
 
@@ -38,14 +34,14 @@ export class DialogsFormComponent {
 
   public title: string;
   public fields: DialogField[];
-  public modalForm: DialogFormGroup;
+  public modalForm: FormGroup;
   passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
-  private markFormAsTouched(control: DialogFormGroup | FormArray<unknown>) {
+  private markFormAsTouched(control: FormGroup | FormArray<AbstractControl>) {
     const controls = control instanceof FormGroup ? Object.values(control.controls) : control.controls;
     controls.forEach(innerControl => {
       innerControl.markAsTouched();
@@ -66,9 +62,9 @@ export class DialogsFormComponent {
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
-        this.data.formGroup as DialogFormGroup :
-        this.fb.group<DialogFormControls<DialogFormValueMap>>(
-          this.data.formGroup as DialogFormGroupConfig<DialogFormValueMap>,
+        this.data.formGroup :
+        this.fb.group(
+          this.data.formGroup,
           this.data.formOptions || {}
         );
       this.title = this.data.title;
@@ -83,7 +79,7 @@ export class DialogsFormComponent {
     }
   }
 
-  onSubmit(mForm: DialogFormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
+  onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
       this.markFormAsTouched(mForm);
       return;
