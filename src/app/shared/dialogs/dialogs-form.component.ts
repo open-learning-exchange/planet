@@ -11,6 +11,7 @@ import { DialogsListComponent } from './dialogs-list.component';
 import { UserService } from '../user.service';
 import {
   DialogField,
+  DialogFormValueMap,
   DialogsFormData
 } from './dialogs-form.service';
 

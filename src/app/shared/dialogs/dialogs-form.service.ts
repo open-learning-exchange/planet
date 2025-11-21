@@ -57,10 +57,24 @@ type DialogControlConfig<TValue> =
   | FormControl<TValue>
   | FormGroup<any>
   | FormArray<any>
-  | [TValue | FormControlState<TValue>, (ValidatorFn | ValidatorFn[] | null)?, (AsyncValidatorFn | AsyncValidatorFn[] | null)?];
+  | [
+    TValue | FormControlState<TValue>,
+    (ValidatorFn | ValidatorFn[] | null)?,
+    (AsyncValidatorFn | AsyncValidatorFn[] | null)?
+  ]
+  | Array<
+    | TValue
+    | FormControlState<TValue>
+    | ValidatorFn
+    | ValidatorFn[]
+    | AsyncValidatorFn
+    | AsyncValidatorFn[]
+  >;
 
 export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
-  [K in keyof T]: DialogControlConfig<T[K]>;
+  [K in keyof T]?: DialogControlConfig<T[K]>;
+} & {
+  [key: string]: unknown;
 };
 
 export type DialogFormControls<T extends DialogFormValueMap> = {
