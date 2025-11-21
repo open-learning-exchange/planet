@@ -124,7 +124,7 @@ export class ConfigurationComponent implements OnInit {
         ]) || []
       })
     });
-    this.configurationFormGroup = this.formBuilder.group({
+    const configurationControls = {
       planetType: this.formBuilder.control('', { validators: Validators.required }),
       localDomain: this.formBuilder.control(this.defaultLocal),
       name: this.formBuilder.control('', {
@@ -142,7 +142,9 @@ export class ConfigurationComponent implements OnInit {
       autoAccept: this.formBuilder.control(true),
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
-    });
+    } satisfies ConfigurationFormControls;
+
+    this.configurationFormGroup = this.formBuilder.group(configurationControls);
     this.contactFormGroup = this.formBuilder.group({
       firstName: this.formBuilder.control('', { validators: CustomValidators.required }),
       lastName: this.formBuilder.control('', { validators: CustomValidators.required }),
