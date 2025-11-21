@@ -35,12 +35,11 @@ export abstract class MyPlanetFiltersBase {
     this.defaultTimeFilter = defaultTimeFilter;
     this.selectedTimeFilter = defaultTimeFilter;
 
-    this.filtersForm = this.fb.group({
-      startDate: this.fb.control(this.minDate),
-      endDate: this.fb.control(this.today)
-    }, {
-      validators: (ac) => {
-        const { startDate, endDate } = ac.value;
+    this.filtersForm = this.fb.group({ startDate: this.minDate, endDate: this.today }, {
+      validators: (group) => {
+        const fg = group as FormGroup<MyPlanetFiltersForm>;
+        const startDate = fg.controls.startDate.value;
+        const endDate = fg.controls.endDate.value;
         return startDate > endDate ? { invalidDates: true } : null;
       }
     });
