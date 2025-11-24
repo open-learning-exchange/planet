@@ -3,8 +3,9 @@ import { FileInputComponent } from '../shared/forms/file-input.component';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import {
-  UntypedFormBuilder,
-  UntypedFormGroup,
+  FormBuilder,
+  FormControl,
+  FormGroup,
   Validators
 } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
@@ -28,6 +29,30 @@ import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 
+interface ResourceFormModel {
+  title: FormControl<string>;
+  author: FormControl<string>;
+  year: FormControl<string>;
+  description: FormControl<string>;
+  language: FormControl<string>;
+  publisher: FormControl<string>;
+  linkToLicense: FormControl<string>;
+  subject: FormControl<string[]>;
+  level: FormControl<string[]>;
+  openWith: FormControl<string>;
+  resourceFor: FormControl<string[]>;
+  medium: FormControl<string>;
+  resourceType: FormControl<string>;
+  addedBy: FormControl<string>;
+  openWhichFile: FormControl<string>;
+  isDownloadable: FormControl<boolean>;
+  sourcePlanet: FormControl<string>;
+  resideOn: FormControl<string>;
+  createdDate: FormControl<string>;
+  updatedDate: FormControl<string>;
+  private: FormControl<boolean>;
+}
+
 @Component({
   selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
@@ -40,7 +65,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachedZipFiles: string[] = [];
   filteredZipFiles: Observable<string[]>;
   deleteAttachment = false;
-  resourceForm: UntypedFormGroup;
+  resourceForm: FormGroup<ResourceFormModel>;
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
@@ -48,7 +73,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   disableDelete = true;
   resourceFilename = '';
   languages = languages;
-  tags = this.fb.control([]);
+  tags = this.fb.control<string[]>([], { nonNullable: true });
   _existingResource: any = {};
   get existingResource(): any {
     return this._existingResource;
@@ -69,7 +94,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   constructor(
     private router: Router,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private userService: UserService,
@@ -117,40 +142,45 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createForm() {
-    this.resourceForm = this.fb.group({
-      title: [
-        '',
-        CustomValidators.required,
-        // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
-        ac => this.validatorService.checkUniqueResourceTitle$(ac, this.existingResource._id, this.privateFor)
-      ],
-      author: '',
-      year: '',
-      description: [ '', CustomValidators.required ],
-      language: '',
-      publisher: '',
-      linkToLicense: '',
-      subject: [ '', Validators.required ],
-      level: [ '', Validators.required ],
-      openWith: '',
-      resourceFor: [],
-      medium: '',
-      resourceType: '',
-      addedBy: this.currentUsername,
-      openWhichFile: [ { value: '', disabled: true }, (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles) ],
-      isDownloadable: '',
-      sourcePlanet: this.stateService.configuration.code,
-      resideOn: this.stateService.configuration.code,
-      createdDate: this.couchService.datePlaceholder,
-      updatedDate: this.couchService.datePlaceholder,
-      private: this.privateFor !== undefined
+    this.resourceForm = this.fb.group<ResourceFormModel>({
+      title: this.fb.control('', {
+        validators: CustomValidators.required,
+        asyncValidators: [
+          // an arrow function is for lexically binding 'this' otherwise 'this' would be undefined
+          (ac) => this.validatorService.checkUniqueResourceTitle$(ac, this.existingResource._id, this.privateFor)
+        ],
+        nonNullable: true
+      }),
+      author: this.fb.control('', { nonNullable: true }),
+      year: this.fb.control('', { nonNullable: true }),
+      description: this.fb.control('', { validators: CustomValidators.required, nonNullable: true }),
+      language: this.fb.control('', { nonNullable: true }),
+      publisher: this.fb.control('', { nonNullable: true }),
+      linkToLicense: this.fb.control('', { nonNullable: true }),
+      subject: this.fb.control<string[]>([], { validators: Validators.required, nonNullable: true }),
+      level: this.fb.control<string[]>([], { validators: Validators.required, nonNullable: true }),
+      openWith: this.fb.control('', { nonNullable: true }),
+      resourceFor: this.fb.control<string[]>([], { nonNullable: true }),
+      medium: this.fb.control('', { nonNullable: true }),
+      resourceType: this.fb.control('', { nonNullable: true }),
+      addedBy: this.fb.control(this.currentUsername, { nonNullable: true }),
+      openWhichFile: this.fb.control({ value: '', disabled: true }, {
+        validators: (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles),
+        nonNullable: true
+      }),
+      isDownloadable: this.fb.control(false, { nonNullable: true }),
+      sourcePlanet: this.fb.control(this.stateService.configuration.code, { nonNullable: true }),
+      resideOn: this.fb.control(this.stateService.configuration.code, { nonNullable: true }),
+      createdDate: this.fb.control(this.couchService.datePlaceholder, { nonNullable: true }),
+      updatedDate: this.fb.control(this.couchService.datePlaceholder, { nonNullable: true }),
+      private: this.fb.control(this.privateFor !== undefined, { nonNullable: true })
     });
     if (this.existingResource.doc) {
       this.setFormValues(this.existingResource);
     }
   }
 
-  setFormValues(resource) {
+  setFormValues(resource: any) {
     this.privateFor = resource.doc.privateFor;
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
@@ -162,7 +192,31 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       this.resourceForm.controls.openWhichFile.enable();
       this.attachedZipFiles = Object.keys(resource.doc._attachments);
     }
-    this.resourceForm.patchValue(resource.doc);
+    const doc = resource.doc || {};
+    this.resourceForm.patchValue({
+      ...doc,
+      title: doc.title || '',
+      author: doc.author || '',
+      year: doc.year || '',
+      description: doc.description || '',
+      language: doc.language || '',
+      publisher: doc.publisher || '',
+      linkToLicense: doc.linkToLicense || '',
+      subject: doc.subject || [],
+      level: doc.level || [],
+      openWith: doc.openWith || '',
+      resourceFor: doc.resourceFor || [],
+      medium: doc.medium || '',
+      resourceType: doc.resourceType || '',
+      addedBy: doc.addedBy || this.currentUsername,
+      openWhichFile: doc.openWhichFile || '',
+      isDownloadable: doc.isDownloadable ?? false,
+      sourcePlanet: doc.sourcePlanet || this.stateService.configuration.code,
+      resideOn: doc.resideOn || this.stateService.configuration.code,
+      createdDate: doc.createdDate || this.couchService.datePlaceholder,
+      updatedDate: doc.updatedDate || this.couchService.datePlaceholder,
+      private: doc.private ?? this.privateFor !== undefined
+    });
     this.tags.setValue(resource.tags.map((tag: any) => tag._id));
     this.captureInitialState();
   }
