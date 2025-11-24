@@ -463,6 +463,10 @@ body {
     }
   }
 
+  .mat-mdc-form-field.mdc-form-field-no-outline .mdc-notched-outline {
+    opacity: 0;
+  }
+
   mat-dialog-actions, mat-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
