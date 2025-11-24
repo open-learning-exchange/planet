@@ -1,10 +1,38 @@
 import { Injectable } from '@angular/core';
-import { UntypedFormGroup, UntypedFormControl, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
+
+export interface QuestionChoice {
+  text: string;
+  id: string;
+}
+
+export interface QuestionValue {
+  body: string;
+  type: string;
+  correctChoice: string | string[];
+  marks: number;
+  choices: QuestionChoice[];
+  hasOtherOption: boolean;
+}
+
+export type QuestionChoiceFormGroup = FormGroup<{
+  text: FormControl<string>;
+  id: FormControl<string>;
+}>;
+
+export type QuestionFormGroup = FormGroup<{
+  body: FormControl<string>;
+  type: FormControl<string>;
+  correctChoice: FormControl<string | string[]>;
+  marks: FormControl<number>;
+  choices: FormArray<QuestionChoiceFormGroup>;
+  hasOtherOption: FormControl<boolean>;
+}>;
 
 @Injectable({
   providedIn: 'root'
@@ -13,56 +41,55 @@ export class ExamsService {
   readonly dbName = 'exams';
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService
   ) {}
 
-  newQuestionForm(requireCorrect, initialValue?: any) {
+  newQuestionForm(requireCorrect: boolean, initialValue?: Partial<QuestionValue>): QuestionFormGroup {
     const choices = (initialValue && initialValue.choices) || [];
-    return this.setInitalFormValue(this.fb.group(Object.assign(
-      {
-        body: [ '', CustomValidators.required ],
-        type: 'input',
-        correctChoice: [ '', CustomValidators.choiceSelected(requireCorrect) ],
-        marks: [ 1, CustomValidators.positiveNumberValidator ],
-        choices: this.fb.array(
-          choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
-        ),
-        hasOtherOption: [ false ]
-      }
-    ), { validators: this.choiceRequiredValidator }
-    ), initialValue);
+    const formGroup = this.fb.group<QuestionFormGroup['controls']>({
+      body: this.fb.control('', { validators: CustomValidators.required, nonNullable: true }),
+      type: this.fb.control('input', { nonNullable: true }),
+      correctChoice: this.fb.control<string | string[]>('', { validators: CustomValidators.choiceSelected(requireCorrect) }),
+      marks: this.fb.control(1, { validators: CustomValidators.positiveNumberValidator, nonNullable: true }),
+      choices: this.fb.array<QuestionChoiceFormGroup>(
+        choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
+      ),
+      hasOtherOption: this.fb.control(false, { nonNullable: true })
+    }, { validators: this.choiceRequiredValidator.bind(this) });
+
+    return this.setInitalFormValue(formGroup, initialValue);
   }
 
-  choiceRequiredValidator(ac) {
-    const questionType = ac.get('type').value;
+  choiceRequiredValidator(ac: QuestionFormGroup) {
+    const questionType = ac.get('type')?.value;
     return questionType === 'select' || questionType === 'selectMultiple' ?
      Validators.required(ac.get('choices')) && { noChoices: true } :
      null;
   }
 
-  newQuestionChoice(newId, intialValue?) {
-    return this.setInitalFormValue(new UntypedFormGroup({
-      'text': new UntypedFormControl('', CustomValidators.required),
-      'id': new UntypedFormControl(newId)
+  newQuestionChoice(newId: string, intialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {
+    return this.setInitalFormValue(this.fb.group({
+      text: this.fb.control('', { validators: CustomValidators.required, nonNullable: true }),
+      id: this.fb.control(newId, { nonNullable: true })
     }), intialValue);
   }
 
-  setInitalFormValue(formGroup, initialValue?) {
+  setInitalFormValue<T extends AbstractControl>(formGroup: T, initialValue?: Partial<QuestionValue> | Partial<QuestionChoice>) {
     if (initialValue !== undefined) {
       formGroup.patchValue(initialValue);
     }
     return formGroup;
   }
 
-  updateQuestion(question: UntypedFormGroup, newQuestion: UntypedFormGroup) {
+  updateQuestion(question: QuestionFormGroup, newQuestion: QuestionFormGroup) {
     const { choices: newChoices, ...fields } = newQuestion.value;
-    const choices = (<UntypedFormArray>question.controls.choices);
+    const choices = question.controls.choices;
     this.removeChoices(choices, newChoices);
     question.patchValue(fields);
-    newChoices.forEach((choice) => {
+    newChoices.forEach((choice: QuestionChoice) => {
       const index = question.controls.choices.value.findIndex(c => c.id === choice.id);
       const newChoice = this.newQuestionChoice('', choice);
       if (index > -1) {
@@ -73,8 +100,8 @@ export class ExamsService {
     });
   }
 
-  removeChoices(oldChoices: UntypedFormArray, newChoices: any[]) {
-    let oldChoice: any;
+  removeChoices(oldChoices: FormArray<QuestionChoiceFormGroup>, newChoices: QuestionChoice[]) {
+    let oldChoice: QuestionChoice;
     for (let i = oldChoices.length - 1; i > -1; i--) {
       oldChoice = oldChoices.value[i];
       if (newChoices.findIndex((choice) => oldChoice.id === choice.id) === -1) {
@@ -83,16 +110,16 @@ export class ExamsService {
     }
   }
 
-  checkValidFormComponent(formField, asTouched = true) {
+  checkValidFormComponent(formField: FormGroup | FormArray, asTouched = true) {
     Object.keys(formField.controls).forEach(field => {
       const control = formField.get(field);
       if (asTouched) {
-        control.markAsTouched({ onlySelf: true });
+        control?.markAsTouched({ onlySelf: true });
       } else {
-        control.markAsUntouched({ onlySelf: true });
+        control?.markAsUntouched({ onlySelf: true });
       }
-      if (control.controls) {
-        this.checkValidFormComponent(control);
+      if ((control instanceof FormGroup) || (control instanceof FormArray)) {
+        this.checkValidFormComponent(control, asTouched);
       }
     });
   }
