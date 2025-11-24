@@ -154,7 +154,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or  adopted
+        // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
         // community surveys that can be adopted & team hasn't adopted yet

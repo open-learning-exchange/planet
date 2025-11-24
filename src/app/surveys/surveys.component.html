@@ -39,7 +39,7 @@
         <mat-cell *matCellDef="let row">
           <mat-checkbox (change)="$event ? selection.toggle(row._id) : null"
             [checked]="selection.isSelected(row._id)"
-            [disabled]="(row.teamId && isManagerRoute) || currentFilter.viewMode === 'adopt'"
+            [disabled]="currentFilter.viewMode === 'adopt'"
             [matTooltip]="getActionTooltip(row, 'select')"
             *ngIf="!row.parent === true">
           </mat-checkbox>
@@ -68,7 +68,7 @@
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
             <div [matTooltip]="getActionTooltip(element, 'edit')">
-              <button mat-raised-button color="primary" *ngIf="!teamId" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived || (element.teamId && isManagerRoute)" i18n>
+              <button mat-raised-button color="primary" *ngIf="!teamId" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived" i18n>
                 <mat-icon>edit</mat-icon> Edit
               </button>
             </div>
