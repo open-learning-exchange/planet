@@ -106,42 +106,70 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  private countSubmissionsForSurvey(surveyId: string, countMap: Map<any, any>, targetTeamId: string | null): number {
+    if (!countMap.has(surveyId)) {
+      return 0;
+    }
+
+    const surveyTeamCounts = countMap.get(surveyId);
+    if (targetTeamId) {
+      return surveyTeamCounts.has(targetTeamId) ? (surveyTeamCounts.get(targetTeamId)['complete'] || 0) : 0;
+    }
+
+    let count = 0;
+    surveyTeamCounts.forEach(statusCounts => {
+      count += statusCounts['complete'] || 0;
+    });
+    return count;
+  }
+
   private loadSurveys() {
     this.isLoading = true;
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
-      receiveData('submissions', 'survey'),
-      this.couchService.findAll('courses')
-    ]).subscribe(([ allSurveys, submissions, courses ]: any) => {
+      this.couchService.get('submissions/_design/surveyData/_view/submissionCounts?group=true'),
+      this.couchService.findAll('courses'),
+      this.couchService.get('submissions/_design/surveyData/_view/parentSurveys')
+    ]).subscribe(([ allSurveys, submissionCounts, courses, parentSurveyRows ]: any) => {
+      const countMap = new Map();
+      submissionCounts.rows.forEach(row => {
+        const [ parentId, teamId, status ] = row.key;
+        if (!countMap.has(parentId)) {
+          countMap.set(parentId, new Map());
+        }
+        if (!countMap.get(parentId).has(teamId)) {
+          countMap.get(parentId).set(teamId, {});
+        }
+        countMap.get(parentId).get(teamId)[status] = row.value;
+      });
+
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
       const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
       this.allSurveys = [
         ...allSurveys.map((survey: any) => {
-          const directSubmissions = submissions.filter(sub => sub.parentId === survey._id || sub.parentId?.startsWith(survey._id + '@'));
           const derivedTeamSurveys = teamSurveys.filter(ts => ts.sourceSurveyId === survey._id);
-          const derivedSubmissions = derivedTeamSurveys.flatMap(ts =>
-            submissions.filter(sub => sub.parentId === ts._id || sub.parentId?.startsWith(ts._id + '@'))
-          );
-          const relatedSubmissions = [...directSubmissions, ...derivedSubmissions];
           const teamIds = [
             ...new Set([
               survey.teamId,
               ...derivedTeamSurveys.map(ts => ts.teamId)
             ])
           ].filter(Boolean);
+
+          const targetTeamId = this.teamId || this.routeTeamId;
+          let taken = this.countSubmissionsForSurvey(survey._id, countMap, targetTeamId);
+          derivedTeamSurveys.forEach(ts => {
+            taken += this.countSubmissionsForSurvey(ts._id, countMap, targetTeamId);
+          });
+
           return {
             ...survey,
-            teamIds: teamIds,
+            teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-            taken: this.teamId || this.routeTeamId
-              ? relatedSubmissions.filter(
-                (data) => data.status === 'complete' &&
-                (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
-              : relatedSubmissions.filter(data => data.status === 'complete').length
+            taken
           };
         }),
-        ...this.createParentSurveys(submissions)
+        ...this.createParentSurveys(parentSurveyRows.rows)
       ];
       this.applyViewModeFilter();
       this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
@@ -165,17 +193,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  createParentSurveys(submissions) {
-    return submissions.filter(submission => submission.parent).reduce((parentSurveys, submission) => {
-      const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === submission.parent._id);
+  createParentSurveys(viewRows) {
+    // viewRows format: { key: parentId, value: { parentDoc, status, teamId } }
+    return viewRows.reduce((parentSurveys, row) => {
+      const { parentDoc, status, teamId } = row.value;
+      const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === parentDoc._id);
       if (parentSurvey) {
-        parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
-      } else if (submission.parent.sourcePlanet === this.stateService.configuration.parentCode) {
+        parentSurvey.taken = parentSurvey.taken + (status !== 'pending' ? 1 : 0);
+      } else if (parentDoc.sourcePlanet === this.stateService.configuration.parentCode) {
         return [ ...parentSurveys, {
-          ...submission.parent,
-          taken: submission.status !== 'pending' ? 1 : 0,
+          ...parentDoc,
+          taken: status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId: submission.team?._id
+          teamId
         } ];
       }
       return parentSurveys;
