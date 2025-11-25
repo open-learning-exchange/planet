@@ -171,6 +171,7 @@ upsert_doc _users _design/_auth @./design/users/_auth.json
 upsert_doc resource_activities _design/resource_activities @./design/activities/activities-design.json
 upsert_doc login_activities _design/login_activities @./design/activities/activities-design.json
 upsert_doc courses_progress _design/courses_progress @./design/courses_progress/courses_progress-design.json
+upsert_doc submissions _design/surveyData @./design/submissions/submissions-design.json
 
 # Insert indexes
 # Note indexes will not overwrite if fields value changes, so make sure to remove unused indexes after changing
@@ -183,6 +184,7 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc submissions _index '{"index":{"fields":["type","parent"]},"name":"parent-submissions-index"}' POST
 # Only insert dummy data and update security on install
 # _users security is set in app and auto accept will be overwritten if set here
 if (($ISINSTALL))
