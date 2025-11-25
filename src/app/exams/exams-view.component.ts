@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { UntypedFormControl, AbstractControl } from '@angular/forms';
+import { FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject, forkJoin, of } from 'rxjs';
@@ -14,6 +14,10 @@ import {
   DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
+
+type ExamAnswerOption = { id: string; text: string; isOther?: boolean };
+type ExamOtherAnswerOption = ExamAnswerOption & { isOther: true };
+type ExamAnswerValue = ExamAnswerOption | ExamAnswerOption[] | string;
 
 @Component({
   selector: 'planet-exams-view',
@@ -33,7 +37,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   question: ExamQuestion;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new UntypedFormControl(null, this.answerValidator);
+  answer = new FormControl<ExamAnswerValue | null>(null, { validators: this.answerValidator.bind(this) });
   statusMessage = '';
   spinnerOn = true;
   title = '';
@@ -52,7 +56,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
-  currentOtherOption: { id: 'other'; text: string; isOther: true } | null = null;
+  currentOtherOption: ExamOtherAnswerOption | null = null;
 
   constructor(
     private router: Router,
@@ -289,25 +293,25 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   });
 }
 
-  setAnswer(event, option) {
-    const value = this.answer.value || [];
+  setAnswer(event, option: ExamAnswerOption) {
+    const currentValue = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];
     if (event.checked) {
-      if (!value.some(val => val.id === option.id)) {
-        value.push(option);
+      if (!currentValue.some(val => val.id === option.id)) {
+        currentValue.push(option);
       } else if (option.id === 'other') {
-        const otherIndex = value.findIndex(val => val.id === 'other');
+        const otherIndex = currentValue.findIndex(val => val.id === 'other');
         if (otherIndex > -1) {
-          value[otherIndex].text = option.text;
+          currentValue[otherIndex].text = option.text;
         }
       }
     } else {
-      const index = value.findIndex(val => val.id === option.id);
+      const index = currentValue.findIndex(val => val.id === option.id);
       if (index > -1) {
-        value.splice(index, 1);
+        currentValue.splice(index, 1);
       }
     }
 
-    this.answer.setValue(value.length > 0 ? value : null);
+    this.answer.setValue(currentValue.length > 0 ? currentValue : null);
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = event.checked;
   }
@@ -319,14 +323,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   calculateCorrect() {
     const value = this.answer.value;
-    const answers = value instanceof Array ? value : [ value ];
-    if (answers.every(answer => answer === null || answer === undefined)) {
+    const answers = Array.isArray(value)
+      ? value
+      : this.isAnswerOption(value) ? [ value ] : [];
+
+    if (answers.length === 0) {
       return undefined;
     }
-    const isMultiCorrect = (correctChoice, ans: any[]) => (
-      correctChoice.every(choice => ans.find((a: any) => a.id === choice)) &&
-      ans.every((a: any) => correctChoice.find(choice => a.id === choice))
+
+    const isMultiCorrect = (correctChoice: string[], ans: ExamAnswerOption[]) => (
+      correctChoice.every(choice => ans.find((a: ExamAnswerOption) => a.id === choice)) &&
+      ans.every((a: ExamAnswerOption) => correctChoice.find(choice => a.id === choice))
     );
+
     return this.question.correctChoice instanceof Array ?
       isMultiCorrect(this.question.correctChoice, answers) :
       answers[0].id === this.question.correctChoice;
@@ -348,40 +357,43 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
-    const setSelectMultipleAnswer = (answers: any[]) => {
+    const setSelectMultipleAnswer = (answers: ExamAnswerOption[]) => {
       answers.forEach(ans => {
         this.setAnswer({ checked: true }, ans);
       });
     };
     this.answer.setValue(null);
-    if (!answer.value) {
+    const answerValue = answer.value as ExamAnswerValue | null;
+    if (!answerValue) {
       return;
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        const rebuilt = answer.value.map(val => {
-          if (val.id === 'other') {
-            this.currentOtherOption.text = val.text || '';
-            return this.currentOtherOption;
-          }
-          return val;
-        });
-        setSelectMultipleAnswer(rebuilt);
+        if (Array.isArray(answerValue)) {
+          const rebuilt = answerValue.map(val => {
+            if (val.id === 'other' && this.currentOtherOption) {
+              this.currentOtherOption.text = val.text || '';
+              return this.currentOtherOption;
+            }
+            return val;
+          });
+          setSelectMultipleAnswer(rebuilt);
+        }
         break;
       case 'select':
-        if (answer.value && answer.value.id === 'other') {
-          this.currentOtherOption.text = answer.value.text;
+        if (this.isOtherOption(answerValue) && this.currentOtherOption) {
+          this.currentOtherOption.text = answerValue.text;
           this.answer.setValue(this.currentOtherOption);
-        } else {
-          this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+        } else if (this.isAnswerOption(answerValue)) {
+          this.answer.setValue(this.question.choices.find((choice) => choice.text === answerValue.text) || null);
         }
         break;
       default:
-        this.answer.setValue(answer.value);
+        this.answer.setValue(answerValue);
     }
   }
 
-  answerValidator(ac: AbstractControl) {
+  answerValidator(ac: AbstractControl<ExamAnswerValue | null>): ValidationErrors | null {
     if (typeof ac.value === 'string') {
       return ac.value.trim() ? null : { required: true };
     }
@@ -391,33 +403,37 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         return { required: true };
       }
       const hasEmptyOther = ac.value.some(option =>
-        option && option.isOther && (!option.text || !option.text.trim())
+        this.isOtherOption(option) && (!option.text || !option.text.trim())
       );
       return hasEmptyOther ? { required: true } : null;
     }
-    if (ac.value && ac.value.isOther && (!ac.value.text || !ac.value.text.trim())) {
-      return { required: true };
+
+    if (this.isOtherOption(ac.value)) {
+      return ac.value.text && ac.value.text.trim() ? null : { required: true };
     }
 
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
 
   setViewAnswerText(answer: any) {
-    this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
+    const answerValue = answer.value as ExamAnswerValue | null;
+    this.answer.setValue(Array.isArray(answerValue) ? answerValue.map((a: ExamAnswerOption) => a.text).join(', ').trim() : answerValue);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
   }
 
   isOtherSelected() {
-    return this.answer.value?.id === 'other';
+    return this.isOtherOption(this.answer.value);
   }
 
   toggleOtherMultiple({ checked }): void {
     this.checkboxState['other'] = checked;
     if (checked) {
-      this.setAnswer({ checked: true }, this.currentOtherOption);
+      if (this.currentOtherOption) {
+        this.setAnswer({ checked: true }, this.currentOtherOption);
+      }
     } else {
-      const remaining = (this.answer.value || []).filter(o => o.id !== 'other');
+      const remaining = (Array.isArray(this.answer.value) ? this.answer.value : []).filter(o => o.id !== 'other');
       this.answer.setValue(remaining.length ? remaining : null);
       this.answer.updateValueAndValidity();
     }
@@ -425,6 +441,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   updateOtherText(): void {
     this.answer.updateValueAndValidity();
+  }
+
+  private isAnswerOption(value: ExamAnswerValue | null): value is ExamAnswerOption {
+    return !!value && !Array.isArray(value) && typeof value === 'object' && 'id' in value;
+  }
+
+  private isOtherOption(value: ExamAnswerValue | null): value is ExamOtherAnswerOption {
+    return this.isAnswerOption(value) && value.isOther === true;
   }
 
 }
