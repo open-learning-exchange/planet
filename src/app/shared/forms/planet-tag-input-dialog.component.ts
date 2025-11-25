@@ -1,5 +1,12 @@
 import { Component, Inject, Input, HostListener } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ValidatorFn
+} from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
 } from '@angular/material/legacy-dialog';
@@ -13,6 +20,11 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
+type TagFormControls = {
+  name: FormControl<string>;
+  attachedTo: FormControl<string[]>;
+};
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -34,8 +46,8 @@ export class PlanetTagInputDialogComponent {
     this._selectMany = value;
     this.data.reset(value);
   }
-  addTagForm: UntypedFormGroup;
-  newTagInfo: { id: string, parentId?: string };
+  addTagForm: FormGroup<TagFormControls>;
+  newTagInfo: { id: string, parentIds?: string[] };
   isUserAdmin = false;
   isInMap = isInMap;
   subcollectionIsOpen = new Map();
@@ -49,7 +61,7 @@ export class PlanetTagInputDialogComponent {
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
@@ -68,9 +80,12 @@ export class PlanetTagInputDialogComponent {
         this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
-    this.addTagForm = this.fb.group({
-      name: [ '', this.tagNameSyncValidator(), ac => this.tagNameAsyncValidator(ac) ],
-      attachedTo: [ [] ]
+    this.addTagForm = this.fb.nonNullable.group({
+      name: this.fb.nonNullable.control('', {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: [ this.tagNameAsyncValidator() ]
+      }),
+      attachedTo: this.fb.nonNullable.control([])
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -84,8 +99,9 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
-      const { parentId, id } = this.newTagInfo;
-      const parentTag = parentId.length > 0 ? this.data.tags.find(tag => tag._id === parentId) : undefined;
+      const { parentIds, id } = this.newTagInfo;
+      const parentTagId = parentIds?.[0];
+      const parentTag = parentTagId ? this.data.tags.find(tag => tag._id === parentTagId) : undefined;
       this.tagChange(id, { parentTag });
     }
     this.newTagInfo = undefined;
@@ -136,7 +152,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagInfo = { id: res[0].id, parentId: this.addTagForm.controls.attachedTo.value };
+        this.newTagInfo = { id: res[0].id, parentIds: this.addTagForm.controls.attachedTo.value };
         this.planetMessageService.showMessage($localize`New collection added`);
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
@@ -208,35 +224,35 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagForm(tag: any = {}) {
-    return this.fb.group({
-      name: [
-        tag.name || '',
-        this.tagNameSyncValidator(),
-        ac => this.tagNameAsyncValidator(ac, ac.value.toLowerCase() === tag.name.toLowerCase() ? ac.value : '')
-      ],
-      attachedTo: [ tag.attachedTo || [] ]
+    const exception = tag.name ? tag.name.toLowerCase() : '';
+    return this.fb.nonNullable.group({
+      name: this.fb.nonNullable.control(tag.name || '', {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: [ this.tagNameAsyncValidator(exception) ]
+      }),
+      attachedTo: this.fb.nonNullable.control(this.asArray(tag.attachedTo))
     });
   }
 
-  tagNameSyncValidator() {
-    return [ CustomValidators.required, ac => ac.value.match('_') ? { noUnderscore: true } : null ];
+  tagNameSyncValidator(): ValidatorFn[] {
+    return [ CustomValidators.required, (ac: AbstractControl<string>) => ac.value.match('_') ? { noUnderscore: true } : null ];
   }
 
-  tagNameAsyncValidator(ac, exception = '') {
-    return this.validatorService.isUnique$(
+  tagNameAsyncValidator(exception = ''): AsyncValidatorFn {
+    return (ac: AbstractControl<string>) => this.validatorService.isUnique$(
       'tags', '_id', ac,
       { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
     );
   }
 
-  resetValidationAndCheck(form: UntypedFormGroup) {
+  resetValidationAndCheck(form: FormGroup<TagFormControls>) {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       control?.clearValidators();
 
       if (key === 'name') {
         control?.setValidators(this.tagNameSyncValidator());
-        control?.setAsyncValidators(ac => this.tagNameAsyncValidator(ac));
+        control?.setAsyncValidators(this.tagNameAsyncValidator());
       }
 
       control?.markAsUntouched();
@@ -264,6 +280,13 @@ export class PlanetTagInputDialogComponent {
       return checkValue(iterator);
     };
     return checkValue(this.selected.entries());
+  }
+
+  private asArray(value: string[] | string | undefined): string[] {
+    if (Array.isArray(value)) {
+      return value;
+    }
+    return value ? [ value ] : [];
   }
 
 }
