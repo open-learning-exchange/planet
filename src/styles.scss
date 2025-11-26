@@ -541,12 +541,14 @@ body {
   }
 
   .mat-menu-panel.notification-menu {
+    max-width: 400px;
     overflow: hidden;
 
     .mat-menu-content {
       div.notification-items {
         max-height: calc(100vh - 100px);
         overflow-y: auto;
+        word-wrap: break-word;
       }
     }
   }
