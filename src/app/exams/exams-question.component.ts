@@ -2,7 +2,8 @@ import {
   Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef,
   ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
@@ -15,21 +16,35 @@ import { trackByIdVal } from '../shared/table-helpers';
   templateUrl: 'exams-question.component.html',
   styleUrls: [ 'exams-question.scss' ]
 })
+type QuestionChoiceForm = FormGroup<{
+  text: FormControl<string>;
+  id: FormControl<string>;
+}>;
+
+type QuestionForm = FormGroup<{
+  body: FormControl<string>;
+  type: FormControl<string>;
+  correctChoice: FormControl<string | string[]>;
+  marks: FormControl<number>;
+  choices: FormArray<QuestionChoiceForm>;
+  hasOtherOption: FormControl<boolean>;
+}>;
+
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
-  @Input() question: UntypedFormGroup;
+  @Input() question: QuestionForm;
   @Output() questionChange = new EventEmitter<any>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
-  correctCheckboxes: any = {};
-  questionForm: UntypedFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
+  correctCheckboxes: Record<string, boolean> = {};
+  questionForm: QuestionForm = this.examsService.newQuestionForm(this.examType === 'courses') as unknown as QuestionForm;
   initializing = true;
   choiceAdded = false;
   trackByFn = trackByIdVal;
   private onDestroy$ = new Subject<void>();
-  get choices(): UntypedFormArray {
-    return (<UntypedFormArray>this.questionForm.controls.choices);
+  get choices(): FormArray<QuestionChoiceForm> {
+    return this.questionForm.controls.choices;
   }
 
   constructor(
@@ -72,16 +87,19 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   addChoice() {
     const newId = uniqueId();
     this.correctCheckboxes[newId] = false;
-    this.choices.push(this.examsService.newQuestionChoice(newId));
+    this.choices.push(this.examsService.newQuestionChoice(newId) as unknown as QuestionChoiceForm);
     this.choiceAdded = true;
   }
 
   removeChoice(index: number) {
-    const correctCh = this.questionForm.controls.correctChoice.value;
-    const correctChoiceIndex = correctCh.indexOf(this.choices.value[index].id);
-    if (correctChoiceIndex > -1) {
-      correctCh.splice(correctChoiceIndex);
-    }
+    const correctChoiceValue = this.questionForm.controls.correctChoice.value;
+    const choiceId = this.choices.value[index].id;
+    const correctChoices = Array.isArray(correctChoiceValue)
+      ? correctChoiceValue.filter((id) => id !== choiceId)
+      : correctChoiceValue === choiceId
+        ? ''
+        : correctChoiceValue;
+    this.questionForm.controls.correctChoice.setValue(correctChoices);
     this.choices.removeAt(index);
   }
 
@@ -89,16 +107,26 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
     this.questionRemove.emit();
   }
 
-  setCorrect(event: any, choice: any) {
+  setCorrect(event: MatCheckboxChange, choice: QuestionChoiceForm) {
     const formControls = this.questionForm.controls;
     const newChoiceId = choice.controls.id.value;
-    let correctChoices = formControls.correctChoice.value || [];
+    const correctValue = formControls.correctChoice.value;
+    const isMultipleChoice = formControls.type.value === 'selectMultiple';
+
+    let correctChoices = Array.isArray(correctValue)
+      ? [...correctValue]
+      : correctValue
+        ? [ correctValue ]
+        : [];
+
     if (event.checked) {
-      correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.concat([ newChoiceId ]) : [ newChoiceId ];
+      correctChoices = isMultipleChoice ? [ ...correctChoices, newChoiceId ] : [ newChoiceId ];
     } else {
-      correctChoices.splice(correctChoices.indexOf(newChoiceId), 1);
+      correctChoices = correctChoices.filter(choiceId => choiceId !== newChoiceId);
     }
-    this.questionForm.controls.correctChoice.setValue(correctChoices);
+
+    const updatedValue = isMultipleChoice ? correctChoices : (correctChoices[0] ?? '');
+    this.questionForm.controls.correctChoice.setValue(updatedValue);
     this.questionForm.controls.choices.value.forEach(({ id }) => {
       this.correctCheckboxes[id] = correctChoices.indexOf(id) > -1;
     });
@@ -111,8 +139,8 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
   }
 
-  updateQuestion(question: UntypedFormGroup) {
-    this.examsService.updateQuestion(this.questionForm, question);
+  updateQuestion(question: QuestionForm) {
+    this.examsService.updateQuestion(this.questionForm as unknown as any, question as unknown as any);
     if (question.value.correctChoice instanceof Array) {
       question.value.correctChoice.forEach(choiceId => {
         this.correctCheckboxes[choiceId] = true;
