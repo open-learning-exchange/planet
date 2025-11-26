@@ -55,7 +55,7 @@ export class ExamsService {
       correctChoice: this.fb.control<string | string[]>('', { validators: CustomValidators.choiceSelected(requireCorrect) }),
       marks: this.fb.control(1, { validators: CustomValidators.positiveNumberValidator, nonNullable: true }),
       choices: this.fb.array<QuestionChoiceFormGroup>(
-        choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice('', choice))
+        choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice(choice.id ?? '', choice))
       ),
       hasOtherOption: this.fb.control(false, { nonNullable: true })
     }, { validators: this.choiceRequiredValidator.bind(this) });
@@ -85,15 +85,16 @@ export class ExamsService {
   }
 
   updateQuestion(question: QuestionFormGroup, newQuestion: QuestionFormGroup) {
-    const { choices: newChoices, ...fields } = newQuestion.value;
+    const { choices: newChoices, ...fields }: QuestionValue = newQuestion.getRawValue();
     const choices = question.controls.choices;
     this.removeChoices(choices, newChoices);
     question.patchValue(fields);
+    const currentChoices = choices.controls;
     newChoices.forEach((choice: QuestionChoice) => {
-      const index = question.controls.choices.value.findIndex(c => c.id === choice.id);
-      const newChoice = this.newQuestionChoice('', choice);
+      const index = currentChoices.findIndex(c => c.controls.id.value === choice.id);
+      const newChoice = this.newQuestionChoice(choice.id, choice);
       if (index > -1) {
-        choices.at(index).setValue(newChoice.value);
+        choices.at(index).setValue(newChoice.getRawValue());
       } else {
         choices.push(newChoice);
       }
@@ -101,9 +102,9 @@ export class ExamsService {
   }
 
   removeChoices(oldChoices: FormArray<QuestionChoiceFormGroup>, newChoices: QuestionChoice[]) {
-    let oldChoice: QuestionChoice;
+    const oldChoiceValues = oldChoices.getRawValue();
     for (let i = oldChoices.length - 1; i > -1; i--) {
-      oldChoice = oldChoices.value[i];
+      const oldChoice = oldChoiceValues[i];
       if (newChoices.findIndex((choice) => oldChoice.id === choice.id) === -1) {
         oldChoices.removeAt(i);
       }
