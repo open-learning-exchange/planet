@@ -29,6 +29,8 @@ import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 
+type DatePlaceholderType = CouchService['datePlaceholder'];
+
 interface ResourceFormModel {
   title: FormControl<string>;
   author: FormControl<string>;
@@ -48,9 +50,10 @@ interface ResourceFormModel {
   isDownloadable: FormControl<boolean>;
   sourcePlanet: FormControl<string>;
   resideOn: FormControl<string>;
-  createdDate: FormControl<string>;
-  updatedDate: FormControl<string>;
+  createdDate: FormControl<number | DatePlaceholderType>;
+  updatedDate: FormControl<number | DatePlaceholderType>;
   private: FormControl<boolean>;
+  [key: string]: FormControl<any>;
 }
 
 @Component({
@@ -171,8 +174,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       isDownloadable: this.fb.control(false, { nonNullable: true }),
       sourcePlanet: this.fb.control(this.stateService.configuration.code, { nonNullable: true }),
       resideOn: this.fb.control(this.stateService.configuration.code, { nonNullable: true }),
-      createdDate: this.fb.control(this.couchService.datePlaceholder, { nonNullable: true }),
-      updatedDate: this.fb.control(this.couchService.datePlaceholder, { nonNullable: true }),
+      createdDate: this.fb.control<number | DatePlaceholderType>(this.couchService.datePlaceholder, { nonNullable: true }),
+      updatedDate: this.fb.control<number | DatePlaceholderType>(this.couchService.datePlaceholder, { nonNullable: true }),
       private: this.fb.control(this.privateFor !== undefined, { nonNullable: true })
     });
     if (this.existingResource.doc) {
