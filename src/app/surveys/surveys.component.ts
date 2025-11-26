@@ -151,7 +151,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
-
       const teamSurveysMap = new Map<string, any[]>();
       teamSurveys.forEach(ts => {
         const sourceId = ts.sourceSurveyId;
@@ -236,7 +235,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           ...parentDoc,
           taken: status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId: teamId
+          teamId
         });
       }
     });
