@@ -68,12 +68,9 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
         <mat-cell *matCellDef="let element" style="cursor: pointer">{{element.stepNum || ''}}</mat-cell>
       </ng-container>
-      <ng-container matColumnDef="teamInfo">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="teamInfo" i18n>Team/Enterprise</mat-header-cell>
-        <mat-cell *matCellDef="let element" style="cursor: pointer">
-          <ng-container *ngIf="element.teamInfo && !element.teamInfo.missing">{{element.teamInfo?.name}} ({{getTeamTypeLabel(element.teamInfo?.type)}})</ng-container>
-          <ng-container *ngIf="element.teamInfo?.missing"><i i18n>(missing)</i></ng-container>
-        </mat-cell>
+      <ng-container matColumnDef="docSource">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="docSource" i18n>Source</mat-header-cell>
+        <mat-cell *matCellDef="let element" style="cursor: pointer">{{element.docSource || ''}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>

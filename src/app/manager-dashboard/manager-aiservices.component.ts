@@ -1,20 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ConfigurationService } from '../configuration/configuration.service';
-import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
-
-interface AIServiceConfigForm {
-  streaming: FormControl<boolean>;
-  assistantName: FormControl<string>;
-  assistantInstructions: FormControl<string>;
-  [key: string]: AbstractControl<any, any>;
-}
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
@@ -22,7 +14,7 @@ interface AIServiceConfigForm {
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: any = {};
-  configForm: FormGroup<AIServiceConfigForm>;
+  configForm: FormGroup;
   hideKey: { [key: string]: boolean } = {};
   spinnerOn = true;
   private unsubscribe$ = new Subject<void>();
@@ -31,16 +23,15 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private clipboard: Clipboard,
     private configurationService: ConfigurationService,
-    private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private stateService: StateService,
   ) {
     this.configForm = this.fb.group({
-      streaming: new FormControl(false, { nonNullable: true }),
-      assistantName: new FormControl('', { nonNullable: true }),
-      assistantInstructions: new FormControl('', { nonNullable: true })
-    }) as FormGroup<AIServiceConfigForm>;
+      streaming: [ false ],
+      assistantName: [ '' ],
+      assistantInstructions: [ '' ]
+    });
   }
 
   ngOnInit() {
@@ -56,12 +47,12 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.configForm = this.fb.group({
-      streaming: new FormControl(!!this.configuration.streaming, { nonNullable: true }),
+      streaming: [ !!this.configuration.streaming ],
       ...this.mapConfigToFormGroup(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormGroup(this.configuration.models, 'models_'),
-      assistantName: new FormControl(this.configuration.assistant?.name || '', { nonNullable: true }),
-      assistantInstructions: new FormControl(this.configuration.assistant?.instructions || '', { nonNullable: true })
-    }) as FormGroup<AIServiceConfigForm>;
+      assistantName: [ this.configuration.assistant?.name || '' ],
+      assistantInstructions: [ this.configuration.assistant?.instructions || '' ]
+    });
 
     if (this.configuration.keys) {
       for (const key of Object.keys(this.configuration.keys)) {
@@ -71,10 +62,10 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   }
 
   mapConfigToFormGroup(configObject: any, prefix: string) {
-    const formGroupObj: { [key: string]: FormControl<string> } = {};
+    const formGroupObj = {};
     if (configObject) {
       for (const key of Object.keys(configObject)) {
-        formGroupObj[prefix + key] = new FormControl(configObject[key] || '', { nonNullable: true });
+        formGroupObj[prefix + key] = [ configObject[key] || '' ];
       }
     }
     return formGroupObj;
