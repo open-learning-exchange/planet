@@ -151,10 +151,30 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
-      const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
+
+      const teamSurveysMap = new Map<string, any[]>();
+      teamSurveys.forEach(ts => {
+        const sourceId = ts.sourceSurveyId;
+        if (!teamSurveysMap.has(sourceId)) {
+          teamSurveysMap.set(sourceId, []);
+        }
+        teamSurveysMap.get(sourceId).push(ts);
+      });
+
+      const surveyCourseMap = new Map<string, any>();
+      courses.forEach((course: any) => {
+        if (course.steps && Array.isArray(course.steps)) {
+          course.steps.forEach((step: any) => {
+            if (step.survey && step.survey._id && !surveyCourseMap.has(step.survey._id)) {
+              surveyCourseMap.set(step.survey._id, course);
+            }
+          });
+        }
+      });
+
       this.allSurveys = [
         ...allSurveys.map((survey: any) => {
-          const derivedTeamSurveys = teamSurveys.filter(ts => ts.sourceSurveyId === survey._id);
+          const derivedTeamSurveys = teamSurveysMap.get(survey._id) || [];
           const teamIds = [
             ...new Set([
               survey.teamId,
@@ -168,7 +188,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             taken += this.countSubmissionsForSurvey(ts._id, countMap, targetTeamId);
           });
 
-          const course = courses.find((c: any) => findSurveyInSteps(c.steps, survey) > -1);
+          const course = surveyCourseMap.get(survey._id);
           return {
             ...survey,
             teamIds,
@@ -180,7 +200,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(parentSurveyRows.rows)
       ];
       this.applyViewModeFilter();
-      this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
       this.isLoading = false;
     });
@@ -203,21 +222,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   createParentSurveys(viewRows) {
     // viewRows format: { key: parentId, value: { parentDoc, status, teamId } }
-    return viewRows.reduce((parentSurveys, row) => {
+    const parentSurveysMap = new Map();
+
+    viewRows.forEach(row => {
       const { parentDoc, status, teamId } = row.value;
-      const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === parentDoc._id);
-      if (parentSurvey) {
-        parentSurvey.taken = parentSurvey.taken + (status !== 'pending' ? 1 : 0);
+      const parentId = parentDoc._id;
+
+      if (parentSurveysMap.has(parentId)) {
+        const parentSurvey = parentSurveysMap.get(parentId);
+        parentSurvey.taken += (status !== 'pending' ? 1 : 0);
       } else if (parentDoc.sourcePlanet === this.stateService.configuration.parentCode) {
-        return [ ...parentSurveys, {
+        parentSurveysMap.set(parentId, {
           ...parentDoc,
           taken: status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId
-        } ];
+          teamId: teamId
+        });
       }
-      return parentSurveys;
-    }, []);
+    });
+
+    return Array.from(parentSurveysMap.values());
   }
 
   goBack() {
