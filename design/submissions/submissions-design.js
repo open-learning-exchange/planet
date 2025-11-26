@@ -1,7 +1,7 @@
 module.exports = {
-  views: {
-    surveyData: {
-      map: function(doc) {
+  "views": {
+    "surveyData": {
+      "map": function(doc) {
         if (doc.type === 'survey') {
           var teamId = doc.team && doc.team._id ? doc.team._id : null;
           var status = doc.status || 'pending';
@@ -27,7 +27,7 @@ module.exports = {
           }
         }
       },
-      reduce: '_count'
+      "reduce": "_count"
     }
   }
 };
