@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
@@ -82,12 +82,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.couchService.checkAuthorization(this.dbName)
+      .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().subscribe(surveys => {
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
     });
-    this.chatService.listAIProviders().subscribe((providers) => {
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
       this.availableAIProviders = providers;
     });
   }
@@ -135,13 +136,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       const countMap = new Map();
       submissionCounts.rows.forEach(row => {
         const [ parentId, teamId, status ] = row.key;
-        if (!countMap.has(parentId)) {
-          countMap.set(parentId, new Map());
+        let parentMap = countMap.get(parentId);
+        if (!parentMap) {
+          parentMap = new Map();
+          countMap.set(parentId, parentMap);
         }
-        if (!countMap.get(parentId).has(teamId)) {
-          countMap.get(parentId).set(teamId, {});
+
+        let teamCounts = parentMap.get(teamId);
+        if (!teamCounts) {
+          teamCounts = {};
+          parentMap.set(teamId, teamCounts);
         }
-        countMap.get(parentId).get(teamId)[status] = row.value;
+        teamCounts[status] = row.value;
       });
 
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
@@ -162,10 +168,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             taken += this.countSubmissionsForSurvey(ts._id, countMap, targetTeamId);
           });
 
+          const course = courses.find((c: any) => findSurveyInSteps(c.steps, survey) > -1);
           return {
             ...survey,
             teamIds,
-            course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
+            course,
+            courseTitle: course ? course.courseTitle : '',
             taken
           };
         }),
