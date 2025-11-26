@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ValidatorService } from '../validators/validator.service';
-import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigurationComponent } from './configuration.component';
