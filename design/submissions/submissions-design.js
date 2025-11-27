@@ -5,7 +5,8 @@ module.exports = {
         if (doc.type === 'survey') {
           var teamId = doc.team && doc.team._id ? doc.team._id : (doc.parent && doc.parent.teamId ? doc.parent.teamId : null);
           var status = doc.status || 'pending';
-          emit([doc.parentId, teamId, status], 1);
+          var baseSurveyId = doc.parentId ? doc.parentId.split('@')[0] : doc.parentId;
+          emit([baseSurveyId, teamId, status], 1);
         }
       },
       "reduce": "_count"
@@ -23,7 +24,10 @@ module.exports = {
               description: doc.parent.description,
               questions: doc.parent.questions,
               type: doc.parent.type,
-              sourcePlanet: doc.parent.sourcePlanet
+              sourcePlanet: doc.parent.sourcePlanet,
+              teamShareAllowed: doc.parent.teamShareAllowed,
+              isArchived: doc.parent.isArchived,
+              createdDate: doc.parent.createdDate
             },
             status: status,
             teamId: teamId
