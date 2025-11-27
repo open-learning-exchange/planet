@@ -356,16 +356,22 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   calculateCorrect() {
     const value = this.answer.value;
     const answers = Array.isArray(value) ? value : [ value ];
-    if (answers.every(answer => answer === null || answer === undefined)) {
+    const answerIds = answers
+      .map(ans => typeof ans === 'string' ? ans : ans?.id)
+      .filter((id): id is string => !!id);
+
+    if (answerIds.length === 0) {
       return undefined;
     }
-    const isMultiCorrect = (correctChoice, ans: any[]) => (
-      correctChoice.every(choice => ans.find((a: any) => a.id === choice)) &&
-      ans.every((a: any) => correctChoice.find(choice => a.id === choice))
+
+    const isMultiCorrect = (correctChoice: string[], ans: string[]) => (
+      correctChoice.every(choice => ans.includes(choice)) &&
+      ans.every(answer => correctChoice.includes(answer))
     );
+
     return this.question.correctChoice instanceof Array ?
-      isMultiCorrect(this.question.correctChoice, answers) :
-      answers[0].id === this.question.correctChoice;
+      isMultiCorrect(this.question.correctChoice, answerIds) :
+      answerIds[0] === this.question.correctChoice;
   }
 
   createAnswerObservable(isFinish = false) {
