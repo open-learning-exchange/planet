@@ -11,11 +11,6 @@ import { ExamsService } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { trackByIdVal } from '../shared/table-helpers';
 
-@Component({
-  selector: 'planet-exam-question',
-  templateUrl: 'exams-question.component.html',
-  styleUrls: [ 'exams-question.scss' ]
-})
 type QuestionChoiceForm = FormGroup<{
   text: FormControl<string>;
   id: FormControl<string>;
@@ -30,6 +25,11 @@ type QuestionForm = FormGroup<{
   hasOtherOption: FormControl<boolean>;
 }>;
 
+@Component({
+  selector: 'planet-exam-question',
+  templateUrl: 'exams-question.component.html',
+  styleUrls: [ 'exams-question.scss' ]
+})
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
   @Input() question: QuestionForm;
