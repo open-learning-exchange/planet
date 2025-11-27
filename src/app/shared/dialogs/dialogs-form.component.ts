@@ -23,9 +23,7 @@ export interface DialogSelection {
   [key: string]: unknown;
 }
 
-export interface DialogField {
-  name: string;
-  type:
+export type DialogFieldType =
   | 'checkbox'
   | 'textbox'
   | 'password'
@@ -37,11 +35,16 @@ export interface DialogField {
   | 'dialog'
   | 'date'
   | 'time'
-  | 'toggle';
+  | 'toggle'
+  | string;
+
+export interface DialogField {
+  name: string;
+  type: DialogFieldType;
   placeholder?: string;
   label?: string;
   text?: string;
-  options?: DialogFieldOption[];
+  options?: DialogFieldOption[] | string[] | unknown;
   required?: boolean;
   disabled?: boolean;
   min?: number | string;
@@ -54,11 +57,13 @@ export interface DialogField {
   planetBeta?: boolean;
   db?: string;
   authorizedRoles?: string | string[];
-  imageGroup?: string;
+  imageGroup?: string | Record<string, string>;
+  step?: string;
+  tooltip?: string;
 }
 
-export type DialogFormControls = { [key: string]: AbstractControl<unknown> };
-export type DialogFormGroup = FormGroup<DialogFormControls>;
+export type DialogFormControls = { [key: string]: AbstractControl };
+export type DialogFormGroup = FormGroup;
 export type DialogFormSubmit = (value: Record<string, unknown>, form: DialogFormGroup) => void;
 
 export interface DialogFormData {
