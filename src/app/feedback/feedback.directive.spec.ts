@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FeedbackDirective } from './feedback.directive';
-import { Component } from '@angular/core/src/metadata/directives';
+import { Component } from '@angular/core';
 
 // Simple component to test that FeedbackDirective is working on
 // different HTML tags
