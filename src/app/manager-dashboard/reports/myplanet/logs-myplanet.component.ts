@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../../shared/couchdb.service';
 import { StateService } from '../../../shared/state.service';
@@ -35,7 +35,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private managerService: ManagerService,
-    fb: FormBuilder,
+    fb: NonNullableFormBuilder,
     activityService: ReportsService,
   ) {
     super(fb, activityService, '24h');
