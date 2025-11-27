@@ -16,7 +16,7 @@ import { UserService } from '../../shared/user.service';
 })
 export class UsersArchiveComponent implements OnInit {
   readonly dbName = '_users';
-  spinnerOn = true;
+  spinnerOn = false;
   user: any = {};
   confirmChoice = false;
   archiveForm: UntypedFormGroup;
@@ -50,6 +50,7 @@ export class UsersArchiveComponent implements OnInit {
   }
 
   archiveUser() {
+    this.spinnerOn = true;
     const description = this.archiveForm.get('description').value;
     this.user = { ...this.user, isArchived: true, archiveReason: description };
     this.userService.updateUser(this.user).subscribe(
@@ -59,6 +60,7 @@ export class UsersArchiveComponent implements OnInit {
       },
       (err) => {
         console.log(err);
+        this.spinnerOn = false;
       }
     );
   }
