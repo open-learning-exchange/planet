@@ -33,6 +33,8 @@ type LoginFormControls = {
   confirmPassword: FormControl<string>;
 };
 
+type DatePlaceholder = CouchService['datePlaceholder'];
+
 type ConfigurationFormControls = {
   planetType: FormControl<string>;
   localDomain: FormControl<string>;
@@ -41,7 +43,7 @@ type ConfigurationFormControls = {
   parentCode: FormControl<string>;
   preferredLang: FormControl<string>;
   code: FormControl<string>;
-  createdDate: FormControl<string>;
+  createdDate: FormControl<DatePlaceholder>;
   autoAccept: FormControl<boolean>;
   alwaysOnline: FormControl<boolean>;
   betaEnabled: FormControl<string>;
