@@ -34,6 +34,14 @@ const removeProtocol = (str: string) => {
     .advanced {
       grid-column-start: 2;
     }
+    .advanced-options-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .advanced-options-container > * {
+      margin-bottom: 10px;
+    }
   ` ]
 })
 export class ConfigurationComponent implements OnInit {
