@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormControl, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
@@ -37,7 +38,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   question: ExamQuestion;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new FormControl<ExamAnswerValue | null>(null, { validators: this.answerValidator.bind(this) });
+  answer = new FormControl<ExamAnswerValue | null>(null, { validators: this.answerValidator });
   statusMessage = '';
   spinnerOn = true;
   title = '';
@@ -293,7 +294,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   });
 }
 
-  setAnswer(event, option: ExamAnswerOption) {
+  setAnswer(event: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
     const currentValue = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];
     if (event.checked) {
       if (!currentValue.some(val => val.id === option.id)) {
@@ -393,7 +394,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  answerValidator(ac: AbstractControl<ExamAnswerValue | null>): ValidationErrors | null {
+  answerValidator = (ac: AbstractControl<ExamAnswerValue | null>): ValidationErrors | null => {
     if (typeof ac.value === 'string') {
       return ac.value.trim() ? null : { required: true };
     }
@@ -413,7 +414,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
 
     return ac.value !== null && ac.value !== undefined ? null : { required: true };
-  }
+  };
 
   setViewAnswerText(answer: any) {
     const answerValue = answer.value as ExamAnswerValue | null;
@@ -426,7 +427,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     return this.isOtherOption(this.answer.value);
   }
 
-  toggleOtherMultiple({ checked }): void {
+  toggleOtherMultiple({ checked }: Pick<MatCheckboxChange, 'checked'>): void {
     this.checkboxState['other'] = checked;
     if (checked) {
       if (this.currentOtherOption) {
