@@ -60,6 +60,10 @@
             position: absolute;
             top: -0.25rem;
             right: -0.25rem;
+            --mat-mdc-button-persistent-ripple-color: auto;
+            > .mat-icon {
+              width: auto;
+            }
           }
           p {
             margin: 0;
