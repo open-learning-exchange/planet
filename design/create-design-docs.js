@@ -1,10 +1,11 @@
 const fs = require('fs');
-const mime = require('mime');
-const basePath = require('path').basename(__dirname) + '/';
+const path = require('path');
+const basePath = __dirname;
 
 const readDirectories = (err, directories) => {
   directories.forEach((dir) => {
-    fs.stat(basePath + dir, (err, stat) => {
+    const dirFullPath = path.join(basePath, dir);
+    fs.stat(dirFullPath, (err, stat) => {
       if (stat.isDirectory()) {
         readDir(dir, readFiles(dir));
       }
@@ -14,24 +15,24 @@ const readDirectories = (err, directories) => {
 
 const readFiles = (dirPath) => (err, files) => {
   files.forEach((file) => {
-    const filePath = basePath + dirPath + '/' + file;
+    const filePath = path.join(basePath, dirPath, file);
     fs.stat(filePath, (err, stat) => {
-      if (mime.getType(file) === 'application/javascript' && file !== 'create-design-docs.js') {
-        writeDesignDoc(require('./' + dirPath + '/' + file), filePath);
+      if (path.extname(file) === '.js' && file !== 'create-design-docs.js') {
+        const modulePath = './' + path.join(dirPath, file);
+        writeDesignDoc(require(modulePath), filePath);
       }
     });
   });
 };
 
 const readDir = (dirPath, callback) => {
-  fs.readdir(basePath + dirPath, callback);
+  fs.readdir(path.join(basePath, dirPath), callback);
 };
 
 const writeDesignDoc = (design, filePath) => {
-
   fs.writeFile(filePath + 'on', JSON.stringify(recurseObject(design)), (err) => {
     if (err) {
-      console.log(err);
+      console.error('Error writing design doc for:', filePath, err);
     }
   });
 };
