@@ -3,7 +3,7 @@ module.exports = {
     "surveyData": {
       "map": function(doc) {
         if (doc.type === 'survey') {
-          var teamId = doc.team && doc.team._id ? doc.team._id : null;
+          var teamId = doc.team && doc.team._id ? doc.team._id : (doc.parent && doc.parent.teamId ? doc.parent.teamId : null);
           var status = doc.status || 'pending';
 
           // Emit for counting

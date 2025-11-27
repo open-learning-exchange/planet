@@ -208,7 +208,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or  adopted
+        // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
         // community surveys that can be adopted & team hasn't adopted yet
@@ -465,7 +465,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     teamObservable.subscribe((team: any) => {
       const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-      this.submissionsService.createSubmission(survey, 'survey', {}, teamInfo).subscribe((res: any) => {
+      const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
+      this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo).subscribe((res: any) => {
         this.router.navigate([
           this.teamId ? 'surveys/dispense' : 'dispense',
           { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
