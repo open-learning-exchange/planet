@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
@@ -82,12 +82,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.couchService.checkAuthorization(this.dbName)
+      .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().subscribe(surveys => {
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
     });
-    this.chatService.listAIProviders().subscribe((providers) => {
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
       this.availableAIProviders = providers;
     });
   }
@@ -106,49 +107,98 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  private countSubmissionsForSurvey(surveyId: string, countMap: Map<any, any>, targetTeamId: string | null): number {
+    if (!countMap.has(surveyId)) {
+      return 0;
+    }
+
+    const surveyTeamCounts = countMap.get(surveyId);
+    if (targetTeamId) {
+      return surveyTeamCounts.has(targetTeamId) ? (surveyTeamCounts.get(targetTeamId)['complete'] || 0) : 0;
+    }
+
+    let count = 0;
+    surveyTeamCounts.forEach(statusCounts => {
+      count += statusCounts['complete'] || 0;
+    });
+    return count;
+  }
+
   private loadSurveys() {
     this.isLoading = true;
     const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
     forkJoin([
       receiveData('exams', 'surveys'),
-      receiveData('submissions', 'survey'),
-      this.couchService.findAll('courses')
-    ]).subscribe(([ allSurveys, submissions, courses ]: any) => {
+      this.couchService.get('submissions/_design/surveyData/_view/submissionCounts?group=true'),
+      this.couchService.findAll('courses'),
+      this.couchService.get('submissions/_design/surveyData/_view/parentSurveys')
+    ]).subscribe(([ allSurveys, submissionCounts, courses, parentSurveyRows ]: any) => {
+      const countMap = new Map();
+      submissionCounts.rows.forEach(row => {
+        const [ parentId, teamId, status ] = row.key;
+        let parentMap = countMap.get(parentId);
+        if (!parentMap) {
+          parentMap = new Map();
+          countMap.set(parentId, parentMap);
+        }
+
+        let teamCounts = parentMap.get(teamId);
+        if (!teamCounts) {
+          teamCounts = {};
+          parentMap.set(teamId, teamCounts);
+        }
+        teamCounts[status] = row.value;
+      });
+
       const teamSurveys = allSurveys.filter((survey: any) => survey.sourceSurveyId);
-      const findSurveyInSteps = (steps, survey) => steps.findIndex((step: any) => step.survey && step.survey._id === survey._id);
+      const teamSurveysMap = new Map<string, any[]>();
+      teamSurveys.forEach(ts => {
+        const sourceId = ts.sourceSurveyId;
+        if (!teamSurveysMap.has(sourceId)) {
+          teamSurveysMap.set(sourceId, []);
+        }
+        teamSurveysMap.get(sourceId).push(ts);
+      });
+
+      const surveyCourseMap = new Map<string, any>();
+      courses.forEach((course: any) => {
+        if (course.steps && Array.isArray(course.steps)) {
+          course.steps.forEach((step: any) => {
+            if (step.survey && step.survey._id && !surveyCourseMap.has(step.survey._id)) {
+              surveyCourseMap.set(step.survey._id, course);
+            }
+          });
+        }
+      });
+
       this.allSurveys = [
         ...allSurveys.map((survey: any) => {
-          const directSubmissions = submissions.filter(sub => sub.parentId === survey._id || sub.parentId?.startsWith(survey._id + '@'));
-          const derivedTeamSurveys = teamSurveys.filter(ts => ts.sourceSurveyId === survey._id);
-          const derivedSubmissions = derivedTeamSurveys.flatMap(ts =>
-            submissions.filter(sub => sub.parentId === ts._id || sub.parentId?.startsWith(ts._id + '@'))
-          );
-          const relatedSubmissions = [...directSubmissions, ...derivedSubmissions];
+          const derivedTeamSurveys = teamSurveysMap.get(survey._id) || [];
           const teamIds = [
             ...new Set([
               survey.teamId,
               ...derivedTeamSurveys.map(ts => ts.teamId)
             ])
           ].filter(Boolean);
+
           const targetTeamId = this.teamId || this.routeTeamId;
+          let taken = this.countSubmissionsForSurvey(survey._id, countMap, targetTeamId);
+          derivedTeamSurveys.forEach(ts => {
+            taken += this.countSubmissionsForSurvey(ts._id, countMap, targetTeamId);
+          });
+
+          const course = surveyCourseMap.get(survey._id);
           return {
             ...survey,
-            teamIds: teamIds,
-            course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-            taken: targetTeamId
-              ? relatedSubmissions.filter((data) => {
-                  if (data.status !== 'complete') { return false };
-                  if (data.team?._id === targetTeamId) { return true };
-                  if (!data.team?._id && data.parent?.teamId === targetTeamId) { return true };
-                  return false;
-                }).length
-              : relatedSubmissions.filter(data => data.status === 'complete').length
+            teamIds,
+            course,
+            courseTitle: course ? course.courseTitle : '',
+            taken
           };
         }),
-        ...this.createParentSurveys(submissions)
+        ...this.createParentSurveys(parentSurveyRows.rows)
       ];
       this.applyViewModeFilter();
-      this.surveys.data = this.surveys.data.map((data: any) => ({ ...data, courseTitle: data.course ? data.course.courseTitle : '' }));
       this.dialogsLoadingService.stop();
       this.isLoading = false;
     });
@@ -169,21 +219,28 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  createParentSurveys(submissions) {
-    return submissions.filter(submission => submission.parent).reduce((parentSurveys, submission) => {
-      const parentSurvey = parentSurveys.find(nSurvey => nSurvey._id === submission.parent._id);
-      if (parentSurvey) {
-        parentSurvey.taken = parentSurvey.taken + (submission.status !== 'pending' ? 1 : 0);
-      } else if (submission.parent.sourcePlanet === this.stateService.configuration.parentCode) {
-        return [ ...parentSurveys, {
-          ...submission.parent,
-          taken: submission.status !== 'pending' ? 1 : 0,
+  createParentSurveys(viewRows) {
+    // viewRows format: { key: parentId, value: { parentDoc, status, teamId } }
+    const parentSurveysMap = new Map();
+
+    viewRows.forEach(row => {
+      const { parentDoc, status, teamId } = row.value;
+      const parentId = parentDoc._id;
+
+      if (parentSurveysMap.has(parentId)) {
+        const parentSurvey = parentSurveysMap.get(parentId);
+        parentSurvey.taken += (status !== 'pending' ? 1 : 0);
+      } else if (parentDoc.sourcePlanet === this.stateService.configuration.parentCode) {
+        parentSurveysMap.set(parentId, {
+          ...parentDoc,
+          taken: status !== 'pending' ? 1 : 0,
           parent: true,
-          teamId: submission.team?._id
-        } ];
+          teamId
+        });
       }
-      return parentSurveys;
-    }, []);
+    });
+
+    return Array.from(parentSurveysMap.values());
   }
 
   goBack() {
