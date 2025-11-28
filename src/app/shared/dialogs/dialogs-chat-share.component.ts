@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatStepper } from '@angular/material/stepper';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
 } from '@angular/material/legacy-dialog';
@@ -54,7 +54,7 @@ export class DialogsChatShareComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogsChatShareComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
-    private formBuilder: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private newsService: NewsService,
     private teamsService: TeamsService,
     private userService: UserService,
@@ -65,10 +65,10 @@ export class DialogsChatShareComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.communityForm = this.formBuilder.nonNullable.group({
+    this.communityForm = this.fb.group({
       message: ''
     });
-    this.teamForm = this.formBuilder.nonNullable.group({
+    this.teamForm = this.fb.group({
       message: '',
       linkId: '',
       teamType: ''
