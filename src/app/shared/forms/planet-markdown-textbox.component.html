@@ -1,5 +1,6 @@
 
 <td-text-editor
+  *ngIf="editorReady"
   [options]="options"
   [ngClass]="{ 'warn-text-color': errorState }"
   [ngModel]="textValue"
