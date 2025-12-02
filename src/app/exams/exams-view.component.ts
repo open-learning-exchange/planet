@@ -38,6 +38,27 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   question: ExamQuestion;
   stepNum = 0;
   maxQuestions = 0;
+  answerValidator = (ac: AbstractControl<ExamAnswerValue | null>): ValidationErrors | null => {
+    if (typeof ac.value === 'string') {
+      return ac.value.trim() ? null : { required: true };
+    }
+
+    if (Array.isArray(ac.value)) {
+      if (ac.value.length === 0) {
+        return { required: true };
+      }
+      const hasEmptyOther = ac.value.some(option =>
+        this.isOtherOption(option) && (!option.text || !option.text.trim())
+      );
+      return hasEmptyOther ? { required: true } : null;
+    }
+
+    if (this.isOtherOption(ac.value)) {
+      return ac.value.text && ac.value.text.trim() ? null : { required: true };
+    }
+
+    return ac.value !== null && ac.value !== undefined ? null : { required: true };
+  };
   answer = new FormControl<ExamAnswerValue | null>(null, { validators: this.answerValidator });
   statusMessage = '';
   spinnerOn = true;
@@ -393,28 +414,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.answer.setValue(answerValue);
     }
   }
-
-  answerValidator = (ac: AbstractControl<ExamAnswerValue | null>): ValidationErrors | null => {
-    if (typeof ac.value === 'string') {
-      return ac.value.trim() ? null : { required: true };
-    }
-
-    if (Array.isArray(ac.value)) {
-      if (ac.value.length === 0) {
-        return { required: true };
-      }
-      const hasEmptyOther = ac.value.some(option =>
-        this.isOtherOption(option) && (!option.text || !option.text.trim())
-      );
-      return hasEmptyOther ? { required: true } : null;
-    }
-
-    if (this.isOtherOption(ac.value)) {
-      return ac.value.text && ac.value.text.trim() ? null : { required: true };
-    }
-
-    return ac.value !== null && ac.value !== undefined ? null : { required: true };
-  };
 
   setViewAnswerText(answer: any) {
     const answerValue = answer.value as ExamAnswerValue | null;
