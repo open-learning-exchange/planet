@@ -49,7 +49,6 @@
         </mat-tab>
         <mat-tab i18n-label label="Information" *ngIf="isLoggedIn">
           <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
-          <ng-container *ngIf="!planetCode">
           </ng-container>
           <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
