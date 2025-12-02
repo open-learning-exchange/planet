@@ -25,7 +25,7 @@ node_modules/
 !.vscode/extensions.json
 
 # misc
-.angular/cache
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -57,3 +57,4 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
+
