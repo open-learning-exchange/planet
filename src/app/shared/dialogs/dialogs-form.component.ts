@@ -47,8 +47,8 @@ export interface DialogField {
   options?: DialogFieldOption[] | string[] | unknown;
   required?: boolean;
   disabled?: boolean;
-  min?: number | string;
-  max?: number | string;
+  min?: number | string | Date;
+  max?: number | string | Date;
   minLength?: number;
   maxLength?: number;
   inputType?: string;
