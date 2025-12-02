@@ -67,18 +67,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
       )
       .subscribe((achievements) => {
-        this.editForm.patchValue(achievements);
-        this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-        this.editForm.controls.references = this.fb.array(achievements.references || []);
-        this.editForm.controls.links = this.fb.array(achievements.links || []);
-        // Keeping older otherInfo property so we don't lose this info on database
-        this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
-
-        if (this.docInfo._id === achievements._id) {
-          this.docInfo._rev = achievements._rev;
-        }
-        this.captureInitialState();
-        this.onFormChanges();
+        this.applyAchievementsToForm(achievements || {});
       }, (error) => {
         console.log(error);
         this.achievementNotFound = true;
@@ -90,50 +79,27 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
-    this.initialFormValues = JSON.stringify({
-      editForm: {
-        ...this.editForm.value,
-        achievements: this.achievements.value,
-        references: this.references.value,
-        links: this.links.value
-      },
-      profileForm: this.profileForm.value
-    });
+    this.initialFormValues = this.getCurrentFormState();
+    this.hasUnsavedChanges = false;
   }
 
   onFormChanges() {
     this.editForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
       .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.evaluateUnsavedChanges();
       });
 
     this.profileForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
       .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.evaluateUnsavedChanges();
       });
   }
 
@@ -224,7 +190,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       link.title !== '' ? $localize`Edit Link` : $localize`Add Link`,
       [
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
-        { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
+        { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, required: true }
       ],
       this.fb.group({
         ...link,
@@ -245,12 +211,13 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   updateFormArray(formArray: UntypedFormArray, value, index = -1) {
+    this.normalizeDialogControls(value);
     if (index === -1) {
       formArray.push(value);
     } else {
       formArray.setControl(index, value);
     }
-    if (value.contains('date')) {
+    if (value?.contains && value.contains('date')) {
       formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
     }
     this.editForm.updateValueAndValidity();
@@ -279,8 +246,13 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.editForm.updateValueAndValidity();
     this.profileForm.updateValueAndValidity();
     if (this.editForm.valid && this.profileForm.valid) {
-      this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
-      this.hasUnsavedChanges = false;
+      this.updateAchievements(this.docInfo, {
+        ...this.editForm.value,
+        achievements: this.achievements.value,
+        references: this.references.value,
+        links: this.links.value,
+        otherInfo: this.editForm.controls.otherInfo.value
+      }, { ...this.user, ...this.profileForm.value });
     } else {
       this.markAsInvalid(this.editForm);
       this.markAsInvalid(this.profileForm);
@@ -301,6 +273,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.userService.updateUser(userInfo)
     ]).subscribe(() => {
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
+      this.captureInitialState();
       this.goBack();
     }, (err) => {
       this.planetMessageService.showAlert($localize`There was an error updating your achievements`);
@@ -315,6 +288,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     return !this.hasUnsavedChanges;
   }
 
+  onLeaveConfirmed() {
+    this.captureInitialState();
+  }
+
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
     if (this.hasUnsavedChanges) {
@@ -322,4 +299,78 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
   }
 
+  private applyAchievementsToForm(achievements) {
+    const normalizedAchievements = this.normalizeAchievements(achievements);
+
+    this.editForm.patchValue(normalizedAchievements);
+    this.replaceFormArray('achievements', normalizedAchievements.achievements);
+    this.replaceFormArray('references', normalizedAchievements.references);
+    this.replaceFormArray('links', normalizedAchievements.links);
+    // Keeping older otherInfo property so we don't lose this info on database
+    this.replaceFormArray('otherInfo', normalizedAchievements.otherInfo);
+
+    this.updateDocInfoRevision(normalizedAchievements);
+    this.captureInitialState();
+    this.onFormChanges();
+  }
+
+  private replaceFormArray(controlName: string, value: any[]) {
+    this.editForm.setControl(controlName, this.fb.array(value || []));
+  }
+
+  private normalizeAchievements(achievements) {
+    return {
+      ...achievements,
+      achievements: achievements?.achievements || [],
+      references: achievements?.references || [],
+      links: achievements?.links || [],
+      otherInfo: achievements?.otherInfo || [],
+    };
+  }
+
+  private updateDocInfoRevision(achievements) {
+    if (achievements && achievements._rev && (achievements._id === this.docInfo._id || achievements._id === this.user._id)) {
+      this.docInfo = { ...this.docInfo, _id: achievements._id, _rev: achievements._rev };
+    }
+  }
+
+  private getCurrentFormState() {
+    return JSON.stringify({
+      editForm: {
+        ...this.editForm.value,
+        achievements: this.achievements.value,
+        references: this.references.value,
+        links: this.links.value,
+        otherInfo: this.editForm.controls.otherInfo.value
+      },
+      profileForm: this.profileForm.value
+    });
+  }
+
+  private evaluateUnsavedChanges() {
+    this.hasUnsavedChanges = this.getCurrentFormState() !== this.initialFormValues;
+  }
+
+  private normalizeDialogControls(formGroup: UntypedFormGroup) {
+    if (!formGroup?.get) {
+      return;
+    }
+    this.normalizeDateControl(formGroup, 'date');
+    this.normalizeLinkControl(formGroup, 'link');
+    this.normalizeLinkControl(formGroup, 'url');
+  }
+
+  private normalizeDateControl(formGroup: UntypedFormGroup, controlName: string) {
+    const control = formGroup.get(controlName);
+    if (control && control.value instanceof Date) {
+      control.setValue(control.value.toISOString());
+    }
+  }
+
+  private normalizeLinkControl(formGroup: UntypedFormGroup, controlName: string) {
+    const control = formGroup.get(controlName);
+    if (control && typeof control.value === 'string') {
+      control.setValue(control.value.trim());
+    }
+  }
 }
