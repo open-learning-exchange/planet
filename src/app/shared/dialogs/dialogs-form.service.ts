@@ -2,34 +2,13 @@ import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Injectable } from '@angular/core';
-import {
-  AbstractControlOptions,
-  AsyncValidatorFn,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormControlState,
-  FormGroup,
-  ValidatorFn
-} from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormGroup } from '@angular/forms';
 
-export type DialogFieldType =
-  | 'checkbox'
-  | 'textbox'
-  | 'password'
-  | 'selectbox'
-  | 'radio'
-  | 'rating'
-  | 'textarea'
-  | 'markdown'
-  | 'dialog'
-  | 'date'
-  | 'time'
-  | 'toggle'
-  | string;
+type DialogFieldType = | 'checkbox' | 'textbox' | 'password' | 'selectbox' | 'radio'
+  | 'rating' | 'textarea' | 'markdown' | 'dialog' | 'date' | 'time' | 'toggle' | string;
 
-export interface DialogField<TName extends string = string> {
-  name: TName;
+export interface DialogField {
+  name: string;
   type: DialogFieldType;
   placeholder?: string;
   label?: string;
@@ -47,95 +26,39 @@ export interface DialogField<TName extends string = string> {
   [key: string]: unknown;
 }
 
-export interface DialogFormValueMap {
-  [key: string]: unknown;
-}
-
-type DialogControlConfig<TValue> =
-  | TValue
-  | FormControlState<TValue>
-  | FormControl<TValue>
-  | FormGroup<any>
-  | FormArray<any>
-  | [
-    TValue | FormControlState<TValue>,
-    (ValidatorFn | ValidatorFn[] | null)?,
-    (AsyncValidatorFn | AsyncValidatorFn[] | null)?
-  ]
-  | Array<
-    | TValue
-    | FormControlState<TValue>
-    | ValidatorFn
-    | ValidatorFn[]
-    | AsyncValidatorFn
-    | AsyncValidatorFn[]
-  >;
-
-export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
-  [K in keyof T]?: DialogControlConfig<T[K]>;
-} & {
-  [key: string]: unknown;
-};
-
-export type DialogFormControls<T extends DialogFormValueMap> = {
-  [K in keyof T]: FormControl<T[K]> | FormGroup<any> | FormArray<any>;
-};
-
-export type DialogFormGroup<T extends DialogFormValueMap = DialogFormValueMap> = FormGroup<DialogFormControls<T>>;
-
-export type DialogFormGroupInput<T extends DialogFormValueMap> =
-  | DialogFormGroup<T>
-  | DialogFormGroupConfig<T>;
-
-export interface DialogsFormOptions<T extends DialogFormValueMap> {
+export interface DialogsFormOptions {
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
-  onSubmit?: (value: T, form: DialogFormGroup<T>) => void;
+  onSubmit?: (value: any, form: FormGroup) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   [key: string]: unknown;
 }
 
-export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueMap>
-  extends DialogsFormOptions<T> {
+export interface DialogsFormData extends DialogsFormOptions {
   title: string;
   fields: DialogField[];
-  formGroup: DialogFormGroupInput<T>;
+  formGroup: FormGroup | any;
 }
 
 @Injectable()
 export class DialogsFormService {
 
-  private dialogRef: MatDialogRef<DialogsFormComponent>;
+  private dialogRef?: MatDialogRef<DialogsFormComponent>;
 
   constructor(private dialog: MatDialog, private fb: FormBuilder) { }
 
-  public confirm<T extends DialogFormValueMap>(
-    title: string,
-    fields: DialogField[],
-    formGroup: DialogFormGroupInput<T>,
-    autoFocus = false
-  ): Observable<T | undefined> {
-    let dialogRef: MatDialogRef<DialogsFormComponent>;
-    dialogRef = this.dialog.open(DialogsFormComponent, {
+  public confirm(title: string, fields: DialogField[], formGroup: FormGroup | any, autoFocus = false): Observable<any> {
+    const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData>(DialogsFormComponent, {
       width: '600px',
-      autoFocus: autoFocus
+      autoFocus,
+      data: { title, fields, formGroup, closeOnSubmit: true }
     });
-    dialogRef.componentInstance.modalForm = formGroup instanceof FormGroup
-      ? formGroup
-      : this.fb.group(formGroup);
-    dialogRef.componentInstance.title = title;
-    dialogRef.componentInstance.fields = fields;
-    return dialogRef.afterClosed() as Observable<T | undefined>;
+    return dialogRef.afterClosed();
   }
 
-  openDialogsForm<T extends DialogFormValueMap>(
-    title: string,
-    fields: DialogField[],
-    formGroup: DialogFormGroupInput<T>,
-    options: DialogsFormOptions<T> = {}
-  ) {
-    this.dialogRef = this.dialog.open(DialogsFormComponent, {
+  openDialogsForm(title: string, fields: DialogField[], formGroup: FormGroup | any, options: DialogsFormOptions = {}) {
+    this.dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData>(DialogsFormComponent, {
       width: '600px',
       autoFocus: options.autoFocus,
       data: { title, formGroup, fields, ...options }
@@ -143,11 +66,13 @@ export class DialogsFormService {
   }
 
   closeDialogsForm() {
-    this.dialogRef.close();
+    this.dialogRef?.close();
   }
 
   showErrorMessage(errorMessage: string) {
-    this.dialogRef.componentInstance.errorMessage = errorMessage;
+    if (this.dialogRef?.componentInstance) {
+      this.dialogRef.componentInstance.errorMessage = errorMessage;
+    }
   }
 
 }

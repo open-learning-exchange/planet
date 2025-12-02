@@ -1,19 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import {
-  MatLegacyDialog as MatDialog,
-  MatLegacyDialogRef as MatDialogRef,
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
+  MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
 } from '@angular/material/legacy-dialog';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { UserService } from '../user.service';
-import {
-  DialogField,
-  DialogFormValueMap,
-  DialogsFormData
-} from './dialogs-form.service';
+import { DialogField, DialogsFormData } from './dialogs-form.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -64,10 +58,7 @@ export class DialogsFormComponent {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.data.formGroup instanceof FormGroup ?
         this.data.formGroup :
-        this.fb.group(
-          this.data.formGroup,
-          this.data.formOptions || {}
-        );
+        this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
       this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
@@ -87,11 +78,11 @@ export class DialogsFormComponent {
     }
     if (this.data && this.data.onSubmit) {
       this.dialogsLoadingService.start();
-      this.data.onSubmit(mForm.value as DialogFormValueMap, mForm);
+      this.data.onSubmit(mForm.getRawValue(), mForm);
     }
     if (!this.data || this.data.closeOnSubmit === true) {
       this.dialogsLoadingService.stop();
-      dialog.close(mForm.value);
+      dialog.close(mForm.getRawValue());
     }
   }
 
