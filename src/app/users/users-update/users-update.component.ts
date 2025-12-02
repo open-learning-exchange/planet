@@ -81,7 +81,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name') || '';
-    this.couchService.get<UserDocument>(this.dbName + '/org.couchdb.user:' + this.urlName)
+    this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
       .subscribe((data: UserDocument) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
@@ -152,12 +152,12 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     // exports don't break: calculate age from birthYear form validation
     const birthYear = this.editForm.controls.birthYear.value;
     if (birthYear && birthYear.toString().length === 4) {
-      const calculatedAge = new Date().getFullYear() - parseInt(birthYear, 10);
+      const calculatedAge = new Date().getFullYear() - Number(birthYear);
       this.editForm.patchValue({ age: calculatedAge }, { emitEvent: false });
     }
 
     if (!this.editForm.valid) {
-      showFormErrors(this.editForm.controls);
+      showFormErrors(this.editForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
     this.hasUnsavedChanges = this.getHasUnsavedChanges();
