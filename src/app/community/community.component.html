@@ -47,8 +47,21 @@
             <p i18n>No Voices available.</p>
           </ng-template>
         </mat-tab>
-        <mat-tab i18n-label label="Information" *ngIf="isLoggedIn">
+        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
+          <div class="card-grid">
+            <mat-card *ngFor="let councillor of councillors">
+              <planet-teams-member
+                [leadershipTitle]="councillor.doc.leadershipTitle"
+                [member]="councillor"
+                [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                (actionClick)="openChangeTitleDialog($event)">
+              </planet-teams-member>
+            </mat-card>
+          </div>
+        </mat-tab>
+        <mat-tab i18n-label label="Services" *ngIf="isLoggedIn">
           <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
+          <ng-container *ngIf="!planetCode">
           </ng-container>
           <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
           <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
@@ -94,18 +107,6 @@
               <span *ngIf="!deleteMode" i18n>Remove Links</span>
               <span *ngIf="deleteMode" i18n>Done Removing Links</span>
             </button>
-          </div>
-        </mat-tab>
-        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
-          <div class="card-grid">
-            <mat-card *ngFor="let councillor of councillors">
-              <planet-teams-member
-                [leadershipTitle]="councillor.doc.leadershipTitle"
-                [member]="councillor"
-                [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
-                (actionClick)="openChangeTitleDialog($event)">
-              </planet-teams-member>
-            </mat-card>
           </div>
         </mat-tab>
         <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
