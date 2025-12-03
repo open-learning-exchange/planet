@@ -74,11 +74,11 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
-      name: ['', {
+      name: [ '', {
         validators: this.tagNameSyncValidator(),
         asyncValidators: [ this.tagNameAsyncValidator() ]
-      }],
-      attachedTo: [[]]
+      } ],
+      attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -225,11 +225,11 @@ export class PlanetTagInputDialogComponent {
 
   tagForm(tag: any = {}) {
     return this.fb.group({
-      name: [tag.name || '', {
+      name: [ tag.name || '', {
         validators: this.tagNameSyncValidator(),
         asyncValidators: [ this.tagNameAsyncValidator(tag.name) ]
-      }],
-      attachedTo: [this.asArray(tag.attachedTo)]
+      } ],
+      attachedTo: [ this.asArray(tag.attachedTo) ]
     });
   }
 
