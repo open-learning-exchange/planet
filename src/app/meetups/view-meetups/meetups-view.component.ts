@@ -100,9 +100,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   fixEnrolledList(remove: boolean, userName: string) {
     if (remove) {
-      this.members = this.members.filter(name => name !== userName);
+      this.members = this.members.filter(member => member.name !== userName);
     } else {
-      this.members.push(userName);
+      // When a user joins, it's always the current user.
+      const currentUser = this.userService.get();
+      if (currentUser.name === userName) {
+        this.members.push(currentUser);
+      }
     }
   }
 
