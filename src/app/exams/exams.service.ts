@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl, UntypedFormArray, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { CustomValidators } from '../validators/custom-validators';
+import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
+import { StateService } from '../shared/state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExamsService {
+  readonly dbName = 'exams';
 
   constructor(
-    private fb: UntypedFormBuilder
+    private fb: UntypedFormBuilder,
+    private couchService: CouchService,
+    private userService: UserService,
+    private stateService: StateService
   ) {}
 
   newQuestionForm(requireCorrect, initialValue?: any) {
@@ -89,4 +97,15 @@ export class ExamsService {
     });
   }
 
+  createExamDocument(examData: any): Observable<any> {
+    const date = this.couchService.datePlaceholder;
+    const examDocument = {
+      createdDate: date,
+      createdBy: this.userService.get().name,
+      ...examData,
+      updatedDate: date,
+      sourcePlanet: this.stateService.configuration.code
+    };
+    return this.couchService.updateDocument(this.dbName, examDocument);
+  }
 }
