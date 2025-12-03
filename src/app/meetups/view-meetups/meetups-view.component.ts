@@ -16,6 +16,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { User } from '../../users/user.model';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -31,7 +32,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
   canManage = false;
-  members = [];
+  members: User[] = [];
   parent = this.route.snapshot.data.parent;
   listDialogRef: MatDialogRef<DialogsListComponent>;
   currentUserName = this.userService.get().name;
@@ -59,6 +60,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
         this.meetupDetail = meetupArray[0];
+        if (!this.meetupDetail.attendees) {
+          this.meetupDetail.attendees = [];
+        }
       });
     if (this.meetupDetail === undefined) {
       this.route.paramMap
@@ -84,8 +88,12 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     return this.couchService.post('shelf/_find', findDocuments({
       'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
     }, 0)). subscribe((data) => {
-      this.members = data.docs.map((res) => {
+      const userNames = data.docs.map((res) => {
         return res._id.split(':')[1];
+      });
+      const userKeys = userNames.map(name => 'org.couchdb.user:' + name);
+      this.couchService.post('_users/_all_docs', { keys: userKeys, include_docs: true }).subscribe((users) => {
+        this.members = users.rows.map(row => row.doc);
       });
     });
   }
@@ -201,4 +209,28 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleAttendance(member: User) {
+    if (!this.canManage) {
+      return;
+    }
+    const memberId = member._id;
+    const index = this.meetupDetail.attendees.indexOf(memberId);
+    if (index > -1) {
+      this.meetupDetail.attendees.splice(index, 1);
+    } else {
+      this.meetupDetail.attendees.push(memberId);
+    }
+  }
+
+  isAttending(member: User): boolean {
+    return this.meetupDetail && this.meetupDetail.attendees && this.meetupDetail.attendees.includes(member._id);
+  }
+
+  saveAttendance() {
+    this.couchService.updateDocument('meetups', this.meetupDetail).subscribe(() => {
+      this.planetMessageService.showMessage('Attendance saved successfully');
+    }, (error) => {
+      this.planetMessageService.showMessage('Error saving attendance: ' + error.message);
+    });
+  }
 }

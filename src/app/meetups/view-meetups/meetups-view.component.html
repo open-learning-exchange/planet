@@ -46,18 +46,22 @@
       <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
     </div>
     <div *ngIf="!isDialog" class="right-tile">
-      <span><b i18n>Joined Members: ({{members.length}})</b></span>
-      <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
-      <ng-template #memberList>
-        <ul>
-          <li *ngFor="let mem of members">
-            <a [routerLink]="['/users/profile', mem]">
-              <span *ngIf="mem === currentUserName; else otherMember" i18n>{{mem}} (You)</span>
-              <ng-template #otherMember><span>{{mem}}</span></ng-template>
-            </a>
-          </li>
-        </ul>
-      </ng-template>
+      <h3 i18n>Joined Members ({{members.length}})</h3>
+      <p *ngIf="members.length === 0" i18n>No members have joined this meetup</p>
+      <mat-grid-list cols="4" rowHeight="1:1" *ngIf="members.length > 0">
+        <mat-grid-tile *ngFor="let member of members" (click)="toggleAttendance(member)">
+          <div class="member-tile" [class.present]="isAttending(member)">
+            <div class="attendance-indicator">
+              <mat-icon *ngIf="isAttending(member)">check_circle</mat-icon>
+            </div>
+            <img [src]="member.avatar || 'assets/icons/user-avatar-placeholder.png'" alt="{{member.name}}'s avatar" class="avatar">
+            <div class="member-name">{{member.name}}</div>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+      <div class="save-button-container" *ngIf="canManage">
+        <button mat-raised-button color="accent" (click)="saveAttendance()">Save Attendance</button>
+      </div>
     </div>
   </div>
 </div>
