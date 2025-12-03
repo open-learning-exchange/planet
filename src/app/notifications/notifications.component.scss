@@ -24,4 +24,9 @@
       }
     }
   }
+
+  mat-cell p {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 }
