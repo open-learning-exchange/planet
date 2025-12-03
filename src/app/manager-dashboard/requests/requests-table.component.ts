@@ -216,7 +216,9 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     const form = this.fb.nonNullable.group({
       name: this.fb.nonNullable.control(currentName, {
         validators: [ CustomValidators.required ],
-        asyncValidators: [ (control: AbstractControl<string>) => this.validatorService.isUnique$(this.dbName, 'name', control, { exceptions }) ]
+        asyncValidators: [
+          (control: AbstractControl<string>) => this.validatorService.isUnique$(this.dbName, 'name', control, { exceptions })
+        ]
       })
     });
     this.dialogsFormService.openDialogsForm(
@@ -229,8 +231,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   editChildName({ doc, nameDoc }) {
-    return (form: EditChildNameFormGroup) => {
-      const { name } = form.getRawValue();
+    return ({ name }: EditChildNameFormValue) => {
       this.couchService.updateDocument(
         this.dbName,
         { ...nameDoc, 'name': name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
