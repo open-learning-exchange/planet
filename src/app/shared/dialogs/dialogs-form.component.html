@@ -29,7 +29,7 @@
 
       <!-- selectbox -->
       <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
-        <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
+        <mat-select placeholder="{{field.placeholder}}" formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple" [compareWith]="field.compareWith || null">
           <mat-option *ngIf="field.reset" i18n>None</mat-option>
           <mat-option *ngFor="let option of field.options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>

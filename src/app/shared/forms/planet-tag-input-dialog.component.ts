@@ -173,7 +173,8 @@ export class PlanetTagInputDialogComponent {
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
       {
         placeholder: $localize`Subcollection of...`, name: 'attachedTo', type: 'selectbox',
-        options: this.subcollectionOfOptions(tag, this.tags), required: false
+        options: this.subcollectionOfOptions(tag, this.tags), required: false,
+        compareWith: this.compareAttachedTo.bind(this)
       }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
@@ -223,11 +224,10 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagForm(tag: any = {}) {
-    const exception = tag.name || '';
     return this.fb.group({
       name: [tag.name || '', {
         validators: this.tagNameSyncValidator(),
-        asyncValidators: [ this.tagNameAsyncValidator(exception) ]
+        asyncValidators: [ this.tagNameAsyncValidator(tag.name) ]
       }],
       attachedTo: [this.asArray(tag.attachedTo)]
     });
@@ -237,11 +237,23 @@ export class PlanetTagInputDialogComponent {
     return [ CustomValidators.required, (ac: AbstractControl<string>) => ac.value.match('_') ? { noUnderscore: true } : null ];
   }
 
-  tagNameAsyncValidator(exception = ''): AsyncValidatorFn {
-    return (ac: AbstractControl<string>) => this.validatorService.isUnique$(
-      'tags', '_id', ac,
-      { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
-    );
+  tagNameAsyncValidator(originalName = ''): AsyncValidatorFn {
+    return (ac: AbstractControl<string>) => {
+      const exception = originalName && ac.value.toLowerCase() === originalName.toLowerCase()
+        ? ac.value
+        : '';
+      return this.validatorService.isUnique$(
+        'tags', '_id', ac,
+        { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
+      );
+    };
+  }
+
+  compareAttachedTo(a: string[] | null, b: string[] | null): boolean {
+    if (!a && !b) { return true; }
+    if (!a || !b) { return false; }
+    if (a.length !== b.length) { return false; }
+    return a.every((val, idx) => val === b[idx]);
   }
 
   resetValidationAndCheck(form: FormGroup) {
