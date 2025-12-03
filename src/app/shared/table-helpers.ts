@@ -108,8 +108,11 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
-  return (data: any, filter: string) => {
-    return matchAllItems(filterItems, getProperty(data, filterField) || []);
+  return (data: unknown, _filter: string) => {
+    const raw = getProperty(data, filterField);
+    const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+
+    return matchAllItems(filterItems, propItems);
   };
 };
 
