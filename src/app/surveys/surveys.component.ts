@@ -130,14 +130,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
               ...derivedTeamSurveys.map(ts => ts.teamId)
             ])
           ].filter(Boolean);
+          const targetTeamId = this.teamId || this.routeTeamId;
           return {
             ...survey,
             teamIds: teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-            taken: this.teamId || this.routeTeamId
-              ? relatedSubmissions.filter(
-                (data) => data.status === 'complete' &&
-                (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
+            taken: targetTeamId
+              ? relatedSubmissions.filter((data) => {
+                  if (data.status !== 'complete') { return false };
+                  if (data.team?._id === targetTeamId) { return true };
+                  if (!data.team?._id && data.parent?.teamId === targetTeamId) { return true };
+                  return false;
+                }).length
               : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
@@ -404,7 +408,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     teamObservable.subscribe((team: any) => {
       const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-      this.submissionsService.createSubmission(survey, 'survey', {}, teamInfo).subscribe((res: any) => {
+      const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
+      this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo).subscribe((res: any) => {
         this.router.navigate([
           this.teamId ? 'surveys/dispense' : 'dispense',
           { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
@@ -450,7 +455,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validator: (ac: FormGroup<SurveyFilterForm>) =>
+          validators: (ac: FormGroup<SurveyFilterForm>) =>
             Object.values(ac.controls).some(control => control.value) ? null : { required: true }
         }
       }

@@ -390,6 +390,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getChatUsage() {
     this.activityService.getChatHistory().subscribe((data) => {
       this.chatActivities.data = data;
+      this.chatActivities.filter(this.filter);
+      this.setChatUsage();
       this.chatLoading = false;
     });
   }
@@ -402,9 +404,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   getVoicesUsage() {
     this.activityService.getVoicesCreated().subscribe((data) => {
       this.voicesActivities.data = data.map(item => ({
-      ...item,
-      user: item.user?.name || '',
-    }));
+        ...item,
+        user: item.user?.name || '',
+      }));
+      this.voicesActivities.filter(this.filter);
+      this.setVoicesUsage();
       this.voicesLoading = false;
     });
   }
@@ -981,6 +985,53 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  private getChartAsCanvas(chartId: string): HTMLCanvasElement {
+    const chart = this.charts.find(c => c.canvas.id === chartId);
+    if (!chart) {
+      this.planetMessageService.showMessage($localize`Chart not available. Please wait for the chart to load.`);
+      throw new Error(`Chart with id ${chartId} not found`);
+    }
+
+    const canvas = chart.canvas;
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const ctx = tempCanvas.getContext('2d');
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    ctx.drawImage(canvas, 0, 0);
+
+    return tempCanvas;
+  }
+
+  downloadChart(chartId: string) {
+    const canvas = this.getChartAsCanvas(chartId);
+
+    const url = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = `${chartId}-${formatDate(new Date())}.png`;
+    link.href = url;
+    link.click();
+  }
+
+  async copyChartToClipboard(chartId: string) {
+    const canvas = this.getChartAsCanvas(chartId);
+    const blob = await new Promise<Blob>((resolve) => {
+      canvas.toBlob((chartBlob) => resolve(chartBlob), 'image/png');
+    });
+
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+      this.planetMessageService.showMessage($localize`Chart copied to clipboard`);
+    } catch (err) {
+      console.error('Failed to copy chart to clipboard:', err);
+      this.planetMessageService.showAlert($localize`Failed to copy chart to clipboard`);
+    }
+  }
+
   downloadComparisonTableCSV() {
     if (this.comparisonTableData.length === 0) {
       this.planetMessageService.showAlert($localize`No comparison data available`);
@@ -1003,5 +1054,4 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
     this.planetMessageService.showMessage($localize`Comparison table downloaded as CSV`);
   }
-
 }

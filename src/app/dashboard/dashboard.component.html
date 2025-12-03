@@ -11,10 +11,10 @@
     </a>
     <div class="dashboard-name" style="margin-left: 16px;">
       <a [routerLink]="['/users/profile', user.name]" class="profile-link">
-        <h1 class="mat-title">{{displayName | truncateText:(isMobile ? 20 : 40)}} <span *ngIf="!isLoading">({{visits | number}})</span></h1>
+        <h1 class="mat-headline-6">{{displayName | truncateText:(isMobile ? 20 : 40)}} <span *ngIf="!isLoading">({{visits | number}})</span></h1>
       </a>
-      <h1 class="mat-title">
-        <span class="mat-subheading-2">
+      <h1 class="mat-headline-6">
+        <span class="mat-subtitle-1">
           <ng-container *ngFor="let role of roles; last as last">
             <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
           </ng-container>
