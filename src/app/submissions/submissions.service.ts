@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, of, forkJoin, throwError } from 'rxjs';
+import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
 import htmlToPdfmake from 'html-to-pdfmake';
@@ -49,9 +49,15 @@ export class SubmissionsService {
     private chatService: ChatService
   ) { }
 
-  updateSubmissions({ query, opts = {}, onlyBest }: { onlyBest?: boolean, opts?: any, query?: any } = {}) {
+  updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
+    onlyBest?: boolean, opts?: any, query?: any, surveyId?: string, type?: 'exam' | 'survey'
+  } = {}) {
+    const submissionsObs = surveyId && type
+      ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')
+      : this.getSubmissions(query, opts);
+
     forkJoin([
-      this.getSubmissions(query, opts),
+      submissionsObs,
       this.courseService.findCourses([], opts)
     ]).subscribe(([ submissions, courses ]: [any, any]) => {
       this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
@@ -196,25 +202,38 @@ export class SubmissionsService {
     }, []);
   }
 
-  sendSubmissionRequests(users: any[], { parentId, parent }) {
+  sendSubmissionRequests(users: any[], { parentId, parent }, team?: { _id: string, name: string, type: string }) {
+    const queryOr = team ? [{ 'team._id': team._id }] : users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }));
+
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
       'parent': { '_rev': parent._rev },
-      '$or': users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }))
+      '$or': queryOr
     })).pipe(
       switchMap((submissions: any) => {
+        const sender = this.userService.get().name;
+
+        if (team) {
+          const teamSubmissionExists = submissions.docs.some((s: any) => s.team?._id === team._id && s.parent._rev === parent._rev);
+          if (teamSubmissionExists) {
+            return of({});
+          }
+          return this.couchService.bulkDocs('submissions', [
+            this.createNewSubmission({ user: {}, parentId, parent, type: 'survey', sender, team })
+          ]);
+        }
+
         const newSubmissionUsers = users.filter((user: any) =>
           submissions.docs.findIndex((s: any) => (s.user._id === user._id && s.parent._rev === parent._rev)) === -1
         );
-        const sender = this.userService.get().name;
-        return this.couchService.updateDocument('submissions/_bulk_docs', {
-          'docs': newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
-        });
+        return this.couchService.bulkDocs('submissions',
+          newSubmissionUsers.map((user) => this.createNewSubmission({ user, parentId, parent, type: 'survey', sender }))
+        );
       })
     );
   }
 
-  createSubmission(parent: any, type: string, user: any = {}, team?: string) {
+  createSubmission(parent: any, type: string, user: any = {}, team?: { _id: string, name: string, type: string }) {
     return this.couchService.updateDocument('submissions', this.createNewSubmission({ parentId: parent._id, parent, user, type, team }));
   }
 
@@ -257,31 +276,43 @@ export class SubmissionsService {
     }
   }
 
+  getSubmissionsIncludingDerived(surveyId: string, type: 'exam' | 'survey', statusFilter: string): Observable<any[]> {
+    return this.couchService.findAll('exams', findDocuments({ sourceSurveyId: surveyId })).pipe(
+      switchMap((teamSurveys: any[]) => {
+        const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
+        const query = findDocuments({ 'parent._id': { '$in': allSurveyIds }, type, status: statusFilter });
+
+        return this.getSubmissions(query);
+      })
+    );
+  }
+
   getSubmissionsExport(exam, type: 'exam' | 'survey') {
-    const query = findDocuments({ 'parent._id': exam._id, type, status: 'complete' });
-    return forkJoin([ this.getSubmissions(query), this.couchService.currentTime(), of(exam.questions.map(question => question.body)) ]);
+    return forkJoin([
+      this.getSubmissionsIncludingDerived(exam._id, type, 'complete'),
+      this.couchService.currentTime(),
+      of(exam.questions.map(question => question.body))
+    ]);
   }
 
   exportSubmissionsCsv(exam, type: 'exam' | 'survey', team?: string) {
-    return this.getSubmissionsExport(exam, type).pipe(switchMap(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
-      const normalizedSubmissions = submissions.map(sub => ({
-        ...sub,
-        parent: {
-          ...sub.parent,
-          questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
-        }
-      }));
-      const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
-      return forkJoin(
-          filteredSubmissions.map(submission => {
-            if (submission.team) {
-              return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
-            }
-            return of(submission);
-          })
-        ).pipe(map((updatedSubmissions: any[]): [any[], number, string[]] => [ updatedSubmissions, time, questionTexts ]));
+    return this.getSubmissionsExport(exam, type).pipe(
+      map(([ submissions, time, questionTexts ]: [any[], number, string[]]) => {
+        const normalizedSubmissions = submissions.map(sub => ({
+          ...sub,
+          parent: {
+            ...sub.parent,
+            questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
+          }
+        }));
+        const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
+        const submissionsWithTeamInfo = filteredSubmissions.map(submission => ({
+          ...submission,
+          teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
+        }));
+        return <[any[], number, string[]]>[submissionsWithTeamInfo, time, questionTexts];
       }),
-      tap(([ updatedSubmissions, time, questionTexts ]) => {
+      tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
         const data = updatedSubmissions.map(submission => {
           const answerIndexes = this.answerIndexes(questionTexts, submission);
@@ -291,6 +322,7 @@ export class SubmissionsService {
               ageFromBirthDate(time, submission.user.birthDate) :
               submission.user.age || 'N/A',
             'Planet': submission.source,
+            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
             [$localize`Date`]: fullLabel(submission.lastUpdateTime),
             [$localize`Group`]: submission.teamInfo?.name || 'N/A',
             [$localize`Group Type`]: submission.teamInfo?.type || 'N/A',
@@ -445,7 +477,7 @@ export class SubmissionsService {
           this.planetMessageService.showAlert($localize`Error exporting PDF: ${error.message}`);
           return throwError(error);
         }),
-        switchMap(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
+        map(([ submissionsTuple, planets ]: [ [ any[], number, string[] ], any[] ]) => {
           const [ submissions, time, questionTexts ] = submissionsTuple;
           const normalizedSubmissions = submissions.map(sub => ({
             ...sub,
@@ -454,26 +486,19 @@ export class SubmissionsService {
               questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
             }
           }));
-          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team === team) : normalizedSubmissions;
+          const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
           if (!filteredSubmissions.length) {
             this.dialogsLoadingService.stop();
             this.planetMessageService.showMessage($localize`There is no survey response`);
-            return of(null);
+            return null;
           }
           const planetsWithName = attachNamesToPlanets(planets);
           const submissionsWithPlanetName = filteredSubmissions.map(submission => ({
             ...submission,
-            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName)
+            planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
+            teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
           }));
-          return forkJoin(
-            submissionsWithPlanetName.map(submission => {
-              if (submission.team) {
-                return this.teamsService.getTeamName(submission.team).pipe(map(teamInfo => ({ ...submission, teamInfo })));
-              }
-              return of(submission);
-            })
-          ).pipe(map((updatedSubmissions: any[]): [ any[], number, string[] ] => [ updatedSubmissions, time, questionTexts ])
-          );
+          return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
         })
       ).subscribe(async tuple => {
         if (!tuple) { return; }
@@ -524,6 +549,7 @@ export class SubmissionsService {
        submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
+      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
       const teamType = submission.teamInfo?.type ? toProperCase(submission.teamInfo.type) : '';
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
@@ -531,6 +557,7 @@ export class SubmissionsService {
         `<h3>${$localize`Submission`} ${index + 1}</h3>`,
         `<ul>`,
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
+        `<li><strong>${$localize`Source:`}</strong> ${planetSource}</li>`,
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
