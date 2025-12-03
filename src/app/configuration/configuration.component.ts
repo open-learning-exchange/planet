@@ -24,7 +24,7 @@ const removeProtocol = (str: string) => {
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html',
   styles: [ `
-    .mat-raised-button {
+    .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
     .configuration-form {
