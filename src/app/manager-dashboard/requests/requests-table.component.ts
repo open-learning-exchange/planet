@@ -24,8 +24,6 @@ interface EditChildNameFormValue {
   name: string;
 }
 
-type EditChildNameFormGroup = FormGroup<{ name: FormControl<EditChildNameFormValue['name']> }>;
-
 @Component({
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html'
