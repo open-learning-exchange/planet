@@ -67,12 +67,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
       )
       .subscribe((achievements) => {
-        this.editForm.patchValue(achievements);
-        this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-        this.editForm.controls.references = this.fb.array(achievements.references || []);
-        this.editForm.controls.links = this.fb.array(achievements.links || []);
+        this.editForm.patchValue({
+          purpose: achievements.purpose,
+          goals: achievements.goals,
+          achievementsHeader: achievements.achievementsHeader,
+          sendToNation: achievements.sendToNation,
+          dateSortOrder: achievements.dateSortOrder || 'none'
+        });
+        this.editForm.setControl('achievements', this.buildAchievementsFormArray(achievements.achievements));
+        this.editForm.setControl('references', this.buildReferencesFormArray(achievements.references));
+        this.editForm.setControl('links', this.buildLinksFormArray(achievements.links));
         // Keeping older otherInfo property so we don't lose this info on database
-        this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
+        this.editForm.setControl('otherInfo', this.buildOtherInfoFormArray(achievements.otherInfo));
 
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
@@ -82,6 +88,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       }, (error) => {
         console.log(error);
         this.achievementNotFound = true;
+        this.captureInitialState();
+        this.onFormChanges();
       });
 
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -104,37 +112,17 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   onFormChanges() {
     this.editForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
-      .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
-      });
+      .subscribe(() => this.updateUnsavedChangesFlag());
 
     this.profileForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
-      .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
-      });
+      .subscribe(() => this.updateUnsavedChangesFlag());
   }
 
   ngOnDestroy() {
@@ -169,6 +157,63 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       ],
       birthplace: ''
     });
+  }
+
+  private buildAchievementsFormArray(achievements: any[] = []) {
+    return this.fb.array(achievements.map((achievement) => this.createAchievementGroup(achievement)));
+  }
+
+  private buildReferencesFormArray(references: any[] = []) {
+    return this.fb.array(references.map((reference) => this.createReferenceGroup(reference)));
+  }
+
+  private buildLinksFormArray(links: any[] = []) {
+    return this.fb.array(links.map((link) => this.createLinkGroup(link)));
+  }
+
+  private buildOtherInfoFormArray(otherInfo: any[] = []) {
+    return this.fb.array(otherInfo);
+  }
+
+  private createAchievementGroup(achievement: any = { title: '', description: '', link: '', date: '' }) {
+    if (typeof achievement === 'string') {
+      achievement = { title: '', description: achievement, link: '', date: '' };
+    }
+    return this.fb.group({
+      title: [ achievement.title || '', CustomValidators.required ],
+      description: [ achievement.description || '' ],
+      link: [ achievement.link || '', [], CustomValidators.validLink ],
+      date: [ achievement.date || '', null, ac => this.validatorService.notDateInFuture$(ac) ]
+    });
+  }
+
+  private createReferenceGroup(reference: any = { name: '' }) {
+    return this.fb.group({
+      name: [ reference.name || '', CustomValidators.required ],
+      relationship: reference.relationship || '',
+      phone: reference.phone || '',
+      email: [ reference.email || '', Validators.email ]
+    });
+  }
+
+  private createLinkGroup(link: any = { title: '', url: '' }) {
+    return this.fb.group({
+      title: [ link.title || '', CustomValidators.required ],
+      url: [ link.url || '', CustomValidators.required, CustomValidators.validLink ]
+    });
+  }
+
+  private updateUnsavedChangesFlag() {
+    const currentState = JSON.stringify({
+      editForm: {
+        ...this.editForm.value,
+        achievements: this.achievements.value,
+        references: this.references.value,
+        links: this.links.value
+      },
+      profileForm: this.profileForm.value
+    });
+    this.hasUnsavedChanges = currentState !== this.initialFormValues;
   }
 
   addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
