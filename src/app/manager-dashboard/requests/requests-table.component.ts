@@ -13,7 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -57,7 +57,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
@@ -211,13 +211,13 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   openEditChildNameDialog(planet) {
     const currentName = planet.nameDoc ? planet.nameDoc.name : planet.doc.name;
     const exceptions = [ currentName ];
-    const form = this.fb.nonNullable.group({
-      name: this.fb.nonNullable.control(currentName, {
+    const form = this.fb.group({
+      name: [currentName, {
         validators: [ CustomValidators.required ],
         asyncValidators: [
           (control: AbstractControl<string>) => this.validatorService.isUnique$(this.dbName, 'name', control, { exceptions })
         ]
-      })
+      }]
     });
     this.dialogsFormService.openDialogsForm(
       $localize`Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
