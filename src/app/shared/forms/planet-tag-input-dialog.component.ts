@@ -1,12 +1,5 @@
 import { Component, Inject, Input, HostListener } from '@angular/core';
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidatorFn
-} from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
 } from '@angular/material/legacy-dialog';
@@ -21,10 +14,10 @@ import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
-type TagFormControls = {
-  name: FormControl<string>;
-  attachedTo: FormControl<string[]>;
-};
+interface TagFormValue {
+  name: string;
+  attachedTo: string[];
+}
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -39,6 +32,16 @@ export class PlanetTagInputDialogComponent {
   filterValue = '';
   mode = 'filter';
   _selectMany = true;
+  addTagForm: FormGroup;
+  newTagInfo: { id: string, parentIds?: string[] };
+  isUserAdmin = false;
+  subcollectionIsOpen = new Map();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  isInMap = isInMap;
+  get okClickValue() {
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
+  }
   get selectMany() {
     return this._selectMany;
   }
@@ -46,22 +49,12 @@ export class PlanetTagInputDialogComponent {
     this._selectMany = value;
     this.data.reset(value);
   }
-  addTagForm: FormGroup<TagFormControls>;
-  newTagInfo: { id: string, parentIds?: string[] };
-  isUserAdmin = false;
-  isInMap = isInMap;
-  subcollectionIsOpen = new Map();
-  get okClickValue() {
-    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
-  }
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
@@ -80,12 +73,12 @@ export class PlanetTagInputDialogComponent {
         this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
-    this.addTagForm = this.fb.nonNullable.group({
-      name: this.fb.nonNullable.control('', {
+    this.addTagForm = this.fb.group({
+      name: ['', {
         validators: this.tagNameSyncValidator(),
         asyncValidators: [ this.tagNameAsyncValidator() ]
-      }),
-      attachedTo: this.fb.nonNullable.control([])
+      }],
+      attachedTo: [[]]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -165,7 +158,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   editTagClick(event, tag) {
-    const onSubmit = ((newTag) => {
+    const onSubmit = ((newTag: TagFormValue) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage($localize`Collection updated`);
@@ -180,7 +173,7 @@ export class PlanetTagInputDialogComponent {
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
       {
         placeholder: $localize`Subcollection of...`, name: 'attachedTo', type: 'selectbox',
-        options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
+        options: this.subcollectionOfOptions(tag, this.tags), required: false
       }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
@@ -190,8 +183,14 @@ export class PlanetTagInputDialogComponent {
   }
 
   subcollectionOfOptions(tag, tags) {
-    return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
-      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
+    const filtered = tags
+      .filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: [t._id || t.name] }));
+
+    return [
+      { name: 'None', value: [] },
+      ...filtered
+    ];
   }
 
   deleteTag(event, tag) {
@@ -224,13 +223,13 @@ export class PlanetTagInputDialogComponent {
   }
 
   tagForm(tag: any = {}) {
-    const exception = tag.name ? tag.name.toLowerCase() : '';
-    return this.fb.nonNullable.group({
-      name: this.fb.nonNullable.control(tag.name || '', {
+    const exception = tag.name || '';
+    return this.fb.group({
+      name: [tag.name || '', {
         validators: this.tagNameSyncValidator(),
         asyncValidators: [ this.tagNameAsyncValidator(exception) ]
-      }),
-      attachedTo: this.fb.nonNullable.control(this.asArray(tag.attachedTo))
+      }],
+      attachedTo: [this.asArray(tag.attachedTo)]
     });
   }
 
@@ -245,7 +244,7 @@ export class PlanetTagInputDialogComponent {
     );
   }
 
-  resetValidationAndCheck(form: FormGroup<TagFormControls>) {
+  resetValidationAndCheck(form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       control?.clearValidators();
