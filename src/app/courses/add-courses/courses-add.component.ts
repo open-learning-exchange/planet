@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -19,6 +19,23 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 
+type CourseFormControls = {
+  courseTitle: FormControl<string>;
+  description: FormControl<string>;
+  languageOfInstruction: FormControl<string>;
+  gradeLevel: FormControl<string>;
+  subjectLevel: FormControl<string>;
+  createdDate: FormControl<string | object>;
+  creator: FormControl<string>;
+  sourcePlanet: FormControl<string>;
+  resideOn: FormControl<string>;
+  updatedDate: FormControl<string | object>;
+};
+
+type CourseFormGroup = FormGroup<CourseFormControls>;
+type CourseFormValue = CourseFormGroup['value'];
+type CourseFormState = { form?: Partial<CourseFormValue> & { images?: any[] }; steps?: any[]; tags?: string[]; initialTags?: any[] };
+
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
@@ -31,14 +48,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
-  private _steps = [];
+  private _steps: any[] = [];
   savedCourse: any = null;
   draftExists: boolean;
-  courseForm: UntypedFormGroup;
+  courseForm!: CourseFormGroup;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
-  tags = this.fb.control([]);
+  tags = this.fb.control<string[]>([], { nonNullable: true });
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
@@ -63,7 +80,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -130,23 +147,23 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   createForm() {
     const configuration = this.stateService.configuration;
-    this.courseForm = this.fb.group({
-      courseTitle: [
-        '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(
+    this.courseForm = this.fb.group<CourseFormControls>({
+      courseTitle: this.fb.control('', {
+        validators: CustomValidators.required,
+        asyncValidators: (ac) => this.validatorService.isUnique$(
           this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
-        )
-      ],
-      description: [ '', CustomValidators.requiredMarkdown ],
-      languageOfInstruction: '',
-      gradeLevel: '',
-      subjectLevel: '',
-      createdDate: this.couchService.datePlaceholder,
-      creator: this.userService.get().name + '@' + configuration.code,
-      sourcePlanet: configuration.code,
-      resideOn: configuration.code,
-      updatedDate: this.couchService.datePlaceholder
+        ),
+        nonNullable: true
+      }),
+      description: this.fb.control('', { validators: CustomValidators.requiredMarkdown, nonNullable: true }),
+      languageOfInstruction: this.fb.control('', { nonNullable: true }),
+      gradeLevel: this.fb.control('', { nonNullable: true }),
+      subjectLevel: this.fb.control('', { nonNullable: true }),
+      createdDate: this.fb.control<string | object>(this.couchService.datePlaceholder, { nonNullable: true }),
+      creator: this.fb.control(this.userService.get().name + '@' + configuration.code, { nonNullable: true }),
+      sourcePlanet: this.fb.control(configuration.code, { nonNullable: true }),
+      resideOn: this.fb.control(configuration.code, { nonNullable: true }),
+      updatedDate: this.fb.control<string | object>(this.couchService.datePlaceholder, { nonNullable: true })
     });
   }
 
@@ -165,11 +182,24 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.courseForm.controls.courseTitle.updateValueAndValidity();
   }
 
-  setFormAndSteps(course: any) {
-    this.courseForm.patchValue(course.form);
-    this.images = course.form.images || [];
-    this.steps = course.steps || [];
-    this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+  setFormAndSteps(course: CourseFormState) {
+    const form: CourseFormState['form'] = course.form ?? {};
+    const formValue: Partial<CourseFormValue> = {
+      courseTitle: form?.courseTitle ?? this.courseForm.controls.courseTitle.value,
+      description: form?.description ?? this.courseForm.controls.description.value,
+      languageOfInstruction: form?.languageOfInstruction ?? this.courseForm.controls.languageOfInstruction.value,
+      gradeLevel: form?.gradeLevel ?? this.courseForm.controls.gradeLevel.value,
+      subjectLevel: form?.subjectLevel ?? this.courseForm.controls.subjectLevel.value,
+      createdDate: this.normalizeDateValue(form?.createdDate ?? this.courseForm.controls.createdDate.value),
+      creator: form?.creator ?? this.courseForm.controls.creator.value,
+      sourcePlanet: form?.sourcePlanet ?? this.courseForm.controls.sourcePlanet.value,
+      resideOn: form?.resideOn ?? this.courseForm.controls.resideOn.value,
+      updatedDate: this.normalizeDateValue(form?.updatedDate ?? this.courseForm.controls.updatedDate.value)
+    };
+    this.courseForm.patchValue(formValue);
+    this.images = form?.images ?? [];
+    this.steps = course.steps ?? [];
+    this.tags.setValue(course.tags ?? (course.initialTags ?? []).map((tag: any) => tag._id) ?? []);
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -211,11 +241,13 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCourse(courseInfo, shouldNavigate) {
-    if (courseInfo.createdDate.constructor === Object) {
-      courseInfo.createdDate = this.couchService.datePlaceholder;
-    }
-    const newCourse = { ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps), ...this.documentInfo };
+  updateCourse(courseInfo: CourseFormValue, shouldNavigate: boolean) {
+    const courseWithDates: CourseFormValue = {
+      ...courseInfo,
+      createdDate: this.normalizeDateValue(courseInfo.createdDate),
+      updatedDate: this.normalizeDateValue(courseInfo.updatedDate)
+    };
+    const newCourse = { ...this.convertMarkdownImagesText({ ...courseWithDates, images: this.images }, this.steps), ...this.documentInfo };
     this.couchService.updateDocument(
       this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
@@ -318,6 +350,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   convertMarkdownImagesText(course, steps) {
     return { ...this.coursesService.storeMarkdownImages({ ...course, steps }) };
+  }
+
+  private normalizeDateValue(value: unknown): string | object {
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (value && typeof value === 'object') {
+      return value;
+    }
+    return this.couchService.datePlaceholder;
   }
 
 }
