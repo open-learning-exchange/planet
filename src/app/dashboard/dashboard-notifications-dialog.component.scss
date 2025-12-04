@@ -1,0 +1,43 @@
+/* Apply adjustments only on small screens */
+@media (max-width: 600px) {
+
+  p[mat-dialog-title] {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+  }
+
+  mat-dialog-content {
+    padding: 0 6px;
+  }
+
+  mat-action-list button[mat-list-item] {
+    font-size: 0.8rem;
+    padding: 6px 4px;
+    display: flex;
+    flex-wrap: wrap;     // allow text to break instead of overflow
+    align-items: center;
+    gap: 6px;
+    white-space: normal;
+  }
+
+  .notification-title {
+    font-size: 0.85rem;
+    min-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1 1 auto;
+  }
+
+  /* % Complete text */
+  button[mat-list-item] span:last-child {
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  mat-dialog-actions button {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}
