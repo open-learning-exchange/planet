@@ -23,6 +23,7 @@ export interface DialogField<TName extends string = string> {
   authorizedRoles?: string | string[];
   imageGroup?: unknown;
   db?: string;
+  compareWith?: (a: any, b: any) => boolean;
   [key: string]: unknown;
 }
 

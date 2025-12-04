@@ -1,5 +1,5 @@
 import { Component, Inject, Input, HostListener } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormGroup, ValidatorFn } from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
 } from '@angular/material/legacy-dialog';
@@ -14,6 +14,11 @@ import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
+interface TagFormValue {
+  name: string;
+  attachedTo: string[];
+}
+
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styleUrls': [ 'planet-tag-input-dialog.scss' ]
@@ -27,6 +32,16 @@ export class PlanetTagInputDialogComponent {
   filterValue = '';
   mode = 'filter';
   _selectMany = true;
+  addTagForm: FormGroup;
+  newTagInfo: { id: string, parentIds?: string[] };
+  isUserAdmin = false;
+  subcollectionIsOpen = new Map();
+  deviceType: DeviceType;
+  deviceTypes: typeof DeviceType = DeviceType;
+  isInMap = isInMap;
+  get okClickValue() {
+    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
+  }
   get selectMany() {
     return this._selectMany;
   }
@@ -34,22 +49,12 @@ export class PlanetTagInputDialogComponent {
     this._selectMany = value;
     this.data.reset(value);
   }
-  addTagForm: UntypedFormGroup;
-  newTagInfo: { id: string, parentId?: string };
-  isUserAdmin = false;
-  isInMap = isInMap;
-  subcollectionIsOpen = new Map();
-  get okClickValue() {
-    return { wasOkClicked: true, indeterminate: this.indeterminate ? mapToArray(this.indeterminate, true) : [] };
-  }
-  deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
 
   constructor(
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
@@ -69,7 +74,10 @@ export class PlanetTagInputDialogComponent {
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
     this.addTagForm = this.fb.group({
-      name: [ '', this.tagNameSyncValidator(), ac => this.tagNameAsyncValidator(ac) ],
+      name: [ '', {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: [ this.tagNameAsyncValidator() ]
+      } ],
       attachedTo: [ [] ]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
@@ -84,8 +92,9 @@ export class PlanetTagInputDialogComponent {
     this.tags = this.filterTags(this.filterValue);
     this.mode = this.data.mode;
     if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
-      const { parentId, id } = this.newTagInfo;
-      const parentTag = parentId.length > 0 ? this.data.tags.find(tag => tag._id === parentId) : undefined;
+      const { parentIds, id } = this.newTagInfo;
+      const parentTagId = parentIds?.[0];
+      const parentTag = parentTagId ? this.data.tags.find(tag => tag._id === parentTagId) : undefined;
       this.tagChange(id, { parentTag });
     }
     this.newTagInfo = undefined;
@@ -136,7 +145,7 @@ export class PlanetTagInputDialogComponent {
     const onAllFormControls = (func: any) => Object.entries(this.addTagForm.controls).forEach(func);
     if (this.addTagForm.valid) {
       this.tagsService.updateTag({ ...this.addTagForm.value, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagInfo = { id: res[0].id, parentId: this.addTagForm.controls.attachedTo.value };
+        this.newTagInfo = { id: res[0].id, parentIds: this.addTagForm.controls.attachedTo.value };
         this.planetMessageService.showMessage($localize`New collection added`);
         onAllFormControls(([ key, value ]) => value.updateValueAndValidity());
         this.data.initTags();
@@ -149,7 +158,7 @@ export class PlanetTagInputDialogComponent {
   }
 
   editTagClick(event, tag) {
-    const onSubmit = ((newTag) => {
+    const onSubmit = ((newTag: TagFormValue) => {
       this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage($localize`Collection updated`);
@@ -164,7 +173,8 @@ export class PlanetTagInputDialogComponent {
     const subcollectionField = tag.subTags && tag.subTags.length > 0 ? [] : [
       {
         placeholder: $localize`Subcollection of...`, name: 'attachedTo', type: 'selectbox',
-        options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
+        options: this.subcollectionOfOptions(tag, this.tags), required: false,
+        compareWith: this.compareAttachedTo.bind(this)
       }
     ];
     this.dialogsFormService.openDialogsForm('Edit Collection', [
@@ -174,8 +184,14 @@ export class PlanetTagInputDialogComponent {
   }
 
   subcollectionOfOptions(tag, tags) {
-    return tags.filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
-      .map((t: any) => ({ name: t.name, value: t._id || t.name }));
+    const filtered = tags
+      .filter((t: any) => t.name !== tag.name && (t.attachedTo === undefined || t.attachedTo.length === 0))
+      .map((t: any) => ({ name: t.name, value: [t._id || t.name] }));
+
+    return [
+      { name: 'None', value: [] },
+      ...filtered
+    ];
   }
 
   deleteTag(event, tag) {
@@ -209,34 +225,45 @@ export class PlanetTagInputDialogComponent {
 
   tagForm(tag: any = {}) {
     return this.fb.group({
-      name: [
-        tag.name || '',
-        this.tagNameSyncValidator(),
-        ac => this.tagNameAsyncValidator(ac, ac.value.toLowerCase() === tag.name.toLowerCase() ? ac.value : '')
-      ],
-      attachedTo: [ tag.attachedTo || [] ]
+      name: [ tag.name || '', {
+        validators: this.tagNameSyncValidator(),
+        asyncValidators: [ this.tagNameAsyncValidator(tag.name) ]
+      } ],
+      attachedTo: [ this.asArray(tag.attachedTo) ]
     });
   }
 
-  tagNameSyncValidator() {
-    return [ CustomValidators.required, ac => ac.value.match('_') ? { noUnderscore: true } : null ];
+  tagNameSyncValidator(): ValidatorFn[] {
+    return [ CustomValidators.required, (ac: AbstractControl<string>) => ac.value.match('_') ? { noUnderscore: true } : null ];
   }
 
-  tagNameAsyncValidator(ac, exception = '') {
-    return this.validatorService.isUnique$(
-      'tags', '_id', ac,
-      { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
-    );
+  tagNameAsyncValidator(originalName = ''): AsyncValidatorFn {
+    return (ac: AbstractControl<string>) => {
+      const exception = originalName && ac.value.toLowerCase() === originalName.toLowerCase()
+        ? ac.value
+        : '';
+      return this.validatorService.isUnique$(
+        'tags', '_id', ac,
+        { exceptions: [ exception ], selectors: { _id: `${this.data.db}_${ac.value.toLowerCase()}` } }
+      );
+    };
   }
 
-  resetValidationAndCheck(form: UntypedFormGroup) {
+  compareAttachedTo(a: string[] | null, b: string[] | null): boolean {
+    if (!a && !b) { return true; }
+    if (!a || !b) { return false; }
+    if (a.length !== b.length) { return false; }
+    return a.every((val, idx) => val === b[idx]);
+  }
+
+  resetValidationAndCheck(form: FormGroup) {
     Object.keys(form.controls).forEach(key => {
       const control = form.get(key);
       control?.clearValidators();
 
       if (key === 'name') {
         control?.setValidators(this.tagNameSyncValidator());
-        control?.setAsyncValidators(ac => this.tagNameAsyncValidator(ac));
+        control?.setAsyncValidators(this.tagNameAsyncValidator());
       }
 
       control?.markAsUntouched();
@@ -264,6 +291,13 @@ export class PlanetTagInputDialogComponent {
       return checkValue(iterator);
     };
     return checkValue(this.selected.entries());
+  }
+
+  private asArray(value: string[] | string | undefined): string[] {
+    if (Array.isArray(value)) {
+      return value;
+    }
+    return value ? [ value ] : [];
   }
 
 }
