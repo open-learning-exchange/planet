@@ -1,43 +1,51 @@
-/* Apply adjustments only on small screens */
-@media (max-width: 600px) {
-
+/* MOBILE ONLY (screens 480px and below) */
+@media screen and (max-width: 480px) {
   p[mat-dialog-title] {
-    font-size: 0.9rem;
-    line-height: 1.2;
-    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.3;
+    text-align: center;
+    word-break: break-word;
   }
 
   mat-dialog-content {
-    padding: 0 6px;
+    padding: 0 8px;
   }
 
   mat-action-list button[mat-list-item] {
-    font-size: 0.8rem;
-    padding: 6px 4px;
+    font-size: 13px;
+    padding: 8px 4px;
     display: flex;
-    flex-wrap: wrap;     // allow text to break instead of overflow
     align-items: center;
     gap: 6px;
-    white-space: normal;
+    flex-wrap: wrap; /* prevents text from stacking badly */
+    white-space: normal !important;
   }
 
-  .notification-title {
-    font-size: 0.85rem;
-    min-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .task-todo {
+    font-size: 0.6rem;
+    line-height: 1.2;
+    word-break: break-word;
+    text-align: left;
+  }
+
+  .rate-done {
+    font-size: 0.6rem;
+    line-height: 1.2;
+    text-align: right;
+  }
+
+  .toolbar-fill {
     flex: 1 1 auto;
+    min-width: 5px;
   }
 
-  /* % Complete text */
-  button[mat-list-item] span:last-child {
-    font-size: 0.75rem;
-    flex-shrink: 0;
+  mat-divider {
+    margin-top: 6px;
   }
 
   mat-dialog-actions button {
-    font-size: 0.85rem;
-    padding: 6px 12px;
+    font-size: 14px;
+    padding: 6px 16px;
+    margin: auto;
   }
 }
