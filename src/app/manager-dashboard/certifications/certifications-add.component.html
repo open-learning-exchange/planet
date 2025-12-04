@@ -21,6 +21,10 @@
         <input matInput i18n-placeholder placeholder="Certificate Name" formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <mat-form-field class="full-width">
+        <input matInput i18n-placeholder placeholder="Template URL" formControlName="templateUrl">
+      </mat-form-field>
+      <input type="file" (change)="onFileSelected($event)" accept="image/*,application/pdf">
     </form>
     <planet-courses *ngIf="courseIds.length > 0" [isForm]="true" [includeIds]="courseIds"></planet-courses>
   </div>

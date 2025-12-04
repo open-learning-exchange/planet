@@ -11,6 +11,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
+import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -48,7 +49,8 @@ export class CoursesService {
     private stateService: StateService,
     private tagsService: TagsService,
     private markdownService: MarkdownService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private certificationsService: CertificationsService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
       if (res !== undefined) {
@@ -160,6 +162,7 @@ export class CoursesService {
     })).subscribe(() => {
       this.progressUpdateInProgress = false;
       this.requestCourse({ courseId });
+      this.certificationsService.checkAndAwardCertificates(userId || this.userService.get()._id);
     });
   }
 

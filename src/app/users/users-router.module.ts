@@ -16,7 +16,8 @@ const routes: Routes = [
   { path: 'update/:name', component: UsersUpdateComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'profile/:name/achievements', component: UsersAchievementsComponent, data: { requiresAuth: false } },
   { path: 'profile/:name/achievements/update', component: UsersAchievementsUpdateComponent, canDeactivate: [UnsavedChangesGuard] },
-  { path: 'submission', component: UsersUpdateComponent, data: { submission: true }, canDeactivate: [UnsavedChangesGuard] }
+  { path: 'submission', component: UsersUpdateComponent, data: { submission: true }, canDeactivate: [UnsavedChangesGuard] },
+  { path: 'my-achievements', component: UsersAchievementsComponent }
 ];
 
 @NgModule({
