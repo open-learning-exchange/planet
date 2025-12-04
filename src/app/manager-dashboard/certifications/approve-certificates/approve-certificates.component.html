@@ -1,0 +1,40 @@
+<mat-toolbar>
+  <span i18n>Approve Certificates</span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span i18n>Pending Certificates</span>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <table mat-table [dataSource]="pendingCertificates" class="mat-elevation-z8">
+      <!-- User Name Column -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef i18n>Student</th>
+        <td mat-cell *matCellDef="let certificate">{{ certificate.fullName }}</td>
+      </ng-container>
+
+      <!-- Course Name Column -->
+      <ng-container matColumnDef="courseName">
+        <th mat-header-cell *matHeaderCellDef i18n>Course</th>
+        <td mat-cell *matCellDef="let certificate">{{ certificate.courseName }}</td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef i18n>Actions</th>
+        <td mat-cell *matCellDef="let certificate">
+          <button mat-icon-button color="primary" (click)="approveCertificate(certificate)">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="denyCertificate(certificate)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['fullName', 'courseName', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['fullName', 'courseName', 'actions'];"></tr>
+    </table>
+  </div>
+</div>

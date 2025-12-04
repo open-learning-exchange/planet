@@ -11,7 +11,9 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
+import { AwardedCertificate } from './awarded-certificate.model';
 import { formatStringDate, pdfMake, pdfFonts } from '../../shared/utils';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -28,6 +30,7 @@ export class UsersAchievementsComponent implements OnInit {
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
+  awardedCertificates: AwardedCertificate[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
@@ -69,6 +72,50 @@ export class UsersAchievementsComponent implements OnInit {
       this.isLoading = false;
     });
     this.coursesService.requestCourses();
+    this.loadAwardedCertificates();
+  }
+
+  loadAwardedCertificates(): void {
+    const userId = this.userService.get()._id;
+    this.couchService.findAll('awarded_certificates').subscribe((certificates: any) => {
+      this.awardedCertificates = certificates.filter(cert => cert.userId === userId && cert.status === 'approved');
+    });
+  }
+
+  async downloadCertificate(certificate: AwardedCertificate): Promise<void> {
+    const url = `${environment.couchAddress}/${certificate.templateUrl}`;
+    const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    const pages = pdfDoc.getPages();
+    const firstPage = pages[0];
+
+    const { width, height } = firstPage.getSize();
+    firstPage.drawText(certificate.fullName, {
+      x: 5,
+      y: height / 2 + 30,
+      font: helveticaFont,
+      size: 50,
+      color: rgb(0, 0, 0),
+    });
+
+    firstPage.drawText(`For completing the course: ${certificate.courseName}`, {
+        x: 5,
+        y: height / 2 - 30,
+        font: helveticaFont,
+        size: 20,
+        color: rgb(0, 0, 0),
+      });
+
+    const pdfBytes = await pdfDoc.save();
+
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${certificate.courseName}-certificate.pdf`;
+    link.click();
   }
 
   initAchievements(id) {

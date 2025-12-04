@@ -48,13 +48,18 @@
           <h3 i18n>My Goals</h3>
           <td-markdown [content]="achievements.goals"></td-markdown>
         </div>
-        <ng-container *planetBeta>
-          <div *ngIf="certifications.length > 0">
+        <ng-container>
+          <div *ngIf="awardedCertificates.length > 0">
             <mat-divider></mat-divider>
             <h3 i18n>My Certifications</h3>
             <mat-list class="certs-list">
-              <mat-list-item *ngFor="let certification of certifications">
-                <span class="cert-item">{{certification.name}}</span>
+              <mat-list-item *ngFor="let certificate of awardedCertificates">
+                <mat-icon mat-list-icon>emoji_events</mat-icon>
+                <div mat-line>{{ certificate.courseName }}</div>
+                <div mat-line>Issued on: {{ certificate.issuedAt | date }}</div>
+                <button mat-icon-button (click)="downloadCertificate(certificate)">
+                  <mat-icon>download</mat-icon>
+                </button>
               </mat-list-item>
             </mat-list>
           </div>

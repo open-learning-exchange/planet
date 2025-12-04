@@ -9,10 +9,9 @@ import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-
-interface CertificationFormModel {
-  name: string;
-}
+import { Certification } from './certification.model';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './certifications-add.component.html'
@@ -43,7 +42,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         asyncValidators: ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
           selectors: { _id: { '$ne': this.certificateInfo._id || '' } }
         })
-      })
+      }),
+      templateUrl: ['']
     });
   }
 
@@ -52,8 +52,11 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       const id = params.get('id');
       if (id) {
         this.certificateInfo._id = id;
-        this.certificationsService.getCertification(id).subscribe(certification => {
-          this.certificateForm.patchValue({ name: certification.name || '' } as Partial<CertificationFormModel>);
+        this.certificationsService.getCertification(id).subscribe((certification: Certification) => {
+          this.certificateForm.patchValue({
+            name: certification.name || '',
+            templateUrl: certification.templateUrl || ''
+          });
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
@@ -63,6 +66,15 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         this.courseIds = [];
       }
     });
+  }
+
+  attachment: { file: File, name: string };
+
+  onFileSelected(event) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.attachment = { file: file, name: file.name };
+    }
   }
 
   ngAfterViewChecked() {
@@ -83,13 +95,36 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       showFormErrors(this.certificateForm.controls);
       return;
     }
-    const certificateFormValue: CertificationFormModel = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    const certificateFormValue: Certification = this.certificateForm.getRawValue();
+    const certificateDoc = {
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds
-    }).subscribe((res) => {
-      this.certificateInfo = { _id: res.id, _rev: res.rev };
+    };
+
+    if (this.attachment) {
+      certificateDoc._attachments = {
+        [this.attachment.name]: {
+          content_type: this.attachment.file.type,
+          data: this.attachment.file
+        }
+      };
+    }
+
+    this.certificationsService.addCertification(certificateDoc).pipe(
+      switchMap((res: any) => {
+        this.certificateInfo = { _id: res.id, _rev: res.rev };
+        if (this.attachment) {
+          return this.certificationsService.getCertification(res.id).pipe(
+            switchMap((cert: any) => {
+              const updatedCert = { ...cert, templateUrl: `certifications/${res.id}/${this.attachment.name}` };
+              return this.certificationsService.addCertification(updatedCert);
+            })
+          );
+        }
+        return of(res);
+      })
+    ).subscribe((res) => {
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
       );
