@@ -116,7 +116,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.examType = params.get('type') || this.examType;
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
-    const mode = params.get('mode');
+    const mode = this.parseMode(params.get('mode'));
     this.mode = mode || this.mode;
     this.answer.setValue(null);
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
@@ -390,13 +390,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       setSelectMultipleAnswer(rebuilt);
       return;
     }
-    if (this.question.type === 'select' && typeof answer.value === 'object' && !Array.isArray(answer.value)) {
+    if (this.question.type === 'select' && this.isAnswerOption(answer.value)) {
       if (answer.value.id === 'other') {
         const baseOtherOption: ExamOtherAnswerOption = this.currentOtherOption || { id: 'other', text: '', isOther: true };
         this.currentOtherOption = { ...baseOtherOption, text: answer.value.text || '' } as ExamOtherAnswerOption;
         this.answer.setValue(this.currentOtherOption);
       } else {
-        this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text) || null);
+        this.answer.setValue(this.question.choices.find((choice) => choice.id === answer.value.id) || null);
       }
       return;
     }
@@ -449,6 +449,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   updateOtherText(): void {
     this.answer.updateValueAndValidity();
+  }
+
+  private parseMode(mode: string | null): 'grade' | 'view' | 'take' | null {
+    return mode === 'grade' || mode === 'view' || mode === 'take' ? mode : null;
+  }
+
+  private isAnswerOption(value: ExamAnswerValue): value is ExamAnswerOption {
+    return !!value && typeof value === 'object' && !Array.isArray(value) && 'id' in value && 'text' in value;
   }
 
 }
