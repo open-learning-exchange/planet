@@ -2,11 +2,12 @@ import { Component, Inject } from '@angular/core';
 import {
   MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
 } from '@angular/material/legacy-dialog';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { UserService } from '../user.service';
+import { DialogField, DialogsFormData } from './dialogs-form.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -27,19 +28,20 @@ import { UserService } from '../user.service';
 export class DialogsFormComponent {
 
   public title: string;
-  public fields: any;
-  public modalForm: UntypedFormGroup;
-  passwordVisibility = new Map();
+  public fields: DialogField[];
+  public modalForm: FormGroup;
+  passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
   dialogListRef: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
-  private markFormAsTouched (formGroup: UntypedFormGroup) {
-    (<any>Object).values(formGroup.controls).forEach(control => {
-      control.markAsTouched();
-      if (control.controls) {
-        this.markFormAsTouched(control);
+  private markFormAsTouched(control: FormGroup | FormArray<AbstractControl>) {
+    const controls = control instanceof FormGroup ? Object.values(control.controls) : control.controls;
+    controls.forEach(innerControl => {
+      innerControl.markAsTouched();
+      if (innerControl instanceof FormGroup || innerControl instanceof FormArray) {
+        this.markFormAsTouched(innerControl);
       }
     });
   }
@@ -47,14 +49,14 @@ export class DialogsFormComponent {
   constructor(
     public dialogRef: MatDialogRef<DialogsFormComponent>,
     private dialog: MatDialog,
-    private fb: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data,
+    private fb: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public data: DialogsFormData,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
     private userService: UserService
   ) {
     if (this.data && this.data.formGroup) {
-      this.modalForm = this.data.formGroup instanceof UntypedFormGroup ?
+      this.modalForm = this.data.formGroup instanceof FormGroup ?
         this.data.formGroup :
         this.fb.group(this.data.formGroup, this.data.formOptions || {});
       this.title = this.data.title;
@@ -69,7 +71,7 @@ export class DialogsFormComponent {
     }
   }
 
-  onSubmit(mForm, dialog) {
+  onSubmit(mForm: FormGroup, dialog: MatDialogRef<DialogsFormComponent>) {
     if (!mForm.valid) {
       this.markFormAsTouched(mForm);
       return;
@@ -84,26 +86,29 @@ export class DialogsFormComponent {
     }
   }
 
-  togglePasswordVisibility(fieldName) {
+  togglePasswordVisibility(fieldName: string) {
     const visibility = this.passwordVisibility.get(fieldName) || false;
     this.passwordVisibility.set(fieldName, !visibility);
   }
 
-  openDialog(field) {
-    const initialSelection = this.modalForm.controls[field.name].value.map((value: any) => value._id);
+  openDialog(field: DialogField) {
+    const control = this.modalForm.controls[field.name];
+    const currentValue = control.value as Array<{ _id: string }> | null;
+    const initialSelection = (currentValue || []).map((value) => value._id);
     this.dialogsLoadingService.start();
-    this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection).subscribe((data) => {
-      this.dialogsLoadingService.stop();
-      this.dialogListRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
+    this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection)
+      .subscribe((data) => {
+        this.dialogsLoadingService.stop();
+        this.dialogListRef = this.dialog.open(DialogsListComponent, {
+          data: data,
+          maxHeight: '500px',
+          width: '600px',
+          autoFocus: false
+        });
       });
-    });
   }
 
-  dialogOkClick(field) {
+  dialogOkClick(field: DialogField) {
     return (selection) => {
       this.modalForm.controls[field.name].setValue(selection);
       this.dialogListRef.close();

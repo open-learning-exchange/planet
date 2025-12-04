@@ -512,7 +512,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validator: (ac: FormGroup<SurveyFilterForm>) =>
+          validators: (ac: FormGroup<SurveyFilterForm>) =>
             Object.values(ac.controls).some(control => control.value) ? null : { required: true }
         }
       }
