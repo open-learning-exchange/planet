@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { MaterialModule } from '../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 import 'rxjs/add/observable/throw';
 
 describe('Login', () => {

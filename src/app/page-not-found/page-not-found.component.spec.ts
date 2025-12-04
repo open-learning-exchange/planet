@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PageNotFoundComponent } from './page-not-found.component';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 describe('PageNotFoundComponent', () => {
   let component: PageNotFoundComponent;
