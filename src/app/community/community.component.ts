@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -98,7 +98,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -455,8 +455,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDescriptionDialog() {
-    const formGroup = this.formBuilder.group({
-      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+    const formGroup: FormGroup<{ description: FormControl<string> }> = this.formBuilder.group({
+      description: this.formBuilder.nonNullable.control(
+        this.team.description || '',
+        { validators: [ CustomValidators.requiredMarkdown ] }
+      )
     });
 
     this.dialogsFormService.openDialogsForm(
