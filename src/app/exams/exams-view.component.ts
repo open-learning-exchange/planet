@@ -18,6 +18,7 @@ import { StateService } from '../shared/state.service';
 type ExamAnswerOption = { id: string; text: string; isOther?: boolean };
 type ExamOtherAnswerOption = { id: 'other'; text: string; isOther: true };
 type ExamAnswerValue = string | ExamAnswerOption | ExamAnswerOption[] | null;
+type ExamMode = 'take' | 'grade' | 'view';
 
 interface SubmissionAnswer {
   value?: ExamAnswerValue;
@@ -37,7 +38,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   @Input() isDialog = false;
   @Input() exam: Exam;
   @Input() submission: any;
-  @Input() mode: 'take' | 'grade' | 'view' = 'take';
+  @Input() mode: ExamMode = 'take';
   @Input() questionNum = 0;
   @Input() previewExamType: any;
   previewMode = false;
@@ -117,7 +118,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const courseId = params.get('id');
     const submissionId = params.get('submissionId');
     const mode = this.parseMode(params.get('mode'));
-    this.mode = mode || this.mode;
+    this.mode = mode ?? this.mode;
     this.answer.setValue(null);
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
     this.spinnerOn = true;
@@ -127,7 +128,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.grade = 0;
     } else if (submissionId) {
       this.fromSubmission = true;
-      this.mode = mode || 'grade';
+      this.mode = mode ?? 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
       this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
@@ -390,17 +391,18 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       setSelectMultipleAnswer(rebuilt);
       return;
     }
-    if (this.question.type === 'select' && this.isAnswerOption(answer.value)) {
-      if (answer.value.id === 'other') {
+    const answerValue = answer.value;
+    if (this.question.type === 'select' && this.isAnswerOption(answerValue)) {
+      if (answerValue.id === 'other') {
         const baseOtherOption: ExamOtherAnswerOption = this.currentOtherOption || { id: 'other', text: '', isOther: true };
-        this.currentOtherOption = { ...baseOtherOption, text: answer.value.text || '' } as ExamOtherAnswerOption;
+        this.currentOtherOption = { ...baseOtherOption, text: answerValue.text || '' } as ExamOtherAnswerOption;
         this.answer.setValue(this.currentOtherOption);
       } else {
-        this.answer.setValue(this.question.choices.find((choice) => choice.id === answer.value.id) || null);
+        this.answer.setValue(this.question.choices.find((choice) => choice.id === answerValue.id) || null);
       }
       return;
     }
-    this.answer.setValue(answer.value);
+    this.answer.setValue(answerValue);
   }
 
   answerValidator = (ac: AbstractControl<ExamAnswerValue>): ValidationErrors | null => {
@@ -451,8 +453,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.answer.updateValueAndValidity();
   }
 
-  private parseMode(mode: string | null): 'grade' | 'view' | 'take' | null {
-    return mode === 'grade' || mode === 'view' || mode === 'take' ? mode : null;
+  private parseMode(mode: string | null): ExamMode | null {
+    if (mode === 'grade' || mode === 'view' || mode === 'take') {
+      return mode;
+    }
+    return null;
   }
 
   private isAnswerOption(value: ExamAnswerValue): value is ExamAnswerOption {
