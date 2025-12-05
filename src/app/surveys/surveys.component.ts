@@ -82,8 +82,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
     this.couchService.checkAuthorization(this.dbName)
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+      .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
         this.parentCount = surveys.filter(survey => survey.parent === true).length;
         this.surveyCount.emit(surveys.length);
