@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: UntypedFormGroup;
+  stepForm: FormGroup<{ id: FormControl<string>; stepTitle: FormControl<string>; description: FormControl<string> }>;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
@@ -38,12 +38,12 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
+    this.stepForm = this.fb.nonNullable.group({
       id: '',
       stepTitle: '',
       description: ''
