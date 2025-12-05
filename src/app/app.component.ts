@@ -26,6 +26,9 @@ export class AppComponent {
       'myLife',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/selfimprovement.svg'));
     iconRegistry.addSvgIcon(
+      'myTeams',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/group.svg'));
+    iconRegistry.addSvgIcon(
       'feedback',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/feedback.svg'));
     iconRegistry.addSvgIcon(

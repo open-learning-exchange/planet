@@ -78,11 +78,11 @@
           { mode, select, team {Plan} enterprise {Mission & Services} services {Services} }
         </ng-template>
         <ng-container *ngIf="(team?.description || team?.services || team?.rules); else emptyText">
-          <div class="mat-title" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
+          <div class="mat-headline-6" *ngIf="team?.description && mode === 'enterprise'" i18n>What is your enterprise's Mission?</div>
           <td-markdown [content]="team.description"></td-markdown>
-          <div class="mat-title" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
+          <div class="mat-headline-6" *ngIf="team?.services" i18n>What are the Services your enterprise provides?</div>
           <td-markdown [content]="team.services"></td-markdown>
-          <div class="mat-title" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</div>
+          <div class="mat-headline-6" *ngIf="team?.rules" i18n>What are the Rules of your enterprise?</div>
           <td-markdown [content]="team.rules"></td-markdown>
         </ng-container>
         <ng-template #emptyText>
@@ -178,8 +178,8 @@
           <p *ngIf="resources?.length < 1; else resourceList" i18n>There are no { mode, select, team {resources} enterprise {documents} } associated with this { mode, select, team {team} enterprise {enterprise} }.</p>
           <ng-template #resourceList>
             <div class="card-grid">
-              <mat-card *ngFor="let resource of resources" (click)="resource.resource._attachments ? openResource(resource.resource._id) : false" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource._attachments" [ngClass]="{'cursor-pointer': resource.resource._attachments}">
-                <div class="mat-subheading-2">
+              <mat-card *ngFor="let resource of resources" (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
+                <div class="mat-subtitle-1">
                   <span *ngIf="resource.resource!==undefined">
                     <b>{{resource.resource.title | truncateText:75}}</b>
                   </span>
@@ -216,7 +216,7 @@
           <ng-template #courseList>
             <div class="card-grid">
               <mat-card *ngFor="let course of team?.courses" (click)="openCourseView(course._id)" class="cursor-pointer">
-                <div class="mat-subheading-2">
+                <div class="mat-subtitle-1">
                   <b>{{course.courseTitle | truncateText:75}}</b>
                 </div>
                 <mat-card-content>
