@@ -1,5 +1,5 @@
 export const gradeLevels = [
-  { 'label': $localize`Pre-Kindergarten`, 'value': 'Pre-Kindergarten' },
+  { 'label': $localize`Open`, 'value': 'Open' },
   { 'label': $localize`Kindergarten`, 'value': 'Kindergarten' },
   { 'label': $localize`1`, 'value': '1' },
   { 'label': $localize`2`, 'value': '2' },
