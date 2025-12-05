@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, } from '@angular/forms';
+import { FormControl, } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -70,8 +70,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
-  fb: UntypedFormBuilder;
-  courseForm: UntypedFormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -100,8 +98,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
   isAuthorized = false;
-  tagFilter = new UntypedFormControl([]);
-  tagFilterValue = [];
+  tagFilter = new FormControl<string[]>([], { nonNullable: true });
+  tagFilterValue: string[] = [];
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
