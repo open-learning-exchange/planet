@@ -11,7 +11,7 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { AwardedCertificate } from './awarded-certificate.model';
+import { AwardedCertificate } from '@app/users/users-achievements/awarded-certificate.model';
 import { formatStringDate, pdfMake, pdfFonts } from '../../shared/utils';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
