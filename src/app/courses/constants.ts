@@ -1,5 +1,5 @@
 export const gradeLevels = [
-  { 'label': $localize`Pre-Kindergarten`, 'value': 'Pre-Kindergarten' },
+  { 'label': $localize`Open`, 'value': 'Open' },
   { 'label': $localize`Kindergarten`, 'value': 'Kindergarten' },
   { 'label': $localize`1`, 'value': '1' },
   { 'label': $localize`2`, 'value': '2' },
@@ -14,8 +14,7 @@ export const gradeLevels = [
   { 'label': $localize`11`, 'value': '11' },
   { 'label': $localize`12`, 'value': '12' },
   { 'label': $localize`College`, 'value': 'College' },
-  { 'label': $localize`Post-Graduate`, 'value': 'Post-Graduate' },
-  { 'label': $localize`Open`, 'value': 'Open' }
+  { 'label': $localize`Post-Graduate`, 'value': 'Post-Graduate' }
 ];
 
 export const subjectLevels = [
