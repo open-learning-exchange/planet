@@ -20,12 +20,6 @@
       "es2019.array",
       "dom"
     ],
-    "baseUrl": "./",
-    "paths": {
-      "@app/*": [
-        "src/app/*"
-      ]
-    },
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {

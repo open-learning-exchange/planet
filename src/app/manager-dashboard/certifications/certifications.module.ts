@@ -13,8 +13,7 @@ import { CoursesModule } from '../../courses/courses.module';
 import { DialogsAddTableModule } from '../../shared/dialogs/dialogs-add-table.module';
 import { CertificationsViewComponent } from './certifications-view.component';
 import { UsersModule } from '../../users/users.module';
-
-import { ApproveCertificatesComponent } from './approve-certificates/approve-certificates.component';
+import { ApproveCertificatesComponent } from './approve-certificates.component';
 
 @NgModule({
   declarations: [

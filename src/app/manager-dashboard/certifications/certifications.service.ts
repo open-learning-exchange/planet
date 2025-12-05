@@ -8,7 +8,7 @@ import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
 import { switchMap, map } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { AwardedCertificate } from '@app/users/users-achievements/awarded-certificate.model';
+import { AwardedCertificate } from '../../users/users-achievements/awarded-certificate.model';
 import { Certification } from './certification.model';
 
 @Injectable({
