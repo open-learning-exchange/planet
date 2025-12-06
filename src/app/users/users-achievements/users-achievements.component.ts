@@ -87,27 +87,13 @@ export class UsersAchievementsComponent implements OnInit {
     const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
 
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const form = pdfDoc.getForm();
 
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
+    const nameField = form.getTextField('studentName');
+    const courseField = form.getTextField('courseName');
 
-    const { width, height } = firstPage.getSize();
-    firstPage.drawText(certificate.fullName, {
-      x: 5,
-      y: height / 2 + 30,
-      font: helveticaFont,
-      size: 50,
-      color: rgb(0, 0, 0),
-    });
-
-    firstPage.drawText(`For completing the course: ${certificate.courseName}`, {
-        x: 5,
-        y: height / 2 - 30,
-        font: helveticaFont,
-        size: 20,
-        color: rgb(0, 0, 0),
-      });
+    nameField.setText(certificate.fullName);
+    courseField.setText(certificate.courseName);
 
     const pdfBytes = await pdfDoc.save();
 

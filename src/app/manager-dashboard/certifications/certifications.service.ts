@@ -102,7 +102,7 @@ export class CertificationsService {
                       }
                       return of(null);
                     })
-                  ).subscribe();
+                  )
                 }
               }
             }
