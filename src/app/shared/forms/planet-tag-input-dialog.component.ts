@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 
 interface TagFormControls {
   name: FormControl<string>;
-  attachedTo: FormControl<string[]>;
+  attachedTo: FormControl<string>;
 }
 
 type TagFormGroup = FormGroup<TagFormControls>;
@@ -45,7 +45,7 @@ export class PlanetTagInputDialogComponent {
     this.data.reset(value);
   }
   addTagForm: TagFormGroup;
-  newTagInfo: { id: string, parentId?: string | string[] };
+  newTagInfo: { id: string, parentId?: string };
   isUserAdmin = false;
   isInMap = isInMap;
   subcollectionIsOpen = new Map();
@@ -83,7 +83,7 @@ export class PlanetTagInputDialogComponent {
         validators: this.tagNameSyncValidator(),
         asyncValidators: this.tagNameAsyncValidator()
       }],
-      attachedTo: [[] as string[]]
+      attachedTo: ['']
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -98,8 +98,7 @@ export class PlanetTagInputDialogComponent {
     this.mode = this.data.mode;
     if (this.newTagInfo && this.newTagInfo.id !== undefined && this.mode === 'add') {
       const { parentId, id } = this.newTagInfo;
-      const parentTagId = Array.isArray(parentId) ? parentId[0] : parentId;
-      const parentTag = parentTagId ? this.data.tags.find(tag => tag._id === parentTagId) : undefined;
+      const parentTag = parentId ? this.data.tags.find(tag => tag._id === parentId) : undefined;
       this.tagChange(id, { parentTag });
     }
     this.newTagInfo = undefined;
@@ -137,13 +136,6 @@ export class PlanetTagInputDialogComponent {
     return value ? this.tagsService.filterTags(this.data.tags, value) : this.data.tags;
   }
 
-  private normalizeAttachedTo(value: string[] | string | undefined | null): string[] {
-    if (Array.isArray(value)) {
-      return value;
-    }
-    return value ? [ value ] : [];
-  }
-
   private forEachTagControl(
     form: TagFormGroup,
     callback: (key: keyof TagFormControls, control: TagFormControls[keyof TagFormControls]) => void
@@ -164,14 +156,13 @@ export class PlanetTagInputDialogComponent {
   addLabel() {
     if (this.addTagForm.valid) {
       const { name, attachedTo } = this.addTagForm.getRawValue();
-      const normalizedAttachedTo = this.normalizeAttachedTo(attachedTo);
-      this.tagsService.updateTag({ name, attachedTo: normalizedAttachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
-        this.newTagInfo = { id: res[0].id, parentId: normalizedAttachedTo };
+      this.tagsService.updateTag({ name, attachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
+        this.newTagInfo = { id: res[0].id, parentId: attachedTo };
         this.planetMessageService.showMessage($localize`New collection added`);
         this.forEachTagControl(this.addTagForm, (_, control) => control.updateValueAndValidity());
         this.data.initTags();
         this.addTagForm.controls.name.reset('');
-        this.addTagForm.controls.attachedTo.reset([]);
+        this.addTagForm.controls.attachedTo.reset('');
       });
     } else {
       this.forEachTagControl(this.addTagForm, (_, control) => control.markAsTouched({ onlySelf: true }));
@@ -180,12 +171,7 @@ export class PlanetTagInputDialogComponent {
 
   editTagClick(event, tag) {
     const onSubmit = ((newTag) => {
-      const updatedTag = {
-        ...tag,
-        ...newTag,
-        attachedTo: this.normalizeAttachedTo(newTag.attachedTo)
-      };
-      this.tagsService.updateTag(updatedTag).subscribe((res) => {
+      this.tagsService.updateTag({ ...tag, ...newTag }).subscribe((res) => {
         const newTagId = res[0].id;
         this.planetMessageService.showMessage($localize`Collection updated`);
         this.selected.set(newTagId, this.selected.get(tag._id));
@@ -244,13 +230,12 @@ export class PlanetTagInputDialogComponent {
 
   tagForm(tag: any = {}): TagFormGroup {
     const existingName = typeof tag.name === 'string' ? tag.name : '';
-    const attachedTo = this.normalizeAttachedTo(tag.attachedTo);
     return this.fb.group({
       name: [existingName, {
         validators: this.tagNameSyncValidator(),
         asyncValidators: this.tagNameAsyncValidator(existingName)
       }],
-      attachedTo: [attachedTo]
+      attachedTo: [ tag.attachedTo || '' ]
     });
   }
 
