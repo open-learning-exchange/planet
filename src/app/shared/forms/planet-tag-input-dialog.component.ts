@@ -1,12 +1,6 @@
 import { Component, Inject, Input, HostListener } from '@angular/core';
 import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn
+  AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn
 } from '@angular/forms';
 import {
   MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
@@ -23,13 +17,12 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { Observable } from 'rxjs';
 
-type TagFormControls = {
+interface TagFormControls {
   name: FormControl<string>;
   attachedTo: FormControl<string[]>;
-};
+}
 
 type TagFormGroup = FormGroup<TagFormControls>;
-type TagFormValue = { name: string; attachedTo: string[] };
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
@@ -66,7 +59,7 @@ export class PlanetTagInputDialogComponent {
     public dialogRef: MatDialogRef<PlanetTagInputDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private tagsService: TagsService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
     private dialogsFormService: DialogsFormService,
@@ -85,12 +78,12 @@ export class PlanetTagInputDialogComponent {
         this.tagChange(tag.tagId || tag, { tagOne: !this.selectMany });
         this.indeterminate.set(tag.tagId || tag, tag.indeterminate || false);
       });
-    this.addTagForm = this.fb.nonNullable.group<TagFormControls>({
-      name: this.fb.nonNullable.control('', {
+    this.addTagForm = this.fb.group({
+      name: ['', {
         validators: this.tagNameSyncValidator(),
-        asyncValidators: this.tagNameAsyncValidator(),
-      }),
-      attachedTo: this.fb.nonNullable.control<string[]>([])
+        asyncValidators: this.tagNameAsyncValidator()
+      }],
+      attachedTo: [[] as string[]]
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -170,7 +163,7 @@ export class PlanetTagInputDialogComponent {
 
   addLabel() {
     if (this.addTagForm.valid) {
-      const { name, attachedTo }: TagFormValue = this.addTagForm.getRawValue();
+      const { name, attachedTo } = this.addTagForm.getRawValue();
       const normalizedAttachedTo = this.normalizeAttachedTo(attachedTo);
       this.tagsService.updateTag({ name, attachedTo: normalizedAttachedTo, db: this.data.db, docType: 'definition' }).subscribe((res) => {
         this.newTagInfo = { id: res[0].id, parentId: normalizedAttachedTo };
@@ -252,12 +245,12 @@ export class PlanetTagInputDialogComponent {
   tagForm(tag: any = {}): TagFormGroup {
     const existingName = typeof tag.name === 'string' ? tag.name : '';
     const attachedTo = this.normalizeAttachedTo(tag.attachedTo);
-    return this.fb.nonNullable.group<TagFormControls>({
-      name: this.fb.nonNullable.control(existingName, {
+    return this.fb.group({
+      name: [existingName, {
         validators: this.tagNameSyncValidator(),
         asyncValidators: this.tagNameAsyncValidator(existingName)
-      }),
-      attachedTo: this.fb.nonNullable.control<string[]>(attachedTo)
+      }],
+      attachedTo: [attachedTo]
     });
   }
 
