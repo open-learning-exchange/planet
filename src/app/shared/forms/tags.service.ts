@@ -52,7 +52,12 @@ export class TagsService {
 
   updateTag(tag) {
     const { count, subTags, ...tagData } = tag;
-    tagData.attachedTo = tagData.attachedTo || '';
+    // Normalize attachedTo from legacy array format to scalar string
+    if (Array.isArray(tagData.attachedTo)) {
+      tagData.attachedTo = tagData.attachedTo[0] || '';
+    } else if (!tagData.attachedTo) {
+      tagData.attachedTo = '';
+    }
     const newId = `${tagData.attachedTo === '' ? tagData.db : tagData.attachedTo}_${tagData.name.toLowerCase()}`;
     if (newId === tag._id) {
       return this.couchService.updateDocument('tags', tagData).pipe(
