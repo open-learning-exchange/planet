@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -28,6 +28,10 @@ import {
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
+
+interface CommunityDescriptionForm {
+  description: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-community',
@@ -98,7 +102,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
-    private formBuilder: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -455,11 +459,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openDescriptionDialog() {
-    const formGroup: FormGroup<{ description: FormControl<string> }> = this.formBuilder.group({
-      description: this.formBuilder.nonNullable.control(
-        this.team.description || '',
-        { validators: [ CustomValidators.requiredMarkdown ] }
-      )
+    const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
+      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
     });
 
     this.dialogsFormService.openDialogsForm(
