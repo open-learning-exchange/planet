@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -255,10 +255,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onSubmit(shouldNavigate = true) {
     if (!this.courseForm.valid) {
-      showFormErrors(this.courseForm.controls);
+      showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
-    this.updateCourse(this.courseForm.value, shouldNavigate);
+    this.updateCourse(this.courseForm.getRawValue(), shouldNavigate);
   }
 
   courseChangeComplete(message, response: any, shouldNavigate) {
