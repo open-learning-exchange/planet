@@ -55,7 +55,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
-  tags = this.fb.nonNullable.control<string[]>([]);
+  tags = this.fb.control<string[]>([]);
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
@@ -148,21 +148,21 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   createForm() {
     const configuration = this.stateService.configuration;
     this.courseForm = this.fb.group<CourseFormControls>({
-      courseTitle: this.fb.nonNullable.control('', {
+      courseTitle: this.fb.control('', {
         validators: CustomValidators.required,
         asyncValidators: (ac) => this.validatorService.isUnique$(
           this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
         )
       }),
-      description: this.fb.nonNullable.control('', { validators: CustomValidators.requiredMarkdown }),
-      languageOfInstruction: this.fb.nonNullable.control(''),
-      gradeLevel: this.fb.nonNullable.control(''),
-      subjectLevel: this.fb.nonNullable.control(''),
-      createdDate: this.fb.nonNullable.control<string | object>(this.couchService.datePlaceholder),
-      creator: this.fb.nonNullable.control(this.userService.get().name + '@' + configuration.code),
-      sourcePlanet: this.fb.nonNullable.control(configuration.code),
-      resideOn: this.fb.nonNullable.control(configuration.code),
-      updatedDate: this.fb.nonNullable.control<string | object>(this.couchService.datePlaceholder)
+      description: this.fb.control('', { validators: CustomValidators.requiredMarkdown }),
+      languageOfInstruction: this.fb.control(''),
+      gradeLevel: this.fb.control(''),
+      subjectLevel: this.fb.control(''),
+      createdDate: this.fb.control<string | object>(this.couchService.datePlaceholder),
+      creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
+      sourcePlanet: this.fb.control(configuration.code),
+      resideOn: this.fb.control(configuration.code),
+      updatedDate: this.fb.control<string | object>(this.couchService.datePlaceholder)
     });
   }
 
