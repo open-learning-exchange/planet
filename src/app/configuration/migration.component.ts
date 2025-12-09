@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material/stepper';
@@ -18,6 +18,12 @@ const removeProtocol = (str: string) => {
 };
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
+
+interface MigrationForm {
+  url: FormControl<string>;
+  name: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-migration',
@@ -38,7 +44,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 export class MigrationComponent implements OnInit {
 
   @ViewChild('stepper') stepper: MatStepper;
-  cloneForm: UntypedFormGroup;
+  cloneForm: FormGroup<MigrationForm>;
   cloneDomain = '';
   cloneProtocol = '';
   admins: any = {};
@@ -47,7 +53,7 @@ export class MigrationComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private formBuilder: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
@@ -56,14 +62,14 @@ export class MigrationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.cloneForm = this.formBuilder.group({
-      url: [ '', Validators.required ],
-      name: [ '', [
+    this.cloneForm = this.fb.group({
+      url: ['', Validators.required],
+      name: ['', [
         Validators.required,
         CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
-      ],
-      password: [ '', Validators.required ]
+        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
+      ]],
+      password: ['', Validators.required]
     });
   }
 
