@@ -67,8 +67,8 @@ export class MigrationComponent implements OnInit {
       name: [ '', [
         Validators.required,
         CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
-      ] ],
+        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
+      ],
       password: [ '', Validators.required ]
     });
   }
