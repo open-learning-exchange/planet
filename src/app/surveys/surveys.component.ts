@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
@@ -51,8 +51,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   currentFilter = { viewMode: 'team' };
   allSurveys: any[] = [];
-  deleteDialog: any;
-  message = '';
+  deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
   isLoading = true;
@@ -82,14 +81,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.surveys.connect().subscribe(surveys => {
-      this.parentCount = surveys.filter(survey => survey.parent === true).length;
-      this.surveyCount.emit(surveys.length);
-    });
-    this.chatService.listAIProviders().subscribe((providers) => {
-      this.availableAIProviders = providers;
-    });
+    this.couchService.checkAuthorization(this.dbName)
+      .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
+        this.parentCount = surveys.filter(survey => survey.parent === true).length;
+        this.surveyCount.emit(surveys.length);
+      });
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
+        this.availableAIProviders = providers;
+      });
   }
 
   ngAfterViewInit() {
@@ -130,14 +130,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
               ...derivedTeamSurveys.map(ts => ts.teamId)
             ])
           ].filter(Boolean);
+          const targetTeamId = this.teamId || this.routeTeamId;
           return {
             ...survey,
             teamIds: teamIds,
             course: courses.find((course: any) => findSurveyInSteps(course.steps, survey) > -1),
-            taken: this.teamId || this.routeTeamId
-              ? relatedSubmissions.filter(
-                (data) => data.status === 'complete' &&
-                (data.team?._id === this.teamId || data.team?._id === this.routeTeamId)).length
+            taken: targetTeamId
+              ? relatedSubmissions.filter((data) => {
+                  if (data.status !== 'complete') { return false };
+                  if (data.team?._id === targetTeamId) { return true };
+                  if (!data.team?._id && data.parent?.teamId === targetTeamId) { return true };
+                  return false;
+                }).length
               : relatedSubmissions.filter(data => data.status === 'complete').length
           };
         }),
@@ -154,7 +158,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
       if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or  adopted
+        // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
         // community surveys that can be adopted & team hasn't adopted yet
@@ -294,9 +298,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         displayName
       }
     });
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
-    });
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog'), takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {
@@ -404,7 +406,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     teamObservable.subscribe((team: any) => {
       const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-      this.submissionsService.createSubmission(survey, 'survey', {}, teamInfo).subscribe((res: any) => {
+      const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
+      this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo).subscribe((res: any) => {
         this.router.navigate([
           this.teamId ? 'surveys/dispense' : 'dispense',
           { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
@@ -450,7 +453,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validator: (ac: FormGroup<SurveyFilterForm>) =>
+          validators: (ac: FormGroup<SurveyFilterForm>) =>
             Object.values(ac.controls).some(control => control.value) ? null : { required: true }
         }
       }
