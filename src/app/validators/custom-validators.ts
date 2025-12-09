@@ -250,9 +250,12 @@ export class CustomValidators {
     return /\S/.test(value) ? null : { 'required': true };
   }
 
-  static requiredMarkdown(ac: AbstractControl<{ text: string }>): ValidationErrors | null {
-    // Markdown editors provide a value object with a text property; coerce to a string control for reuse.
-    return CustomValidators.required(new FormControl<string | null>(ac.value?.text ?? ''));
+  static requiredMarkdown(ac: AbstractControl<string | { text: string } | null>): ValidationErrors | null {
+    // Markdown editors may emit plain strings (no imageGroup) or objects with a text property (with imageGroup).
+    const markdownText = typeof ac.value === 'string'
+      ? ac.value
+      : ac.value?.text ?? '';
+    return CustomValidators.required(new FormControl<string | null>(markdownText));
   }
 
   static fileMatch(ac: AbstractControl<string | null>, fileList: string[]): ValidationErrors | null {
