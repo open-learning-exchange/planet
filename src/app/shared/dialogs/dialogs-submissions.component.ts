@@ -3,7 +3,7 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/leg
 
 @Component({
   template: `
-    <h3 mat-dialog-title i18n class="mat-subheading-2">Review Previous Test Attempts</h3>
+    <h3 mat-dialog-title i18n class="mat-subtitle-1">Review Previous Test Attempts</h3>
     <mat-dialog-content>
       <planet-submissions *ngIf="view==='list'" [isDialog]="true" [parentId]="data.parentId"
         [displayedColumns]="[ 'lastUpdateTime', 'gradeTime', 'grade', 'status' ]" (submissionClick)="showSubmission($event)">

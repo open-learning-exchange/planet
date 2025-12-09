@@ -61,7 +61,7 @@ type ContactFormControls = {
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html',
   styles: [ `
-    .mat-raised-button {
+    .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
     .configuration-form {
@@ -70,6 +70,14 @@ type ContactFormControls = {
     }
     .advanced {
       grid-column-start: 2;
+    }
+    .advanced-options-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .advanced-options-container > * {
+      margin-bottom: 10px;
     }
   ` ]
 })
