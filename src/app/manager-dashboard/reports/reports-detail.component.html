@@ -101,6 +101,19 @@
     </mat-form-field>
   </div>
 </ng-template>
+<ng-template #chartWithActions let-chartId="chartId">
+  <div class="chart-wrapper">
+    <div class="chart-actions">
+      <button mat-icon-button (click)="downloadChart(chartId)" [disabled]="charts.length === 0" matTooltip="Download as image" i18n-matTooltip>
+        <mat-icon>get_app</mat-icon>
+      </button>
+      <button mat-icon-button (click)="copyChartToClipboard(chartId)" [disabled]="charts.length === 0" matTooltip="Copy to clipboard" i18n-matTooltip>
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </div>
+    <canvas [id]="chartId"></canvas>
+  </div>
+</ng-template>
 
 <div class="space-container">
   <mat-toolbar>
@@ -126,16 +139,16 @@
   <div class="view-container view-full-height">
     <mat-tab-group>
       <mat-tab i18n-label label="Summary">
-        <canvas id="uniqueVisitChart"></canvas>
-        <canvas id="visitChart"></canvas>
-        <canvas id="resourceViewChart"></canvas>
-        <canvas id="courseViewChart"></canvas>
-        <canvas id="stepCompletedChart"></canvas>
-        <canvas id="chatUsageChart"></canvas>
-        <canvas id="voicesCreatedChart"></canvas>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'uniqueVisitChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'visitChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'resourceViewChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'courseViewChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'stepCompletedChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'chatUsageChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'voicesCreatedChart' }"></ng-container>
         <div class="reports-table-container">
           <div>
-            <h1 class="mat-title" i18n>Members</h1>
+            <h1 class="mat-headline-6" i18n>Members</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
               <mat-grid-tile class="subheading label" i18n>Total Members</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
@@ -171,7 +184,7 @@
             </mat-grid-list>
           </div>
           <div>
-            <h1 class="mat-title" i18n>Resources</h1>
+            <h1 class="mat-headline-6" i18n>Resources</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
               <mat-grid-tile class="subheading label" i18n>Total Resources</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalResources}}</mat-grid-tile>
@@ -204,7 +217,7 @@
             </mat-grid-list>
           </div>
           <div>
-            <h1 class="mat-title" i18n>Courses</h1>
+            <h1 class="mat-headline-6" i18n>Courses</h1>
             <mat-grid-list cols="2" rowHeight="2rem">
               <mat-grid-tile class="subheading label" i18n>Total Courses</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalCourses}}</mat-grid-tile>
@@ -256,6 +269,10 @@
               <mat-datepicker #week2Picker></mat-datepicker>
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
+            <span class="toolbar-fill"></span>
+            <button mat-icon-button [disabled]="comparisonTableData.length === 0" (click)="downloadComparisonTableCSV()" matTooltip="Download as CSV" i18n-matTooltip>
+              <mat-icon>get_app</mat-icon>
+            </button>
           </mat-toolbar>
           <div *ngIf="comparisonLoading" class="view-container view-full-height" i18n>
             Loading comparison data...

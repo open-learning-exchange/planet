@@ -45,7 +45,7 @@ const getProtocol = (str: string) => {
   selector: 'planet-migration',
   templateUrl: './migration.component.html',
   styles: [ `
-    .mat-raised-button {
+    .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
     .configuration-form {
