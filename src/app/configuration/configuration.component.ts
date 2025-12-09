@@ -1,12 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  AsyncValidatorFn,
-  FormControl,
-  FormGroup,
-  NonNullableFormBuilder,
-  Validators
-} from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
@@ -27,15 +20,15 @@ const removeProtocol = (str: string) => {
   return /\/\/(.*?)$/.exec(str)[1];
 };
 
-type LoginFormControls = {
+interface LoginForm {
   name: FormControl<string>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
-};
+}
 
 type DatePlaceholder = CouchService['datePlaceholder'];
 
-type ConfigurationFormControls = {
+interface ConfigurationForm {
   planetType: FormControl<string>;
   localDomain: FormControl<string>;
   name: FormControl<string>;
@@ -47,15 +40,15 @@ type ConfigurationFormControls = {
   autoAccept: FormControl<boolean>;
   alwaysOnline: FormControl<boolean>;
   betaEnabled: FormControl<string>;
-};
+}
 
-type ContactFormControls = {
+interface ContactForm {
   firstName: FormControl<string>;
   lastName: FormControl<string>;
   middleName: FormControl<string>;
   email: FormControl<string>;
   phoneNumber: FormControl<string>;
-};
+}
 
 @Component({
   selector: 'planet-configuration',
@@ -86,9 +79,9 @@ export class ConfigurationComponent implements OnInit {
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
-  loginForm: FormGroup<LoginFormControls>;
-  configurationFormGroup: FormGroup<ConfigurationFormControls>;
-  contactFormGroup: FormGroup<ContactFormControls>;
+  loginForm!: FormGroup<LoginForm>;
+  configurationFormGroup!: FormGroup<ConfigurationForm>;
+  contactFormGroup!: FormGroup<ContactForm>;
   nations = [];
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
@@ -114,58 +107,39 @@ export class ConfigurationComponent implements OnInit {
       this.initUpdate();
     }
     this.loginForm = this.formBuilder.group({
-      name: this.formBuilder.control('', {
-        validators: [
-          Validators.required,
-          CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-          Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
-        ]
-      }),
-      password: this.formBuilder.control('', {
-        validators: Validators.compose([
-          Validators.required,
-          CustomValidators.matchPassword('confirmPassword', false)
-        ]) || []
-      }),
-      confirmPassword: this.formBuilder.control('', {
-        validators: Validators.compose([
-          Validators.required,
-          CustomValidators.matchPassword('password', true)
-        ]) || []
-      })
+      name: [ '', [
+        Validators.required,
+        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)]
+      ],
+      password: [ '', [
+        Validators.required,
+        CustomValidators.matchPassword('confirmPassword', false) ]
+      ],
+      confirmPassword: ['', [
+        Validators.required,
+        CustomValidators.matchPassword('password', true) ]
+      ]
     });
-    const configurationControls = {
-      planetType: this.formBuilder.control('', { validators: Validators.required }),
+    this.configurationFormGroup = this.formBuilder.group({
+      planetType: [ '', Validators.required ],
       localDomain: this.formBuilder.control(this.defaultLocal),
-      name: this.formBuilder.control('', {
-        validators: [ Validators.required, Validators.pattern(/^[A-Za-z0-9]/i) ],
-        asyncValidators: this.parentUniqueValidator('name')
-      }),
-      parentDomain: this.formBuilder.control('', { validators: Validators.required }),
-      parentCode: this.formBuilder.control('', { validators: Validators.required }),
-      preferredLang: this.formBuilder.control('', { validators: Validators.required }),
-      code: this.formBuilder.control('', {
-        validators: Validators.required,
-        asyncValidators: this.parentUniqueValidator('code')
-      }),
-      createdDate: this.formBuilder.control(this.couchService.datePlaceholder),
+      name:  ['', [ Validators.required, Validators.pattern(/^[A-Za-z0-9]/i) ], this.parentUniqueValidator('name') ],
+      parentDomain: [ '', Validators.required ],
+      parentCode: [ '', Validators.required ],
+      preferredLang: [ '', Validators.required ],
+      code: [ '', Validators.required, this.parentUniqueValidator('code') ],
+      createdDate: this.couchService.datePlaceholder,
       autoAccept: this.formBuilder.control(true),
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
-    } satisfies ConfigurationFormControls;
-
-    this.configurationFormGroup = this.formBuilder.group(configurationControls);
+    });
     this.contactFormGroup = this.formBuilder.group({
-      firstName: this.formBuilder.control('', { validators: CustomValidators.required }),
-      lastName: this.formBuilder.control('', { validators: CustomValidators.required }),
-      middleName: this.formBuilder.control(''),
-      email: this.formBuilder.control('', {
-        validators: Validators.compose([
-          Validators.required,
-          Validators.email
-        ]) || []
-      }),
-      phoneNumber: this.formBuilder.control('', { validators: CustomValidators.required })
+      firstName: [ '', CustomValidators.required ],
+      lastName: [ '', CustomValidators.required ],
+      middleName: '',
+      email: [ '', [ Validators.required, Validators.email ] ],
+      phoneNumber: [ '', CustomValidators.required ]
     });
     this.getNationList();
   }
@@ -186,14 +160,14 @@ export class ConfigurationComponent implements OnInit {
 
   parentUniqueValidator(controlName: 'name' | 'code'): AsyncValidatorFn {
     return (ac: AbstractControl<string>) => {
-      const parentDomainControl = ac.parent?.get('parentDomain') as AbstractControl<string> | null;
+      const parentDomain = (ac.parent as FormGroup<ConfigurationForm>)?.controls.parentDomain.value;
       return this.validatorService.isUnique$(
         'communityregistrationrequests',
         controlName,
         ac,
         {
           exceptions: [ this.configuration[controlName] ],
-          opts: { domain: parentDomainControl?.value }
+          opts: { domain: parentDomain }
         }
       );
     };
@@ -215,22 +189,17 @@ export class ConfigurationComponent implements OnInit {
   resetDefault() {
     this.isAdvancedOptionConfirmed = false;
     this.isAdvancedOptionsChanged = false;
-    this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
+    this.configurationFormGroup.controls.localDomain.setValue(this.defaultLocal);
   }
 
   planetNameChange(event: Event) {
-    event.preventDefault();
     if (this.configurationType !== 'update') {
-      const nameControl = this.configurationFormGroup.get('name');
-      if (!nameControl) {
-        return;
-      }
-      let code = nameControl.value;
+      let code = this.configurationFormGroup.controls.name.value;
       // convert special character to dot except last character
       code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
       // skip special character if comes as last character
       code = code.replace(/\W+$/, '').toLowerCase();
-      this.configurationFormGroup.get('code')?.setValue(code);
+      this.configurationFormGroup.controls.code.setValue(code);
     }
   }
 
@@ -261,10 +230,10 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChangeNation() {
-    const parentDomain = this.configurationFormGroup.get('parentDomain')?.value;
+    const parentDomain = this.configurationFormGroup.controls.parentDomain.value;
     const parentCode = this.nations.find(n => n.localDomain === parentDomain);
-    this.configurationFormGroup.get('parentCode')?.setValue(parentCode?.code ?? '');
-    if (this.configurationFormGroup.get('name')?.value !== '') {
+    this.configurationFormGroup.controls.parentCode.setValue(parentCode?.code ?? '');
+    if (this.configurationFormGroup.controls.name.value !== '') {
       this.configurationFormGroup.controls.name.updateValueAndValidity();
       this.configurationFormGroup.controls.code.updateValueAndValidity();
     }
