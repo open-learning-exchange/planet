@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
@@ -51,8 +51,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isAuthorized = false;
   currentFilter = { viewMode: 'team' };
   allSurveys: any[] = [];
-  deleteDialog: any;
-  message = '';
+  deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
   isLoading = true;
@@ -82,14 +81,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
-    this.couchService.checkAuthorization(this.dbName).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.surveys.connect().subscribe(surveys => {
-      this.parentCount = surveys.filter(survey => survey.parent === true).length;
-      this.surveyCount.emit(surveys.length);
-    });
-    this.chatService.listAIProviders().subscribe((providers) => {
-      this.availableAIProviders = providers;
-    });
+    this.couchService.checkAuthorization(this.dbName)
+      .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
+        this.parentCount = surveys.filter(survey => survey.parent === true).length;
+        this.surveyCount.emit(surveys.length);
+      });
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
+        this.availableAIProviders = providers;
+      });
   }
 
   ngAfterViewInit() {
@@ -298,9 +298,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         displayName
       }
     });
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
-      this.message = '';
-    });
+    this.deleteDialog.afterClosed().pipe(debug('Closing dialog'), takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {
