@@ -7,6 +7,12 @@ import { AuthService } from './auth-guard.service';
 import { UserService } from './user.service';
 import { StateService } from './state.service';
 
+/**
+ * Guard that allows beta-enabled users to skip authentication while forcing
+ * everyone else through the standard {@link AuthService} checks. To keep this
+ * guard active, ensure `betaEnabled` is set to either `off` or `user` in the
+ * configuration; setting it to `on` bypasses the auth flow entirely.
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -29,6 +35,10 @@ export class BetaThenAuthService {
       }
       return this.authService.canActivateChild(route, state);
     }));
+  }
+
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    return this.canActivate(route, state);
   }
 
 }

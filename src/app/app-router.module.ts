@@ -6,13 +6,15 @@ import { AuthService } from './shared/auth-guard.service';
 import { HomeComponent } from './home/home.component';
 import { UserGuard } from './shared/user-guard.service';
 import { UnsavedChangesGuard } from './shared/unsaved-changes.guard';
+import { BetaThenAuthService } from './shared/beta-then-auth-guard-service';
 
 const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
     loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
-    canActivateChild: [ UserGuard ],
+    canActivate: [ BetaThenAuthService ],
+    canActivateChild: [ BetaThenAuthService, UserGuard ],
     canDeactivate: [ UnsavedChangesGuard ]
   },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule), canActivate: [ AuthService ] },
