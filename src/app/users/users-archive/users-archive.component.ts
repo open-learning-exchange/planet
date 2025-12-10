@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -8,6 +8,7 @@ import { UserService } from '../../shared/user.service';
 
 interface ArchiveFormControls {
   description: FormControl<string>;
+  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
