@@ -1,5 +1,10 @@
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ReportsService } from '../reports.service';
+
+export interface MyPlanetFiltersForm {
+  startDate: FormControl<Date>;
+  endDate: FormControl<Date>;
+}
 
 export abstract class MyPlanetFiltersBase {
 
@@ -17,25 +22,24 @@ export abstract class MyPlanetFiltersBase {
   today: Date = new Date();
   startDate: Date = this.minDate;
   endDate: Date = this.today;
-  filtersForm: FormGroup<{ startDate: FormControl<Date>; endDate: FormControl<Date>; }>;
+  filtersForm: FormGroup<MyPlanetFiltersForm>;
   get isDefaultTimeFilter(): boolean {
     return this.selectedTimeFilter === this.defaultTimeFilter;
   }
 
   protected constructor(
-    protected fb: FormBuilder,
+    protected fb: NonNullableFormBuilder,
     protected activityService: ReportsService,
     defaultTimeFilter: string
   ) {
     this.defaultTimeFilter = defaultTimeFilter;
     this.selectedTimeFilter = defaultTimeFilter;
 
-    this.filtersForm = this.fb.group({
-      startDate: this.fb.control(this.minDate, { nonNullable: true }),
-      endDate: this.fb.control(this.today, { nonNullable: true })
-    }, {
-      validators: (ac) => {
-        const { startDate, endDate } = ac.value;
+    this.filtersForm = this.fb.group({ startDate: this.minDate, endDate: this.today }, {
+      validators: (group) => {
+        const fg = group as FormGroup<MyPlanetFiltersForm>;
+        const startDate = fg.controls.startDate.value;
+        const endDate = fg.controls.endDate.value;
         return startDate > endDate ? { invalidDates: true } : null;
       }
     });
@@ -91,10 +95,12 @@ export abstract class MyPlanetFiltersBase {
   }
 
   private updateFormValidators() {
-    this.filtersForm.get('startDate')?.setValidators(
+    const { startDate, endDate } = this.filtersForm.controls;
+
+    startDate.setValidators(
       [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ]
     );
-    this.filtersForm.get('endDate')?.setValidators(
+    endDate.setValidators(
       [ Validators.required, Validators.min(this.minDate.getTime()), Validators.max(this.today.getTime()) ]
     );
     this.filtersForm.updateValueAndValidity();
