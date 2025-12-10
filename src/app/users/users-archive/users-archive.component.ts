@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
+
+interface ArchiveFormControls {
+  description: FormControl<string>;
+}
 
 @Component({
   templateUrl: './users-archive.component.html',
@@ -19,11 +23,11 @@ export class UsersArchiveComponent implements OnInit {
   spinnerOn = true;
   user: any = {};
   confirmChoice = false;
-  archiveForm: UntypedFormGroup;
+  archiveForm: FormGroup<ArchiveFormControls>;
 
   constructor(
     private couchService: CouchService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: FormBuilder,
     private userService: UserService
   ) {}
 
@@ -36,7 +40,7 @@ export class UsersArchiveComponent implements OnInit {
   }
 
   createForm() {
-    this.archiveForm = this.formBuilder.group({
+    this.archiveForm = this.formBuilder.nonNullable.group({
       description: [ '', CustomValidators.requiredMarkdown ],
     });
   }
@@ -50,7 +54,7 @@ export class UsersArchiveComponent implements OnInit {
   }
 
   archiveUser() {
-    const description = this.archiveForm.get('description').value;
+    const { description } = this.archiveForm.value;
     this.user = { ...this.user, isArchived: true, archiveReason: description };
     this.userService.updateUser(this.user).subscribe(
       () => {
