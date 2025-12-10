@@ -77,6 +77,8 @@ mat-tab-group, mat-tab {
   background-color: white;
   padding-bottom: 0.5rem;
   padding-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .toolbar-row {
