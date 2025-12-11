@@ -166,7 +166,7 @@ export class LoginFormComponent {
     try {
       const userData = await this.couchService.get('_users/org.couchdb.user:' + name).toPromise();
 
-      if (userData?.isArchived) {
+      if (userData && userData?.isArchived) {
         this.errorHandler($localize`Member ${name} is not registered.`)();
         return true;
       }
