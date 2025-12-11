@@ -42,11 +42,11 @@
         <li *ngFor="let conversation of filteredConversations; let i = index; trackBy: trackByFn" class="conversation-list" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
-              <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
+              <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
                 <mat-form-field class="mat-form-field" style="width: 50%;">
-                  <input matInput [formControl]="titleForm[conversation?._id].controls.title" required>
+                  <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
                   <mat-error>
-                    <planet-form-error-messages [formControl]="titleForm[conversation?._id].controls.title"></planet-form-error-messages>
+                    <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
                   </mat-error>
                 </mat-form-field>
                 <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
