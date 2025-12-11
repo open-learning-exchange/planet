@@ -183,7 +183,8 @@ export class ExamsAddComponent implements OnInit {
 
   initializeQuestions(questions: any[]) {
     questions.forEach((question) => {
-      (<FormArray<QuestionFormGroup>>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
+      (<FormArray<QuestionFormGroup>>this.examForm.controls.questions)
+        .push(this.examsService.newQuestionForm(this.examType === 'exam', question));
     });
   }
 
