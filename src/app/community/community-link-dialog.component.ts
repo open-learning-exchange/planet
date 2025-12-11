@@ -1,12 +1,33 @@
 import { Component, ViewChild, Inject } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { MatStepper } from '@angular/material/stepper';
+import { MatStepper, MatStepperSelectionEvent } from '@angular/material/stepper';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+
+interface CommunityLinkForm {
+  title: FormControl<string>;
+  route: FormControl<string>;
+  linkId: FormControl<string>;
+  teamType: FormControl<string>;
+  icon: FormControl<string>;
+  platform: FormControl<string>;
+}
+
+type CommunityLinkSelection = {
+  db: 'teams' | 'social';
+  title: string;
+  selector?: { type: 'team' | 'enterprise' };
+};
+
+type TeamSelectionEvent = {
+  mode: 'team' | 'enterprise';
+  teamId: string;
+  teamType: string;
+};
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
@@ -14,13 +35,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 export class CommunityLinkDialogComponent {
 
   @ViewChild('linkStepper') linkStepper: MatStepper;
-  selectedLink: { db, title, selector? };
-  links: { db, title, selector? }[] = [
+  selectedLink?: CommunityLinkSelection;
+  links: CommunityLinkSelection[] = [
     { db: 'teams', title: $localize`Teams`, selector: { type: 'team' } },
     { db: 'teams', title: $localize`Enterprises`, selector: { type: 'enterprise' } },
     { db: 'social', title: $localize`Web & Social` }
   ];
-  linkForm: UntypedFormGroup;
+  linkForm: FormGroup<CommunityLinkForm>;
   socialPlatforms = [
     { value: 'instagram', label: 'Instagram' },
     { value: 'facebook', label: 'Facebook' },
@@ -35,22 +56,29 @@ export class CommunityLinkDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private teamsService: TeamsService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
-    this.linkForm = this.fb.group({
-      title: [ '', CustomValidators.required, ac => this.validatorService.isUnique$('teams', 'title', ac, {}) ],
-      route: [ '', CustomValidators.required ],
-      linkId: '',
-      teamType: '',
-      icon: '',
-      platform: ''
+    this.linkForm = this.fb.nonNullable.group({
+      title: this.fb.nonNullable.control('', {
+        validators: [CustomValidators.required],
+        asyncValidators: [ac => this.validatorService.isUnique$('teams', 'title', ac, {})]
+      }),
+      route: this.fb.nonNullable.control('', { validators: [CustomValidators.required] }),
+      linkId: this.fb.nonNullable.control(''),
+      teamType: this.fb.nonNullable.control(''),
+      icon: this.fb.nonNullable.control(''),
+      platform: this.fb.nonNullable.control('')
     });
   }
 
-  teamSelect({ mode, teamId, teamType }) {
+  get linkTitleForm(): FormControl<string> {
+    return this.linkForm.controls.title;
+  }
+
+  teamSelect({ mode, teamId, teamType }: TeamSelectionEvent) {
     this.linkForm.controls.route.setValue(this.teamsService.teamLinkRoute(mode, teamId));
     this.linkForm.controls.linkId.setValue(teamId);
     this.linkForm.controls.teamType.setValue(teamType);
@@ -59,14 +87,21 @@ export class CommunityLinkDialogComponent {
     this.linkStepper.next();
   }
 
-  linkStepperChange({ selectedIndex }) {
+  linkStepperChange({ selectedIndex }: MatStepperSelectionEvent) {
     if (selectedIndex === 0 && this.linkForm.pristine !== true) {
-      this.linkForm.reset();
+      this.linkForm.reset({
+        title: '',
+        route: '',
+        linkId: '',
+        teamType: '',
+        icon: '',
+        platform: ''
+      });
     }
   }
 
   linkSubmit() {
-    const linkTitle = this.linkForm.get('title')?.value;
+    const linkTitle = this.linkForm.controls.title.value;
     this.teamsService.createServicesLink(this.linkForm.value).pipe(
       switchMap(() => this.data.getLinks())
     ).subscribe({
