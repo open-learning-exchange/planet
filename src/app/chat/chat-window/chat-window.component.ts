@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -9,10 +9,15 @@ import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 
-interface PromptForm {
-  prompt: FormControl<string>;
-  [key: string]: AbstractControl<any, any>;
+interface PromptFormModel {
+  prompt: string;
 }
+
+type PromptFormControls = {
+  prompt: FormControl<PromptFormModel['prompt']>;
+};
+
+type PromptFormGroup = FormGroup<PromptFormControls>;
 
 @Component({
   selector: 'planet-chat-window',
@@ -33,7 +38,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-  promptForm: FormGroup<PromptForm>;
+  promptForm: PromptFormGroup;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -49,7 +54,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private stateService: StateService,
     private userService: UserService
   ) {}
@@ -131,8 +136,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createForm() {
-    this.promptForm = this.formBuilder.nonNullable.group({
-      prompt: [ '', CustomValidators.required ],
+    this.promptForm = this.formBuilder.group<PromptFormControls>({
+      prompt: this.formBuilder.control('', { validators: CustomValidators.required }),
     });
   }
 
