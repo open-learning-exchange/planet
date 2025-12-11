@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -8,7 +8,6 @@ import { UserService } from '../../shared/user.service';
 
 interface ArchiveFormControls {
   description: FormControl<string>;
-  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
@@ -28,7 +27,7 @@ export class UsersArchiveComponent implements OnInit {
 
   constructor(
     private couchService: CouchService,
-    private formBuilder: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private userService: UserService
   ) {}
 
@@ -41,7 +40,7 @@ export class UsersArchiveComponent implements OnInit {
   }
 
   createForm() {
-    this.archiveForm = this.formBuilder.nonNullable.group({
+    this.archiveForm = this.fb.group({
       description: [ '', CustomValidators.requiredMarkdown ],
     });
   }
