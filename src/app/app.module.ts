@@ -11,6 +11,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { MaterialModule } from './shared/material.module';
 import { environment } from '../environments/environment';
 import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
+import { BetaThenAuthService } from './shared/beta-then-auth-guard-service';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 
@@ -31,6 +32,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
+  providers: [ BetaThenAuthService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {}
