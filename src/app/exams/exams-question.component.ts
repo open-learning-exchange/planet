@@ -2,11 +2,11 @@ import {
   Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef,
   ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import { UntypedFormGroup, UntypedFormArray } from '@angular/forms';
+import { FormArray } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
-import { ExamsService } from './exams.service';
+import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { trackByIdVal } from '../shared/table-helpers';
 
@@ -17,19 +17,19 @@ import { trackByIdVal } from '../shared/table-helpers';
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
-  @Input() question: UntypedFormGroup;
-  @Output() questionChange = new EventEmitter<any>();
+  @Input() question: QuestionFormGroup;
+  @Output() questionChange = new EventEmitter<QuestionFormGroup>();
   @Input() examType = 'courses';
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};
-  questionForm: UntypedFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
+  questionForm: QuestionFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;
   trackByFn = trackByIdVal;
   private onDestroy$ = new Subject<void>();
-  get choices(): UntypedFormArray {
-    return (<UntypedFormArray>this.questionForm.controls.choices);
+  get choices(): FormArray<QuestionChoiceFormGroup> {
+    return this.questionForm.controls.choices;
   }
 
   constructor(
@@ -77,10 +77,12 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   }
 
   removeChoice(index: number) {
-    const correctCh = this.questionForm.controls.correctChoice.value;
-    const correctChoiceIndex = correctCh.indexOf(this.choices.value[index].id);
+    const correctChoices = this.getCorrectChoices();
+    const choiceId = this.choices.at(index).controls.id.value;
+    const correctChoiceIndex = correctChoices.indexOf(choiceId);
     if (correctChoiceIndex > -1) {
-      correctCh.splice(correctChoiceIndex);
+      correctChoices.splice(correctChoiceIndex, 1);
+      this.setCorrectChoiceValue(correctChoices);
     }
     this.choices.removeAt(index);
   }
@@ -92,15 +94,19 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   setCorrect(event: any, choice: any) {
     const formControls = this.questionForm.controls;
     const newChoiceId = choice.controls.id.value;
-    let correctChoices = formControls.correctChoice.value || [];
+    const correctChoices = this.getCorrectChoices();
     if (event.checked) {
-      correctChoices = formControls.type.value === 'selectMultiple' ? correctChoices.concat([ newChoiceId ]) : [ newChoiceId ];
+      const updatedChoices = formControls.type.value === 'selectMultiple' ? correctChoices.concat([ newChoiceId ]) : [ newChoiceId ];
+      this.setCorrectChoiceValue(updatedChoices);
     } else {
-      correctChoices.splice(correctChoices.indexOf(newChoiceId), 1);
+      const index = correctChoices.indexOf(newChoiceId);
+      if (index > -1) {
+        correctChoices.splice(index, 1);
+      }
+      this.setCorrectChoiceValue(correctChoices);
     }
-    this.questionForm.controls.correctChoice.setValue(correctChoices);
     this.questionForm.controls.choices.value.forEach(({ id }) => {
-      this.correctCheckboxes[id] = correctChoices.indexOf(id) > -1;
+      this.correctCheckboxes[id] = this.getCorrectChoices().indexOf(id) > -1;
     });
   }
 
@@ -111,7 +117,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
   }
 
-  updateQuestion(question: UntypedFormGroup) {
+  updateQuestion(question: QuestionFormGroup) {
     this.examsService.updateQuestion(this.questionForm, question);
     if (question.value.correctChoice instanceof Array) {
       question.value.correctChoice.forEach(choiceId => {
@@ -122,6 +128,19 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
     }
     this.examsService.checkValidFormComponent(this.questionForm, question.touched);
     this.initializing = false;
+  }
+
+  private getCorrectChoices(): string[] {
+    const currentValue = this.questionForm.controls.correctChoice.value;
+    if (Array.isArray(currentValue)) {
+      return [ ...currentValue ];
+    }
+    return currentValue ? [ currentValue ] : [];
+  }
+
+  private setCorrectChoiceValue(choices: string[]) {
+    const choiceValue = this.questionForm.controls.type.value === 'selectMultiple' ? choices : (choices[0] || '');
+    this.questionForm.controls.correctChoice.setValue(choiceValue);
   }
 
 }
