@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -9,9 +9,8 @@ import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 
-interface PromptForm {
+interface PromptFormControls {
   prompt: FormControl<string>;
-  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
@@ -33,7 +32,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-  promptForm: FormGroup<PromptForm>;
+  promptForm: FormGroup<PromptFormControls>;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -131,8 +130,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createForm() {
-    this.promptForm = this.formBuilder.nonNullable.group({
-      prompt: [ '', CustomValidators.required ],
+    this.promptForm = this.formBuilder.group<PromptFormControls>({
+      prompt: this.formBuilder.nonNullable.control('', {
+        validators: CustomValidators.required,
+      }),
     });
   }
 
