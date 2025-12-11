@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
@@ -19,6 +19,36 @@ const removeProtocol = (str: string) => {
   // First match includes characters, second does not (so we use second)
   return /\/\/(.*?)$/.exec(str)[1];
 };
+
+interface LoginForm {
+  name: FormControl<string>;
+  password: FormControl<string>;
+  confirmPassword: FormControl<string>;
+}
+
+type DatePlaceholder = CouchService['datePlaceholder'];
+
+interface ConfigurationForm {
+  planetType: FormControl<string>;
+  localDomain: FormControl<string>;
+  name: FormControl<string>;
+  parentDomain: FormControl<string>;
+  parentCode: FormControl<string>;
+  preferredLang: FormControl<string>;
+  code: FormControl<string>;
+  createdDate: FormControl<DatePlaceholder>;
+  autoAccept: FormControl<boolean>;
+  alwaysOnline: FormControl<boolean>;
+  betaEnabled: FormControl<string>;
+}
+
+interface ContactForm {
+  firstName: FormControl<string>;
+  lastName: FormControl<string>;
+  middleName: FormControl<string>;
+  email: FormControl<string>;
+  phoneNumber: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-configuration',
@@ -49,9 +79,9 @@ export class ConfigurationComponent implements OnInit {
   configurationType = 'new';
   nationOrCommunity = 'community';
   message = '';
-  loginForm: UntypedFormGroup;
-  configurationFormGroup: UntypedFormGroup;
-  contactFormGroup: UntypedFormGroup;
+  loginForm!: FormGroup<LoginForm>;
+  configurationFormGroup!: FormGroup<ConfigurationForm>;
+  contactFormGroup!: FormGroup<ContactForm>;
   nations = [];
   showAdvancedOptions = false;
   isAdvancedOptionsChanged = false;
@@ -62,7 +92,7 @@ export class ConfigurationComponent implements OnInit {
   languageNames = languages.map(list => list.name);
 
   constructor(
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
@@ -82,54 +112,33 @@ export class ConfigurationComponent implements OnInit {
         CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
         Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
       ],
-      password: [
-        '',
-        Validators.compose([
-          Validators.required,
-          CustomValidators.matchPassword('confirmPassword', false)
-        ])
+      password: [ '', [
+        Validators.required,
+        CustomValidators.matchPassword('confirmPassword', false) ]
       ],
-      confirmPassword: [
-        '',
-        Validators.compose([
-          Validators.required,
-          CustomValidators.matchPassword('password', true)
-        ])
+      confirmPassword: [ '', [
+        Validators.required,
+        CustomValidators.matchPassword('password', true) ]
       ]
     });
     this.configurationFormGroup = this.formBuilder.group({
       planetType: [ '', Validators.required ],
-      localDomain: this.defaultLocal,
-      name: [
-        '',
-        [ Validators.required,
-        Validators.pattern(/^[A-Za-z0-9]/i) ],
-        this.parentUniqueValidator('name')
-      ],
+      localDomain: this.formBuilder.control(this.defaultLocal),
+      name:  ['', [ Validators.required, Validators.pattern(/^[A-Za-z0-9]/i) ], this.parentUniqueValidator('name') ],
       parentDomain: [ '', Validators.required ],
       parentCode: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
-      code: [
-        '',
-        Validators.required,
-        this.parentUniqueValidator('code')
-      ],
+      code: [ '', Validators.required, this.parentUniqueValidator('code') ],
       createdDate: this.couchService.datePlaceholder,
-      autoAccept: true,
-      alwaysOnline: false,
-      betaEnabled: 'off'
+      autoAccept: this.formBuilder.control(true),
+      alwaysOnline: this.formBuilder.control(false),
+      betaEnabled: this.formBuilder.control('off')
     });
     this.contactFormGroup = this.formBuilder.group({
       firstName: [ '', CustomValidators.required ],
       lastName: [ '', CustomValidators.required ],
-      middleName: [ '' ],
-      email: [
-        '',
-        Validators.compose([
-          Validators.required,
-          Validators.email
-        ])
-      ],
+      middleName: '',
+      email: [ '', [ Validators.required, Validators.email ] ],
       phoneNumber: [ '', CustomValidators.required ]
     });
     this.getNationList();
@@ -149,15 +158,16 @@ export class ConfigurationComponent implements OnInit {
     } );
   }
 
-  parentUniqueValidator(controlName: string) {
-    return ac => {
+  parentUniqueValidator(controlName: 'name' | 'code'): AsyncValidatorFn {
+    return (ac: AbstractControl<string>) => {
+      const parentDomain = (ac.parent as FormGroup<ConfigurationForm>)?.controls.parentDomain.value;
       return this.validatorService.isUnique$(
         'communityregistrationrequests',
         controlName,
         ac,
         {
           exceptions: [ this.configuration[controlName] ],
-          opts: { domain: ac.parent.get('parentDomain').value }
+          opts: { domain: parentDomain }
         }
       );
     };
@@ -171,24 +181,25 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  localDomainChange(event) {
-    this.isAdvancedOptionsChanged = (this.defaultLocal !== event.target.value);
+  localDomainChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.isAdvancedOptionsChanged = (this.defaultLocal !== target.value);
   }
 
   resetDefault() {
     this.isAdvancedOptionConfirmed = false;
     this.isAdvancedOptionsChanged = false;
-    this.configurationFormGroup.get('localDomain').setValue(this.defaultLocal);
+    this.configurationFormGroup.controls.localDomain.setValue(this.defaultLocal);
   }
 
-  planetNameChange(event) {
+  planetNameChange(event: Event) {
     if (this.configurationType !== 'update') {
-      let code = this.configurationFormGroup.get('name').value;
+      let code = this.configurationFormGroup.controls.name.value;
       // convert special character to dot except last character
       code = code.replace(/\W+(?!$)/g, '.').toLowerCase();
       // skip special character if comes as last character
       code = code.replace(/\W+$/, '').toLowerCase();
-      this.configurationFormGroup.get('code').setValue(code);
+      this.configurationFormGroup.controls.code.setValue(code);
     }
   }
 
@@ -219,9 +230,10 @@ export class ConfigurationComponent implements OnInit {
   }
 
   onChangeNation() {
-    const parentCode = this.nations.find(n => n.localDomain === this.configurationFormGroup.get('parentDomain').value);
-    this.configurationFormGroup.get('parentCode').setValue(parentCode.code);
-    if (this.configurationFormGroup.get('name').value !== '') {
+    const parentDomain = this.configurationFormGroup.controls.parentDomain.value;
+    const parentCode = this.nations.find(n => n.localDomain === parentDomain);
+    this.configurationFormGroup.controls.parentCode.setValue(parentCode?.code ?? '');
+    if (this.configurationFormGroup.controls.name.value !== '') {
       this.configurationFormGroup.controls.name.updateValueAndValidity();
       this.configurationFormGroup.controls.code.updateValueAndValidity();
     }
