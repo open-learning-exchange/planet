@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { MatStepper } from '@angular/material/stepper';
 import { forkJoin, interval } from 'rxjs';
-import { switchMap, takeWhile, map } from 'rxjs/operators';
+import { switchMap, takeWhile, map, finalize } from 'rxjs/operators';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,6 +18,12 @@ const removeProtocol = (str: string) => {
 };
 
 const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
+
+interface MigrationForm {
+  url: FormControl<string>;
+  name: FormControl<string>;
+  password: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-migration',
@@ -38,7 +44,7 @@ const getProtocol = (str: string) => /^[^:]+(?=:\/\/)/.exec(str)[0];
 export class MigrationComponent implements OnInit {
 
   @ViewChild('stepper') stepper: MatStepper;
-  cloneForm: UntypedFormGroup;
+  cloneForm: FormGroup<MigrationForm>;
   cloneDomain = '';
   cloneProtocol = '';
   admins: any = {};
@@ -47,7 +53,7 @@ export class MigrationComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private formBuilder: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private syncService: SyncService,
     private planetMessageService: PlanetMessageService,
@@ -56,7 +62,7 @@ export class MigrationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.cloneForm = this.formBuilder.group({
+    this.cloneForm = this.fb.group({
       url: [ '', Validators.required ],
       name: [ '', [
         Validators.required,
@@ -72,7 +78,9 @@ export class MigrationComponent implements OnInit {
     this.cloneProtocol = url.indexOf('http') > -1 ? getProtocol(url) : '';
     this.cloneDomain = url.indexOf('http') > -1 ? removeProtocol(url) : url;
     this.credential = { password: this.cloneForm.controls.password.value, name: this.cloneForm.controls.name.value };
+    this.dialogsLoadingService.start();
     this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.cloneDomain, protocol: this.cloneProtocol })
+    .pipe(finalize(() => this.dialogsLoadingService.stop()))
     .subscribe(() => {
       this.stepper.selected.completed = true;
       this.stepper.next();
