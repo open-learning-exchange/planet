@@ -15,7 +15,6 @@ import {
   commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
-import { debug } from '../debug-operator';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -261,7 +260,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+    this.deleteDialog.afterClosed().subscribe(() => {
       this.message = '';
     });
   }

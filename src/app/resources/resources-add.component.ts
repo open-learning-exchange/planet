@@ -14,7 +14,6 @@ import * as JSZip from 'jszip/dist/jszip.min';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { debug } from '../debug-operator';
 
 import mime from 'mime';
 import { StateService } from '../shared/state.service';
@@ -192,7 +191,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     const fileObs: Observable<any> = this.createFileObs();
-    fileObs.pipe(debug('Preparing file for upload')).subscribe(({ resource, file }) => {
+    fileObs.subscribe(({ resource, file }) => {
       const { _id, _rev } = this.existingResource;
       // If we are removing the attachment, only keep id and rev from existing resource.  Otherwise use all props
       const existingData = this.attachmentMarkedForDeletion ? { _id, _rev } : this.existingResource.doc;
@@ -307,7 +306,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         const fileNames = this.getFileNames(data);
 
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
-        forkJoin(fileNames.map(this.processZip(zip))).pipe(debug('Unpacking zip file')).subscribe((filesArray) => {
+        forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
           // Create object in format for multiple attachment upload to CouchDB
           const filesObj = filesArray.reduce((newFilesObj: any, file: any) => {
             // Default to text/plain if no mime type found
