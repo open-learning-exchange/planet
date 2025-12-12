@@ -1,7 +1,8 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { MatStepper, MatStepperSelectionEvent } from '@angular/material/stepper';
+import { MatStepper } from '@angular/material/stepper';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
@@ -87,7 +88,7 @@ export class CommunityLinkDialogComponent {
     this.linkStepper.next();
   }
 
-  linkStepperChange({ selectedIndex }: MatStepperSelectionEvent) {
+  linkStepperChange({ selectedIndex }: StepperSelectionEvent) {
     if (selectedIndex === 0 && this.linkForm.pristine !== true) {
       this.linkForm.reset({
         title: '',
@@ -102,7 +103,9 @@ export class CommunityLinkDialogComponent {
 
   linkSubmit() {
     const linkTitle = this.linkForm.controls.title.value;
-    this.teamsService.createServicesLink(this.linkForm.value).pipe(
+    const link = this.linkForm.getRawValue();
+
+    this.teamsService.createServicesLink(link).pipe(
       switchMap(() => this.data.getLinks())
     ).subscribe({
       next: () => {
