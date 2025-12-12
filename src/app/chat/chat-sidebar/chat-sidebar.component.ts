@@ -15,6 +15,7 @@ import { UserService } from '../../shared/user.service';
 
 interface TitleForm {
   title: FormControl<string>;
+  [key: string]: FormControl<string>;
 }
 
 @Component({
