@@ -270,4 +270,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   focusInput() {
     this.chatInput?.nativeElement.focus();
   }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      if (this.promptForm.valid && this.spinnerOn) {
+        this.onSubmit();
+      }
+    }
+  }
 }
