@@ -10,7 +10,6 @@ import { UsersAchievementsService } from './users-achievements.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
-import { ValidatorService } from '../../validators/validator.service';
 import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
@@ -53,7 +52,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private usersAchievementsService: UsersAchievementsService,
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
-    private validatorService: ValidatorService,
     private planetStepListService: PlanetStepListService
   ) {
     this.createForm();
@@ -164,8 +162,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       lastName: [ '', CustomValidators.required ],
       birthDate: [
         '',
-        [ CustomValidators.dateValidRequired ],
-        ac => this.validatorService.notDateInFuture$(ac)
+        [ CustomValidators.dateValidRequired ]
       ],
       birthplace: ''
     });
@@ -188,7 +185,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         title: [ achievement.title, CustomValidators.required ],
         description: [ achievement.description ],
         link: [ achievement.link, [], CustomValidators.validLink ],
-        date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
+        date: [ achievement.date ]
       }),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
