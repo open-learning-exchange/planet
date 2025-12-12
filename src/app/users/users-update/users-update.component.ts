@@ -8,7 +8,6 @@ import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
 import { CustomValidators } from '../../validators/custom-validators';
 import { StateService } from '../../shared/state.service';
-import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
@@ -58,7 +57,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private router: Router,
     private userService: UserService,
     private stateService: StateService,
-    private validatorService: ValidatorService,
     private dialog: MatDialog
   ) {
     this.userData();
@@ -108,8 +106,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
       birthDate: [
         '',
-        this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
-        ac => this.validatorService.notDateInFuture$(ac)
+        this.conditionalValidator(CustomValidators.dateValidRequired).bind(this)
       ],
       birthYear: [ '', [
         Validators.min(1900),
