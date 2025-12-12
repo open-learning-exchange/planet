@@ -18,7 +18,6 @@ import {
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
-import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
@@ -253,7 +252,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+    this.deleteDialog.afterClosed().subscribe(() => {
       this.message = '';
     });
   }

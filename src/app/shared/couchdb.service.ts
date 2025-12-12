@@ -3,7 +3,6 @@ import { HttpHeaders, HttpClient, HttpRequest } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, of, empty, throwError, forkJoin } from 'rxjs';
 import { catchError, map, expand, toArray, flatMap, switchMap } from 'rxjs/operators';
-import { debug } from '../debug-operator';
 import { PlanetMessageService } from './planet-message.service';
 import { findDocuments } from './mangoQueries';
 
@@ -43,7 +42,6 @@ export class CouchService {
 
   formatHttpReq(httpReq: Observable<any>, type: string, reqNum: Number) {
     return httpReq
-      .pipe(debug('Http ' + type + ' ' + reqNum + ' request'))
       .pipe(catchError(err => {
         if (err.status === 403) {
           this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
