@@ -457,7 +457,6 @@ body {
   mat-toolbar:first-child > planet-selector,
   .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
-    margin-top: 10px;
     &.mat-form-field-type-no-underline {
       margin-top: inherit;
     }
@@ -465,6 +464,11 @@ body {
 
   .mat-mdc-form-field.mdc-form-field-no-outline .mdc-notched-outline {
     opacity: 0;
+  }
+
+  .mdc-toolbar-input {
+    align-self: baseline;
+    padding-top: 4px;
   }
 
   mat-dialog-actions, mat-card-footer.action-buttons {
