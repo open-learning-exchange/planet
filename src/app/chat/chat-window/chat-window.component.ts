@@ -224,8 +224,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
-    this.promptForm.controls.prompt.setValue('');
-    this.chatService.sendNewChatAddedSignal();
   }
 
   onSubmit() {
@@ -237,7 +235,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    if (!this.selectedConversationId) {
+      this.chatService.sendNewChatAddedSignal();
+    }
     const content = this.promptForm.controls.prompt.value;
+    this.promptForm.controls.prompt.setValue('');
+    this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
@@ -249,28 +252,37 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (this.streaming) {
-      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
+      const lastConversationIndex = this.conversations.length - 1;
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
+          this.conversations[lastConversationIndex].response = completion?.chat;
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            '_rev': completion.couchDBResponse?.rev,
           };
           this.postSubmit();
         },
         (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+          this.conversations[lastConversationIndex].response = 'Error: ' + error.message;
+          this.conversations[lastConversationIndex].error = true;
           this.spinnerOn = true;
-          this.promptForm.controls.prompt.setValue('');
-        }
+        },
       );
     }
   }
 
   focusInput() {
     this.chatInput?.nativeElement.focus();
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      if (this.promptForm.valid && this.spinnerOn) {
+        this.onSubmit();
+      }
+    }
   }
 }
