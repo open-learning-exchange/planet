@@ -221,6 +221,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
+    this.promptForm.controls.prompt.setValue('');
     this.chatService.sendNewChatAddedSignal();
   }
 
@@ -233,9 +234,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    if (!this.selectedConversationId) {
+      this.chatService.sendNewChatAddedSignal();
+    }
     const content = this.promptForm.controls.prompt.value;
-    this.promptForm.controls.prompt.setValue('');
-    this.conversations.push({ id: Date.now().toString(), query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
@@ -260,9 +262,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           this.postSubmit();
         },
         (error: any) => {
-          const lastConversationIndexOnError = this.conversations.length - 1;
-          this.conversations[lastConversationIndexOnError].response = 'Error: ' + error.message;
-          this.conversations[lastConversationIndexOnError].error = true;
+          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
           this.spinnerOn = true;
         },
       );
