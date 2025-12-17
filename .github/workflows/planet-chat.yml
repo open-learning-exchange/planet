@@ -76,14 +76,14 @@ jobs:
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
-          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          latesttag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
+          amd64tag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_chatapi_latest.yaml
@@ -96,15 +96,15 @@ jobs:
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v0.7.0/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
-          versiontag="$DOCKER_ORG/$DOCKER_REPO:chatapi-$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
+          versiontag="docker.io/$DOCKER_ORG/$DOCKER_REPO:chatapi-$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
           yq e '.tags |= . + ["chatapi"] ' - | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
+          amd64tag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
           yq e '.manifests[0].platform.architecture = "amd64"' - | \
           yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
+          armtag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
           yq e '.manifests[1].platform.architecture = "arm"' - | \
           yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
+          arm64tag="docker.io/$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
           yq e '.manifests[2].platform.architecture = "arm64"' - | \
           yq e '.manifests[2].platform.os = "linux"' - | \
           tee /tmp/MA_manifests/MA_chatapi_versioned.yaml
