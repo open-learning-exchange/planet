@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { forkJoin, of } from 'rxjs';
@@ -9,7 +9,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
-import { ExamsService } from './exams.service';
+import { ExamsService, QuestionFormGroup } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
 import { UserService } from '../shared/user.service';
 import { ExamsPreviewComponent } from './exams-preview.component';
@@ -24,7 +24,7 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams';
-  examForm: UntypedFormGroup;
+  examForm: FormGroup;
   documentInfo: any = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
@@ -39,24 +39,24 @@ export class ExamsAddComponent implements OnInit {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  private _question: UntypedFormGroup;
-  get question(): UntypedFormGroup {
+  private _question: QuestionFormGroup;
+  get question(): QuestionFormGroup {
     return this._question;
   }
-  set question(newQuestion: UntypedFormGroup) {
-    const question = (<UntypedFormGroup>(<UntypedFormArray>this.examForm.controls.questions).at(this.activeQuestionIndex));
+  set question(newQuestion: QuestionFormGroup) {
+    const question = (<FormArray<QuestionFormGroup>>this.examForm.controls.questions).at(this.activeQuestionIndex);
     this.examsService.updateQuestion(question, newQuestion);
     this._question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
-  get questions(): UntypedFormArray {
-    return <UntypedFormArray>this.examForm.controls.questions;
+  get questions(): FormArray<QuestionFormGroup> {
+    return <FormArray<QuestionFormGroup>>this.examForm.controls.questions;
   }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -177,18 +177,19 @@ export class ExamsAddComponent implements OnInit {
     this.activeQuestionIndex = index;
     this.isQuestionsActive = index > -1;
     if (index > -1) {
-      this.question = (<UntypedFormGroup>(<UntypedFormArray>this.examForm.get('questions')).at(index));
+      this.question = (<FormArray<QuestionFormGroup>>this.examForm.get('questions')).at(index);
     }
   }
 
   initializeQuestions(questions: any[]) {
     questions.forEach((question) => {
-      (<UntypedFormArray>this.examForm.controls.questions).push(this.examsService.newQuestionForm(this.examType === 'exam', question));
+      (<FormArray<QuestionFormGroup>>this.examForm.controls.questions)
+        .push(this.examsService.newQuestionForm(this.examType === 'exam', question));
     });
   }
 
   addQuestion(type: string) {
-    const questions = (<UntypedFormArray>this.examForm.get('questions'));
+    const questions = (<FormArray<QuestionFormGroup>>this.examForm.get('questions'));
     questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
     questions.updateValueAndValidity();
     this.planetStepListService.addStep(questions.length - 1);
@@ -197,7 +198,7 @@ export class ExamsAddComponent implements OnInit {
   }
 
   removeQuestion(index) {
-    (<UntypedFormArray>this.examForm.get('questions')).removeAt(index);
+    (<FormArray<QuestionFormGroup>>this.examForm.get('questions')).removeAt(index);
   }
 
   getQuestionLabel(value: any, index: number): string {
