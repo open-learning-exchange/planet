@@ -15,7 +15,7 @@
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
       <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
       <button mat-raised-button color="accent" type="button" [disabled]="disableRemove" (click)="removeCourses()" i18n>Remove Courses</button>
-      <button mat-raised-button color="primary" type="button" (click)="openImagePreviewDialog()" i18n>Upload a certificate Image or pdf</button>
+      <button mat-raised-button color="primary" type="button" (click)="openImagePreviewDialog()" i18n>Upload a certificate template or pdf</button>
     </div>
     <form [formGroup]="certificateForm" novalidate>
       <mat-form-field class="full-width">
