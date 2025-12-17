@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Build image
         run: |
@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Multiarch Deploy
         run: |
