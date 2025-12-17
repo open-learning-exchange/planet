@@ -25,6 +25,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
+  previewUrl: any;
+  selectedFile: any;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
@@ -78,6 +80,15 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files[0]) {
+      this.selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => this.previewUrl = reader.result;
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
   submitCertificate(reroute: boolean) {
     if (!this.certificateForm.valid) {
       showFormErrors(this.certificateForm.controls);
@@ -87,7 +98,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     this.certificationsService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,
-      courseIds: this.courseIds
+      courseIds: this.courseIds,
+      attachment: this.selectedFile
     }).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(

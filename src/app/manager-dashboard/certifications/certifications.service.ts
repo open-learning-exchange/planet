@@ -4,6 +4,7 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { dedupeShelfReduce } from '../../shared/utils';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,18 @@ export class CertificationsService {
   }
 
   addCertification(certification) {
+    const { attachment, ...cert } = certification;
+    if (attachment) {
+      return this.couchService.updateDocument(this.dbName, cert).pipe(
+        switchMap((res: any) => {
+          return this.couchService.putAttachment(
+            `${this.dbName}/${res.id}/attachment`,
+            attachment,
+            { rev: res.rev }
+          );
+        })
+      );
+    }
     return this.couchService.updateDocument(this.dbName, { ...certification });
   }
 
