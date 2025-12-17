@@ -42,7 +42,8 @@ export class ImagePreviewDialogComponent implements OnInit {
   }
 
   remove() {
-    this.dialogRef.close(null);
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
 
   close() {
