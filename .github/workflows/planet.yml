@@ -59,7 +59,7 @@ jobs:
 
       - name: Docker login
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Pre-Build Planet
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
@@ -97,7 +97,7 @@ jobs:
           rm -rf ./src/assets/landing-page/video/landing.mp4
 
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Tag prebuild as latest
         continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
@@ -138,7 +138,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Build image
         run: |
@@ -181,7 +181,7 @@ jobs:
 
     steps:
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY2 }}
 
       - name: Multiarch Deploy
         run: |
