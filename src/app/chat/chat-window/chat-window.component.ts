@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { NonNullableFormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -46,7 +46,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private formBuilder: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private stateService: StateService,
     private userService: UserService
   ) {}
@@ -128,8 +128,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createForm() {
-    this.promptForm = this.formBuilder.nonNullable.group({
-      prompt: this.formBuilder.nonNullable.control('', { validators: [ CustomValidators.required ] }),
+    this.promptForm = this.fb.group({
+      prompt: this.fb.control('', { validators: [ CustomValidators.required ] }),
     });
   }
 
