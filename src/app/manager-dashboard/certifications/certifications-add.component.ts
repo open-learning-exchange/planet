@@ -9,6 +9,7 @@ import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { ImagePreviewDialogComponent } from '../../shared/dialogs/image-preview-dialog.component';
 
 interface CertificationFormModel {
   name: string;
@@ -25,7 +26,6 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
-  previewUrl: any;
   selectedFile: any;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
@@ -80,13 +80,16 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     this.router.navigate([ navigation ], { relativeTo: this.route });
   }
 
-  onFileSelected(event: any) {
-    if (event.target.files && event.target.files[0]) {
-      this.selectedFile = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = e => this.previewUrl = reader.result;
-      reader.readAsDataURL(this.selectedFile);
-    }
+  openImagePreviewDialog() {
+    const dialogRef = this.dialog.open(ImagePreviewDialogComponent, {
+      data: { file: this.selectedFile }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result !== undefined) {
+        this.selectedFile = result;
+      }
+    });
   }
 
   submitCertificate(reroute: boolean) {

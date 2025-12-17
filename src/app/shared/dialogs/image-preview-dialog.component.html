@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Image Preview</h2>
+<mat-dialog-content>
+  <div *ngIf="previewUrl; else noImage">
+    <img [src]="previewUrl" style="max-width: 100%; max-height: 50vh;">
+  </div>
+  <ng-template #noImage>
+    <p>No image selected.</p>
+  </ng-template>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <input type="file" #fileInput (change)="onFileSelected($event)" hidden>
+  <button mat-button (click)="fileInput.click()">Change</button>
+  <button mat-button (click)="remove()">Remove</button>
+  <span style="flex: 1 1 auto;"></span>
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="confirm()">Confirm</button>
+</mat-dialog-actions>
