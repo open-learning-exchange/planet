@@ -46,6 +46,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   pageType: string | null = null;
   disableDownload = true;
   disableDelete = true;
+  showDownloadCheckbox = false;
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control([]);
@@ -155,6 +156,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     // If the resource does not have an attachment, disable file downloadable toggle
     this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
+    this.showDownloadCheckbox = !!resource.doc._attachments;
     this.resourceFilename = resource.doc._attachments
       ? Object.keys(resource.doc._attachments).join(', ')
       : '';
@@ -255,6 +257,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.deleteAttachment = event.checked;
     // Also disable downloadable toggle if user is removing file
     this.disableDownload = event.checked;
+    this.showDownloadCheckbox = !event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
   }
 
@@ -263,6 +266,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.resourceFilename = '';
     this.disableDelete = true;
     this.disableDownload = true;
+    this.showDownloadCheckbox = false;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.hasUnsavedChanges = true;
   }
@@ -333,7 +337,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   removeNewFile() {
     this.file = null;
     this.fileInput.clearFile();
-    this.disableDownload = false;
+    this.disableDownload = true;
+    this.showDownloadCheckbox = false;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
@@ -352,6 +357,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     this.file = input.files[0];
     this.disableDownload = false;
+    this.showDownloadCheckbox = true;
     this.resourceForm.updateValueAndValidity();
 
     if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
