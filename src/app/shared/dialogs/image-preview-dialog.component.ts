@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 
 @Component({
@@ -9,6 +9,7 @@ export class ImagePreviewDialogComponent implements OnInit {
 
   previewUrl: any;
   selectedFile: File;
+  @ViewChild('fileInput') fileInput: ElementRef;
 
   constructor(
     public dialogRef: MatDialogRef<ImagePreviewDialogComponent>,
@@ -26,6 +27,7 @@ export class ImagePreviewDialogComponent implements OnInit {
     if (event.target.files && event.target.files[0]) {
       this.selectedFile = event.target.files[0];
       this.updatePreview();
+      this.fileInput.nativeElement.value = '';
     }
   }
 
