@@ -28,7 +28,8 @@ export class CouchService {
     const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
-      httpReq = this.http[type](url, data, opts);
+      const body = typeof data === 'object' && !(data instanceof Blob) ? JSON.stringify(data) : data;
+      httpReq = this.http[type](url, body, opts);
     } else {
       httpReq = this.http[type](url, opts);
     }
@@ -68,10 +69,16 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  putAttachment(db: string, file: FormData, opts?: any) {
-    return this.couchDBReq('put', db, this.setOpts(opts), file);
+  putAttachment(db: string, file: File, opts?: any) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': file.type,
+      }),
+      withCredentials: true,
+      ...opts,
+    };
+    return this.couchDBReq('put', db, this.setOpts(httpOptions), file);
   }
-
   updateDocument(db: string, doc: any, opts?: any) {
     let docWithDate: any;
     return this.currentTime().pipe(
