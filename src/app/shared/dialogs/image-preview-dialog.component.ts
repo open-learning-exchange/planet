@@ -3,6 +3,7 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
 
 @Component({
   templateUrl: './image-preview-dialog.component.html',
+  styleUrls: ['./image-preview-dialog.component.scss']
 })
 export class ImagePreviewDialogComponent implements OnInit {
 
