@@ -1,8 +1,9 @@
 @import "../variables.scss";
 @import "../../planet-mat-theme.scss";
-@import "../mixins.scss";
+@import "../_mixins";
 
 :host {
+  // Expose consistent lt/rt grid areas so the login hero and form tiles align with template markup.
   @include left-right-grid-areas;
 
   text-align: center;

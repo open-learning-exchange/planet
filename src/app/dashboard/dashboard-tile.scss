@@ -1,8 +1,9 @@
-@import '../mixins.scss';
+@import '../_mixins';
 @import '../variables';
 
 :host {
 
+  // Map the status tile column to the lt/rt grid areas used by the dashboard card layout.
   @include left-right-grid-areas;
   // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
