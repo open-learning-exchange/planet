@@ -12,7 +12,7 @@
   <div class="view-container view-full-height">
     <div class="attachment-preview" *ngIf="previewSrc && previewSrc !== 'assets/image.png'">
       <p i18n>Certificate Template Preview:</p>
-      <img [src]="previewSrc" (click)="openImagePreviewDialog()" alt="Certificate Template Preview" style="max-width: 200px; cursor: pointer; border: 1px solid #ccc; padding: 5px;">
+      <img [src]="previewSrc" (click)="openImagePreviewDialog()" alt="Certificate Template Preview">
     </div>
     <div class="action-buttons">
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(false)" i18n>Save</button>
