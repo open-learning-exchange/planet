@@ -232,4 +232,14 @@ export class CouchService {
     );
   }
 
+  getAttachment(db: string, docId: string, attachmentId: string, opts?: any): Observable<any> {
+    const url = `${this.baseUrl}/${db}/${docId}/${attachmentId}`;
+    const httpOptions = {
+      ...this.defaultOpts,
+      responseType: 'blob' as 'json',
+      ...opts,
+    };
+    return this.couchDBReq('get', url, this.setOpts(httpOptions));
+  }
+
 }
