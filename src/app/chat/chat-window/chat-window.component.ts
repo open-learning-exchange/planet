@@ -222,8 +222,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  postSubmit() {
+  postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
+    if (wasNewConversation) {
+        this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
+    }
   }
 
   onSubmit() {
@@ -235,14 +238,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
-    // Save current content for the user's message
+    const wasNewConversation = !this.selectedConversationId; // Store state before any changes
+
     const content = this.promptForm.controls.prompt.value;
     this.promptForm.controls.prompt.setValue(''); // Clear the input field
 
-    // Check if we are starting a brand new conversation
-    if (!this.selectedConversationId) {
-      this.resetConversation(); // Clear existing messages before adding new prompt
-      this.chatService.sendNewChatAddedSignal(); // Signal a new chat is starting
+    if (wasNewConversation) {
+      this.resetConversation(); // Clear local messages only when starting a new conversation
     }
 
     // Add user's prompt to the conversation display
@@ -253,7 +255,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
@@ -268,7 +269,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
             '_id': completion.couchDBResponse?.id,
             '_rev': completion.couchDBResponse?.rev,
           };
-          this.postSubmit();
+          this.postSubmit(wasNewConversation); // Pass the flag
         },
         (error: any) => {
           this.conversations[lastConversationIndex].response = 'Error: ' + error.message;
