@@ -224,7 +224,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
     if (wasNewConversation) {
-        this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
+      this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
     }
   }
 
@@ -285,8 +285,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      // Add check for this.disabled
-      if (this.promptForm.valid && this.spinnerOn && !this.disabled) {
+      if (this.promptForm.valid && this.spinnerOn) {
         this.onSubmit();
       }
     }
