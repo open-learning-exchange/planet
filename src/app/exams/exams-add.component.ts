@@ -91,7 +91,7 @@ export class ExamsAddComponent implements OnInit {
 
   ngOnInit() {
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
-    if (this.route.snapshot.url[0].path !== 'update') {
+    if (!this.route.snapshot.url.length || this.route.snapshot.url[0].path !== 'update') {
       return;
     }
     this.successMessage = this.examType === 'survey' ? $localize`Survey updated successfully` : $localize`Test updated successfully`;
