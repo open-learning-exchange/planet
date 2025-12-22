@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -11,6 +11,8 @@ import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ImagePreviewDialogComponent } from '../../shared/dialogs/image-preview-dialog.component';
 import { environment } from '../../../environments/environment';
+import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
+import { warningMsg } from '../../shared/unsaved-changes.component';
 
 interface CertificationFormModel {
   name: string;
@@ -20,7 +22,7 @@ interface CertificationFormModel {
   templateUrl: './certifications-add.component.html',
   styleUrls: ['./certifications-add.component.scss']
 })
-export class CertificationsAddComponent implements OnInit, AfterViewChecked {
+export class CertificationsAddComponent implements OnInit, AfterViewChecked, CanComponentDeactivate {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
@@ -31,6 +33,10 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   selectedFile: any; // Will hold base64 string for new files
   previewSrc: any = 'assets/image.png'; // For image preview
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
+
+  initialFormValues: any;
+  attachmentChanged = false;
+  isFormInitialized = false;
 
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
@@ -61,6 +67,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
           this.certificateForm.patchValue({ name: certification.name || '' } as Partial<CertificationFormModel>);
+          this.initialFormValues = { ...this.certificateForm.value };
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
@@ -68,8 +75,20 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
             // Construct direct URL for the preview
             this.previewSrc = `${this.urlPrefix}${id}/attachment`;
           }
+          this.isFormInitialized = true;
+          this.setupFormValueChanges();
         });
+      } else {
+        this.initialFormValues = { ...this.certificateForm.value };
+        this.isFormInitialized = true;
+        this.setupFormValueChanges();
       }
+    });
+  }
+
+  setupFormValueChanges() {
+    this.certificateForm.valueChanges.subscribe(() => {
+      // The guard will check for changes, no need to set a flag here
     });
   }
 
@@ -92,20 +111,22 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        if (result instanceof File) {
-          // New file selected, convert to base64
-          const reader = new FileReader();
-          reader.onload = () => {
-            this.selectedFile = reader.result; // base64 string
-            this.previewSrc = reader.result;
-          };
-          reader.readAsDataURL(result);
-        } else if (result === null) {
-          // Image removed
-          this.selectedFile = null;
-          this.previewSrc = 'assets/image.png';
-        }
+      if (result === undefined) {
+        return; // Dialog was closed without action
+      }
+      this.attachmentChanged = true; // Any confirmed action in the dialog is a change
+      if (result instanceof File) {
+        // New file selected, convert to base64
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.selectedFile = reader.result as string;
+          this.previewSrc = this.selectedFile;
+        };
+        reader.readAsDataURL(result);
+      } else if (result === null) {
+        // Image removed
+        this.selectedFile = null;
+        this.previewSrc = 'assets/image.png';
       }
     });
   }
@@ -133,10 +154,18 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           'data': data
         }
       };
+    } else if (this.attachmentChanged && !this.selectedFile) {
+        // This means the image was removed
+        if (certData._attachments) {
+            delete certData._attachments;
+        }
     }
+
 
     this.certificationsService.addCertification(certData).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
+      this.initialFormValues = { ...this.certificateForm.value };
+      this.attachmentChanged = false;
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
       );
@@ -166,4 +195,25 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     this.courseIds = this.courseIds.filter(id => this.courseTable.selection.selected.indexOf(id) === -1);
   }
 
+  canDeactivate(): boolean {
+    return !this.getHasUnsavedChanges();
+  }
+
+  isFormPristine(): boolean {
+    return JSON.stringify(this.certificateForm.value) === JSON.stringify(this.initialFormValues);
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.getHasUnsavedChanges()) {
+      $event.returnValue = warningMsg;
+    }
+  }
+
+  private getHasUnsavedChanges(): boolean {
+    if (!this.isFormInitialized) {
+        return false;
+    }
+    return !this.isFormPristine() || this.attachmentChanged;
+  }
 }
