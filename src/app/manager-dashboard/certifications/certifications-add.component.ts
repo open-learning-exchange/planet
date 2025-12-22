@@ -59,12 +59,16 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
-          this.loadAttachment();
+          // Load attachment from CouchDB if it exists
+          if (certification._attachments && certification._attachments.attachment) {
+            this.certificationsService.getAttachment(id, 'attachment').subscribe(blob => {
+              this.selectedFile = new File([blob], 'attachment'); // Create a File object
+            });
+          }
         });
       } else {
         this.certificateInfo._id = `temp-${Date.now()}`;
         this.courseIds = [];
-        this.loadAttachment();
       }
     });
   }
@@ -90,39 +94,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.selectedFile = result;
-        this.saveAttachment();
       }
     });
-  }
-
-  loadAttachment() {
-    const storedAttachment = localStorage.getItem(`certification-attachment-${this.certificateInfo._id}`);
-    if (storedAttachment) {
-      const attachment = JSON.parse(storedAttachment);
-      const byteCharacters = atob(attachment.data.split(',')[1]);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      this.selectedFile = new File([byteArray], attachment.name, { type: attachment.type });
-    }
-  }
-
-  saveAttachment() {
-    if (this.selectedFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        localStorage.setItem(`certification-attachment-${this.certificateInfo._id}`, JSON.stringify({
-          name: this.selectedFile.name,
-          type: this.selectedFile.type,
-          data: reader.result
-        }));
-      };
-      reader.readAsDataURL(this.selectedFile);
-    } else {
-      localStorage.removeItem(`certification-attachment-${this.certificateInfo._id}`);
-    }
   }
 
   submitCertificate(reroute: boolean) {
@@ -137,7 +110,6 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       courseIds: this.courseIds,
       attachment: this.selectedFile
     }).subscribe((res) => {
-      localStorage.removeItem(`certification-attachment-${this.certificateInfo._id}`);
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
