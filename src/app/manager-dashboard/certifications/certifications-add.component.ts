@@ -10,7 +10,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ImagePreviewDialogComponent } from '../../shared/dialogs/image-preview-dialog.component';
-import { switchMap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 interface CertificationFormModel {
   name: string;
@@ -27,7 +27,10 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
   courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
-  selectedFile: any;
+  selectedFile: any; // Will hold base64 string for new files
+  previewSrc: any = 'assets/image.png'; // For image preview
+  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
+
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
@@ -60,11 +63,9 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
-          // Load attachment from CouchDB if it exists
           if (certification._attachments && certification._attachments.attachment) {
-            this.certificationsService.getAttachment(id, 'attachment').subscribe(blob => {
-              this.selectedFile = new File([blob], 'attachment'); // Create a File object
-            });
+            // Construct direct URL for the preview
+            this.previewSrc = `${this.urlPrefix}${id}/attachment`;
           }
         });
       }
@@ -86,38 +87,23 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   openImagePreviewDialog() {
     const dialogRef = this.dialog.open(ImagePreviewDialogComponent, {
-      data: { file: this.selectedFile }
+      data: { file: this.previewSrc } // Pass previewSrc to the dialog
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        this.selectedFile = result;
-        // If it's a new certification (no _id from route), create a draft.
-        if (!this.route.snapshot.paramMap.get('id')) {
-          // If no doc exists yet, create one
-          if (!this.certificateInfo._id || this.certificateInfo._id.startsWith('temp-')) {
-            this.certificationsService.createDraftCertification().pipe(
-              switchMap((res: any) => {
-                this.certificateInfo = { _id: res.id, _rev: res.rev };
-                return this.certificationsService.uploadAttachment(res.id, res.rev, this.selectedFile);
-              })
-            ).subscribe(uploadRes => {
-              this.certificateInfo._rev = uploadRes.rev; // Update rev after attachment upload
-              this.planetMessageService.showMessage($localize`Draft saved.`);
-            });
-          } else { // Draft doc already exists, just upload attachment
-            this.certificationsService.uploadAttachment(this.certificateInfo._id, this.certificateInfo._rev, this.selectedFile)
-              .subscribe(uploadRes => {
-                this.certificateInfo._rev = uploadRes.rev;
-                this.planetMessageService.showMessage($localize`Draft updated.`);
-              });
-          }
-        } else { // Existing certification, just upload the new attachment
-          this.certificationsService.uploadAttachment(this.certificateInfo._id, this.certificateInfo._rev, this.selectedFile)
-            .subscribe(uploadRes => {
-              this.certificateInfo._rev = uploadRes.rev;
-              this.planetMessageService.showMessage($localize`Attachment updated.`);
-            });
+        if (result instanceof File) {
+          // New file selected, convert to base64
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.selectedFile = reader.result; // base64 string
+            this.previewSrc = reader.result;
+          };
+          reader.readAsDataURL(result);
+        } else if (result === null) {
+          // Image removed
+          this.selectedFile = null;
+          this.previewSrc = 'assets/image.png';
         }
       }
     });
@@ -129,13 +115,25 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue: CertificationFormModel = this.certificateForm.getRawValue();
-    const certData = {
+    const certData: any = {
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds,
-      type: 'certification' // Ensure type is 'certification', not 'draft'
     };
-    // The attachment is already in CouchDB, so we just update the document fields.
+
+    if (this.selectedFile && this.selectedFile.startsWith('data:')) {
+      // New base64 image data is present
+      const imgDataArr: string[] = this.selectedFile.split(/;\w+,/);
+      const contentType: string = imgDataArr[0].replace(/data:/, '');
+      const data: string = imgDataArr[1];
+      certData._attachments = {
+        'attachment': {
+          'content_type': contentType,
+          'data': data
+        }
+      };
+    }
+
     this.certificationsService.addCertification(certData).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
