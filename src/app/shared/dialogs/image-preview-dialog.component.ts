@@ -8,7 +8,7 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
 export class ImagePreviewDialogComponent implements OnInit {
 
   previewUrl: any;
-  selectedFile: File;
+  selectedFile: File | null;
   @ViewChild('fileInput') fileInput: ElementRef;
 
   constructor(
@@ -18,8 +18,13 @@ export class ImagePreviewDialogComponent implements OnInit {
 
   ngOnInit() {
     if (this.data && this.data.file) {
-      this.selectedFile = this.data.file;
-      this.updatePreview();
+      if (typeof this.data.file === 'string') {
+        this.previewUrl = this.data.file;
+        this.selectedFile = null; // It's just a URL, no file object yet
+      } else if (this.data.file instanceof File || this.data.file instanceof Blob) {
+        this.selectedFile = this.data.file;
+        this.updatePreview();
+      }
     }
   }
 
@@ -27,16 +32,20 @@ export class ImagePreviewDialogComponent implements OnInit {
     if (event.target.files && event.target.files[0]) {
       this.selectedFile = event.target.files[0];
       this.updatePreview();
-      this.fileInput.nativeElement.value = '';
+      if (this.fileInput.nativeElement) {
+        this.fileInput.nativeElement.value = '';
+      }
     }
   }
 
   updatePreview() {
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previewUrl = reader.result;
-    };
-    reader.readAsDataURL(this.selectedFile);
+    if (this.selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   confirm() {
@@ -49,6 +58,8 @@ export class ImagePreviewDialogComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    // When closing without confirming, return undefined so the calling component knows no change was made
+    this.dialogRef.close(undefined);
   }
 }
+
