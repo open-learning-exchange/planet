@@ -224,7 +224,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
-    this.chatService.sendNewChatAddedSignal();
   }
 
   onSubmit() {
@@ -236,11 +235,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
-    if (!this.selectedConversationId) {
-      this.chatService.sendNewChatAddedSignal();
-    }
+    // Save current content for the user's message
     const content = this.promptForm.controls.prompt.value;
-    this.promptForm.controls.prompt.setValue('');
+    this.promptForm.controls.prompt.setValue(''); // Clear the input field
+
+    // Check if we are starting a brand new conversation
+    if (!this.selectedConversationId) {
+      this.resetConversation(); // Clear existing messages before adding new prompt
+      this.chatService.sendNewChatAddedSignal(); // Signal a new chat is starting
+    }
+
+    // Add user's prompt to the conversation display
     this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
@@ -281,7 +286,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      if (this.promptForm.valid && this.spinnerOn) {
+      // Add check for this.disabled
+      if (this.promptForm.valid && this.spinnerOn && !this.disabled) {
         this.onSubmit();
       }
     }
