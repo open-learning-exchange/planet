@@ -10,19 +10,12 @@
     <span i18n>{pageType, select, Add {Add} Update {Update}} Certification</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="attachment-preview" *ngIf="previewSrc && previewSrc !== 'assets/image.png'">
-      <p i18n>Certificate Template Preview:</p>
-      <img [src]="previewSrc" (click)="openImagePreviewDialog()" alt="Certificate Template Preview" style="max-width: 200px; cursor: pointer; border: 1px solid #ccc; padding: 5px;">
-    </div>
     <div class="action-buttons">
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(false)" i18n>Save</button>
       <button mat-raised-button color="primary" type="button" (click)="submitCertificate(true)" i18n class="margin-lr-5">Save & Return</button>
       <button mat-raised-button color="accent" type="button" (click)="openCourseDialog()" i18n>Add Courses</button>
       <button mat-raised-button color="accent" type="button" [disabled]="disableRemove" (click)="removeCourses()" i18n>Remove Courses</button>
-      <button mat-raised-button color="primary" type="button" (click)="openImagePreviewDialog()">
-        <span *ngIf="previewSrc && previewSrc !== 'assets/image.png'" i18n>Change Template</span>
-        <span *ngIf="!previewSrc || previewSrc === 'assets/image.png'" i18n>Upload a certificate template or pdf</span>
-      </button>
+      <button mat-raised-button color="primary" type="button" (click)="openImagePreviewDialog()" i18n>Upload a certificate template or pdf</button>
     </div>
     <form [formGroup]="certificateForm" novalidate>
       <mat-form-field class="full-width">
