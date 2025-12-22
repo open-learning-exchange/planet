@@ -4,7 +4,6 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
-import { ValidatorService } from '../validators/validator.service';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { showFormErrors } from '../shared/table-helpers';
@@ -28,7 +27,6 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
@@ -92,8 +90,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       phoneNumber: [ '', CustomValidators.required ],
       birthDate: [
         '',
-        CustomValidators.dateValidRequired,
-        ac => this.validatorService.notDateInFuture$(ac)
+        CustomValidators.dateValidRequired
       ],
       birthplace: ''
     });
