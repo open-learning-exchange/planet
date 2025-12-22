@@ -51,7 +51,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
-  surveyId = this.route.snapshot.params['surveyId'];
+  surveyId: string | null = null;
+  isManagerSurveysRoute = false;
 
   constructor(
     private router: Router,
@@ -65,6 +66,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.surveyId = this.route.snapshot.paramMap.get('surveyId');
+    this.isManagerSurveysRoute = !!this.surveyId;
   }
 
   ngOnInit() {
@@ -81,15 +84,21 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.coursesService.requestCourses();
     zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ submissions, courses ]) => {
-      submissions = submissions.filter(data => data.user && data.type !== 'photo' && data.parent).reduce((sList, s1) => {
-        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-        if (!s1.user._id || sIndex === -1) {
-          sList.push(s1);
-        } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
-          sList[sIndex] = s1;
-        }
-        return sList;
-      }, []).map(submission => this.appendCourseInfo(submission, courses));
+      let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
+
+      if (!this.isManagerSurveysRoute) {
+        normalized = normalized.reduce((sList, s1) => {
+          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
+          if (!s1.user._id || sIndex === -1) {
+            sList.push(s1);
+          } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
+            sList[sIndex] = s1;
+          }
+          return sList;
+        }, []);
+      }
+
+      submissions = normalized.map(submission => this.appendCourseInfo(submission, courses));
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
