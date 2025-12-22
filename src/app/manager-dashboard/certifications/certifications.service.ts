@@ -72,6 +72,18 @@ export class CertificationsService {
     return this.couchService.updateDocument(this.dbName, { ...certification });
   }
 
+  createDraftCertification() {
+    return this.couchService.updateDocument(this.dbName, { type: 'draft' });
+  }
+
+  uploadAttachment(docId: string, rev: string, file: File) {
+    return this.couchService.putAttachment(
+      `${this.dbName}/${docId}/attachment`,
+      file,
+      { rev }
+    );
+  }
+
   isCourseCompleted(course, user) {
     return course.doc.steps.length === course.progress
       .filter(step => step.userId === user._id && step.passed)

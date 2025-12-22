@@ -10,6 +10,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ImagePreviewDialogComponent } from '../../shared/dialogs/image-preview-dialog.component';
+import { switchMap } from 'rxjs/operators';
 
 interface CertificationFormModel {
   name: string;
@@ -66,9 +67,6 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
             });
           }
         });
-      } else {
-        this.certificateInfo._id = `temp-${Date.now()}`;
-        this.courseIds = [];
       }
     });
   }
@@ -94,6 +92,33 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
         this.selectedFile = result;
+        // If it's a new certification (no _id from route), create a draft.
+        if (!this.route.snapshot.paramMap.get('id')) {
+          // If no doc exists yet, create one
+          if (!this.certificateInfo._id || this.certificateInfo._id.startsWith('temp-')) {
+            this.certificationsService.createDraftCertification().pipe(
+              switchMap((res: any) => {
+                this.certificateInfo = { _id: res.id, _rev: res.rev };
+                return this.certificationsService.uploadAttachment(res.id, res.rev, this.selectedFile);
+              })
+            ).subscribe(uploadRes => {
+              this.certificateInfo._rev = uploadRes.rev; // Update rev after attachment upload
+              this.planetMessageService.showMessage($localize`Draft saved.`);
+            });
+          } else { // Draft doc already exists, just upload attachment
+            this.certificationsService.uploadAttachment(this.certificateInfo._id, this.certificateInfo._rev, this.selectedFile)
+              .subscribe(uploadRes => {
+                this.certificateInfo._rev = uploadRes.rev;
+                this.planetMessageService.showMessage($localize`Draft updated.`);
+              });
+          }
+        } else { // Existing certification, just upload the new attachment
+          this.certificationsService.uploadAttachment(this.certificateInfo._id, this.certificateInfo._rev, this.selectedFile)
+            .subscribe(uploadRes => {
+              this.certificateInfo._rev = uploadRes.rev;
+              this.planetMessageService.showMessage($localize`Attachment updated.`);
+            });
+        }
       }
     });
   }
@@ -104,12 +129,14 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       return;
     }
     const certificateFormValue: CertificationFormModel = this.certificateForm.getRawValue();
-    this.certificationsService.addCertification({
+    const certData = {
       ...this.certificateInfo,
       ...certificateFormValue,
       courseIds: this.courseIds,
-      attachment: this.selectedFile
-    }).subscribe((res) => {
+      type: 'certification' // Ensure type is 'certification', not 'draft'
+    };
+    // The attachment is already in CouchDB, so we just update the document fields.
+    this.certificationsService.addCertification(certData).subscribe((res) => {
       this.certificateInfo = { _id: res.id, _rev: res.rev };
       this.planetMessageService.showMessage(
         this.pageType === 'Add' ? $localize`New certification added` : $localize`Certification updated`
