@@ -93,12 +93,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chatService.selectedConversationId$
       .pipe(
         takeUntil(this.onDestroy$),
-        filter(() => {
-          if (this.clearChat) {
-            this.clearChat = false;
-            return false;
-          }
-          return true;
+        filter((conversationId) => {
+          // Only fetch if it's a different conversation or it's being explicitly cleared (null).
+          // This prevents re-fetching the same conversation that we just updated locally.
+          return (conversationId as any)?._id !== (this.selectedConversationId as any)?._id || conversationId === null;
         })
       )
       .subscribe((conversationId) => {
@@ -281,7 +279,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      if (this.promptForm.valid && this.spinnerOn) {
+      // Add check for this.disabled
+      if (this.promptForm.valid && this.spinnerOn && !this.disabled) {
         this.onSubmit();
       }
     }
