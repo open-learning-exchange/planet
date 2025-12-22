@@ -19,8 +19,7 @@ interface CertificationFormModel {
 }
 
 @Component({
-  templateUrl: './certifications-add.component.html',
-  styleUrls: ['./certifications-add.component.scss']
+  templateUrl: './certifications-add.component.html'
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked, CanComponentDeactivate {
 
