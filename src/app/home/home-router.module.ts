@@ -12,6 +12,7 @@ import { myDashboardRoute } from './router-constants';
 import { CoursesProgressLearnerComponent } from '../courses/progress-courses/courses-progress-learner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
+import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
 import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
 export function dashboardPath(route): string {
@@ -41,7 +42,12 @@ const alwaysGuardedRoutes = [
     path: 'health/profile/:id',
     loadChildren: () => import('../health/health.module').then(m => m.HealthModule), data: { roles: [ '_admin', 'health' ] } },
   { path: 'nation', component: TeamsViewComponent, data: { mode: 'services' } },
-  { path: 'earth', component: TeamsViewComponent, data: { mode: 'services' } },
+  {
+    path: 'earth',
+    component: TeamsViewComponent,
+    data: { mode: 'services' },
+    canActivate: [ BetaThenAuthService ]
+  },
   { path: myDashboardRoute, component: DashboardComponent },
   {
     path: dashboardPath('mySurveys'),

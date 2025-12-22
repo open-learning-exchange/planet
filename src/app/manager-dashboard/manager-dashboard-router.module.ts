@@ -12,12 +12,17 @@ import { ReportsDetailComponent } from './reports/reports-detail.component';
 import { ReportsPendingComponent } from './reports/reports-pending.component';
 import { ReportsMyPlanetComponent } from './reports/myplanet/reports-myplanet.component';
 import { LogsMyPlanetComponent } from './reports/myplanet/logs-myplanet.component';
+import { BetaThenAuthService } from '../shared/beta-then-auth-guard-service';
 
 const routes: Routes = [
   { path: '', component: ManagerDashboardComponent },
   { path: 'aiservices', component: ManagerAIServicesComponent },
   { path: 'currency', component: ManagerCurrencyComponent },
-  { path: 'certifications', loadChildren: () => import('./certifications/certifications.module').then(m => m.CertificationsModule) },
+  {
+    path: 'certifications',
+    loadChildren: () => import('./certifications/certifications.module').then(m => m.CertificationsModule),
+    canActivate: [ BetaThenAuthService ]
+  },
   { path: 'sync', component: ManagerSyncComponent },
   { path: 'fetch', component: ManagerFetchComponent },
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule), data: { parent: true } },
