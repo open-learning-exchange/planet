@@ -28,6 +28,10 @@ export class CertificationsService {
     return this.couchService.get(`${this.dbName}/${id}`);
   }
 
+  getAttachment(docId: string, attachmentId: string) {
+    return this.couchService.getAttachment(this.dbName, docId, attachmentId);
+  }
+
   openDeleteDialog(certification: any, callback) {
     const displayName = certification.name;
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
