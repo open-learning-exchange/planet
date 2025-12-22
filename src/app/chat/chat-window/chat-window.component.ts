@@ -221,8 +221,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit() {
     this.spinnerOn = true;
-    this.promptForm.controls.prompt.setValue('');
-    this.chatService.sendNewChatAddedSignal();
   }
 
   onSubmit() {
@@ -238,6 +236,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       this.chatService.sendNewChatAddedSignal();
     }
     const content = this.promptForm.controls.prompt.value;
+    this.promptForm.controls.prompt.setValue('');
+    this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
@@ -262,7 +262,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           this.postSubmit();
         },
         (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+          this.conversations[lastConversationIndex].response = 'Error: ' + error.message;
+          this.conversations[lastConversationIndex].error = true;
           this.spinnerOn = true;
         },
       );
@@ -276,7 +277,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      if (this.promptForm.valid && this.spinnerOn) {
+      // Add check for this.disabled
+      if (this.promptForm.valid && this.spinnerOn && !this.disabled) {
         this.onSubmit();
       }
     }
