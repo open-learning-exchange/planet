@@ -31,6 +31,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   fallbackConversation: any[] = [];
   selectedConversationId: any;
   promptForm: PromptFormGroup;
+  pendingNewConversation = false;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -210,7 +211,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
-      this.postSubmit();
+      this.postSubmit(this.pendingNewConversation);
+      this.pendingNewConversation = false;
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
@@ -219,8 +221,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  postSubmit() {
+  postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
+    if (wasNewConversation) {
+        this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
+    }
   }
 
   onSubmit() {
@@ -232,11 +237,15 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
-    if (!this.selectedConversationId) {
-      this.chatService.sendNewChatAddedSignal();
-    }
+    const wasNewConversation = !this.selectedConversationId; // Store state before any changes
+
     const content = this.promptForm.controls.prompt.value;
-    this.promptForm.controls.prompt.setValue('');
+    this.promptForm.controls.prompt.setValue(''); // Clear the input field
+
+    if (wasNewConversation) {
+      this.resetConversation(); // Clear local messages only when starting a new conversation
+    }
+    this.pendingNewConversation = wasNewConversation;
     this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
@@ -244,7 +253,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
@@ -259,7 +267,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
             '_id': completion.couchDBResponse?.id,
             '_rev': completion.couchDBResponse?.rev,
           };
-          this.postSubmit();
+          this.postSubmit(wasNewConversation); // Pass the flag
         },
         (error: any) => {
           this.conversations[lastConversationIndex].response = 'Error: ' + error.message;
