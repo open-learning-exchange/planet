@@ -236,10 +236,20 @@ export class CouchService {
     const url = `${this.baseUrl}/${db}/${docId}/${attachmentId}`;
     const httpOptions = {
       ...this.defaultOpts,
-      responseType: 'blob' as 'json',
+      responseType: 'blob',
       ...opts,
     };
-    return this.couchDBReq('get', url, this.setOpts(httpOptions));
+    // Use http.get directly instead of couchDBReq because couchDBReq is not suitable for attachment URLs
+    return this.http.get(url, httpOptions).pipe(
+      catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
+        } else {
+          this.planetMessageService.showAlert($localize`Error fetching attachment: ${err.message}`);
+        }
+        return throwError(err);
+      })
+    );
   }
 
 }
