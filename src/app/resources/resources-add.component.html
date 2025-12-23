@@ -109,7 +109,7 @@
           </div>
         </div>
         <div class="inner-gaps full-width">
-          <mat-checkbox [disabled]="disableDownload || resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
+          <mat-checkbox *ngIf="showDownloadCheckbox" [disabled]="resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
           <mat-checkbox *ngIf="privateFor" formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
         </div>
       </form>
