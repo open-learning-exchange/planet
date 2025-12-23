@@ -1,5 +1,5 @@
 import { Component, ViewChild, Inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
@@ -57,21 +57,21 @@ export class CommunityLinkDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<CommunityLinkDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private teamsService: TeamsService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService
   ) {
-    this.linkForm = this.fb.nonNullable.group({
-      title: this.fb.nonNullable.control('', {
+    this.linkForm = this.fb.group({
+      title: this.fb.control('', {
         validators: [CustomValidators.required],
         asyncValidators: [ac => this.validatorService.isUnique$('teams', 'title', ac, {})]
       }),
-      route: this.fb.nonNullable.control('', { validators: [CustomValidators.required] }),
-      linkId: this.fb.nonNullable.control(''),
-      teamType: this.fb.nonNullable.control(''),
-      icon: this.fb.nonNullable.control(''),
-      platform: this.fb.nonNullable.control('')
+      route: this.fb.control('', { validators: [CustomValidators.required] }),
+      linkId: this.fb.control(''),
+      teamType: this.fb.control(''),
+      icon: this.fb.control(''),
+      platform: this.fb.control('')
     });
   }
 
