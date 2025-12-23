@@ -5,8 +5,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { UsersAchievementsService } from './users-achievements.service';
-import { catchError, auditTime } from 'rxjs/operators';
-import { throwError, combineLatest } from 'rxjs';
+import { catchError, auditTime, switchMap, map } from 'rxjs/operators'; // Added switchMap and map
+import { throwError, combineLatest, forkJoin, Observable, of } from 'rxjs'; // Added forkJoin, Observable, of
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
@@ -124,12 +124,52 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   setCertifications(courses = [], progress = [], certifications = []) {
-    this.certifications = certifications.filter(certification => {
+    const filteredCertifications = certifications.filter(certification => {
       const certificateCourses = courses
         .filter(course => certification.courseIds.indexOf(course._id) > -1)
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
       return certificateCourses.every(course => this.certificationsService.isCourseCompleted(course, this.user));
     });
+
+    const attachmentFetches: Observable<any>[] = filteredCertifications.map(certification => {
+      // Check if _attachments exists and has an attachment named 'attachment'
+      if (certification._attachments && certification._attachments.attachment) {
+        return this.couchService.getAttachment(this.certificationsService.dbName, certification._id, 'attachment').pipe(
+          switchMap(blob => {
+            return new Observable<any>(observer => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                // Ensure reader.result is a string (base64) before assigning
+                certification.templateImage = typeof reader.result === 'string' ? reader.result : null;
+                observer.next(certification);
+                observer.complete();
+              };
+              reader.onerror = (error) => {
+                console.error('Error reading blob as DataURL', error);
+                certification.templateImage = null; // Set to null on error
+                observer.next(certification);
+                observer.complete();
+              };
+              reader.readAsDataURL(blob);
+            });
+          }),
+          catchError(err => {
+            console.error('Error fetching attachment for certification', certification._id, err);
+            return of(certification); // Return certification without attachment if error
+          })
+        );
+      } else {
+        return of(certification); // No attachment, return certification as is
+      }
+    });
+
+    if (attachmentFetches.length > 0) {
+      forkJoin(attachmentFetches).subscribe(certsWithAttachments => {
+        this.certifications = certsWithAttachments;
+      });
+    } else {
+      this.certifications = filteredCertifications;
+    }
   }
 
   copyLink() {
@@ -232,7 +272,7 @@ export class UsersAchievementsComponent implements OnInit {
 
     contentArray = contentArray.concat(optionals);
 
-    const documentDefinition = {
+    let documentDefinition: any = { // Changed to let to allow modification
       content: contentArray,
       styles: {
         header: {
@@ -245,6 +285,21 @@ export class UsersAchievementsComponent implements OnInit {
         }
       },
     };
+
+    // Find a certification with a template image
+    const certificationWithTemplate = this.certifications.find(cert => cert.templateImage);
+
+    if (certificationWithTemplate && certificationWithTemplate.templateImage) {
+      documentDefinition.background = [
+        {
+          image: certificationWithTemplate.templateImage,
+          width: 612, // US Letter width in points (8.5 inches * 72 points/inch)
+          height: 792, // US Letter height in points (11 inches * 72 points/inch)
+          absolutePosition: { x: 0, y: 0 },
+          opacity: 0.5 // Optional: adjust opacity for readability
+        }
+      ];
+    }
 
     pdfMake
       .createPdf(documentDefinition)

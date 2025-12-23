@@ -17,6 +17,7 @@ import { SyncDirective } from '../../manager-dashboard/sync.directive';
 import { DialogsImagesComponent } from './dialogs-images.component';
 import { DialogsAnnouncementComponent, DialogsAnnouncementSuccessComponent } from './dialogs-announcement.component';
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
+import { ImagePreviewDialogComponent } from './image-preview-dialog.component';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     DialogsRatingsComponent,
     DialogsRatingsDirective,
     ChangePasswordDirective,
-    SyncDirective
+    SyncDirective,
+    ImagePreviewDialogComponent
   ],
   declarations: [
     DialogsFormComponent,
@@ -53,7 +55,8 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     ChangePasswordDirective,
     SyncDirective,
     DialogsAnnouncementComponent,
-    DialogsAnnouncementSuccessComponent
+    DialogsAnnouncementSuccessComponent,
+    ImagePreviewDialogComponent
   ],
   providers: [
     DialogsFormService,
