@@ -221,9 +221,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
+<<<<<<< HEAD
     if (wasNewConversation) {
       this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
     }
+=======
+    this.chatService.sendNewChatAddedSignal();
+>>>>>>> a6184dd9e5030111ad3a3532eb96bcfdd8dbae3a
   }
 
   onSubmit() {
@@ -235,6 +239,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+<<<<<<< HEAD
     const wasNewConversation = !this.selectedConversationId; // Store state before any changes
 
     const content = this.promptForm.controls.prompt.value;
@@ -244,6 +249,13 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       this.resetConversation(); // Clear local messages only when starting a new conversation
     }
     this.pendingNewConversation = wasNewConversation;
+=======
+    if (!this.selectedConversationId) {
+      this.chatService.sendNewChatAddedSignal();
+    }
+    const content = this.promptForm.controls.prompt.value;
+    this.promptForm.controls.prompt.setValue('');
+>>>>>>> a6184dd9e5030111ad3a3532eb96bcfdd8dbae3a
     this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
     this.data = { ...this.data, content, aiProvider: this.provider };
 
