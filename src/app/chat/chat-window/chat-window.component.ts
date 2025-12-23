@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
-import { NonNullableFormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -9,7 +9,10 @@ import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
 
-type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
+interface PromptForm {
+  prompt: FormControl<string>;
+  [key: string]: AbstractControl<any, any>;
+}
 
 @Component({
   selector: 'planet-chat-window',
@@ -27,10 +30,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   streaming: boolean;
   disabled = false;
   clearChat = true;
+  wasNewConversation: boolean;
   provider: AIProvider;
   fallbackConversation: any[] = [];
   selectedConversationId: any;
-  promptForm: PromptFormGroup;
+  promptForm: FormGroup<PromptForm>;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -46,7 +50,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
-    private fb: NonNullableFormBuilder,
+    private formBuilder: FormBuilder,
     private stateService: StateService,
     private userService: UserService
   ) {}
@@ -128,8 +132,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   createForm() {
-    this.promptForm = this.fb.group({
-      prompt: this.fb.control('', { validators: [ CustomValidators.required ] }),
+    this.promptForm = this.formBuilder.nonNullable.group({
+      prompt: [ '', CustomValidators.required ],
     });
   }
 
@@ -210,7 +214,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
-      this.postSubmit();
+      this.postSubmit(this.wasNewConversation);
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
@@ -219,10 +223,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  postSubmit() {
+  postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
-    this.promptForm.controls.prompt.setValue('');
-    this.chatService.sendNewChatAddedSignal();
+    if (wasNewConversation) {
+        this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
+    }
   }
 
   onSubmit() {
@@ -234,40 +239,64 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    this.wasNewConversation = !this.selectedConversationId; // Store state before any changes
+
     const content = this.promptForm.controls.prompt.value;
+    this.promptForm.controls.prompt.setValue(''); // Clear the input field
+
+    if (this.wasNewConversation) {
+      this.resetConversation(); // Clear local messages only when starting a new conversation
+    }
+
+    // Add user's prompt to the conversation display
+    const newConversation = {
+      id: Date.now().toString(),
+      role: 'user',
+      query: content,
+      response: '',
+    };
+    this.conversations.push(newConversation);
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
     if (this.streaming) {
-      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
+          newConversation.response = completion?.chat;
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            '_rev': completion.couchDBResponse?.rev,
           };
-          this.postSubmit();
+          this.postSubmit(this.wasNewConversation); // Pass the flag
         },
         (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+          newConversation.response = 'Error: ' + error.message;
+          newConversation.error = true;
           this.spinnerOn = true;
-          this.promptForm.controls.prompt.setValue('');
-        }
+        },
       );
     }
   }
 
   focusInput() {
     this.chatInput?.nativeElement.focus();
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      // Add check for this.disabled and providers.length
+      if (this.promptForm.valid && this.spinnerOn && !this.disabled && this.providers.length > 0) {
+        this.onSubmit();
+      }
+    }
   }
 }
