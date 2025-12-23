@@ -44,7 +44,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
-  disableDownload = true;
   disableDelete = true;
   showDownloadCheckbox = false;
   resourceFilename = '';
@@ -154,7 +153,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   setFormValues(resource) {
     this.privateFor = resource.doc.privateFor;
     // If the resource does not have an attachment, disable file downloadable toggle
-    this.disableDownload = !resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
     this.showDownloadCheckbox = !!resource.doc._attachments;
     this.resourceFilename = resource.doc._attachments
@@ -257,7 +255,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   deleteAttachmentToggle(event) {
     this.deleteAttachment = event.checked;
     // Also disable downloadable toggle if user is removing file
-    this.disableDownload = event.checked;
     this.showDownloadCheckbox = !event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
   }
@@ -266,7 +263,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.attachmentMarkedForDeletion = true;
     this.resourceFilename = '';
     this.disableDelete = true;
-    this.disableDownload = true;
     this.showDownloadCheckbox = false;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.hasUnsavedChanges = true;
@@ -338,8 +334,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   removeNewFile() {
     this.file = null;
     this.fileInput.clearFile();
-    this.disableDownload = true;
-    this.showDownloadCheckbox = false;
+    this.showDownloadCheckbox = !!this.existingResource.doc?._attachments && !this.attachmentMarkedForDeletion;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
@@ -357,7 +352,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.file = input.files[0];
-    this.disableDownload = false;
     this.showDownloadCheckbox = true;
     this.resourceForm.updateValueAndValidity();
 
