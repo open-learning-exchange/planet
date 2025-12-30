@@ -1,6 +1,7 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UserService } from '../../shared/user.service';
@@ -14,27 +15,41 @@ import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { TemplateRef, ViewChild } from '@angular/core';
+import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+
+interface UsersUpdateFormGroup {
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  email: FormControl<string>;
+  language: FormControl<string>;
+  phoneNumber: FormControl<string>;
+  birthDate: FormControl<string | Date | null>;
+  birthYear: FormControl<number | null>;
+  age: FormControl<number | null>;
+  gender: FormControl<string>;
+  level: FormControl<string>;
+  betaEnabled: FormControl<boolean>;
+}
 
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: [ './users-update.scss' ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
-  user: any = {};
-  initialFormValues: any;
+  user: UserDocument = { name: '', roles: [] };
+  initialFormValues: UsersUpdateFormValue | null = null;
   educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
-  editForm: UntypedFormGroup;
-  currentImgKey: string;
+  editForm: FormGroup<UsersUpdateFormGroup>;
+  currentImgKey: string | null = null;
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
   uploadImage = false;
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   redirectUrl = '/';
-  file: any;
+  file: string | null = null;
   title = '';
   roles: string[] = [];
   languages = languages;
@@ -45,14 +60,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
   avatarChanged = false;
   attachmentDeleted = false;
-  originalAttachments: any = null;
+  originalAttachments: Record<string, UserAttachment> | null = null;
   isFormInitialized = false;
   imageChangedEvent: Event | null = null;
   showImagePreview = true;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -73,16 +88,16 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.redirectUrl = routeSnapshot.queryParams.teamId ? `/teams/view/${routeSnapshot.queryParams.teamId}` : '/manager/surveys';
       return;
     }
-    this.urlName = this.route.snapshot.paramMap.get('name');
+    this.urlName = this.route.snapshot.paramMap.get('name') || '';
     this.couchService.get(this.dbName + '/org.couchdb.user:' + this.urlName)
-      .subscribe((data) => {
+      .subscribe((data: UserDocument) => {
         this.user = data;
         if (this.user.gender || this.user.name !== this.userService.get().name) {
           this.redirectUrl = '../../profile/' + this.user.name;
         }
-        this.editForm.patchValue(data);
-        this.initialFormValues = { ...this.editForm.value };
-        if (data['_attachments']) {
+        this.editForm.patchValue(this.mapUserToFormValue(data));
+        this.initialFormValues = { ...this.editForm.getRawValue() };
+        if (data._attachments) {
           // If multiple attachments this could break? Entering the if-block as well
           this.currentImgKey = Object.keys(data._attachments)[0];
           this.currentProfileImg = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + this.currentImgKey;
@@ -99,28 +114,34 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   userData() {
-    this.editForm = this.fb.group({
-      firstName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      middleName: '',
-      lastName: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      email: [ '', [ this.conditionalValidator(Validators.required).bind(this), Validators.email ] ],
-      language: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      phoneNumber: [ '', this.conditionalValidator(CustomValidators.required).bind(this) ],
-      birthDate: [
-        '',
-        this.conditionalValidator(CustomValidators.dateValidRequired).bind(this),
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthYear: [ '', [
-        Validators.min(1900),
-        Validators.max(new Date().getFullYear() - 1),
-        Validators.pattern(/^\d{4}$/)
-      ]],
-      age: [ '' ],
-      gender: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      level: [ '', this.conditionalValidator(Validators.required).bind(this) ],
-      betaEnabled: false
+    this.editForm = this.fb.group<UsersUpdateFormGroup>({
+      firstName: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
+      email: this.fb.control('', [ this.conditionalValidator(Validators.required), Validators.email ]),
+      language: this.fb.control('', this.conditionalValidator(Validators.required)),
+      phoneNumber: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
+      birthDate: new FormControl<string | Date | null>(
+        null,
+        {
+          validators: this.conditionalValidator(CustomValidators.dateValidRequired),
+          asyncValidators: (ac: AbstractControl) => this.validatorService.notDateInFuture$(ac)
+        }
+      ),
+      birthYear: new FormControl<number | null>(
+        null,
+        [
+          Validators.min(1900),
+          Validators.max(new Date().getFullYear() - 1),
+          Validators.pattern(/^\d{4}$/)
+        ]
+      ),
+      age: new FormControl<number | null>(null),
+      gender: this.fb.control('', this.conditionalValidator(Validators.required)),
+      level: this.fb.control('', this.conditionalValidator(Validators.required)),
+      betaEnabled: this.fb.control(false)
     });
+    this.initialFormValues = { ...this.editForm.getRawValue() };
   }
 
   setupFormValueChanges() {
@@ -131,15 +152,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  conditionalValidator(validator: any) {
+  conditionalValidator(validator: ValidatorFn): ValidatorFn {
     return (ac) => this.submissionMode ? null : validator(ac);
   }
 
   onSubmit() {
     // exports don't break: calculate age from birthYear form validation
-    const birthYear = this.editForm.get('birthYear')?.value;
+    const birthYear = this.editForm.controls.birthYear.value;
     if (birthYear && birthYear.toString().length === 4) {
-      const calculatedAge = new Date().getFullYear() - parseInt(birthYear, 10);
+      const calculatedAge = new Date().getFullYear() - Number(birthYear);
       this.editForm.patchValue({ age: calculatedAge }, { emitEvent: false });
     }
 
@@ -154,16 +175,17 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   submitUser() {
     if (this.submissionMode) {
       // Remove birthYear from submitted data
-      const { birthYear, ...cleanUserData } = this.editForm.value;
+      const { birthYear, ...cleanUserData } = this.editForm.getRawValue();
       this.appendToSurvey(cleanUserData);
     } else {
-      const attachment = this.file ? this.createAttachmentObj() : {};
-      this.userService.updateUser(Object.assign({}, this.user, this.editForm.value, attachment)).pipe(
+      const attachment = this.file ? this.createAttachmentObj(this.file) : {};
+      const updatedUser: UserDocument = { ...this.user, ...this.editForm.getRawValue(), ...attachment };
+      this.userService.updateUser(updatedUser).pipe(
         switchMap(() => this.userService.addImageForReplication(true))
       ).subscribe(() => {
         this.avatarChanged = false;
         this.editForm.markAsPristine();
-        this.initialFormValues = { ...this.editForm.value };
+        this.initialFormValues = { ...this.editForm.getRawValue() };
         this.hasUnsavedChanges = false;
         this.goBack();
       }, (err) => {
@@ -173,15 +195,15 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
   }
 
-  createAttachmentObj(): object {
+  createAttachmentObj(file: string): { _attachments: Record<string, UserAttachment> } {
     // Unclear if only encoding is base64
     // This ought to cover any encoding as long as the formatting is: ";[encoding],"
-    const imgDataArr: string[] = this.file.split(/;\w+,/);
+    const imgDataArr: string[] = file.split(/;\w+,/);
     // Replacing start ['data:'] of content type string
     const contentType: string = imgDataArr[0].replace(/data:/, '');
     const data: string = imgDataArr[1];
     // Create attachment object
-    const attachments: object = {};
+    const attachments: Record<string, UserAttachment> = {};
     // Alter between two possible keys for image element to ensure database updates
     const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
     attachments[imgKey] = {
@@ -253,13 +275,13 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.hasUnsavedChanges = this.isFormPristine() ? false : true;
   }
 
-  appendToSurvey(user) {
+  appendToSurvey(user: SubmissionUserPayload) {
     const submissionId = this.route.snapshot.params.id;
     this.couchService.get('submissions/' + submissionId).pipe(switchMap((submission) => {
       return this.couchService.put('submissions/' + submissionId, { ...submission, user });
     })).subscribe(() => {
       this.avatarChanged = false;
-      this.initialFormValues = { ...this.editForm.value };
+      this.initialFormValues = { ...this.editForm.getRawValue() };
       this.hasUnsavedChanges = false;
       this.goBack();
     });
@@ -270,7 +292,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   isFormPristine(): boolean {
-    return JSON.stringify(this.editForm.value) === JSON.stringify(this.initialFormValues);
+    if (!this.initialFormValues) {
+      return true;
+    }
+    return JSON.stringify(this.editForm.getRawValue()) === JSON.stringify(this.initialFormValues);
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
@@ -297,6 +322,23 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     dialogRef.afterClosed().subscribe(() => {
       this.showImagePreview = true;
     });
+  }
+
+  private mapUserToFormValue(user: UserDocument): Partial<UsersUpdateFormValue> {
+    return {
+      firstName: user.firstName ?? '',
+      middleName: user.middleName ?? '',
+      lastName: user.lastName ?? '',
+      email: user.email ?? '',
+      language: user.language ?? '',
+      phoneNumber: user.phoneNumber ?? '',
+      birthDate: user.birthDate ?? null,
+      birthYear: user.birthYear ?? null,
+      age: user.age ?? null,
+      gender: user.gender ?? '',
+      level: user.level ?? '',
+      betaEnabled: user.betaEnabled ?? false
+    };
   }
 
 }
