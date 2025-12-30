@@ -44,8 +44,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
-  disableDelete = true;
   showDownloadCheckbox = false;
+  disableDelete = true;
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control([]);
@@ -153,8 +153,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   setFormValues(resource) {
     this.privateFor = resource.doc.privateFor;
     // If the resource does not have an attachment, disable file downloadable toggle
-    this.disableDelete = !resource.doc._attachments;
     this.showDownloadCheckbox = !!resource.doc._attachments;
+    this.disableDelete = !resource.doc._attachments;
     this.resourceFilename = resource.doc._attachments
       ? Object.keys(resource.doc._attachments).join(', ')
       : '';
@@ -335,7 +335,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.file = null;
     this.fileInput.clearFile();
     this.showDownloadCheckbox = !!this.existingResource.doc?._attachments && !this.attachmentMarkedForDeletion;
-    this.resourceForm.patchValue({ isDownloadable: false });
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
   }
