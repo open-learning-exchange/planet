@@ -235,7 +235,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
-      showFormErrors(this.resourceForm.controls as unknown as Record<string, AbstractControl>);
+      showFormErrors(this.resourceForm.controls);
       return;
     }
     const fileObs: Observable<any> = this.createFileObs();

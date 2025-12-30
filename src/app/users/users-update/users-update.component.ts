@@ -1,13 +1,7 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidatorFn,
-  Validators
-} from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { UserService } from '../../shared/user.service';
@@ -21,8 +15,22 @@ import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+
+interface UsersUpdateFormGroup {
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  email: FormControl<string>;
+  language: FormControl<string>;
+  phoneNumber: FormControl<string>;
+  birthDate: FormControl<string | Date | null>;
+  birthYear: FormControl<number | null>;
+  age: FormControl<number | null>;
+  gender: FormControl<string>;
+  level: FormControl<string>;
+  betaEnabled: FormControl<boolean>;
+}
 
 @Component({
   templateUrl: './users-update.component.html',
@@ -59,7 +67,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -113,14 +121,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       email: this.fb.control('', [ this.conditionalValidator(Validators.required), Validators.email ]),
       language: this.fb.control('', this.conditionalValidator(Validators.required)),
       phoneNumber: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
-      birthDate: this.fb.control<string | Date | null>(
+      birthDate: new FormControl<string | Date | null>(
         null,
         {
           validators: this.conditionalValidator(CustomValidators.dateValidRequired),
           asyncValidators: (ac: AbstractControl) => this.validatorService.notDateInFuture$(ac)
         }
       ),
-      birthYear: this.fb.control<number | null>(
+      birthYear: new FormControl<number | null>(
         null,
         [
           Validators.min(1900),
@@ -128,7 +136,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           Validators.pattern(/^\d{4}$/)
         ]
       ),
-      age: this.fb.control<number | null>(null),
+      age: new FormControl<number | null>(null),
       gender: this.fb.control('', this.conditionalValidator(Validators.required)),
       level: this.fb.control('', this.conditionalValidator(Validators.required)),
       betaEnabled: this.fb.control(false)
@@ -157,7 +165,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     }
 
     if (!this.editForm.valid) {
-      showFormErrors(this.editForm.controls as unknown as { [key: string]: AbstractControl });
+      showFormErrors(this.editForm.controls);
       return;
     }
     this.hasUnsavedChanges = this.getHasUnsavedChanges();
@@ -333,19 +341,4 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     };
   }
 
-}
-
-interface UsersUpdateFormGroup {
-  firstName: FormControl<string>;
-  middleName: FormControl<string>;
-  lastName: FormControl<string>;
-  email: FormControl<string>;
-  language: FormControl<string>;
-  phoneNumber: FormControl<string>;
-  birthDate: FormControl<string | Date | null>;
-  birthYear: FormControl<number | null>;
-  age: FormControl<number | null>;
-  gender: FormControl<string>;
-  level: FormControl<string>;
-  betaEnabled: FormControl<boolean>;
 }
