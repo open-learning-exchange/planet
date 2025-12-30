@@ -13,12 +13,16 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { UntypedFormBuilder } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CustomValidators } from '../../validators/custom-validators';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/mangoQueries';
+
+interface EditChildNameFormValue {
+  name: string;
+}
 
 @Component({
   selector: 'planet-requests-table',
@@ -53,7 +57,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private couchService: CouchService,
     private dialogsListService: DialogsListService,
     private dialog: MatDialog,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     private dialogsFormService: DialogsFormService,
@@ -205,25 +209,30 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   openEditChildNameDialog(planet) {
-    const exceptions = [ planet.nameDoc ? planet.nameDoc.name : planet.doc.name ];
+    const currentName = planet.nameDoc ? planet.nameDoc.name : planet.doc.name;
+    const exceptions = [ currentName ];
+    const form = this.fb.group({
+      name: [currentName, {
+        validators: [ CustomValidators.required ],
+        asyncValidators: [
+          (control: AbstractControl<string>) => this.validatorService.isUnique$(this.dbName, 'name', control, { exceptions })
+        ]
+      }]
+    });
     this.dialogsFormService.openDialogsForm(
       $localize`Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
       [ { 'label': $localize`Name`, 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, 'required': true } ],
-      this.fb.group({ name: [
-        planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(this.dbName, 'name', ac, { exceptions })
-      ] }),
+      form,
       { onSubmit: this.editChildName(planet).bind(this) }
     );
 
   }
 
   editChildName({ doc, nameDoc }) {
-    return (form) => {
+    return ({ name }: EditChildNameFormValue) => {
       this.couchService.updateDocument(
         this.dbName,
-        { ...nameDoc, 'name': form.name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
+        { ...nameDoc, 'name': name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
       ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
