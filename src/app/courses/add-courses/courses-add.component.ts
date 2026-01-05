@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -32,10 +32,6 @@ interface CourseFormModel {
   updatedDate: FormControl<DateValue>;
 }
 
-type CourseFormValue = {
-  [Key in keyof CourseFormModel]: CourseFormModel[Key]['value'];
-};
-
 type DateValue = number | string | CouchService['datePlaceholder'];
 
 @Component({
@@ -57,7 +53,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
-  tags = new FormControl<string[]>([], { nonNullable: true });
+  tags = this.fb.control<string[]>([]);
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
@@ -82,6 +78,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -148,23 +145,22 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   createForm() {
     const configuration = this.stateService.configuration;
-    this.courseForm = new FormGroup<CourseFormModel>({
-      courseTitle: new FormControl('', {
-        nonNullable: true,
+    this.courseForm = this.fb.group<CourseFormModel>({
+      courseTitle: this.fb.control('', {
         validators: CustomValidators.required,
         asyncValidators: ac => this.validatorService.isUnique$(
           this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
         )
       }),
-      description: new FormControl('', { nonNullable: true, validators: CustomValidators.requiredMarkdown }),
-      languageOfInstruction: new FormControl('', { nonNullable: true }),
-      gradeLevel: new FormControl('', { nonNullable: true }),
-      subjectLevel: new FormControl('', { nonNullable: true }),
-      createdDate: new FormControl<DateValue>(this.couchService.datePlaceholder, { nonNullable: true }),
-      creator: new FormControl(this.userService.get().name + '@' + configuration.code, { nonNullable: true }),
-      sourcePlanet: new FormControl(configuration.code, { nonNullable: true }),
-      resideOn: new FormControl(configuration.code, { nonNullable: true }),
-      updatedDate: new FormControl<DateValue>(this.couchService.datePlaceholder, { nonNullable: true })
+      description: this.fb.control('', { validators: CustomValidators.requiredMarkdown }),
+      languageOfInstruction: this.fb.control(''),
+      gradeLevel: this.fb.control(''),
+      subjectLevel: this.fb.control(''),
+      createdDate: this.fb.control<DateValue>(this.couchService.datePlaceholder),
+      creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
+      sourcePlanet: this.fb.control(configuration.code),
+      resideOn: this.fb.control(configuration.code),
+      updatedDate: this.fb.control<DateValue>(this.couchService.datePlaceholder)
     });
   }
 
@@ -229,7 +225,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCourse(courseInfo: CourseFormValue, shouldNavigate: boolean) {
+  updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
