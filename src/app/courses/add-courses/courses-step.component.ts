@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-r
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.component';
 
-interface StepFormModel {
+interface CoursesStepForm {
   id: FormControl<string>;
   stepTitle: FormControl<string>;
   description: FormControl<string>;
@@ -27,7 +27,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: FormGroup<StepFormModel>;
+  stepForm: FormGroup<CoursesStepForm>;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
@@ -49,7 +49,7 @@ export class CoursesStepComponent implements OnDestroy {
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group<StepFormModel>({
+    this.stepForm = this.fb.group<CoursesStepForm>({
       id: this.fb.control(''),
       stepTitle: this.fb.control(''),
       description: this.fb.control('')
@@ -95,7 +95,13 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   removeResource(position: number) {
-    this.steps[this.activeStepIndex].resources.splice(position, 1);
+    const resources = this.steps[this.activeStepIndex]?.resources;
+    if (!resources || position < 0 || position >= resources.length) {
+      return;
+    }
+    resources.splice(position, 1);
+    this.activeStep = this.steps[this.activeStepIndex];
+    this.stepsChange.emit(this.steps);
   }
 
   addExam(type = 'exam') {
