@@ -87,18 +87,8 @@ export class ValidatorService {
       }));
   }
 
-  private roundTimestamp(timestamp: number) {
-    return new Date(timestamp).setHours(0, 0, 0, 0);
-  }
-
   public notDateInFuture$(ac: AbstractControl): Observable<ValidationErrors | null> {
     return this.couchService.currentTime().pipe(map(date => ac.value > date ? ({ invalidFutureDate: true }) : null));
-  }
-
-  public notDateInPast$(ac: AbstractControl): Observable<ValidationErrors | null> {
-    return (this.couchService.currentTime() as Observable<number>).pipe(
-      map(date => ac.value < this.roundTimestamp(date) ? ({ dateInPast: true }) : null)
-    );
   }
 
 }
