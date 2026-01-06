@@ -92,12 +92,12 @@ export class ValidatorService {
   }
 
   public notDateInFuture$(ac: AbstractControl): Observable<ValidationErrors | null> {
-    return this.couchService.currentTime().pipe(map(date => ac.value > date ? ({ invalidFutureDate: true }) : null));
+    return this.couchService.currentTime().pipe(map((date: number) => ac.value > date ? ({ invalidFutureDate: true }) : null));
   }
 
   public notDateInPast$(ac: AbstractControl): Observable<ValidationErrors | null> {
     return (this.couchService.currentTime() as Observable<number>).pipe(
-      map(date => ac.value < this.roundTimestamp(date) ? ({ dateInPast: true }) : null)
+      map((date: number) => ac.value < this.roundTimestamp(date) ? ({ dateInPast: true }) : null)
     );
   }
 
