@@ -15,7 +15,6 @@ import { UserService } from '../../shared/user.service';
 
 interface TitleForm {
   title: FormControl<string>;
-  [key: string]: FormControl<string>;
 }
 
 @Component({
@@ -152,7 +151,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   initializeFormGroups() {
     this.conversations.forEach((conversation: Conversation) => {
       this.titleForm[conversation._id] = this.formBuilder.nonNullable.group({
-        title: this.formBuilder.nonNullable.control(conversation?.title ?? '', Validators.required),
+        title: [ conversation?.title ?? '', Validators.required ]
       });
     });
   }
