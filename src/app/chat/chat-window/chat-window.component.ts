@@ -244,7 +244,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       this.resetConversation(); // Clear local messages only when starting a new conversation
     }
     this.pendingNewConversation = wasNewConversation;
+    // Add local message immediately
     this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
+
+    // Notify sidebar immediately that a new conversation was created locally
+    if (wasNewConversation) {
+      this.chatService.sendNewChatAddedSignal();
+    }
+
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
@@ -283,8 +290,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      // Add check for this.disabled
-      if (this.promptForm.valid && this.spinnerOn && !this.disabled) {
+      // Mirror the send button's disabled condition so Enter doesn't bypass it
+      const sendDisabled = !this.promptForm.valid || this.providers.length === 0 || this.disabled;
+      if (!sendDisabled) {
         this.onSubmit();
       }
     }
