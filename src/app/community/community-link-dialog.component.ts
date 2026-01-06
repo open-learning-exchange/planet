@@ -18,13 +18,13 @@ interface CommunityLinkForm {
   platform: FormControl<string>;
 }
 
-type CommunityLinkSelection = {
+interface CommunityLinkSelection {
   db: 'teams' | 'social';
   title: string;
   selector?: { type: 'team' | 'enterprise' };
 };
 
-type TeamSelectionEvent = {
+interface TeamSelectionEvent {
   mode: 'team' | 'enterprise';
   teamId: string;
   teamType: string;
