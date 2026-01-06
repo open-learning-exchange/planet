@@ -247,10 +247,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     // Add local message immediately
     this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
 
-    // Notify sidebar immediately that a new conversation was created locally
-    if (wasNewConversation) {
-      this.chatService.sendNewChatAddedSignal();
-    }
 
     this.data = { ...this.data, content, aiProvider: this.provider };
 
