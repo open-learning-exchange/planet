@@ -64,7 +64,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
   pageType: string | null = null;
-  disableDownload = true;
+  showDownloadCheckbox = false;
   disableDelete = true;
   resourceFilename = '';
   languages = languages;
@@ -176,7 +176,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   setFormValues(resource: any) {
     this.privateFor = resource.doc.privateFor;
     // If the resource does not have an attachment, disable file downloadable toggle
-    this.disableDownload = !resource.doc._attachments;
+    this.showDownloadCheckbox = !!resource.doc._attachments;
     this.disableDelete = !resource.doc._attachments;
     this.resourceFilename = resource.doc._attachments
       ? Object.keys(resource.doc._attachments).join(', ')
@@ -235,7 +235,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
-      showFormErrors(this.resourceForm.controls as unknown as Record<string, AbstractControl>);
+      showFormErrors(this.resourceForm.controls);
       return;
     }
     const fileObs: Observable<any> = this.createFileObs();
@@ -259,12 +259,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createFileObs() {
-    // If file doesn't exist, mediaType will be undefined
+    // If file doesn't exist, mediaType will be undefined or null
     const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
+    if (!mediaType) {
+      // Creates an observable that immediately returns an empty object
+      return of({ resource: {} });
+    }
     switch (mediaType) {
-      case undefined:
-        // Creates an observable that immediately returns an empty object
-        return of({ resource: {} });
       case 'zip':
         return this.zipObs(this.file);
       default:
@@ -301,7 +302,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   deleteAttachmentToggle(event) {
     this.deleteAttachment = event.checked;
     // Also disable downloadable toggle if user is removing file
-    this.disableDownload = event.checked;
+    this.showDownloadCheckbox = !event.checked;
     this.resourceForm.patchValue({ isDownloadable: false });
   }
 
@@ -309,7 +310,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.attachmentMarkedForDeletion = true;
     this.resourceFilename = '';
     this.disableDelete = true;
-    this.disableDownload = true;
+    this.showDownloadCheckbox = false;
     this.resourceForm.patchValue({ isDownloadable: false });
     this.hasUnsavedChanges = true;
   }
@@ -380,7 +381,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   removeNewFile() {
     this.file = null;
     this.fileInput.clearFile();
-    this.disableDownload = !this.existingResource.doc?._attachments || this.attachmentMarkedForDeletion;
+    this.showDownloadCheckbox = !!this.existingResource.doc?._attachments && !this.attachmentMarkedForDeletion;
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
   }
@@ -397,7 +398,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     this.file = input.files[0];
-    this.disableDownload = false;
+    this.showDownloadCheckbox = true;
     this.resourceForm.updateValueAndValidity();
 
     if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
