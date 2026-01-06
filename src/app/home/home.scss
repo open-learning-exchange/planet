@@ -73,6 +73,10 @@
     align-self: center;
     display: flex;
     align-items: center;
+
+    .theme-toggle {
+      margin-left: 6px;
+    }
   }
 
   .nav-shadow::before {

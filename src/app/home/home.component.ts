@@ -16,6 +16,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
+import { ThemeService } from '../shared/theme.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -61,6 +62,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   isMobile: boolean;
   showBanner = true;
   isLoggedIn = false;
+  activeTheme$ = this.themeService.activeTheme$;
+  themePreference$ = this.themeService.themePreference$;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -84,7 +87,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private themeService: ThemeService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -271,5 +275,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         maxHeight: '100vh'
       });
     }
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 }
