@@ -26,7 +26,7 @@
 <ng-template #collectionRow>
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
-  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
 </ng-template>
