@@ -65,7 +65,7 @@
       </ng-container>
     </ng-container>
     <button mat-icon-button [matMenuTriggerFor]="userProfile">
-      <img *ngIf="user._attachments; else accountIcon" class="profile-image-large" [src]="userImgSrc">
+      <img *ngIf="user._attachments; else accountIcon" class="profile-image-avatar" [src]="userImgSrc">
       <ng-template #accountIcon><mat-icon>account_circle</mat-icon></ng-template>
     </button>
     <mat-menu #userProfile="matMenu" [overlapTrigger]="false">
