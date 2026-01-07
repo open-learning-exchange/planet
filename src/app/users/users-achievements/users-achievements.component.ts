@@ -305,4 +305,77 @@ export class UsersAchievementsComponent implements OnInit {
       .createPdf(documentDefinition)
       .download($localize`${this.user.name} achievements.pdf`);
   }
+
+  downloadCertificate(certification: any) {
+  if (!certification.templateImage) {
+    this.planetMessageService.showAlert($localize`Certificate template not found`);
+    return;
+  }
+
+  const fullName =
+    `${this.user.firstName} ${this.user.middleName ?? ''} ${this.user.lastName}`.trim();
+
+  const certificateName = certification.name;
+  const dateIssued = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+
+  const PAGE = {
+    width: 800,
+    height: 500
+  };
+
+  /**
+   * This Y value MUST visually align with
+   * "has completed the course on" in the template.
+   * Adjust once, then never touch again.
+   */
+  const completedLineY = 250;
+
+  const documentDefinition: any = {
+    pageSize: PAGE,
+    pageMargins: [0, 0, 0, 0],
+
+    background: (_page: number, pageSize: any) => ({
+      image: certification.templateImage,
+      width: pageSize.width,
+      height: pageSize.height
+    }),
+
+    content: [
+      // USER NAME (ABOVE the phrase)
+      {
+        text: fullName,
+        absolutePosition: { x: 0, y: completedLineY - 40 },
+        alignment: 'center',
+        fontSize: 32,
+        bold: true
+      },
+
+      // CERTIFICATE NAME (BELOW the phrase)
+      {
+        text: certificateName,
+        absolutePosition: { x: 0, y: completedLineY + 50 },
+        alignment: 'center',
+        fontSize: 20
+      },
+
+      // DATE ISSUED (BELOW certificate name)
+      {
+        text: `Issued on ${dateIssued}`,
+        absolutePosition: { x: 0, y: completedLineY + 90 },
+        alignment: 'center',
+        fontSize: 12
+      }
+    ]
+  };
+
+  pdfMake
+    .createPdf(documentDefinition)
+    .download(`${fullName} - ${certificateName}.pdf`);
+}
+
+
 }
