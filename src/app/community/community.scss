@@ -74,17 +74,20 @@ mat-tab-group, mat-tab {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: white;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
   display: flex;
   gap: 0.5rem;
 }
 
+.toggle-button {
+  margin-bottom: 1rem;
+}
+
+.community-view .responsive-toolbar {
+  border-radius: 7.5px;
+}
+
 .toolbar-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
   width: 100%;
   gap: 12px;
 
