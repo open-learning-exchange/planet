@@ -56,6 +56,9 @@
       </ng-container>
       <planet-language i18n-title title="Language"></planet-language>
     </ng-container>
+    <button mat-icon-button [matMenuTriggerFor]="themeMenu" i18n-title title="Theme">
+      <mat-icon>{{ (activeTheme$ | async) === 'dark' ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    </button>
     <ng-container *ngIf="isLoggedIn">
       <ng-container *planetAuthorizedRoles="'learner'">
         <button mat-icon-button *ngIf="notifications.length > 0" [matMenuTriggerFor]="notificationMenu" i18n-title title="Notifications">
@@ -77,8 +80,22 @@
       </ng-container>
       <button mat-menu-item i18n (click)="openLoginDialog()" *ngIf="!isLoggedIn">Login</button>
     </mat-menu>
-    <!--Notification dropdown menu-->
-    <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
+    <mat-menu #themeMenu="matMenu" [overlapTrigger]="false">
+      <button mat-menu-item (click)="setThemePreference('light')" [disabled]="themePreference === 'light'">
+        <mat-icon>light_mode</mat-icon>
+        <span i18n>Light</span>
+      </button>
+      <button mat-menu-item (click)="setThemePreference('dark')" [disabled]="themePreference === 'dark'">
+        <mat-icon>dark_mode</mat-icon>
+        <span i18n>Dark</span>
+      </button>
+      <button mat-menu-item (click)="setThemePreference('system')" [disabled]="themePreference === 'system'">
+        <mat-icon>settings_suggest</mat-icon>
+        <span i18n>Use system setting</span>
+      </button>
+    </mat-menu>
+  <!--Notification dropdown menu-->
+  <mat-menu #notificationMenu="matMenu" [overlapTrigger]="false" class="notification-menu">
       <div class="notification-items">
         <a mat-menu-item (click)="readAllNotification()" i18n>Mark all as Read</a>
         <a [routerLink]="notification.type !== 'challenges' ? (!notification.link ? '/notifications' : notification.link !== '/' ? [notification.link, notification.linkParams || {}] : '/') : null"
