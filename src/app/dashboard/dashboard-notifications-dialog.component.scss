@@ -1,51 +1,31 @@
-/* MOBILE ONLY (screens 480px and below) */
-@media screen and (max-width: 480px) {
-  p[mat-dialog-title] {
-    font-size: 14px;
-    line-height: 1.3;
-    text-align: center;
-    word-break: break-word;
-  }
+@import '../variables';
 
-  mat-dialog-content {
-    padding: 0 8px;
-  }
-
+@media (max-width: $screen-sm) {
   mat-action-list button[mat-list-item] {
-    font-size: 13px;
-    padding: 8px 4px;
     display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap; /* prevents text from stacking badly */
-    white-space: normal !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px 6px;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    white-space: normal;
+    min-height: auto;
+    height: auto;
+  }
+
+  .task-todo,
+  .rate-done {
+    width: 100%;
+    word-break: break-word;
   }
 
   .task-todo {
-    font-size: 0.6rem;
-    line-height: 1.2;
-    word-break: break-word;
-    text-align: left;
+    font-weight: 500;
   }
 
   .rate-done {
-    font-size: 0.6rem;
-    line-height: 1.2;
-    text-align: right;
+    text-align: left;
   }
 
-  .toolbar-fill {
-    flex: 1 1 auto;
-    min-width: 5px;
-  }
-
-  mat-divider {
-    margin-top: 6px;
-  }
-
-  mat-dialog-actions button {
-    font-size: 14px;
-    padding: 6px 16px;
-    margin: auto;
-  }
 }

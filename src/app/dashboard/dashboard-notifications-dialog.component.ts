@@ -4,7 +4,7 @@ import { myDashboardRoute } from '../home/router-constants';
 
 @Component({
   templateUrl: './dashboard-notifications-dialog.component.html',
-  styleUrls: ['./dashboard-notifications-dialog.component.scss']
+  styleUrls: [ './dashboard-notifications-dialog.component.scss' ]
 })
 export class DashboardNotificationsDialogComponent implements OnInit {
 
