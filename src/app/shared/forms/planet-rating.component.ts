@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
@@ -26,6 +26,15 @@ const popupFormFields = [
   }
 ];
 
+interface RateFormModel {
+  rate: FormControl<number>;
+}
+
+interface PopupFormModel {
+  rate: FormControl<number>;
+  comment: FormControl<string>;
+}
+
 @Component({
   templateUrl: './planet-rating.component.html',
   styles: [ ` .list-item-rating {
@@ -41,8 +50,8 @@ export class PlanetRatingComponent implements OnChanges {
   @Input() ratingType = '';
   @Input() disabled = false;
 
-  rateForm: UntypedFormGroup;
-  popupForm: UntypedFormGroup;
+  rateForm: FormGroup<RateFormModel>;
+  popupForm: FormGroup<PopupFormModel>;
   isPopupOpen = false;
   stackedBarData = [];
   enrolled = true;
@@ -56,7 +65,7 @@ export class PlanetRatingComponent implements OnChanges {
   private dbName = 'ratings';
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private planetMessage: PlanetMessageService,
     private userService: UserService,
@@ -64,8 +73,8 @@ export class PlanetRatingComponent implements OnChanges {
     private ratingService: RatingService,
     private stateService: StateService
   ) {
-    this.rateForm = this.fb.group(this.rateFormField);
-    this.popupForm = this.fb.group(Object.assign({}, this.rateFormField, this.commentField));
+    this.rateForm = this.fb.group({ rate: 0 });
+    this.popupForm = this.fb.group({ rate: 0, comment: '' });
   }
 
   ngOnChanges() {
@@ -80,8 +89,13 @@ export class PlanetRatingComponent implements OnChanges {
       },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
-    this.rateForm.setValue(this.rateFormField);
-    this.popupForm.setValue(Object.assign({}, this.rateFormField, this.commentField));
+    this.rateForm.setValue({
+      rate: this.rateFormField.rate
+    });
+    this.popupForm.setValue({
+      rate: this.rateFormField.rate,
+      comment: this.commentField.comment
+    });
   }
 
   isEnrolled(id: any, type: any): boolean {
@@ -90,7 +104,7 @@ export class PlanetRatingComponent implements OnChanges {
     return inShelf;
   }
 
-  onStarClick(form = this.rateForm) {
+  onStarClick(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel> = this.rateForm) {
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       if (this.ratingType === 'course') {
         this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
@@ -121,7 +135,7 @@ export class PlanetRatingComponent implements OnChanges {
     });
   }
 
-  updateRating(form) {
+  updateRating(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel>) {
     // Later parameters of Object.assign will overwrite values from previous objects
     const configuration = this.stateService.configuration;
     const newRating = {
@@ -162,9 +176,6 @@ export class PlanetRatingComponent implements OnChanges {
   ratingError() {
     this.planetMessage.showAlert($localize`There was an issue updating your rating`);
     this.rateForm.patchValue({ rate: this.rating.userRating.rate || 0 });
-    // If the dialog is open, then there will also be a comment control to reset
-    if (this.rateForm.controls.comment) {
-      this.rateForm.patchValue({ comment: this.rating.userRating.comment || '' });
-    }
+    this.popupForm.patchValue({ comment: this.rating.userRating.comment || '' });
   }
 }
