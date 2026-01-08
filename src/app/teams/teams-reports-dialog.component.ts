@@ -7,7 +7,7 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/leg
     h3 {
       margin-bottom: 0;
     }
-    .mat-body-1 {
+    .mat-subtitle-2 {
       margin-top: 0;
     }
   ` ]
