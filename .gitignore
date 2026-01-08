@@ -32,6 +32,7 @@ node_modules/
 /libpeerconnection.log
 npm-debug.log
 testem.log
+*.log
 /typings
 
 # e2e

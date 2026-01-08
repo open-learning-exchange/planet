@@ -886,6 +886,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.filter.app = '';
     this.selectedTeam = 'All';
     this.filter.members = [];
+    this.dateFilterForm.reset();
     this.onTimeFilterChange('12m');
   }
 
