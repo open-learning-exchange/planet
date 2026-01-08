@@ -49,10 +49,10 @@ export class CoursesStepComponent implements OnDestroy {
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
-      id: '',
-      stepTitle: '',
-      description: ''
+    this.stepForm = this.fb.group<CoursesStepForm>({
+      id: this.fb.control(''),
+      stepTitle: this.fb.control(''),
+      description: this.fb.control('')
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
