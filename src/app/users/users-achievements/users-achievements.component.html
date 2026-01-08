@@ -55,6 +55,7 @@
             <mat-list class="certs-list">
               <mat-list-item *ngFor="let certification of certifications">
                 <span class="cert-item">{{certification.name}}</span>
+                <button mat-raised-button color="primary" (click)="downloadCertificate(certification)"><mat-icon>file_download</mat-icon></button>
               </mat-list-item>
             </mat-list>
           </div>
