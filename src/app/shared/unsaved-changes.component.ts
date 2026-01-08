@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 
 export const warningMsg = $localize`You have unsaved changes. Are you sure you want to leave?`;

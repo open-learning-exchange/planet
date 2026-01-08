@@ -8,7 +8,7 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
 import { MatNativeDateModule, DateAdapter, NativeDateAdapter } from '@angular/material/core';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatGridListModule } from '@angular/material/grid-list';

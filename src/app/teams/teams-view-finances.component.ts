@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
