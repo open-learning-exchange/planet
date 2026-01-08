@@ -28,7 +28,8 @@ export class CouchService {
     const url = (domain ? (protocol || environment.parentProtocol) + '://' + domain : this.baseUrl) + '/' + db;
     let httpReq: Observable<any>;
     if (type === 'post' || type === 'put') {
-      httpReq = this.http[type](url, data, opts);
+      const body = typeof data === 'object' && !(data instanceof Blob) ? JSON.stringify(data) : data;
+      httpReq = this.http[type](url, body, opts);
     } else {
       httpReq = this.http[type](url, opts);
     }
@@ -68,10 +69,16 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  putAttachment(db: string, file: FormData, opts?: any) {
-    return this.couchDBReq('put', db, this.setOpts(opts), file);
+  putAttachment(db: string, file: File, opts?: any) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': file.type,
+      }),
+      withCredentials: true,
+      ...opts,
+    };
+    return this.couchDBReq('put', db, this.setOpts(httpOptions), file);
   }
-
   updateDocument(db: string, doc: any, opts?: any) {
     let docWithDate: any;
     return this.currentTime().pipe(
@@ -220,6 +227,26 @@ export class CouchService {
     return this.http.get(url, this.defaultOpts).pipe(
       catchError(err => {
         this.planetMessageService.showAlert($localize`Error fetching document: ${err.message}`);
+        return throwError(err);
+      })
+    );
+  }
+
+  getAttachment(db: string, docId: string, attachmentId: string, opts?: any): Observable<any> {
+    const url = `${this.baseUrl}/${db}/${docId}/${attachmentId}`;
+    const httpOptions = {
+      ...this.defaultOpts,
+      responseType: 'blob',
+      ...opts,
+    };
+    // Use http.get directly instead of couchDBReq because couchDBReq is not suitable for attachment URLs
+    return this.http.get(url, httpOptions).pipe(
+      catchError(err => {
+        if (err.status === 403) {
+          this.planetMessageService.showAlert($localize`You are not authorized. Please contact administrator.`);
+        } else {
+          this.planetMessageService.showAlert($localize`Error fetching attachment: ${err.message}`);
+        }
         return throwError(err);
       })
     );
