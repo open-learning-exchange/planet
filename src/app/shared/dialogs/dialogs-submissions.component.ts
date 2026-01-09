@@ -18,7 +18,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     </mat-dialog-actions>
   `,
   styles: [ `
-    h3.mat-dialog-title {
+    h3.mat-mdc-dialog-title {
       margin: 0
     }
   ` ]

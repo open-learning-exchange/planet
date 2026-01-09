@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   templateUrl: './community-list-dialog.component.html',
   styles: [ `
-    :host mat-dialog-content {
+    :host mat-mdc-dialog-content {
       min-width: 33vw;
     }
   ` ]
