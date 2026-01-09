@@ -31,7 +31,6 @@ node_modules/
 /coverage
 /libpeerconnection.log
 npm-debug.log
-npm_output.log
 testem.log
 /typings
 
@@ -58,3 +57,4 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
+
