@@ -1,12 +1,62 @@
 @import './app/variables';
 @import './planet-mat-theme.scss';
 
+:root {
+  --planet-surface: #ffffff;
+  --planet-background: #f7f9fc;
+  --planet-text: #0f172a;
+  --planet-subdued-text: #475569;
+  --planet-border: rgba(0, 0, 0, 0.08);
+}
+
+.planet-theme-dark {
+  --planet-surface: #1f2937;
+  --planet-background: #0f172a;
+  --planet-text: #e5e7eb;
+  --planet-subdued-text: #cbd5e1;
+  --planet-border: rgba(255, 255, 255, 0.12);
+
+  color: var(--planet-text);
+  background-color: var(--planet-background);
+
+  a,
+  a:hover {
+    color: var(--planet-text);
+  }
+
+  .mat-divider,
+  mat-divider {
+    border-color: var(--planet-border);
+  }
+
+  .mat-card,
+  .mat-expansion-panel,
+  .mat-table,
+  .mat-select-panel,
+  .mat-menu-panel,
+  .mat-list-base .mat-list-item,
+  .mat-list-base .mat-list-option {
+    background-color: var(--planet-surface);
+    color: var(--planet-text);
+  }
+}
+
 body {
   font-family: $font-family;
   margin: 0;
+  background-color: var(--planet-background);
+  color: var(--planet-text);
 
   .gradient-background {
     background: linear-gradient(to bottom, #000000, $primary);
+  }
+
+  .mat-sidenav,
+  .mat-sidenav-content,
+  .mat-drawer-content,
+  .main-content {
+    background-color: var(--planet-background);
+    color: var(--planet-text);
   }
 
   a,
@@ -38,11 +88,11 @@ body {
   }
 
   .grey-text-color {
-    color: $grey-text;
+    color: var(--planet-subdued-text);
   }
 
   .bg-light-grey {
-    background-color: $light-grey;
+    background-color: var(--planet-surface);
   }
 
   .bg-grey {

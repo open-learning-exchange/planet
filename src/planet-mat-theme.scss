@@ -26,6 +26,20 @@
 
 @include mat.all-component-themes($planet-app-theme);
 
+$planet-app-dark-theme: mat.define-dark-theme($planet-app-primary, $planet-app-accent, $planet-app-warn);
+
+.planet-theme-light {
+  /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
+  @include mat.all-legacy-component-themes($planet-app-theme);
+  @include mat.all-component-themes($planet-app-theme);
+}
+
+.planet-theme-dark {
+  /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
+  @include mat.all-legacy-component-themes($planet-app-dark-theme);
+  @include mat.all-component-themes($planet-app-dark-theme);
+}
+
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
   library: mat.define-palette(mat.$pink-palette, $accent-hue),
