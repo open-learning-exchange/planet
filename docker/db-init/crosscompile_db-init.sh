@@ -3,13 +3,11 @@
 ARCH=$1
 ACT=$2
 
-if [[ "${ARCH}" == "armv7" ]]; then
-  TRIPLE="arm-linux-gnueabihf"
-  GCC="4.8"
-elif [[ "${ARCH}" == "armv8" ]]; then
+if [[ "${ARCH}" == "armv8" ]]; then
   TRIPLE="aarch64-linux-gnu"
   GCC="4.8"
 else
+  echo "Error: Unsupported architecture '${ARCH}'" >&2
   exit 1
 fi
 
