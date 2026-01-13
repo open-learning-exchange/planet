@@ -34,8 +34,10 @@ export class CoursesViewDetailComponent implements OnChanges {
 @Component({
   template: `
     <ng-container *ngIf="courseDetail">
-      <h3>{{courseDetail.courseTitle}}</h3>
-      <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
+      <h3 mat-dialog-title>{{courseDetail.courseTitle}}</h3>
+      <mat-dialog-content>
+        <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
+      </mat-dialog-content>
       <mat-dialog-actions>
         <button mat-dialog-close mat-raised-button i18n>Close</button>
         <button mat-dialog-close mat-raised-button color="primary" (click)="routeToCourses(courseDetail._id)" i18n>View Course</button>

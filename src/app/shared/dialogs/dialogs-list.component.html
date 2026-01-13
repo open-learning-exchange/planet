@@ -1,11 +1,14 @@
 <ng-container *ngIf="tableData.data.length === 0">
-  <p i18n>There are no items to select</p>
+  <mat-dialog-content>
+    <p i18n>There are no items to select</p>
+  </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close i18n>OK</button>
   </mat-dialog-actions>
 </ng-container>
 <ng-container *ngIf="tableData.data.length > 0">
-  <div class="search-bar">
+  <mat-dialog-content>
+    <div class="search-bar">
     <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti && isAllSelected()!=='hidden'">
       {isAllSelected(), select, yes {Deselect} no {Select}} all
     </button>
@@ -32,10 +35,11 @@
       class="cursor-pointer">
     </mat-row>
   </mat-table>
-  <mat-paginator #paginator
-    [pageSize]="5"
-    [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
-  </mat-paginator>
+    <mat-paginator #paginator
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+    </mat-paginator>
+  </mat-dialog-content>
   <mat-dialog-actions>
     <span class="mat-caption margin-lr-3" [matTooltip]="tooltipText" *ngIf="data.allowMulti">
       {{selection.selected.length + ' '}}
