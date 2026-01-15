@@ -8,7 +8,7 @@ import { forkJoin } from 'rxjs';
   styles: [
     `
       .mat-mdc-button > .mat-icon.svg-icon {
-      height: inherit;
+        height: inherit;
       }
     `
   ]
