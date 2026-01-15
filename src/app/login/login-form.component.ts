@@ -293,7 +293,7 @@ export class LoginFormComponent {
   openNotificationsDialog(surveys) {
     this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
       data: { surveys },
-      width: '40vw',
+      maxWidth: '60vw',
       maxHeight: '90vh',
       autoFocus: false
     });
