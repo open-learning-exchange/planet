@@ -31,6 +31,7 @@ import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-t
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { CustomMatPaginatorIntl } from './custom-mat-paginator-intl.service';
 
@@ -76,6 +77,7 @@ export class CustomDateAdapter extends NativeDateAdapter {
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    NgxMaterialTimepickerModule,
   ],
   providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter },
