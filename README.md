@@ -94,13 +94,17 @@ For chatapi development instructions, refer to the [chatapi README](chatapi/READ
 
 To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
 ```
-  npm run dev -- --configuration spa 
+  npm run dev -- --configuration spa
 
   or 
 
   ng serve --configuration spa
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
+
+## Theme preferences
+
+Planet now supports light and dark themes across the application. By default the UI mirrors the browser or operating system `prefers-color-scheme` setting, and any explicit selection is saved to the browser so it persists between visits. Use the moon/sun toggle in the main navigation bar to switch themes at any time; the change is applied immediately to the full UI, including dialogs and menus.
 
 ## Unit & End-to-End Tests
 

@@ -51,10 +51,17 @@
       <ng-container *ngIf="isLoggedIn">
         <ng-container *planetAuthorizedRoles="''">
           <button mat-icon-button planetSync i18n-title title="Sync" *ngIf="onlineStatus === 'accepted'"><mat-icon svgIcon="sync"></mat-icon></button>
-        </ng-container>
-        <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager'"><mat-icon>settings</mat-icon></button>
+      </ng-container>
+      <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager'"><mat-icon>settings</mat-icon></button>
       </ng-container>
       <planet-language i18n-title title="Language"></planet-language>
+    </ng-container>
+    <ng-container *ngIf="activeTheme$ | async as activeTheme">
+      <button mat-icon-button class="theme-toggle" (click)="toggleTheme()"
+        [matTooltip]="activeTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+        i18n-matTooltip>
+        <mat-icon>{{ activeTheme === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
     </ng-container>
     <ng-container *ngIf="isLoggedIn">
       <ng-container *planetAuthorizedRoles="'learner'">
