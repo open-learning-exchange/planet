@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StateService } from './shared/state.service';
+import { ThemeService } from './services/theme.service';
 declare let gtag: Function;
 
 @Component({
@@ -14,7 +15,8 @@ export class AppComponent {
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
     public router: Router,
-    private stateService: StateService
+    private stateService: StateService,
+    private themeService: ThemeService
   ) {
     iconRegistry.addSvgIcon(
       'myLibrary',
@@ -88,5 +90,7 @@ export class AppComponent {
         gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
       }
     });
+
+    this.themeService.getActiveTheme();
   }
 }

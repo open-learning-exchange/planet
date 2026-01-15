@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, Ho
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { Subject, interval, of } from 'rxjs';
+import { Observable, Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
@@ -15,6 +15,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
+import { ThemeService, ThemePreference } from '../services/theme.service';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 
 @Component({
@@ -61,6 +62,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   isMobile: boolean;
   showBanner = true;
   isLoggedIn = false;
+  themePreference: ThemePreference = 'system';
+  activeTheme$: Observable<'light' | 'dark'>;
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
@@ -84,8 +87,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private themeService: ThemeService
   ) {
+    this.activeTheme$ = this.themeService.themeChanges$;
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.onUserUpdate();
@@ -99,6 +104,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnInit() {
+    this.themePreference = this.themeService.getPreference();
     this.getNotification();
     this.onUserUpdate();
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -147,6 +153,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     }
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  setThemePreference(preference: ThemePreference): void {
+    this.themePreference = preference;
+    this.themeService.setPreference(preference);
   }
 
   openLanguageSelector(): void {
