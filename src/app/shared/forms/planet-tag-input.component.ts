@@ -4,7 +4,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
