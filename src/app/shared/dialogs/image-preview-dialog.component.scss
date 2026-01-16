@@ -1,0 +1,73 @@
+/* Dialog content layout */
+.mat-dialog-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  max-height: 70vh;
+  overflow: auto;
+}
+
+/* Dialog action buttons */
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Image preview styling */
+img {
+  max-width: 100%;
+  max-height: 60vh;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Subtle hover effect for images */
+img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Material buttons spacing */
+.mat-button,
+.mat-raised-button {
+  min-width: 96px;
+}
+
+/* Primary raised button enhancement */
+.mat-raised-button.mat-primary {
+  background-color: #3f51b5; /* Material Indigo */
+  color: #fff;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(63, 81, 181, 0.3);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-raised-button.mat-primary:hover {
+  background-color: #35449a;
+  box-shadow: 0 6px 12px rgba(63, 81, 181, 0.4);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .mat-dialog-content {
+    padding: 16px;
+  }
+
+  .mat-dialog-actions {
+    padding: 12px 16px 16px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mat-dialog-actions button {
+    width: 100%;
+  }
+}

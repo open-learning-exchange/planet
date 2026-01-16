@@ -52,7 +52,7 @@ export class CertificationsService {
   }
 
   addCertification(certification) {
-    return this.couchService.updateDocument(this.dbName, { ...certification });
+    return this.couchService.updateDocument(this.dbName, certification);
   }
 
   isCourseCompleted(course, user) {

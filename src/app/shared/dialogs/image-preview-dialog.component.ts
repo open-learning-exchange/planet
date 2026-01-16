@@ -1,0 +1,65 @@
+import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+
+@Component({
+  templateUrl: './image-preview-dialog.component.html',
+  styleUrls: ['./image-preview-dialog.component.scss']
+})
+export class ImagePreviewDialogComponent implements OnInit {
+
+  previewUrl: any;
+  selectedFile: File | null;
+  @ViewChild('fileInput') fileInput: ElementRef;
+
+  constructor(
+    public dialogRef: MatDialogRef<ImagePreviewDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+
+  ngOnInit() {
+    if (this.data && this.data.file) {
+      if (typeof this.data.file === 'string') {
+        this.previewUrl = this.data.file;
+        this.selectedFile = null; // It's just a URL, no file object yet
+      } else if (this.data.file instanceof File || this.data.file instanceof Blob) {
+        this.selectedFile = this.data.file;
+        this.updatePreview();
+      }
+    }
+  }
+
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files[0]) {
+      this.selectedFile = event.target.files[0];
+      this.updatePreview();
+      if (this.fileInput.nativeElement) {
+        this.fileInput.nativeElement.value = '';
+      }
+    }
+  }
+
+  updatePreview() {
+    if (this.selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result;
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  confirm() {
+    this.dialogRef.close(this.selectedFile);
+  }
+
+  remove() {
+    this.selectedFile = null;
+    this.previewUrl = null;
+  }
+
+  close() {
+    // When closing without confirming, return undefined so the calling component knows no change was made
+    this.dialogRef.close(undefined);
+  }
+}
+
