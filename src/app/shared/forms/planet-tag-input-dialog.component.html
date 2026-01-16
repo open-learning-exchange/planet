@@ -34,21 +34,25 @@
         <mat-checkbox *ngIf="tag.subTags.length === 0" (change)="checkboxChange($event, tag._id || tag.name)" [checked]="isInMap(tag._id || tag.name, selected)" [indeterminate]="isInMap(tag._id || tag.name, indeterminate)" class="checkbox-spacing"></mat-checkbox>
         <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
         <span class="count">({{ tag.count || 0 }})</span>
-        <span class="toolbar-fill"></span>
-        <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event, tag)" i18n class="button-spacing">Edit</button>
-        <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
-          <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
-        </span>
+        <ng-container matListItemMeta>
+          <span class="toolbar-fill"></span>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event, tag)" i18n class="button-spacing">Edit</button>
+          <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
+            <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
+          </span>
+        </ng-container>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange(subTag._id || subTag.name, { parentTag: tag })" class="cursor-pointer list-item-spacing">
-          <mat-icon mat-list-icon class="icon-spacing">subdirectory_arrow_right</mat-icon>
+          <mat-icon matListItemIcon class="icon-spacing">subdirectory_arrow_right</mat-icon>
           <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)" class="checkbox-spacing"></mat-checkbox>
           <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
           <span class="count">({{ tag.count || 0 }})</span>
-          <span class="toolbar-fill"></span>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event, subTag)" i18n class="button-spacing">Edit</button>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event, subTag)" i18n>Delete</button>
+          <ng-container matListItemMeta>
+            <span class="toolbar-fill"></span>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event, subTag)" i18n class="button-spacing">Edit</button>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event, subTag)" i18n>Delete</button>
+          </ng-container>
         </mat-list-item>
       </ng-container>
       <mat-divider></mat-divider>
@@ -61,20 +65,24 @@
         <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
         <span class="count">({{ tag.count || 0 }})</span>
         <planet-tag-input-toggle-icon *ngIf="tag.subTags.length > 0" [isOpen]="subcollectionIsOpen.get(tag._id)"></planet-tag-input-toggle-icon>
-        <span class="toolbar-fill"></span>
-        <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" i18n>Edit</button>
-        <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
-          <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
-        </span>
+        <ng-container matListItemMeta>
+          <span class="toolbar-fill"></span>
+          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,tag)" i18n>Edit</button>
+          <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
+            <button mat-stroked-button *ngIf="isUserAdmin" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
+          </span>
+        </ng-container>
       </mat-list-item>
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(subTag._id || subTag.name)">
-          <mat-icon>subdirectory_arrow_right</mat-icon>
+          <mat-icon matListItemIcon>subdirectory_arrow_right</mat-icon>
           <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
           <span class="count">({{ tag.count || 0 }})</span>
-          <span class="toolbar-fill"></span>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)" i18n>Edit</button>
-          <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,subTag)" i18n>Delete</button>
+          <ng-container matListItemMeta>
+            <span class="toolbar-fill"></span>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)" i18n>Edit</button>
+            <button mat-stroked-button *ngIf="isUserAdmin" (click)="deleteTag($event,subTag)" i18n>Delete</button>
+          </ng-container>
         </mat-list-item>
       </ng-container>
       <mat-divider></mat-divider>
