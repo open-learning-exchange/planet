@@ -1,6 +1,6 @@
 <mat-nav-list *ngIf="listMode" [disableRipple]="ignoreClick" [ngClass]="{ 'no-pointer': ignoreClick }">
   <mat-list-item *ngFor="let stepListItem of stepListItems; index as i" (click)="stepClick(i)">
-    <ng-template [ngTemplateOutlet]="stepListItem.template"></ng-template>
+    <ng-template matListItemTitle [ngTemplateOutlet]="stepListItem.template"></ng-template>
   </mat-list-item>
 </mat-nav-list>
 <div class="planet-step-list-form-container" *ngIf="!listMode">

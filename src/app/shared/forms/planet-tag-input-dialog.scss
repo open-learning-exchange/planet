@@ -10,24 +10,20 @@
   padding-bottom: 16px;
 }
 
-:host .mat-list-option span {
-  font-weight: inherit;
+:host .mat-mdc-list-item, :host .mat-mdc-action-list .mat-mdc-list-item {
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 16px;
 }
 
-:host p[matLine] *, :host .mat-nav-list .mat-list-item * {
-  margin-right: 0.25rem;
+:host .mat-mdc-list-item-meta {
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
 }
 
-:host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
-  margin-right: 0;
-}
-
-:host .mat-nav-list {
+:host .mat-mdc-nav-list {
   margin-bottom: 16px;
-}
-
-.mat-list-item:last-of-type {
-  margin-bottom: 8px;
 }
 
 :host mat-dialog-actions {
@@ -60,8 +56,5 @@
 
 .count {
   white-space: nowrap;
-}
-
-.mat-action-list .count {
-  margin-left: 2px;
+  margin-left: 0.25rem;
 }
