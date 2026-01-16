@@ -18,10 +18,6 @@
     }
   }
 
-  & mat-list, & ul, & ol {
-    text-align: left;
-  }
-
   mat-divider {
     margin-top: 1rem;
     background-color: $primary;
@@ -57,13 +53,13 @@
     margin: 2rem;
    }
 
-  .mat-list-base .mat-list-item {
-    &.mat-list-item-word-wrap {
+  .mat-mdc-list-base .mat-mdc-list-item {
+    &.mat-mdc-list-item-word-wrap {
       height: initial;
       margin: 0.75rem 0;
     }
 
-    .mat-line {
+    .mat-mdc-list-line {
       word-wrap: break-word;
       white-space: pre-wrap;
     }
@@ -73,7 +69,6 @@
       grid-template-areas: "txt dt";
       grid-template-columns: auto max-content;
       align-items: center;
-      margin-bottom: 0.75rem;
 
       .achievement-text {
         grid-area: txt;
