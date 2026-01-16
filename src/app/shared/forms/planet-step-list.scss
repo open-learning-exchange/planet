@@ -6,6 +6,10 @@
   cursor: auto;
 }
 
+.mat-mdc-list-item span, button {
+  vertical-align: middle;
+}
+
 .planet-step-list-form-container {
   display: grid;
   grid-template-rows: min-content auto min-content;
