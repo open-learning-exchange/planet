@@ -11,18 +11,18 @@
     <mat-card-content>
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.code.label">Code</span>
-            <mat-form-field>
+            <mat-form-field floatLabel="never">
               <input matInput formControlName="code" (input)="form.get('code').setValue(form.get('code').value.toUpperCase())" placeholder="e.g. USD" i18n-placeholder>
               <mat-error><planet-form-error-messages [control]="form.controls.code"></planet-form-error-messages></mat-error>
             </mat-form-field>
           </div>
         </mat-list-item>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.symbol.label">Symbol</span>
-            <mat-form-field>
+            <mat-form-field floatLabel="never">
               <input matInput formControlName="symbol" placeholder="e.g. $" i18n-placeholder>
               <mat-error><planet-form-error-messages [control]="form.controls.symbol"></planet-form-error-messages></mat-error>
             </mat-form-field>

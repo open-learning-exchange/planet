@@ -19,6 +19,10 @@
   width: 100%;
   align-items: baseline;
   gap: 20px;
+
+  mat-form-field {
+    margin: 20px;
+  }
 }
 
 .update-button-container {
