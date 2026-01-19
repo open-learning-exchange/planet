@@ -16,6 +16,8 @@ export interface Conversation {
   title: string;
   createdDate: number;
   updatedDate: number;
+  aiProvider?: ProviderName;
+  shared?: boolean;
   context?: any;
 }
 

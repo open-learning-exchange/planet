@@ -1,5 +1,5 @@
 @use '../variables' as theme;
 
-mat-icon {
+mat-icon, span {
   color: theme.$primary-text;
 }
