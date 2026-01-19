@@ -4,23 +4,22 @@ import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntil, map } from 'rxjs/operators';
-import { Subject, zip, forkJoin, of, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { TeamsService } from '../teams/teams.service';
 
 const columnsByFilterAndMode = {
   exam: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
+    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
-    grade: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime' ],
-    survey: [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'lastUpdateTime' ]
+    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
+    survey: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'lastUpdateTime' ]
   }
 };
 
@@ -33,7 +32,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
-  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'teamInfo', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
+  @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -52,7 +51,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     type: 'exam',
     status: 'requires grading'
   };
-  surveyId = this.route.snapshot.params['surveyId'];
+  surveyId: string | null = null;
+  isManagerSurveysRoute = false;
 
   constructor(
     private router: Router,
@@ -61,12 +61,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private userService: UserService,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService,
-    private teamsService: TeamsService
+    private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.surveyId = this.route.snapshot.paramMap.get('surveyId');
+    this.isManagerSurveysRoute = !!this.surveyId;
   }
 
   ngOnInit() {
@@ -83,27 +84,32 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.coursesService.requestCourses();
     zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
     .subscribe(([ submissions, courses ]) => {
-      submissions = submissions.filter(data => data.user && data.type !== 'photo' && data.parent).reduce((sList, s1) => {
-        const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-        if (!s1.user._id || sIndex === -1) {
-          sList.push(s1);
-        } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
-          sList[sIndex] = s1;
-        }
-        return sList;
-      }, []).map(submission => this.appendCourseInfo(submission, courses));
-      forkJoin(submissions.map(s => this.appendTeamInfo$(s))).subscribe(subs => {
-        // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
-        subs.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
-        this.submissions.data = subs.map(submission => ({
-          ...submission,
-          submittedBy: this.submissionsService.submissionName(submission.user)
-        }));
-        this.dialogsLoadingService.stop();
-        this.applyFilter('');
-      });
+      let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
+
+      if (!this.isManagerSurveysRoute) {
+        normalized = normalized.reduce((sList, s1) => {
+          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
+          if (!s1.user._id || sIndex === -1) {
+            sList.push(s1);
+          } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
+            sList[sIndex] = s1;
+          }
+          return sList;
+        }, []);
+      }
+
+      submissions = normalized.map(submission => this.appendCourseInfo(submission, courses));
+      // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
+      submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
+      this.submissions.data = submissions.map(submission => ({
+        ...submission,
+        submittedBy: this.submissionsService.submissionName(submission.user),
+        docSource: submission.androidId ? 'myPlanet' : 'planet'
+      }));
+      this.dialogsLoadingService.stop();
+      this.applyFilter('');
     });
-    this.submissionsService.updateSubmissions({ query: this.submissionQuery() });
+    this.submissionsService.updateSubmissions(this.submissionQuery());
     this.setupTable();
   }
 
@@ -136,14 +142,19 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   submissionQuery() {
     if (this.surveyId) {
       this.filter.type = 'survey';
-      return findDocuments({ parentId: this.surveyId, type: 'survey', status: 'complete' });
+      return { surveyId: this.surveyId, type: 'survey' as const };
     }
     switch (this.mode) {
-      case 'survey': return findDocuments({ 'user.name': this.userService.get().name, type: 'survey' });
-      case 'review': return findDocuments({
-        'user.name': this.userService.get().name, parentId: this.parentId, status: { '$ne': 'pending' }
-      });
-      default: return undefined;
+      case 'survey':
+        return { query: findDocuments({ 'user.name': this.userService.get().name, type: 'survey' }) };
+      case 'review':
+        return { query: findDocuments({
+          'user.name': this.userService.get().name,
+          parentId: this.parentId,
+          status: { '$ne': 'pending' }
+        }) };
+      default:
+        return { query: undefined };
     }
   }
 
@@ -231,11 +242,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     const stepNum = submissionCourse.doc.steps
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
     return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
-  }
-
-  appendTeamInfo$(submission): Observable<any> {
-    if (!submission.team) { return of({ ...submission, teamName: '' }); }
-    return this.teamsService.getTeamName(submission.team).pipe(map((teamInfo: any) => ({ ...submission, teamInfo })));
   }
 
   getTeamTypeLabel(teamType: string): string {

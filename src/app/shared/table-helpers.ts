@@ -108,8 +108,11 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
-  return (data: any, filter: string) => {
-    return matchAllItems(filterItems, getProperty(data, filterField) || []);
+  return (data: unknown, _filter: string) => {
+    const raw = getProperty(data, filterField);
+    const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+
+    return matchAllItems(filterItems, propItems);
   };
 };
 
@@ -204,8 +207,8 @@ export const trackByIdVal = (index, item: { id: string }) => item.id;
 
 export const trackByIndex = (index: number) => index;
 
-export const showFormErrors = (controls: { [key: string]: AbstractControl }) => {
-  Object.values(controls).forEach(control => {
+export const showFormErrors = <T extends { [K in keyof T]: AbstractControl }>(controls: T) => {
+  (Object.values(controls) as AbstractControl[]).forEach(control => {
     control.markAsTouched({ onlySelf: true });
   });
 };

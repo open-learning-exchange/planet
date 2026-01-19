@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -8,6 +8,12 @@ import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { PlanetStepListComponent } from '../../shared/forms/planet-step-list.component';
+
+interface CoursesStepForm {
+  id: FormControl<string>;
+  stepTitle: FormControl<string>;
+  description: FormControl<string>;
+}
 
 @Component({
   selector: 'planet-courses-step',
@@ -21,7 +27,7 @@ export class CoursesStepComponent implements OnDestroy {
   @Output() stepsChange = new EventEmitter<any>();
   @Output() addStepEvent = new EventEmitter<void>();
 
-  stepForm: UntypedFormGroup;
+  stepForm: FormGroup<CoursesStepForm>;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
@@ -38,15 +44,15 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
-      id: '',
-      stepTitle: '',
-      description: ''
+    this.stepForm = this.fb.group<CoursesStepForm>({
+      id: this.fb.control(''),
+      stepTitle: this.fb.control(''),
+      description: this.fb.control('')
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
@@ -89,7 +95,13 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   removeResource(position: number) {
-    this.steps[this.activeStepIndex].resources.splice(position, 1);
+    const resources = this.steps[this.activeStepIndex]?.resources;
+    if (!resources || position < 0 || position >= resources.length) {
+      return;
+    }
+    resources.splice(position, 1);
+    this.activeStep = this.steps[this.activeStepIndex];
+    this.stepsChange.emit(this.steps);
   }
 
   addExam(type = 'exam') {

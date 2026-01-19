@@ -48,7 +48,11 @@ wss.on('connection', (ws) => {
         }));
       }
     } catch (error: any) {
-      ws.send(`${error.message}: Cannot connect to the streaming endpoint`);
+      if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
+        ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
+      } else {
+        ws.send(JSON.stringify({ 'error': 'Internal Server Error', 'message': error.message }));
+      }
     }
   });
 
@@ -66,7 +70,7 @@ app.post('/', async (req: any, res: any) => {
 
   try {
     if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, data.context, data.assistant, false);
+      const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
       return res.status(200).json({
         'status': 'Success',
         'chat': response
@@ -80,6 +84,9 @@ app.post('/', async (req: any, res: any) => {
       });
     }
   } catch (error: any) {
+    if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
+      return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
+    }
     return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
   }
 });

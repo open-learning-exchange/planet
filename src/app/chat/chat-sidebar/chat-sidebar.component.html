@@ -2,12 +2,14 @@
   <mat-drawer #drawer mode="side" [opened]="deviceType === deviceTypes.DESKTOP || deviceType === deviceTypes.TABLET">
 
     <div class="header-container">
-      <div class="header">
+      <div class="header flex-vertical-center">
         <button type="button" mat-raised-button color="primary" mat-button (click)="newChat()">
           <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
-        <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-icon-button (click)="drawer.toggle()"><i class="material-icons">chevron_left</i></button>
+        <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-mini-fab (click)="drawer.toggle()">
+          <mat-icon class="material-icons">chevron_left</mat-icon>
+        </button>
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
         <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
@@ -40,11 +42,11 @@
         <li *ngFor="let conversation of filteredConversations; let i = index; trackBy: trackByFn" class="conversation-list" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
-              <form [formGroup]="titleForm[conversation?._id]" (ngSubmit)="submitTitle(conversation)">
+              <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
                 <mat-form-field class="mat-form-field" style="width: 50%;">
-                  <input matInput [formControl]="titleForm[conversation?._id].controls.title" required>
+                  <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
                   <mat-error>
-                    <planet-form-error-messages [formControl]="titleForm[conversation?._id].controls.title"></planet-form-error-messages>
+                    <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
                   </mat-error>
                 </mat-form-field>
                 <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
@@ -79,8 +81,8 @@
 
   <div class="window-box">
     <div class="expand-button">
-      <button mat-icon-button (click)="drawer.toggle()">
-        <i class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</i>
+      <button mat-mini-fab (click)="drawer.toggle()">
+        <mat-icon class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
       </button>
     </div>
     <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
