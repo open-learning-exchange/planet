@@ -49,10 +49,10 @@ export class CoursesStepComponent implements OnDestroy {
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
-      id: '',
-      stepTitle: '',
-      description: ''
+    this.stepForm = this.fb.group<CoursesStepForm>({
+      id: this.fb.control(''),
+      stepTitle: this.fb.control(''),
+      description: this.fb.control('')
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };
@@ -95,7 +95,13 @@ export class CoursesStepComponent implements OnDestroy {
   }
 
   removeResource(position: number) {
-    this.steps[this.activeStepIndex].resources.splice(position, 1);
+    const resources = this.steps[this.activeStepIndex]?.resources;
+    if (!resources || position < 0 || position >= resources.length) {
+      return;
+    }
+    resources.splice(position, 1);
+    this.activeStep = this.steps[this.activeStepIndex];
+    this.stepsChange.emit(this.steps);
   }
 
   addExam(type = 'exam') {
