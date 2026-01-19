@@ -1,47 +1,47 @@
 :host {
   display: block;
   overflow: hidden;
-}
 
-:host mat-dialog-content {
-  overflow-y: auto;
-  max-height: calc(100vh - 156px);
-  box-sizing: border-box;
-  padding-bottom: 16px;
-}
+  mat-dialog-content {
+    overflow-y: auto;
+    max-height: calc(100vh - 156px);
+    box-sizing: border-box;
+    padding-bottom: 16px;
+  }
 
-:host .mat-mdc-list-item, :host .mat-mdc-action-list .mat-mdc-list-item {
-  align-items: center;
-  gap: 0.25rem;
-  padding-right: 16px;
-}
+  .mat-mdc-list-item, .mat-mdc-action-list .mat-mdc-list-item {
+    align-items: center;
+    gap: 0.25rem;
+    padding-right: 16px;
+  }
 
-:host .mat-mdc-list-item-meta {
-  align-items: center;
-  gap: 0.25rem;
-  margin-left: auto;
-}
+  .mat-mdc-list-item-meta {
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+  }
 
-:host .mat-mdc-nav-list {
-  margin-bottom: 16px;
-}
+   .mat-mdc-nav-list {
+    margin-bottom: 16px;
+  }
 
-:host mat-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: 16px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
-  background-color: #fff;
-  position: sticky;
-  bottom: 0;
-  border-top: 1px solid #e0e0e0;
-}
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 16px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid #e0e0e0;
+  }
 
-:host mat-dialog-actions button {
-  margin: 0;
-  padding: 4px;
+  mat-dialog-actions button {
+    margin: 0;
+    padding: 4px;
+  }
 }
 
 .icon-spacing,
