@@ -46,7 +46,7 @@
       </mat-accordion>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
-          <span matListItemTitle class="exam-question">{{ getQuestionLabel(question.value.body, i) }}</span>
+          <span matListItemTitle>{{ getQuestionLabel(question.value.body, i) }}</span>
           <span matListItemLine i18n class="mat-caption warn-text-color exam-error" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
         </planet-step-list-item>
         <div planetStepListForm>
