@@ -10,6 +10,25 @@
   vertical-align: middle;
 }
 
+.mat-mdc-list-item-unscoped-content {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  overflow: visible !important;
+
+  > span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > span:not(:first-child), > button {
+    flex: 0 0 auto;
+  }
+}
+
 .planet-step-list-form-container {
   display: grid;
   grid-template-rows: min-content auto min-content;
