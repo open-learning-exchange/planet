@@ -12,7 +12,7 @@
       <mat-list>
         <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
           <div matListItemTitle class="list-item-content">
-            <span >{{ apiKey.key | titlecase }}</span>
+            <span>{{ apiKey.key | titlecase }}</span>
             <mat-form-field>
               <input
                 matInput
@@ -57,7 +57,7 @@
       <mat-list>
         <mat-list-item>
           <div matListItemTitle class="list-item-content">
-            <span  i18n>Name:</span>
+            <span i18n>Name:</span>
             <mat-form-field>
               <input matInput formControlName="assistantName" placeholder="Assistant name" i18n-placeholder/>
             </mat-form-field>

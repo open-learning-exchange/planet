@@ -11,17 +11,12 @@
 }
 
 .mat-mdc-list-item-unscoped-content {
-  display: flex !important;
+  display: flex;
   align-items: center;
   gap: 8px;
-  overflow: visible !important;
 
   > span:first-child {
     flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   > span:not(:first-child), > button {
