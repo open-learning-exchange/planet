@@ -13,7 +13,7 @@
         <mat-list-item>
           <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.code.label">Code</span>
-            <mat-form-field floatLabel="never">
+            <mat-form-field>
               <input matInput formControlName="code" (input)="form.get('code').setValue(form.get('code').value.toUpperCase())" placeholder="e.g. USD" i18n-placeholder>
               <mat-error><planet-form-error-messages [control]="form.controls.code"></planet-form-error-messages></mat-error>
             </mat-form-field>
@@ -22,7 +22,7 @@
         <mat-list-item>
           <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.symbol.label">Symbol</span>
-            <mat-form-field floatLabel="never">
+            <mat-form-field>
               <input matInput formControlName="symbol" placeholder="e.g. $" i18n-placeholder>
               <mat-error><planet-form-error-messages [control]="form.controls.symbol"></planet-form-error-messages></mat-error>
             </mat-form-field>

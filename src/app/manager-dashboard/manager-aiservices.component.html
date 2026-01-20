@@ -13,7 +13,7 @@
         <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
           <div matListItemTitle class="list-item-content">
             <span >{{ apiKey.key | titlecase }}</span>
-            <mat-form-field floatLabel="never">
+            <mat-form-field>
               <input
                 matInput
                 [type]="hideKey[apiKey.key] ? 'password' : 'text'"
@@ -42,7 +42,7 @@
         <mat-list-item *ngFor="let model of configuration.models | keyvalue">
           <div matListItemTitle class="list-item-content">
             <span>{{ model.key | titlecase }}</span>
-            <mat-form-field floatLabel="never">
+            <mat-form-field>
               <input matInput [formControlName]="'models_' + model.key" placeholder="Enter model" i18n-placeholder />
             </mat-form-field>
           </div>
@@ -58,7 +58,7 @@
         <mat-list-item>
           <div matListItemTitle class="list-item-content">
             <span  i18n>Name:</span>
-            <mat-form-field floatLabel="never">
+            <mat-form-field>
               <input matInput formControlName="assistantName" placeholder="Assistant name" i18n-placeholder/>
             </mat-form-field>
           </div>

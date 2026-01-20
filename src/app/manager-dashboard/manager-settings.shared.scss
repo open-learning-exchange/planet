@@ -13,16 +13,16 @@
   margin: 0 auto;
 }
 
+mat-list-item {
+  overflow: visible;
+}
+
 .list-item-content {
   display: grid;
   grid-template-columns: 1.5fr 4fr;
   width: 100%;
   align-items: baseline;
   gap: 20px;
-
-  mat-form-field {
-    margin: 20px;
-  }
 }
 
 .update-button-container {
