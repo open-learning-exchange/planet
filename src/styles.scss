@@ -543,10 +543,24 @@ body {
   .mat-mdc-menu-panel.notification-menu {
     overflow: hidden;
 
-    .mat-mdc-menu-content {
-      div.notification-items {
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
+    .mat-mdc-menu-content .notification-items {
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .menu-item-notification {
+      display: block;
+
+      &.primary-text-color,
+      &.primary-text-color .mdc-list-item__primary-text {
+        color: $primary;
+      }
+
+      &:hover.primary-text-color,
+      &:focus.primary-text-color,
+      &:hover.primary-text-color .mdc-list-item__primary-text,
+      &:focus.primary-text-color .mdc-list-item__primary-text {
+        color: rgba(0, 0, 0, 0.87);
       }
     }
   }
