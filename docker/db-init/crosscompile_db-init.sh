@@ -5,10 +5,10 @@ ACT=$2
 
 if [[ "${ARCH}" == "armv7" ]]; then
   TRIPLE="arm-linux-gnueabihf"
-  GCC="4.8"
+  GCC="9"
 elif [[ "${ARCH}" == "armv8" ]]; then
   TRIPLE="aarch64-linux-gnu"
-  GCC="4.8"
+  GCC="9"
 else
   exit 1
 fi
@@ -24,7 +24,7 @@ echo "Building db-init for ${ARCH}"
 if [[ "${ACT}" == "install" ]]; then
   apt-get update -qq
   apt-get install -y curl gnupg
-  curl -sL https://deb.nodesource.com/setup_10.x | bash -
+  curl -sL https://deb.nodesource.com/setup_18.x | bash -
   apt-get install -y nodejs build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb
 else

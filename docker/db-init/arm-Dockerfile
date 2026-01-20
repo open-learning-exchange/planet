@@ -1,4 +1,4 @@
-FROM ubuntu:xenial as builder
+FROM ubuntu:20.04 as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./docker/db-init/crosscompile_db-init.sh .
