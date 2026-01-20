@@ -7,10 +7,10 @@ import { forkJoin } from 'rxjs';
   templateUrl: './manager-sync.component.html',
   styles: [
     `
-      .mat-mdc-button > .mat-icon.svg-icon {
-        height: inherit;
-      }
-    `
+          .mat-mdc-button > .mat-icon.svg-icon {
+            height: inherit;
+          }
+        `
   ]
 })
 
