@@ -1,7 +1,7 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.component';
 

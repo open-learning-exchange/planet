@@ -32,7 +32,7 @@
   display: block;
 }
 
-.mat-cell button, .mat-cell div button[mat-raised-button] {
+.mat-mdc-cell button, .mat-cell div button[mat-raised-button] {
   width: 150px;
   text-align: center;
   padding: 8px 12px;
@@ -48,7 +48,7 @@
     max-width: 125px;
   }
 
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-cell div button[mat-raised-button] {
     width: 100px;
     text-align: center;
     padding: 8px 12px;
@@ -69,7 +69,7 @@
     max-width: 125px;
   }
 
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-cell div button[mat-raised-button] {
     width: 50px;
   }
 }
