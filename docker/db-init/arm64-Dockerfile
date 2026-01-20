@@ -1,4 +1,4 @@
-FROM ubuntu:xenial as builder
+FROM ubuntu:xenial AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./docker/db-init/crosscompile_db-init.sh .
@@ -21,4 +21,4 @@ COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./couchdb-setup.sh /root/couchdb-setup.sh
 ADD ./design /root/design
 
-CMD bash ./docker-entrypoint.sh
+CMD ["bash", "./docker-entrypoint.sh"]
