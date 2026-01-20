@@ -58,6 +58,12 @@ export class PlanetStepListItemComponent {
 
   moveStep(event, direction = 0) {
     event.stopPropagation();
+    if (direction === this.index) {
+      const confirmDelete = window.confirm($localize`Are you sure you want to delete this item?`);
+      if (!confirmDelete) {
+        return;
+      }
+    }
     this.planetStepListService.moveStep(this.index, direction, this.listId);
   }
 
@@ -152,6 +158,10 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   }
 
   removeStep() {
+    const confirmDelete = window.confirm($localize`Are you sure you want to delete this item?`);
+    if (!confirmDelete) {
+      return;
+    }
     this.moveStep({ index: this.openIndex, direction: 0, listId: this.listId });
     this.toList();
   }
