@@ -23,11 +23,10 @@ echo "Building db-init for ${ARCH}"
 
 if [[ "${ACT}" == "install" ]]; then
   apt-get update -qq
-  apt-get install -y curl gnupg apt-transport-https
-  # Import NodeSource GPG key explicitly
-  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg || true
+  apt-get install -y curl gnupg
   curl -sL https://deb.nodesource.com/setup_10.x | bash -
-  apt-get update -qq
+  # Use --allow-unauthenticated since Node.js 10.x repository GPG key is deprecated/unavailable
+  # This is acceptable as Node.js 10 itself is EOL and this is only for cross-compilation build
   apt-get install -y --allow-unauthenticated nodejs build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb
 else
