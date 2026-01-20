@@ -84,7 +84,11 @@
                 <mat-list-item *ngFor="let link of localLinks" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                   <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
                   <span matListItemTitle>{{link.title}}</span>
-                  <button *ngIf="deleteMode" matListItemMeta mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
+                  <span *ngIf="deleteMode" matListItemMeta>
+                    <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </span>
                 </mat-list-item>
               </ng-container>
               <ng-container *ngIf="socialWebLinks.length > 0">
@@ -93,7 +97,11 @@
                   <mat-icon *ngIf="link.icon === 'web'" matListItemIcon>public</mat-icon>
                   <mat-icon *ngIf="link.icon !== 'web'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
                   <span matListItemTitle>{{link.title}}</span>
-                  <button *ngIf="deleteMode" matListItemMeta mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
+                  <span *ngIf="deleteMode" matListItemMeta>
+                    <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </span>
                 </a>
               </ng-container>
             </mat-nav-list>
