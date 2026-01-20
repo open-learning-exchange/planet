@@ -540,10 +540,10 @@ body {
     color: $grey;
   }
 
-  .mat-menu-panel.notification-menu {
+  .mat-mdc-menu-panel.notification-menu {
     overflow: hidden;
 
-    .mat-menu-content {
+    .mat-mdc-menu-content {
       div.notification-items {
         max-height: calc(100vh - 100px);
         overflow-y: auto;
@@ -650,7 +650,7 @@ body {
   }
 
   // Course/Resources Details ellipsis menu
-  .actions-menu .mat-menu-content {
+  .actions-menu .mat-mdc-menu-content {
     display: flex;
     flex-flow: column;
     gap: 1rem;
