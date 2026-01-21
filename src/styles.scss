@@ -1,12 +1,62 @@
+@use '@angular/material' as mat;
 @import './app/variables';
 @import './planet-mat-theme.scss';
+
+:root {
+  color-scheme: light;
+  @include screen-sizes();
+  --color-primary: #{$primary};
+  --color-primary-text: #{$primary-text};
+  --color-primary-dark: #{$primary-dark};
+  --color-primary-light: #{$primary-light};
+  --color-primary-lighter: #{$primary-lighter};
+  --color-accent: #{$accent};
+  --color-accent-text: #{$accent-text};
+  --color-accent-lighter: #{$accent-lighter};
+  --color-warn: #{$warn};
+  --color-grey: #{$grey};
+  --color-grey-text: #{$grey-text};
+  --color-light-grey: #{$light-grey};
+  --color-surface: #fff;
+  --color-surface-alt: #f6f8fb;
+  --color-on-surface: #1c1c1c;
+  --color-shadow: #{$shadow};
+  --color-shadow-strong: rgba(0, 0, 0, 0.25);
+  --color-shadow-soft: rgba(0, 0, 0, 0.2);
+  --color-shadow-faint: rgba(0, 0, 0, 0.12);
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --color-primary: #{$primary-dark};
+  --color-primary-text: #{$white};
+  --color-primary-dark: #{darken($primary-dark, 10%)};
+  --color-primary-light: #{lighten($primary-dark, 15%)};
+  --color-primary-lighter: #{lighten($primary-dark, 25%)};
+  --color-accent: #{mat.get-color-from-palette($planet-app-accent, 300)};
+  --color-accent-text: #000;
+  --color-accent-lighter: #{mat.get-color-from-palette($planet-app-accent, 200)};
+  --color-warn: #{lighten($warn, 20%)};
+  --color-grey: #{lighten($grey, 20%)};
+  --color-grey-text: #e0e0e0;
+  --color-light-grey: #1f1f1f;
+  --color-surface: #121212;
+  --color-surface-alt: #1e1e1e;
+  --color-on-surface: #e5e5e5;
+  --color-shadow: rgba(0, 0, 0, 0.6);
+  --color-shadow-strong: rgba(0, 0, 0, 0.6);
+  --color-shadow-soft: rgba(0, 0, 0, 0.4);
+  --color-shadow-faint: rgba(0, 0, 0, 0.25);
+}
 
 body {
   font-family: $font-family;
   margin: 0;
+  background-color: var(--color-surface, #fff);
+  color: var(--color-on-surface, #1c1c1c);
 
   .gradient-background {
-    background: linear-gradient(to bottom, #000000, $primary);
+    background: linear-gradient(to bottom, #000000, var(--color-primary, #{$primary}));
   }
 
   a,
@@ -16,37 +66,37 @@ body {
   }
 
   .primary-text-color {
-    color: $primary;
+    color: var(--color-primary, #{$primary});
   }
 
   .primary-color {
-    background-color: $primary;
-    color: $primary-text;
+    background-color: var(--color-primary, #{$primary});
+    color: var(--color-primary-text, #{$primary-text});
   }
 
   .accent-color {
-    background-color: $accent;
-    color: $accent-text;
+    background-color: var(--color-accent, #{$accent});
+    color: var(--color-accent-text, #{$accent-text});
   }
 
   .accent-text-color {
-    color: $accent;
+    color: var(--color-accent, #{$accent});
   }
 
   .warn-text-color {
-    color: $warn;
+    color: var(--color-warn, #{$warn});
   }
 
   .grey-text-color {
-    color: $grey-text;
+    color: var(--color-grey-text, #{$grey-text});
   }
 
   .bg-light-grey {
-    background-color: $light-grey;
+    background-color: var(--color-light-grey, #{$light-grey});
   }
 
   .bg-grey {
-    background-color: $grey;
+    background-color: var(--color-grey, #{$grey});
   }
 
   .display-flex {
@@ -217,7 +267,7 @@ body {
   $stars-width: calc(120px + (10 * #{$stars-margin}));
   .stars {
     display: inline-block;
-    color: $grey;
+    color: var(--color-grey, #{$grey});
     position: relative;
     // Each mat-icon star is 24x24.  Will need to change if star sizes change
     width: $stars-width;
@@ -227,7 +277,7 @@ body {
     }
 
     span {
-      color: $accent;
+      color: var(--color-accent, #{$accent});
       position: absolute;
       top: 0;
       left: 0;
@@ -323,11 +373,11 @@ body {
   .rating-bar {
     display: block;
     height: 10px;
-    border: 1px solid $accent;
+    border: 1px solid var(--color-accent, #{$accent});
     margin-top: 0.5em;
 
     div {
-      background-color: $accent;
+      background-color: var(--color-accent, #{$accent});
       height: 100%;
     }
   }
@@ -337,11 +387,11 @@ body {
   }
 
   mat-table .highlight, .primary-lighter-color {
-    background-color: $primary-lighter;
+    background-color: var(--color-primary-lighter, #{$primary-lighter});
   }
 
   mat-table, .primary-light-color {
-    background-color: $primary-light;
+    background-color: var(--color-primary-light, #{$primary-light});
   }
 
   // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
@@ -396,7 +446,7 @@ body {
   }
 
   .primary-link-hover a:hover {
-    color: $primary;
+    color: var(--color-primary, #{$primary});
   }
 
   .view-container {
@@ -664,7 +714,7 @@ body {
     text-align: left;
     padding: 8px;
     border-radius: 5px;
-    background-color: #{$primary};
+    background-color: var(--color-primary, #{$primary});
     color: white;
   }
 
@@ -707,7 +757,7 @@ body {
   }
 
   .copy-btn.copied {
-    color: $primary;
+    color: var(--color-primary, #{$primary});
   }
 
   .chat-link {
@@ -729,7 +779,7 @@ body {
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: $primary;
+    background-color: var(--color-primary, #{$primary});
     border-radius: 10px;
     border: 3px solid #f1f1f1;
   }
