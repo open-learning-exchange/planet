@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -31,6 +31,10 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 type ChartModule = typeof import('chart.js');
+type DateFilterForm = {
+  startDate: FormControl<Date | '' | null>;
+  endDate: FormControl<Date | '' | null>;
+};
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -63,7 +67,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
-  dateFilterForm: UntypedFormGroup;
+  dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -105,7 +109,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService
   ) {
@@ -201,13 +205,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: [ '' ],
-      endDate: [ '' ],
-      validators: [ CustomValidators.endDateValidator() ]
-    });
+      startDate: this.fb.control<Date | '' | null>(''),
+      endDate: this.fb.control<Date | '' | null>('')
+    }, { validators: CustomValidators.endDateValidator() });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate ? new Date(value.startDate) : null;
-      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const startDate = value.startDate instanceof Date ? value.startDate : null;
+      const endDate = value.endDate instanceof Date ? value.endDate : null;
 
       this.filter = { ...this.filter, startDate, endDate };
 
