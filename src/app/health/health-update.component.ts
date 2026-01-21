@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { interval, of, race, forkJoin } from 'rxjs';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { interval, of, race, forkJoin, merge } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
@@ -12,22 +12,44 @@ import { languages } from '../shared/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 
+interface ProfileFormGroup {
+  name: FormControl<string>;
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  email: FormControl<string>;
+  language: FormControl<string>;
+  phoneNumber: FormControl<string>;
+  birthDate: FormControl<string | Date | null>;
+  birthplace: FormControl<string>;
+}
+
+interface HealthFormGroup {
+  emergencyContactName: FormControl<string>;
+  emergencyContactType: FormControl<string>;
+  emergencyContact: FormControl<string>;
+  specialNeeds: FormControl<string>;
+  immunizations: FormControl<string>;
+  allergies: FormControl<string>;
+  notes: FormControl<string>;
+}
+
 @Component({
   templateUrl: './health-update.component.html',
   styleUrls: [ './health-update.scss' ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: UntypedFormGroup;
-  healthForm: UntypedFormGroup;
+  profileForm: FormGroup<ProfileFormGroup>;
+  healthForm: FormGroup<HealthFormGroup>;
   existingData: any = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
-  initialFormValues: any;
+  initialFormValues: string;
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
@@ -49,65 +71,55 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   private captureInitialState() {
-    this.initialFormValues = JSON.stringify({
-      profile: this.profileForm.value,
-      health: this.healthForm.value
+    this.initialFormValues = this.getCurrentState();
+  }
+
+  private getCurrentState(): string {
+    return JSON.stringify({
+      profile: this.profileForm.getRawValue(),
+      health: this.healthForm.getRawValue()
     });
   }
 
   onFormChanges() {
-    this.profileForm.valueChanges
+    merge(this.profileForm.valueChanges, this.healthForm.valueChanges)
       .pipe(
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(() => {
-        const currentState = JSON.stringify({
-          profile: this.profileForm.value,
-          health: this.healthForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
-      });
-
-    this.healthForm.valueChanges
-      .pipe(
-        debounce(() => race(interval(200), of(true)))
-      )
-      .subscribe(() => {
-        const currentState = JSON.stringify({
-          profile: this.profileForm.value,
-          health: this.healthForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.hasUnsavedChanges = this.getCurrentState() !== this.initialFormValues;
       });
   }
 
   initProfileForm() {
-    this.profileForm = this.fb.group({
-      name: '',
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', CustomValidators.required ],
-      birthDate: [
+    this.profileForm = this.fb.group<ProfileFormGroup>({
+      name: this.fb.control(''),
+      firstName: this.fb.control('', CustomValidators.required),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', CustomValidators.required),
+      email: this.fb.control('', [ Validators.required, Validators.email ]),
+      language: this.fb.control('', Validators.required),
+      phoneNumber: this.fb.control('', CustomValidators.required),
+      birthDate: new FormControl<string | Date | null>(
         '',
-        CustomValidators.dateValidRequired,
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+        {
+          validators: CustomValidators.dateValidRequired,
+          asyncValidators: ac => this.validatorService.notDateInFuture$(ac)
+        }
+      ),
+      birthplace: this.fb.control('')
     });
   }
 
   initHealthForm() {
-    this.healthForm = this.fb.group({
-      emergencyContactName: '',
-      emergencyContactType: '',
-      emergencyContact: '',
-      specialNeeds: '',
-      immunizations: '',
-      allergies: '',
-      notes: ''
+    this.healthForm = this.fb.group<HealthFormGroup>({
+      emergencyContactName: this.fb.control(''),
+      emergencyContactType: this.fb.control(''),
+      emergencyContact: this.fb.control(''),
+      specialNeeds: this.fb.control(''),
+      immunizations: this.fb.control(''),
+      allergies: this.fb.control(''),
+      notes: this.fb.control('')
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.updateEmergencyContactValidators(value);
@@ -130,11 +142,11 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       return;
     }
     forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.getRawValue() }),
       this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,
-        profile: this.healthForm.value
+        profile: this.healthForm.getRawValue()
       })
     ]).subscribe(() => {
       this.hasUnsavedChanges = false;
@@ -147,14 +159,22 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   canDeactivate(): boolean {
-    return !this.hasUnsavedChanges;
+    return !this.getHasUnsavedChanges();
+  }
+
+  isFormPristine(): boolean {
+    return this.getCurrentState() === this.initialFormValues;
   }
 
   @HostListener('window:beforeunload', [ '$event' ])
   unloadNotification($event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedChanges) {
+    if (this.getHasUnsavedChanges()) {
       $event.returnValue = warningMsg;
     }
+  }
+
+  private getHasUnsavedChanges(): boolean {
+    return !this.isFormPristine();
   }
 
 }
