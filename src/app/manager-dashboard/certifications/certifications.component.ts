@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
