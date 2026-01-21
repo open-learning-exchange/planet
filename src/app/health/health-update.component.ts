@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
@@ -18,16 +18,16 @@ import { warningMsg } from '../shared/unsaved-changes.component';
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
-  profileForm: UntypedFormGroup;
-  healthForm: UntypedFormGroup;
-  existingData: any = {};
+  profileForm: FormGroup<ProfileFormGroup>;
+  healthForm: FormGroup<HealthFormGroup>;
+  existingData: { _id?: string; _rev?: string; profile?: HealthFormValue } = {};
   languages = languages;
   minBirthDate: Date = this.userService.minBirthDate;
-  initialFormValues: any;
+  initialFormValues: string;
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
@@ -50,8 +50,8 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 
   private captureInitialState() {
     this.initialFormValues = JSON.stringify({
-      profile: this.profileForm.value,
-      health: this.healthForm.value
+      profile: this.profileForm.getRawValue(),
+      health: this.healthForm.getRawValue()
     });
   }
 
@@ -62,8 +62,8 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       )
       .subscribe(() => {
         const currentState = JSON.stringify({
-          profile: this.profileForm.value,
-          health: this.healthForm.value
+          profile: this.profileForm.getRawValue(),
+          health: this.healthForm.getRawValue()
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
       });
@@ -74,40 +74,39 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       )
       .subscribe(() => {
         const currentState = JSON.stringify({
-          profile: this.profileForm.value,
-          health: this.healthForm.value
+          profile: this.profileForm.getRawValue(),
+          health: this.healthForm.getRawValue()
         });
         this.hasUnsavedChanges = currentState !== this.initialFormValues;
       });
   }
 
   initProfileForm() {
-    this.profileForm = this.fb.group({
-      name: '',
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      email: [ '', [ Validators.required, Validators.email ] ],
-      language: [ '', Validators.required ],
-      phoneNumber: [ '', CustomValidators.required ],
-      birthDate: [
-        '',
-        CustomValidators.dateValidRequired,
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+    this.profileForm = new FormGroup<ProfileFormGroup>({
+      name: new FormControl('', { nonNullable: true }),
+      firstName: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
+      middleName: new FormControl('', { nonNullable: true }),
+      lastName: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
+      email: new FormControl('', { nonNullable: true, validators: [ Validators.required, Validators.email ] }),
+      language: new FormControl('', { nonNullable: true, validators: [ Validators.required ] }),
+      phoneNumber: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
+      birthDate: new FormControl<Date | null>(null, {
+        validators: [ CustomValidators.dateValidRequired ],
+        asyncValidators: [ ac => this.validatorService.notDateInFuture$(ac) ]
+      }),
+      birthplace: new FormControl('', { nonNullable: true })
     });
   }
 
   initHealthForm() {
     this.healthForm = this.fb.group({
-      emergencyContactName: '',
-      emergencyContactType: '',
-      emergencyContact: '',
-      specialNeeds: '',
-      immunizations: '',
-      allergies: '',
-      notes: ''
+      emergencyContactName: this.fb.nonNullable.control(''),
+      emergencyContactType: this.fb.nonNullable.control(''),
+      emergencyContact: this.fb.nonNullable.control(''),
+      specialNeeds: this.fb.nonNullable.control(''),
+      immunizations: this.fb.nonNullable.control(''),
+      allergies: this.fb.nonNullable.control(''),
+      notes: this.fb.nonNullable.control('')
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.updateEmergencyContactValidators(value);
@@ -129,12 +128,14 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       showFormErrors(this.healthForm.controls);
       return;
     }
+    const profileValue = this.profileForm.getRawValue();
+    const healthValue = this.healthForm.getRawValue();
     forkJoin([
-      this.userService.updateUser({ ...this.userService.get(), ...this.profileForm.value }),
+      this.userService.updateUser({ ...this.userService.get(), ...profileValue }),
       this.healthService.postHealthProfileData({
         _id: this.existingData._id || this.userService.get()._id,
         _rev: this.existingData._rev,
-        profile: this.healthForm.value
+        profile: healthValue
       })
     ]).subscribe(() => {
       this.hasUnsavedChanges = false;
@@ -158,3 +159,33 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
 }
+
+interface ProfileFormValue {
+  name: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  language: string;
+  phoneNumber: string;
+  birthDate: Date | null;
+  birthplace: string;
+}
+
+interface HealthFormValue {
+  emergencyContactName: string;
+  emergencyContactType: string;
+  emergencyContact: string;
+  specialNeeds: string;
+  immunizations: string;
+  allergies: string;
+  notes: string;
+}
+
+type ProfileFormGroup = {
+  [Key in keyof ProfileFormValue]: FormControl<ProfileFormValue[Key]>;
+};
+
+type HealthFormGroup = {
+  [Key in keyof HealthFormValue]: FormControl<HealthFormValue[Key]>;
+};
