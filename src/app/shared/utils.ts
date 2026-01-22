@@ -142,3 +142,7 @@ export const calculateMdAdjustedLimit = (content, limit) => {
   const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
   return Math.floor(limit * scaleFactor);
 };
+
+export const normalizeDiacritics = (text: string): string => {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};

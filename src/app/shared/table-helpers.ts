@@ -1,5 +1,6 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 import { FuzzySearchService } from './fuzzy-search.service';
+import { normalizeDiacritics } from './utils';
 
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
@@ -34,11 +35,11 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalizedFilter = normalizeDiacritics(filter.trim().toLowerCase());
     for (let i = 0; i < filterFields.length; i++) {
       const fieldValue = getProperty(data, filterFields[i]);
       if (typeof fieldValue === 'string' &&
-          fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
+          normalizeDiacritics(fieldValue.toLowerCase()).indexOf(normalizedFilter) > -1) {
         return true;
       }
     }
@@ -49,12 +50,12 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
     // Normalize each word
-    const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    const words = filter.split(' ').map(value => normalizeDiacritics(value.toLowerCase()));
     return words.every(word => {
       return filterFields.some(field => {
         const fieldValue = getProperty(data, field);
         return typeof fieldValue === 'string' &&
-               fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
+               normalizeDiacritics(fieldValue.toLowerCase()).includes(word);
       });
     });
   };
@@ -63,7 +64,7 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
 // Enhanced version that combines exact and fuzzy search
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
   return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const normalizedFilter = normalizeDiacritics(filter.trim().toLowerCase());
     if (!normalizedFilter) { return true; }
 
     return filterFields.some(field => {
@@ -71,7 +72,7 @@ export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchSe
       if (typeof fieldValue !== 'string') { return false; }
 
       // Try exact match first, then fuzzy if available
-      const normalizedFieldValue = fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normalizedFieldValue = normalizeDiacritics(fieldValue.toLowerCase());
       return normalizedFieldValue.includes(normalizedFilter) ||
              (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
     });
