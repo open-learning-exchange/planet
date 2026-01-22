@@ -20,16 +20,7 @@ export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
 export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2025, 0, 16));
 
 @Component({
-  template: `
-    <div class="announcement-container">
-      <img
-        src="assets/challenge/dec challenge.jpeg"
-        alt="Issues Challenge"
-        class="announcement-banner"
-      />
-      <p class="success-msg">¡Felicidades reto completado!</p>
-    </div>
-  `,
+  templateUrl: './dialogs-announcement-success.component.html',
   styleUrls: [ './dialogs-announcement.component.scss' ]
 })
 export class DialogsAnnouncementSuccessComponent { }
