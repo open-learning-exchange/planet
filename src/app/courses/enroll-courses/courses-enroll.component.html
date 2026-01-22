@@ -13,5 +13,6 @@
     </button>
   </mat-toolbar>
 
-  <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
+  <planet-loading-spinner *ngIf="isLoading"></planet-loading-spinner>
+  <planet-users-table *ngIf="!isLoading" [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
 </div>

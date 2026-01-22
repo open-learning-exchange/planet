@@ -10,6 +10,7 @@ import { StateService } from '../../shared/state.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
+import { load } from '../../shared/loading-state';
 
 
 @Component({
@@ -18,6 +19,7 @@ import { CsvService } from '../../shared/csv.service';
 
 export class CoursesEnrollComponent {
 
+  isLoading = true;
   courseId: string;
   course: any;
   members: any[] = [];
@@ -54,7 +56,8 @@ export class CoursesEnrollComponent {
           this.coursesService.coursesListener$()
         );
       }),
-      take(1)
+      take(1),
+      load(this)
     ).subscribe((responses) => {
       this.setMembers(responses);
     });

@@ -253,9 +253,7 @@
       <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td>
-          <div class="view-container" *ngIf="isLoading" i18n>
-            Courses Loading...
-          </div>
+          <planet-loading-spinner *ngIf="isLoading" text="Courses Loading..." i18n-text></planet-loading-spinner>
           <div class="view-container" *ngIf="!isLoading" i18n>
             No Course Found
           </div>

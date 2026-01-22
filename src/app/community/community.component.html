@@ -35,9 +35,7 @@
               </button>
             </div>
           </mat-toolbar>
-          <ng-container *ngIf="isLoading; else loaded">
-            <span i18n>Loading voices...</span>
-          </ng-container>
+          <planet-loading-spinner *ngIf="isLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
           <ng-template #loaded>
             <ng-container *ngIf="filteredNews?.length > 0; else noVoices">
               <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)"></planet-news-list>

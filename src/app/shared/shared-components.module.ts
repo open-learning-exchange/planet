@@ -25,6 +25,7 @@ import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { PlanetLoadingSpinnerComponent } from './components/loading-spinner/planet-loading-spinner.component';
 
 @NgModule({
   imports: [
@@ -32,6 +33,7 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
   ],
   exports: [
     PlanetLocalStatusComponent,
+    PlanetLoadingSpinnerComponent,
     SubmitDirective,
     PlanetLanguageComponent,
     ResourcesMenuComponent,
@@ -56,6 +58,7 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     TimeAgoPipe
   ],
   declarations: [
+    PlanetLoadingSpinnerComponent,
     PlanetLocalStatusComponent,
     SubmitDirective,
     PlanetLanguageComponent,

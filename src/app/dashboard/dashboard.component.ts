@@ -16,6 +16,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { load } from '../shared/loading-state';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -145,14 +146,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
       this.getTeamMembership()
-    ]).subscribe(dashboardItems => {
+    ]).pipe(load(this)).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
       const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
       this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
         .filter(team => team.status !== 'archived');
-      this.isLoading = false;
     });
   }
 

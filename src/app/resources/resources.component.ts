@@ -121,7 +121,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
@@ -150,8 +149,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
       this.resources.paginator = this.paginator;
       this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+    }, () => this.isLoading = false);
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;

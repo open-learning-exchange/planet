@@ -18,6 +18,7 @@ import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { load } from '../../shared/loading-state';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -42,6 +43,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   readonly dbName = 'courses'; // make database name a constant
   private onDestroy$ = new Subject<void>();
+  isLoading = true;
   private isDestroyed = false;
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
@@ -99,7 +101,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.pouchService.getDocEditing(this.dbName, this.courseId),
       this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
       this.stateService.getCouchState('tags', 'local')
-    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
+    ]).pipe(load(this)).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.savedCourse = saved;

@@ -125,7 +125,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.availableLabels = this.getAvailableLabels(this.news);
       this.isLoading = false;
       this.applyFilters();
-    });
+    }, () => this.isLoading = false);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
         this.setCouncillors(users);

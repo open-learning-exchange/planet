@@ -139,7 +139,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.userShelf = this.userService.shelf;
         this.setupList(this.courses.data, shelf.courseIds);
       });
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -168,8 +167,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    });
+    }, () => this.isLoading = false);
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });
