@@ -2,14 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
-import { ResourcesComponent } from './resources.component';
-import { ResourcesViewComponent } from './view-resources/resources-view.component';
-import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
-import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { ResourcesSharedModule } from './resources-shared.module';
+
+import { ResourcesViewerComponent } from './view-resources/resources-viewer.component';
+import { ResourcesAddComponent } from './resources-add.component';
+import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
 
 @NgModule({
   imports: [
@@ -17,18 +16,22 @@ import { ResourcesSharedModule } from './resources-shared.module';
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    ResourcesRouterModule,
     MaterialModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    PlanetDialogsModule,
-    SharedComponentsModule,
-    ResourcesSharedModule
+    SharedComponentsModule
   ],
   declarations: [
-    ResourcesComponent,
-    ResourcesViewComponent
+    ResourcesViewerComponent,
+    ResourcesAddComponent,
+    ResourcesSearchComponent,
+    ResourcesSearchListComponent
   ],
-  exports: [ ResourcesComponent ]
+  exports: [
+    ResourcesViewerComponent,
+    ResourcesAddComponent,
+    ResourcesSearchComponent,
+    ResourcesSearchListComponent
+  ]
 })
-export class ResourcesModule {}
+export class ResourcesSharedModule {}

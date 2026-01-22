@@ -1,7 +1,7 @@
 import { MaterialModule } from '../material.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ResourcesModule } from '../../resources/resources.module';
+import { ResourcesSharedModule } from '../../resources/resources-shared.module';
 import { DialogsAddResourcesComponent } from './dialogs-add-resources.component';
 
 
@@ -9,7 +9,7 @@ import { DialogsAddResourcesComponent } from './dialogs-add-resources.component'
   imports: [
     CommonModule,
     MaterialModule,
-    ResourcesModule
+    ResourcesSharedModule
   ],
   exports: [
     DialogsAddResourcesComponent
