@@ -9,7 +9,7 @@ import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
 import { StateService } from '../../shared/state.service';
-import { styleVariables, formatDate } from '../../shared/utils';
+import { styleVariables, formatDate, getThemeColor } from '../../shared/utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { CsvService } from '../../shared/csv.service';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
@@ -998,7 +998,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     tempCanvas.height = canvas.height;
     const ctx = tempCanvas.getContext('2d');
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = getThemeColor('--white-color') || '#ffffff';
     ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
     ctx.drawImage(canvas, 0, 0);
 

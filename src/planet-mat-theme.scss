@@ -67,3 +67,27 @@ $accent-map: (
 .mat-mdc-raised-button[color="primary"][disabled] {
   pointer-events: none;
 }
+
+:root {
+  --primary-color: #{$primary};
+  --primary-lighter-color: #{$primary-lighter};
+  --primary-text-color: #{$primary-text};
+  --accent-color: #{$accent};
+  --accent-lighter-color: #{$accent-lighter};
+  --accent-text-color: #{$accent-text};
+  --warn-color: #{$warn};
+  --grey-color: #{$grey};
+  --grey-text-color: #{$grey-text};
+  --light-grey-color: #{$light-grey};
+  --white-color: #{$white};
+  --chart-color-1: #FF6384;
+  --chart-color-2: #36A2EB;
+  --chart-color-3: #FFCE56;
+  --chart-color-4: #4BC0C0;
+  --chart-color-5: #9966FF;
+  --chart-color-6: #FF9F40;
+  --chart-color-7: #C9CBCF;
+  --chart-color-8: #8DD4F2;
+  --chart-color-9: #A8E6CF;
+  --chart-color-10: #DCE775;
+}

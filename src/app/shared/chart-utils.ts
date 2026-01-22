@@ -1,3 +1,5 @@
+import { getThemeColor } from './utils';
+
 type ChartJsModule = typeof import('chart.js');
 type RegisterableKey = 'ArcElement' | 'BarController' | 'BarElement' | 'CategoryScale' | 'DoughnutController'
   | 'Legend' | 'LinearScale' | 'Title' | 'Tooltip' | 'LineController' | 'PointElement' | 'LineElement';
@@ -46,7 +48,7 @@ export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanv
 }
 
 export function renderNoDataPlaceholder(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, message = 'No data available'): string {
-  ctx.fillStyle = '#666666';
+  ctx.fillStyle = getThemeColor('--grey-color') || '#666666';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = '16px sans-serif';
@@ -54,7 +56,19 @@ export function renderNoDataPlaceholder(ctx: CanvasRenderingContext2D, canvas: H
   return canvas.toDataURL('image/png');
 }
 
-export const CHART_COLORS = [
-  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-  '#FF9F40', '#C9CBCF', '#8DD4F2', '#A8E6CF', '#DCE775'
-];
+export function getChartColors(): string[] {
+  return [
+    getThemeColor('--chart-color-1') || '#FF6384',
+    getThemeColor('--chart-color-2') || '#36A2EB',
+    getThemeColor('--chart-color-3') || '#FFCE56',
+    getThemeColor('--chart-color-4') || '#4BC0C0',
+    getThemeColor('--chart-color-5') || '#9966FF',
+    getThemeColor('--chart-color-6') || '#FF9F40',
+    getThemeColor('--chart-color-7') || '#C9CBCF',
+    getThemeColor('--chart-color-8') || '#8DD4F2',
+    getThemeColor('--chart-color-9') || '#A8E6CF',
+    getThemeColor('--chart-color-10') || '#DCE775'
+  ];
+}
+
+export const CHART_COLORS = getChartColors();
