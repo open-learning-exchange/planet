@@ -6,7 +6,7 @@ import { filterDropdowns } from '../shared/table-helpers';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { NotificationsService } from './notifications.service';
