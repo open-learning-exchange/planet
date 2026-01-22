@@ -43,7 +43,6 @@ import { SurveysModule } from '../surveys/surveys.module';
     TeamsModule,
     PlanetCalendarModule,
     UsersModule,
-    CoursesViewDetailModule,
     ChatModule,
     SurveysModule
   ],
