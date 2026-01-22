@@ -3,6 +3,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StateService } from './shared/state.service';
+import { CouchService } from './shared/couchdb.service';
+import { REQUIRED_INDEXES } from './shared/couchdb-indexes';
 declare let gtag: Function;
 
 @Component({
@@ -14,8 +16,10 @@ export class AppComponent {
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
     public router: Router,
-    private stateService: StateService
+    private stateService: StateService,
+    private couchService: CouchService
   ) {
+    this.couchService.ensureIndexes(REQUIRED_INDEXES).subscribe();
     iconRegistry.addSvgIcon(
       'myLibrary',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/library.svg'));

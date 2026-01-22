@@ -213,6 +213,24 @@ export class CouchService {
     return Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate());
   }
 
+  explain(db: string, query: any, opts?: any): Observable<any> {
+    return this.post(db + '/_explain', query, opts);
+  }
+
+  createIndex(db: string, indexDef: any, opts?: any): Observable<any> {
+    return this.post(db + '/_index', indexDef, opts);
+  }
+
+  ensureIndexes(indexes: { db: string, index: any }[], opts?: any): Observable<any> {
+    const actions = indexes.map(item => this.createIndex(item.db, item.index, opts).pipe(
+      catchError(err => {
+        console.error(`Failed to create index for ${item.db}:`, err);
+        return of(null);
+      })
+    ));
+    return forkJoin(actions);
+  }
+
   getDocumentByID(db: string, docId: string): Observable<any> {
     const url = `${this.baseUrl}/${db}/${docId}`;
     return this.http.get(url, this.defaultOpts).pipe(

@@ -184,6 +184,19 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
+upsert_doc courses _index '{"index":{"fields":[{"courseTitle":"asc"}]},"name":"title-index"}' POST
+upsert_doc courses _index '{"index":{"fields":[{"creator":"asc"}]},"name":"creator-index"}' POST
+upsert_doc resources _index '{"index":{"fields":[{"createdDate":"desc"}]},"name":"date-index"}' POST
+upsert_doc resources _index '{"index":{"fields":[{"author":"asc"}]},"name":"author-index"}' POST
+upsert_doc courses_progress _index '{"index":{"fields":[{"userId":"asc"}]},"name":"user-index"}' POST
+upsert_doc courses_progress _index '{"index":{"fields":[{"courseId":"asc"}]},"name":"course-index"}' POST
+upsert_doc notifications _index '{"index":{"fields":[{"status":"asc"}]},"name":"status-index"}' POST
+upsert_doc notifications _index '{"index":{"fields":[{"type":"asc"}]},"name":"type-index"}' POST
+upsert_doc notifications _index '{"index":{"fields":[{"link":"asc"}]},"name":"link-index"}' POST
+upsert_doc submissions _index '{"index":{"fields":[{"parentId":"asc"}]},"name":"parent-index"}' POST
+upsert_doc submissions _index '{"index":{"fields":[{"status":"asc"}]},"name":"status-index"}' POST
+upsert_doc health _index '{"index":{"fields":[{"planetCode":"asc"}]},"name":"planet-index"}' POST
+upsert_doc login_activities _index '{"index":{"fields":[{"user":"asc"}]},"name":"user-index"}' POST
 # Only insert dummy data and update security on install
 # _users security is set in app and auto accept will be overwritten if set here
 if (($ISINSTALL))
