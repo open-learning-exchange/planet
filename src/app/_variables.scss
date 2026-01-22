@@ -181,3 +181,7 @@ $planet-warn: (
 );
 
 */
+
+// Task status colors
+$task-deadline-soon-color: mat.get-color-from-palette($planet-app-accent, 500);
+$task-deadline-passed-color: mat.get-color-from-palette($planet-app-warn, 500);
