@@ -7,7 +7,9 @@
 
 <form class="container" [formGroup]="configForm">
   <mat-card class="card">
-    <mat-card-title i18n>API Keys</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>API Keys</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
         <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
@@ -36,7 +38,9 @@
 
 
   <mat-card class="card">
-    <mat-card-title i18n>Models</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Models</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
         <mat-list-item *ngFor="let model of configuration.models | keyvalue">
@@ -52,7 +56,9 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.assistant">
       <mat-list>
         <mat-list-item>
@@ -75,7 +81,9 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Chat Configurations</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Chat Configurations</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <mat-list>
         <mat-list-item>

@@ -88,7 +88,9 @@
     </div>
     <div class="cards-container">
       <mat-card>
-        <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>
+        <mat-card-header>
+          <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <mat-list>
             <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
@@ -101,7 +103,9 @@
         </mat-card-content>
       </mat-card>
       <mat-card>
-        <mat-card-title i18n class="primary-text-color">Enterprises</mat-card-title>
+        <mat-card-header>
+          <mat-card-title i18n class="primary-text-color">Enterprises</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
           <mat-list>
             <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
