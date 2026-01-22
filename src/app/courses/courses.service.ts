@@ -11,6 +11,7 @@ import { TagsService } from '../shared/forms/tags.service';
 import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
+import { DataAccessService } from '../shared/data-access.service';
 
 // Service for updating and storing active course for single course views.
 @Injectable({
@@ -48,7 +49,8 @@ export class CoursesService {
     private stateService: StateService,
     private tagsService: TagsService,
     private markdownService: MarkdownService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private dataAccessService: DataAccessService
   ) {
     const handleStateRes = (res: any, dataName: string) => {
       if (res !== undefined) {
@@ -210,7 +212,7 @@ export class CoursesService {
     } else {
       courseIds.push(courseId);
     }
-    return this.userService.updateShelf(courseIds, 'courseIds').pipe(map((res) => {
+    return this.dataAccessService.saveShelfData(courseIds, 'courseIds').pipe(map((res) => {
       const admissionMessage = type === 'resign'
         ? $localize`Removed from myCourses: ${title}`
         : $localize`Course added to your dashboard: ${title}`;
@@ -224,7 +226,7 @@ export class CoursesService {
   }
 
   courseAdmissionMany(courseIds, type) {
-    return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
+    return this.dataAccessService.changeShelfData(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
       const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
       const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
         $localize`Added to myCourses: ${prefix} `;

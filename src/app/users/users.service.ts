@@ -7,6 +7,7 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class UsersService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private dataAccessService: DataAccessService
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
@@ -184,11 +186,11 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
-    return this.couchService.get('shelf/' + userId).pipe(
+    return this.dataAccessService.fetchShelfData(userId).pipe(
       switchMap(shelfUser => {
         return forkJoin([
           this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
-          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
+          this.dataAccessService.deleteShelf(userId, shelfUser._rev),
           this.deleteUserFromTeams(user),
           this.tasksService.removeAssigneeFromTasks(user._id)
         ]);

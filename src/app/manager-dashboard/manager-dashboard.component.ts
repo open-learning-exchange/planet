@@ -16,6 +16,7 @@ import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -57,7 +58,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationService,
     private stateService: StateService,
     private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dataAccessService: DataAccessService
   ) {}
 
   ngOnInit() {
@@ -152,7 +154,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         const replicators = createDeleteArray(docs);
         const configuration = this.planetConfiguration;
         return forkJoin([
-          this.couchService.delete('shelf/' + this.userService.get()._id + '?rev=' + this.userService.shelf._rev ),
+          this.dataAccessService.deleteShelf(this.userService.get()._id, this.userService.shelf._rev),
           this.couchService.delete('configurations/' + configuration._id + '?rev=' + configuration._rev ),
           this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),

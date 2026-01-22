@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Injectable()
 export class MeetupService {
@@ -21,7 +22,8 @@ export class MeetupService {
     private dialog: MatDialog,
     private couchService: CouchService,
     private userService: UserService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dataAccessService: DataAccessService
   ) {
     this.userService.shelfChange$
       .subscribe((shelf: any) => {
@@ -74,7 +76,7 @@ export class MeetupService {
   }
 
   attendMeetups(meetupIds, type) {
-    return this.userService.changeShelf(meetupIds, 'meetupIds', type).pipe(map(({ shelf, countChanged }) => {
+    return this.dataAccessService.changeShelfData(meetupIds, 'meetupIds', type).pipe(map(({ shelf, countChanged }) => {
       const message = type === 'remove' ?
         $localize`You have left ${countChanged} meetups` : $localize`You have joined ${countChanged} meetups`;
       this.planetMessageService.showMessage(message);
@@ -83,13 +85,10 @@ export class MeetupService {
   }
 
   updateMeetupShelf(meetupIds, participate) {
-    const newShelf = { ...this.userShelf, meetupIds };
-    return this.couchService.put('shelf/' + this.userService.get()._id, newShelf)
-      .pipe(map((response) => {
-        this.userShelf = newShelf;
-        this.userShelf._rev = response.rev;
-        this.userService.shelf = this.userShelf;
-        return { response, participate };
+    return this.dataAccessService.saveShelfData(meetupIds, 'meetupIds')
+      .pipe(map(({ shelf }) => {
+        // userShelf is updated via subscription in constructor
+        return { response: { rev: shelf._rev }, participate };
     }));
   }
 

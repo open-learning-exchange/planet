@@ -8,6 +8,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { DataAccessService } from '../shared/data-access.service';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -57,7 +58,8 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private teamsService: TeamsService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dataAccessService: DataAccessService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -106,7 +108,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
       this.removeTeam(item, userId, userPlanetCode);
     } else {
       const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
-      this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
+      this.dataAccessService.saveShelfData(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
   }
 
@@ -149,7 +151,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const ids = this.itemData
       .filter(item => item !== null && item !== undefined)
       .map(item => item._id || item);
-    this.userService.updateShelf(ids, this.shelfName).subscribe(
+    this.dataAccessService.saveShelfData(ids, this.shelfName).subscribe(
       () => {},
       () => {
         this.planetMessageService.showAlert($localize`There was an error reordering ${this.cardTitle}`);

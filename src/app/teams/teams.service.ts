@@ -11,6 +11,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { truncateText } from '../shared/utils';
+import { DataAccessService } from '../shared/data-access.service';
 
 const nameField = {
   'type': 'textbox',
@@ -61,7 +62,8 @@ export class TeamsService {
     private userService: UserService,
     private usersService: UsersService,
     private stateService: StateService,
-    private validatorService: ValidatorService
+    private validatorService: ValidatorService,
+    private dataAccessService: DataAccessService
   ) {}
 
   addTeamDialog(userId: string, type: 'team' | 'enterprise' | 'services', team: any = {}) {
@@ -203,8 +205,8 @@ export class TeamsService {
   // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
   updateShelf(membershipDoc) {
     const { userId, teamId } = membershipDoc;
-    return this.couchService.get('shelf/' + userId).pipe(switchMap(shelf =>
-      this.userService.updateShelf(shelf.myTeamIds.filter(myTeamId => myTeamId !== teamId), 'myTeamIds')
+    return this.dataAccessService.fetchShelfData(userId).pipe(switchMap(shelf =>
+      this.dataAccessService.saveShelfData(shelf.myTeamIds.filter(myTeamId => myTeamId !== teamId), 'myTeamIds')
     ));
   }
 

@@ -19,6 +19,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -80,7 +81,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dataAccessService: DataAccessService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
@@ -163,7 +165,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   getMembershipStatus() {
     return forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.user.planetCode } }),
-      this.couchService.get('shelf/' + this.user._id)
+      this.dataAccessService.fetchShelfData(this.user._id)
     ]).pipe(
       map(([ membershipDocs, shelf ]) => this.userMembership = [
         ...membershipDocs,

@@ -9,6 +9,7 @@ import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class ResourcesService {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private tagsService: TagsService,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private dataAccessService: DataAccessService
   ) {
     this.ratingService.ratingsUpdated$.subscribe((res: any) => {
       const planetField = res.parent ? 'parent' : 'local';
@@ -89,7 +91,7 @@ export class ResourcesService {
   }
 
   libraryAddRemove(resourceIds, type) {
-    return this.userService.changeShelf(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
+    return this.dataAccessService.changeShelfData(resourceIds, 'resourceIds', type).pipe(map(({ shelf, countChanged }) => {
       const resource = this.resources.local.find(r => r._id === resourceIds[0]);
       const resourceTitle = resource ? resource.doc.title : '';
       const message = type === 'remove' ?

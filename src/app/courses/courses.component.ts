@@ -32,6 +32,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
+import { DataAccessService } from '../shared/data-access.service';
 
 @Component({
   selector: 'planet-courses',
@@ -132,7 +133,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private dataAccessService: DataAccessService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -384,15 +386,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       ' ' : '';
   }
 
-  updateShelf(newShelf, message: string) {
-    this.couchService.put('shelf/' + this.user._id, newShelf).subscribe((res) => {
-      newShelf._rev = res.rev;
-      this.userService.shelf = newShelf;
-      this.setupList(this.courses.data, this.userShelf.courseIds);
-      this.planetMessageService.showMessage($localize`${message} myCourses`);
-    }, (error) => (error));
-  }
-
   addToCourse(courses) {
     const currentShelf = this.userService.shelf;
     const courseIds = courses.map((data) => {
@@ -401,7 +394,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     const message = courses.length === 1 ?
       $localize`${courses[0].courseTitle} have been added to` :
       $localize`${courses.length} courses have been added to`;
-    this.updateShelf(Object.assign({}, currentShelf, { courseIds }), message);
+    this.dataAccessService.saveShelfData(courseIds, 'courseIds').subscribe(() => {
+      this.planetMessageService.showMessage($localize`${message} myCourses`);
+    }, (error) => (error));
   }
 
   courseToggle(courseId, type) {

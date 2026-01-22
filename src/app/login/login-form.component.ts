@@ -20,6 +20,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { SubmissionsService } from '../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
+import { DataAccessService } from '../shared/data-access.service';
 
 interface RegisterForm {
   name: [ string, ValidatorFn[]?, AsyncValidatorFn? ],
@@ -78,7 +79,8 @@ export class LoginFormComponent {
     private stateService: StateService,
     private pouchService: PouchService,
     private healthService: HealthService,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private dataAccessService: DataAccessService
   ) {
     if (!this.isDialog) {
       this.createMode = this.router.url.split('?')[0] === '/login/newmember';
@@ -145,7 +147,7 @@ export class LoginFormComponent {
     };
 
     this.pouchAuthService.signup(name, password, opts).pipe(
-      switchMap(() => this.couchService.put('shelf/org.couchdb.user:' + name, {}))
+      switchMap(() => this.dataAccessService.initShelf(name))
     ).subscribe(
       res => {
         this.planetMessageService.showMessage($localize`Welcome to Planet Learning, ${res.id.replace('org.couchdb.user:', '')}!`);
