@@ -6,12 +6,11 @@ import { StateService } from '../shared/state.service';
   templateUrl: './teams-reports-detail.component.html',
   styles: [ `
     .report-grid-container {
-      overflow-x: auto;
-      overflow-y: auto;
+      overflow-x: hidden;
     }
     .report-grid {
       display: grid;
-      grid-template-columns: 250px 1fr;
+      grid-template-columns: 4fr 1fr;
       grid-row-gap: 0.25rem;
       overflow-wrap: break-word;
     }
