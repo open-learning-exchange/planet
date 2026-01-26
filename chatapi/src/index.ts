@@ -4,8 +4,9 @@ import cors from 'cors';
 import http from 'http';
 import WebSocket from 'ws';
 
-import { chat, chatNoSave } from './services/chat.service';
-import { keys } from './config/ai-providers.config';
+import { chat } from './services/chat.service';
+import { getWelcome, createChat, checkProviders } from './controllers/chat.controller';
+import { isValidData } from './utils/validation.utils';
 
 dotenv.config();
 
@@ -17,14 +18,7 @@ app.use(cors());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.get('/', (req: any, res: any) => {
-  res.status(200).json({
-    'status': 'Success',
-    'message': 'OLE Chat API Service',
-  });
-});
-
-const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
+app.get('/', getWelcome);
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
@@ -61,44 +55,9 @@ wss.on('connection', (ws) => {
   });
 });
 
-app.post('/', async (req: any, res: any) => {
-  const { data, save } = req.body;
+app.post('/', createChat);
 
-  if (!isValidData(data)) {
-    return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
-  }
-
-  try {
-    if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
-      return res.status(200).json({
-        'status': 'Success',
-        'chat': response
-      });
-    } else {
-      const response = await chat(data, false);
-      return res.status(201).json({
-        'status': 'Success',
-        'chat': response?.completionText,
-        'couchDBResponse': response?.couchSaveResponse
-      });
-    }
-  } catch (error: any) {
-    if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
-      return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
-    }
-    return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
-  }
-});
-
-app.get('/checkproviders', async (req: any, res: any) => {
-  res.status(200).json({
-    'openai': keys.openai.apiKey ? true : false,
-    'perplexity': keys.perplexity.apiKey ? true : false,
-    'deepseek': keys.deepseek.apiKey ? true : false,
-    'gemini': keys.gemini.apiKey ? true : false
-  });
-});
+app.get('/checkproviders', checkProviders);
 
 const port = process.env.SERVE_PORT || 5000;
 
