@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -31,9 +31,9 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 type ChartModule = typeof import('chart.js');
-type DateFilterForm = {
-  startDate: FormControl<Date | '' | null>;
-  endDate: FormControl<Date | '' | null>;
+interface DateFilterForm {
+  startDate: FormControl<Date>;
+  endDate: FormControl<Date>;
 };
 
 @Component({
@@ -109,7 +109,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService
   ) {
@@ -205,12 +205,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: this.fb.control<Date | '' | null>(''),
-      endDate: this.fb.control<Date | '' | null>('')
+      startDate: this.fb.control(new Date(0), { validators: Validators.required }),
+      endDate: this.fb.control(new Date(), { validators: Validators.required })
     }, { validators: CustomValidators.endDateValidator() });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate instanceof Date ? value.startDate : null;
-      const endDate = value.endDate instanceof Date ? value.endDate : null;
+      const { startDate, endDate } = value;
 
       this.filter = { ...this.filter, startDate, endDate };
 
