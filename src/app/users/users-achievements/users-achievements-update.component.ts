@@ -98,14 +98,15 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
+    const editFormState = {
+      ...this.editForm.getRawValue(),
+      achievements: this.achievements.getRawValue(),
+      references: this.references.getRawValue(),
+      links: this.links.getRawValue()
+    };
     this.initialFormValues = JSON.stringify({
-      editForm: {
-        ...this.editForm.value,
-        achievements: this.achievements.value,
-        references: this.references.value,
-        links: this.links.value
-      },
-      profileForm: this.profileForm.value
+      editForm: editFormState,
+      profileForm: this.profileForm.getRawValue()
     });
   }
 
@@ -204,14 +205,15 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private updateUnsavedChangesFlag() {
+    const editFormState = {
+      ...this.editForm.getRawValue(),
+      achievements: this.achievements.getRawValue(),
+      references: this.references.getRawValue(),
+      links: this.links.getRawValue()
+    };
     const currentState = JSON.stringify({
-      editForm: {
-        ...this.editForm.value,
-        achievements: this.achievements.value,
-        references: this.references.value,
-        links: this.links.value
-      },
-      profileForm: this.profileForm.value
+      editForm: editFormState,
+      profileForm: this.profileForm.getRawValue()
     });
     this.hasUnsavedChanges = currentState !== this.initialFormValues;
   }
@@ -228,13 +230,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
       ],
-      this.fb.group({
-        ...achievement,
-        title: [ achievement.title, CustomValidators.required ],
-        description: [ achievement.description ],
-        link: [ achievement.link, [], CustomValidators.validLink ],
-        date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
-      }),
+      this.createAchievementGroup(achievement),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
          formGroup.controls.date.value;
@@ -253,13 +249,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'phone', 'placeholder': $localize`Phone Number`, 'required': false },
         { 'type': 'textbox', 'name': 'email', 'placeholder': $localize`Email`, 'required': false }
       ],
-      this.fb.group({
-        relationship: '',
-        phone: '',
-        ...reference,
-        name: [ reference.name, CustomValidators.required ],
-        email: [ reference.email, Validators.email ],
-      }),
+      this.createReferenceGroup(reference),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
     );
   }
@@ -271,11 +261,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
         { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
       ],
-      this.fb.group({
-        ...link,
-        title: [ link.title, CustomValidators.required ],
-        url: [ link.url, CustomValidators.required, CustomValidators.validLink ],
-      }),
+      this.createLinkGroup(link),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
   }
@@ -295,7 +281,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     } else {
       formArray.setControl(index, value);
     }
-    if (value.contains('date')) {
+    if (value?.get?.('date')) {
       formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
     }
     this.editForm.updateValueAndValidity();
