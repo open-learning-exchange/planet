@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
@@ -11,6 +11,37 @@ import { showFormErrors } from '../shared/table-helpers';
 import { languages } from '../shared/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+
+interface ProfileFormValue {
+  name: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  language: string;
+  phoneNumber: string;
+  birthDate: Date | null;
+  birthplace: string;
+}
+
+interface HealthFormValue {
+  emergencyContactName: string;
+  emergencyContactType: string;
+  emergencyContact: string;
+  specialNeeds: string;
+  immunizations: string;
+  allergies: string;
+  notes: string;
+}
+
+type ProfileFormGroup = {
+  [Key in keyof ProfileFormValue]: FormControl<ProfileFormValue[Key]>;
+};
+
+type HealthFormGroup = {
+  [Key in keyof HealthFormValue]: FormControl<HealthFormValue[Key]>;
+};
+
 
 @Component({
   templateUrl: './health-update.component.html',
@@ -27,7 +58,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private validatorService: ValidatorService,
     private userService: UserService,
     private healthService: HealthService,
@@ -82,31 +113,31 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   initProfileForm() {
-    this.profileForm = new FormGroup<ProfileFormGroup>({
-      name: new FormControl('', { nonNullable: true }),
-      firstName: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
-      middleName: new FormControl('', { nonNullable: true }),
-      lastName: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
-      email: new FormControl('', { nonNullable: true, validators: [ Validators.required, Validators.email ] }),
-      language: new FormControl('', { nonNullable: true, validators: [ Validators.required ] }),
-      phoneNumber: new FormControl('', { nonNullable: true, validators: [ CustomValidators.required ] }),
+    this.profileForm = this.fb.group({
+      name: this.fb.control(''),
+      firstName: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      email: this.fb.control('', { validators: [ Validators.required, Validators.email ] }),
+      language: this.fb.control('', { validators: [ Validators.required ] }),
+      phoneNumber: this.fb.control('', { validators: [ CustomValidators.required ] }),
       birthDate: new FormControl<Date | null>(null, {
         validators: [ CustomValidators.dateValidRequired ],
         asyncValidators: [ ac => this.validatorService.notDateInFuture$(ac) ]
       }),
-      birthplace: new FormControl('', { nonNullable: true })
+      birthplace: this.fb.control('')
     });
   }
 
   initHealthForm() {
     this.healthForm = this.fb.group({
-      emergencyContactName: this.fb.nonNullable.control(''),
-      emergencyContactType: this.fb.nonNullable.control(''),
-      emergencyContact: this.fb.nonNullable.control(''),
-      specialNeeds: this.fb.nonNullable.control(''),
-      immunizations: this.fb.nonNullable.control(''),
-      allergies: this.fb.nonNullable.control(''),
-      notes: this.fb.nonNullable.control('')
+      emergencyContactName: this.fb.control(''),
+      emergencyContactType: this.fb.control(''),
+      emergencyContact: this.fb.control(''),
+      specialNeeds: this.fb.control(''),
+      immunizations: this.fb.control(''),
+      allergies: this.fb.control(''),
+      notes: this.fb.control('')
     });
     this.healthForm.controls.emergencyContactType.valueChanges.subscribe(value => {
       this.updateEmergencyContactValidators(value);
@@ -159,33 +190,3 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
 }
-
-interface ProfileFormValue {
-  name: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  email: string;
-  language: string;
-  phoneNumber: string;
-  birthDate: Date | null;
-  birthplace: string;
-}
-
-interface HealthFormValue {
-  emergencyContactName: string;
-  emergencyContactType: string;
-  emergencyContact: string;
-  specialNeeds: string;
-  immunizations: string;
-  allergies: string;
-  notes: string;
-}
-
-type ProfileFormGroup = {
-  [Key in keyof ProfileFormValue]: FormControl<ProfileFormValue[Key]>;
-};
-
-type HealthFormGroup = {
-  [Key in keyof HealthFormValue]: FormControl<HealthFormValue[Key]>;
-};
