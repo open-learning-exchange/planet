@@ -78,10 +78,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resourcesLoading = true;
   coursesLoading = true;
   chatLoading = true;
-  healthLoading = true;
-  voicesLoading = true;
   loginLoading = true;
   progressLoading = true;
+  healthLoading = true;
+  voicesLoading = true;
   healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
   comparisonWeek1End: Date = new Date();
@@ -331,8 +331,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.setStepCompletion();
       this.setDocVisits('courseActivities', false);
       this.progressLoading = false;
-    }, () => {
-      this.progressLoading = false;
+      }, () => {
+        this.progressLoading = false;
     });
   }
 

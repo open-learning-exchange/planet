@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
 @Injectable({
   'providedIn': 'root'
@@ -36,13 +34,6 @@ export class DialogsLoadingService {
       this.spinnerDialog.close();
       this.isSpinnerOn = false;
     }
-  }
-
-  wrap<T>(observable: Observable<T>): Observable<T> {
-    this.start();
-    return observable.pipe(
-      finalize(() => this.stop())
-    );
   }
 
 }
