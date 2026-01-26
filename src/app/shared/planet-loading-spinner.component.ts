@@ -19,6 +19,7 @@ import { Component, Input } from '@angular/core';
         display: flex;
         flex-direction: column;
         gap: 16px;
+        padding: 24px;
       }
     }
   `]
