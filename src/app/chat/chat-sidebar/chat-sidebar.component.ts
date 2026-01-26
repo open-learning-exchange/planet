@@ -179,7 +179,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
           this.isLoading = false;
         },
         (error) => {
-          console.log(error);
           this.isLoading = false;
         }
       );

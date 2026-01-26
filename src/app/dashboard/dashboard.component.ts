@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-
-import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
-import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -32,7 +31,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
-
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -43,7 +41,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading = true;
   deviceType: DeviceType;
   isMobile = false;
-
   myLifeItems: any[] = [];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 

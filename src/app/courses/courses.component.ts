@@ -139,6 +139,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.userShelf = this.userService.shelf;
         this.setupList(this.courses.data, shelf.courseIds);
       });
+    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -148,7 +149,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   ngOnInit() {
     this.titleSearch = '';
-    this.dialogsLoadingService.start();
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
