@@ -45,6 +45,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
+  isLoading = true;
 
   constructor(
     private chatService: ChatService,
@@ -157,6 +158,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   getChatHistory(newChat: boolean = false) {
+    this.isLoading = true;
     this.chatService
       .findConversations([], [ this.userService.get().name ])
       .subscribe(
@@ -174,8 +176,12 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
             this.selectConversation(this.filteredConversations[0], 0);
           }
           this.initializeFormGroups();
+          this.isLoading = false;
         },
-        (error) => console.log(error)
+        (error) => {
+          console.log(error);
+          this.isLoading = false;
+        }
       );
   }
 

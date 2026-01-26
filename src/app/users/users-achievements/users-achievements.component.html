@@ -25,9 +25,7 @@
     </div>
   </mat-toolbar>
   <div class="view-container">
-    <div *ngIf="isLoading" class="loading-message">
-      <p i18n>Loading Achievements...</p>
-    </div>
+    <planet-loading-spinner *ngIf="isLoading" text="Loading achievements..." i18n-text></planet-loading-spinner>
     <div *ngIf="!isLoading">
       <div *ngIf="achievements !== undefined" class="achievements-container">
         <div class="user-info">

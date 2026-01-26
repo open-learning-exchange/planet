@@ -49,6 +49,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
+  newsLoading = true;
   resources: any[] = [];
   isRoot = true;
   visits: any = {};
@@ -59,7 +60,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   readonly dbName = 'teams';
   leaderDialog: any;
   finances: any[] = [];
-  financesLoading = true;
+  teamDataLoading = true;
   reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
@@ -96,11 +97,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.teamId = params.get('teamId') || planetAndParentId(this.stateService.configuration);
-      this.initTeam(this.teamId);
-    });
-    this.tasksService.tasksListener({ [this.dbName]: this.teamId }).subscribe(tasks => {
+    this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
+      params.get('teamId') || planetAndParentId(this.stateService.configuration)
+    ), tap((teamId) => {
+      this.teamId = teamId;
+      this.initTeam(teamId);
+      this.tasksService.getTasks();
+    }), switchMap((teamId) => this.tasksService.tasksListener({ [this.dbName]: teamId }))
+    ).subscribe(tasks => {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
@@ -135,9 +139,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   initTeam(teamId: string) {
     this.newsService.newsUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(news => this.news = news.map(post => ({
-        ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
-      })));
+      .subscribe(news => {
+        this.news = news.map(post => ({
+          ...post, public: ((post.doc.viewIn || []).find(view => view._id === teamId) || {}).public
+        }));
+        this.newsLoading = false;
+      }, () => {
+        this.newsLoading = false;
+      });
     if (this.mode === 'services') {
       this.initServices(teamId);
       return;
@@ -178,6 +187,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   requestTeamNews(teamId) {
+    this.newsLoading = true;
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
@@ -196,10 +206,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getMembers() {
     if (this.team === undefined) {
-      this.financesLoading = false;
+      this.teamDataLoading = false;
       return of([]);
     }
-    this.financesLoading = true;
+    this.teamDataLoading = true;
     return this.teamsService.getTeamMembers(this.team, true).pipe(switchMap((docs: any[]) => {
       const src = (member) => {
         const { attachmentDoc, userId, userPlanetCode, userDoc } = member;
@@ -223,7 +233,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       this.setStatus(this.team, this.leader, this.userService.get());
       this.setTasks(this.tasks);
       return this.teamsService.getTeamResources(docs.filter(doc => doc.docType === 'resourceLink'));
-    }), map(resources => this.resources = resources), finalize(() => this.financesLoading = false));
+    }), map(resources => this.resources = resources), finalize(() => this.teamDataLoading = false));
   }
 
   setTasks(tasks = []) {

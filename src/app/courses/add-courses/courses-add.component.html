@@ -5,8 +5,7 @@
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</mat-toolbar>
-  <planet-loading-spinner *ngIf="isLoading"></planet-loading-spinner>
-  <div class="view-container view-full-height" *ngIf="!isLoading">
+  <div class="view-container view-full-height">
     <div class="form-container">
       <form [formGroup]="courseForm" class="form-spacing" novalidate>
         <mat-form-field class="full-width">

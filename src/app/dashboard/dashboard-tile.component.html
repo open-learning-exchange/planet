@@ -17,7 +17,7 @@
          cdkDropList
          [cdkDropListOrientation]="isAccordionMode ? 'vertical' : 'horizontal'"
          (cdkDropListDropped)="drop($event)">
-      <ng-container *ngIf="!isLoading; else loadingMessage">
+      <ng-container *ngIf="!isLoading; else loadingTile">
         <ng-container *ngFor="let item of itemData;let even=even">
           <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
             <div
@@ -45,8 +45,8 @@
           Add item to {{cardTitle}}
         </span>
       </ng-container>
-      <ng-template #loadingMessage>
-        <planet-loading-spinner></planet-loading-spinner>
+      <ng-template #loadingTile>
+        <planet-loading-spinner text="Loading..." i18n-text></planet-loading-spinner>
       </ng-template>
     </div>
   </div>

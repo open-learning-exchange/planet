@@ -10,8 +10,6 @@ import { StateService } from '../../shared/state.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
-import { load } from '../../shared/loading-state';
-
 
 @Component({
   templateUrl: './courses-enroll.component.html'
@@ -56,10 +54,10 @@ export class CoursesEnrollComponent {
           this.coursesService.coursesListener$()
         );
       }),
-      take(1),
-      load(this)
+      take(1)
     ).subscribe((responses) => {
       this.setMembers(responses);
+      this.isLoading = false;
     });
   }
 

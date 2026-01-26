@@ -135,6 +135,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
+    this.dialogsLoadingService.start();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -149,7 +150,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       );
       this.resources.paginator = this.paginator;
       this.isLoading = false;
-    }, () => this.isLoading = false);
+      this.dialogsLoadingService.stop();
+    }, () => {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    });
     this.resourcesService.requestResourcesUpdate(this.parent);
     this.resources.filterPredicate = this.filterPredicate;
     this.resources.sortingDataAccessor = commonSortingDataAccessor;

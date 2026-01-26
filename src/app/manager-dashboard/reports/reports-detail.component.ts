@@ -80,6 +80,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   chatLoading = true;
   healthLoading = true;
   voicesLoading = true;
+  loginLoading = true;
+  progressLoading = true;
   healthNoData = false;
   timeFilterOptions = this.activityService.standardTimeFilters;
   comparisonWeek1End: Date = new Date();
@@ -91,7 +93,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
   comparisonData2: any = {};
-  private chartModule: ChartModule | null = null;
+
+  get summaryLoading() {
+    return this.loginLoading || this.resourcesLoading ||
+     this.coursesLoading || this.chatLoading || this.voicesLoading || this.progressLoading;
+  }
 
   constructor(
     private activityService: ReportsService,
@@ -268,6 +274,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
+      this.loginLoading = false;
     });
     this.usersService.requestUserData();
   }
@@ -323,6 +330,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       this.setStepCompletion();
       this.setDocVisits('courseActivities', false);
+      this.progressLoading = false;
+    }, () => {
+      this.progressLoading = false;
     });
   }
 

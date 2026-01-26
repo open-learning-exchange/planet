@@ -25,7 +25,7 @@ import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
-import { PlanetLoadingSpinnerComponent } from './components/loading-spinner/planet-loading-spinner.component';
+import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
 
 @NgModule({
   imports: [

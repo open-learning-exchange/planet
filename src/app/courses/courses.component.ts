@@ -148,6 +148,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   ngOnInit() {
     this.titleSearch = '';
+    this.dialogsLoadingService.start();
     this.getCourses();
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
@@ -167,7 +168,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.isLoading = false;
-    }, () => this.isLoading = false);
+      this.dialogsLoadingService.stop();
+    }, () => {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);
     });

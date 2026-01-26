@@ -7,7 +7,6 @@ import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
@@ -55,7 +54,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();

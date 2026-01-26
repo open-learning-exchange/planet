@@ -4,7 +4,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 
-import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
@@ -16,7 +16,6 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { load } from '../shared/loading-state';
 
 @Component({
   templateUrl: './dashboard.component.html',
@@ -89,7 +88,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
@@ -134,7 +132,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initDashboard() {
-
+    this.isLoading = true;
     const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
@@ -146,7 +144,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
       this.getTeamMembership()
-    ]).pipe(load(this)).subscribe(dashboardItems => {
+    ]).pipe(finalize(() => this.isLoading = false)).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
