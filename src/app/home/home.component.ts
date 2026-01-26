@@ -7,7 +7,6 @@ import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { debug } from '../debug-operator';
 import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
@@ -64,7 +63,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   // Sets the margin for the main content to match the sidenav width
   animObs = interval(15).pipe(
-    debug('Menu animation'),
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();

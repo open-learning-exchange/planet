@@ -1,0 +1,31 @@
+@import '../variables';
+
+@media (max-width: $screen-sm) {
+  mat-action-list button[mat-list-item] {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 10px 6px;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    white-space: normal;
+    min-height: auto;
+    height: auto;
+  }
+
+  .task-todo,
+  .rate-done {
+    width: 100%;
+    word-break: break-word;
+  }
+
+  .task-todo {
+    font-weight: 500;
+  }
+
+  .rate-done {
+    text-align: left;
+  }
+
+}
