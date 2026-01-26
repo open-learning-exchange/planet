@@ -63,7 +63,7 @@ export class DialogsPromptComponent {
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   setDefault(value, dfault) {
