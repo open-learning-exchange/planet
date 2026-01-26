@@ -17,12 +17,13 @@ import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 
 @Component({
   templateUrl: 'exams-add.component.html',
   styleUrls: [ 'exams-add.scss' ]
 })
-export class ExamsAddComponent implements OnInit {
+export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';
   examForm: FormGroup;
   documentInfo: any = {};
@@ -150,6 +151,7 @@ export class ExamsAddComponent implements OnInit {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
+      this.examForm.markAsPristine();
       this.documentInfo = { _id: res.id, _rev: res.rev };
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
@@ -162,6 +164,10 @@ export class ExamsAddComponent implements OnInit {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
     });
+  }
+
+  canDeactivate() {
+    return this.examForm.pristine;
   }
 
   appendToCourse(info, type: 'exam' | 'survey') {
