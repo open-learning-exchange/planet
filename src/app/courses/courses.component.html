@@ -146,11 +146,15 @@
           </div>
           <mat-chip-set #tagsList class="tags-list" aria-label="Course tags" i18n-aria-label>
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" highlighted color="primary">
-                {{tag.name}}
+              <mat-chip *ngIf="tag.isMainTag" highlighted color="primary">
+                <a matChipAction type="button" (click)="addTag(tag._id)">
+                  {{tag.name}}
+                </a>
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
+              <mat-chip *ngFor="let subTag of tag.subTags">
+                <a matChipAction type="button" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </a>
               </mat-chip>
             </ng-container>
           </mat-chip-set>

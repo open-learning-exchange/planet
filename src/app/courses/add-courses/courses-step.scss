@@ -15,8 +15,10 @@ planet-courses-step mat-chip-set {
 .mat-mdc-chip {
   max-width: 300px;
 
-  a {
+  a[matChipAction] {
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
   }
 }
