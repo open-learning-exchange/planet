@@ -1,8 +1,8 @@
 <div class="action-buttons">
   <div class="transaction-buttons">
     <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()" *ngIf="editable">Add Transaction</button>
-    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
-    <button mat-raised-button color="accent"  i18n (click)="exportTableData()" *ngIf="!emptyTable">Export Transactions</button>
+    <button *ngIf="startDate && endDate" mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
+    <button *ngIf="startDate && endDate && !emptyTable" mat-raised-button color="accent" i18n (click)="exportTableData()">Export Transactions</button>
   </div>
   <div class="transaction-date-fields">
     <mat-form-field>
