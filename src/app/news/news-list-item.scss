@@ -67,7 +67,7 @@ mat-card-content {
 }
 
 @media (max-width: $screen-xs) {
-  .subtitle-row .label-panel mat-chip {
+  .subtitle-row .label-panel .mat-mdc-chip {
     max-width: 80px;
     white-space: nowrap;
     overflow: hidden;

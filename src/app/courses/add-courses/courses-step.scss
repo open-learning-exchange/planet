@@ -1,4 +1,4 @@
-planet-courses-step mat-chip-set {
+planet-courses-step .mat-mdc-chip-set {
   margin: 0;
 }
 
@@ -9,16 +9,5 @@ planet-courses-step mat-chip-set {
 
   .vertical-form {
     overflow-y: auto;
-  }
-}
-
-.mat-mdc-chip {
-  max-width: 300px;
-
-  a[matChipAction] {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
   }
 }
