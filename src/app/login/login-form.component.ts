@@ -28,8 +28,8 @@ interface RegisterForm {
 }
 
 interface LoginForm {
-  name: [ string, ValidatorFn ],
-  password: [ string, ValidatorFn ]
+  name: [ string, ValidatorFn | ValidatorFn[] ],
+  password: [ string, ValidatorFn | ValidatorFn[] ]
 }
 
 const registerForm: RegisterForm = {
@@ -46,7 +46,7 @@ const registerForm: RegisterForm = {
 };
 
 const loginForm: LoginForm = {
-  name: [ '', CustomValidators.required ],
+  name: [ '', [Validators.required, CustomValidators.required] ],
   password: [ '', Validators.required ]
 };
 
