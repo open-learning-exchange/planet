@@ -642,13 +642,6 @@ body {
     }
   }
 
-  // For the members page roles
-  @media(max-width: $screen-sm) {
-    .mat-column-roles .mat-chip-list div.mat-chip-list-wrapper {
-      flex-wrap: nowrap;
-    }
-  }
-
   // Course/Resources Details ellipsis menu
   .actions-menu .mat-menu-content {
     display: flex;
