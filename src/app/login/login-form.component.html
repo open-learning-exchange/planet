@@ -6,7 +6,7 @@
     </mat-error>
   </mat-form-field>
   <mat-form-field class="full-width">
-    <input matInput i18n-placeholder placeholder="Password" name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password"/>
+    <input matInput i18n-placeholder placeholder="Password" name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password" required/>
     <button type="button" mat-icon-button matSuffix (click)="showPassword = !showPassword" tabindex="-1">
       <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
