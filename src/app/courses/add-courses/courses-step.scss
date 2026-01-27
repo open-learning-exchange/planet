@@ -1,4 +1,4 @@
-planet-courses-step .mat-chip-list-wrapper {
+planet-courses-step mat-chip-set {
   margin: 0;
 }
 
@@ -12,7 +12,7 @@ planet-courses-step .mat-chip-list-wrapper {
   }
 }
 
-.mat-chip {
+mat-chip {
   max-width: 300px;
   
   a {
