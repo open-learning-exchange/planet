@@ -12,9 +12,9 @@ planet-courses-step mat-chip-set {
   }
 }
 
-mat-chip {
+.mat-mdc-chip {
   max-width: 300px;
-  
+
   a {
     overflow: hidden;
     text-overflow: ellipsis;
