@@ -33,14 +33,14 @@
     align-items: start;
   }
 
-::ng-deep .checkbox-group .mat-checkbox-layout {
+::ng-deep .checkbox-group .mat-mdc-checkbox-layout {
   align-items: flex-start;
 }
-::ng-deep .checkbox-group .mat-checkbox-inner-container {
+::ng-deep .checkbox-group .mat-mdc-checkbox-inner-container {
   align-self: flex-start;
   margin-top: 2px;
 }
-::ng-deep .checkbox-group .mat-checkbox-label {
+::ng-deep .checkbox-group .mat-mdc-checkbox-label {
   display: block;
   white-space: normal;
   word-break: break-word;
