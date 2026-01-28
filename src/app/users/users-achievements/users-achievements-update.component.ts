@@ -98,12 +98,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
-    const editFormState = {
-      ...this.editForm.getRawValue(),
-      achievements: this.achievements.getRawValue(),
-      references: this.references.getRawValue(),
-      links: this.links.getRawValue()
-    };
+    const editFormState = this.editForm.getRawValue();
     this.initialFormValues = JSON.stringify({
       editForm: editFormState,
       profileForm: this.profileForm.getRawValue()
@@ -205,12 +200,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private updateUnsavedChangesFlag() {
-    const editFormState = {
-      ...this.editForm.getRawValue(),
-      achievements: this.achievements.getRawValue(),
-      references: this.references.getRawValue(),
-      links: this.links.getRawValue()
-    };
+    const editFormState = this.editForm.getRawValue();
     const currentState = JSON.stringify({
       editForm: editFormState,
       profileForm: this.profileForm.getRawValue()
