@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { Component, OnInit, Input } from '@angular/core';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 
@@ -13,7 +12,6 @@ export class PlanetLanguageComponent implements OnInit {
   languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
   @Input() iconOnly: boolean;
-  @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   constructor(private router: Router) {}
 
@@ -30,7 +28,4 @@ export class PlanetLanguageComponent implements OnInit {
     return '/' + language.shortCode + this.router.url;
   }
 
-  openMenu() {
-    this.menuTrigger?.openMenu();
-  }
 }
