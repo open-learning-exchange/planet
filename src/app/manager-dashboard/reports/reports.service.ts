@@ -334,7 +334,7 @@ export class ReportsService {
         startDate = minDate;
         break;
       default:
-        return { startDate: null, endDate: null, showCustomDateFields: false };
+        return { startDate: minDate, endDate, showCustomDateFields: false };
     }
     return { startDate, endDate, showCustomDateFields };
   }
