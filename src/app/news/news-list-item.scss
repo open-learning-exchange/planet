@@ -12,12 +12,7 @@ mat-card {
 }
 
 mat-card-header {
-  width: 100%;
   display: block;
-}
-
-::ng-deep .mat-card-header-text {
-  margin: 0 !important;
 }
 
 .subtitle-row {
@@ -27,7 +22,7 @@ mat-card-header {
 }
 
 mat-card-content {
-  margin-bottom: 0;
+  padding-top: 1rem;
 }
 
 .chat-container {
