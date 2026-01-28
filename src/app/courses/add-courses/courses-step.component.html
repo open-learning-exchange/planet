@@ -30,10 +30,10 @@
       </mat-chip-list>
     </ng-container>
   </div>
-  <div planetStepListActions>
+  <div planetStepListActions style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; padding: 0 16px;">
     <a mat-raised-button color="primary" (click)="addExam()">{{ examButtonLabel }}</a>
     <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
     <a mat-raised-button color="primary" (click)="addExam('survey')">{{ surveyButtonLabel }}</a>
     <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
-  </div>
+</div>
 </planet-step-list>
