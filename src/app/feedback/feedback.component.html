@@ -88,8 +88,8 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header="priority" i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-list *ngIf="element.priority==='Yes'"><mat-chip class="chip-no-style" selected color="accent" i18n>Yes</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.priority==='No'"><mat-chip class="chip-no-style" i18n>No</mat-chip></mat-chip-list>
+          <mat-chip-set *ngIf="element.priority==='Yes'" aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent" i18n>Yes</mat-chip></mat-chip-set>
+          <mat-chip-set *ngIf="element.priority==='No'" aria-label="Priority" i18n-aria-label><mat-chip i18n>No</mat-chip></mat-chip-set>
         </mat-cell>
       </ng-container>
       <!-- Owner Column -->
@@ -103,8 +103,8 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <mat-chip-list *ngIf="element.status==='Open' || element.status==='Reopened'"><mat-chip class="chip-no-style" selected>{{element.status}}</mat-chip></mat-chip-list>
-            <mat-chip-list *ngIf="element.status==='Closed'"><mat-chip class="chip-no-style">{{element.status}}</mat-chip></mat-chip-list>
+            <mat-chip-set *ngIf="element.status==='Open' || element.status==='Reopened'" aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.status}}</mat-chip></mat-chip-set>
+            <mat-chip-set *ngIf="element.status==='Closed'" aria-label="Status" i18n-aria-label><mat-chip>{{element.status}}</mat-chip></mat-chip-set>
           </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
