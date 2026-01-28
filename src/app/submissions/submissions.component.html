@@ -75,10 +75,10 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
         <mat-cell *matCellDef="let element" [ngSwitch]="element.status" style="cursor: pointer">
-          <mat-chip-set *ngSwitchCase="'pending'" aria-label="Submission status" i18n-aria-label><mat-chip class="chip-no-style" i18n>pending</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchCase="'requires grading'" aria-label="Submission status" i18n-aria-label><mat-chip class="chip-no-style" highlighted color="accent" i18n>requires grading</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchCase="'complete'" aria-label="Submission status" i18n-aria-label><mat-chip class="chip-no-style" highlighted color="primary" i18n>complete</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchDefault aria-label="Submission status" i18n-aria-label><mat-chip class="chip-no-style" highlighted color="warn" i18n>incomplete</mat-chip></mat-chip-set>
+          <mat-chip-set *ngSwitchCase="'pending'" aria-label="Submission status" i18n-aria-label><mat-chip i18n>pending</mat-chip></mat-chip-set>
+          <mat-chip-set *ngSwitchCase="'requires grading'" aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="accent" i18n>requires grading</mat-chip></mat-chip-set>
+          <mat-chip-set *ngSwitchCase="'complete'" aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="primary" i18n>complete</mat-chip></mat-chip-set>
+          <mat-chip-set *ngSwitchDefault aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="warn" i18n>incomplete</mat-chip></mat-chip-set>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="grade">

@@ -22,7 +22,7 @@
     </form>
     <ng-container *ngIf="activeStep?.resources?.length">
       <span i18n class="margin-lr-4">Attached Resources: </span>
-      <mat-chip-set aria-label="Attached resources" i18n-aria-label>
+      <mat-chip-set class="tags-list" aria-label="Attached resources" i18n-aria-label>
         <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
           <a matChipAction target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
           <button matChipRemove type="button" aria-label="Remove resource" i18n-aria-label (click)="removeResource(i)">

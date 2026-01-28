@@ -34,7 +34,7 @@
       <mat-cell *matCellDef="let element">
         {{element.planet.nameDoc?.name || element.planet.doc.name}}
         <mat-chip-set aria-label="Planet type" i18n-aria-label>
-          <mat-chip class="planet-chip-label margin-lr-5 chip-no-style" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+          <mat-chip class="planet-chip-label margin-lr-5" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
         </mat-chip-set>
       </mat-cell>
     </ng-container>
@@ -88,14 +88,14 @@
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <mat-chip-set aria-label="Roles" i18n-aria-label>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
+          <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
           <ng-container *ngFor="let role of element.doc.roles; index as i">
-            <mat-chip class="chip-no-style" *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
+            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
               <planet-role [role]="role"></planet-role>
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
+          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
         </mat-chip-set>
         <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
       </mat-cell>
