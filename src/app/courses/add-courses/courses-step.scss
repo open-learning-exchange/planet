@@ -14,9 +14,15 @@ planet-courses-step .mat-chip-list-wrapper {
 
 .mat-chip {
   max-width: 300px;
-  
+
   a {
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.step-icons {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
 }

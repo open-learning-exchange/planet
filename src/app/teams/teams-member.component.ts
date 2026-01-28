@@ -9,7 +9,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
   styles: [ `
-    .mat-list-item-disabled {
+    .mat-mdc-list-item-disabled {
       background-color: white;
     }
     .mat-card-subtitle p.role-text {

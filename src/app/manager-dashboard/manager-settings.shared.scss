@@ -13,6 +13,11 @@
   margin: 0 auto;
 }
 
+mat-list-item.mat-mdc-list-item {
+  overflow: visible;
+  height: auto;
+}
+
 .list-item-content {
   display: grid;
   grid-template-columns: 1.5fr 4fr;
