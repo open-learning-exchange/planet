@@ -121,7 +121,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
@@ -136,6 +135,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
+    this.dialogsLoadingService.start();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -149,6 +149,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }, () => {
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });

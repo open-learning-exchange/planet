@@ -30,6 +30,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   initializeEvents = true;
   isWaitingForEvents = true;
   isOwnUser = true;
+  isLoading = true;
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -66,6 +67,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initData() {
+    this.isLoading = true;
     this.healthService.getHealthData(this.userDetail._id).pipe(
       switchMap(([ { profile, events, userKey } ]: any[]) => {
         this.userDetail = { ...profile, ...this.userDetail };
@@ -79,6 +81,9 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(eventDocs => {
       this.events = [ ...this.events, ...eventDocs ];
       this.setEventData();
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

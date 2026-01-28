@@ -33,6 +33,7 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
+  isLoading = true;
 
   constructor(
     private certificationsService: CertificationsService,
@@ -72,8 +73,12 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   }
 
   getCertifications() {
+    this.isLoading = true;
     this.certificationsService.getCertifications().subscribe((certifications: any) => {
       this.certifications.data = certifications;
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

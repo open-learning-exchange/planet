@@ -1,4 +1,6 @@
-<mat-list>
+<planet-loading-spinner *ngIf="isLoading" text="Loading communities..." i18n-text></planet-loading-spinner>
+<p *ngIf="!isLoading && planets.hubs.length === 0 && planets.sandboxPlanets.length === 0" i18n>No communities available.</p>
+<mat-list *ngIf="!isLoading">
   <ng-container *ngFor="let hub of planets.hubs">
     <h3 mat-subheader>{{hub.name}}</h3>
     <mat-list-item *ngFor="let planet of hub.children" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">

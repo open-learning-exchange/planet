@@ -274,10 +274,8 @@
               <mat-icon>get_app</mat-icon>
             </button>
           </mat-toolbar>
-          <div *ngIf="comparisonLoading" class="view-container view-full-height" i18n>
-            Loading comparison data...
-          </div>
-          <div *ngIf="!comparisonLoading && comparisonTableData.length > 0" class="comparison-table-container">
+          <planet-loading-spinner *ngIf="comparisonLoading || summaryLoading" text="Loading comparison data..." i18n-text></planet-loading-spinner>
+          <div *ngIf="!comparisonLoading && !summaryLoading && comparisonTableData.length > 0" class="comparison-table-container">
             <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width">
               <ng-container matColumnDef="metric">
                 <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
@@ -303,15 +301,13 @@
               <tr mat-row *matRowDef="let row; columns: comparisonColumns;"></tr>
             </table>
           </div>
-          <div *ngIf="!comparisonLoading && comparisonTableData.length === 0" class="view-container view-full-height loading-message" i18n>
+          <div *ngIf="!comparisonLoading && !summaryLoading && comparisonTableData.length === 0" class="view-container view-full-height loading-message" i18n>
             Select dates and click Compare to view comparison data
           </div>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <div *ngIf="resourcesLoading" class="view-container view-full-height" i18n>
-          Reports loading...
-        </div>
+        <planet-loading-spinner *ngIf="resourcesLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
         <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
@@ -325,9 +321,7 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <div *ngIf="coursesLoading" class="view-container view-full-height" i18n>
-          Reports loading...
-        </div>
+        <planet-loading-spinner *ngIf="coursesLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
         <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
@@ -342,9 +336,7 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <div *ngIf="healthTab.isActive && healthLoading" class="view-container view-full-height" i18n>
-          Reports loading...
-        </div>
+        <planet-loading-spinner *ngIf="healthTab.isActive && healthLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
         <div *ngIf="healthTab.isActive && !healthLoading && healthNoData" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
@@ -360,9 +352,7 @@
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <div *ngIf="chatLoading" class="view-container view-full-height" i18n>
-          Reports loading...
-        </div>
+        <planet-loading-spinner *ngIf="chatLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
         <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>

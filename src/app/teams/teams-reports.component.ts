@@ -24,6 +24,7 @@ export class TeamsReportsComponent implements DoCheck {
 
   @Input() reports: any[];
   @Input() editable = false;
+  @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;

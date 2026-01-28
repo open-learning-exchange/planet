@@ -134,14 +134,7 @@
         [class.highlighted]="selectedIds.includes(row.doc._id)">
       </mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>
-          <div class="view-container" *ngIf="isLoading" i18n>
-            { mode, select, team {Loading Teams...} enterprise {Loading Enterprises...} }
-          </div>
-          <div class="view-container" *ngIf="!isLoading" i18n>
-            No { mode, select, team {Teams} enterprise {Enterprises} } Found
-          </div>
-        </td>
+        <td><div class="view-container" *ngIf="!isLoading" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>
     </mat-table>
   </div>

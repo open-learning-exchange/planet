@@ -11,13 +11,13 @@ import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
 
-
 @Component({
   templateUrl: './courses-enroll.component.html'
 })
 
 export class CoursesEnrollComponent {
 
+  isLoading = true;
   courseId: string;
   course: any;
   members: any[] = [];
@@ -57,6 +57,7 @@ export class CoursesEnrollComponent {
       take(1)
     ).subscribe((responses) => {
       this.setMembers(responses);
+      this.isLoading = false;
     });
   }
 
