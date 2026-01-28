@@ -15,7 +15,7 @@ planet-courses-search {
     display: grid;
     grid-template-rows: $label-height calc(#{$toolbar-height} - #{$label-height});
 
-    .mat-selection-list {
+    .mat-mdc-selection-list {
       height: calc(#{$toolbar-height} - #{$label-height});
       padding: 0;
       overflow-y: auto;
