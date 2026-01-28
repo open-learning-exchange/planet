@@ -209,7 +209,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       endDate: this.fb.control(new Date(), { validators: Validators.required })
     }, { validators: CustomValidators.endDateValidator() });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const { startDate, endDate } = value;
+      const { startDate = this.filter.startDate, endDate = this.filter.endDate } = value;
 
       this.filter = { ...this.filter, startDate, endDate };
 
@@ -231,6 +231,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   filterData() {
+    if (this.dateFilterForm?.invalid) {
+      return;
+    }
     this.loginActivities.filter(this.filter);
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
