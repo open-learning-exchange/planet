@@ -1,0 +1,341 @@
+
+> planet@0.21.37 ng-high-memory
+> node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng build --configuration production --aot --localize=true
+
+WARNING [src/i18n/messages.nep.xlf]: File target locale ('ne-NP') does not match configured locale ('ne')
+WARNING [src/i18n/messages.spa.xlf]: File target locale ('es-ES') does not match configured locale ('es')
+One or more browsers which are configured in the project's Browserslist configuration will be ignored as ES5 output is not supported by the Angular CLI.
+Ignored browsers: kaios 2.5, op_mini all
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+✔ Browser application bundle generation complete.
+- Generating localized bundles...
+✔ Localized bundle generation complete.
+- Copying assets...
+✔ Copying assets complete.
+- Generating index html...
+✔ Index html generation complete.
+- Generating service worker...
+✔ Service worker generation complete.
+
+Initial Chunk Files           | Names                                      |   Raw Size | Estimated Transfer Size
+main.f78797ac34967c1f.js      | main                                       |    5.55 MB |                 1.16 MB
+styles.d13411d5c372ef57.css   | styles                                     |  902.92 kB |                45.59 kB
+polyfills.06516893f0f4a89b.js | polyfills                                  |   33.20 kB |                10.71 kB
+runtime.04ae377c9c151f70.js   | runtime                                    |    2.97 kB |                 1.46 kB
+
+| Initial Total                              |    6.46 MB |                 1.21 MB
+
+Lazy Chunk Files              | Names                                      |   Raw Size | Estimated Transfer Size
+497.d143c663a2606745.js       | login-login-module                         |    1.20 MB |                36.51 kB
+837.9cdcdd7d5591fc1c.js       | home-home-module                           | 1007.06 kB |               214.45 kB
+549.4afc253a2cc8a2ba.js       | manager-dashboard-manager-dashboard-module |  202.46 kB |                40.27 kB
+600.1e2a68068586d879.js       | chart-js                                   |  192.98 kB |                57.46 kB
+347.f3166b4d8a436503.js       | courses-courses-module                     |   84.18 kB |                19.09 kB
+9.018da972f1333073.js         | health-health-module                       |   50.38 kB |                11.97 kB
+405.0a27726eb8afc475.js       | feedback-feedback-module                   |   32.24 kB |                 8.14 kB
+797.7a576e1d20fcc512.js       | login-login-module                         |   23.56 kB |                 6.91 kB
+263.af64c4fad4b21e66.js       | courses-courses-module                     |   22.64 kB |                 6.51 kB
+118.37ce92aa8fc844d3.js       | certifications-certifications-module       |   18.35 kB |                 5.28 kB
+common.16704258007484ff.js    | common                                     |    2.82 kB |                 1.17 kB
+
+Build at: 2026-01-29T15:46:29.579Z - Hash: 4f2ae372fc522c1a - Time: 49883ms
+
+Warning: /app/node_modules/pouchdb-authentication/lib/index.es.js depends on 'inherits'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb-authentication/lib/index.es.js depends on 'url-join'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb-authentication/lib/index.es.js depends on 'url-parse'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb-errors/lib/index.es.js depends on 'inherits'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb-find/node_modules/pouchdb-utils/lib/index-browser.es.js depends on 'immediate'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'argsarray'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'events'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'immediate'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'inherits'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'spark-md5'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/node_modules/pouchdb/lib/index-browser.es.js depends on 'vuvuzela'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/src/app/resources/resources-add.component.ts depends on 'jszip/dist/jszip.min'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: /app/src/app/submissions/submissions.service.ts depends on 'html-to-pdfmake'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+Warning: pouchdb-utils depends on 'immediate'. CommonJS or AMD dependencies can cause optimization bailouts.
+For more info see: https://angular.io/guide/build#configuring-commonjs-dependencies
+
+./src/app/users/users-achievements/users-achievements.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/users/users-achievements/users-achievements.scss 1:9     root stylesheet
+
+
+./src/app/home/home.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/home/home.scss 2:9                                       root stylesheet
+
+
+./src/app/shared/planet-language.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @use
+src/app/shared/planet-language.scss 1:1                          root stylesheet
+
+
+./src/app/shared/dialogs/dialogs-announcement.component.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/shared/dialogs/dialogs-announcement.component.scss 1:9   root stylesheet
+
+
+./src/app/resources/resources.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/resources/resources.scss 1:9                             root stylesheet
+
+
+./src/app/dashboard/dashboard.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/dashboard/dashboard.scss 1:9                             root stylesheet
+
+
+./src/app/resources/search-resources/resources-search.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/resources/resources.scss 1:9                             @import
+src/app/resources/search-resources/resources-search.scss 1:9     root stylesheet
+
+
+./src/app/resources/resources-add.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/resources/resources-add.scss 1:9                         root stylesheet
+
+
+./src/app/users/users-profile/users-profile.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/users/users-profile/users-profile.scss 1:9               root stylesheet
+
+
+./src/app/notifications/notifications.component.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/notifications/notifications.component.scss 1:9           root stylesheet
+
+
+./src/app/courses/search-courses/courses-search.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/courses/courses.scss 1:9                                 @import
+src/app/courses/search-courses/courses-search.scss 1:9           root stylesheet
+
+
+./src/app/courses/courses.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/courses/courses.scss 1:9                                 root stylesheet
+
+
+./src/app/users/users-table.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/users/users-table.scss 1:9                               root stylesheet
+
+
+./src/app/teams/teams-view.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/teams/teams-view.scss 2:9                                root stylesheet
+
+
+./src/app/teams/teams.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/teams/teams.scss 1:9                                     root stylesheet
+
+
+./src/app/community/community.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/community/community.scss 1:9                             root stylesheet
+
+
+./src/app/users/users-update/users-update.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/users/users-update/users-update.scss 1:9                 root stylesheet
+
+
+./src/app/tasks/tasks.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/tasks/tasks.scss 1:9                                     root stylesheet
+
+
+./src/app/manager-dashboard/manager-settings.shared.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/manager-settings.shared.scss 1:9       root stylesheet
+
+
+./src/app/shared/forms/planet-markdown-textbox.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/shared/forms/planet-markdown-textbox.scss 1:9            root stylesheet
+
+
+./src/app/manager-dashboard/manager-dashboard.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/manager-dashboard.scss 1:9             root stylesheet
+
+
+./src/app/manager-dashboard/reports/reports-detail.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/reports/reports-detail.scss 1:9        root stylesheet
+
+
+./src/app/manager-dashboard/requests/requests.component.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/requests/requests.component.scss 1:9   root stylesheet
+
+
+./src/app/manager-dashboard/reports/reports.components.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/reports/reports.components.scss 1:9    root stylesheet
+
+
+./src/app/manager-dashboard/reports/myplanet/myplanet.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/manager-dashboard/reports/myplanet/myplanet.scss 1:9     root stylesheet
+
+
+./src/app/courses/view-courses/courses-view.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/courses/view-courses/courses-view.scss 1:9               root stylesheet
+
+
+./src/app/exams/exams-add.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/exams/exams-add.scss 1:9                                 root stylesheet
+
+
+./src/app/courses/add-courses/courses-add.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/courses/add-courses/courses-add.scss 1:9                 root stylesheet
+
+
+./src/app/resources/view-resources/resources-view.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/resources/view-resources/resources-view.scss 1:9         root stylesheet
+
+
+./src/app/courses/step-view-courses/courses-step-view.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/courses/step-view-courses/courses-step-view.scss 1:9     root stylesheet
+
+
+./src/app/exams/exams-view.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/exams/exams-view.scss 1:9                                root stylesheet
+
+
+./src/app/resources/view-resources/resources-viewer.scss?ngResource - Warning: Module Warning (from ./node_modules/sass-loader/dist/cjs.js):
+Angular Material themes should be created from a map containing the keys "color", "typography", and "density". The color value should be a map containing the palette values for "primary", "accent", and "warn". See https://material.angular.io/guide/theming for more information.
+
+node_modules/@angular/material/core/theming/_theming.scss 186:5  define-light-theme()
+src/app/_variables.scss 19:20                                    @import
+src/app/resources/view-resources/resources-viewer.scss 1:9       root stylesheet
