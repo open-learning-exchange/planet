@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { CertificationsService } from './certifications.service';
