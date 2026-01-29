@@ -8,7 +8,7 @@
   <div class="view-container view-full-height">
     <div class="form-container">
       <form [formGroup]="courseForm" class="form-spacing" novalidate>
-        <mat-form-field class="full-width">
+        <mat-form-field class="cover-field">
           <input matInput i18n-placeholder placeholder="Course Title" formControlName="courseTitle" required>
           <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
         </mat-form-field>
@@ -37,6 +37,16 @@
         <mat-form-field class="full-width mat-form-field-type-no-underline">
           <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
         </mat-form-field>
+        <mat-form-field class="cover-field">
+          <input matInput i18n-placeholder placeholder="Cover" formControlName="cover" readonly>
+          <button mat-icon-button matSuffix type="button" (click)="selectCoverImage()" i18n-matTooltip="@@coverImageSelectTooltip" matTooltip="Select cover image">
+            <mat-icon>image</mat-icon>
+          </button>
+          <mat-hint i18n="@@coverImageSizeHint">Image must be 500x500 px.</mat-hint>
+        </mat-form-field>
+        <div class="cover-preview" *ngIf="coverPreviewUrl">
+          <img [src]="coverPreviewUrl" alt="Cover preview" i18n-alt="@@coverPreviewAlt">
+        </div>
       </form>
     </div>
     <div [ngClass]="{'steps-container': steps.length > 0 }">

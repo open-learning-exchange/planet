@@ -7,3 +7,7 @@
 <p *ngIf="courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet"><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 <p><b i18n>Description:</b></p>
 <planet-markdown [content]="courseDetail?.description" [imageSource]="imageSource" class="img-resize"></planet-markdown>
+<div *ngIf="courseDetail?.cover">
+  <p><b i18n="@@courseCoverLabel">Cover:</b></p>
+  <img [src]="coverImageUrl(courseDetail.cover)" alt="Course cover" i18n-alt="@@courseCoverAlt">
+</div>

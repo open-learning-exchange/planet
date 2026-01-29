@@ -8,6 +8,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { environment } from '../../environments/environment';
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
@@ -164,6 +165,10 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
+  }
+
+  coverImageUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
   }
 }
 

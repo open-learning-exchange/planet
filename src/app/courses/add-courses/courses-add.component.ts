@@ -3,7 +3,9 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from 
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
+import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -18,6 +20,7 @@ import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { DialogsImagesComponent } from '../../shared/dialogs/dialogs-images.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -25,6 +28,7 @@ interface CourseFormModel {
   languageOfInstruction: FormControl<string>;
   gradeLevel: FormControl<string>;
   subjectLevel: FormControl<string>;
+  cover: FormControl<string>;
   createdDate: FormControl<DateValue>;
   creator: FormControl<string>;
   sourcePlanet: FormControl<string>;
@@ -47,6 +51,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   private _steps = [];
+  coverPreviewUrl = '';
   savedCourse: any = null;
   draftExists: boolean;
   courseForm: FormGroup<CourseFormModel>;
@@ -87,7 +92,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.onFormChanges();
@@ -156,6 +162,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       languageOfInstruction: this.fb.control(''),
       gradeLevel: this.fb.control(''),
       subjectLevel: this.fb.control(''),
+      cover: this.fb.control(''),
       createdDate: this.fb.control<DateValue>(this.couchService.datePlaceholder),
       creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
       sourcePlanet: this.fb.control(configuration.code),
@@ -184,6 +191,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.images = course.form.images || [];
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+    this.coverPreviewUrl = course.form?.cover ? this.getCoverUrl(course.form.cover) : '';
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -225,11 +233,73 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
+  selectCoverImage() {
+    this.dialog.open(DialogsImagesComponent, {
+      width: '500px',
+      data: {
+        imageGroup: 'community'
+      }
+    }).afterClosed().subscribe(image => {
+      if (image) {
+        const coverPath = `resources/${image._id}/${encodeURI(image.filename)}`;
+        const coverUrl = this.getCoverUrl(coverPath);
+        const loadedImage = new Image();
+        loadedImage.onload = () => {
+          if (loadedImage.width === 500 && loadedImage.height === 500) {
+            this.courseForm.controls.cover.setValue(coverPath);
+            this.coverPreviewUrl = coverUrl;
+          } else {
+            this.clearCoverSelection();
+            this.deleteInvalidCoverImage(image);
+          }
+        };
+        loadedImage.onerror = () => {
+          this.clearCoverSelection();
+          this.planetMessageService.showAlert($localize`:@@coverImageLoadFailed:Unable to load the cover image.`);
+        };
+        loadedImage.src = coverUrl;
+      }
+    });
+  }
+
+  clearCoverSelection() {
+    this.courseForm.controls.cover.setValue('');
+    this.coverPreviewUrl = '';
+  }
+
+  getCoverUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
+  }
+
+  deleteInvalidCoverImage(image) {
+    this.couchService.get(`resources/${image._id}`).pipe(
+      switchMap((resource) => this.couchService.delete(`resources/${resource._id}?rev=${resource._rev}`))
+    ).subscribe(() => {
+      this.planetMessageService.showAlert(
+        $localize`:@@coverImageRemoved:Cover image must be 500x500 px. The image was removed.`
+      );
+    }, () => {
+      this.planetMessageService.showAlert(
+        $localize`:@@coverImageRemoveFailed:Cover image must be 500x500 px. Unable to remove the image.`
+      );
+    });
+  }
+
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
-    const newCourse = { ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps), ...this.documentInfo };
+    const normalizedCourse = {
+      ...courseInfo,
+      cover: courseInfo.cover?.trim()
+    };
+    const newCourse = {
+      ...this.convertMarkdownImagesText({ ...normalizedCourse, images: this.images }, this.steps),
+      ...this.documentInfo
+    };
+    if (!normalizedCourse.cover) {
+      delete newCourse.cover;
+    }
     this.couchService.updateDocument(
       this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
@@ -302,7 +372,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       });
     } else {
       this.setFormAndSteps({
-        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '' },
+        form: {
+          courseTitle: '',
+          description: '',
+          languageOfInstruction: '',
+          gradeLevel: '',
+          subjectLevel: '',
+          cover: ''
+        },
         steps: [],
         tags: []
       });

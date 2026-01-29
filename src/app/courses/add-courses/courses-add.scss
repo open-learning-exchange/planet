@@ -31,6 +31,26 @@
     background: $grey;
   }
 
+  .cover-preview {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 67px 0 1rem;
+    clear: both;
+
+    img {
+      max-width: 200px;
+      width: 100%;
+      height: auto;
+      border: 1px solid $grey;
+    }
+  }
+
+  .cover-field {
+    display: block;
+    width: 545px;
+  }
+
   @media (max-width: $screen-md) {
     .form-spacing {
       justify-content: center;

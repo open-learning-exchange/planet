@@ -29,6 +29,10 @@ export class CoursesViewDetailComponent implements OnChanges {
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';
   }
+
+  coverImageUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
+  }
 }
 
 @Component({

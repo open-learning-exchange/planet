@@ -11924,6 +11924,70 @@
         </context-group>
         <target state="final">No Survey Found</target>
       </trans-unit>
+          <trans-unit id="coverImageSelectTooltip" datatype="html" approved="yes">
+        <source>Select cover image</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <target state="final">Select cover image</target>
+      </trans-unit>
+          <trans-unit id="coverImageSizeHint" datatype="html" approved="yes">
+        <source>Image must be 500x500 px.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+        <target state="final">Image must be 500x500 px.</target>
+      </trans-unit>
+          <trans-unit id="coverPreviewAlt" datatype="html" approved="yes">
+        <source>Cover preview</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <target state="final">Cover preview</target>
+      </trans-unit>
+          <trans-unit id="coverImageLoadFailed" datatype="html" approved="yes">
+        <source>Unable to load the cover image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">257</context>
+        </context-group>
+        <target state="final">Unable to load the cover image.</target>
+      </trans-unit>
+          <trans-unit id="coverImageRemoved" datatype="html" approved="yes">
+        <source>Cover image must be 500x500 px. The image was removed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">278</context>
+        </context-group>
+        <target state="final">Cover image must be 500x500 px. The image was removed.</target>
+      </trans-unit>
+          <trans-unit id="coverImageRemoveFailed" datatype="html" approved="yes">
+        <source>Cover image must be 500x500 px. Unable to remove the image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">280</context>
+        </context-group>
+        <target state="final">Cover image must be 500x500 px. Unable to remove the image.</target>
+      </trans-unit>
+          <trans-unit id="courseCoverLabel" datatype="html" approved="yes">
+        <source>Cover:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <target state="final">Cover:</target>
+      </trans-unit>
+          <trans-unit id="courseCoverAlt" datatype="html" approved="yes">
+        <source>Course cover</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <target state="final">Course cover</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
