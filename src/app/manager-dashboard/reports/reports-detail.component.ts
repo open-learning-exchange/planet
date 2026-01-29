@@ -985,6 +985,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  isChartReady(chartId: string): boolean {
+    return !!this.charts.find(chart => chart.canvas.id === chartId);
+  }
+
   private getChartAsCanvas(chartId: string): HTMLCanvasElement {
     const chart = this.charts.find(c => c.canvas.id === chartId);
     if (!chart) {

@@ -104,10 +104,10 @@
 <ng-template #chartWithActions let-chartId="chartId">
   <div class="chart-wrapper">
     <div class="chart-actions">
-      <button mat-icon-button (click)="downloadChart(chartId)" [disabled]="charts.length === 0" matTooltip="Download as image" i18n-matTooltip>
+      <button mat-icon-button (click)="downloadChart(chartId)" [disabled]="!isChartReady(chartId)" matTooltip="Download as image" i18n-matTooltip>
         <mat-icon>get_app</mat-icon>
       </button>
-      <button mat-icon-button (click)="copyChartToClipboard(chartId)" [disabled]="charts.length === 0" matTooltip="Copy to clipboard" i18n-matTooltip>
+      <button mat-icon-button (click)="copyChartToClipboard(chartId)" [disabled]="!isChartReady(chartId)" matTooltip="Copy to clipboard" i18n-matTooltip>
         <mat-icon>content_copy</mat-icon>
       </button>
     </div>
