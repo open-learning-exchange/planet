@@ -50,6 +50,9 @@
         <input matInput planetTimeMask i18n-placeholder placeholder="End Time" formControlName="endTime">
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
       </mat-form-field>
+      <div class="timezone-row">
+        <button mat-stroked-button type="button" disabled i18n>Timezone: America/New_York</button>
+      </div>
       <div class="full-width">
         <label i18n>Recurring Frequency</label>
         <mat-radio-group formControlName="recurring">
