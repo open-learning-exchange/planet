@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { zip } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
@@ -55,9 +55,12 @@ export class CoursesEnrollComponent {
         );
       }),
       take(1)
+    ).pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
     ).subscribe((responses) => {
       this.setMembers(responses);
-      this.isLoading = false;
     });
   }
 

@@ -4,7 +4,7 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
@@ -264,7 +264,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.usersListener(true),
       this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
-    ]).pipe(take(1)).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
+    ]).pipe(
+      take(1),
+      finalize(() => this.loginLoading = false)
+    ).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
@@ -274,7 +277,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
-      this.loginLoading = false;
     });
     this.usersService.requestUserData();
   }
@@ -316,7 +318,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     combineLatest([
       this.activityService.courseProgressReport(),
       this.couchService.findAll('courses')
-    ]).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
+    ]).pipe(finalize(() => this.progressLoading = false)).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
@@ -330,16 +332,20 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       });
       this.setStepCompletion();
       this.setDocVisits('courseActivities', false);
-      this.progressLoading = false;
-      }, () => {
-        this.progressLoading = false;
     });
   }
 
   getDocVisits(type) {
     const params = reportsDetailParams(type);
-    this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
-    .subscribe((activities: any) => {
+    this.activityService.getAllActivities(params.db, activityParams(this.planetCode)).pipe(
+      finalize(() => {
+        if (type === 'resourceActivities') {
+          this.resourcesLoading = false;
+        } else if (type === 'courseActivities') {
+          this.coursesLoading = false;
+        }
+      })
+    ).subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
       this[type].total.data = activities.filter(
@@ -347,17 +353,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
-      if (type === 'resourceActivities') {
-        this.resourcesLoading = false;
-      } else if (type === 'courseActivities') {
-        this.coursesLoading = false;
-      }
-    }, error => {
-      if (type === 'resourceActivities') {
-        this.resourcesLoading = false;
-      } else if (type === 'courseActivities') {
-        this.coursesLoading = false;
-      }
     });
   }
 
@@ -398,11 +393,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getChatUsage() {
-    this.activityService.getChatHistory().subscribe((data) => {
+    this.activityService.getChatHistory().pipe(finalize(() => this.chatLoading = false)).subscribe((data) => {
       this.chatActivities.data = data;
       this.chatActivities.filter(this.filter);
       this.setChatUsage();
-      this.chatLoading = false;
     });
   }
 
@@ -412,14 +406,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getVoicesUsage() {
-    this.activityService.getVoicesCreated().subscribe((data) => {
+    this.activityService.getVoicesCreated().pipe(finalize(() => this.voicesLoading = false)).subscribe((data) => {
       this.voicesActivities.data = data.map(item => ({
         ...item,
         user: item.user?.name || '',
       }));
       this.voicesActivities.filter(this.filter);
       this.setVoicesUsage();
-      this.voicesLoading = false;
     });
   }
 
@@ -1037,7 +1030,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ]);
       this.planetMessageService.showMessage($localize`Chart copied to clipboard`);
     } catch (err) {
-      console.error('Failed to copy chart to clipboard:', err);
       this.planetMessageService.showAlert($localize`Failed to copy chart to clipboard`);
     }
   }
