@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';

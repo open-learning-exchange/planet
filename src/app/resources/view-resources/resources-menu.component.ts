@@ -2,7 +2,7 @@ import { Component, Input, ViewChild } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 
 @Component({

@@ -2,8 +2,9 @@
   <a mat-icon-button [routerLink]="parent ? ['/manager/meetups'] : ['/meetups']"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Meetup</span>
 </mat-toolbar>
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 action-buttons">
+<ng-template #meetupDetailContent>
+  <div class="space-container">
+    <mat-toolbar class="primary-color font-size-1 action-buttons">
     <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
     <span class="toolbar-fill"></span>
     <div class="button-group-right">
@@ -59,8 +60,17 @@
         </ul>
       </ng-template>
     </div>
+    </div>
   </div>
-</div>
+</ng-template>
+<ng-container *ngIf="isDialog; else meetupDetailPage">
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="meetupDetailContent"></ng-container>
+  </mat-dialog-content>
+</ng-container>
+<ng-template #meetupDetailPage>
+  <ng-container *ngTemplateOutlet="meetupDetailContent"></ng-container>
+</ng-template>
 <mat-dialog-actions *ngIf="isDialog">
   <button mat-raised-button type="button" mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>

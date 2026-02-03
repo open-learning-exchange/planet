@@ -1,6 +1,6 @@
 import { Component, ViewChild, Inject } from '@angular/core';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CustomValidators } from '../validators/custom-validators';
