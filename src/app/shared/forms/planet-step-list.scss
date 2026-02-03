@@ -15,6 +15,28 @@
     margin: 0.25rem 0 0 0.25rem;
   }
 
+  /* Make the top action bar a flex row: keep back button left, push others right */
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .action-buttons .back-button {
+    margin-right: auto;
+  }
+  
+  /* Normalize top action buttons to match planet step list action sizing */
+  .action-buttons button,
+  .action-buttons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    min-height: 40px;
+    box-sizing: border-box;
+  }
+
   .planet-step-list-actions > * {
     margin: 0.25rem 0 0 0.25rem;
   }
@@ -30,4 +52,89 @@
   .planet-step-list-actions {
     margin: 0.5rem 0 0 0;
   }
+}
+
+/* Align step list action buttons for components using the attribute or class */
+[planetStepListActions], .planet-step-list-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 0 16px;
+  flex-wrap: wrap;
+}
+
+[planetStepListActions]::before,
+[planetStepListActions] > *,
+.planet-step-list-actions > * {
+  margin-left: 0;
+}
+
+[planetStepListActions] button,
+[planetStepListActions] a,
+.planet-step-list-actions button,
+.planet-step-list-actions a {
+  margin: 0;
+  min-width: 110px;
+  text-align: center;
+}
+
+/* Stronger, container-scoped rules to avoid overrides from component styles */
+.planet-step-list-form-container [planetStepListActions],
+.planet-step-list-form-container .planet-step-list-actions {
+  display: flex;
+  align-items: center;
+}
+
+.planet-step-list-form-container [planetStepListActions] a,
+.planet-step-list-form-container [planetStepListActions] button,
+.planet-step-list-form-container .planet-step-list-actions a,
+.planet-step-list-form-container .planet-step-list-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+}
+
+/* Reset any stray margins/positioning and force consistent vertical alignment */
+.planet-step-list-form-container [planetStepListActions] > *,
+.planet-step-list-form-container .planet-step-list-actions > *,
+.planet-step-list-actions > * {
+  margin-top: 0 !important;
+  align-self: center !important;
+  vertical-align: middle !important;
+  position: static !important;
+}
+
+/* Ensure Material button variants have identical sizing inside action bars */
+.planet-step-list-form-container [planetStepListActions] .mat-raised-button,
+.planet-step-list-form-container [planetStepListActions] .mat-stroked-button,
+.planet-step-list-form-container .planet-step-list-actions .mat-raised-button,
+.planet-step-list-form-container .planet-step-list-actions .mat-stroked-button,
+.action-buttons .mat-stroked-button,
+.action-buttons .mat-flat-button,
+.action-buttons .mat-raised-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1rem !important;
+  min-height: 40px !important;
+  height: 40px !important;
+  line-height: 1 !important;
+}
+
+/* Normalize Material inner wrapper used for button content (icons/text) */
+.planet-step-list-form-container [planetStepListActions] .mat-button-wrapper,
+.planet-step-list-form-container .planet-step-list-actions .mat-button-wrapper,
+.action-buttons .mat-button-wrapper {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 40px !important;
+}
+
+/* Reduce extra bottom container padding so buttons sit flush with content area */
+.planet-step-list-actions {
+  padding-bottom: 12px;
 }
