@@ -22,35 +22,4 @@ planet-courses-step .mat-chip-list-wrapper {
 }
 
 
-[planetStepListActions],
-div[planetStepListActions] {
-  display: flex !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 16px 0 0 0 !important;  
-  padding: 0 16px !important;     
-  flex-wrap: wrap !important;
-  position: relative !important;  
-}
-
-
-[planetStepListActions]::before,
-[planetStepListActions] > * {
-  margin-left: 0 !important;
-}
-
-
-[planetStepListActions] button,
-[planetStepListActions] a {
-  margin: 0 !important;
-  min-width: 110px;
-  text-align: center;
-}
-
-.overall-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-}
+/* Layout moved to shared planet-step-list.scss */
