@@ -19,7 +19,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   `,
   styles: [ `
     h3.mat-mdc-dialog-title {
-      margin: 0
+      text-align: center;
     }
   ` ]
 })

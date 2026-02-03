@@ -462,7 +462,7 @@ body {
     }
   }
 
-  mat-mdc-dialog-actions, mat-card-footer.action-buttons {
+  .mat-mdc-dialog-actions, .mat-mdc-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
   }
