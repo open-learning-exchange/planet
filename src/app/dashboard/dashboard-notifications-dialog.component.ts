@@ -3,7 +3,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { myDashboardRoute } from '../home/router-constants';
 
 @Component({
-  templateUrl: './dashboard-notifications-dialog.component.html'
+  templateUrl: './dashboard-notifications-dialog.component.html',
+  styleUrls: [ './dashboard-notifications-dialog.component.scss' ]
 })
 export class DashboardNotificationsDialogComponent implements OnInit {
 

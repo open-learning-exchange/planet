@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     h3 {
       margin-bottom: 0;
     }
-    .mat-body-2 {
+    .mat-subtitle-2 {
       margin-top: 0;
     }
   ` ]

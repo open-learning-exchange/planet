@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl, } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -15,7 +15,6 @@ import {
   commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
-import { debug } from '../debug-operator';
 import { languages } from '../shared/languages';
 import { SyncService } from '../shared/sync.service';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -31,7 +30,6 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
-import { CoursesViewDetailDialogComponent } from './view-courses/courses-view-detail.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
 
@@ -70,8 +68,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   dialogRef: MatDialogRef<DialogsListComponent>;
   message = '';
   deleteDialog: any;
-  fb: UntypedFormBuilder;
-  courseForm: UntypedFormGroup;
   readonly dbName = 'courses';
   parent = this.route.snapshot.data.parent;
   planetConfiguration = this.stateService.configuration;
@@ -100,8 +96,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   private onDestroy$ = new Subject<void>();
   planetType = this.planetConfiguration.planetType;
   isAuthorized = false;
-  tagFilter = new UntypedFormControl([]);
-  tagFilterValue = [];
+  tagFilter = new FormControl<string[]>([], { nonNullable: true });
+  tagFilterValue: string[] = [];
   searchSelection: any = { _empty: true };
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
@@ -261,7 +257,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+    this.deleteDialog.afterClosed().subscribe(() => {
       this.message = '';
     });
   }
