@@ -1,7 +1,7 @@
 <form class="vertical-form" [formGroup]="questionForm">
   <div class="type-title-container">
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()">
+      <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()" panelClass="exam-question-select">
         <mat-option value="input" i18n>Text - Short answer</mat-option>
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>

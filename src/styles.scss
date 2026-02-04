@@ -673,6 +673,10 @@ body {
     align-items: center;
   }
 
+  .exam-question-menu.mat-mdc-menu-panel {
+    max-width: none;
+  }
+
   // Styles for the chat-output directive
   .conversation-query {
     text-align: left;
