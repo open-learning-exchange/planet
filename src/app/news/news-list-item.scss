@@ -69,6 +69,7 @@ mat-chip {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: $screen-xs) {
