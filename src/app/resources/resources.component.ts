@@ -131,9 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.myView !== 'myPersonals') {
-      this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
-    }
+    this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     this.titleSearch = '';
     this.dialogsLoadingService.start();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
@@ -143,10 +141,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe((resources) => {
       this.resources.data = resources.filter(
         (resource: any) =>
-          this.excludeIds.indexOf(resource._id) === -1 &&
-          (this.myView === 'myPersonals' ?
-            (resource.doc.private === true && (resource.doc.privateFor || {}).users === this.userService.get()._id) :
-            resource.doc.private !== true)
+          this.excludeIds.indexOf(resource._id) === -1 && resource.doc.private !== true
       );
       this.resources.paginator = this.paginator;
       this.isLoading = false;
