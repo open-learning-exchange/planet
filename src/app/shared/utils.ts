@@ -43,8 +43,7 @@ export const styleVariables: any = {
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
   grey: '#bdbdbd',
-  greyText: 'rgba(0, 0, 0, 0.54)',
-  lightGrey: 'whitesmoke'
+  greyText: 'rgba(0, 0, 0, 0.54)'
 };;
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
