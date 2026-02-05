@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -31,6 +31,10 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 type ChartModule = typeof import('chart.js');
+interface DateFilterForm {
+  startDate: FormControl<Date>;
+  endDate: FormControl<Date>;
+};
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -63,7 +67,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
-  dateFilterForm: UntypedFormGroup;
+  dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -111,7 +115,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService
   ) {
@@ -207,13 +211,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: [ '' ],
-      endDate: [ '' ],
-      validators: [ CustomValidators.endDateValidator() ]
-    });
+      startDate: this.fb.control(new Date(0), { validators: Validators.required }),
+      endDate: this.fb.control(new Date(), { validators: Validators.required })
+    }, { validators: CustomValidators.endDateValidator() });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate ? new Date(value.startDate) : null;
-      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const { startDate = this.filter.startDate, endDate = this.filter.endDate } = value;
 
       this.filter = { ...this.filter, startDate, endDate };
 
@@ -235,6 +237,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   filterData() {
+    if (this.dateFilterForm?.invalid) {
+      return;
+    }
     this.loginActivities.filter(this.filter);
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
