@@ -26,24 +26,4 @@
     height: $view-container-height-no-toolbar
   }
 
-  .checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.5rem;
-    align-items: start;
-  }
-
-::ng-deep .checkbox-group .mat-checkbox-layout {
-  align-items: flex-start;
-}
-::ng-deep .checkbox-group .mat-checkbox-inner-container {
-  align-self: flex-start;
-  margin-top: 2px;
-}
-::ng-deep .checkbox-group .mat-checkbox-label {
-  display: block;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.3;
-}
 }

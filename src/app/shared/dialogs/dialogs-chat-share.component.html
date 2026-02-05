@@ -5,8 +5,9 @@
         <mat-panel-title i18n="@@share-with-community-panel-title">Share with Community</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <i i18n style="margin-right: 1rem;">add note</i>
-        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm"></mat-checkbox><br>
+        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm">
+          <i i18n>add note</i>
+        </mat-checkbox>
         <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
           <mat-form-field *ngIf="showForm" class="full-width">
             <textarea
