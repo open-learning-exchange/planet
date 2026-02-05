@@ -20,7 +20,7 @@
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
         <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
       </div>
-      <mat-menu #questionMenu>
+      <mat-menu #questionMenu="matMenu" class="exam-question-menu">
         <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
