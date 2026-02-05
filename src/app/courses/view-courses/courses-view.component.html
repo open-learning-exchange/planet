@@ -123,7 +123,7 @@
             </mat-action-row>
           </mat-expansion-panel>
         </ng-container>
-        <span *ngIf="isLoading" i18n>Loading course details...</span>
+        <planet-loading-spinner *ngIf="isLoading" text="Loading course details..." i18n-text></planet-loading-spinner>
         <span *ngIf="courseDetail.steps.length===0 && !isLoading" i18n>There is no content for this course</span>
       </div>
     </div>

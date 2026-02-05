@@ -13,7 +13,7 @@
     <mat-card-content>
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.code.label">Code</span>
             <mat-form-field>
               <input matInput formControlName="code" (input)="form.get('code').setValue(form.get('code').value.toUpperCase())" placeholder="e.g. USD" i18n-placeholder>
@@ -22,7 +22,7 @@
           </div>
         </mat-list-item>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n="@@currency.symbol.label">Symbol</span>
             <mat-form-field>
               <input matInput formControlName="symbol" placeholder="e.g. $" i18n-placeholder>

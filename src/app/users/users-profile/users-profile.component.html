@@ -33,55 +33,55 @@
       </div>
       <mat-list class="profile-list-lt">
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Full Name</h4>
-          <p matLine><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Full Name</h4>
+          <p matListItemLine><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Email</h4>
-          <p matLine><b>{{userDetail.email || 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Email</h4>
+          <p matListItemLine><b>{{userDetail.email || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Language</h4>
-          <p matLine><b>{{userDetail.language || 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Language</h4>
+          <p matListItemLine><b>{{userDetail.language || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Number of Visits</h4>
-          <p matLine><b>{{totalLogins || ''}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Number of Visits</h4>
+          <p matListItemLine><b>{{totalLogins || ''}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Roles</h4>
-          <p matLine><b>{{ getUserRoles().join(', ') }}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Roles</h4>
+          <p matListItemLine><b>{{ getUserRoles().join(', ') }}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
       <mat-list class="profile-list-rt">
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>DOB</h4>
-          <p matLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>DOB</h4>
+          <p matListItemLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Phone</h4>
-          <p matLine><b>{{userDetail.phoneNumber || 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Phone</h4>
+          <p matListItemLine><b>{{userDetail.phoneNumber || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Level</h4>
-          <p matLine><b><planet-language-label [options]="educationLevel" [label]="userDetail.level || 'N/A'"></planet-language-label></b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Level</h4>
+          <p matListItemLine><b><planet-language-label [options]="educationLevel" [label]="userDetail.level || 'N/A'"></planet-language-label></b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Last Login</h4>
-          <p matLine><b>{{(lastLogin || '') | date: 'mediumDate'}} {{(lastLogin || '') | date: 'shortTime'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Last Login</h4>
+          <p matListItemLine><b>{{(lastLogin || '') | date: 'mediumDate'}} {{(lastLogin || '') | date: 'shortTime'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <h4 class="primary-text-color" matLine i18n>Member Since</h4>
-          <p matLine><b>{{(userDetail.joinDate | date: 'mediumDate') || 'N/A'}}</b></p>
+          <h4 class="primary-text-color" matListItemTitle i18n>Member Since</h4>
+          <p matListItemLine><b>{{(userDetail.joinDate | date: 'mediumDate') || 'N/A'}}</b></p>
         </mat-list-item>
         <mat-divider></mat-divider>
       </mat-list>
@@ -94,10 +94,10 @@
         <mat-card-content>
           <mat-list>
             <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
-              <h4 matLine><b>{{team.doc.name}}</b></h4>
+              <h4 matListItemTitle><b>{{team.doc.name}}</b></h4>
             </mat-list-item>
             <mat-list-item *ngIf="teams.length === 0">
-              <p matLine i18n>User is not a member of any teams</p>
+              <p matListItemTitle i18n>User is not a member of any teams</p>
             </mat-list-item>
           </mat-list>
         </mat-card-content>
@@ -109,10 +109,10 @@
         <mat-card-content>
           <mat-list>
             <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
-              <h4 matLine><b>{{enterprise.doc.name}}</b></h4>
+              <h4 matListItemTitle><b>{{enterprise.doc.name}}</b></h4>
             </mat-list-item>
             <mat-list-item *ngIf="enterprises.length === 0">
-              <p matLine i18n>User is not a member of any enterprises</p>
+              <p matListItemTitle i18n>User is not a member of any enterprises</p>
             </mat-list-item>
           </mat-list>
         </mat-card-content>

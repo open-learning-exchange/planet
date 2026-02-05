@@ -36,7 +36,7 @@
   <span class="mat-caption" i18n>Tasks</span>
   <mat-selection-list (selectionChange)="toggleTask($event)" [disabled]="userStatus !== 'member'" [disableRipple]="userStatus !== 'member'">
     <mat-list-option checkboxPosition="before" *ngFor="let task of member?.tasks" [selected]="task.completed" [value]="task">
-      <p class="ellipsis-title">{{task.title}}</p>
+      <span matListItemTitle class="ellipsis-title">{{task.title}}</span>
     </mat-list-option>
   </mat-selection-list>
 </mat-card-content>

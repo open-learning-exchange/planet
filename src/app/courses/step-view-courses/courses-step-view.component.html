@@ -94,9 +94,7 @@
   </div>
   <ng-template #emptyRecord>
     <div class="view-container view-full-height" i18n>
-      <ng-container *ngIf="isLoading; else noContent">
-        Loading Content...
-      </ng-container>
+      <planet-loading-spinner *ngIf="isLoading; else noContent" text="Loading content..." i18n-text></planet-loading-spinner>
       <ng-template #noContent>No description provided.</ng-template>
     </div>
   </ng-template>
