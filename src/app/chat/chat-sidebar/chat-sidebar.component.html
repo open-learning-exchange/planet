@@ -37,7 +37,7 @@
       </div>
       <hr>
     </div>
-    <ng-container *ngIf="filteredConversations?.length; else noChats">
+    <ng-container *ngIf="!isLoading && filteredConversations?.length; else noChats">
       <ul>
         <li *ngFor="let conversation of filteredConversations; let i = index; trackBy: trackByFn" class="conversation-list" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
@@ -75,7 +75,8 @@
       </ul>
     </ng-container>
     <ng-template #noChats>
-      <div class="no-chats-message" i18n>No previous conversations.</div>
+      <planet-loading-spinner *ngIf="isLoading" text="Loading conversations..." i18n-text></planet-loading-spinner>
+      <div class="no-chats-message" *ngIf="!isLoading" i18n>No previous conversations.</div>
     </ng-template>
   </mat-drawer>
 

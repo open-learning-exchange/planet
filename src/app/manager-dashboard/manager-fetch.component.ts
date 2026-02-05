@@ -35,6 +35,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
+  isLoading = true;
 
   constructor(
     private couchService: CouchService,
@@ -46,8 +47,12 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.managerService.getPushedList().subscribe((pushedList: any) => {
       this.pushedItems.data = pushedList;
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

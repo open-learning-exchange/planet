@@ -53,6 +53,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
+  private useDialogLoading = true;
   isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
@@ -72,11 +73,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private chatService: ChatService,
     private examsService: ExamsService
-  ) {
-    this.dialogsLoadingService.start();
-  }
+  ) {}
 
   ngOnInit() {
+    this.useDialogLoading = !this.teamId && !this.routeTeamId;
+    if (this.useDialogLoading) {
+      this.dialogsLoadingService.start();
+    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
@@ -167,8 +170,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.applyViewModeFilter();
-      this.dialogsLoadingService.stop();
       this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
+    }, () => {
+      this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
     });
   }
 
