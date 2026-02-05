@@ -5,7 +5,6 @@ import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
 import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
-import { debug } from '../../debug-operator';
 import { RatingService } from './rating.service';
 import { StateService } from '../state.service';
 
@@ -165,7 +164,6 @@ export class PlanetRatingComponent implements OnChanges {
     this.isPopupOpen = true;
     this.dialogsForm
       .confirm($localize`Rating`, popupFormFields, this.popupForm)
-      .pipe(debug('Dialog confirm'))
       .subscribe((res) => {
         if (res) {
           this.onStarClick(this.popupForm);

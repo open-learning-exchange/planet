@@ -5,7 +5,6 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
-import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
@@ -69,7 +68,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.route.paramMap
-      .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
         this.resourcesService.requestResourcesUpdate(this.parent);

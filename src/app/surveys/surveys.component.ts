@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -16,7 +16,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, filterById } from '../shared/utils';
-import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -317,7 +316,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         displayName
       }
     });
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog'), takeUntil(this.onDestroy$)).subscribe(() => {});
+    this.deleteDialog.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {
