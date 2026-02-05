@@ -9,7 +9,7 @@
     grid-column-gap: 2rem;
   }
 
-  .mat-list-item p{
+  .mat-mdc-list-item-line p {
     overflow-wrap: break-word;
     white-space: normal;
     word-break: break-word;
@@ -56,12 +56,6 @@
       width: 50%;
     }
 
-    .mat-list-item p{
-      overflow-wrap: break-word;
-      white-space: normal;
-      word-break: break-word;
-    }
-
     .view-container {
       overflow-x: auto;
     }
@@ -74,11 +68,6 @@
       min-width: 0;
       overflow-wrap: break-word;
       word-break: break-word;
-    }
-
-    mat-list-item {
-      max-width: 100%;
-      box-sizing: border-box;
     }
 
   }

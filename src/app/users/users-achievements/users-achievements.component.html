@@ -54,7 +54,7 @@
             <h3 i18n>My Certifications</h3>
             <mat-list class="certs-list">
               <mat-list-item *ngFor="let certification of certifications">
-                <span class="cert-item">{{certification.name}}</span>
+                <span matListItemTitle class="cert-item">{{certification.name}}</span>
               </mat-list-item>
             </mat-list>
           </div>
@@ -64,8 +64,8 @@
           <h3 i18n>My Links</h3>
           <mat-list>
             <mat-list-item class="mat-list-item-word-wrap" *ngFor="let link of achievements.links">
-              <h4 class="link-title" mat-line>{{link.title}}:</h4>
-              <a href="{{link.url}}" target="_blank" class="styled-link"> {{link.url}} </a>
+              <h4 class="link-title" matListItemTitle>{{link.title}}:</h4>
+              <span matListItemMeta><a href="{{link.url}}" target="_blank" class="styled-link">{{link.url}}</a></span>
             </mat-list-item>
           </mat-list>
         </div>
@@ -75,7 +75,7 @@
           <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
           <mat-list>
             <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" *ngFor="let achievement of achievements.achievements; index as i" (click)="onAchievementClick(achievement, i)">
-              <p class="achievement-header" mat-line>
+              <span matListItemTitle class="achievement-header">
                 <span class="achievement-text">{{achievement.title || achievement}}
                   <ng-container *ngIf="isClickable(achievement)">
                     <mat-icon *ngIf="openAchievementIndex !== i" color="primary">expand_more</mat-icon>
@@ -83,12 +83,12 @@
                   </ng-container>
                 </span>
                 <span class="achievement-date">{{achievement.date | date: medium}}</span>
-              </p>
-              <p mat-line *ngIf="openAchievementIndex === i">
+              </span>
+              <span matListItemLine *ngIf="openAchievementIndex === i">
                 {{achievement.description}}
-              <br><a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link"> {{achievement.link}} </a>
-              </p>
-              <span mat-line class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
+                <a *ngIf="achievement.link" href="{{achievement.link}}" target="_blank" class="styled-link">{{achievement.link}}</a>
+              </span>
+              <span matListItemLine class="achievement-buttons" *ngIf="openAchievementIndex === i"></span>
             </mat-list-item>
           </mat-list>
         </div>
@@ -97,10 +97,10 @@
           <h3 i18n>My References</h3>
           <mat-list class="references-list">
             <mat-list-item class="mat-list-item-word-wrap" *ngFor="let reference of achievements.references">
-              <h4 mat-line>{{reference.name}}</h4>
-              <p mat-line *ngIf="reference?.relationship"><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</p>
-              <p mat-line *ngIf="reference?.phone"><ng-container i18n>Phone Number:</ng-container> {{reference.phone}}</p>
-              <p mat-line *ngIf="reference?.email"><ng-container i18n>Email:</ng-container> {{reference.email}}</p>
+              <span matListItemTitle>{{reference.name}}</span>
+              <span matListItemLine *ngIf="reference?.relationship"><ng-container i18n>Relationship:</ng-container> {{reference.relationship}}</span>
+              <span matListItemLine *ngIf="reference?.phone"><ng-container i18n>Phone Number:</ng-container> {{reference.phone}}</span>
+              <span matListItemLine *ngIf="reference?.email"><ng-container i18n>Email:</ng-container> {{reference.email}}</span>
             </mat-list-item>
           </mat-list>
         </div>
