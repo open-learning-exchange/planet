@@ -12,10 +12,12 @@
 </div>
 <mat-dialog-content>
   <mat-card *ngFor="let rating of ratings" class="margin-tb">
-    <mat-card-title>
-      <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
-      <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
-    </mat-card-title>
+    <mat-card-header>
+      <mat-card-title>
+        <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
+        <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
+      </mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="rating.comment">{{rating.comment}}</mat-card-content>
   </mat-card>
 </mat-dialog-content>

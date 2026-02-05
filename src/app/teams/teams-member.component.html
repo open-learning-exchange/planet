@@ -9,7 +9,7 @@
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">
       {{member?.doc?.leadershipTitle | truncateText:38}}
     </p>
-    <p class="primary-text-color role-text" *ngIf="member?.role">{{member?.role | truncateText:70}}</p>
+    <p class="primary-text-color" *ngIf="member?.role">{{member?.role | truncateText:70}}</p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
     <mat-icon>more_vert</mat-icon>
