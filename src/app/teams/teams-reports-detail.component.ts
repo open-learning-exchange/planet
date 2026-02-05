@@ -6,7 +6,7 @@ import { StateService } from '../shared/state.service';
   templateUrl: './teams-reports-detail.component.html',
   styles: [ `
     .report-grid-container {
-      overflow-x: hidden;
+      overflow-x: auto;
     }
     .report-grid {
       display: grid;
