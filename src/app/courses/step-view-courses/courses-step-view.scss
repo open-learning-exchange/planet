@@ -70,4 +70,11 @@
     }
   }
 
+  /* Ensure the toolbar's right-side container aligns its child buttons/text vertically */
+  mat-toolbar > div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
 }
