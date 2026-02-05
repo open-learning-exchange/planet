@@ -11926,6 +11926,70 @@
         </context-group>
         <target state="needs-translation">No Survey Found</target>
       </trans-unit>
+          <trans-unit id="coverImageSelectTooltip" datatype="html" approved="yes">
+        <source>Select cover image</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <target state="final">कभर तस्बिर छनोट गर्नुहोस्</target>
+      </trans-unit>
+          <trans-unit id="coverImageSizeHint" datatype="html" approved="yes">
+        <source>Image must be 500x500 px.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+        <target state="final">तस्बिर 500x500 px हुनुपर्छ।</target>
+      </trans-unit>
+          <trans-unit id="coverPreviewAlt" datatype="html" approved="yes">
+        <source>Cover preview</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <target state="final">कभर पूर्वावलोकन</target>
+      </trans-unit>
+          <trans-unit id="coverImageLoadFailed" datatype="html" approved="yes">
+        <source>Unable to load the cover image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">257</context>
+        </context-group>
+        <target state="final">कभर तस्बिर लोड गर्न सकिएन।</target>
+      </trans-unit>
+          <trans-unit id="coverImageRemoved" datatype="html" approved="yes">
+        <source>Cover image must be 500x500 px. The image was removed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">278</context>
+        </context-group>
+        <target state="final">कभर तस्बिर 500x500 px हुनुपर्छ। तस्बिर हटाइयो।</target>
+      </trans-unit>
+          <trans-unit id="coverImageRemoveFailed" datatype="html" approved="yes">
+        <source>Cover image must be 500x500 px. Unable to remove the image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">280</context>
+        </context-group>
+        <target state="final">कभर तस्बिर 500x500 px हुनुपर्छ। तस्बिर हटाउन सकिएन।</target>
+      </trans-unit>
+          <trans-unit id="courseCoverLabel" datatype="html" approved="yes">
+        <source>Cover:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+        <target state="final">कभर:</target>
+      </trans-unit>
+          <trans-unit id="courseCoverAlt" datatype="html" approved="yes">
+        <source>Course cover</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <target state="final">कोर्स कभर</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

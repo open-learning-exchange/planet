@@ -14823,6 +14823,62 @@
           <context context-type="linenumber">85</context>
         </context-group>
       </trans-unit>
+          <trans-unit id="coverImageSelectTooltip" datatype="html">
+        <source>Select cover image</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="coverImageSizeHint" datatype="html">
+        <source>Image must be 500x500 px.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="coverPreviewAlt" datatype="html">
+        <source>Cover preview</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="coverImageLoadFailed" datatype="html">
+        <source>Unable to load the cover image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">257</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="coverImageRemoved" datatype="html">
+        <source>Cover image must be 500x500 px. The image was removed.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">278</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="coverImageRemoveFailed" datatype="html">
+        <source>Cover image must be 500x500 px. Unable to remove the image.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
+          <context context-type="linenumber">280</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="courseCoverLabel" datatype="html">
+        <source>Cover:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+          <trans-unit id="courseCoverAlt" datatype="html">
+        <source>Course cover</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/courses/view-courses/courses-view-detail.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

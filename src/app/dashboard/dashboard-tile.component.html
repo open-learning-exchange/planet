@@ -29,6 +29,9 @@
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
             >
+              <div class="dashboard-course-cover" *ngIf="cardType === 'myCourses' && item.cover">
+                <img [src]="coverImageUrl(item.cover)" alt="Course cover" i18n-alt="@@courseCoverAlt">
+              </div>
               <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
                 {{item.firstLine}}
               </p>
