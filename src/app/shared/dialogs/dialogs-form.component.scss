@@ -1,0 +1,19 @@
+  .checkbox-wrapper:last-child {
+      margin: 0 0 20px 0;
+    }
+
+    .mat-radio-group.ng-touched.ng-invalid label {
+      border-bottom: 2px solid red;
+    }
+
+    .ng-touched.ng-valid {
+      border: none;
+    }
+
+    .date-picker-input{
+     cursor: pointer;
+    }
+
+    .time-picker-input {
+    cursor: pointer;
+    }
