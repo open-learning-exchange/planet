@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { zip } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
@@ -11,13 +11,13 @@ import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
 
-
 @Component({
   templateUrl: './courses-enroll.component.html'
 })
 
 export class CoursesEnrollComponent {
 
+  isLoading = true;
   courseId: string;
   course: any;
   members: any[] = [];
@@ -55,6 +55,10 @@ export class CoursesEnrollComponent {
         );
       }),
       take(1)
+    ).pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
     ).subscribe((responses) => {
       this.setMembers(responses);
     });

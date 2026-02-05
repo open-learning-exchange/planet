@@ -13,10 +13,11 @@ planet-resources-search {
   &> planet-resources-search-list {
     height: inherit;
     display: grid;
-    grid-template-rows: $label-height calc(#{$toolbar-height} - #{$label-height});
+    row-gap: 0.25rem;
+    grid-template-rows: $label-height calc(#{$toolbar-height} - #{$label-height} - 0.25rem);
 
-    .mat-selection-list {
-      height: calc(#{$toolbar-height} - #{$label-height});
+    .mat-mdc-selection-list {
+      height: calc(#{$toolbar-height} - #{$label-height} - 0.25rem);
       padding: 0;
       overflow-y: auto;
     }

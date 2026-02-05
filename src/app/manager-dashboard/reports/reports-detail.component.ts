@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Location } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
-import { takeUntil, take } from 'rxjs/operators';
+import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { ReportsService } from './reports.service';
@@ -31,6 +31,10 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 type ChartModule = typeof import('chart.js');
+interface DateFilterForm {
+  startDate: FormControl<Date>;
+  endDate: FormControl<Date>;
+};
 
 @Component({
   templateUrl: './reports-detail.component.html',
@@ -63,7 +67,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
-  dateFilterForm: UntypedFormGroup;
+  dateFilterForm: FormGroup<DateFilterForm>;
   teams: any;
   selectedTeam: any = 'All';
   showFiltersRow = false;
@@ -78,6 +82,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   resourcesLoading = true;
   coursesLoading = true;
   chatLoading = true;
+  loginLoading = true;
+  progressLoading = true;
   healthLoading = true;
   voicesLoading = true;
   healthNoData = false;
@@ -91,7 +97,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
   comparisonData2: any = {};
-  private chartModule: ChartModule | null = null;
+
+  get summaryLoading() {
+    return this.loginLoading || this.resourcesLoading ||
+     this.coursesLoading || this.chatLoading || this.voicesLoading || this.progressLoading;
+  }
 
   constructor(
     private activityService: ReportsService,
@@ -105,7 +115,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService
   ) {
@@ -201,13 +211,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   initDateFilterForm() {
     this.dateFilterForm = this.fb.group({
-      startDate: [ '' ],
-      endDate: [ '' ],
-      validators: [ CustomValidators.endDateValidator() ]
-    });
+      startDate: this.fb.control(new Date(0), { validators: Validators.required }),
+      endDate: this.fb.control(new Date(), { validators: Validators.required })
+    }, { validators: CustomValidators.endDateValidator() });
     this.dateFilterForm.valueChanges.subscribe(value => {
-      const startDate = value.startDate ? new Date(value.startDate) : null;
-      const endDate = value.endDate ? new Date(value.endDate) : null;
+      const { startDate = this.filter.startDate, endDate = this.filter.endDate } = value;
 
       this.filter = { ...this.filter, startDate, endDate };
 
@@ -229,6 +237,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   filterData() {
+    if (this.dateFilterForm?.invalid) {
+      return;
+    }
     this.loginActivities.filter(this.filter);
     this.setLoginActivities();
     this.ratings.total.filter(this.filter);
@@ -258,7 +269,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     combineLatest([
       this.usersService.usersListener(true),
       this.activityService.getAllActivities('login_activities', activityParams(this.planetCode))
-    ]).pipe(take(1)).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
+    ]).pipe(
+      take(1),
+      finalize(() => this.loginLoading = false)
+    ).subscribe(([ users, loginActivities ]: [ any[], any ]) => {
       this.loginActivities.data = loginActivities;
       const adminName = this.stateService.configuration.adminName.split('@')[0];
       this.users = users.filter(user => user.doc.name !== adminName && user.doc.planetCode === this.planetCode);
@@ -309,7 +323,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     combineLatest([
       this.activityService.courseProgressReport(),
       this.couchService.findAll('courses')
-    ]).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
+    ]).pipe(finalize(() => this.progressLoading = false)).subscribe(([ { enrollments, completions, steps }, courses ]: [ any, any[] ]) => {
       this.progress.enrollments.data = enrollments;
       this.progress.completions.data = completions;
       this.progress.steps.data = steps.map(({ userId, ...step }) => ({ ...step, user: userId.replace('org.couchdb.user:', '') }));
@@ -328,8 +342,15 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   getDocVisits(type) {
     const params = reportsDetailParams(type);
-    this.activityService.getAllActivities(params.db, activityParams(this.planetCode))
-    .subscribe((activities: any) => {
+    this.activityService.getAllActivities(params.db, activityParams(this.planetCode)).pipe(
+      finalize(() => {
+        if (type === 'resourceActivities') {
+          this.resourcesLoading = false;
+        } else if (type === 'courseActivities') {
+          this.coursesLoading = false;
+        }
+      })
+    ).subscribe((activities: any) => {
       // Filter out bad data caused by error found Mar 2 2020 where course id was sometimes undefined in database
       // Also filter out bad data found Mar 29 2020 where resourceId included '_design'
       this[type].total.data = activities.filter(
@@ -337,17 +358,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           && !activity.private
       );
       this.setDocVisits(type, true);
-      if (type === 'resourceActivities') {
-        this.resourcesLoading = false;
-      } else if (type === 'courseActivities') {
-        this.coursesLoading = false;
-      }
-    }, error => {
-      if (type === 'resourceActivities') {
-        this.resourcesLoading = false;
-      } else if (type === 'courseActivities') {
-        this.coursesLoading = false;
-      }
     });
   }
 
@@ -388,11 +398,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getChatUsage() {
-    this.activityService.getChatHistory().subscribe((data) => {
+    this.activityService.getChatHistory().pipe(finalize(() => this.chatLoading = false)).subscribe((data) => {
       this.chatActivities.data = data;
       this.chatActivities.filter(this.filter);
       this.setChatUsage();
-      this.chatLoading = false;
     });
   }
 
@@ -402,14 +411,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getVoicesUsage() {
-    this.activityService.getVoicesCreated().subscribe((data) => {
+    this.activityService.getVoicesCreated().pipe(finalize(() => this.voicesLoading = false)).subscribe((data) => {
       this.voicesActivities.data = data.map(item => ({
         ...item,
         user: item.user?.name || '',
       }));
       this.voicesActivities.filter(this.filter);
       this.setVoicesUsage();
-      this.voicesLoading = false;
     });
   }
 
@@ -1027,7 +1035,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ]);
       this.planetMessageService.showMessage($localize`Chart copied to clipboard`);
     } catch (err) {
-      console.error('Failed to copy chart to clipboard:', err);
       this.planetMessageService.showAlert($localize`Failed to copy chart to clipboard`);
     }
   }

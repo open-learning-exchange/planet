@@ -240,14 +240,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
       <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>
-          <div class="view-container" *ngIf="isLoading" i18n>
-            Resources Loading...
-          </div>
-          <div class="view-container" *ngIf="!isLoading" i18n>
-            No Resource Found
-          </div>
-        </td>
+        <td><div class="view-container" *ngIf="!isLoading" i18n>No Resource Found</div></td>
       </tr>
     </mat-table>
     <mat-paginator #paginator

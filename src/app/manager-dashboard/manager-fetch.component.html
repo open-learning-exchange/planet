@@ -12,7 +12,8 @@
     </button>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="pushedItems" matSort>
+    <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
+    <mat-table #table [dataSource]="pushedItems" matSort *ngIf="!isLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
