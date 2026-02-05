@@ -61,6 +61,7 @@ body {
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
+    max-height: 64px;
   }
 
   // Use to reset font size to base
