@@ -1,3 +1,5 @@
+@import '../variables';
+
 planet-tasks {
   mat-action-list {
     .mat-mdc-list-item {
@@ -22,12 +24,12 @@ planet-tasks {
     }
   }
 
-  .deadline-soon{
-    color: #F6BE00
+  .deadline-soon {
+    color: $accent;
   }
 
-  .deadline-passed{
-    color: red
+  .deadline-passed {
+    color: $warn;
   }
   /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
   /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
