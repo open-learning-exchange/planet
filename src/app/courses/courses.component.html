@@ -144,16 +144,20 @@
             <span i18n>myProgress:</span>
             <planet-courses-progress-bar [course]="element.doc" [courseProgress]="element.progress"></planet-courses-progress-bar>
           </div>
-          <mat-chip-list #tagsList class="tags-list">
+          <mat-chip-set #tagsList class="tags-list" aria-label="Course tags" i18n-aria-label>
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
+              <mat-chip *ngIf="tag.isMainTag" highlighted color="primary">
+                <a matChipAction type="button" (click)="addTag(tag._id)">
+                  {{tag.name}}
+                </a>
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
+              <mat-chip *ngFor="let subTag of tag.subTags">
+                <a matChipAction type="button" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </a>
               </mat-chip>
             </ng-container>
-          </mat-chip-list>
+          </mat-chip-set>
           <div class="content">
             <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
             <div *ngIf="showPreviewExpand(element.doc)" style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
