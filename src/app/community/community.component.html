@@ -35,9 +35,7 @@
               </button>
             </div>
           </mat-toolbar>
-          <ng-container *ngIf="isLoading; else loaded">
-            <span i18n>Loading voices...</span>
-          </ng-container>
+          <planet-loading-spinner *ngIf="newsLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
           <ng-template #loaded>
             <ng-container *ngIf="filteredNews?.length > 0; else noVoices">
               <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)"></planet-news-list>
@@ -48,6 +46,7 @@
           </ng-template>
         </mat-tab>
         <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
+          <p *ngIf="councillors.length === 0" i18n>No leaders available.</p>
           <div class="card-grid">
             <mat-card *ngFor="let councillor of councillors">
               <planet-teams-member
@@ -63,8 +62,11 @@
           <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
           <ng-container *ngIf="!planetCode">
           </ng-container>
-          <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
-          <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
+          <planet-loading-spinner *ngIf="teamLoading" text="Loading description..." i18n-text></planet-loading-spinner>
+          <ng-container *ngIf="!teamLoading">
+            <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
+            <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
+          </ng-container>
           <ng-container *planetAuthorizedRoles="''">
             <div *ngIf="!planetCode" class="action-buttons sticky-button">
               <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
@@ -77,8 +79,9 @@
           </ng-container>
           <ng-container>
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
-            <span *ngIf="links?.length === 0" i18n><p>No links available.</p></span>
-            <mat-nav-list *ngIf="links?.length > 0">
+            <planet-loading-spinner *ngIf="communityDataLoading" text="Loading links..." i18n-text></planet-loading-spinner>
+            <span *ngIf="!communityDataLoading && links?.length === 0" i18n><p>No links available.</p></span>
+            <mat-nav-list *ngIf="!communityDataLoading && links?.length > 0">
               <ng-container *ngIf="localLinks.length > 0">
                 <h3 mat-subheader i18n>Local</h3>
                 <mat-list-item *ngFor="let link of localLinks" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
@@ -121,10 +124,11 @@
           <planet-community-list></planet-community-list>
         </mat-tab>
         <mat-tab i18n-label label="Finances" *ngIf="isLoggedIn">
-          <planet-teams-view-finances [finances]="finances" [isLoading]="financesLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
+          <planet-teams-view-finances [finances]="finances" [isLoading]="communityDataLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
         </mat-tab>
         <mat-tab i18n-label label="Reports" *ngIf="isLoggedIn">
-          <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
+          <planet-loading-spinner *ngIf="communityDataLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
+          <planet-teams-reports *ngIf="!communityDataLoading" [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
         </mat-tab>
         <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
           <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>

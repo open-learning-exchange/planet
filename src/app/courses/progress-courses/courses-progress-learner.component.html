@@ -10,9 +10,7 @@
     <planet-courses-progress-chart *ngIf="chartData?.length; else noProgress" [inputs]="chartData" [height]="yAxisLength" [showTotals]="false" (clickAction)="handleCourseClick($event)" (changeData)="changeData($event)">
     </planet-courses-progress-chart>
     <ng-template #noProgress>
-      <div class="view-container" *ngIf="isLoading" i18n>
-        Loading Progress...
-      </div>
+      <planet-loading-spinner *ngIf="isLoading" text="Loading progress..." i18n-text></planet-loading-spinner>
       <div class="view-container" *ngIf="!isLoading" i18n>
         No Progress record available
       </div>
