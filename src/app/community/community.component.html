@@ -5,8 +5,9 @@
         <mat-tab i18n-label label="Our Voices">
           <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
               <mat-form-field class="search-form-field mdc-toolbar-input">
+                <mat-label i18n>Search voice</mat-label>
                 <mat-icon matPrefix>search</mat-icon>
-                <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
+                <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
               </mat-form-field>
               <mat-form-field class="label-filter-field mdc-toolbar-input">
                 <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">

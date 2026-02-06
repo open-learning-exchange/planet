@@ -40,7 +40,12 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width mdc-form-field-no-outline">
-          <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
+          <!--
+            Label (and previous placeholder) is not rendered. Keeping the label because I'm not sure if it's picked up
+            by screen readers. Could remove or change for better accessibility.
+          -->
+          <mat-label i18n>Labels</mat-label>
+          <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
         </mat-form-field>
       </form>
     </div>
