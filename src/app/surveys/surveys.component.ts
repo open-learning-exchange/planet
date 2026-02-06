@@ -53,7 +53,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
-  private useDialogLoading = true;
+  useDialogLoading = true;
   isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;

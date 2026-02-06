@@ -82,5 +82,5 @@
     </div>
   </mat-toolbar>
 
-  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog" [isLoading]="isLoading"></planet-users-table>
+  <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog" [isLoading]="isLoading && !useDialogLoading"></planet-users-table>
 </div>
