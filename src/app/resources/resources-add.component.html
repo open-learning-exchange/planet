@@ -27,7 +27,8 @@
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width mdc-form-field-no-outline">
-          <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
+          <mat-label i18n>Labels</mat-label>
+          <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
         </mat-form-field>
         <mat-form-field>
           <mat-label i18n>Language</mat-label>
