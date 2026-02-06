@@ -53,6 +53,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
   isLoading = true;
+  useDialogLoading = true;
 
   constructor(
     private userService: UserService,
@@ -65,7 +66,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     private usersService: UsersService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -75,6 +75,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.useDialogLoading = !this.isDialog;
+    if (this.useDialogLoading) {
+      this.dialogsLoadingService.start();
+    }
     this.planetType = this.stateService.configuration.planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
     this.route.queryParamMap.pipe(
@@ -88,7 +92,9 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.children = childPlanets.filter((planet: any) => planet.doc.docType !== 'parentName').sort(sortPlanet)
     );
     this.usersService.usersListener().pipe(takeUntil(this.onDestroy$)).subscribe(users => {
-      this.dialogsLoadingService.stop();
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
       this.users = users.filter((user: any) => this.excludeIds.indexOf(user._id) === -1);
       this.isLoading = false;
     });
