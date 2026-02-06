@@ -1,6 +1,6 @@
-const rp = require('request-promise');
+import * as rp from 'request-promise';
 
-module.exports = function(timeStamp) {
+export default function userHandler(timeStamp: string) {
   const user = 'e2e_' + timeStamp;
 
   return {
@@ -28,4 +28,4 @@ module.exports = function(timeStamp) {
       });
     }
   };
-};
+}
