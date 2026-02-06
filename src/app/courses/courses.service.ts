@@ -27,7 +27,6 @@ export class CoursesService {
     this._course = { ...this._course, ...newCourse };
   }
   progress: any;
-  submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
