@@ -25,7 +25,8 @@
 <ng-template #filterSelectors>
   <planet-selector *ngIf="planetCodes.length > 1" [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
   <mat-form-field *ngIf="submittedExamSteps?.length > 1" class="margin-lr-3">
-    <mat-select i18n-placeholder placeholder="View Test Progress" [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
+    <mat-label i18n>View Test Progress</mat-label>
+    <mat-select [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
       <mat-option *ngFor="let step of submittedExamSteps" [value]="step" i18n>
         {{ step.stepTitle || 'Step ' + (step.index + 1) }}
       </mat-option>

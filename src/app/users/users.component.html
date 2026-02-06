@@ -38,7 +38,8 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
       <mat-form-field class="font-size-1">
-        <mat-select i18n-placeholder placeholder="Children" [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
+        <mat-label i18n>Children</mat-label>
+        <mat-select [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
           <mat-option *ngFor="let child of children" [value]="child.doc">
             {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
           </mat-option>
@@ -48,16 +49,18 @@
   </ng-template>
 
   <ng-template #filterGroup>
-    <mat-form-field class="font-size-1 margin-lr-5">
-      <mat-select i18n-placeholder placeholder="Filter by role" [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
+    <mat-form-field class="font-size-1 margin-lr-5 mdc-toolbar-input">
+      <mat-label i18n>Filter by role</mat-label>
+      <mat-select [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
         <mat-option i18n value="All">All</mat-option>
         <mat-option *ngFor="let role of allRolesList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-icon class="input-icon">search</mat-icon>
-    <mat-form-field class="font-size-1">
-      <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue i18n-placeholder placeholder="Search name...">
+    <mat-form-field class="font-size-1 mdc-toolbar-input">
+      <mat-label i18n>Search name...</mat-label>
+      <input matInput (keyup)="searchChanged($event.target.value)" [value]=searchValue>
     </mat-form-field>
     <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
   </ng-template>
@@ -68,8 +71,9 @@
     <span class="toolbar-fill"></span>
     <div class="margin-lr-3" *ngIf="tableState.filterType==='local'">
       <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
-        <mat-form-field>
-          <mat-select name="role" [(ngModel)]="selectedRoles" multiple i18n-placeholder placeholder="Set roles of selected">
+        <mat-form-field style="width:256px" class="mdc-toolbar-input">
+          <mat-label i18n>Set roles of selected</mat-label>
+          <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
             <mat-option disabled="disabled" class="hide-checkbox">
               <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
               <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
