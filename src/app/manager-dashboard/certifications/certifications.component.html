@@ -33,7 +33,6 @@
     <a mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></a>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <planet-loading-spinner *ngIf="isLoading" text="Loading certifications..." i18n-text></planet-loading-spinner>
     <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
