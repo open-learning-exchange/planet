@@ -9,7 +9,7 @@
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <span class="toolbar-fill"></span>
-    <div>
+    <div class="toolbar-actions">
       <button mat-icon-button *ngIf="resource?._attachments && !showChat" (click)="this.isGridView = !this.isGridView">
         <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
       </button>
