@@ -57,4 +57,14 @@
 .count {
   white-space: nowrap;
   margin-left: 0.25rem;
+  flex-shrink: 0;
+}
+
+planet-tag-input-toggle-icon {
+  flex-shrink: 0;
+}
+
+.ellipsis-text {
+  flex: 1;
+  min-width: 0;
 }
