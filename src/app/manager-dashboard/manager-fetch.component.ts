@@ -9,7 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { findByIdInArray, itemsShown } from '../shared/utils';
+import { findByIdInArray, itemsShown, formatDate } from '../shared/utils';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
@@ -25,6 +25,11 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     .fetch-icon {
       color: #666;
     }
+    .filter-container {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+    }
   ` ]
 })
 
@@ -36,6 +41,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
   isLoading = true;
+  filterName = '';
+  filterDate: Date | null = null;
 
   constructor(
     private couchService: CouchService,
@@ -48,6 +55,16 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.isLoading = true;
+    this.pushedItems.filterPredicate = (data: any, filter: string) => {
+      const filterValues = JSON.parse(filter);
+      const nameMatch = filterValues.name ? (
+        (data.db === 'resources' && data.item.doc?.title?.toLowerCase().includes(filterValues.name)) ||
+        (data.db === 'courses' && data.item.doc?.courseTitle?.toLowerCase().includes(filterValues.name))
+      ) : true;
+      const dateMatch = filterValues.date ? formatDate(new Date(data.time)) === filterValues.date : true;
+      return nameMatch && dateMatch;
+    };
+
     this.managerService.getPushedList().subscribe((pushedList: any) => {
       this.pushedItems.data = pushedList;
       this.isLoading = false;
@@ -100,6 +117,14 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
         of({})
     )).subscribe(() => this.planetMessageService.showMessage($localize`Resources/Courses are being fetched`));
 
+  }
+
+  applyFilter() {
+    const filterValues = {
+      name: this.filterName.trim().toLowerCase(),
+      date: this.filterDate ? formatDate(this.filterDate) : ''
+    };
+    this.pushedItems.filter = JSON.stringify(filterValues);
   }
 
 }
