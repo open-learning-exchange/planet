@@ -70,8 +70,9 @@
     }
   }
 
-  /* Ensure the toolbar's right-side container aligns its child buttons/text vertically */
-  mat-toolbar > div {
+  /* Ensure the toolbar's right-side container aligns its child buttons/text vertically
+     Scoped to the step view's primary toolbar to avoid affecting other toolbars */
+  mat-toolbar.primary-color.font-size-1 > div {
     display: flex;
     align-items: center;
     gap: 0.5rem;
