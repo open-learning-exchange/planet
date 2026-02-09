@@ -1023,18 +1023,26 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     link.click();
   }
 
-  hasChartData(chartId: string): boolean {
+  hasNonZeroChartData(chartId: string): boolean {
     const chart = this.charts.find(c => c.canvas.id === chartId);
     if (!chart) { return false; }
     const datasets: any[] = (chart.data && (chart.data as any).datasets) || [];
     if (!datasets.length) { return false; }
-    for (const ds of datasets) {
+    return datasets.some(ds => {
       const dataArr = Array.isArray(ds.data) ? ds.data : [];
-      if (dataArr.some(v => (typeof v === 'number' && v > 0) || (v && typeof v === 'object' && (v.y > 0 || v.v > 0)))) {
-        return true;
-      }
+      return dataArr.some(v => {
+        const val = this.getChartPointValue(v);
+        return val !== undefined && val !== 0;
+      });
+    });
+  }
+
+  private getChartPointValue(value: any): number | undefined {
+    if (value && typeof value === 'object') {
+      const val = value.y ?? value.v;
+      return typeof val === 'number' ? val : undefined;
     }
-    return false;
+    return typeof value === 'number' ? value : undefined;
   }
 
   async copyChartToClipboard(chartId: string) {
