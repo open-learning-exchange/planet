@@ -1,4 +1,4 @@
-export const showdown = require('showdown');
+const showdown = require('showdown');
 export const pdfMake = require('pdfmake/build/pdfmake');
 export const pdfFonts = require('pdfmake/build/vfs_fonts');
 export const converter = new showdown.Converter();
