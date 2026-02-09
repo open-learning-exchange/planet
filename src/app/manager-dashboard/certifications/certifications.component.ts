@@ -1,10 +1,11 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { SelectionModel } from '@angular/cdk/collections';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { finalize } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
-import { SelectionModel } from '@angular/cdk/collections';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
@@ -77,13 +78,13 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   getCertifications() {
     this.isLoading = true;
     this.dialogsLoadingService.start();
-    this.certificationsService.getCertifications().subscribe((certifications: any) => {
+    this.certificationsService.getCertifications().pipe(
+      finalize(() => {
+        this.isLoading = false;
+        this.dialogsLoadingService.stop();
+      })
+    ).subscribe((certifications: any) => {
       this.certifications.data = certifications;
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
-    }, () => {
-      this.isLoading = false;
-      this.dialogsLoadingService.stop();
     });
   }
 
