@@ -64,7 +64,6 @@ If you are using an 32bit arm device and encounter a fatal error while running t
   ```
   {
     "data": {
-      "user": "admin",
       "content": "Hello",
       "assistant": false,
       "context": "",
@@ -79,7 +78,6 @@ If you are using an 32bit arm device and encounter a fatal error while running t
   }
   ```
   Additional info on data:
-  - **user**: string(required) -> Provide the planet/myPlanet username
   - **content**: string(required) -> The latest prompt for the AI to answer
   - **assistant**: boolean(required) -> Set to true if you want to use the assistants endpoint
   - **context**: string(optional) -> The text context you would like to pre-load the AI Assistant   with
@@ -133,7 +131,6 @@ any provider model supported by the provider can be used.
 - Request json sample
   ```
   {
-      "user": "admin",
       "time": {},
       "content": "Hola",
       "aiProvider": {
