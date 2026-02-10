@@ -69,11 +69,11 @@ export class ExamsService {
      null;
   }
 
-  newQuestionChoice(newId: string, intialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {
+  newQuestionChoice(newId: string, initialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {
     return this.setInitalFormValue(this.fb.group({
       text: this.fb.control('', { validators: [ CustomValidators.required ] }),
       id: this.fb.control(newId)
-    }), intialValue);
+    }), initialValue);
   }
 
   setInitalFormValue(formGroup: QuestionFormGroup, initialValue?: Partial<QuestionValue>): QuestionFormGroup;
