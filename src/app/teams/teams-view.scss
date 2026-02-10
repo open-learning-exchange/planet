@@ -9,13 +9,11 @@
     grid-auto-rows: 180px;
     &.member-cards {
       grid-auto-rows: 320px;
-      mat-card-content {
-        max-height: 149px;
-      }
     }
     mat-card-content {
-      max-height: 99px;
+      max-height: 200px;
       overflow-y: auto;
+      margin-bottom: 0.5rem;
     }
     .top-right-icon {
       position: absolute;
@@ -24,13 +22,11 @@
     }
 
     mat-card {
-      display: flex;
-      flex-direction: column;
-
       mat-card-actions {
         margin-top: auto;
         display: flex;
         justify-content: center;
+        gap: 1rem;
       }
     }
   }
@@ -39,12 +35,16 @@
     margin: 0;
   }
 
-  .mat-subtitle-1 b {
-    display: inline-block;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .mat-subtitle-1 {
+    margin: 5px 25px 10px 15px;
+
+    b {
+      display: inline-block;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .toolbar-button{
