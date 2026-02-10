@@ -36,7 +36,7 @@ interface ConfigurationForm {
   parentCode: FormControl<string>;
   preferredLang: FormControl<string>;
   code: FormControl<string>;
-  createdDate: FormControl<DatePlaceholder>;
+  createdDate: FormControl<number | DatePlaceholder>;
   autoAccept: FormControl<boolean>;
   alwaysOnline: FormControl<boolean>;
   betaEnabled: FormControl<string>;
@@ -129,7 +129,7 @@ export class ConfigurationComponent implements OnInit {
       parentCode: [ '', Validators.required ],
       preferredLang: [ '', Validators.required ],
       code: [ '', Validators.required, this.parentUniqueValidator('code') ],
-      createdDate: this.couchService.datePlaceholder,
+      createdDate: this.formBuilder.control<number | DatePlaceholder>(this.couchService.datePlaceholder),
       autoAccept: this.formBuilder.control(true),
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
