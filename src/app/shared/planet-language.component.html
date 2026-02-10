@@ -1,4 +1,4 @@
-<button mat-button [matMenuTriggerFor]="languageMenu">
+<button #menuButton mat-button [matMenuTriggerFor]="languageMenu">
   <mat-icon>translate</mat-icon>
   <span *ngIf="!iconOnly">{{this.currentLanguage.name}}</span>
 </button>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 
@@ -12,6 +12,7 @@ export class PlanetLanguageComponent implements OnInit {
   languages = languages;
   currentLanguage: any = { name: 'English', shortCode: 'eng' };
   @Input() iconOnly: boolean;
+  @ViewChild('menuButton') menuButton: ElementRef<HTMLButtonElement>;
 
   constructor(private router: Router) {}
 
@@ -26,6 +27,10 @@ export class PlanetLanguageComponent implements OnInit {
 
   getRouterUrl(language) {
     return '/' + language.shortCode + this.router.url;
+  }
+
+  openMenu() {
+    this.menuButton?.nativeElement.click();
   }
 
 }
