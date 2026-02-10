@@ -1,9 +1,8 @@
-@import '../../_mixins';
+@import '../../mixins';
 @import '../../variables';
 
 :host {
   .view-container {
-    // Align the meetup detail and attendee list using shared left/right grid areas.
     @include left-right-grid-areas;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
