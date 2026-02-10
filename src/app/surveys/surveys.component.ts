@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -24,10 +24,10 @@ import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.co
 import { ExamsService } from '../exams/exams.service';
 
 interface SurveyFilterForm {
-  includeQuestions: FormControl<boolean | null>;
-  includeAnswers: FormControl<boolean | null>;
-  includeCharts: FormControl<boolean | null>;
-  includeAnalysis: FormControl<boolean | null>;
+  includeQuestions: FormControl<boolean>;
+  includeAnswers: FormControl<boolean>;
+  includeCharts: FormControl<boolean>;
+  includeAnalysis: FormControl<boolean>;
 }
 
 @Component({
@@ -72,7 +72,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
     private chatService: ChatService,
-    private examsService: ExamsService
+    private examsService: ExamsService,
+    private fb: NonNullableFormBuilder
   ) {}
 
   ngOnInit() {
@@ -457,6 +458,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
+    const formGroup: FormGroup<SurveyFilterForm> = this.fb.group({
+      includeQuestions: this.fb.control(true),
+      includeAnswers: this.fb.control(true),
+      includeCharts: this.fb.control(false),
+      includeAnalysis: this.fb.control(false)
+    });
+
     this.dialogsFormService.openDialogsForm(
       $localize`Records to Export`,
       [
@@ -472,7 +480,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           tooltip: chatDisabled && $localize`AI analysis is disabled, contact community admin`
         }
       ],
-      { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
+      formGroup,
       {
         autoFocus: true,
         disableIfInvalid: true,
