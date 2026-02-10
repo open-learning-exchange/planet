@@ -19,7 +19,7 @@
         </mat-chip-list>
         <p class="primary-text-color" *ngIf="item.doc.createdOn !== planetCode"><ng-container i18n>Member of Planet</ng-container> {{item.doc.createdOn}}</p>
       </div>
-      <div class="time-panel">
+      <div>
         <ng-container *ngIf="item.sharedDate; else checkEditTime">
           <mat-icon *ngIf="isMobile;else shareText" class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
           <ng-template #shareText>
