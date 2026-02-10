@@ -150,6 +150,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       })
     ]).subscribe(() => {
       this.hasUnsavedChanges = false;
+      this.captureInitialState();
       this.goBack();
     });
   }
