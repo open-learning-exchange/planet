@@ -22,6 +22,10 @@ export ZMQ_BUILD_OPTIONS="--host=${TRIPLE}"
 echo "Building db-init for ${ARCH}"
 
 if [[ "${ACT}" == "install" ]]; then
+  # treehouses/node-tags:arm ships with a deprecated NodeSource apt repo that
+  # currently fails signature validation on xenial, so drop it explicitly.
+  rm -f /etc/apt/sources.list.d/nodesource.list
+  rm -f /etc/apt/sources.list.d/nodesource.list.save
   apt-get update -qq
   apt-get install -y nodejs npm build-essential ${PACKAGES}
   npm install "--arch=${TRIPLE}" -g add-cors-to-couchdb
