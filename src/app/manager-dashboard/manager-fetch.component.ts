@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { findByIdInArray, itemsShown } from '../shared/utils';
@@ -35,6 +35,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   planetConfiguration = this.stateService.configuration;
   displayedColumns = [ 'select', 'item', 'date' ];
   pushedItems = new MatTableDataSource();
+  isLoading = true;
 
   constructor(
     private couchService: CouchService,
@@ -46,8 +47,12 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     this.managerService.getPushedList().subscribe((pushedList: any) => {
       this.pushedItems.data = pushedList;
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

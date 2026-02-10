@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -16,7 +16,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, filterById } from '../shared/utils';
-import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -54,6 +53,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
+  useDialogLoading = true;
   isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
@@ -73,11 +73,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private chatService: ChatService,
     private examsService: ExamsService
-  ) {
-    this.dialogsLoadingService.start();
-  }
+  ) {}
 
   ngOnInit() {
+    this.useDialogLoading = !this.teamId && !this.routeTeamId;
+    if (this.useDialogLoading) {
+      this.dialogsLoadingService.start();
+    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
@@ -168,8 +170,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.applyViewModeFilter();
-      this.dialogsLoadingService.stop();
       this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
+    }, () => {
+      this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
     });
   }
 
@@ -317,7 +326,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         displayName
       }
     });
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog'), takeUntil(this.onDestroy$)).subscribe(() => {});
+    this.deleteDialog.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {

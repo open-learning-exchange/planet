@@ -1,8 +1,8 @@
 <div class="action-buttons">
   <div class="transaction-buttons">
     <button mat-raised-button color="primary" i18n (click)="openEditTransactionDialog()" *ngIf="editable">Add Transaction</button>
-    <button mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
-    <button mat-raised-button color="accent"  i18n (click)="exportTableData()" *ngIf="!emptyTable">Export Transactions</button>
+    <button *ngIf="startDate || endDate" mat-raised-button color="primary" i18n (click)="resetDateFilter()" [disabled]="table.filter === ''">View All Transactions</button>
+    <button mat-raised-button color="accent" i18n (click)="exportTableData()" *ngIf="!emptyTable">Export Transactions</button>
   </div>
   <div class="transaction-date-fields">
     <mat-form-field>
@@ -19,7 +19,9 @@
   </div>
 </div>
 <mat-card class="margin-lr" *ngIf="showBalanceWarning">
-  <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  <mat-card-content>
+    <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  </mat-card-content>
 </mat-card>
 <ng-container *ngIf="!isLoading; else loadingTpl">
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
@@ -57,7 +59,7 @@
   </mat-table>
 </ng-container>
 <ng-template #loadingTpl>
-  <p i18n>Loading transactions...</p>
+  <planet-loading-spinner text="Loading transactions..." i18n-text></planet-loading-spinner>
 </ng-template>
 <ng-template #emptyMessage>
   <p i18n>There are no transactions</p>

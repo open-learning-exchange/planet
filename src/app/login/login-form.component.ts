@@ -28,7 +28,7 @@ interface RegisterForm {
 }
 
 interface LoginForm {
-  name: [ string, ValidatorFn ],
+  name: [ string, ValidatorFn | ValidatorFn[] ],
   password: [ string, ValidatorFn ]
 }
 
@@ -46,7 +46,7 @@ const registerForm: RegisterForm = {
 };
 
 const loginForm: LoginForm = {
-  name: [ '', CustomValidators.required ],
+  name: [ '', [ Validators.required, CustomValidators.required ] ],
   password: [ '', Validators.required ]
 };
 
@@ -293,7 +293,7 @@ export class LoginFormComponent {
   openNotificationsDialog(surveys) {
     this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
       data: { surveys },
-      width: '40vw',
+      maxWidth: '60vw',
       maxHeight: '90vh',
       autoFocus: false
     });

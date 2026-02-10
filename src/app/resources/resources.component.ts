@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -18,7 +18,6 @@ import {
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
-import { debug } from '../debug-operator';
 import { SyncService } from '../shared/sync.service';
 import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
@@ -122,7 +121,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
@@ -137,6 +135,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
+    this.dialogsLoadingService.start();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -150,6 +149,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }, () => {
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
@@ -253,7 +255,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     // Reset the message when the dialog closes
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog')).subscribe(() => {
+    this.deleteDialog.afterClosed().subscribe(() => {
       this.message = '';
     });
   }

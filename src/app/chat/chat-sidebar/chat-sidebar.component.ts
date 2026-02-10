@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -15,7 +15,6 @@ import { UserService } from '../../shared/user.service';
 
 interface TitleForm {
   title: FormControl<string>;
-  [key: string]: AbstractControl<any, any>;
 }
 
 @Component({
@@ -33,19 +32,20 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.recordSearch();
     this.filterConversations();
   }
-  conversations: Conversation[];
-  filteredConversations: Conversation[];
-  selectedConversation: Conversation;
+  conversations: Conversation[] = [];
+  filteredConversations: Conversation[] = [];
+  selectedConversation: Conversation | null = null;
   lastRenderedConversation: number;
-  isEditing: boolean;
-  provider: AIProvider;
+  isEditing = false;
+  provider?: AIProvider;
   fullTextSearch = false;
-  searchType: 'questions' | 'responses';
+  searchType: 'questions' | 'responses' | null = null;
   overlayOpen = false;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
-  titleForm: { [key: string]: FormGroup<TitleForm> } = {};
+  titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
+  isLoading = true;
 
   constructor(
     private chatService: ChatService,
@@ -57,6 +57,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private userService: UserService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.lastRenderedConversation = -1;
   }
 
   ngOnInit() {
@@ -120,7 +121,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.overlayOpen = !this.overlayOpen;
   }
 
-  updateConversation(conversation: Conversation, title?: string, shared?: boolean) {
+  updateConversation(conversation: Conversation, title?: string | null, shared?: boolean) {
     this.couchService.updateDocument(
       this.dbName, {
         ...conversation,
@@ -135,12 +136,16 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   submitTitle(conversation: Conversation) {
-    if (this.titleForm[conversation._id].valid) {
-      const title = this.titleForm[conversation._id].controls.title.value;
+    const formGroup = this.titleForm[conversation._id];
+    if (!formGroup) {
+      return;
+    }
+    if (formGroup.valid) {
+      const title = formGroup.controls.title.value;
       this.updateConversation(conversation, title);
       this.toggleEditTitle();
     } else {
-      showFormErrors(this.titleForm[conversation._id].controls);
+      showFormErrors(formGroup.controls);
     }
   }
 
@@ -153,10 +158,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   }
 
   getChatHistory(newChat: boolean = false) {
+    this.isLoading = true;
     this.chatService
       .findConversations([], [ this.userService.get().name ])
       .subscribe(
-        (conversations: any) => {
+        (conversations: Conversation[]) => {
           this.conversations = conversations
             .filter((conversation) => !conversation?.context)
             .sort((a, b) => {
@@ -166,21 +172,28 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
               return dateB - dateA;
             });
           this.filteredConversations = [ ...this.conversations ];
-          if (newChat) {
+          if (newChat && this.filteredConversations.length) {
             this.selectConversation(this.filteredConversations[0], 0);
           }
           this.initializeFormGroups();
+          this.isLoading = false;
         },
-        (error) => console.log(error)
+        (error) => {
+          this.isLoading = false;
+        }
       );
   }
 
-  selectConversation(conversation, index: number) {
+  selectConversation(conversation: Conversation, index: number) {
     this.selectedConversation = conversation;
-    const aiProvider: AIProvider = {
-      name: this.selectedConversation['aiProvider'],
-    };
-    this.chatService.setChatAIProvider(aiProvider);
+    if (this.selectedConversation?.aiProvider) {
+      const aiProvider: AIProvider = {
+        name: this.selectedConversation.aiProvider,
+      };
+      this.chatService.setChatAIProvider(aiProvider);
+    } else {
+      this.chatService.setChatAIProvider(undefined);
+    }
     const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
       '_id': conversation?._id,
