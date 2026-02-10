@@ -107,39 +107,51 @@ export class ConfigurationComponent implements OnInit {
       this.initUpdate();
     }
     this.loginForm = this.formBuilder.group({
-      name: [ '', [
-        Validators.required,
-        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
-      ],
-      password: [ '', [
-        Validators.required,
-        CustomValidators.matchPassword('confirmPassword', false) ]
-      ],
-      confirmPassword: [ '', [
-        Validators.required,
-        CustomValidators.matchPassword('password', true) ]
-      ]
+      name: this.formBuilder.control('', {
+        validators: [
+          Validators.required,
+          CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+          Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
+        ]
+      }),
+      password: this.formBuilder.control('', {
+        validators: [
+          Validators.required,
+          CustomValidators.matchPassword('confirmPassword', false)
+        ]
+      }),
+      confirmPassword: this.formBuilder.control('', {
+        validators: [
+          Validators.required,
+          CustomValidators.matchPassword('password', true)
+        ]
+      })
     });
     this.configurationFormGroup = this.formBuilder.group({
-      planetType: [ '', Validators.required ],
+      planetType: this.formBuilder.control('', { validators: [ Validators.required ] }),
       localDomain: this.formBuilder.control(this.defaultLocal),
-      name:  ['', [ Validators.required, Validators.pattern(/^[A-Za-z0-9]/i) ], this.parentUniqueValidator('name') ],
-      parentDomain: [ '', Validators.required ],
-      parentCode: [ '', Validators.required ],
-      preferredLang: [ '', Validators.required ],
-      code: [ '', Validators.required, this.parentUniqueValidator('code') ],
+      name: this.formBuilder.control('', {
+        validators: [ Validators.required, Validators.pattern(/^[A-Za-z0-9]/i) ],
+        asyncValidators: [ this.parentUniqueValidator('name') ]
+      }),
+      parentDomain: this.formBuilder.control('', { validators: [ Validators.required ] }),
+      parentCode: this.formBuilder.control('', { validators: [ Validators.required ] }),
+      preferredLang: this.formBuilder.control('', { validators: [ Validators.required ] }),
+      code: this.formBuilder.control('', {
+        validators: [ Validators.required ],
+        asyncValidators: [ this.parentUniqueValidator('code') ]
+      }),
       createdDate: this.formBuilder.control<number | DatePlaceholder>(this.couchService.datePlaceholder),
       autoAccept: this.formBuilder.control(true),
       alwaysOnline: this.formBuilder.control(false),
       betaEnabled: this.formBuilder.control('off')
     });
     this.contactFormGroup = this.formBuilder.group({
-      firstName: [ '', CustomValidators.required ],
-      lastName: [ '', CustomValidators.required ],
-      middleName: '',
-      email: [ '', [ Validators.required, Validators.email ] ],
-      phoneNumber: [ '', CustomValidators.required ]
+      firstName: this.formBuilder.control('', { validators: [ CustomValidators.required ] }),
+      lastName: this.formBuilder.control('', { validators: [ CustomValidators.required ] }),
+      middleName: this.formBuilder.control(''),
+      email: this.formBuilder.control('', { validators: [ Validators.required, Validators.email ] }),
+      phoneNumber: this.formBuilder.control('', { validators: [ CustomValidators.required ] })
     });
     this.getNationList();
   }

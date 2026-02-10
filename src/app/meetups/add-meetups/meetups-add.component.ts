@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { interval, of, race } from 'rxjs';
 import { debounce, switchMap } from 'rxjs/operators';
@@ -74,7 +74,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     private planetMessageService: PlanetMessageService,
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private userService: UserService,
     private stateService: StateService
   ) {
@@ -149,20 +149,24 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   createForm() {
     this.meetupForm = this.fb.group<MeetupFormControls>({
-      title: new FormControl('', { validators: [ CustomValidators.required ] }),
-      description: new FormControl('', { validators: [ CustomValidators.required ] }),
-      startDate: new FormControl<string | Date | null>(this.meetup?.startDate ?? '', { validators: [ Validators.required ] }),
-      endDate: new FormControl<string | Date | null>(this.meetup?.endDate ?? '', { validators: [ CustomValidators.endDateValidator() ] }),
-      recurring: new FormControl('none'),
+      title: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      description: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      startDate: new FormControl<string | Date | null>(this.meetup?.startDate ?? '', {
+        validators: [ Validators.required ]
+      }),
+      endDate: new FormControl<string | Date | null>(this.meetup?.endDate ?? '', {
+        validators: [ CustomValidators.endDateValidator() ]
+      }),
+      recurring: this.fb.control('none'),
       day: new FormArray<FormControl<string>>([]),
-      startTime: new FormControl('', { validators: [ CustomValidators.timeValidator() ] }),
-      endTime: new FormControl('', { validators: [ CustomValidators.timeValidator() ] }),
-      category: new FormControl(''),
-      meetupLocation: new FormControl(''),
-      meetupLink: new FormControl('', { asyncValidators: [ CustomValidators.validLink ] }),
-      createdBy: new FormControl(this.userService.get().name),
-      sourcePlanet: new FormControl(this.stateService.configuration.code),
-      createdDate: new FormControl<number | DatePlaceholder>(this.couchService.datePlaceholder),
+      startTime: this.fb.control('', { validators: [ CustomValidators.timeValidator() ] }),
+      endTime: this.fb.control('', { validators: [ CustomValidators.timeValidator() ] }),
+      category: this.fb.control(''),
+      meetupLocation: this.fb.control(''),
+      meetupLink: this.fb.control('', { asyncValidators: [ CustomValidators.validLink ] }),
+      createdBy: this.fb.control(this.userService.get().name),
+      sourcePlanet: this.fb.control(this.stateService.configuration.code),
+      createdDate: this.fb.control<number | DatePlaceholder>(this.couchService.datePlaceholder),
       recurringNumber: new FormControl<number | null>(10, {
         validators: [ Validators.min(2), CustomValidators.integerValidator ]
       })
