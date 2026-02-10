@@ -16,6 +16,11 @@
 
 .upgrade_mat-card {
   max-width: 400px;
+
+  mat-card-actions {
+    justify-content: center;
+    gap: 1rem;
+  }
 }
 
 .upgrade_mat-card-icon {

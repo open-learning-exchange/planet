@@ -1,11 +1,7 @@
-mat-card {
-  height: calc(100% - 2.25rem);
+mat-grid-tile .mat-mdc-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  height: 100%;
   width: 100%;
-}
-
-mat-card-content {
-  height: calc(100% - 7rem);
-  overflow-y: hidden;
 }
 
 .fixed {
