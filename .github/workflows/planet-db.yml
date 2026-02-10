@@ -49,7 +49,7 @@ jobs:
 
       - name: Build image
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -72,7 +72,7 @@ jobs:
 
       - name: Multiarch Deploy
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
@@ -92,7 +92,7 @@ jobs:
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests

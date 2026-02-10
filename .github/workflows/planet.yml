@@ -64,7 +64,7 @@ jobs:
       - name: Pre-Build Planet
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo .
@@ -74,7 +74,7 @@ jobs:
       - name: Push latest pre-build
         if: ${{ (github.ref == 'refs/heads/master' || env.IS_RELEASE == 'true') && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker tag $repo $latestrepo
@@ -102,7 +102,7 @@ jobs:
       - name: Tag prebuild as latest
         continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker pull $prerepo
@@ -110,7 +110,7 @@ jobs:
 
       - name: Build single language build
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$BRANCH"
           export NODE_OPTIONS=--max_old_space_size=4096
@@ -142,7 +142,7 @@ jobs:
 
       - name: Build image
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$BRANCH"
           LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
@@ -185,7 +185,7 @@ jobs:
 
       - name: Multiarch Deploy
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
@@ -205,7 +205,7 @@ jobs:
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests

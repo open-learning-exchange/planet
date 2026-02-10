@@ -35,7 +35,7 @@ jobs:
 
       - name: deploy
         run: |
-          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH="$(echo "$GITHUB_REF_NAME" | sed -E 's#[^A-Za-z0-9_.-]#-#g')"
           if [[ "${{ github.event.inputs.hostname }}" == "" ]]; then
             SERVER_HOST="planet.dev.ole.org"
           else
