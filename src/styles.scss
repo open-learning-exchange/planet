@@ -646,20 +646,27 @@ body {
     padding-top: 0.5rem;
   }
 
-  .chip-no-style {
-    pointer-events: none;
-    &:focus::after {
-      opacity: 0;
-    }
-    &> mat-icon {
-      pointer-events: auto;
-    }
-  }
+  .tags-list .mat-mdc-chip {
+    max-width: 200px;
 
-  // For the members page roles
-  @media(max-width: $screen-sm) {
-    .mat-column-roles .mat-chip-list div.mat-chip-list-wrapper {
-      flex-wrap: nowrap;
+    .mdc-evolution-chip__action,
+    .mdc-evolution-chip__cell--primary {
+      color: inherit;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .mdc-evolution-chip__text-label,
+    .mat-mdc-chip-action-label {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      :focus, :hover {
+        color: currentColor;
+      }
     }
   }
 
