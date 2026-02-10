@@ -14,22 +14,24 @@ import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 
+type DatePlaceholder = CouchService['datePlaceholder'];
+
 interface MeetupFormControls {
-  title: [ string, ValidatorFn? ];
-  description: [ string, ValidatorFn? ];
-  startDate: [ string | Date | null, ValidatorFn? ];
-  endDate: [ string | Date | null, ValidatorFn? ];
-  recurring: [ string ];
+  title: FormControl<string>;
+  description: FormControl<string>;
+  startDate: FormControl<string | Date | null>;
+  endDate: FormControl<string | Date | null>;
+  recurring: FormControl<string>;
   day: FormArray<FormControl<string>>;
-  startTime: [ string, ValidatorFn? ];
-  endTime: [ string, ValidatorFn? ];
-  category: [ string ];
-  meetupLocation: [ string ];
-  meetupLink: [ string ];
-  createdBy: [ string ];
-  sourcePlanet: [ string ];
-  createdDate: [ string ];
-  recurringNumber: [ number | null, ValidatorFn? ];
+  startTime: FormControl<string>;
+  endTime: FormControl<string>;
+  category: FormControl<string>;
+  meetupLocation: FormControl<string>;
+  meetupLink: FormControl<string>;
+  createdBy: FormControl<string>;
+  sourcePlanet: FormControl<string>;
+  createdDate: FormControl<number | DatePlaceholder>;
+  recurringNumber: FormControl<number | null>;
 }
 
 @Component({
@@ -53,7 +55,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Output() onGoBack = new EventEmitter<any>();
   message = '';
-  meetupForm: FormGroup;
+  meetupForm: FormGroup<MeetupFormControls>;
   readonly dbName = 'meetups'; // database name constant
   categories = constants.categories;
   pageType = 'Add new';
@@ -146,22 +148,24 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   createForm() {
-    this.meetupForm = this.fb.group({
-      title: [ '', CustomValidators.required ],
-      description: [ '', CustomValidators.required ],
-      startDate: [ this.meetup?.startDate ?? '', Validators.required ],
-      endDate: [ this.meetup?.endDate ?? '', CustomValidators.endDateValidator() ],
-      recurring: [ 'none' ],
+    this.meetupForm = this.fb.group<MeetupFormControls>({
+      title: new FormControl('', { validators: [ CustomValidators.required ] }),
+      description: new FormControl('', { validators: [ CustomValidators.required ] }),
+      startDate: new FormControl<string | Date | null>(this.meetup?.startDate ?? '', { validators: [ Validators.required ] }),
+      endDate: new FormControl<string | Date | null>(this.meetup?.endDate ?? '', { validators: [ CustomValidators.endDateValidator() ] }),
+      recurring: new FormControl('none'),
       day: new FormArray<FormControl<string>>([]),
-      startTime: [ '', CustomValidators.timeValidator() ],
-      endTime: [ '', CustomValidators.timeValidator() ],
-      category: [ '' ],
-      meetupLocation: [ '' ],
-      meetupLink: [ '', [], CustomValidators.validLink ],
-      createdBy: [ this.userService.get().name ],
-      sourcePlanet: [ this.stateService.configuration.code ],
-      createdDate: [ this.couchService.datePlaceholder ],
-      recurringNumber: [ 10, [ Validators.min(2), CustomValidators.integerValidator ] ]
+      startTime: new FormControl('', { validators: [ CustomValidators.timeValidator() ] }),
+      endTime: new FormControl('', { validators: [ CustomValidators.timeValidator() ] }),
+      category: new FormControl(''),
+      meetupLocation: new FormControl(''),
+      meetupLink: new FormControl('', { asyncValidators: [ CustomValidators.validLink ] }),
+      createdBy: new FormControl(this.userService.get().name),
+      sourcePlanet: new FormControl(this.stateService.configuration.code),
+      createdDate: new FormControl<number | DatePlaceholder>(this.couchService.datePlaceholder),
+      recurringNumber: new FormControl<number | null>(10, {
+        validators: [ Validators.min(2), CustomValidators.integerValidator ]
+      })
     }, {
       validators: CustomValidators.meetupTimeValidator()
     });
