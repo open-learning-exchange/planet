@@ -350,6 +350,9 @@ body {
   // Note checkbox column must be named "select" in table
   .mat-column-select {
     overflow: visible;
+    // Reduce padding for MDC checkbox cells
+    padding-left: 12px !important;
+    max-width: 44px;
   }
 
   .planet-radio-section {
