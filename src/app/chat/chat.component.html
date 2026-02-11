@@ -5,6 +5,7 @@
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
   <mat-form-field *ngIf="displayToggle" class="mdc-toolbar-input">
+    <mat-label i18n>AI Service</mat-label>
     <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
       <mat-option *ngFor="let service of aiServices" [value]="service.model">
         {{service.name}}

@@ -37,14 +37,14 @@
       <mat-form-field>
         <mat-label i18n>Start Date</mat-label>
         <input matInput [matDatepicker]="datepickerStart" required="true" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matIconSuffix [for]="datepickerStart"></mat-datepicker-toggle>
         <mat-datepicker #datepickerStart></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label i18n>End Date</mat-label>
         <input matInput [matDatepicker]="datepickerEnd" formControlName="endDate">
-        <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matIconSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
         <mat-datepicker #datepickerEnd></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
       </mat-form-field>

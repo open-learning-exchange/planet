@@ -10,7 +10,8 @@
       {isAllSelected(), select, yes {Deselect} no {Select}} all
     </button>
     <mat-form-field *ngIf="dropdownField && dropdownOptions.length > 1" class="font-size-1 margin-lr-3">
-      <mat-select [placeholder]="dropdownField" [value]="data.dropdownSettings.startingValue.value" (selectionChange)="onFilterChange($event.value, dropdownField)">
+      <mat-label>{{ dropdownField }}</mat-label>
+      <mat-select [value]="data.dropdownSettings.startingValue.value" (selectionChange)="onFilterChange($event.value, dropdownField)">
         <mat-option *ngFor="let option of dropdownOptions" value={{option.value}}>{{option.text}}</mat-option>
       </mat-select>
     </mat-form-field>

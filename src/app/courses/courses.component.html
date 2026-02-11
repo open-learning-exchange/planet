@@ -4,6 +4,7 @@
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <mat-label i18n>Labels</mat-label>
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
       <span class="toolbar-fill"></span>
@@ -16,6 +17,7 @@
       <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
       <span i18n>{myCoursesFilter.value, select, on {myCourses} off {Courses}}</span>
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-4 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <mat-label i18n>Labels</mat-label>
         <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="courses.filteredData" [helperText]="false" [largeFont]="true" [selectMany]="false" mode="filter" [updateRouteParam]="!isDialog"></planet-tag-input>
       </mat-form-field>
       <span class="toolbar-fill"></span>
@@ -72,6 +74,7 @@
   <ng-template #actionButtons>
     <ng-container *ngIf="user.isUserAdmin">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <mat-label i18n>Labels</mat-label>
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>

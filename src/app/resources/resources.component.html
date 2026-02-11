@@ -27,6 +27,7 @@
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
   <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
+    <mat-label i18n>Labels</mat-label>
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
 </ng-template>
@@ -74,6 +75,7 @@
   <ng-template #actionButtons>
     <ng-container *planetAuthorizedRoles="'manager'">
       <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
+        <mat-label i18n>Labels</mat-label>
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>

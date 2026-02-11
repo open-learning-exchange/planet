@@ -8,14 +8,14 @@
     <mat-form-field>
       <mat-label i18n>Pick Start Date</mat-label>
       <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
-      <mat-datepicker-toggle matSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+      <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterStart></mat-datepicker>
       <mat-error i18n *ngIf="startDate > endDate">Start date must be before end date</mat-error>
     </mat-form-field>
     <mat-form-field>
       <mat-label i18n>Pick End Date</mat-label>
       <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder [min]="startDate">
-      <mat-datepicker-toggle matSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+      <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterEnd></mat-datepicker>
     </mat-form-field>
   </div>

@@ -45,6 +45,7 @@
             <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
               <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
                 <mat-form-field class="mat-form-field" style="width: 50%;">
+                  <mat-label i18n>Title</mat-label>
                   <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
                   <mat-error>
                     <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>

@@ -43,6 +43,7 @@
               <input matInput [formControl]="answer">
             </mat-form-field>
             <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
+              <mat-label i18n>Answer</mat-label>
               <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
             </mat-form-field>
             <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
@@ -54,11 +55,13 @@
                   <mat-radio-button [value]="currentOtherOption">
                     <span class="multiple-choice-text" i18n>Other: </span>
                   </mat-radio-button>
-                  <input matInput
-                    class="other-option-input"
-                    [disabled]="!isOtherSelected()"
-                    [(ngModel)]="currentOtherOption.text"
-                    (ngModelChange)="updateOtherText()">
+                  <mat-form-field class="other-option-input">
+                    <mat-label i18n>Other</mat-label>
+                    <input matInput
+                      [disabled]="!isOtherSelected()"
+                      [(ngModel)]="currentOtherOption.text"
+                      (ngModelChange)="updateOtherText()">
+                  </mat-form-field>
                 </div>
               </ng-container>
             </mat-radio-group>
@@ -74,7 +77,10 @@
                   <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
                     <span class="multiple-choice-text" i18n>Other: </span>
                   </mat-checkbox>
-                  <input matInput class="other-option-input" [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                  <mat-form-field class="other-option-input">
+                    <mat-label i18n>Other</mat-label>
+                    <input matInput [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                  </mat-form-field>
                 </div>
               </ng-container>
             </div>
