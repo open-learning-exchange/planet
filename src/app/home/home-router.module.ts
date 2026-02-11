@@ -24,11 +24,11 @@ const alwaysGuardedRoutes = [
   {
     path: 'manager',
     loadChildren: () => import('../manager-dashboard/manager-dashboard.module').then(m => m.ManagerDashboardModule),
-    data: { roles: [ '_admin' ] }
+    data: { roles: [ '_admin' ], preload: true }
   },
-  { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule) },
+  { path: 'courses', loadChildren: () => import('../courses/courses.module').then(m => m.CoursesModule), data: { preload: true } },
   { path: 'feedback', loadChildren: () => import('../feedback/feedback.module').then(m => m.FeedbackModule) },
-  { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule) },
+  { path: 'resources', loadChildren: () => import('../resources/resources.module').then(m => m.ResourcesModule), data: { preload: true } },
   { path: 'chat', loadChildren: () => import('../chat/chat.module').then(m => m.ChatModule) },
   { path: 'meetups', loadChildren: () => import('../meetups/meetups.module').then(m => m.MeetupsModule) },
   { path: 'notifications', component: NotificationsComponent },
