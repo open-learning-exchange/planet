@@ -4,7 +4,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -15,6 +15,7 @@ import {
   DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 interface ExamAnswerOption {
   id: string;
@@ -49,7 +50,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   stepNum = 0;
   maxQuestions = 0;
   statusMessage = '';
-  spinnerOn = true;
   title = '';
   grade;
   submissionId: string;
@@ -105,6 +105,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
     private stateService: StateService,
+    private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
   ) {
     this.examForm = this.formBuilder.group({
@@ -151,7 +152,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.mode = mode || this.mode;
     this.answer.setValue(null);
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
-    this.spinnerOn = true;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
       this.statusMessage = '';
@@ -181,15 +181,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    this.dialogsLoadingService.start();
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
 // Only navigate away from page until after successful post (ensures DB is updated for submission list)
-    obs.subscribe(({ nextQuestion }) => {
+    obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
-        this.spinnerOn = false;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
         // Challenge option only
@@ -215,7 +215,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.isDialog) {
-      this.spinnerOn = false;
       return;
     }
     this.examComplete();
@@ -228,7 +227,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
-      this.spinnerOn = false;
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
@@ -237,7 +235,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.currentOtherOption = { id: 'other', text: '', isOther: true };
     }
     this.isNewQuestion = true;
-    this.spinnerOn = false;
   }
 
   examComplete() {

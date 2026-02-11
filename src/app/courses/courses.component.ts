@@ -169,6 +169,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
       this.isLoading = false;
       this.dialogsLoadingService.stop();
+    }, () => {
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
     });
     this.selection.changed.subscribe(({ source }) => {
       this.countSelectNotEnrolled(source.selected);

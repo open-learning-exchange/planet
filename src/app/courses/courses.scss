@@ -4,10 +4,6 @@ $toolbar-height: 25vh;
 $label-height: 1rem;
 
 /* Column Widths */
-.mat-column-select {
-  max-width: 44px;
-}
-
 .mat-column-info {
   max-width: 200px;
   align-self: start;
@@ -57,14 +53,6 @@ $label-height: 1rem;
 
 .break-word {
   word-break: break-word;
-}
-
-.tags-list mat-chip {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
 }
 
 planet-courses {

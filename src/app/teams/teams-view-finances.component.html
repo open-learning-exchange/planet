@@ -19,7 +19,9 @@
   </div>
 </div>
 <mat-card class="margin-lr" *ngIf="showBalanceWarning">
-  <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  <mat-card-content>
+    <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  </mat-card-content>
 </mat-card>
 <ng-container *ngIf="!isLoading; else loadingTpl">
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
@@ -57,7 +59,7 @@
   </mat-table>
 </ng-container>
 <ng-template #loadingTpl>
-  <p i18n>Loading transactions...</p>
+  <planet-loading-spinner text="Loading transactions..." i18n-text></planet-loading-spinner>
 </ng-template>
 <ng-template #emptyMessage>
   <p i18n>There are no transactions</p>

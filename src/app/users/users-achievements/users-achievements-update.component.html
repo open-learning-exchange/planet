@@ -60,8 +60,10 @@
           </a>
           <planet-step-list [steps]="achievements" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let achievement of achievements.controls; index as i">
-              <span>{{achievement.value.title || achievement.value}}</span>
-              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+              <span matListItemTitle>{{achievement.value.title || achievement.value}}</span>
+              <ng-container matListItemMeta>
+                <button mat-stroked-button type="button" class="margin-lr-4" (click)="addAchievement(i, achievement.value)" i18n>Edit</button>
+              </ng-container>
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addAchievement()" mat-stroked-button color="primary" i18n>Enter an Achievement</button>
@@ -70,8 +72,10 @@
           <p class="mat-hint mat-caption" i18n>Add any references below</p>
           <planet-step-list [steps]="references" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let reference of references.controls; index as i">
-              <span>{{reference.value.name}}</span>
-              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, reference.value)" i18n>Edit</button>
+              <span matListItemTitle>{{reference.value.name}}</span>
+              <ng-container matListItemMeta>
+                <button mat-stroked-button type="button" class="margin-lr-4" (click)="addReference(i, reference.value)" i18n>Edit</button>
+              </ng-container>
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addReference()" mat-stroked-button color="primary" i18n>Enter a Reference</button>
@@ -80,13 +84,15 @@
           <p class="mat-hint mat-caption" i18n>Add any links below</p>
           <planet-step-list [steps]="links" [ignoreClick]="true">
             <planet-step-list-item *ngFor="let link of links.controls; index as i">
-              <span>{{link.value.title}}</span>
-              <button mat-stroked-button type="button" class="margin-lr-4" (click)="addLink(i, link.value)" i18n>Edit</button>
+              <span matListItemTitle>{{link.value.title}}</span>
+              <ng-container matListItemMeta>
+                <button mat-stroked-button type="button" class="margin-lr-4" (click)="addLink(i, link.value)" i18n>Edit</button>
+              </ng-container>
             </planet-step-list-item>
           </planet-step-list>
           <button type="button" (click)="addLink()" mat-stroked-button color="primary" i18n>Enter a Link</button>
         </div>
-        <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
+        <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
           Allow your achievements to be shared with the nation
         </mat-checkbox>
       </form>

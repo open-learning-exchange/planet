@@ -14,7 +14,7 @@ import { DialogField, DialogsFormData } from './dialogs-form.service';
       margin: 0 0 20px 0;
     }
 
-    .mat-radio-group.ng-touched.ng-invalid label {
+    .mat-mdc-radio-group.ng-touched.ng-invalid label {
       border-bottom: 2px solid red;
     }
 

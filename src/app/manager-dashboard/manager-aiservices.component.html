@@ -7,11 +7,13 @@
 
 <form class="container" [formGroup]="configForm">
   <mat-card class="card">
-    <mat-card-title i18n>API Keys</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>API Keys</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
         <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span>{{ apiKey.key | titlecase }}</span>
             <mat-form-field>
               <input
@@ -36,11 +38,13 @@
 
 
   <mat-card class="card">
-    <mat-card-title i18n>Models</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Models</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
         <mat-list-item *ngFor="let model of configuration.models | keyvalue">
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span>{{ model.key | titlecase }}</span>
             <mat-form-field>
               <input matInput [formControlName]="'models_' + model.key" placeholder="Enter model" i18n-placeholder />
@@ -52,11 +56,13 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.assistant">
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n>Name:</span>
             <mat-form-field>
               <input matInput formControlName="assistantName" placeholder="Assistant name" i18n-placeholder/>
@@ -75,11 +81,13 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Chat Configurations</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Chat Configurations</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n>Chat streaming:</span>
             <mat-slide-toggle
               formControlName="streaming"
