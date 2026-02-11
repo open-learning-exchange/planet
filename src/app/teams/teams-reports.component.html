@@ -4,10 +4,11 @@
     Export as CSV
   </button>
 </div>
-<div *ngIf="!reports || reports?.length === 0">
+<planet-loading-spinner *ngIf="isLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
+<div *ngIf="!isLoading && (!reports || reports?.length === 0)">
   <p i18n>No reports available at the moment.</p>
 </div>
-<mat-grid-list [cols]="columns" gutterSize="0.5rem" rowHeight="22rem" id="report-grid">
+<mat-grid-list *ngIf="!isLoading" [cols]="columns" gutterSize="0.5rem" rowHeight="22rem" id="report-grid">
   <mat-grid-tile *ngFor="let report of reports" (click)="openReportDialog(report)">
     <mat-card>
       <mat-card-header>

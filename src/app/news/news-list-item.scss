@@ -12,12 +12,7 @@ mat-card {
 }
 
 mat-card-header {
-  width: 100%;
   display: block;
-}
-
-::ng-deep .mat-card-header-text {
-  margin: 0 !important;
 }
 
 .subtitle-row {
@@ -27,7 +22,7 @@ mat-card-header {
 }
 
 mat-card-content {
-  margin-bottom: 0;
+  padding-top: 1rem;
 }
 
 .chat-container {
@@ -43,21 +38,16 @@ mat-card-content {
   height: 40px;
 }
 
-.chip-outline-accent {
+.mat-mdc-chip.chip-outline-accent {
   background-color: $accent-lighter;
 }
 
-.chip-outline-primary {
+.mat-mdc-chip.chip-outline-primary {
   background-color: $primary-lighter;
 }
 
-.chip-outline-grey {
+.mat-mdc-chip.chip-outline-grey {
   background-color: $light-grey;
-}
-
-mat-chip {
-  pointer-events: auto;
-  cursor: pointer;
 }
 
 .user-name-truncate {
@@ -69,13 +59,4 @@ mat-chip {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-@media (max-width: $screen-xs) {
-  .subtitle-row .label-panel .mat-chip {
-    max-width: 80px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 }

@@ -2,8 +2,11 @@
 
 planet-tasks {
   mat-action-list {
+    .mat-mdc-list-item {
+      align-items: center;
+    }
 
-    mat-checkbox {
+    .mat-mdc-checkbox {
       order: -1;
       margin-right: 0.5rem;
     }
@@ -16,7 +19,7 @@ planet-tasks {
       order: 3;
     }
 
-    .mat-list-item.mat-list-item-with-avatar p[matLine] {
+    .mat-mdc-list-item.mat-mdc-list-item-with-avatar span[matListItemLine] {
       margin-left: -16px;
     }
   }

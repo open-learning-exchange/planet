@@ -5,9 +5,6 @@ $label-height: 1rem;
 
 .resources-list {
   /* Column Widths */
-  .mat-column-select {
-    max-width: 44px;
-  }
   .mat-column-tags {
     max-width: 125px;
   }
@@ -70,14 +67,6 @@ $label-height: 1rem;
 
 .rating-header {
   justify-content: center;
-}
-
-.tags-list mat-chip {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
 }
 
 planet-resources {

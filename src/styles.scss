@@ -350,6 +350,9 @@ body {
   // Note checkbox column must be named "select" in table
   .mat-column-select {
     overflow: visible;
+    // Reduce padding for MDC checkbox cells
+    padding-left: 12px !important;
+    max-width: 44px;
   }
 
   .planet-radio-section {
@@ -540,13 +543,27 @@ body {
     color: $grey;
   }
 
-  .mat-menu-panel.notification-menu {
+  .mat-mdc-menu-panel.notification-menu {
     overflow: hidden;
 
-    .mat-menu-content {
-      div.notification-items {
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
+    .mat-mdc-menu-content .notification-items {
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .menu-item-notification {
+      display: block;
+
+      &.primary-text-color,
+      &.primary-text-color .mdc-list-item__primary-text {
+        color: $primary;
+      }
+
+      &:hover.primary-text-color,
+      &:focus.primary-text-color,
+      &:hover.primary-text-color .mdc-list-item__primary-text,
+      &:focus.primary-text-color .mdc-list-item__primary-text {
+        color: rgba(0, 0, 0, 0.87);
       }
     }
   }
@@ -636,31 +653,42 @@ body {
     padding-top: 0.5rem;
   }
 
-  .chip-no-style {
-    pointer-events: none;
-    &:focus::after {
-      opacity: 0;
-    }
-    &> mat-icon {
-      pointer-events: auto;
-    }
-  }
+  .tags-list .mat-mdc-chip {
+    max-width: 200px;
 
-  // For the members page roles
-  @media(max-width: $screen-sm) {
-    .mat-column-roles .mat-chip-list div.mat-chip-list-wrapper {
-      flex-wrap: nowrap;
+    .mdc-evolution-chip__action,
+    .mdc-evolution-chip__cell--primary {
+      color: inherit;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .mdc-evolution-chip__text-label,
+    .mat-mdc-chip-action-label {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      :focus, :hover {
+        color: currentColor;
+      }
     }
   }
 
   // Course/Resources Details ellipsis menu
-  .actions-menu .mat-menu-content {
+  .actions-menu .mat-mdc-menu-content {
     display: flex;
     flex-flow: column;
     gap: 1rem;
     padding: 1rem;
     text-align: center;
     align-items: center;
+  }
+
+  .exam-question-menu.mat-mdc-menu-panel {
+    max-width: none;
   }
 
   // Styles for the chat-output directive
