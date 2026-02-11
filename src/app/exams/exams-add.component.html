@@ -20,7 +20,7 @@
         <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
         <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
       </div>
-      <mat-menu #questionMenu>
+      <mat-menu #questionMenu="matMenu" class="exam-question-menu">
         <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
@@ -46,8 +46,8 @@
       </mat-accordion>
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
         <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
-          <span class="exam-question">{{ getQuestionLabel(question.value.body, i) }}</span>
-          <span i18n class="margin-lr-4 mat-caption warn-text-color" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
+          <span matListItemTitle>{{ getQuestionLabel(question.value.body, i) }}</span>
+          <span matListItemLine i18n class="mat-caption warn-text-color exam-error" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
         </planet-step-list-item>
         <div planetStepListForm>
           <span class="mat-caption margin-lr-5">

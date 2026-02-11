@@ -69,14 +69,6 @@ $label-height: 1rem;
   justify-content: center;
 }
 
-.tags-list mat-chip {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-}
-
 planet-resources {
   @media(max-width: $screen-md) {
     .resources-list {

@@ -9,15 +9,8 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
   styles: [ `
-    .mat-list-item-disabled {
+    .mat-mdc-list-item-disabled {
       background-color: white;
-    }
-    .mat-card-subtitle p.role-text {
-      min-height: 35px;
-    }
-    .mat-card-tasks {
-      max-height: 70px;
-      overflow: hidden;
     }
     .mat-caption {
       font-size: 16px;

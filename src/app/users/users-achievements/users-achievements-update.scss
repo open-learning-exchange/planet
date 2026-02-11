@@ -7,7 +7,7 @@
     }
   }
 
-  planet-step-list .mat-list-base .mat-list-item {
+  planet-step-list .mat-mdc-list-base .mat-mdc-list-item {
     height: inherit;
     padding: 0.25rem 0;
     white-space: pre-wrap;
@@ -25,5 +25,9 @@
   .achievements-checkbox {
     margin-top: 15px;
     margin-bottom: 15px;
+  }
+
+  a[mat-raised-button] mat-icon {
+    vertical-align: middle;
   }
 }
