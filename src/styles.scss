@@ -645,7 +645,11 @@ body {
     margin: 0.25rem;
   }
 
-  mat-tab-group.tabs-padding .mat-tab-body {
+  .mat-mdc-tab {
+    letter-spacing: normal;
+  }
+
+  mat-tab-group.tabs-padding .mat-mdc-tab-body {
     padding-top: 0.5rem;
   }
 
