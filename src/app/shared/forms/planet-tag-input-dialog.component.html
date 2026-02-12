@@ -46,8 +46,8 @@
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="tagChange(subTag._id || subTag.name, { parentTag: tag })" class="cursor-pointer list-item-spacing">
           <mat-icon matListItemIcon class="icon-spacing">subdirectory_arrow_right</mat-icon>
           <mat-checkbox (change)="checkboxChange($event, subTag._id || subTag.name)" [checked]="isInMap(subTag._id || subTag.name, selected)" [indeterminate]="isInMap(subTag._id || subTag.name, indeterminate)" class="checkbox-spacing"></mat-checkbox>
-          <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
-          <span class="count">({{ tag.count || 0 }})</span>
+          <span class="ellipsis-text mat-subtitle-2">{{ subTag.name }}</span>
+          <span class="count">({{ subTag.count || 0 }})</span>
           <ng-container matListItemMeta>
             <span class="toolbar-fill"></span>
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event, subTag)" i18n class="button-spacing">Edit</button>
@@ -76,8 +76,8 @@
       <ng-container *ngIf="subcollectionIsOpen.get(tag._id)">
         <mat-list-item *ngFor="let subTag of tag.subTags" (click)="selectOne(subTag._id || subTag.name)">
           <mat-icon matListItemIcon>subdirectory_arrow_right</mat-icon>
-          <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>
-          <span class="count">({{ tag.count || 0 }})</span>
+          <span class="ellipsis-text mat-subtitle-2">{{ subTag.name }}</span>
+          <span class="count">({{ subTag.count || 0 }})</span>
           <ng-container matListItemMeta>
             <span class="toolbar-fill"></span>
             <button mat-stroked-button *ngIf="isUserAdmin" (click)="editTagClick($event,subTag)" i18n>Edit</button>
