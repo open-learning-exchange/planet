@@ -128,7 +128,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    
+      BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+
     strategy:
       matrix:
         arch: [ amd64, arm, arm64 ]
