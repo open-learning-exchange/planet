@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './teams-reports-dialog.component.html',
   styles: [ `
     h3 {
-      margin-bottom: 0;
+      margin: 0;
     }
     .mat-subtitle-2 {
       margin-top: 0;

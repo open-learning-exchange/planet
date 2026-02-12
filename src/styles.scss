@@ -468,6 +468,7 @@ body {
   .mat-mdc-dialog-actions, .mat-mdc-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
+    gap: 5px;
   }
 
   .no-max-height-dialog .mat-mdc-dialog-content {
