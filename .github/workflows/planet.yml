@@ -186,7 +186,8 @@ jobs:
       - name: Multiarch Deploy
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
+          sudo wget -qO- https://github.com/estesp/manifest-tool/releases/download/v2.2.1/binaries-manifest-tool-2.2.1.tar.gz | sudo tar xzf - -C /usr/local/bin manifest-tool-linux-amd64
+          sudo mv /usr/local/bin/manifest-tool-linux-amd64 /usr/local/bin/manifest_tool
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
           latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
@@ -206,7 +207,8 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
+          sudo wget -qO- https://github.com/estesp/manifest-tool/releases/download/v2.2.1/binaries-manifest-tool-2.2.1.tar.gz | sudo tar xzf - -C /usr/local/bin manifest-tool-linux-amd64
+          sudo mv /usr/local/bin/manifest-tool-linux-amd64 /usr/local/bin/manifest_tool
           sudo chmod +x /usr/local/bin/manifest_tool
           mkdir -p /tmp/MA_manifests
           versiontag="$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
