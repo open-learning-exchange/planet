@@ -1,119 +1,35 @@
-<ng-template #profileContent>
-  <div [ngClass]="{'space-container': !isDialog}">
-    <mat-toolbar class="primary-color font-size-1">
-      <span>{{userDetail.name}}</span>
-      <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isMobile; else actionButtons">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu" class="actions-menu">
-        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </mat-menu>
-    </mat-toolbar>
-    <ng-template #actionButtons>
-      <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
-        <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
-      </button>
-      <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
-        <mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span>
-      </button>
-      <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">
-        Change Password
-      </a>
-    </ng-template>
-    <div class="view-container">
-      <div class="profile-container">
-        <div class="profile-image-section">
-          <ng-container *ngIf="userDetail._attachments; else noAttachment">
-            <img class="profile-image-large" [src]="imageSrc">
-          </ng-container>
-          <ng-template #noAttachment>
-            <img class="profile-image-large" src="assets/image.png">
-          </ng-template>
-        </div>
-        <mat-list class="profile-list-lt">
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Full Name</h4>
-            <p matLine><b>{{userDetail.firstName ? userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName : 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Email</h4>
-            <p matLine><b>{{userDetail.email || 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Language</h4>
-            <p matLine><b>{{userDetail.language || 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Number of Visits</h4>
-            <p matLine><b>{{totalLogins || ''}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Roles</h4>
-            <p matLine><b>{{ getUserRoles().join(', ') }}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </mat-list>
-        <mat-list class="profile-list-rt">
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>DOB</h4>
-            <p matLine><b>{{(userDetail.birthDate | date: 'fullDate') || 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Phone</h4>
-            <p matLine><b>{{userDetail.phoneNumber || 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Level</h4>
-            <p matLine><b><planet-language-label [options]="educationLevel" [label]="userDetail.level || 'N/A'"></planet-language-label></b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Last Login</h4>
-            <p matLine><b>{{(lastLogin || '') | date: 'mediumDate'}} {{(lastLogin || '') | date: 'shortTime'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-          <mat-list-item>
-            <h4 class="primary-text-color" matLine i18n>Member Since</h4>
-            <p matLine><b>{{(userDetail.joinDate | date: 'mediumDate') || 'N/A'}}</b></p>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-        </mat-list>
-      </div>
-      <div class="cards-container">
-        <mat-card>
-          <mat-card-title i18n class="primary-text-color">Teams</mat-card-title>
-          <mat-card-content>
-            <mat-list>
-              <mat-list-item *ngFor="let team of teams" [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
-                <h4 matLine><b>{{team.doc.name}}</b></h4>
-              </mat-list-item>
-              <mat-list-item *ngIf="teams.length === 0">
-                <p matLine i18n>User is not a member of any teams</p>
-              </mat-list-item>
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
-        <mat-card>
-          <mat-card-title i18n class="primary-text-color">Enterprises</mat-card-title>
-          <mat-card-content>
-            <mat-list>
-              <mat-list-item *ngFor="let enterprise of enterprises" [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
-                <h4 matLine><b>{{enterprise.doc.name}}</b></h4>
-              </mat-list-item>
-              <mat-list-item *ngIf="enterprises.length === 0">
-                <p matLine i18n>User is not a member of any enterprises</p>
-              </mat-list-item>
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span>{{userDetail.name}}</span>
+    <mat-icon class="margin-lr-5" *ngIf="userDetail.gender" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="isMobile; else actionButtons">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" class="actions-menu">
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </mat-menu>
+  </mat-toolbar>
+  <ng-template #actionButtons>
+    <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
+      <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
+    </button>
+    <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
+      <mat-icon>mode_edit</mat-icon><span i18n>Edit Profile</span>
+    </button>
+    <a mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" i18n [planetChangePassword]="userDetail">
+      Change Password
+    </a>
+  </ng-template>
+  <div class="view-container">
+    <div class="profile-container">
+      <div class="profile-image-section">
+        <ng-container *ngIf="userDetail._attachments; else noAttachment">
+          <img class="profile-image-large" [src]="imageSrc">
+        </ng-container>
+        <ng-template #noAttachment>
+          <img class="profile-image-large" src="assets/image.png">
+        </ng-template>
       </div>
       <mat-list class="profile-list-lt">
         <mat-list-item>
@@ -203,12 +119,4 @@
       </mat-card>
     </div>
   </div>
-</ng-template>
-<ng-container *ngIf="isDialog; else profilePage">
-  <mat-dialog-content>
-    <ng-container *ngTemplateOutlet="profileContent"></ng-container>
-  </mat-dialog-content>
-</ng-container>
-<ng-template #profilePage>
-  <ng-container *ngTemplateOutlet="profileContent"></ng-container>
-</ng-template>
+</div>
