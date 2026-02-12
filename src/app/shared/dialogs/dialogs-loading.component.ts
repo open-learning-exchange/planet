@@ -11,6 +11,7 @@ import { MatDialogRef } from '@angular/material/dialog';
       overflow: hidden;
       grid-template-rows: 1fr 200px;
       grid-template-columns: 200px;
+      padding: 24px;
     }
     .logo-spinner {
       animation: loading-icon-linear-rotate 4s linear infinite;
