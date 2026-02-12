@@ -2,20 +2,39 @@
 
 $toolbar-height: 25vh;
 $label-height: 1rem;
+.mat-mdc-table {
+  .mat-mdc-row {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+  }
 
-/* Column Widths */
-.mat-column-info {
-  max-width: 200px;
-  align-self: start;
-}
+  .mat-mdc-cell {
+    border: none;
+  }
 
-.mat-column-createdDate {
-  max-width: 100px;
-  align-self: start;
-}
+  /* Column Widths */
+  .mat-column-select {
+    max-width: 44px;
+    padding: 0 0 0 24px;
+  }
 
-.mat-column-rating {
-  max-width: 115px;
+  .mat-column-info {
+    max-width: 200px;
+    align-self: start;
+    padding: 0;
+  }
+
+  .mat-column-createdDate {
+    max-width: 100px;
+    align-self: start;
+    padding: 0;
+  }
+
+  .mat-column-rating {
+    max-width: 145px;
+    padding: 0;
+  }
 }
 
 .column {
