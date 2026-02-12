@@ -470,6 +470,10 @@ body {
     justify-content: flex-end;
   }
 
+  .meetups-add-dialog .mat-mdc-dialog-content {
+    max-height: none;
+  }
+
   mat-row mat-cell {
     flex-wrap: wrap;
     .mat-mdc-raised-button {
