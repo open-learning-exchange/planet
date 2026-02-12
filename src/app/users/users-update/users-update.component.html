@@ -59,7 +59,7 @@
               <mat-label i18n>Birthdate</mat-label>
               <input matInput [matDatepicker]="dp" formControlName="birthDate"
                 [required]="!submissionMode" [min]="minBirthDate">
-              <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
               <mat-datepicker #dp></mat-datepicker>
               <mat-error>
                 <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>

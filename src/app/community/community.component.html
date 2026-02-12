@@ -6,7 +6,7 @@
           <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
               <mat-form-field class="search-form-field mdc-toolbar-input">
                 <mat-label i18n>Search voice</mat-label>
-                <mat-icon matPrefix>search</mat-icon>
+                <mat-icon matIconPrefix>search</mat-icon>
                 <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
               </mat-form-field>
               <mat-form-field class="label-filter-field mdc-toolbar-input">

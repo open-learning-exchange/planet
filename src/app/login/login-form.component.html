@@ -9,7 +9,7 @@
   <mat-form-field class="full-width">
     <mat-label i18n>Password</mat-label>
     <input matInput name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password" required/>
-    <button type="button" mat-icon-button matSuffix (click)="showPassword = !showPassword" tabindex="-1">
+    <button type="button" mat-icon-button matIconSuffix (click)="showPassword = !showPassword" tabindex="-1">
       <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>
@@ -19,7 +19,7 @@
   <mat-form-field class="full-width" *ngIf="createMode">
     <mat-label i18n>Repeat Password</mat-label>
     <input matInput name="repeatPassword" [type]="showRepeatPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
-    <button type="button" mat-icon-button matSuffix (click)="showRepeatPassword = !showRepeatPassword" tabindex="-1">
+    <button type="button" mat-icon-button matIconSuffix (click)="showRepeatPassword = !showRepeatPassword" tabindex="-1">
       <mat-icon>{{showRepeatPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>
