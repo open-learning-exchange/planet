@@ -3,7 +3,11 @@
 
 :host {
   .view-container {
-    display: block;
+    @include left-right-grid-areas;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "lt rt";
+    column-gap: 1rem;
     max-height: 60vh;
     overflow: auto;
   }
@@ -15,9 +19,19 @@
 
   .button-group-right {
     display: flex;
-    
+
     button {
       margin-right: 4px;
+    }
+  }
+
+  @media (max-width: $screen-sm) {
+    .view-container {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "lt"
+        "rt";
+      row-gap: 1rem;
     }
   }
 }
