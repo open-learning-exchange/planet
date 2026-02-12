@@ -10,6 +10,7 @@
                 <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
               </mat-form-field>
               <mat-form-field class="label-filter-field mdc-toolbar-input">
+                <mat-label i18n>Label</mat-label>
                 <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
                   <mat-select-trigger>
                     <ng-container *ngIf="selectedLabel">
