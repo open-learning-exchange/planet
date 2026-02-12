@@ -18,6 +18,15 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
 @Component({
   templateUrl: './meetups.component.html',
   styles: [ `
+    .mat-mdc-row {
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-mdc-cell {
+      border: none;
+    }
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
