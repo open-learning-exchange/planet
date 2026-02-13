@@ -465,7 +465,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openDescriptionDialog() {
     const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
-      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+      description: this.fb.control(this.team.description || '', { validators: [ CustomValidators.requiredMarkdown ] })
     });
 
     this.dialogsFormService.openDialogsForm(
