@@ -10,6 +10,7 @@ import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ConfigurationService } from './configuration.service';
+import { hexToString } from '../shared/utils';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -119,14 +120,36 @@ export class MigrationComponent implements OnInit {
 
   cloneUserDbs() {
     this.couchService.findAll('configurations').pipe(
-      switchMap((configurations: any[]) => this.configurationService.setCouchPerUser({ doc: configurations[0] })),
-      switchMap(() => this.getDatabaseNames()),
-      switchMap((allDatabases: string[]) => forkJoin(
-        allDatabases.filter(db => db.indexOf('userdb-') > -1).map(db => this.syncService.sync(this.syncDoc(db), this.credential))
+      switchMap((configurations: any[]) => this.configurationService.setCouchPerUser({ doc: configurations[0] }).pipe(
+        map(() => configurations[0].code)
+      )),
+      switchMap((planetCode: string) => this.getDatabaseNames().pipe(
+        map((allDatabases: string[]) => ({ allDatabases, planetCode }))
+      )),
+      switchMap(({ allDatabases, planetCode }: { allDatabases: string[], planetCode: string }) => forkJoin(
+        allDatabases
+          .filter(db => this.isUserDbForPlanet(db, planetCode))
+          .map(db => this.syncService.sync(this.syncDoc(db), this.credential))
       ))
     ).subscribe(() => {
       this.replicationCompletionCheck(() => this.completeMigration());
     });
+  }
+
+  isUserDbForPlanet(databaseName: string, planetCode: string) {
+    const match = /^userdb-([^-]+)-([^-]+)$/.exec(databaseName);
+    if (!match) {
+      return false;
+    }
+    const [ , encodedPlanetCode, encodedUserId ] = match;
+    if (!this.isHexValue(encodedPlanetCode) || !this.isHexValue(encodedUserId)) {
+      return false;
+    }
+    return hexToString(encodedPlanetCode) === planetCode && hexToString(encodedUserId).length > 0;
+  }
+
+  isHexValue(value: string) {
+    return value.length > 0 && value.length % 2 === 0 && /^[0-9a-f]+$/i.test(value);
   }
 
   completeMigration() {
