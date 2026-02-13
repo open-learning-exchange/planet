@@ -4,13 +4,13 @@
   </button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
-  <div *ngIf="displayToggle" class="select-container">
-    <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()" class="select-item">
+  <mat-form-field *ngIf="displayToggle" class="mdc-toolbar-input">
+    <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
       <mat-option *ngFor="let service of aiServices" [value]="service.model">
         {{service.name}}
       </mat-option>
     </mat-select>
-  </div>
+  </mat-form-field>
   <ng-template #textDisplay>
     <span i18n>{{activeService}}</span>
   </ng-template>

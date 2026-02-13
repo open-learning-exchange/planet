@@ -18,7 +18,8 @@
     </div>
     <form [formGroup]="certificateForm" novalidate>
       <mat-form-field class="full-width">
-        <input matInput i18n-placeholder placeholder="Certificate Name" formControlName="name" required>
+        <mat-label i18n>Certificate Name</mat-label>
+        <input matInput formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
