@@ -13,6 +13,7 @@
           <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
           <button
             mat-icon-button
+            matIconSuffix
             [planetSubmit]="promptForm.valid && spinnerOn"
             [disabled]="!promptForm.valid || providers.length === 0"
             i18n-matTooltip
