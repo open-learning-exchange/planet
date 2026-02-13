@@ -8,7 +8,7 @@ import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { findByIdInArray, itemsShown } from '../shared/utils';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';

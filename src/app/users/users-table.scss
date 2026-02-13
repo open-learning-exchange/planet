@@ -5,7 +5,7 @@
   max-width: 100px;
 }
 
-.mat-cell.mat-column-name span {
+.mat-mdc-cell.mat-column-name span {
   padding-right:5px;
   overflow: hidden;
   display: -webkit-box;
@@ -27,7 +27,7 @@ button-container {
   justify-content: center;
 }
 
-.mat-cell button, .mat-cell div button[mat-raised-button] {
+.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
   width: 150px;
   text-align: center;
   padding: 8px 12px;
@@ -43,7 +43,7 @@ button-container {
 }
 
 @media (max-width: $screen-sm) {
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
     width: 50px;
   }
 }
