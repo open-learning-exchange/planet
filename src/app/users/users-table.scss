@@ -27,7 +27,7 @@ button-container {
   justify-content: center;
 }
 
-.mat-mdc-cell button, .mat-cell div button[mat-raised-button] {
+.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
   width: 150px;
   text-align: center;
   padding: 8px 12px;
@@ -43,7 +43,7 @@ button-container {
 }
 
 @media (max-width: $screen-sm) {
-  .mat-mdc-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
     width: 50px;
   }
 }
