@@ -31,6 +31,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   fallbackConversation: any[] = [];
   selectedConversationId: any;
   promptForm: PromptFormGroup;
+  pendingNewConversation = false;
   data: ConversationForm = {
     _id: '',
     _rev: '',
@@ -90,12 +91,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.chatService.selectedConversationId$
       .pipe(
         takeUntil(this.onDestroy$),
-        filter(() => {
-          if (this.clearChat) {
-            this.clearChat = false;
-            return false;
-          }
-          return true;
+        filter((conversationId) => {
+          // Only fetch if it's a different conversation or it's being explicitly cleared (null).
+          // This prevents re-fetching the same conversation that we just updated locally.
+          return (conversationId as any)?._id !== (this.selectedConversationId as any)?._id || conversationId === null;
         })
       )
       .subscribe((conversationId) => {
@@ -210,7 +209,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
-      this.postSubmit();
+      this.postSubmit(this.pendingNewConversation);
+      this.pendingNewConversation = false;
     } else {
       this.spinnerOn = false;
       const lastConversation = this.conversations[this.conversations.length - 1];
@@ -219,10 +219,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  postSubmit() {
+  postSubmit(wasNewConversation: boolean = false) { // Add parameter
     this.spinnerOn = true;
-    this.promptForm.controls.prompt.setValue('');
-    this.chatService.sendNewChatAddedSignal();
+    if (wasNewConversation) {
+      this.chatService.sendNewChatAddedSignal(); // Notify sidebar only if a new conversation was created
+    }
   }
 
   onSubmit() {
@@ -234,40 +235,62 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   submitPrompt() {
+    const wasNewConversation = !this.selectedConversationId; // Store state before any changes
+
     const content = this.promptForm.controls.prompt.value;
+    this.promptForm.controls.prompt.setValue(''); // Clear the input field
+
+    if (wasNewConversation) {
+      this.resetConversation(); // Clear local messages only when starting a new conversation
+    }
+    this.pendingNewConversation = wasNewConversation;
+    // Add local message immediately
+    this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
+
+
     this.data = { ...this.data, content, aiProvider: this.provider };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
     }
 
     if (this.streaming) {
-      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
+      const lastConversationIndex = this.conversations.length - 1;
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
+          this.conversations[lastConversationIndex].response = completion?.chat;
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            '_rev': completion.couchDBResponse?.rev,
           };
-          this.postSubmit();
+          this.postSubmit(wasNewConversation); // Pass the flag
         },
         (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+          this.conversations[lastConversationIndex].response = 'Error: ' + error.message;
+          this.conversations[lastConversationIndex].error = true;
           this.spinnerOn = true;
-          this.promptForm.controls.prompt.setValue('');
-        }
+        },
       );
     }
   }
 
   focusInput() {
     this.chatInput?.nativeElement.focus();
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      // Mirror the send button's disabled condition so Enter doesn't bypass it
+      const sendDisabled = !this.promptForm.valid || this.providers.length === 0 || this.disabled;
+      if (!sendDisabled) {
+        this.onSubmit();
+      }
+    }
   }
 }
