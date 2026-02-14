@@ -11,6 +11,16 @@
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>
+  <div class="filter-container">
+    <mat-form-field>
+      <input matInput placeholder="Filter by Name" [ngModel]="filterName" (ngModelChange)="filterName=$event; applyFilter()">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="picker" placeholder="Filter by Date" [ngModel]="filterDate" (ngModelChange)="filterDate=$event; applyFilter()">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
   <div class="view-container view-full-height view-table">
     <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
     <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
