@@ -1,0 +1,11 @@
+export const environment = {
+  production: false,
+  test: false,
+  chatAddress: window.location.protocol + '//' + window.location.hostname + ':5000',
+  couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
+  centerAddress: 'planet.earth.ole.org/db',
+  centerProtocol: 'https',
+  parentProtocol: 'https',
+  upgradeAddress: window.location.origin + '/upgrade',
+  syncAddress: window.location.protocol + '//localhost:5984'
+};
