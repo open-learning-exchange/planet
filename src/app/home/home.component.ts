@@ -147,10 +147,6 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
-  openLanguageSelector(): void {
-    this.languageComponent?.openMenu();
-  }
-
   // Used to swap in different background.
   // Should remove when background is finalized.
   backgroundRoute() {

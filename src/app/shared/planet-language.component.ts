@@ -29,8 +29,4 @@ export class PlanetLanguageComponent implements OnInit {
   getRouterUrl(language) {
     return '/' + language.shortCode + this.router.url;
   }
-
-  openMenu() {
-    this.menuTrigger?.openMenu();
-  }
 }
