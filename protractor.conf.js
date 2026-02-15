@@ -27,18 +27,21 @@ exports.config = {
   },
   onPrepare() {
     var defer = protractor.promise.defer();
+    // Protractor may require an explicit deferred promise to keep onPrepare waiting.
     require('ts-node').register({
       project: './e2e/tsconfig.e2e.json'
     });
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
     browser.params.user = user.get();
 
-    return user.create().then(function(res) {
+    user.create().then(function(res) {
       defer.fulfill();
     })
     .catch(function(err) {
       console.log(err);
+      defer.reject(err);
     });
+    return defer.promise;
   },
   onComplete() {
     return user.delete().then(function(res) {
