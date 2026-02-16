@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, Subject, interval, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce } from 'rxjs/operators';
@@ -16,6 +16,52 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 
+type DateValue = string | Date;
+type DateSortOrder = 'none' | 'asc' | 'desc';
+
+interface AchievementFormControls {
+  title: FormControl<string>;
+  description: FormControl<string>;
+  link: FormControl<string>;
+  date: FormControl<DateValue>;
+}
+
+interface ReferenceFormControls {
+  name: FormControl<string>;
+  relationship: FormControl<string>;
+  phone: FormControl<string>;
+  email: FormControl<string>;
+}
+
+interface LinkFormControls {
+  title: FormControl<string>;
+  url: FormControl<string>;
+}
+
+interface EditFormControls {
+  purpose: FormControl<string>;
+  goals: FormControl<string>;
+  achievementsHeader: FormControl<string>;
+  achievements: FormArray<AchievementFormGroup>;
+  references: FormArray<ReferenceFormGroup>;
+  links: FormArray<LinkFormGroup>;
+  otherInfo: FormArray<FormControl<any>>;
+  sendToNation: FormControl<boolean>;
+  dateSortOrder: FormControl<DateSortOrder>;
+}
+
+interface ProfileFormControls {
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  birthDate: FormControl<DateValue>;
+  birthplace: FormControl<string>;
+}
+
+type AchievementFormGroup = FormGroup<AchievementFormControls>;
+type ReferenceFormGroup = FormGroup<ReferenceFormControls>;
+type LinkFormGroup = FormGroup<LinkFormControls>;
+
 @Component({
   templateUrl: './users-achievements-update.component.html',
   styleUrls: [ 'users-achievements-update.scss' ],
@@ -27,24 +73,24 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   achievementNotFound = false;
-  editForm: UntypedFormGroup;
-  profileForm: UntypedFormGroup;
+  editForm!: FormGroup<EditFormControls>;
+  profileForm!: FormGroup<ProfileFormControls>;
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
-  get achievements(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.achievements;
+  get achievements(): FormArray<AchievementFormGroup> {
+    return this.editForm.controls.achievements;
   }
-  get references(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.references;
+  get references(): FormArray<ReferenceFormGroup> {
+    return this.editForm.controls.references;
   }
-  get links(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.links;
+  get links(): FormArray<LinkFormGroup> {
+    return this.editForm.controls.links;
   }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -127,31 +173,30 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   createForm() {
-    this.editForm = this.fb.group({
-      purpose: '',
-      goals: '',
-      achievementsHeader: '',
-      achievements: this.fb.array([]),
-      references: this.fb.array([]),
-      links: this.fb.array([]),
+    this.editForm = this.fb.group<EditFormControls>({
+      purpose: this.fb.control(''),
+      goals: this.fb.control(''),
+      achievementsHeader: this.fb.control(''),
+      achievements: this.fb.array<AchievementFormGroup>([]),
+      references: this.fb.array<ReferenceFormGroup>([]),
+      links: this.fb.array<LinkFormGroup>([]),
       // Keeping older otherInfo property so we don't lose this info on database
-      otherInfo: this.fb.array([]),
-      sendToNation: false,
-      dateSortOrder: 'none'
+      otherInfo: this.fb.array<FormControl<any>>([]),
+      sendToNation: this.fb.control(false),
+      dateSortOrder: this.fb.control<DateSortOrder>('none')
     });
   }
 
   createProfileForm() {
-    this.profileForm = this.fb.group({
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      birthDate: [
-        '',
-        [ CustomValidators.dateValidRequired ],
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+    this.profileForm = this.fb.group<ProfileFormControls>({
+      firstName: this.fb.control('', { validators: CustomValidators.required }),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', { validators: CustomValidators.required }),
+      birthDate: this.fb.control('', {
+        validators: [ CustomValidators.dateValidRequired ],
+        asyncValidators: ac => this.validatorService.notDateInFuture$(ac)
+      }),
+      birthplace: this.fb.control('')
     });
   }
 
@@ -167,35 +212,38 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     return this.fb.array(links.map((link) => this.createLinkGroup(link)));
   }
 
-  private buildOtherInfoFormArray(otherInfo: any[] = []) {
-    return this.fb.array(otherInfo);
+  private buildOtherInfoFormArray(otherInfo: any[] = []): FormArray<FormControl<any>> {
+    return this.fb.array(otherInfo.map((otherInfoItem) => this.fb.control(otherInfoItem)));
   }
 
-  private createAchievementGroup(achievement: any = { title: '', description: '', link: '', date: '' }) {
+  private createAchievementGroup(achievement: any = { title: '', description: '', link: '', date: '' }): AchievementFormGroup {
     if (typeof achievement === 'string') {
       achievement = { title: '', description: achievement, link: '', date: '' };
     }
-    return this.fb.group({
-      title: [ achievement.title || '', CustomValidators.required ],
-      description: [ achievement.description || '' ],
-      link: [ achievement.link || '', [], CustomValidators.validLink ],
-      date: [ achievement.date || '', null, ac => this.validatorService.notDateInFuture$(ac) ]
+    return this.fb.group<AchievementFormControls>({
+      title: this.fb.control(achievement.title || '', { validators: CustomValidators.required }),
+      description: this.fb.control(achievement.description || ''),
+      link: this.fb.control(achievement.link || '', { asyncValidators: CustomValidators.validLink }),
+      date: this.fb.control(achievement.date || '', { asyncValidators: ac => this.validatorService.notDateInFuture$(ac) })
     });
   }
 
-  private createReferenceGroup(reference: any = { name: '' }) {
-    return this.fb.group({
-      name: [ reference.name || '', CustomValidators.required ],
-      relationship: reference.relationship || '',
-      phone: reference.phone || '',
-      email: [ reference.email || '', Validators.email ]
+  private createReferenceGroup(reference: any = { name: '' }): ReferenceFormGroup {
+    return this.fb.group<ReferenceFormControls>({
+      name: this.fb.control(reference.name || '', { validators: CustomValidators.required }),
+      relationship: this.fb.control(reference.relationship || ''),
+      phone: this.fb.control(reference.phone || ''),
+      email: this.fb.control(reference.email || '', { validators: Validators.email })
     });
   }
 
-  private createLinkGroup(link: any = { title: '', url: '' }) {
-    return this.fb.group({
-      title: [ link.title || '', CustomValidators.required ],
-      url: [ link.url || '', CustomValidators.required, CustomValidators.validLink ]
+  private createLinkGroup(link: any = { title: '', url: '' }): LinkFormGroup {
+    return this.fb.group<LinkFormControls>({
+      title: this.fb.control(link.title || '', { validators: CustomValidators.required }),
+      url: this.fb.control(link.url || '', {
+        validators: CustomValidators.required,
+        asyncValidators: CustomValidators.validLink
+      })
     });
   }
 
@@ -256,8 +304,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     );
   }
 
-  onDialogSubmit(formArray, index) {
-    return (formValue, formGroup) => {
+  onDialogSubmit<T extends FormGroup>(formArray: FormArray<T>, index: number) {
+    return (formValue: unknown, formGroup: T) => {
       if (formValue === undefined) {
         return;
       }
@@ -265,14 +313,14 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     };
   }
 
-  updateFormArray(formArray: UntypedFormArray, value, index = -1) {
+  updateFormArray<T extends FormGroup>(formArray: FormArray<T>, value: T, index = -1) {
     if (index === -1) {
       formArray.push(value);
     } else {
       formArray.setControl(index, value);
     }
     if (value?.get?.('date')) {
-      formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
+      formArray.setValue(this.sortDate(formArray.value as any[], this.editForm.controls.dateSortOrder.value || 'none') as any);
     }
     this.editForm.updateValueAndValidity();
   }
@@ -283,7 +331,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
 
-  sortDate(achievements, sortOrder = 'none') {
+  sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
     if (sortOrder === 'none') {
       return achievements;
     }
@@ -308,7 +356,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
   }
 
-  markAsInvalid(userForm) {
+  markAsInvalid(userForm: FormGroup<any>) {
     if (!userForm.valid) {
       showFormErrors(userForm.controls);
     }
