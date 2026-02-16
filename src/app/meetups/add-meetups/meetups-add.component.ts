@@ -118,7 +118,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     meetup.endDate = meetup.endDate ? new Date(meetup.endDate) : null;
     this.meetupForm.patchValue(meetup);
     this.dayFormArray.clear();
-    dayValues.forEach(day => this.dayFormArray.push(new FormControl(day)));
+    dayValues.forEach(day => this.dayFormArray.push(this.fb.control(day)));
   }
 
   private captureInitialState() {
@@ -151,14 +151,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     this.meetupForm = this.fb.group<MeetupFormControls>({
       title: this.fb.control('', { validators: [ CustomValidators.required ] }),
       description: this.fb.control('', { validators: [ CustomValidators.required ] }),
-      startDate: new FormControl<string | Date | null>(this.meetup?.startDate ?? '', {
+      startDate: this.fb.control<string | Date | null>(this.meetup?.startDate ?? '', {
         validators: [ Validators.required ]
       }),
-      endDate: new FormControl<string | Date | null>(this.meetup?.endDate ?? '', {
+      endDate: this.fb.control<string | Date | null>(this.meetup?.endDate ?? '', {
         validators: [ CustomValidators.endDateValidator() ]
       }),
       recurring: this.fb.control('none'),
-      day: new FormArray<FormControl<string>>([]),
+      day: this.fb.array<FormControl<string>>([]),
       startTime: this.fb.control('', { validators: [ CustomValidators.timeValidator() ] }),
       endTime: this.fb.control('', { validators: [ CustomValidators.timeValidator() ] }),
       category: this.fb.control(''),
@@ -167,7 +167,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       createdBy: this.fb.control(this.userService.get().name),
       sourcePlanet: this.fb.control(this.stateService.configuration.code),
       createdDate: this.fb.control<number | DatePlaceholder>(this.couchService.datePlaceholder),
-      recurringNumber: new FormControl<number | null>(10, {
+      recurringNumber: this.fb.control<number | null>(10, {
         validators: [ Validators.min(2), CustomValidators.integerValidator ]
       })
     }, {
@@ -267,7 +267,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     const dayFormArray = this.dayFormArray;
     if (isChecked) {
       // add to day array if checked
-      dayFormArray.push(new FormControl(day));
+      dayFormArray.push(this.fb.control(day));
     } else {
       // remove from day array if unchecked
       const index = dayFormArray.controls.findIndex(control => control.value === day);
@@ -287,7 +287,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       // add all days to the array if the course is daily
       case 'daily':
         this.days.forEach((day) => {
-          dayFormArray.push(new FormControl(day));
+          dayFormArray.push(this.fb.control(day));
         });
         break;
       case 'weekly':
@@ -297,7 +297,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           const startDateObj = startDateValue instanceof Date ? startDateValue : new Date(startDateValue);
           const dayOfWeek = this.days[startDateObj.getDay()];
           if (dayOfWeek) {
-            dayFormArray.push(new FormControl(dayOfWeek));
+            dayFormArray.push(this.fb.control(dayOfWeek));
           }
         }
         break;

@@ -63,11 +63,11 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
-      temperature: new FormControl<number | null>(null, { validators: [ Validators.min(1) ] }),
-      pulse: new FormControl<number | null>(null, { validators: [ Validators.min(1) ] }),
+      temperature: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      pulse: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
       bp: this.fb.control('', { validators: [ CustomValidators.bpValidator ] }),
-      height: new FormControl<number | null>(null, { validators: [ Validators.min(1) ] }),
-      weight: new FormControl<number | null>(null, { validators: [ Validators.min(1) ] }),
+      height: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      weight: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
       vision: this.fb.control(''),
       hearing: this.fb.control(''),
       notes: this.fb.control(''),
