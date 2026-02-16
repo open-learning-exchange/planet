@@ -5,7 +5,7 @@ import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 
-function handleChatError(error: any) {
+function handleChatError(error: any): never {
   if (error.response) {
     throw new Error(`GPT Service Error: ${error.response.status} - ${error.response.data?.error?.code}`);
   } else {
@@ -23,7 +23,7 @@ function handleChatError(error: any) {
 export async function chat(data: any, stream?: boolean, callback?: (response: string) => void): Promise<{
   completionText: string;
   couchSaveResponse: DocumentInsertResponse;
-} | undefined> {
+}> {
   const { content, ...dbData } = data;
   const messages: ChatMessage[] = [];
   const aiProvider = dbData.aiProvider as AIProvider || { 'name': 'openai' };
@@ -70,7 +70,7 @@ export async function chatNoSave(
   aiProvider: AIProvider,
   assistant: boolean,
   context?: any
-): Promise<string | undefined> {
+): Promise<string> {
   const messages: ChatMessage[] = [];
 
   messages.push({ 'role': 'user', content });
