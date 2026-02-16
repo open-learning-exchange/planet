@@ -1,5 +1,5 @@
 @import './app/variables';
-@import './planet-mat-theme.scss';
+@import './planet-mat-theme';
 
 body {
   font-family: $font-family;
@@ -350,6 +350,9 @@ body {
   // Note checkbox column must be named "select" in table
   .mat-column-select {
     overflow: visible;
+    // Reduce padding for MDC checkbox cells
+    padding-left: 12px !important;
+    max-width: 44px;
   }
 
   .planet-radio-section {
@@ -642,7 +645,11 @@ body {
     margin: 0.25rem;
   }
 
-  mat-tab-group.tabs-padding .mat-tab-body {
+  .mat-mdc-tab {
+    letter-spacing: normal;
+  }
+
+  mat-tab-group.tabs-padding .mat-mdc-tab-body {
     padding-top: 0.5rem;
   }
 
