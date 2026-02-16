@@ -66,8 +66,12 @@ bash couchdb-setup.sh -p 2200 -i
 Install dependencies and serve the app:
 ```
 npm install
-ng serve
+npm run dev
 ```
+
+`npm run dev` generates `src/environments/environment.dev.ts` from `src/environments/environment.template` and then serves Angular with the `dev` configuration.
+
+`src/environments/environment.dev.ts` is intentionally generated at runtime and should remain untracked in git. If you run `ng serve --configuration dev` directly, generate it first with `bash dev-env.sh`.
 
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
