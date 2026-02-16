@@ -52,8 +52,16 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
+
+          PLATFORM="linux/amd64"
+          if [ "${{ matrix.arch }}" == "arm" ]; then
+            PLATFORM="linux/arm/v7"
+          elif [ "${{ matrix.arch }}" == "arm64" ]; then
+            PLATFORM="linux/arm64"
+          fi
+
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build -f './docker/db-init/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker build --platform $PLATFORM -f './docker/db-init/${{ matrix.arch }}-Dockerfile' -t $repo .
           docker images
           docker tag $repo $branchrepo
           docker push $repo
