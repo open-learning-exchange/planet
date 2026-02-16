@@ -40,13 +40,11 @@ wss.on('connection', (ws) => {
         ws.send(JSON.stringify({ 'type': 'partial', response }));
       });
 
-      if (chatResponse) {
-        ws.send(JSON.stringify({
-          'type': 'final',
-          'completionText': chatResponse.completionText,
-          'couchDBResponse': chatResponse.couchSaveResponse
-        }));
-      }
+      ws.send(JSON.stringify({
+        'type': 'final',
+        'completionText': chatResponse.completionText,
+        'couchDBResponse': chatResponse.couchSaveResponse
+      }));
     } catch (error: any) {
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
         ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
@@ -79,8 +77,8 @@ app.post('/', async (req: any, res: any) => {
       const response = await chat(data, false);
       return res.status(201).json({
         'status': 'Success',
-        'chat': response?.completionText,
-        'couchDBResponse': response?.couchSaveResponse
+        'chat': response.completionText,
+        'couchDBResponse': response.couchSaveResponse
       });
     }
   } catch (error: any) {
