@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject, interval, of, race } from 'rxjs';
-import { catchError, takeUntil, debounce } from 'rxjs/operators';
+import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
+import { catchError, takeUntil, debounce, filter, startWith, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -78,6 +78,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
+  submitAttempted = false;
+  private submitAfterPending = false;
   get achievements(): FormArray<AchievementFormGroup> {
     return this.editForm.controls.achievements;
   }
@@ -322,7 +324,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     if (value?.get?.('date')) {
       formArray.setValue(this.sortDate(formArray.value as any[], this.editForm.controls.dateSortOrder.value || 'none') as any);
     }
-    this.editForm.updateValueAndValidity();
   }
 
   sortAchievements() {
@@ -345,9 +346,15 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   onSubmit() {
-    this.editForm.updateValueAndValidity();
-    this.profileForm.updateValueAndValidity();
+    this.submitAttempted = true;
+    if (this.editForm.pending || this.profileForm.pending) {
+      this.submitAfterPending = true;
+      this.submitWhenReady();
+      return;
+    }
+    this.submitAfterPending = false;
     if (this.editForm.valid && this.profileForm.valid) {
+      this.submitAttempted = false;
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
       this.hasUnsavedChanges = false;
     } else {
@@ -356,10 +363,45 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
   }
 
+  private submitWhenReady() {
+    combineLatest([
+      this.editForm.statusChanges.pipe(startWith(this.editForm.status)),
+      this.profileForm.statusChanges.pipe(startWith(this.profileForm.status))
+    ]).pipe(
+      filter(([ editStatus, profileStatus ]) => editStatus !== 'PENDING' && profileStatus !== 'PENDING'),
+      take(1)
+    ).subscribe(() => {
+      if (this.submitAfterPending) {
+        this.onSubmit();
+      }
+    });
+  }
+
   markAsInvalid(userForm: FormGroup<any>) {
     if (!userForm.valid) {
+      userForm.markAllAsTouched();
       showFormErrors(userForm.controls);
     }
+  }
+
+  sectionError(section: 'achievements' | 'references' | 'links'): string {
+    const index = this.firstInvalidIndex(this.editForm.controls[section]);
+    if (index < 0 || !this.submitAttempted) {
+      return '';
+    }
+    const itemNumber = index + 1;
+    switch (section) {
+      case 'achievements':
+        return $localize`Achievement #${itemNumber} has invalid fields`;
+      case 'references':
+        return $localize`Reference #${itemNumber} has invalid fields`;
+      case 'links':
+        return $localize`Link #${itemNumber} has invalid fields`;
+    }
+  }
+
+  private firstInvalidIndex(formArray: FormArray<FormGroup<any>>): number {
+    return formArray.controls.findIndex((control) => control.invalid);
   }
 
   updateAchievements(docInfo, achievements, userInfo) {

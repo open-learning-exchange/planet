@@ -66,6 +66,7 @@
               </ng-container>
             </planet-step-list-item>
           </planet-step-list>
+          <p class="warn-text-color mat-caption" *ngIf="sectionError('achievements')" i18n>{{ sectionError('achievements') }}</p>
           <button type="button" (click)="addAchievement()" mat-stroked-button color="primary" i18n>Enter an Achievement</button>
         </div>
         <div>
@@ -78,6 +79,7 @@
               </ng-container>
             </planet-step-list-item>
           </planet-step-list>
+          <p class="warn-text-color mat-caption" *ngIf="sectionError('references')" i18n>{{ sectionError('references') }}</p>
           <button type="button" (click)="addReference()" mat-stroked-button color="primary" i18n>Enter a Reference</button>
         </div>
         <div>
@@ -90,6 +92,7 @@
               </ng-container>
             </planet-step-list-item>
           </planet-step-list>
+          <p class="warn-text-color mat-caption" *ngIf="sectionError('links')" i18n>{{ sectionError('links') }}</p>
           <button type="button" (click)="addLink()" mat-stroked-button color="primary" i18n>Enter a Link</button>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
