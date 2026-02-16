@@ -19,7 +19,6 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
-import { itemsShown } from '../shared/utils';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -150,7 +149,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   isSelected(user) {
@@ -158,7 +156,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
+    const visibleDocs = this.usersTable.filteredData.slice(start, end).map((row: any) => row.doc);
+    return visibleDocs.every(doc => this.isSelected(doc)) && visibleDocs.length > 0;
   }
 
   onlyManagerSelected() {
@@ -169,9 +170,20 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   masterToggle() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc));
+    if (this.isAllSelected()) {
+      this.usersTable.filteredData.slice(start, end).forEach((row: any) => {
+        const found = this.isSelected(row.doc);
+        if (found) {
+          this.selection.deselect(found);
+        }
+      });
+    } else {
+      this.usersTable.filteredData.slice(start, end).forEach((row: any) => {
+        if (!this.isSelected(row.doc)) {
+          this.selection.select(row.doc);
+        }
+      });
+    }
   }
 
   gotoProfileView(userName: string) {
