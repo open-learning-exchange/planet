@@ -10,45 +10,53 @@
     <div class="view-container">
       <form class="form-spacing" [formGroup]="meetupForm" novalidate>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+        <mat-label i18n>Title</mat-label>
+        <input matInput formControlName="title" required>
         <mat-error>
           <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
         </mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Location" formControlName="meetupLocation">
+        <mat-label i18n>Location</mat-label>
+        <input matInput formControlName="meetupLocation">
         <mat-error>
           <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
         </mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Link" formControlName="meetupLink">
+        <mat-label i18n>Link</mat-label>
+        <input matInput formControlName="meetupLink">
         <mat-error>
           <planet-form-error-messages [control]="meetupForm.controls.meetupLink"></planet-form-error-messages>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
+        <mat-label i18n>Description</mat-label>
+        <planet-markdown-textbox class="full-width" required="true" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput [matDatepicker]="datepickerStart" i18n-placeholder required="true" placeholder="Start Date" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="datepickerStart"></mat-datepicker-toggle>
+        <mat-label i18n>Start Date</mat-label>
+        <input matInput [matDatepicker]="datepickerStart" required="true" formControlName="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="datepickerStart"></mat-datepicker-toggle>
         <mat-datepicker #datepickerStart></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput [matDatepicker]="datepickerEnd" i18n-placeholder placeholder="End Date" formControlName="endDate">
-        <mat-datepicker-toggle matSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
+        <mat-label i18n>End Date</mat-label>
+        <input matInput [matDatepicker]="datepickerEnd" formControlName="endDate">
+        <mat-datepicker-toggle matIconSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
         <mat-datepicker #datepickerEnd></mat-datepicker>
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput planetTimeMask i18n-placeholder placeholder="Start Time" formControlName="startTime">
+        <mat-label i18n>Start Time</mat-label>
+        <input matInput planetTimeMask formControlName="startTime">
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput planetTimeMask i18n-placeholder placeholder="End Time" formControlName="endTime">
+        <mat-label i18n>End Time</mat-label>
+        <input matInput planetTimeMask formControlName="endTime">
         <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width">
@@ -68,7 +76,8 @@
       </div>
       <ng-container *ngIf="meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily'">
         <mat-form-field>
-          <input matInput type="number" min="2" i18n-placeholder placeholder="Number of Recurrences" formControlName="recurringNumber">
+          <mat-label i18n>Number of Recurrences</mat-label>
+          <input matInput type="number" min="2" formControlName="recurringNumber">
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurringNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </ng-container>

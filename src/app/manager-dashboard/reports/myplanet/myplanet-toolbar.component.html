@@ -43,13 +43,15 @@
 </ng-template>
 <ng-template #typeVersionFilters>
   <mat-form-field *ngIf="showTypeFilter" class="margin-lr-5 font-size-1">
-    <mat-select i18n-placeholder placeholder="Type" (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
+    <mat-label i18n>Type</mat-label>
+    <mat-select (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
       <mat-option [value]="" i18n>All Types</mat-option>
       <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field class="margin-lr-5 font-size-1">
-    <mat-select i18n-placeholder placeholder="Version" (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
+    <mat-label i18n>Version</mat-label>
+    <mat-select (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
       <mat-option [value]="" i18n>All Versions</mat-option>
       <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
     </mat-select>
@@ -58,8 +60,9 @@
 <ng-template #formStartDate>
   <div [formGroup]="formGroup">
     <mat-form-field class="margin-lr-5 font-size-1">
-      <input matInput [matDatepicker]="startPicker" i18n-placeholder placeholder="Start Date" formControlName="startDate" [min]="minDate" [max]="formGroup.controls.endDate.value">
-      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-label i18n>Start Date</mat-label>
+      <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate" [max]="formGroup.controls.endDate.value">
+      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
       <mat-error i18n *ngIf="formGroup?.errors?.invalidDates">Start date must be before end date</mat-error>
     </mat-form-field>
@@ -68,22 +71,25 @@
 <ng-template #formEndDate>
   <div [formGroup]="formGroup">
     <mat-form-field class="margin-lr-5 font-size-1">
-      <input matInput [matDatepicker]="endPicker" i18n-placeholder placeholder="End Date" formControlName="endDate" [min]="formGroup.controls.startDate.value" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-label i18n>End Date</mat-label>
+      <input matInput [matDatepicker]="endPicker" formControlName="endDate" [min]="formGroup.controls.startDate.value" [max]="today">
+      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
       <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
   </div>
 </ng-template>
 <ng-template #timeFrameFilter>
   <mat-form-field class="margin-lr-5 font-size-1">
-    <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+    <mat-label i18n>Time Frame</mat-label>
+    <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
       <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
 </ng-template>
 <ng-template #actionButtons>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="onSearch($event.target.value)" [value]="searchValue" i18n-placeholder placeholder="Search">
+    <mat-label i18n>Search</mat-label>
+    <input matInput (keyup)="onSearch($event.target.value)" [value]="searchValue">
   </mat-form-field>
   <button mat-raised-button (click)="onClear()" color="primary" [disabled]="!searchValue && !selectedVersion && (!showTypeFilter || !selectedType) && disableShowAllTime" class="margin-lr-5">
     <span i18n>Clear</span>

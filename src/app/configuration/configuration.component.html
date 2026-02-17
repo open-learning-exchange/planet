@@ -3,15 +3,18 @@
     <ng-template matStepLabel i18n>Create Admin</ng-template>
     <form class="form-spacing" [formGroup]="loginForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase planetRestrictDiacritics>
+        <mat-label i18n>Username</mat-label>
+        <input matInput formControlName="name" required planetLowercase planetRestrictDiacritics>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
+        <mat-label i18n>Password</mat-label>
+        <input matInput formControlName="password" type="password" required>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.password"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Confirm Password" type="password" formControlName="confirmPassword" required>
+        <mat-label i18n>Confirm Password</mat-label>
+        <input matInput type="password" formControlName="confirmPassword" required>
         <mat-error><planet-form-error-messages [control]="loginForm.controls.confirmPassword"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width">
@@ -25,31 +28,37 @@
     <ng-template matStepLabel i18n>{ configurationType, select, new {Set Up Configuration} update {Update Configuration}}</ng-template>
     <form class="form-spacing configuration-form" [formGroup]="configurationFormGroup">
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Select Nation/Community" (selectionChange)="onChange($event.value)" formControlName="planetType" required>
+        <mat-label i18n>Select Nation/Community</mat-label>
+        <mat-select (selectionChange)="onChange($event.value)" formControlName="planetType" required>
           <mat-option value="nation" i18n>Nation</mat-option>
           <mat-option value="community" i18n>Community</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.planetType"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field *ngIf="nationOrCommunity === 'community'">
-        <mat-select i18n-placeholder placeholder="Nation(s)" formControlName="parentDomain" (selectionChange)="onChangeNation()" required>
+        <mat-label i18n>Nation(s)</mat-label>
+        <mat-select formControlName="parentDomain" (selectionChange)="onChangeNation()" required>
           <mat-option *ngFor="let nation of nations" [value]="nation.localDomain">{{nation.name}}</mat-option>
         </mat-select>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.parentDomain"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field *ngIf="nationOrCommunity === 'nation'">
-        <input matInput i18n-placeholder placeholder="Center" formControlName="parentDomain" required readonly>
+        <mat-label i18n>Center</mat-label>
+        <input matInput formControlName="parentDomain" required readonly>
       </mat-form-field>
       <mat-form-field class="new-line">
-        <input matInput i18n-placeholder placeholder="Name" formControlName="name" required (keyup)="planetNameChange($event)">
+        <mat-label i18n>Name</mat-label>
+        <input matInput formControlName="name" required (keyup)="planetNameChange($event)">
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Code" formControlName="code" required readonly>
+        <mat-label i18n>Code</mat-label>
+        <input matInput formControlName="code" required readonly>
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.code"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Language" formControlName="preferredLang" [matAutocomplete]="auto" required>
+        <mat-label i18n>Language</mat-label>
+        <input matInput formControlName="preferredLang" [matAutocomplete]="auto" required>
         <mat-autocomplete #auto="matAutocomplete">
           <mat-option *ngFor="let language of languageNames" [value]="language">
             {{ language }}
@@ -60,14 +69,14 @@
         <span i18n>Advanced Options:</span>
         <ng-container *ngIf="showAdvancedOptions">
           <mat-form-field>
-            <input matInput i18n-placeholder placeholder="Local URL" formControlName="localDomain" (keyup)="localDomainChange($event)">
+            <mat-label i18n>Local URL</mat-label>
+            <input matInput formControlName="localDomain" (keyup)="localDomainChange($event)">
           </mat-form-field>
           <mat-slide-toggle formControlName="autoAccept" i18n>Auto accept Members</mat-slide-toggle>
           <mat-form-field>
+            <mat-label i18n>Beta features</mat-label>
             <mat-select
               formControlName="betaEnabled"
-              i18n-placeholder
-              placeholder="Beta features"
               i18n-matTooltip
               matTooltip="Beta features may not work as intended. It's recommended to leave this off">
               <mat-option value="off" i18n>Always off</mat-option>
@@ -100,22 +109,27 @@
     <form class="form-spacing" [formGroup]="contactFormGroup" (ngSubmit)="onSubmitConfiguration()">
       <ng-template matStepLabel i18n>{ configurationType, select, new {Contact Details} update {Update Contact Details}}</ng-template>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+        <mat-label i18n>First Name</mat-label>
+        <input matInput formControlName="firstName" required>
         <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.firstName"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+        <mat-label i18n>Middle Name</mat-label>
+        <input matInput formControlName="middleName">
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+        <mat-label i18n>Last Name</mat-label>
+        <input matInput formControlName="lastName" required>
         <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.lastName"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Email" formControlName="email" required>
+        <mat-label i18n>Email</mat-label>
+        <input matInput formControlName="email" required>
         <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.email"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber" required>
+        <mat-label i18n>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" required>
         <mat-error><planet-form-error-messages [control]="contactFormGroup.controls.phoneNumber"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width">
