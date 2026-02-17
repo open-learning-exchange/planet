@@ -875,8 +875,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.showCustomDateFields = showCustomDateFields;
 
     if (timeFilter === 'custom') {
-      const currentStartDate = new Date();
-      currentStartDate.setMonth(currentStartDate.getMonth() - 12);
+      // Preserve the user's existing custom range (including deep-linked query params)
+      // instead of resetting to a default 12-month window every time "Custom" is selected.
+      const currentStartDate = this.filter.startDate || this.minDate || new Date(new Date().setMonth(new Date().getMonth() - 12));
       const currentEndDate = this.filter.endDate || this.today;
       this.dateFilterForm.patchValue({
         startDate: currentStartDate,
