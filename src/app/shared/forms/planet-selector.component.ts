@@ -7,7 +7,8 @@ import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.ut
   selector: 'planet-selector',
   template: `
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Select Planet" [value]="selectedPlanet" (selectionChange)="onPlanetChange($event.value)">
+      <mat-label i18n>Select Planet</mat-label>
+      <mat-select [value]="selectedPlanet" (selectionChange)="onPlanetChange($event.value)">
         <mat-option *ngFor="let planet of planets" [value]="planet">{{planet.nameDoc ? planet.nameDoc.name : planet.doc.name}}</mat-option>
       </mat-select>
     </mat-form-field>

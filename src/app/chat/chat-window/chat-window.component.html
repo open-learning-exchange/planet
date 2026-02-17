@@ -8,12 +8,12 @@
 
   <div class="form-container">
     <form [formGroup]="promptForm" class="form-space" (ngSubmit)="onSubmit()">
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label i18n>Chat</mat-label>
-        <div class="textarea-container">
           <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
           <button
             mat-icon-button
+            matIconSuffix
             [planetSubmit]="promptForm.valid && spinnerOn"
             [disabled]="!promptForm.valid || providers.length === 0"
             i18n-matTooltip
@@ -23,7 +23,6 @@
           >
             <mat-icon>send</mat-icon>
           </button>
-        </div>
       </mat-form-field>
     </form>
   </div>

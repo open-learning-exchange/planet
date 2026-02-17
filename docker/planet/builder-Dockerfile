@@ -1,10 +1,5 @@
 FROM treehouses/planet-base AS builder
 
-ARG LANGUAGE=""
-ENV LANG=${LANGUAGE}
-ARG LANGUAGE2=""
-ENV LANG2=${LANGUAGE2}
-
 COPY docker/planet/scripts/ ./
 COPY . .
 
