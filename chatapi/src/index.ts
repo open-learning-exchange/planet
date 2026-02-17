@@ -26,6 +26,8 @@ app.get('/', (req: any, res: any) => {
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
 
+const hasAssistantFlag = (data: any) => Object.prototype.hasOwnProperty.call(data, 'assistant');
+
 // WebSocket connection handling
 wss.on('connection', (ws) => {
   ws.on('message', async (data) => {
@@ -33,6 +35,11 @@ wss.on('connection', (ws) => {
       data = JSON.parse(data.toString());
       if (!isValidData(data)) {
         ws.send(JSON.stringify({ 'error': 'Invalid data format.' }));
+        return;
+      }
+
+      if (hasAssistantFlag(data)) {
+        ws.send(JSON.stringify({ 'error': 'Bad Request', 'message': 'The "assistant" flag is no longer supported' }));
         return;
       }
 
@@ -68,9 +75,13 @@ app.post('/', async (req: any, res: any) => {
     return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
   }
 
+  if (hasAssistantFlag(data)) {
+    return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "assistant" flag is no longer supported' });
+  }
+
   try {
     if (!save) {
-      const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
+      const response = await chatNoSave(data.content, data.aiProvider, data.context);
       return res.status(200).json({
         'status': 'Success',
         'chat': response
