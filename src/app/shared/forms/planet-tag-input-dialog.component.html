@@ -4,7 +4,8 @@
 </ng-container>
 <mat-dialog-content>
   <mat-form-field class="full-width">
-    <input matInput i18n-placeholder placeholder="Filter by Collection Name" [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
+    <mat-label i18n>Filter by Collection Name</mat-label>
+    <input matInput [ngModel]="filterValue" (ngModelChange)="updateFilter($event)">
   </mat-form-field>
   <mat-expansion-panel *planetAuthorizedRoles="'manager'">
     <mat-expansion-panel-header>
@@ -12,11 +13,13 @@
     </mat-expansion-panel-header>
     <form class="form-spacing" [formGroup]="addTagForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Collection" formControlName="name" required>
+        <mat-label i18n>Collection</mat-label>
+        <input matInput formControlName="name" required>
         <mat-error><planet-form-error-messages [control]="addTagForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <mat-select i18n-placeholder placeholder="Subcollection of..." formControlName="attachedTo">
+        <mat-label i18n>Subcollection of...</mat-label>
+        <mat-select formControlName="attachedTo">
           <mat-option i18n>None</mat-option>
           <mat-option *ngFor="let tag of tags" [value]="tag._id || tag.name">
             <span class="ellipsis-text mat-subtitle-2">{{ tag.name }}</span>

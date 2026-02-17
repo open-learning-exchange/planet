@@ -12,7 +12,7 @@ button {
 }
 
 @media(max-width: #{$screen-md}) {
-  .mat-form-field {
+  .mat-mdc-form-field {
     width: 100%;
   }
 
@@ -20,7 +20,7 @@ button {
     form {
       width: 100%;
 
-      .mat-form-field {
+      .mat-mdc-form-field {
         width: 100%;
       }
     }
