@@ -26,18 +26,20 @@ exports.config = {
     print: function() {}
   },
   onPrepare() {
-    var defer = protractor.promise.defer();
-    require('ts-node').register({
-      project: './e2e/tsconfig.e2e.json'
+    const tsRegistrationPromise = Promise.resolve().then(function() {
+      require('ts-node').register({
+        project: './e2e/tsconfig.e2e.json'
+      });
     });
-    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
-    browser.params.user = user.get();
+    const userCreationPromise = user.create();
 
-    return user.create().then(function(res) {
-      defer.fulfill();
-    })
-    .catch(function(err) {
+    // Add future async fixtures to this list so startup waits for all setup steps.
+    return Promise.all([ tsRegistrationPromise, userCreationPromise ]).then(function() {
+      jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+      browser.params.user = user.get();
+    }).catch(function(err) {
       console.log(err);
+      throw err;
     });
   },
   onComplete() {
