@@ -4,7 +4,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
 import { UsersService } from '../users/users.service';
-import { stringToHex, ageFromBirthDate } from '../shared/utils';
+import { stringToHex, hexToString, ageFromBirthDate } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
 
 @Injectable({
@@ -28,6 +28,19 @@ export class HealthService {
 
   userDatabaseName(userId: string) {
     return `userdb-${stringToHex(this.stateService.configuration.code)}-${stringToHex(userId.split(':')[1])}`;
+  }
+
+  userIdFromDatabaseName(userDb: string) {
+    const match = /^userdb-([0-9a-f]+)-([0-9a-f]+)$/i.exec(userDb);
+    if (!match) {
+      return null;
+    }
+    const [ , encodedPlanetCode, encodedUserId ] = match;
+    const expectedPlanetCode = this.stateService.configuration.code;
+    if (hexToString(encodedPlanetCode) !== expectedPlanetCode) {
+      return null;
+    }
+    return `org.couchdb.user:${hexToString(encodedUserId)}`;
   }
 
   getUserKey(userDb: string, createIfNone = false) {
