@@ -170,6 +170,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   ngOnDestroy() {
+    this.submitAfterPending = false;
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -348,6 +349,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   onSubmit() {
     this.submitAttempted = true;
     if (this.editForm.pending || this.profileForm.pending) {
+      if (this.submitAfterPending) {
+        return;
+      }
       this.submitAfterPending = true;
       this.submitWhenReady();
       return;
@@ -369,6 +373,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.profileForm.statusChanges.pipe(startWith(this.profileForm.status))
     ]).pipe(
       filter(([ editStatus, profileStatus ]) => editStatus !== 'PENDING' && profileStatus !== 'PENDING'),
+      takeUntil(this.onDestroy$),
       take(1)
     ).subscribe(() => {
       if (this.submitAfterPending) {
