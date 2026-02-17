@@ -26,7 +26,6 @@ exports.config = {
     print: function() {}
   },
   onPrepare() {
-    var defer = protractor.promise.defer();
     require('ts-node').register({
       project: './e2e/tsconfig.e2e.json'
     });
@@ -34,7 +33,7 @@ exports.config = {
     browser.params.user = user.get();
 
     return user.create().then(function(res) {
-      defer.fulfill();
+      return res;
     })
     .catch(function(err) {
       console.log(err);
