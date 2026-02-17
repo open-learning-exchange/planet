@@ -73,10 +73,9 @@
         </mat-form-field>
       </ng-container>
       </form>
-      <mat-dialog-actions>
-        <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
-        <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
-      </mat-dialog-actions>
+      <ng-container *ngIf="!isDialog">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </ng-container>
     </div>
   </div>
 </ng-template>
@@ -84,7 +83,16 @@
   <mat-dialog-content>
     <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
   </mat-dialog-content>
+  <mat-dialog-actions>
+    <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+  </mat-dialog-actions>
 </ng-container>
+<ng-template #actionButtons>
+  <div [class.mat-mdc-dialog-actions]="!isDialog">
+    <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
+    <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
+  </div>
+</ng-template>
 <ng-template #meetupPage>
   <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
 </ng-template>
