@@ -121,14 +121,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       email: this.fb.control('', [ this.conditionalValidator(Validators.required), Validators.email ]),
       language: this.fb.control('', this.conditionalValidator(Validators.required)),
       phoneNumber: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
-      birthDate: new FormControl<string | Date | null>(
+      birthDate: this.fb.control<string | Date | null>(
         null,
         {
           validators: this.conditionalValidator(CustomValidators.dateValidRequired),
           asyncValidators: (ac: AbstractControl) => this.validatorService.notDateInFuture$(ac)
         }
       ),
-      birthYear: new FormControl<number | null>(
+      birthYear: this.fb.control<number | null>(
         null,
         [
           Validators.min(1900),
@@ -136,7 +136,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           Validators.pattern(/^\d{4}$/)
         ]
       ),
-      age: new FormControl<number | null>(null),
+      age: this.fb.control<number | null>(null),
       gender: this.fb.control('', this.conditionalValidator(Validators.required)),
       level: this.fb.control('', this.conditionalValidator(Validators.required)),
       betaEnabled: this.fb.control(false)

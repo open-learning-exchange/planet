@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
 import { UserService } from '../shared/user.service';
@@ -17,23 +17,23 @@ import { warningMsg } from '../shared/unsaved-changes.component';
 import { debounce } from 'rxjs/operators';
 
 interface HealthEventFormControls {
-  temperature: [ number | null, ValidatorFn? ];
-  pulse: [ number | null, ValidatorFn? ];
-  bp: [ string, ValidatorFn? ];
-  height: [ number | null, ValidatorFn? ];
-  weight: [ number | null, ValidatorFn? ];
-  vision: [ string ];
-  hearing: [ string ];
-  notes: [ string ];
-  diagnosis: [ string ];
-  treatments: [ string ];
-  medications: [ string ];
-  immunizations: [ string ];
-  allergies: [ string ];
-  xrays: [ string ];
-  tests: [ string ];
-  referrals: [ string ];
-  conditions: [ Record<string, boolean> ];
+  temperature: FormControl<number | null>;
+  pulse: FormControl<number | null>;
+  bp: FormControl<string>;
+  height: FormControl<number | null>;
+  weight: FormControl<number | null>;
+  vision: FormControl<string>;
+  hearing: FormControl<string>;
+  notes: FormControl<string>;
+  diagnosis: FormControl<string>;
+  treatments: FormControl<string>;
+  medications: FormControl<string>;
+  immunizations: FormControl<string>;
+  allergies: FormControl<string>;
+  xrays: FormControl<string>;
+  tests: FormControl<string>;
+  referrals: FormControl<string>;
+  conditions: FormControl<Record<string, boolean>>;
 }
 
 type HealthEventFormFields = keyof HealthEventFormControls;
@@ -44,7 +44,7 @@ type HealthEventFormFields = keyof HealthEventFormControls;
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
-  healthForm: FormGroup;
+  healthForm: FormGroup<HealthEventFormControls>;
   conditions = conditions;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   event: any = {};
@@ -52,7 +52,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   hasUnsavedChanges = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private healthService: HealthService,
     private router: Router,
     private route: ActivatedRoute,
@@ -63,23 +63,23 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private planetMessageService: PlanetMessageService
   ) {
     this.healthForm = this.fb.group({
-      temperature: [ null, Validators.min(1) ],
-      pulse: [ null, Validators.min(1) ],
-      bp: [ '', CustomValidators.bpValidator ],
-      height: [ null, Validators.min(1) ],
-      weight: [ null, Validators.min(1) ],
-      vision: [ '' ],
-      hearing: [ '' ],
-      notes: [ '' ],
-      diagnosis: [ '' ],
-      treatments: [ '' ],
-      medications: [ '' ],
-      immunizations: [ '' ],
-      allergies: [ '' ],
-      xrays: [ '' ],
-      tests: [ '' ],
-      referrals: [ '' ],
-      conditions: [ {} ]
+      temperature: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      pulse: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      bp: this.fb.control('', { validators: [ CustomValidators.bpValidator ] }),
+      height: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      weight: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
+      vision: this.fb.control(''),
+      hearing: this.fb.control(''),
+      notes: this.fb.control(''),
+      diagnosis: this.fb.control(''),
+      treatments: this.fb.control(''),
+      medications: this.fb.control(''),
+      immunizations: this.fb.control(''),
+      allergies: this.fb.control(''),
+      xrays: this.fb.control(''),
+      tests: this.fb.control(''),
+      referrals: this.fb.control(''),
+      conditions: this.fb.control<Record<string, boolean>>({})
     });
   }
 

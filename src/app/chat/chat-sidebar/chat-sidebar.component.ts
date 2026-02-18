@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { NonNullableFormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -52,7 +52,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private searchService: SearchService,
     private userService: UserService
   ) {
@@ -151,8 +151,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   initializeFormGroups() {
     this.conversations.forEach((conversation: Conversation) => {
-      this.titleForm[conversation._id] = this.formBuilder.nonNullable.group({
-        title: [ conversation?.title ?? '', Validators.required ]
+      this.titleForm[conversation._id] = this.formBuilder.group({
+        title: this.formBuilder.control(conversation?.title ?? '', { validators: [ Validators.required ] })
       });
     });
   }
