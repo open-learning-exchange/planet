@@ -1,7 +1,7 @@
 @import "../variables";
 
 .mat-column-taken {
-  max-width: 150px;
+  max-width: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -10,18 +10,13 @@
 }
 
 .mat-column-createdDate {
-  max-width: 130px;
+  max-width: 200px;
   text-align: left;
   padding: 0 20px;
-  margin-left: 20px;
 }
 
 .mat-column-name, .mat-column-courseTitle {
   max-width: 250px;
-}
-
-.mat-column-action {
-  margin-left: 40px;
 }
 
 .course-title, .mat-column-name span {
@@ -32,7 +27,7 @@
   display: block;
 }
 
-.mat-cell button, .mat-cell div button[mat-raised-button] {
+.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
   width: 150px;
   text-align: center;
   padding: 8px 12px;
@@ -48,7 +43,7 @@
     max-width: 125px;
   }
 
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
     width: 100px;
     text-align: center;
     padding: 8px 12px;
@@ -69,7 +64,7 @@
     max-width: 125px;
   }
 
-  .mat-cell button, .mat-cell div button[mat-raised-button] {
+  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
     width: 50px;
   }
 }
