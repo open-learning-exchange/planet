@@ -102,6 +102,21 @@ To run planet in development with a different locale, you can set the configurat
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
+### Script Maintenance & Operational Helpers
+
+The following npm scripts are intentionally kept for legacy automation and deployment toggles:
+
+* `npm run starthub-true` / `npm run starthub-false`
+  * **Purpose:** Toggle the `/srv/starthub` marker used by hub deployments to signal start-state transitions.
+  * **Environment prerequisite:** The deployment target must provide a writable `/srv/starthub` path (for GitHub Actions deploys, this is the remote host accessed over SSH, not the CI runner).
+  * **Deployment invocation:** `.github/workflows/deploy.yml` writes `true` before restart and resets to `false` after restart to mirror these scripts.
+
+* `npm run webdriver-set-version`
+  * **Purpose:** Pin the Protractor/WebDriverManager ChromeDriver version for **legacy Angular e2e** flows (`npm run e2e`).
+  * **Scope:** Legacy Protractor-based e2e only; it is not required for unit tests, linting, docker builds, or chatapi workflows.
+  * **Compatibility expectation:** Uses ChromeDriver `2.37`, expected to match legacy Chrome `64-66` era environments used by this e2e stack.
+  * **CI invocation:** `.github/workflows/planet.yml` includes a `legacy-e2e-webdriver-setup` job that runs `npm run webdriver-set-version` on manual dispatch.
+
 ## Unit & End-to-End Tests
 
 You can run tests directly from the host or within the development container.
