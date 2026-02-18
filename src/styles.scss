@@ -368,12 +368,11 @@ body {
   }
 
   // Remove the underline from mat-form-field for custom fields
-  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-  .mat-form-field-type-no-underline .mat-form-field-underline {
+  .mat-form-field-type-no-underline .mdc-line-ripple {
     display: none;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-  .mat-form-field-dynamic-width .mat-form-field-infix {
+
+  .mat-form-field-dynamic-width .mat-mdc-form-field-infix {
     width: auto;
   }
 
@@ -501,17 +500,6 @@ body {
     planet-courses-progress-bar {
       height: 1rem;
       width: 100%;
-    }
-  }
-
-  .collections-search {
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-    .mat-form-field-wrapper {
-      padding: 0;
-    }
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-    .mat-form-field-infix {
-      border: 0;
     }
   }
 

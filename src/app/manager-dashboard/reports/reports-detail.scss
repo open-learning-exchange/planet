@@ -92,16 +92,6 @@ mat-toolbar mat-form-field {
   .mat-mdc-form-field {
     width: 100%;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  mat-button-toggle-group {
-    width: 100%;
-    display: flex;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-    .mat-button-toggle {
-      flex: 1;
-    }
-  }
 
   .reports-table-container {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
