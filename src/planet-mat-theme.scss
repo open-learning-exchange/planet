@@ -13,16 +13,9 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
-/* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
-@include mat.all-legacy-component-typographies();
 @include mat.all-component-typographies();
-/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
-@include mat.legacy-core();
 @include mat.core();
 @import './app/variables';
-
-/* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-@include mat.all-legacy-component-themes($planet-app-theme);
 
 @include mat.all-component-themes($planet-app-theme);
 
@@ -38,8 +31,6 @@ $accent-map: (
   $accent-palette: map-get($accent-map, #{$section});
   $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
   .planet-#{$section}-theme {
-    /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-    @include mat.all-legacy-component-themes($theme);
     @include mat.all-component-themes($theme);
 
     .accent-color {
