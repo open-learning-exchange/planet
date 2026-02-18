@@ -1,4 +1,4 @@
-@import '../app/variables';
+@use '../app/variables' as v;
 
 full-calendar {
   .fc-h-event .fc-event-title {
@@ -13,7 +13,7 @@ full-calendar {
     flex-direction: column;
     align-items: center;
 
-    @media only screen and (max-width: #{$screen-sm}) {
+    @media only screen and (max-width: #{v.$screen-sm}) {
       .fc-toolbar-chunk {
         display: flex;
       }
@@ -23,11 +23,11 @@ full-calendar {
     position: relative;
 
     &:not(:disabled):hover {
-      background-color: $primary;
+      background-color: v.$primary;
     }
   }
 
-  @media only screen and (min-width: #{$screen-md}) {
+  @media only screen and (min-width: #{v.$screen-md}) {
     .fc-more-popover .fc-popover-body {
       min-width: unset !important;
 
