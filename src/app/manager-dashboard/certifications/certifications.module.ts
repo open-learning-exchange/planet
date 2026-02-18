@@ -5,7 +5,7 @@ import { CertificationsRouterModule } from './certifications-router.module';
 import { MaterialModule } from '../../shared/material.module';
 import { PlanetFormsModule } from '../../shared/forms/planet-forms.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../../shared/shared-components.module';
 import { PlanetDialogsModule } from '../../shared/dialogs/planet-dialogs.module';
 import { CertificationsAddComponent } from './certifications-add.component';

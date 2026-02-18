@@ -52,14 +52,16 @@
 </ng-template>
 <ng-template #timeFilterSelect>
   <mat-form-field class="margin-lr-5 font-size-1">
-    <mat-select i18n-placeholder placeholder="Time Frame" (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+    <mat-label i18n>Time Frame</mat-label>
+    <mat-select selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
       <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
 </ng-template>
 <ng-template #teamsFilterSelect>
   <mat-form-field class="font-size-1 margin-lr-5">
-    <mat-select i18n-placeholder placeholder="Filter Members" (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
+    <mat-label i18n>Filter Member</mat-label>
+    <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
       <mat-option i18n value="All">All Members</mat-option>
       <mat-optgroup label="Teams" i18n-label>
         <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
@@ -85,7 +87,7 @@
     <mat-form-field class="margin-lr-5 font-size-1">
       <mat-label i18n>Start Date</mat-label>
       <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
-      <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
       <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
     </mat-form-field>
@@ -96,7 +98,7 @@
     <mat-form-field class="margin-lr-5 font-size-1">
       <mat-label i18n>End Date</mat-label>
       <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
-      <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
       <mat-datepicker #endPicker></mat-datepicker>
     </mat-form-field>
   </div>
@@ -259,13 +261,13 @@
             <mat-form-field class="margin-lr-5">
               <mat-label i18n>Week 1 End Date</mat-label>
               <input matInput [matDatepicker]="week1Picker" [(ngModel)]="comparisonWeek1End" (dateChange)="onComparisonDateChange()">
-              <mat-datepicker-toggle matSuffix [for]="week1Picker"></mat-datepicker-toggle>
+              <mat-datepicker-toggle matIconSuffix [for]="week1Picker"></mat-datepicker-toggle>
               <mat-datepicker #week1Picker></mat-datepicker>
             </mat-form-field>
             <mat-form-field class="margin-lr-5">
               <mat-label i18n>Week 2 End Date</mat-label>
               <input matInput [matDatepicker]="week2Picker" [(ngModel)]="comparisonWeek2End" (dateChange)="onComparisonDateChange()">
-              <mat-datepicker-toggle matSuffix [for]="week2Picker"></mat-datepicker-toggle>
+              <mat-datepicker-toggle matIconSuffix [for]="week2Picker"></mat-datepicker-toggle>
               <mat-datepicker #week2Picker></mat-datepicker>
             </mat-form-field>
             <button mat-raised-button color="primary" (click)="loadComparisonData()" i18n>Compare</button>
