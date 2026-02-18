@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 @Component({
   selector: 'planet-loading-spinner',
   template: `
-      <div class="planet-spinner-container">
+    <div class="planet-spinner-container">
       <mat-spinner diameter="40"></mat-spinner>
       <div class="planet-spinner-text">{{ text }}</div>
     </div>

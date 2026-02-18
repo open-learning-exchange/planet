@@ -32,14 +32,16 @@
   </ng-template>
 
   <ng-template #filterOptions>
-    <mat-form-field class="font-size-1 margin-lr-3">
-      <mat-select i18n-placeholder placeholder="Feedback Type" [value]="filter.type || 'All'" (selectionChange)="onFilterChange($event.value, 'type')">
+    <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
+      <mat-label i18n>Feedback Type</mat-label>
+      <mat-select [value]="filter.type || 'All'" (selectionChange)="onFilterChange($event.value, 'type')">
         <mat-option i18n value="All">All</mat-option>
         <mat-option *ngFor="let option of typeOptions" value={{option}}>{{option}}</mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field class="font-size-1 margin-lr-3">
-      <mat-select i18n-placeholder placeholder="Feedback Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+    <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
+      <mat-label i18n>Feedback Status</mat-label>
+      <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
         <mat-option i18n value="All">All</mat-option>
         <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{option.text}}</mat-option>
       </mat-select>
@@ -47,8 +49,9 @@
   </ng-template>
   <ng-template #searchOptions>
     <mat-icon class="input-icon">search</mat-icon>
-    <mat-form-field class="font-size-1">
-      <input matInput i18n-placeholder placeholder="Type title to search..." [(ngModel)]="titleSearch">
+    <mat-form-field class="font-size-1 mdc-toolbar-input">
+      <mat-label i18n>Title</mat-label>
+      <input matInput [(ngModel)]="titleSearch">
     </mat-form-field>
     <button mat-button (click)="resetSearch()"
       [disabled]="feedback.filter.trim() === '' && filter.type === '' && filter.status === '' && titleSearch.trim() === ''">
@@ -88,8 +91,8 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header="priority" i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-list *ngIf="element.priority==='Yes'"><mat-chip class="chip-no-style" selected color="accent" i18n>Yes</mat-chip></mat-chip-list>
-          <mat-chip-list *ngIf="element.priority==='No'"><mat-chip class="chip-no-style" i18n>No</mat-chip></mat-chip-list>
+          <mat-chip-set *ngIf="element.priority==='Yes'" aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent" i18n>Yes</mat-chip></mat-chip-set>
+          <mat-chip-set *ngIf="element.priority==='No'" aria-label="Priority" i18n-aria-label><mat-chip i18n>No</mat-chip></mat-chip-set>
         </mat-cell>
       </ng-container>
       <!-- Owner Column -->
@@ -103,8 +106,8 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <mat-chip-list *ngIf="element.status==='Open' || element.status==='Reopened'"><mat-chip class="chip-no-style" selected>{{element.status}}</mat-chip></mat-chip-list>
-            <mat-chip-list *ngIf="element.status==='Closed'"><mat-chip class="chip-no-style">{{element.status}}</mat-chip></mat-chip-list>
+            <mat-chip-set *ngIf="element.status==='Open' || element.status==='Reopened'" aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.status}}</mat-chip></mat-chip-set>
+            <mat-chip-set *ngIf="element.status==='Closed'" aria-label="Status" i18n-aria-label><mat-chip>{{element.status}}</mat-chip></mat-chip-set>
           </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->

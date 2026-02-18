@@ -2,7 +2,8 @@
   <h3><ng-container i18n>Ratings for</ng-container><i> {{title}}</i></h3>
   <span class="toolbar-fill"></span>
   <mat-form-field class="font-size-1 margin-lr-5">
-    <mat-select placeholder="Sort by" (selectionChange)="onSortChange($event.value)">
+    <mat-label i18n>Sort by</mat-label>
+    <mat-select (selectionChange)="onSortChange($event.value)">
       <mat-option i18n value="time,1">Most Recent</mat-option>
       <mat-option i18n value="time,-1">Oldest</mat-option>
       <mat-option i18n value="rate,1">Best Rating</mat-option>
@@ -12,10 +13,12 @@
 </div>
 <mat-dialog-content>
   <mat-card *ngFor="let rating of ratings" class="margin-tb">
-    <mat-card-title>
-      <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
-      <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
-    </mat-card-title>
+    <mat-card-header>
+      <mat-card-title>
+        <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
+        <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
+      </mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="rating.comment">{{rating.comment}}</mat-card-content>
   </mat-card>
 </mat-dialog-content>

@@ -1,72 +1,75 @@
-<div class="announcement-container">
-  <img
-    src="assets/challenge/dec challenge.jpeg"
-    alt="Issues Challenge"
-    class="announcement-banner"
-  />
+<h2 mat-dialog-title i18n>Announcement</h2>
+<mat-dialog-content>
+  <div class="announcement-container">
+    <img
+      src="assets/challenge/dec challenge.jpeg"
+      alt="Issues Challenge"
+      class="announcement-banner"
+    />
 
-  <div class="thermometer-container">
-    <div class="thermometer">
-      <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
-        <div
-          class="thermometer-label"
-          [ngClass]="{ outside: getGoalPercentage() < 8 }"
-        >
-          ${{ getGroupMoneyEarned() }} / ${{ goal }}
+    <div class="thermometer-container">
+      <div class="thermometer">
+        <div class="thermometer-bar" [style.width.%]="getGoalPercentage()">
+          <div
+            class="thermometer-label"
+            [ngClass]="{ outside: getGoalPercentage() < 8 }"
+          >
+            ${{ getGroupMoneyEarned() }} / ${{ goal }}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <hr>
+    <hr>
 
-  <div *ngIf="isLoading; else content">
-    <mat-spinner></mat-spinner>
-  </div>
-
-  <ng-template #content>
-    <div class="steps-container">
-      <div class="step">
-        <mat-icon color="primary">
-          {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
-        </mat-icon>
-        <span>Únete al curso Curso Planet & myPlanet. [${{courseStepValue}}]</span>
-        <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
-          Unirse
-        </a>
-      </div>
-
-      <div class="step">
-        <mat-icon color="primary">
-          {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
-        </mat-icon>
-        <span>Comparte tu opinión en Nuestras Voces. [${{postStepValue}}/voz]<br><span>{{getPosts()}} de 5 Voces diarias</span> </span>
-        <a *ngIf="getStatus('joinedCourse') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="shareVoice()">
-          Chatea y comparte
-        </a>
-        <ng-template #dailyVoices>
-          <div class="daily-voces-dots">
-            <div
-              *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
-              class="dot"
-              [ngClass]="{ completed: i < getPosts() }"
-            ></div>
-          </div>
-        </ng-template>
-      </div>
-
-      <div class="step">
-        <mat-icon color="primary">
-          {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
-        </mat-icon>
-        <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
-        <a *ngIf="getStatus('joinedCourse') && getStatus('hasPost') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
-          Encuesta
-        </a>
-      </div>
-
-      <div>
-        <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b> / $11</span>
-      </div>
+    <div *ngIf="isLoading; else content">
+      <mat-spinner></mat-spinner>
     </div>
-  </ng-template>
-</div>
+
+    <ng-template #content>
+      <div class="steps-container">
+        <div class="step">
+          <mat-icon color="primary">
+            {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
+          </mat-icon>
+          <span>Únete al curso Curso Planet & myPlanet. [${{courseStepValue}}]</span>
+          <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
+            Unirse
+          </a>
+        </div>
+
+        <div class="step">
+          <mat-icon color="primary">
+            {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
+          </mat-icon>
+          <span>Comparte tu opinión en Nuestras Voces. [${{postStepValue}}/voz]<br><span>{{getPosts()}} de 5 Voces diarias</span> </span>
+          <a *ngIf="getStatus('joinedCourse') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="shareVoice()">
+            Chatea y comparte
+          </a>
+          <ng-template #dailyVoices>
+            <div class="daily-voces-dots">
+              <div
+                *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
+                class="dot"
+                [ngClass]="{ completed: i < getPosts() }"
+              ></div>
+            </div>
+          </ng-template>
+        </div>
+
+        <div class="step">
+          <mat-icon color="primary">
+            {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
+          </mat-icon>
+          <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
+          <a *ngIf="getStatus('joinedCourse') && getStatus('hasPost') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
+            Encuesta
+          </a>
+        </div>
+
+        <div>
+          <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b> / $11</span>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</mat-dialog-content>

@@ -6,7 +6,8 @@
   <span class="toolbar-fill"></span>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type title to search...">
+    <mat-label i18n>Type title to search...</mat-label>
+    <input matInput (keyup)="applyFilter($event.target.value)">
   </mat-form-field>
 </mat-toolbar>
 
@@ -28,8 +29,8 @@
     </ng-container>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <planet-loading-spinner *ngIf="isLoading" text="Loading surveys..." i18n-text></planet-loading-spinner>
-    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" *ngIf="!isLoading">
+    <planet-loading-spinner *ngIf="isLoading && !useDialogLoading" text="Loading surveys..." i18n-text></planet-loading-spinner>
+    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"

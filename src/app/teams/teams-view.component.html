@@ -60,7 +60,7 @@
       <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="toolbar-button margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
-      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
+      <mat-chip-set *ngSwitchCase="'requesting'" aria-label="Request status" i18n-aria-label><mat-chip color="accent" highlighted i18n>Request pending</mat-chip></mat-chip-set>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
       <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
@@ -242,11 +242,11 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab #surveysTab i18n-label label="Surveys">
+        <mat-tab i18n-label label="Surveys">
           <ng-template mat-tab-label>
-            <ng-container i18n>Surveys</ng-container> <span *ngIf="surveysTab.isActive">({{surveysCount}})</span>
+            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
           </ng-template>
-          <planet-surveys *ngIf="surveysTab.isActive" [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
+          <planet-surveys [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
       </ng-container>
     </mat-tab-group>

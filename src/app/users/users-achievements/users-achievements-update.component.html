@@ -13,41 +13,43 @@
     <div class="achievements-forms-container">
       <form [formGroup]="profileForm" class="form-spacing">
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="First Name" formControlName="firstName" required>
+          <mat-label i18n>First Name</mat-label>
+          <input matInput formControlName="firstName" required>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.firstName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+          <mat-label i18n>Middle Name</mat-label>
+          <input matInput formControlName="middleName">
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Last Name" formControlName="lastName" required>
+          <mat-label i18n>Last Name</mat-label>
+          <input matInput formControlName="lastName" required>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="dp" i18n-placeholder placeholder="Birthdate" formControlName="birthDate" required [min]="minBirthDate">
-          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-label i18n>Birthdate</mat-label>
+          <input matInput [matDatepicker]="dp" formControlName="birthDate" required [min]="minBirthDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Birthplace" formControlName="birthplace">
+          <mat-label i18n>Birthplace</mat-label>
+          <input matInput formControlName="birthplace">
         </mat-form-field>
       </form>
       <form [formGroup]="editForm">
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose" i18n-placeholder
-            placeholder="My Purpose - What are your educational and professional ambitions?"
-          ></planet-markdown-textbox>
+          <mat-label i18n>My Purpose - What are your educational and professional ambitions?</mat-label>
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.purpose"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals" i18n-placeholder
-            placeholder="My Goals - What are your goals for the next 10 years?"
-          ></planet-markdown-textbox>
+          <mat-label i18n>My Goals - What are your goals for the next 10 years?</mat-label>
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.goals"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader" i18n-placeholder
-            placeholder="Summary of Achievements - Briefly summarize your achievements and add related materials below"
-          ></planet-markdown-textbox>
+          <mat-label i18n>Summary of Achievements - Briefly summarize your achievements and add related materials below</mat-label>
+          <planet-markdown-textbox class="full-width" [formControl]="editForm.controls.achievementsHeader"></planet-markdown-textbox>
         </mat-form-field>
         <div>
           <p class="mat-hint mat-caption" i18n>Add any materials demonstrating your achievements below</p>
@@ -92,7 +94,7 @@
           </planet-step-list>
           <button type="button" (click)="addLink()" mat-stroked-button color="primary" i18n>Enter a Link</button>
         </div>
-        <mat-checkbox formControlName="sendToNation" class="full-width" i18n>
+        <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
           Allow your achievements to be shared with the nation
         </mat-checkbox>
       </form>

@@ -9,76 +9,92 @@
     <div>
       <form class="form-spacing" [formGroup]="resourceForm" novalidate>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+          <mat-label i18n>Title</mat-label>
+          <input matInput formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Author" formControlName="author">
+          <mat-label i18n>Author</mat-label>
+          <input matInput   formControlName="author">
         </mat-form-field>
         <mat-form-field>
-          <input matInput  i18n-placeholder placeholder="Year" formControlName="year">
+          <mat-label i18n>Year</mat-label>
+          <input matInput   formControlName="year">
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Description" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+          <mat-label i18n>Description</mat-label>
+          <planet-markdown-textbox class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-tag-input [formControl]="tags" [db]="dbName" i18n-placeholder placeholder="Labels" mode="add"></planet-tag-input>
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width mdc-form-field-no-outline">
+          <mat-label i18n>Labels</mat-label>
+          <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Language" formControlName="language">
+          <mat-label i18n>Language</mat-label>
+          <mat-select formControlName="language">
             <mat-option *ngFor="let lang of languages" [value]="lang.name">{{lang.name}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Publisher/Attribution" formControlName="publisher">
+          <mat-label i18n>Publisher/Attribution</mat-label>
+          <input matInput formControlName="publisher">
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Link to License" formControlName="linkToLicense">
+          <mat-label i18n>Link to License</mat-label>
+          <input matInput formControlName="linkToLicense">
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Subject(s)" formControlName="subject" multiple required>
+          <mat-label i18n>Subject(s)</mat-label>
+          <mat-select formControlName="subject" multiple required>
             <mat-option *ngFor="let subject of constants.subjectList" [value]="subject.value">{{subject.label}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Level(s)" formControlName="level" multiple required>
+          <mat-label i18n>Level(s)</mat-label>
+          <mat-select formControlName="level" multiple required>
             <mat-option *ngFor="let level of constants.levelList" [value]="level.value">{{level.label}}</mat-option>
           </mat-select>
           <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Open" formControlName="openWith">
+          <mat-label i18n>Open</mat-label>
+          <mat-select formControlName="openWith">
             <mat-option *ngFor="let open of constants.openWith" [value]="open.value">
             {{ open.label }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Resource For" formControlName="resourceFor" multiple>
+          <mat-label i18n>Resource For</mat-label>
+          <mat-select formControlName="resourceFor" multiple>
             <mat-option *ngFor="let role of constants.resourceFor" [value]="role.value">{{role.label}}</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Media" formControlName="medium">
+          <mat-label i18n>Media</mat-label>
+          <mat-select formControlName="medium">
             <mat-option *ngFor="let medium of constants.media" [value]="medium.value">
             {{ medium.label }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Resource Type" formControlName="resourceType">
+          <mat-label i18n>Resource Type</mat-label>
+          <mat-select formControlName="resourceType">
             <mat-option *ngFor="let type of constants.resourceType" [value]="type.value">
             {{ type.label}}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Added By" formControlName="addedBy" readonly>
+          <mat-label i18n>Added By</mat-label>
+          <input matInput formControlName="addedBy" readonly>
         </mat-form-field>
         <mat-form-field>
-          <input type="text" i18n-placeholder placeholder="Open Which File" matInput formControlName="openWhichFile" [matAutocomplete]="auto">
+          <mat-label i18n>Open Which File</mat-label>
+          <input type="text" matInput formControlName="openWhichFile" [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete">
             <mat-option *ngFor="let file of filteredZipFiles | async" [value]="file">
               {{file}}

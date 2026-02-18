@@ -8,7 +8,8 @@
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1 margin-lr-3">
-      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter" i18n-placeholder placeholder="Type certification name to search">
+      <mat-label i18n>Type certification name to search</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
     </mat-form-field>
     <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
   </ng-container>
@@ -22,7 +23,8 @@
   <mat-toolbar-row>
     <mat-icon>search</mat-icon>
     <mat-form-field class="font-size-1 margin-lr-3">
-      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter" i18n-placeholder placeholder="Type certification name to search">
+      <mat-label i18n>Type certification name to search</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
     </mat-form-field>
     <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
   </mat-toolbar-row>
@@ -33,8 +35,7 @@
     <a mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></a>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <planet-loading-spinner *ngIf="isLoading" text="Loading certifications..." i18n-text></planet-loading-spinner>
-    <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true" *ngIf="!isLoading">
+    <mat-table #table [dataSource]="certifications" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell i18n *matHeaderCellDef mat-sort-header="name">Certification Name</mat-header-cell>
         <mat-cell *matCellDef="let element"><span class="ellipsis-text">{{element.name}}</span></mat-cell>

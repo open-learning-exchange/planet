@@ -63,13 +63,15 @@ export class MigrationComponent implements OnInit {
 
   ngOnInit() {
     this.cloneForm = this.fb.group({
-      url: [ '', Validators.required ],
-      name: [ '', [
-        Validators.required,
-        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
-      ],
-      password: [ '', Validators.required ]
+      url: this.fb.control('', { validators: [ Validators.required ] }),
+      name: this.fb.control('', {
+        validators: [
+          Validators.required,
+          CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+          Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
+        ]
+      }),
+      password: this.fb.control('', { validators: [ Validators.required ] })
     });
   }
 

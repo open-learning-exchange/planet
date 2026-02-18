@@ -1,5 +1,5 @@
 @import './app/variables';
-@import './planet-mat-theme.scss';
+@import './planet-mat-theme';
 
 body {
   font-family: $font-family;
@@ -61,6 +61,7 @@ body {
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
+    max-height: 64px;
   }
 
   // Use to reset font size to base
@@ -198,11 +199,11 @@ body {
     line-height: 1;
   }
 
-  .mat-row.expanded-row {
+  .mat-mdc-row.expanded-row {
     border: none;
   }
 
-  .mat-row.expanded-row td {
+  .mat-mdc-row.expanded-row td {
     padding: 0;
   }
 
@@ -350,6 +351,9 @@ body {
   // Note checkbox column must be named "select" in table
   .mat-column-select {
     overflow: visible;
+    // Reduce padding for MDC checkbox cells
+    padding-left: 12px !important;
+    max-width: 44px;
   }
 
   .planet-radio-section {
@@ -364,10 +368,11 @@ body {
   }
 
   // Remove the underline from mat-form-field for custom fields
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-type-no-underline .mat-form-field-underline {
     display: none;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-dynamic-width .mat-form-field-infix {
     width: auto;
   }
@@ -454,17 +459,30 @@ body {
 
   mat-toolbar:first-child > mat-form-field,
   mat-toolbar:first-child > planet-selector,
-  .mat-toolbar form .mat-form-field,
+  .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
-    margin-top: 10px;
     &.mat-form-field-type-no-underline {
       margin-top: inherit;
     }
   }
 
-  mat-dialog-actions, mat-card-footer.action-buttons {
+  .mat-mdc-form-field.mdc-form-field-no-outline .mdc-notched-outline {
+    opacity: 0;
+  }
+
+  .mdc-toolbar-input {
+    align-self: baseline;
+    padding-top: 4px;
+  }
+
+  .mat-mdc-dialog-actions, .mat-mdc-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .no-max-height-dialog .mat-mdc-dialog-content {
+    max-height: none;
   }
 
   mat-row mat-cell {
@@ -487,9 +505,11 @@ body {
   }
 
   .collections-search {
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-wrapper {
       padding: 0;
     }
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-infix {
       border: 0;
     }
@@ -536,7 +556,7 @@ body {
     }
   }
 
-  .mat-input-element[readonly]{
+  .mat-mdc-input-element[readonly]{
     color: $grey;
   }
 
@@ -642,24 +662,35 @@ body {
     margin: 0.25rem;
   }
 
-  mat-tab-group.tabs-padding .mat-tab-body {
+  .mat-mdc-tab {
+    letter-spacing: normal;
+  }
+
+  mat-tab-group.tabs-padding .mat-mdc-tab-body {
     padding-top: 0.5rem;
   }
 
-  .chip-no-style {
-    pointer-events: none;
-    &:focus::after {
-      opacity: 0;
-    }
-    &> mat-icon {
-      pointer-events: auto;
-    }
-  }
+  .tags-list .mat-mdc-chip {
+    max-width: 200px;
 
-  // For the members page roles
-  @media(max-width: $screen-sm) {
-    .mat-column-roles .mat-chip-list div.mat-chip-list-wrapper {
-      flex-wrap: nowrap;
+    .mdc-evolution-chip__action,
+    .mdc-evolution-chip__cell--primary {
+      color: inherit;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .mdc-evolution-chip__text-label,
+    .mat-mdc-chip-action-label {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      :focus, :hover {
+        color: currentColor;
+      }
     }
   }
 
