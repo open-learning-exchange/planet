@@ -68,7 +68,7 @@
             <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
           </ng-container>
           <ng-container *planetAuthorizedRoles="''">
-            <div *ngIf="!planetCode" class="action-buttons sticky-button">
+            <div *ngIf="!planetCode" class="action-buttons flex-row-gap">
               <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
               </button>
