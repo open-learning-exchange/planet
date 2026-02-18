@@ -4,10 +4,11 @@
   </a>
 </mat-toolbar>
 
-<div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
-  <div class="view-container">
-    <form class="form-spacing" [formGroup]="meetupForm" novalidate>
+<ng-template #meetupContent>
+  <div [ngClass]="{'space-container':!isDialog}">
+    <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
+    <div class="view-container">
+      <form class="form-spacing" [formGroup]="meetupForm" novalidate>
       <mat-form-field>
         <mat-label i18n>Title</mat-label>
         <input matInput formControlName="title" required>
@@ -80,10 +81,27 @@
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurringNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </ng-container>
-    </form>
-    <mat-dialog-actions>
-      <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
-      <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
-    </mat-dialog-actions>
+      </form>
+      <ng-container *ngIf="!isDialog">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </ng-container>
+    </div>
   </div>
-</div>
+</ng-template>
+<ng-container *ngIf="isDialog; else meetupPage">
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+  </mat-dialog-actions>
+</ng-container>
+<ng-template #actionButtons>
+  <div [class.mat-mdc-dialog-actions]="!isDialog">
+    <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
+    <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
+  </div>
+</ng-template>
+<ng-template #meetupPage>
+  <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
+</ng-template>
