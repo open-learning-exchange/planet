@@ -91,7 +91,7 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const yearDiff = now.getFullYear() - birth.getFullYear();
   const afterBirthDay = now.getMonth() < birth.getMonth() ?
     false :
-    now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
+    now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate() ?
     false :
     true;
   return yearDiff - (afterBirthDay ? 0 : 1);
