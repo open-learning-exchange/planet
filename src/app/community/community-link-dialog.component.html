@@ -14,7 +14,8 @@
       </mat-step>
       <mat-step i18n-label label="Title" [stepControl]="linkTitleForm">
         <mat-form-field class="full-width">
-          <input matInput i18n-placeholder placeholder="Title" formControlName="title" required>
+          <mat-label i18n>Title</mat-label>
+          <input matInput formControlName="title" required>
           <mat-error><planet-form-error-messages [control]="linkForm.controls.title"></planet-form-error-messages></mat-error>
         </mat-form-field>
       </mat-step>
