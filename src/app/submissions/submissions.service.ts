@@ -795,8 +795,7 @@ export class SubmissionsService {
       response = await this.chatService.getPrompt(
         {
           content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
-          aiProvider: { name: 'openai' },
-          assistant: false
+          aiProvider: { name: 'openai' }
         },
         false
       ).toPromise();
