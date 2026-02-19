@@ -130,6 +130,36 @@ Lint: `ng lint`
 This will fix any lint errors that TSLint can automatically fix:
 `Fix Lint: ng lint --fix`
 
+### Starthub toggle (`/srv/starthub`)
+
+If your deployment workflow still relies on `/srv/starthub`, use the package scripts below instead of writing the file manually:
+
+```bash
+npm run starthub-true
+npm run starthub-false
+npm run starthub-status
+```
+
+#### Host/container path semantics
+
+* Default path is `/srv/starthub`.
+* The path is resolved in the environment where the command runs:
+  * Running on the host writes to the host filesystem.
+  * Running inside a container writes to the container filesystem unless `/srv` is bind-mounted.
+* To target a different location, set `STARTHUB_FILE` when calling `docker/starthub.sh`.
+
+#### When to run each script
+
+* `npm run starthub-true`: before operations that should explicitly enable hub startup behavior.
+* `npm run starthub-false`: before operations that should explicitly disable hub startup behavior.
+* `npm run starthub-status`: verification step before/after deployment and troubleshooting.
+
+#### Safety constraints and rollback
+
+* `docker/starthub.sh` validates that the parent directory exists and the target path is writable before writing.
+* The script only accepts `true`, `false`, or `status` to avoid accidental file corruption from arbitrary values.
+* Rollback is immediate: run the opposite command (`starthub-false` or `starthub-true`) and confirm with `starthub-status`.
+
 
 To serve the app in a different language, use the LNG variable:
 `

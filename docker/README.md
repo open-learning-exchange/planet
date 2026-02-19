@@ -29,6 +29,18 @@ This docker compose can be use for your development environment and very handy, 
 ## How to use
 I will divide this how to use into two sections, for development and for production. It is interesting to run our development environment on top of isolated docker container.
 
+## Starthub control file
+
+If your environment still uses `/srv/starthub` as an external toggle, use `docker/starthub.sh`:
+
+```bash
+bash ./docker/starthub.sh true
+bash ./docker/starthub.sh false
+bash ./docker/starthub.sh status
+```
+
+The script checks path existence and write permissions before writing to reduce deployment mistakes.
+
 ### For Production
 
 1. Move to `srv/planet` folder
