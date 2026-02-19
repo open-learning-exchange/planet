@@ -19,7 +19,13 @@ $accent-map: (
 
 @each $section in library, courses, meetups, teams {
   $accent-palette: map-get($accent-map, #{$section});
-  $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  $theme: mat.define-light-theme((
+    color: (
+      primary: $planet-app-primary,
+      accent: $accent-palette,
+      warn: $planet-app-warn
+    )
+  ));
   .planet-#{$section}-theme {
     @include mat.all-component-themes($theme);
 
