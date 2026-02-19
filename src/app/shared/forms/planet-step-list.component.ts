@@ -1,28 +1,16 @@
-import {
-  Component,
-  Input,
-  EventEmitter,
-  Output,
-  Directive,
-  ContentChildren,
-  ViewChild,
-  TemplateRef,
-  Injectable,
-  OnDestroy,
-  AfterContentChecked,
-  ViewEncapsulation,
-  HostBinding
+import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild,
+  TemplateRef, Injectable, OnDestroy, AfterContentChecked, ViewEncapsulation, HostBinding, QueryList
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AbstractControl, FormArray, FormGroup, UntypedFormArray } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
 export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
 export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
-export type PlanetStepListSteps = unknown[] | PlanetStepFormArray | UntypedFormArray;
+export type PlanetStepListSteps = unknown[] | PlanetStepFormArray;
 
 interface StepMoveEvent {
   index: number;
@@ -92,7 +80,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepsChange = new EventEmitter<unknown[]>();
 
-  @ContentChildren(PlanetStepListItemComponent) stepListItems;
+  @ContentChildren(PlanetStepListItemComponent) stepListItems: QueryList<PlanetStepListItemComponent>;
 
   listMode = true;
   openIndex = -1;
@@ -165,7 +153,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
   }
 
-  changeStep(direction) {
+  changeStep(direction: number) {
     this.stepClick(this.openIndex + direction);
   }
 
