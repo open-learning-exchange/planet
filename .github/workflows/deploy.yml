@@ -55,10 +55,16 @@ jobs:
           echo "planet.dev.ole.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFqXBJPFe+pH3L57o1ildAxHssG4lpkloTcw3Wbs64c7bL8M6hR0rre4ufpCKboVLn4trJqbKOPWtFgBJHsgqXA=" > ~/.ssh/known_hosts
           # echo "planet.earth.ole.org ...."
           ssh root@$SERVER_HOST <<EOF
+          if [ ! -w /srv ] && [ ! -w /srv/starthub ] && [ ! -e /srv/starthub ]; then
+            echo "Error: /srv/starthub is not writable on deployment target"
+            exit 1
+          fi
+          echo "true" > /srv/starthub
           docker pull $PLANET_REPO
           docker pull $DBINIT_REPO
           docker tag $PLANET_REPO "$DOCKER_ORG/$DOCKER_REPO:local"
           docker tag $DBINIT_REPO "$DOCKER_ORG/$DOCKER_REPO:db-init-local"
           docker images
           treehouses services planet restart
+          echo "false" > /srv/starthub
           EOF

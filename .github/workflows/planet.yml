@@ -22,6 +22,27 @@ env:
 
 jobs:
 
+  legacy-e2e-webdriver-setup:
+    name: Legacy e2e webdriver setup
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for legacy e2e webdriver pin
+        run: npm ci
+
+      - name: Pin legacy chromedriver for Protractor e2e
+        run: npm run webdriver-set-version
+
+
   build-prepare:
     name: Preparing
     runs-on: ubuntu-latest
