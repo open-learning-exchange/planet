@@ -93,6 +93,15 @@ mat-toolbar mat-form-field {
     width: 100%;
   }
 
+  mat-button-toggle-group {
+    width: 100%;
+    display: flex;
+
+    mat-button-toggle {
+      flex: 1;
+    }
+  }
+
   .reports-table-container {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   }
