@@ -32,4 +32,11 @@ planet-tasks {
     color: $warn;
   }
 
+  mat-button-toggle-group {
+    font-size: 14px;
+    mat-button-toggle {
+      line-height: 34px;
+    }
+  }
+
 }
