@@ -1,25 +1,24 @@
-<ng-container [ngSwitch]="mode">
-  <planet-courses *ngSwitchCase="'courses'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-courses>
-  <planet-users *ngSwitchCase="'users'" [isDialog]="true" [hideChildren]="data.hideChildren" [excludeIds]="data.excludeIds"></planet-users>
-  <div *ngSwitchCase="'teams'">
-    <div mat-dialog-title>
+<mat-dialog-content>
+  <ng-container [ngSwitch]="mode">
+    <planet-courses *ngSwitchCase="'courses'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-courses>
+    <planet-users *ngSwitchCase="'users'" [isDialog]="true" [hideChildren]="data.hideChildren" [excludeIds]="data.excludeIds"></planet-users>
+    <div *ngSwitchCase="'teams'">
       <mat-form-field class="full-width">
         <mat-label i18n>Send to team or enterprise</mat-label>
         <mat-select (selectionChange)="onSelectionChange($event)">
           <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
-    <mat-dialog-content *ngIf="selectedLink">
       <planet-teams
+        *ngIf="selectedLink"
         [isDialog]="true"
         [excludeIds]="data.excludeIds"
         [mode]="selectedLink?.selector?.type"
         (rowClick)="teamSelect($event)"
       ></planet-teams>
-    </mat-dialog-content>
-  </div>
-</ng-container>
+    </div>
+  </ng-container>
+</mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>
   <button color="primary" mat-raised-button [disabled]="okDisabled" (click)="ok()" i18n>OK</button>

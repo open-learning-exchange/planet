@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
-
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';

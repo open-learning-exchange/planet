@@ -61,6 +61,7 @@ body {
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
+    max-height: 64px;
   }
 
   // Use to reset font size to base
@@ -198,11 +199,11 @@ body {
     line-height: 1;
   }
 
-  .mat-row.expanded-row {
+  .mat-mdc-row.expanded-row {
     border: none;
   }
 
-  .mat-row.expanded-row td {
+  .mat-mdc-row.expanded-row td {
     padding: 0;
   }
 
@@ -367,10 +368,11 @@ body {
   }
 
   // Remove the underline from mat-form-field for custom fields
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-type-no-underline .mat-form-field-underline {
     display: none;
   }
-
+  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
   .mat-form-field-dynamic-width .mat-form-field-infix {
     width: auto;
   }
@@ -457,17 +459,30 @@ body {
 
   mat-toolbar:first-child > mat-form-field,
   mat-toolbar:first-child > planet-selector,
-  .mat-toolbar form .mat-form-field,
+  .mat-toolbar form .mat-mdc-form-field,
   .input-icon {
-    margin-top: 10px;
     &.mat-form-field-type-no-underline {
       margin-top: inherit;
     }
   }
 
-  mat-dialog-actions, mat-card-footer.action-buttons {
+  .mat-mdc-form-field.mdc-form-field-no-outline .mdc-notched-outline {
+    opacity: 0;
+  }
+
+  .mdc-toolbar-input {
+    align-self: baseline;
+    padding-top: 4px;
+  }
+
+  .mat-mdc-dialog-actions, .mat-mdc-card-footer.action-buttons {
     display: flex;
     justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .no-max-height-dialog .mat-mdc-dialog-content {
+    max-height: none;
   }
 
   mat-row mat-cell {
@@ -490,9 +505,11 @@ body {
   }
 
   .collections-search {
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-wrapper {
       padding: 0;
     }
+    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
     .mat-form-field-infix {
       border: 0;
     }
@@ -539,7 +556,7 @@ body {
     }
   }
 
-  .mat-input-element[readonly]{
+  .mat-mdc-input-element[readonly]{
     color: $grey;
   }
 

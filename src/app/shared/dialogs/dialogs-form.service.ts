@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
-import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlState, FormGroup, ValidatorFn } from '@angular/forms';
 
