@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { from, forkJoin, of, throwError } from 'rxjs';
@@ -28,7 +28,7 @@ interface RegisterForm {
 }
 
 interface LoginForm {
-  name: [ string, ValidatorFn ],
+  name: [ string, ValidatorFn | ValidatorFn[] ],
   password: [ string, ValidatorFn ]
 }
 
@@ -46,7 +46,7 @@ const registerForm: RegisterForm = {
 };
 
 const loginForm: LoginForm = {
-  name: [ '', CustomValidators.required ],
+  name: [ '', [ Validators.required, CustomValidators.required ] ],
   password: [ '', Validators.required ]
 };
 

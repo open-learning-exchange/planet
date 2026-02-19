@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator';
+import { FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
@@ -16,7 +16,6 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, filterById } from '../shared/utils';
-import { debug } from '../debug-operator';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -25,10 +24,10 @@ import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.co
 import { ExamsService } from '../exams/exams.service';
 
 interface SurveyFilterForm {
-  includeQuestions: FormControl<boolean | null>;
-  includeAnswers: FormControl<boolean | null>;
-  includeCharts: FormControl<boolean | null>;
-  includeAnalysis: FormControl<boolean | null>;
+  includeQuestions: FormControl<boolean>;
+  includeAnswers: FormControl<boolean>;
+  includeCharts: FormControl<boolean>;
+  includeAnalysis: FormControl<boolean>;
 }
 
 @Component({
@@ -54,6 +53,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
   parentCount = 0;
+  useDialogLoading = true;
   isLoading = true;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
@@ -72,12 +72,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private dialogsFormService: DialogsFormService,
     private chatService: ChatService,
-    private examsService: ExamsService
-  ) {
-    this.dialogsLoadingService.start();
-  }
+    private examsService: ExamsService,
+    private fb: NonNullableFormBuilder
+  ) {}
 
   ngOnInit() {
+    this.useDialogLoading = !this.teamId && !this.routeTeamId;
+    if (this.useDialogLoading) {
+      this.dialogsLoadingService.start();
+    }
     this.surveys.filterPredicate = filterSpecificFields([ 'name' ]);
     this.surveys.sortingDataAccessor = sortNumberOrString;
     this.loadSurveys();
@@ -168,8 +171,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         ...this.createParentSurveys(submissions)
       ];
       this.applyViewModeFilter();
-      this.dialogsLoadingService.stop();
       this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
+    }, () => {
+      this.isLoading = false;
+      if (this.useDialogLoading) {
+        this.dialogsLoadingService.stop();
+      }
     });
   }
 
@@ -317,7 +327,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         displayName
       }
     });
-    this.deleteDialog.afterClosed().pipe(debug('Closing dialog'), takeUntil(this.onDestroy$)).subscribe(() => {});
+    this.deleteDialog.afterClosed().pipe(takeUntil(this.onDestroy$)).subscribe(() => {});
   }
 
   openSendSurveyToUsersDialog(survey) {
@@ -448,6 +458,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
+    const formGroup: FormGroup<SurveyFilterForm> = this.fb.group({
+      includeQuestions: this.fb.control(true),
+      includeAnswers: this.fb.control(true),
+      includeCharts: this.fb.control(false),
+      includeAnalysis: this.fb.control(false)
+    });
+
     this.dialogsFormService.openDialogsForm(
       $localize`Records to Export`,
       [
@@ -463,7 +480,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           tooltip: chatDisabled && $localize`AI analysis is disabled, contact community admin`
         }
       ],
-      { includeQuestions: true, includeAnswers: true, includeCharts: false, includeAnalysis: false },
+      formGroup,
       {
         autoFocus: true,
         disableIfInvalid: true,

@@ -5,15 +5,12 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
-import {
-  MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
-} from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
-import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 
@@ -62,7 +59,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       });
     if (this.meetupDetail === undefined) {
       this.route.paramMap
-        .pipe(debug('Getting meetup id from parameters'), takeUntil(this.onDestroy$))
+        .pipe(takeUntil(this.onDestroy$))
         .subscribe((params: ParamMap) => {
           const meetupId = params.get('id');
           const getOpts: any = { meetupIds: [ meetupId ] };

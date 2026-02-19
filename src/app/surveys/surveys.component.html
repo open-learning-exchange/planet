@@ -6,7 +6,8 @@
   <span class="toolbar-fill"></span>
   <mat-icon class="input-icon">search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type title to search...">
+    <mat-label i18n>Type title to search...</mat-label>
+    <input matInput (keyup)="applyFilter($event.target.value)">
   </mat-form-field>
 </mat-toolbar>
 
@@ -28,7 +29,8 @@
     </ng-container>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true">
+    <planet-loading-spinner *ngIf="isLoading && !useDialogLoading" text="Loading surveys..." i18n-text></planet-loading-spinner>
+    <mat-table #table [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -114,14 +116,7 @@
       <mat-header-row *matHeaderRowDef="displayedColumns" [class.hidden]="!surveys.data || surveys.data.length === 0"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>
-          <div class="view-container" *ngIf="isLoading" i18n>
-            Loading Surveys...
-          </div>
-          <div class="view-container" *ngIf="!isLoading" i18n>
-            No Survey Found
-          </div>
-        </td>
+        <td><div class="view-container" *ngIf="!isLoading" i18n>No Survey Found</div></td>
       </tr>
     </mat-table>
     <mat-paginator #paginator

@@ -1,22 +1,24 @@
 <button class="close" mat-dialog-close mat-icon-button>
   <mat-icon>close</mat-icon>
 </button>
-<h3>{{data.title}}</h3>
-<div *ngIf="data?.type !== 'log'">
-  <p i18n>Name: {{data.allData.name}} </p>
-  <p i18n>Code: {{data.allData.code}}</p>
-  <p i18n>Local URL: {{data.allData.localDomain}}</p>
-  <p i18n>{ data.allData.planetType, select, community {Nation} nation {Center} } URL: {{data.allData.parentDomain}}</p>
-  <p i18n>Planet Type: {{data.allData.planetType}} </p>
-  <p i18n>Created Date: {{data.allData.createdDate | date: 'fullDate'}}</p>
-  <p i18n>Language: {{data.allData.preferredLang}}</p>
-  <p i18n>Status: {{data.allData.registrationRequest}}</p>
-  <p i18n>Email: {{data.allData.email}}</p>
-  <p i18n>Phone Number: {{data.allData.phoneNumber}}</p>
-</div>
-<div *ngIf="data.type === 'log'">
-  <p i18n>Name: {{data.allData.deviceName || data.allData.customDeviceName}} </p>
-  <p i18n>Version: {{data.allData.version}}</p>
-  <p i18n>Time: {{data.allData.time}}</p>
-  <p i18n class="content">Error: {{data.allData.error}}</p>
-</div>
+<h3 mat-dialog-title>{{data.title}}</h3>
+<mat-dialog-content>
+  <div *ngIf="data?.type !== 'log'">
+    <p i18n>Name: {{data.allData.name}} </p>
+    <p i18n>Code: {{data.allData.code}}</p>
+    <p i18n>Local URL: {{data.allData.localDomain}}</p>
+    <p i18n>{ data.allData.planetType, select, community {Nation} nation {Center} } URL: {{data.allData.parentDomain}}</p>
+    <p i18n>Planet Type: {{data.allData.planetType}} </p>
+    <p i18n>Created Date: {{data.allData.createdDate | date: 'fullDate'}}</p>
+    <p i18n>Language: {{data.allData.preferredLang}}</p>
+    <p i18n>Status: {{data.allData.registrationRequest}}</p>
+    <p i18n>Email: {{data.allData.email}}</p>
+    <p i18n>Phone Number: {{data.allData.phoneNumber}}</p>
+  </div>
+  <div *ngIf="data.type === 'log'">
+    <p i18n>Name: {{data.allData.deviceName || data.allData.customDeviceName}} </p>
+    <p i18n>Version: {{data.allData.version}}</p>
+    <p i18n>Time: {{data.allData.time}}</p>
+    <p i18n class="content">Error: {{data.allData.error}}</p>
+  </div>
+</mat-dialog-content>

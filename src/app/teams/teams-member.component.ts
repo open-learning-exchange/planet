@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
@@ -9,15 +9,8 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
   styles: [ `
-    .mat-list-item-disabled {
+    .mat-mdc-list-item-disabled {
       background-color: white;
-    }
-    .mat-card-subtitle p.role-text {
-      min-height: 35px;
-    }
-    .mat-card-tasks {
-      max-height: 70px;
-      overflow: hidden;
     }
     .mat-caption {
       font-size: 16px;

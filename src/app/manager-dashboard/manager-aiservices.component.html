@@ -7,24 +7,25 @@
 
 <form class="container" [formGroup]="configForm">
   <mat-card class="card">
-    <mat-card-title i18n>API Keys</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>API Keys</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.keys">
       <mat-list>
         <mat-list-item *ngFor="let apiKey of configuration.keys | keyvalue">
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span>{{ apiKey.key | titlecase }}</span>
             <mat-form-field>
+              <mat-label i18n></mat-label>
               <input
                 matInput
                 [type]="hideKey[apiKey.key] ? 'password' : 'text'"
                 [formControlName]="'keys_' + apiKey.key"
-                placeholder="Enter API key"
-                i18n-placeholder
               />
-              <button mat-icon-button matSuffix (click)="toggleHideKey(apiKey.key)">
+              <button mat-icon-button matIconSuffix (click)="toggleHideKey(apiKey.key)">
                 <mat-icon>{{ hideKey[apiKey.key] ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
-              <button mat-icon-button matSuffix (click)="copyKey(apiKey.key)">
+              <button mat-icon-button matIconSuffix (click)="copyKey(apiKey.key)">
                 <mat-icon>content_copy</mat-icon>
               </button>
             </mat-form-field>
@@ -36,14 +37,17 @@
 
 
   <mat-card class="card">
-    <mat-card-title i18n>Models</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Models</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.models">
       <mat-list>
         <mat-list-item *ngFor="let model of configuration.models | keyvalue">
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span>{{ model.key | titlecase }}</span>
             <mat-form-field>
-              <input matInput [formControlName]="'models_' + model.key" placeholder="Enter model" i18n-placeholder />
+              <mat-label i18n>Enter model</mat-label>
+              <input matInput [formControlName]="'models_' + model.key" />
             </mat-form-field>
           </div>
         </mat-list-item>
@@ -52,14 +56,17 @@
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Assistant Configuration</mat-card-title>
+    </mat-card-header>
     <mat-card-content *ngIf="configuration.assistant">
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n>Name:</span>
             <mat-form-field>
-              <input matInput formControlName="assistantName" placeholder="Assistant name" i18n-placeholder/>
+              <mat-label i18n>Assistant name</mat-label>
+              <input matInput formControlName="assistantName" />
             </mat-form-field>
           </div>
         </mat-list-item>
@@ -68,18 +75,21 @@
       <div class="list-item-content instructions">
         <span i18n>Instructions:</span>
         <mat-form-field>
-          <textarea matInput formControlName="assistantInstructions" placeholder="Assistant instructions" i18n-placeholder></textarea>
+          <mat-label i18n>Assistant instructions</mat-label>
+          <textarea matInput formControlName="assistantInstructions"></textarea>
         </mat-form-field>
       </div>
     </mat-card-content>
   </mat-card>
 
   <mat-card class="card">
-    <mat-card-title i18n>Chat Configurations</mat-card-title>
+    <mat-card-header>
+      <mat-card-title i18n>Chat Configurations</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <mat-list>
         <mat-list-item>
-          <div class="list-item-content">
+          <div matListItemTitle class="list-item-content">
             <span i18n>Chat streaming:</span>
             <mat-slide-toggle
               formControlName="streaming"

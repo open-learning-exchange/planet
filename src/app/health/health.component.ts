@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
@@ -30,6 +30,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   initializeEvents = true;
   isWaitingForEvents = true;
   isOwnUser = true;
+  isLoading = true;
   onDestroy$ = new Subject<void>();
 
   constructor(
@@ -66,6 +67,7 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   initData() {
+    this.isLoading = true;
     this.healthService.getHealthData(this.userDetail._id).pipe(
       switchMap(([ { profile, events, userKey } ]: any[]) => {
         this.userDetail = { ...profile, ...this.userDetail };
@@ -79,6 +81,9 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(eventDocs => {
       this.events = [ ...this.events, ...eventDocs ];
       this.setEventData();
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

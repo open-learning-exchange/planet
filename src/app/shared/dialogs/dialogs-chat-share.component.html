@@ -5,15 +5,15 @@
         <mat-panel-title i18n="@@share-with-community-panel-title">Share with Community</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
-        <i i18n style="margin-right: 1rem;">add note</i>
-        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm"></mat-checkbox><br>
+        <mat-checkbox [checked]="showForm" (change)="showForm = !showForm">
+          <i i18n>add note</i>
+        </mat-checkbox>
         <form [formGroup]="communityForm" (ngSubmit)="shareWithCommunity()">
           <mat-form-field *ngIf="showForm" class="full-width">
+            <mat-label i18n>Optional message</mat-label>
             <textarea
               matInput
-              placeholder="Optional message"
               formControlName="message"
-              i18n-placeholder
             ></textarea>
           </mat-form-field>
           <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>
@@ -41,7 +41,8 @@
             </mat-step>
             <mat-step i18n-label label="Message" [stepControl]="teamForm">
               <mat-form-field class="full-width">
-                <textarea matInput i18n-placeholder placeholder="Message" formControlName="message"></textarea>
+                <mat-label i18n>Message</mat-label>
+                <textarea matInput formControlName="message"></textarea>
                 <mat-error><planet-form-error-messages [control]="teamForm.controls.message"></planet-form-error-messages></mat-error>
               </mat-form-field>
               <button mat-raised-button color="primary" type="submit" mat-dialog-close i18n>

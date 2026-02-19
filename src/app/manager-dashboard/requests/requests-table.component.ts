@@ -1,10 +1,10 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
@@ -20,8 +20,8 @@ import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/mangoQueries';
 
-interface EditChildNameFormValue {
-  name: string;
+interface EditChildNameFormControls {
+  name: FormControl<string>;
 }
 
 @Component({
@@ -211,13 +211,13 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   openEditChildNameDialog(planet) {
     const currentName = planet.nameDoc ? planet.nameDoc.name : planet.doc.name;
     const exceptions = [ currentName ];
-    const form = this.fb.group({
-      name: [currentName, {
+    const form: FormGroup<EditChildNameFormControls> = this.fb.group({
+      name: this.fb.control(currentName, {
         validators: [ CustomValidators.required ],
         asyncValidators: [
           (control: AbstractControl<string>) => this.validatorService.isUnique$(this.dbName, 'name', control, { exceptions })
         ]
-      }]
+      })
     });
     this.dialogsFormService.openDialogsForm(
       $localize`Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
@@ -229,7 +229,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   editChildName({ doc, nameDoc }) {
-    return ({ name }: EditChildNameFormValue) => {
+    return ({ name }: { name: string }) => {
       this.couchService.updateDocument(
         this.dbName,
         { ...nameDoc, 'name': name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }

@@ -29,8 +29,8 @@
       </ng-container>
     </mat-menu>
     <span class="toolbar-fill"></span>
-    <button mat-icon-button [disabled]="isLoading || questionNum === 1" (click)="moveQuestion(-1)" [planetSubmit]="spinnerOn"><mat-icon>navigate_before</mat-icon></button>
-    <button mat-icon-button [disabled]="isLoading || questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })" [planetSubmit]="spinnerOn"><mat-icon>navigate_next</mat-icon></button>
+    <button mat-icon-button [disabled]="isLoading || questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="isLoading || questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <ng-container *ngIf="!isLoading; else LoadingContent">
@@ -39,7 +39,8 @@
         <ng-container *ngSwitchCase="'take'">
           <ng-container [ngSwitch]="question?.type">
             <mat-form-field class="full-width" *ngSwitchCase="'input'">
-              <input matInput i18n-placeholder placeholder="Enter answer here" [formControl]="answer">
+              <mat-label i18n>Enter answer here</mat-label>
+              <input matInput [formControl]="answer">
             </mat-form-field>
             <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
               <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
@@ -94,7 +95,8 @@
             <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
           </mat-radio-group>
           <mat-form-field class="full-width mat-form-field-type-no-underline">
-            <planet-markdown-textbox class="full-width" i18n-placeholder placeholder="Comment" [(ngModel)]="comment"></planet-markdown-textbox>
+            <mat-label i18n>Comment</mat-label>
+            <planet-markdown-textbox class="full-width" [(ngModel)]="comment"></planet-markdown-textbox>
           </mat-form-field>
         </ng-container>
         <ng-container *ngSwitchCase="'view'">
@@ -117,7 +119,6 @@
           mat-raised-button
           color="primary"
           (click)="nextQuestion()"
-          [planetSubmit]="spinnerOn"
           [disabled]="!answer.valid || grade === undefined || grade === null || (mode !== 'grade' && questionNum === maxQuestions)">
           <ng-container i18n>Submit Answer</ng-container>
         </button>
@@ -149,9 +150,7 @@
       </div>
     </ng-container>
     <ng-template #LoadingContent>
-      <div i18n>
-        Loading content...
-      </div>
+      <planet-loading-spinner text="Loading content..." i18n-text></planet-loading-spinner>
     </ng-template>
   </div>
 </div>

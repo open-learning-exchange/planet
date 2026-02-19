@@ -5,10 +5,8 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
-import { debug } from '../../debug-operator';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
@@ -56,7 +54,6 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -69,12 +66,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     this.route.paramMap
-      .pipe(debug('Getting resource id from parameters'), takeUntil(this.onDestroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
-    this.dialogsLoadingService.start();
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
       .subscribe((resources) => {
         this.resource = resources.find((r: any) => r._id === this.resourceId);
@@ -85,12 +81,11 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
         }
-        this.dialogsLoadingService.stop();
         this.isLoading = false;
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
-      });
+      }, () => this.isLoading = false);
   }
 
   ngOnDestroy() {

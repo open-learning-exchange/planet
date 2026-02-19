@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { UntypedFormControl, AbstractControl } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -14,6 +15,21 @@ import {
   DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+
+interface ExamAnswerOption {
+  id: string;
+  text: string;
+  isOther?: boolean;
+};
+
+type ExamOtherAnswerOption = ExamAnswerOption & { isOther: true };
+
+type ExamAnswerValue = string | ExamAnswerOption | ExamAnswerOption[] | null;
+
+interface ExamViewForm {
+  answer: FormControl<ExamAnswerValue>;
+}
 
 @Component({
   selector: 'planet-exams-view',
@@ -33,9 +49,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   question: ExamQuestion;
   stepNum = 0;
   maxQuestions = 0;
-  answer = new UntypedFormControl(null, this.answerValidator);
   statusMessage = '';
-  spinnerOn = true;
   title = '';
   grade;
   submissionId: string;
@@ -52,7 +66,34 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
-  currentOtherOption: { id: 'other'; text: string; isOther: true } | null = null;
+  currentOtherOption: ExamOtherAnswerOption = { id: 'other', text: '', isOther: true };
+  private readonly answerValidator: ValidatorFn = (ac: AbstractControl<ExamAnswerValue>): ValidationErrors | null => {
+    const value = ac.value;
+    if (typeof value === 'string') {
+      return value.trim() ? null : { required: true };
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return { required: true };
+      }
+      const hasEmptyOther = value.some(option =>
+        this.isOtherOption(option) && (!option.text || !option.text.trim())
+      );
+      return hasEmptyOther ? { required: true } : null;
+    }
+
+    if (this.isOtherOption(value)) {
+      return value.text && value.text.trim() ? null : { required: true };
+    }
+
+    return value !== null && value !== undefined ? null : { required: true };
+  };
+
+  readonly examForm: FormGroup<ExamViewForm>;
+  get answer(): FormControl<ExamAnswerValue> {
+    return this.examForm.controls.answer;
+  }
 
   constructor(
     private router: Router,
@@ -64,7 +105,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
     private stateService: StateService,
-  ) { }
+    private dialogsLoadingService: DialogsLoadingService,
+    private formBuilder: FormBuilder,
+  ) {
+    this.examForm = this.formBuilder.group({
+      answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: this.answerValidator })
+    });
+  }
 
   ngOnInit() {
     this.setCourseListener();
@@ -105,7 +152,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.mode = mode || this.mode;
     this.answer.setValue(null);
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
-    this.spinnerOn = true;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
       this.statusMessage = '';
@@ -135,15 +181,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   nextQuestion({ nextClicked = false, isFinish = false }: { nextClicked?: boolean, isFinish?: boolean } = {}) {
+    this.dialogsLoadingService.start();
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
 // Only navigate away from page until after successful post (ensures DB is updated for submission list)
-    obs.subscribe(({ nextQuestion }) => {
+    obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
-        this.spinnerOn = false;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
         // Challenge option only
@@ -169,7 +215,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     if (this.isDialog) {
-      this.spinnerOn = false;
       return;
     }
     this.examComplete();
@@ -182,7 +227,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
-      this.spinnerOn = false;
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
@@ -191,7 +235,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.currentOtherOption = { id: 'other', text: '', isOther: true };
     }
     this.isNewQuestion = true;
-    this.spinnerOn = false;
   }
 
   examComplete() {
@@ -289,16 +332,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   });
 }
 
-  setAnswer(event, option) {
-    const value = this.answer.value || [];
+  setAnswer(event: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
+    const value: ExamAnswerOption[] = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];
     if (event.checked) {
-      if (!value.some(val => val.id === option.id)) {
+      const existingIndex = value.findIndex(val => val.id === option.id);
+      if (existingIndex === -1) {
         value.push(option);
       } else if (option.id === 'other') {
-        const otherIndex = value.findIndex(val => val.id === 'other');
-        if (otherIndex > -1) {
-          value[otherIndex].text = option.text;
-        }
+        value[existingIndex] = { ...value[existingIndex], text: option.text };
       }
     } else {
       const index = value.findIndex(val => val.id === option.id);
@@ -319,17 +360,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   calculateCorrect() {
     const value = this.answer.value;
-    const answers = value instanceof Array ? value : [ value ];
-    if (answers.every(answer => answer === null || answer === undefined)) {
+    const answers = Array.isArray(value) ? value : this.isAnswerOption(value) ? [ value ] : [];
+    const answerIds = answers
+      .map(ans => typeof ans === 'string' ? ans : ans?.id)
+      .filter((id): id is string => !!id);
+
+    if (answerIds.length === 0) {
       return undefined;
     }
-    const isMultiCorrect = (correctChoice, ans: any[]) => (
-      correctChoice.every(choice => ans.find((a: any) => a.id === choice)) &&
-      ans.every((a: any) => correctChoice.find(choice => a.id === choice))
+
+    const isMultiCorrect = (correctChoice: string[], ans: string[]) => (
+      correctChoice.every(choice => ans.includes(choice)) &&
+      ans.every(answer => correctChoice.includes(answer))
     );
+
     return this.question.correctChoice instanceof Array ?
-      isMultiCorrect(this.question.correctChoice, answers) :
-      answers[0].id === this.question.correctChoice;
+      isMultiCorrect(this.question.correctChoice, answerIds) :
+      answerIds[0] === this.question.correctChoice;
   }
 
   createAnswerObservable(isFinish = false) {
@@ -348,7 +395,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setAnswerForRetake(answer: any) {
-    const setSelectMultipleAnswer = (answers: any[]) => {
+    const setSelectMultipleAnswer = (answers: ExamAnswerOption[]) => {
       answers.forEach(ans => {
         this.setAnswer({ checked: true }, ans);
       });
@@ -359,65 +406,52 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     switch (this.question.type) {
       case 'selectMultiple':
-        const rebuilt = answer.value.map(val => {
-          if (val.id === 'other') {
-            this.currentOtherOption.text = val.text || '';
-            return this.currentOtherOption;
-          }
-          return val;
-        });
-        setSelectMultipleAnswer(rebuilt);
+        if (Array.isArray(answer.value)) {
+          const rebuilt = answer.value.map(val => {
+            if (val.id === 'other') {
+              this.currentOtherOption.text = val.text || '';
+              return this.currentOtherOption;
+            }
+            return val;
+          });
+          setSelectMultipleAnswer(rebuilt);
+        }
         break;
       case 'select':
-        if (answer.value && answer.value.id === 'other') {
+        if (this.isOtherOption(answer.value)) {
           this.currentOtherOption.text = answer.value.text;
           this.answer.setValue(this.currentOtherOption);
+        } else if (this.isAnswerOption(answer.value)) {
+          const selectedChoice = this.question.choices.find((choice) => choice.text === answer.value.text) || null;
+          this.answer.setValue(selectedChoice);
         } else {
-          this.answer.setValue(this.question.choices.find((choice) => choice.text === answer.value.text));
+          this.answer.setValue(answer.value as ExamAnswerValue);
         }
         break;
       default:
-        this.answer.setValue(answer.value);
+        this.answer.setValue(answer.value as ExamAnswerValue);
     }
-  }
-
-  answerValidator(ac: AbstractControl) {
-    if (typeof ac.value === 'string') {
-      return ac.value.trim() ? null : { required: true };
-    }
-
-    if (Array.isArray(ac.value)) {
-      if (ac.value.length === 0) {
-        return { required: true };
-      }
-      const hasEmptyOther = ac.value.some(option =>
-        option && option.isOther && (!option.text || !option.text.trim())
-      );
-      return hasEmptyOther ? { required: true } : null;
-    }
-    if (ac.value && ac.value.isOther && (!ac.value.text || !ac.value.text.trim())) {
-      return { required: true };
-    }
-
-    return ac.value !== null && ac.value !== undefined ? null : { required: true };
   }
 
   setViewAnswerText(answer: any) {
-    this.answer.setValue(Array.isArray(answer.value) ? answer.value.map((a: any) => a.text).join(', ').trim() : answer.value);
+    const answerValue = answer.value as ExamAnswerValue | null;
+    this.answer.setValue(Array.isArray(answerValue) ? answerValue.map((a: ExamAnswerOption) => a.text).join(', ').trim() : answerValue);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
   }
 
   isOtherSelected() {
-    return this.answer.value?.id === 'other';
+    return this.isOtherOption(this.answer.value);
   }
 
-  toggleOtherMultiple({ checked }): void {
+  toggleOtherMultiple({ checked }: Pick<MatCheckboxChange, 'checked'>): void {
     this.checkboxState['other'] = checked;
     if (checked) {
-      this.setAnswer({ checked: true }, this.currentOtherOption);
+      if (this.currentOtherOption) {
+        this.setAnswer({ checked: true }, this.currentOtherOption);
+      }
     } else {
-      const remaining = (this.answer.value || []).filter(o => o.id !== 'other');
+      const remaining = Array.isArray(this.answer.value) ? this.answer.value.filter(o => o.id !== 'other') : [];
       this.answer.setValue(remaining.length ? remaining : null);
       this.answer.updateValueAndValidity();
     }
@@ -425,6 +459,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   updateOtherText(): void {
     this.answer.updateValueAndValidity();
+  }
+
+  private isAnswerOption(value: ExamAnswerValue | null): value is ExamAnswerOption {
+    return !!value && !Array.isArray(value) && typeof value === 'object' && 'id' in value;
+  }
+
+  private isOtherOption(value: ExamAnswerValue | null): value is ExamOtherAnswerOption {
+    return this.isAnswerOption(value) && value.isOther === true;
   }
 
 }
