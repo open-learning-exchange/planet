@@ -46,6 +46,7 @@
     "@fullcalendar/daygrid": "^6.1.10",
     "@fullcalendar/interaction": "^6.1.10",
     "chart.js": "^3.9.1",
+    "easymde": "^2.18.0",
     "export-to-csv": "^0.2.1",
     "html-to-pdfmake": "^1.2.0",
     "jszip": "^3.2.2",
