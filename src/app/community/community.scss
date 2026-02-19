@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas: "news calendar";
-  gap: .5rem; // sass-lint:disable-line no-misspelled-properties
+  gap: .5rem; 
 
   @media only screen and (max-width: #{$screen-md}) {
     grid-template-columns: 1fr;
@@ -70,9 +70,9 @@ mat-tab-group, mat-tab {
   height: 100%;
 }
 
-.flex-row-gap {
+.community-flex-row-gap {
   display: flex;
-  gap: .5rem; // sass-lint:disable-line no-misspelled-properties
+  gap: .5rem; 
 }
 
 .sticky-button {
