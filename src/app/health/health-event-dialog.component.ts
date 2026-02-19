@@ -1,12 +1,16 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
+import { HealthService } from './health.service';
 import { UserService } from '../shared/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -17,6 +21,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   event: any;
   hasConditionAndTreatment = false;
+  @Output() examDeleted = new EventEmitter<void>();
   conditionAndTreatmentFields = conditionAndTreatmentFields;
   conditions: string;
   hasVital = false;
@@ -26,13 +31,18 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   seconds: string;
   timeLimit = 300000;
   isDestroyed = false;
+  deleteDialog: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private router: Router,
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<HealthEventDialogComponent>,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private healthService: HealthService,
+    private planetMessageService: PlanetMessageService,
   ) {
     pdfMake.vfs = pdfFonts.pdfMake.vfs;
     this.event = this.data.event || {};
@@ -61,6 +71,39 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
   editExam(event) {
     this.router.navigate([ 'event', { id: this.data.user, eventId: event._id } ], { relativeTo: this.data.route });
+  }
+
+  deleteExam(event) {
+    const displayName = new Date(event.date).toLocaleString();
+    this.openDeleteDialog(event._id, event._rev, 'single', displayName, 1);
+  }
+
+  openDeleteDialog(eventId: string, eventRev: string, amount, displayName = '', count) {
+    const okClick = {
+      request: this.healthService.deleteExamination(eventId, eventRev),
+      onNext: () => {
+        this.planetMessageService.showMessage('Examination deleted successfully');
+        this.deleteDialog.close();
+        this.dialogRef.close();
+      },
+      onError: () => {
+        this.planetMessageService.showAlert('There was a problem deleting the examination.');
+        this.deleteDialog.close();
+      }
+    };
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick,
+        amount,
+        changeType: 'delete',
+        type: 'examination',
+        displayName,
+        count
+      }
+    });
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.examDeleted.emit();
+    });
   }
 
   editButtonCountdown() {

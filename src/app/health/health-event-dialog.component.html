@@ -27,8 +27,7 @@
   <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
     <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
   </button>
-  <button type="button" color="accent" (click)="exportToPdf(event)" mat-raised-button>
-    <span i18n>Export</span>
-  </button>
+  <button type="button" mat-raised-button (click)="deleteExam(event)" color="warn" i18n>Delete</button>
+  <button type="button" color="accent" (click)="exportToPdf(event)" mat-raised-button><span i18n>Export</span></button>
   <button type="button" mat-raised-button mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>
