@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -51,6 +51,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  private loadingCompleteSubscription: Subscription;
+  private newsByIdSubscription?: Subscription;
+  private currentVoiceId = 'root';
 
   constructor(
     private dialog: MatDialog,
@@ -68,9 +71,15 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     });
 
     this.initNews();
+
+    // Subscribe to loading completion to reset isLoadingMore flag
+    this.loadingCompleteSubscription = this.newsService.loadingComplete$.subscribe(() => {
+      this.isLoadingMore = false;
+    });
   }
 
   ngOnChanges() {
+    this.isLoadingMore = false;
     let isLatest = true;
     this.replyObject = {};
     this.items.forEach(item => {
@@ -99,6 +108,13 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     if (this.observer) {
       this.observer.disconnect();
     }
+    if (this.loadingCompleteSubscription) {
+      this.loadingCompleteSubscription.unsubscribe();
+    }
+    if (this.newsByIdSubscription) {
+      this.newsByIdSubscription.unsubscribe();
+      this.newsByIdSubscription = undefined;
+    }
   }
 
   setupObserver() {
@@ -121,6 +137,48 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   initNews() {
     const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
+    this.currentVoiceId = newVoiceId;
+
+    // Check if voice is in the current items
+    if (newVoiceId !== 'root' && !this.items.find(item => item._id === newVoiceId)) {
+      if (this.newsByIdSubscription) {
+        this.newsByIdSubscription.unsubscribe();
+        this.newsByIdSubscription = undefined;
+      }
+      const requestVoiceId = newVoiceId;
+      this.newsByIdSubscription = this.newsService.getNewsById(newVoiceId).subscribe({
+        next: (newsItem) => {
+          if (this.currentVoiceId !== requestVoiceId) {
+            return;
+          }
+          if (!this.items.find(item => item._id === newsItem._id)) {
+            this.items = [ newsItem, ...this.items ];
+            this.ngOnChanges();
+          }
+          this.filterNewsToShow(newVoiceId);
+          if (this.newsByIdSubscription) {
+            this.newsByIdSubscription.unsubscribe();
+            this.newsByIdSubscription = undefined;
+          }
+        },
+        error: () => {
+          if (this.currentVoiceId === requestVoiceId) {
+            this.filterNewsToShow('root');
+          }
+          if (this.newsByIdSubscription) {
+            this.newsByIdSubscription.unsubscribe();
+            this.newsByIdSubscription = undefined;
+          }
+        },
+        complete: () => {
+          if (this.currentVoiceId === requestVoiceId) {
+            this.newsByIdSubscription = undefined;
+          }
+        }
+      });
+      return;
+    }
+
     this.filterNewsToShow(newVoiceId);
   }
 
@@ -312,10 +370,19 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       const news = this.getCurrentItems();
       this.totalItems = news.length;
       const start = this.pageIndex * this.pageSize;
+      const end = start + this.pageSize;
       const { items } = this.paginateItems(news, start, this.pageSize);
       this.displayedItems = items;
+
+      const shouldFetchRemote = news.length >= this.pageSize && end >= news.length && this.newsService.canLoadMore();
+      if (shouldFetchRemote && !this.isLoadingMore) {
+        this.isLoadingMore = true;
+        this.newsService.loadMoreNews();
+      } else {
+        this.isLoadingMore = false;
+      }
+
       this.hasMoreNews = false;
-      this.isLoadingMore = false;
     } else {
       let pageSize = this.pageSize;
       if (initial) {
@@ -330,13 +397,25 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       this.displayedItems = [ ...this.displayedItems, ...items ];
       this.pageEnd[this.replyViewing._id] = this.displayedItems.length;
       this.nextStartIndex = endIndex;
-      this.hasMoreNews = hasMore;
-      this.isLoadingMore = false;
       this.totalReplies = news.length;
+
+      const shouldFetchRemote = endIndex >= news.length && !hasMore && this.newsService.canLoadMore();
+
+      if (shouldFetchRemote) {
+        this.isLoadingMore = true;
+        this.newsService.loadMoreNews();
+      } else {
+        this.isLoadingMore = false;
+      }
+
+      this.hasMoreNews = hasMore || shouldFetchRemote || this.newsService.canLoadMore();
     }
   }
 
   loadMoreItems() {
+    if (this.isLoadingMore) {
+      return;
+    }
     this.isLoadingMore = true;
     this.loadPagedItems(false);
   }
