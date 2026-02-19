@@ -521,6 +521,18 @@ body {
     min-height: 24px;
   }
 
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper:hover,
+  .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+    background-color: transparent;
+  }
+
+  .mat-mdc-form-field:hover .mdc-notched-outline__leading,
+  .mat-mdc-form-field:hover .mdc-notched-outline__notch,
+  .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+    border-color: rgba(0, 0, 0, 0.24);
+  }
+
   .form-container {
     width: calc(#{$form-width-3} + 20px);
   }
