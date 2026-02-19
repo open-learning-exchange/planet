@@ -13,6 +13,13 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const isClientConfigError = (message: string) => [
+  'The "assistant" field must be a boolean',
+  'Assistant mode is only supported for the openai provider',
+  'Assistant mode requires assistant configuration with both "name" and "instructions"',
+  'Assistant mode requires a valid "context" object'
+].includes(message);
+
 app.use(cors());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
@@ -50,6 +57,8 @@ wss.on('connection', (ws) => {
     } catch (error: any) {
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
         ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
+      } else if (isClientConfigError(error.message)) {
+        ws.send(JSON.stringify({ 'error': 'Bad Request', 'message': error.message }));
       } else {
         ws.send(JSON.stringify({ 'error': 'Internal Server Error', 'message': error.message }));
       }
@@ -87,6 +96,9 @@ app.post('/', async (req: any, res: any) => {
     if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
       return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
     }
+    if (isClientConfigError(error.message)) {
+      return res.status(400).json({ 'error': 'Bad Request', 'message': error.message });
+    }
     return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
   }
 });
@@ -102,4 +114,8 @@ app.get('/checkproviders', async (req: any, res: any) => {
 
 const port = process.env.SERVE_PORT || 5000;
 
-server.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port, () => console.log(`Server running on port ${port}`)); // eslint-disable-line no-console
+}
+
+export { app };

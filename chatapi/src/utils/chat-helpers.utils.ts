@@ -1,4 +1,5 @@
 import { models } from '../config/ai-providers.config';
+import { assistant as assistantConfig } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
@@ -12,6 +13,28 @@ import {
   createAndHandleRunWithStreaming,
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
+
+function validateAssistantMode(assistant: boolean, aiProvider: AIProvider, context: any) {
+  if (typeof assistant !== 'boolean') {
+    throw new Error('The "assistant" field must be a boolean');
+  }
+
+  if (!assistant) {
+    return;
+  }
+
+  if (aiProvider.name !== 'openai') {
+    throw new Error('Assistant mode is only supported for the openai provider');
+  }
+
+  if (!assistantConfig?.name?.trim() || !assistantConfig?.instructions?.trim()) {
+    throw new Error('Assistant mode requires assistant configuration with both "name" and "instructions"');
+  }
+
+  if (!context || typeof context !== 'object') {
+    throw new Error('Assistant mode requires a valid "context" object');
+  }
+}
 
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming enabled
@@ -30,6 +53,7 @@ export async function aiChatStream(
   if (!provider) {
     throw new Error('Unsupported AI provider');
   }
+  validateAssistantMode(assistant, aiProvider, context);
   const model = aiProvider.model ?? provider.defaultModel;
 
   if (assistant) {
@@ -85,6 +109,7 @@ export async function aiChatNonStream(
   if (!provider) {
     throw new Error('Unsupported AI provider');
   }
+  validateAssistantMode(assistant, aiProvider, context);
   const model = aiProvider.model ?? provider.defaultModel;
 
   if (context.resource && context.resource.attachments) {
