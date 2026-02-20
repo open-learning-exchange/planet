@@ -22,12 +22,44 @@
     }
 
     mat-card {
+      position: relative;
+
       mat-card-actions {
         margin-top: auto;
         display: flex;
         justify-content: center;
         gap: 1rem;
       }
+    }
+
+    .visibility-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 12px;
+      line-height: 18px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      user-select: none;
+
+      // helps it stay readable over content
+      background-clip: padding-box;
+    }
+
+    .visibility-badge.is-public {
+      color: #1b5e20;
+      background: #e8f5e9;
+      border-color: #c8e6c9;
+    }
+
+    .visibility-badge.is-private {
+      color: #7f0000;
+      background: #ffebee;
+      border-color: #ffcdd2;
     }
   }
 
