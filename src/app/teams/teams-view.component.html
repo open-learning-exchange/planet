@@ -195,6 +195,14 @@
                     {{resource.linkDoc.title | truncateText:75}}
                   </span>
                 </div>
+                <div
+                  *ngIf="resource.resource !== undefined"
+                  class="visibility-badge"
+                  [ngClass]="resource.resource?.private === true ? 'is-private' : 'is-public'"
+                  (click)="$event.stopPropagation()">
+                  <ng-container *ngIf="resource.resource?.private === true" i18n>Private</ng-container>
+                  <ng-container *ngIf="resource.resource?.private !== true" i18n>Public</ng-container>
+                </div>
                 <mat-card-content>
                   <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
                 </mat-card-content>
