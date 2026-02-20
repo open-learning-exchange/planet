@@ -196,14 +196,15 @@
                   </span>
                   <span
                     *ngIf="resource.resource !== undefined"
+                  <!-- Non-interactive visibility badge; click handler only stops propagation to prevent mat-card activation -->
+                  <div
+                    *ngIf="resource.resource !== undefined"
                     class="visibility-badge"
                     [ngClass]="resource.resource?.private === true ? 'is-private' : 'is-public'"
-                    (click)="$event.stopPropagation()"
-                    aria-label="{ resource.resource?.private, select, true {Private resource visibility} other {Public resource visibility} }"
-                    i18n-aria-label="Accessibility label describing whether the resource visibility is private or public.">
+                    (click)="$event.stopPropagation()">
                     <ng-container *ngIf="resource.resource?.private === true" i18n>Private</ng-container>
                     <ng-container *ngIf="resource.resource?.private !== true" i18n>Public</ng-container>
-                  </span>
+                  </div>
                 </div>
                 <mat-card-content>
                   <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
