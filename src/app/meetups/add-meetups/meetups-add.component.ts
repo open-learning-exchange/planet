@@ -65,6 +65,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   meetupFrequency: string[] = [];
   initialFormValues = '';
   hasUnsavedChanges = false;
+  userTimezone = '';
+  selectedTimezone = 'America/New_York';
   get dayFormArray(): FormArray<FormControl<string>> {
     return this.meetupForm.controls.day as FormArray<FormControl<string>>;
   }
@@ -82,6 +84,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
+    // Use a standard timezone for display (American standard)
+    this.userTimezone = this.selectedTimezone = 'America/New_York';
     if (this.meetup._id) {
       this.setMeetupData({ ...this.meetup });
     } else {
@@ -277,6 +281,8 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }
     dayFormArray.updateValueAndValidity();
   }
+
+  // timezone is fixed to America/New_York
 
   toggleDaily(val: string, showCheckbox: boolean) {
     const dayFormArray = this.dayFormArray;
