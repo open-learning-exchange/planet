@@ -198,7 +198,9 @@
                     *ngIf="resource.resource !== undefined"
                     class="visibility-badge"
                     [ngClass]="resource.resource?.private === true ? 'is-private' : 'is-public'"
-                    (click)="$event.stopPropagation()">
+                    (click)="$event.stopPropagation()"
+                    aria-label="{ resource.resource?.private, select, true {Private resource visibility} other {Public resource visibility} }"
+                    i18n-aria-label="Accessibility label describing whether the resource visibility is private or public.">
                     <ng-container *ngIf="resource.resource?.private === true" i18n>Private</ng-container>
                     <ng-container *ngIf="resource.resource?.private !== true" i18n>Public</ng-container>
                   </span>
