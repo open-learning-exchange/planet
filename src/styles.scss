@@ -192,13 +192,6 @@ body {
     margin: 0;
   }
 
-  // Fix for new MDC icon buttons being used in old style inputs.
-  // May need to change after converting forms to MDC.
-  .mat-form-field-suffix button .mat-icon {
-    font-size: 100%;
-    line-height: 1;
-  }
-
   .mat-mdc-row.expanded-row {
     border: none;
   }
@@ -368,12 +361,11 @@ body {
   }
 
   // Remove the underline from mat-form-field for custom fields
-  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-  .mat-form-field-type-no-underline .mat-form-field-underline {
+  .mat-form-field-type-no-underline .mdc-line-ripple {
     display: none;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-  .mat-form-field-dynamic-width .mat-form-field-infix {
+
+  .mat-form-field-dynamic-width .mat-mdc-form-field-infix {
     width: auto;
   }
 
@@ -504,17 +496,6 @@ body {
     }
   }
 
-  .collections-search {
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-    .mat-form-field-wrapper {
-      padding: 0;
-    }
-    /* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version.*/
-    .mat-form-field-infix {
-      border: 0;
-    }
-  }
-
   @media only screen and (max-width: $screen-sm) {
     .collections-search {
       display: flex;
@@ -531,6 +512,18 @@ body {
   .planet-chip-label {
     padding: 4px 6px;
     min-height: 24px;
+  }
+
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper:hover,
+  .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
+    background-color: transparent;
+  }
+
+  .mat-mdc-form-field:hover .mdc-notched-outline__leading,
+  .mat-mdc-form-field:hover .mdc-notched-outline__notch,
+  .mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+    border-color: rgba(0, 0, 0, 0.24);
   }
 
   .form-container {
