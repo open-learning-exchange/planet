@@ -97,43 +97,6 @@
   padding: 0.5rem 1rem;
 }
 
-/* Reset any stray margins/positioning and force consistent vertical alignment */
-.planet-step-list-form-container [planetStepListActions] > *,
-.planet-step-list-form-container .planet-step-list-actions > *,
-.planet-step-list-actions > * {
-  margin-top: 0 !important;
-  align-self: center !important;
-  vertical-align: middle !important;
-  position: static !important;
-}
-
-/* Ensure Material button variants have identical sizing inside action bars */
-.planet-step-list-form-container [planetStepListActions] .mat-raised-button,
-.planet-step-list-form-container [planetStepListActions] .mat-stroked-button,
-.planet-step-list-form-container .planet-step-list-actions .mat-raised-button,
-.planet-step-list-form-container .planet-step-list-actions .mat-stroked-button,
-.action-buttons .mat-stroked-button,
-.action-buttons .mat-flat-button,
-.action-buttons .mat-raised-button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 1rem !important;
-  min-height: 40px !important;
-  height: 40px !important;
-  line-height: 1 !important;
-}
-
-/* Normalize Material inner wrapper used for button content (icons/text) */
-.planet-step-list-form-container [planetStepListActions] .mat-button-wrapper,
-.planet-step-list-form-container .planet-step-list-actions .mat-button-wrapper,
-.action-buttons .mat-button-wrapper {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 40px !important;
-}
-
 /* Reduce extra bottom container padding so buttons sit flush with content area */
 .planet-step-list-actions {
   padding-bottom: 12px;
