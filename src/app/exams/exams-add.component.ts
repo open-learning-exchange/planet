@@ -11,9 +11,7 @@ import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
-import { UserService } from '../shared/user.service';
 import { ExamsPreviewComponent } from './exams-preview.component';
-import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -89,9 +87,7 @@ export class ExamsAddComponent implements OnInit {
     private coursesService: CoursesService,
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
-    private userService: UserService,
     private dialog: MatDialog,
-    private stateService: StateService,
     private submissionsService: SubmissionsService
   ) {
     this.createForm();
