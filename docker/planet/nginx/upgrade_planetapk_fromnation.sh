@@ -5,7 +5,6 @@ echo "Content-type: text/plain"
 echo ""
 
 apkName="myPlanet.apk"
-localApkName="myPlanet.apk"
 sha256File="$apkName.sha256"
 
 nationUrl="$(curl -s http://couchdb:5984/configurations/$(curl http://couchdb:5984/configurations/_all_docs -s | jq .rows[0].id -r) | jq .parentDomain -r | sed -e 's|^[^/]*//||' -e 's|/.*$||')"
@@ -29,7 +28,6 @@ if [ -f "$apkName" ] && [ -f "$sha256File" ]; then
     if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
       echo "Download successful"
       rm -f "$apkName.tmp"
-      echo $tag > /usr/share/nginx/html/fs/apkversion
     else
       echo "Download error"
       mv "$apkName.tmp" "$apkName"
@@ -41,7 +39,6 @@ else
   if sha256sum "$apkName" | sha256sum -c "$sha256File" 2>&1 | grep OK; then
     echo "Download successful"
     rm -f "$apkName.tmp"
-    echo $tag > /usr/share/nginx/html/fs/apkversion
   else
     echo "Download error"
   fi
