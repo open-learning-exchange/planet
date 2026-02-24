@@ -8,7 +8,15 @@ import { ConfigurationService } from '../configuration/configuration.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 
-type ConfigFormControls = Record<string, FormControl<string | boolean>>;
+interface FixedConfigFormControls {
+  streaming: FormControl<boolean>;
+  assistantName: FormControl<string>;
+  assistantInstructions: FormControl<string>;
+}
+
+type DynamicConfigControlKey = `keys_${string}` | `models_${string}`;
+type DynamicConfigFormControls = Partial<Record<DynamicConfigControlKey, FormControl<string>>>;
+type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
   streaming?: boolean;
@@ -74,11 +82,11 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     }
   }
 
-  mapConfigToFormControls(configObject: Record<string, unknown> | undefined, prefix: string): ConfigFormControls {
-    const formGroupObj: ConfigFormControls = {};
+  mapConfigToFormControls(configObject: Record<string, unknown> | undefined, prefix: 'keys_' | 'models_'): DynamicConfigFormControls {
+    const formGroupObj: DynamicConfigFormControls = {};
     if (configObject) {
       for (const key of Object.keys(configObject)) {
-        formGroupObj[prefix + key] = this.fb.control(String(configObject[key] || ''));
+        formGroupObj[`${prefix}${key}`] = this.fb.control(String(configObject[key] ?? ''));
       }
     }
     return formGroupObj;
@@ -93,7 +101,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     this.spinnerOn = true;
     const updatedConfig = {
       ...this.configuration,
-      streaming: this.configForm.controls.streaming?.value === true,
+      streaming: this.configForm.controls.streaming.value,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
       assistant: {
@@ -112,7 +120,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     );
   }
 
-  extractFormValues(configObject: Record<string, unknown> | undefined, prefix: string): Record<string, string> {
+  extractFormValues(configObject: Record<string, unknown> | undefined, prefix: 'keys_' | 'models_'): Record<string, string> {
     const values: Record<string, string> = {};
     if (!configObject) { return values;}
     for (const key of Object.keys(configObject)) {
@@ -122,7 +130,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   }
 
   private getStringControlValue(controlName: string): string {
-    const value = this.configForm.controls[controlName]?.value;
+    const value = this.configForm.get(controlName)?.value;
     return typeof value === 'string' ? value : '';
   }
 
