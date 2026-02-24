@@ -4,15 +4,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppRoutingModule } from './app-router.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { MaterialModule } from './shared/material.module';
+import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
+import { FullCalendarModule } from '@fullcalendar/angular';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { MaterialModule } from './shared/material.module';
 import { environment } from '../environments/environment';
-import { PlanetDialogsModule } from './shared/dialogs/planet-dialogs.module';
-
-import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   imports: [
