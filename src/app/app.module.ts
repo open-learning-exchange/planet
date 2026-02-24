@@ -5,7 +5,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppRoutingModule } from './app-router.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { ImageCropperModule } from 'ngx-image-cropper';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { MaterialModule } from './shared/material.module';
@@ -23,7 +23,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MaterialModule,
     PlanetDialogsModule,
     FullCalendarModule,
-    ImageCropperModule,
+    ImageCropperComponent,
     environment.production
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
