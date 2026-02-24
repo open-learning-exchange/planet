@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -167,6 +167,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }, () => {
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });

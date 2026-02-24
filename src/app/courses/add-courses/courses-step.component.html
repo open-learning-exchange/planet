@@ -1,10 +1,12 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
   <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
-    <span i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
-    <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
-    <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
-    <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
-    <span class="toolbar-fill"></span>
+    <span matListItemTitle i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
+    <ng-container matListItemMeta>
+      <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
+      <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
+      <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
+      <span class="toolbar-fill"></span>
+    </ng-container>
   </planet-step-list-item>
   <span class="mat-caption margin-lr-5" planetStepListNumber>
     <span i18n>Editing Step</span>{{ ' ' + (this.activeStepIndex + 1) + ' ' }}
@@ -13,21 +15,25 @@
   <div planetStepListForm>
     <form [formGroup]="stepForm">
       <mat-form-field class="full-width">
-        <input matInput i18n-placeholder placeholder="Step title" maxlength="200" formControlName="stepTitle">
+        <mat-label i18n>Step title</mat-label>
+        <input matInput maxlength="200" formControlName="stepTitle">
       </mat-form-field>
       <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <planet-markdown-textbox class="full-width" i18n-placeholder placeholder="Description" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
+        <mat-label i18n>Description</mat-label>
+        <planet-markdown-textbox class="full-width" [formControl]="stepForm.controls.description" imageGroup="community"></planet-markdown-textbox>
         <mat-error><planet-form-error-messages [control]="stepForm.controls.description"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
     <ng-container *ngIf="activeStep?.resources?.length">
       <span i18n class="margin-lr-4">Attached Resources: </span>
-      <mat-chip-list>
+      <mat-chip-set class="tags-list" aria-label="Attached resources" i18n-aria-label>
         <mat-chip *ngFor="let resource of activeStep.resources; let i = index">
-          <a target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
-          <mat-icon matChipRemove (click)="removeResource(i)">clear</mat-icon>
+          <a matChipAction type="button" target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
+          <button matChipRemove type="button" aria-label="Remove resource" i18n-aria-label (click)="removeResource(i)">
+            <mat-icon>clear</mat-icon>
+          </button>
         </mat-chip>
-      </mat-chip-list>
+      </mat-chip-set>
     </ng-container>
   </div>
   <div planetStepListActions>

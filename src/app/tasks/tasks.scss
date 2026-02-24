@@ -2,8 +2,11 @@
 
 planet-tasks {
   mat-action-list {
+    .mat-mdc-list-item {
+      align-items: center;
+    }
 
-    mat-checkbox {
+    .mat-mdc-checkbox {
       order: -1;
       margin-right: 0.5rem;
     }
@@ -16,7 +19,7 @@ planet-tasks {
       order: 3;
     }
 
-    .mat-list-item.mat-list-item-with-avatar p[matLine] {
+    .mat-mdc-list-item.mat-mdc-list-item-with-avatar span[matListItemLine] {
       margin-left: -16px;
     }
   }
@@ -28,12 +31,10 @@ planet-tasks {
   .deadline-passed {
     color: $warn;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+
   mat-button-toggle-group {
     font-size: 14px;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    mat-button-toggle {
       line-height: 34px;
     }
   }

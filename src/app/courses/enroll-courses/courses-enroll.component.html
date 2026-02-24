@@ -12,6 +12,5 @@
       Export
     </button>
   </mat-toolbar>
-
-  <planet-users-table [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
+  <planet-users-table [isLoading]="isLoading" [users]="members" [(tableState)]="tableState" [displayedColumns]="userTableColumns" [shouldOpenProfileDialog]="true" containerClass="view-container view-full-height view-table"></planet-users-table>
 </div>

@@ -1,7 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import {
-  MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA
-} from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
@@ -16,7 +14,7 @@ import { DialogField, DialogsFormData } from './dialogs-form.service';
       margin: 0 0 20px 0;
     }
 
-    .mat-radio-group.ng-touched.ng-invalid label {
+    .mat-mdc-radio-group.ng-touched.ng-invalid label {
       border-bottom: 2px solid red;
     }
 
