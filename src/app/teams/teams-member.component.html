@@ -9,7 +9,7 @@
     <p class="primary-text-color" *ngIf="member?.doc?.leadershipTitle">
       {{member?.doc?.leadershipTitle | truncateText:38}}
     </p>
-    <p class="primary-text-color role-text" *ngIf="member?.role">{{member?.role | truncateText:70}}</p>
+    <p class="primary-text-color" *ngIf="member?.role">{{member?.role | truncateText:70}}</p>
   </mat-card-subtitle>
   <button *ngIf="actionMenu.length" class="top-right-icon" mat-icon-button [matMenuTriggerFor]="memberMenu">
     <mat-icon>more_vert</mat-icon>
@@ -36,7 +36,7 @@
   <span class="mat-caption" i18n>Tasks</span>
   <mat-selection-list (selectionChange)="toggleTask($event)" [disabled]="userStatus !== 'member'" [disableRipple]="userStatus !== 'member'">
     <mat-list-option checkboxPosition="before" *ngFor="let task of member?.tasks" [selected]="task.completed" [value]="task">
-      <p class="ellipsis-title">{{task.title}}</p>
+      <span matListItemTitle class="ellipsis-title">{{task.title}}</span>
     </mat-list-option>
   </mat-selection-list>
 </mat-card-content>

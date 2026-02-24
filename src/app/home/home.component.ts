@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';

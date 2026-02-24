@@ -2,65 +2,75 @@
   <a mat-icon-button [routerLink]="parent ? ['/manager/meetups'] : ['/meetups']"><mat-icon>arrow_back</mat-icon></a>
   <span i18n>Meetup</span>
 </mat-toolbar>
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 action-buttons">
-    <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
-    <span class="toolbar-fill"></span>
-    <div class="button-group-right">
-      <ng-container *ngIf="editable === true">
-        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
-                (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
-          <mat-icon>edit</mat-icon>
+<ng-template #meetupDetailContent>
+  <div class="space-container">
+    <mat-toolbar class="primary-color font-size-1 action-buttons">
+      <h3 class="margin-lr-3 ellipsis-title">{{meetupDetail?.title}}</h3>
+      <span class="toolbar-fill"></span>
+      <div class="button-group-right">
+        <ng-container *ngIf="editable === true">
+          <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
+                  (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
+                  (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-container>
+      </div>
+      <div *ngIf="!parent && !isDialog">
+        <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail?.endDate || meetupDetail?.startDate)" (click)="openInviteMemberDialog()">
+          <span i18n>Invite Member</span>
         </button>
-        <button mat-stroked-button *ngIf="(canManage && !meetupDetail.isTask) || meetupDetail.isTask"
-                (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
-          <mat-icon>delete</mat-icon>
+        <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
+          <span *ngIf="meetupDetail?.participate; else joinMeetupText" i18n>Leave</span>
+          <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
         </button>
-      </ng-container>
-    </div>
-    <div *ngIf="!parent && !isDialog">
-      <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail?.endDate || meetupDetail?.startDate)" (click)="openInviteMemberDialog()">
-        <span i18n>Invite Member</span>
-      </button>
-      <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
-        <span *ngIf="meetupDetail?.participate; else joinMeetupText" i18n>Leave</span>
-        <ng-template #joinMeetupText><span i18n>Join</span></ng-template>
-      </button>
-    </div>
-  </mat-toolbar>
-  <div class="view-container">
-    <div [ngClass]="{'left-tile':!isDialog}">
-      <p *ngIf="meetupDetail?.createdBy">
-        <b i18n>Created By:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode)">{{' ' + meetupDetail?.createdBy}}</a>
-      </p>
-      <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
-      <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
-      <p *ngIf="meetupDetail?.deadline"><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
-      <p *ngIf="meetupDetail?.completedTime"><b i18n>Completed On:</b> {{meetupDetail?.completedTime | date: 'fullDate'}} {{meetupDetail?.completedTime | date: 'shortTime'}}</p>
-      <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
-      <p *ngIf="meetupDetail?.recurring && meetupDetail?.recurring !== 'none'"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}} for {{ meetupDetail?.recurringNumber }} {{ meetupDetail?.recurring === 'daily' ? 'days' : 'weeks' }}</p>
-      <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-      <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
-      <p *ngIf="meetupDetail?.meetupLink"><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener" class="cursor-pointer">{{meetupDetail?.meetupLink}}</a></p>
-      <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
-      <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
-    </div>
-    <div *ngIf="!isDialog" class="right-tile">
-      <span><b i18n>Joined Members: ({{members.length}})</b></span>
-      <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
-      <ng-template #memberList>
-        <ul>
-          <li *ngFor="let mem of members">
-            <a [routerLink]="['/users/profile', mem]">
-              <span *ngIf="mem === currentUserName; else otherMember" i18n>{{mem}} (You)</span>
-              <ng-template #otherMember><span>{{mem}}</span></ng-template>
-            </a>
-          </li>
-        </ul>
-      </ng-template>
+      </div>
+    </mat-toolbar>
+    <div class="view-container">
+      <div [ngClass]="{'left-tile':!isDialog}">
+        <p *ngIf="meetupDetail?.createdBy">
+          <b i18n>Created By:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode)">{{' ' + meetupDetail?.createdBy}}</a>
+        </p>
+        <p *ngIf="meetupDetail?.category"><b i18n>Category:</b> {{meetupDetail?.category}}</p>
+        <p *ngIf="meetupDetail?.startDate || meetupDetail?.endDate"><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+        <p *ngIf="meetupDetail?.deadline"><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
+        <p *ngIf="meetupDetail?.completedTime"><b i18n>Completed On:</b> {{meetupDetail?.completedTime | date: 'fullDate'}} {{meetupDetail?.completedTime | date: 'shortTime'}}</p>
+        <p *ngIf="meetupDetail?.startTime || meetupDetail?.endTime" i18n><b>Time:</b> {{meetupDetail?.startTime}} {{ meetupDetail?.endTime ? '-' : '' }} {{meetupDetail?.endTime}}</p>
+        <p *ngIf="meetupDetail?.recurring && meetupDetail?.recurring !== 'none'"><b i18n>Recurring:</b> {{meetupDetail?.recurring | titlecase}} for {{ meetupDetail?.recurringNumber }} {{ meetupDetail?.recurring === 'daily' ? 'days' : 'weeks' }}</p>
+        <p *ngIf="meetupDetail?.recurring === 'weekly'"><b i18n>Recurring Days: </b><span *ngFor="let day of meetupDetail?.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
+        <p *ngIf="meetupDetail?.meetupLocation"><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
+        <p *ngIf="meetupDetail?.meetupLink"><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener" class="cursor-pointer">{{meetupDetail?.meetupLink}}</a></p>
+        <p *ngIf="meetupDetail?.assignee"><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+        <b *ngIf="meetupDetail?.description" i18n>Description:</b><td-markdown [content]="meetupDetail?.description"></td-markdown>
+      </div>
+      <div *ngIf="!isDialog" class="right-tile">
+        <span><b i18n>Joined Members: ({{members.length}})</b></span>
+        <p *ngIf="members.length === 0; else memberList" i18n>No members have joined this meetup</p>
+        <ng-template #memberList>
+          <ul>
+            <li *ngFor="let mem of members">
+              <a [routerLink]="['/users/profile', mem]">
+                <span *ngIf="mem === currentUserName; else otherMember" i18n>{{mem}} (You)</span>
+                <ng-template #otherMember><span>{{mem}}</span></ng-template>
+              </a>
+            </li>
+          </ul>
+        </ng-template>
+      </div>
     </div>
   </div>
-</div>
+</ng-template>
+<ng-container *ngIf="isDialog; else meetupDetailPage">
+  <mat-dialog-content>
+    <ng-container *ngTemplateOutlet="meetupDetailContent"></ng-container>
+  </mat-dialog-content>
+</ng-container>
+<ng-template #meetupDetailPage>
+  <ng-container *ngTemplateOutlet="meetupDetailContent"></ng-container>
+</ng-template>
 <mat-dialog-actions *ngIf="isDialog">
   <button mat-raised-button type="button" mat-dialog-close i18n>Close</button>
 </mat-dialog-actions>

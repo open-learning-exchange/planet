@@ -4,23 +4,40 @@ $toolbar-height: 25vh;
 $label-height: 1rem;
 
 .resources-list {
+  .mat-mdc-row {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: rgba(0, 0, 0, 0.12);
+  }
+
+  .mat-mdc-cell {
+    border: none;
+  }
+
   /* Column Widths */
   .mat-column-select {
-    max-width: 44px;
+    max-width: 68px;
+    padding: 0 0 0 24px;
   }
   .mat-column-tags {
     max-width: 125px;
   }
+  .mat-column-title {
+    padding: 0;
+  }
   .mat-column-rating {
-    max-width: 115px;
+    max-width: 145px;
+    padding: 0;
   }
   .mat-column-info {
     max-width: 200px;
     align-self: start;
+    padding: 0;
   }
   .mat-column-createdDate {
     max-width: 125px;
     align-self: start;
+    padding: 0;
   }
   .mat-mdc-progress-bar {
     height: 10px;
@@ -72,14 +89,6 @@ $label-height: 1rem;
   justify-content: center;
 }
 
-.tags-list mat-chip {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-}
-
 planet-resources {
   @media(max-width: $screen-md) {
     .resources-list {
@@ -110,11 +119,11 @@ planet-resources {
       }
     }
 
-    .mat-header-row {
+    .mat-mdc-header-row {
       display: none;
     }
 
-    .mat-row {
+    .mat-mdc-row {
       flex-direction: column;
       align-items: start;
       padding: 8px 24px;

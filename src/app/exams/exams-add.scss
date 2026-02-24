@@ -28,21 +28,19 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-  }
-    .button-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-right: 8px;
-    }
 
     .warn-text-color {
       display: block;
       width: 100%;
+      margin: 4px;
     }
+  }
 
-  .warn-text-color {
-    margin: 4px;
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-right: 8px;
   }
 
   .exam-inputs {
@@ -53,12 +51,6 @@
   .exam-questions {
     grid-area: questions;
     overflow-y: auto;
-  }
-
-  .exam-question {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
 }
