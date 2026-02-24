@@ -48,7 +48,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     private router: Router,
     private stateService: StateService,
   ) {
-    this.configForm = new FormGroup<ConfigFormControls>({
+    this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(false),
       assistantName: this.fb.control(''),
       assistantInstructions: this.fb.control('')
@@ -67,7 +67,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   }
 
   initForm() {
-    this.configForm = new FormGroup<ConfigFormControls>({
+    this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(!!this.configuration.streaming),
       ...this.mapConfigToFormControls(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
