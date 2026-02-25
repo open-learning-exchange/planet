@@ -54,3 +54,13 @@
   white-space: nowrap;
   margin-left: 0.25rem;
 }
+
+.add-collection-btn-container {
+  align-self: start;
+  margin-top: 10px;
+}
+
+.add-collection-btn-container button {
+  min-height: 40px;
+  padding: 6px 16px;
+}
