@@ -34,28 +34,6 @@
     margin: 0.25rem 0 0 0.25rem;
   }
 
-  /* Make the top action bar a flex row: keep back button left, push others right */
-  .action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .action-buttons .back-button {
-    margin-right: auto;
-  }
-  
-  /* Normalize top action buttons to match planet step list action sizing */
-  .action-buttons button,
-  .action-buttons a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    min-height: 40px;
-    box-sizing: border-box;
-  }
-
   .planet-step-list-actions > * {
     margin: 0.25rem 0 0 0.25rem;
   }
@@ -71,52 +49,4 @@
   .planet-step-list-actions {
     margin: 0.5rem 0 0 0;
   }
-}
-
-/* Align step list action buttons for components using the attribute or class */
-[planetStepListActions], .planet-step-list-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  padding: 0 16px;
-  flex-wrap: wrap;
-}
-
-[planetStepListActions]::before,
-[planetStepListActions] > *,
-.planet-step-list-actions > * {
-  margin-left: 0;
-}
-
-[planetStepListActions] button,
-[planetStepListActions] a,
-.planet-step-list-actions button,
-.planet-step-list-actions a {
-  margin: 0;
-  min-width: 110px;
-  text-align: center;
-}
-
-/* Stronger, container-scoped rules to avoid overrides from component styles */
-.planet-step-list-form-container [planetStepListActions],
-.planet-step-list-form-container .planet-step-list-actions {
-  display: flex;
-  align-items: center;
-}
-
-.planet-step-list-form-container [planetStepListActions] a,
-.planet-step-list-form-container [planetStepListActions] button,
-.planet-step-list-form-container .planet-step-list-actions a,
-.planet-step-list-form-container .planet-step-list-actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-}
-
-/* Reduce extra bottom container padding so buttons sit flush with content area */
-.planet-step-list-actions {
-  padding-bottom: 12px;
 }
