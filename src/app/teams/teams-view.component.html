@@ -195,14 +195,13 @@
                     {{resource.linkDoc.title | truncateText:75}}
                   </span>
                 </div>
-                <div
+                <mat-chip
                   *ngIf="resource.resource !== undefined"
                   class="visibility-badge"
-                  [ngClass]="resource.resource?.private === true ? 'is-private' : 'is-public'"
+                  [ngClass]="resource.resource?.private === true ? 'chip-private' : 'chip-public'"
                   (click)="$event.stopPropagation()">
-                  <ng-container *ngIf="resource.resource?.private === true" i18n>Private</ng-container>
-                  <ng-container *ngIf="resource.resource?.private !== true" i18n>Public</ng-container>
-                </div>
+                  <planet-label [label]="resource.resource?.private === true ? 'Private' : 'Public'"></planet-label>
+                </mat-chip>
                 <mat-card-content>
                   <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>
                 </mat-card-content>
