@@ -12,6 +12,8 @@
     "start": "ng serve",
     "dev": "bash dev-env.sh && ng serve --configuration dev",
     "build": "npm run ng-high-memory -- build --configuration production",
+    "build:test": "npm run ng-high-memory -- build --configuration test",
+    "serve:test": "ng serve --configuration test",
     "test": "ng test",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",

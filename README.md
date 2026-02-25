@@ -102,6 +102,21 @@ To run planet in development with a different locale, you can set the configurat
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
+## Environment Configuration
+
+Planet environment files live in `src/environments/`, and the Angular `test` build profile maps to `src/environments/environment.test.ts`.
+
+For QA/integration testing, keep these toggles aligned with current infrastructure defaults:
+- `test: true`
+- `couchAddress: 'http://127.0.0.1:5984'`
+- `syncAddress: 'http://localhost:5984'`
+
+Use the dedicated test-profile targets when validating this setup:
+```
+npm run serve:test
+npm run build:test
+```
+
 ## Unit & End-to-End Tests
 
 You can run tests directly from the host or within the development container.

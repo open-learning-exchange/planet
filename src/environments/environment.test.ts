@@ -6,5 +6,5 @@ export const environment = {
   centerProtocol: 'https',
   parentProtocol: 'https',
   upgradeAddress: window.location.origin + '/upgrade',
-  syncAddress: window.location.protocol + '//localhost:5984'
+  syncAddress: 'http://localhost:5984'
 };
