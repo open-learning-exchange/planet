@@ -5,7 +5,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
 import { UserService } from '../user.service';
-import { DialogField, DialogsFormData } from './dialogs-form.service';
+import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -25,13 +25,13 @@ import { DialogField, DialogsFormData } from './dialogs-form.service';
 })
 export class DialogsFormComponent {
 
-  public title: string;
-  public fields: DialogField[];
-  public modalForm: FormGroup;
+  public title!: string;
+  public fields!: DialogField[];
+  public modalForm!: FormGroup;
   passwordVisibility = new Map<string, boolean>();
   isSpinnerOk = true;
   errorMessage = '';
-  dialogListRef: MatDialogRef<DialogsListComponent>;
+  dialogListRef!: MatDialogRef<DialogsListComponent>;
   disableIfInvalid = false;
 
   private markFormAsTouched(control: FormGroup | FormArray<AbstractControl>) {
@@ -54,9 +54,7 @@ export class DialogsFormComponent {
     private userService: UserService
   ) {
     if (this.data && this.data.formGroup) {
-      this.modalForm = this.data.formGroup instanceof FormGroup ?
-        this.data.formGroup :
-        this.fb.group(this.data.formGroup, this.data.formOptions || {});
+      this.modalForm = this.createModalForm(this.data.formGroup);
       this.title = this.data.title;
       this.fields = this.data.fields.filter(field => !field.planetBeta || this.userService.isBetaEnabled());
       this.isSpinnerOk = false;
@@ -120,6 +118,13 @@ export class DialogsFormComponent {
 
   isDirty() {
     return this.modalForm.dirty;
+  }
+
+  private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {
+    if (formGroup instanceof FormGroup) {
+      return formGroup;
+    }
+    return this.fb.group(formGroup, this.data.formOptions || {});
   }
 
 }
