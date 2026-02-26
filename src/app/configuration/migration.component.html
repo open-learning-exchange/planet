@@ -4,15 +4,18 @@
     <b i18n>Please provide PLANET details to clone from</b>
     <form class="form-spacing" [formGroup]="cloneForm">
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Server URL" formControlName="url" required>
+        <mat-label i18n>Server URL</mat-label>
+        <input matInput formControlName="url" required>
         <mat-error><planet-form-error-messages [control]="cloneForm.controls.url"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Username" formControlName="name" required planetLowercase planetRestrictDiacritics>
+        <mat-label i18n>Username</mat-label>
+        <input matInput formControlName="name" required planetLowercase planetRestrictDiacritics>
         <mat-error><planet-form-error-messages [control]="cloneForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Password" formControlName="password" type="password" required>
+        <mat-label i18n>Password</mat-label>
+        <input matInput formControlName="password" type="password" required>
         <mat-error><planet-form-error-messages [control]="cloneForm.controls.password"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <div class="full-width">

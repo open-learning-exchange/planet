@@ -128,7 +128,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
-    
+      BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+
     strategy:
       matrix:
         arch: [ amd64, arm, arm64 ]
@@ -186,39 +187,27 @@ jobs:
       - name: Multiarch Deploy
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
-          sudo chmod +x /usr/local/bin/manifest_tool
-          mkdir -p /tmp/MA_manifests
-          latesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e -n '.image = strenv(latesttag)' | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
-          yq e '.manifests[0].platform.architecture = "amd64"' - | \
-          yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
-          yq e '.manifests[1].platform.architecture = "arm"' - | \
-          yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
-          yq e '.manifests[2].platform.architecture = "arm64"' - | \
-          yq e '.manifests[2].platform.os = "linux"' - | \
-          tee /tmp/MA_manifests/MA_planet_latest.yaml
-          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_latest.yaml
+          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          docker manifest create $manifesttag $amd64tag $armtag $arm64tag
+          docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
+          docker manifest annotate $manifesttag $armtag --os linux --arch arm
+          docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
+          docker manifest push $manifesttag
 
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          sudo wget -O /usr/local/bin/manifest_tool https://github.com/estesp/manifest-tool/releases/download/v1.0.3/manifest-tool-linux-amd64
-          sudo chmod +x /usr/local/bin/manifest_tool
-          mkdir -p /tmp/MA_manifests
-          versiontag="$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" yq e -n '.image = strenv(versiontag)' | \
-          yq e '.tags |= . + ["latest"] ' - | \
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[0].image = strenv(amd64tag)' - | \
-          yq e '.manifests[0].platform.architecture = "amd64"' - | \
-          yq e '.manifests[0].platform.os = "linux"' - | \
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[1].image = strenv(armtag)' - | \
-          yq e '.manifests[1].platform.architecture = "arm"' - | \
-          yq e '.manifests[1].platform.os = "linux"' - | \
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}" yq e '.manifests[2].image = strenv(arm64tag)' - | \
-          yq e '.manifests[2].platform.architecture = "arm64"' - | \
-          yq e '.manifests[2].platform.os = "linux"' - | \
-          tee /tmp/MA_manifests/MA_planet_versioned.yaml
-          manifest_tool push from-spec /tmp/MA_manifests/MA_planet_versioned.yaml
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          for tag in "$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:latest"; do
+            docker manifest create $tag $amd64tag $armtag $arm64tag
+            docker manifest annotate $tag $amd64tag --os linux --arch amd64
+            docker manifest annotate $tag $armtag --os linux --arch arm
+            docker manifest annotate $tag $arm64tag --os linux --arch arm64
+            docker manifest push $tag
+          done

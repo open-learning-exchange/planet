@@ -1,6 +1,6 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 

@@ -1,13 +1,15 @@
 <form (ngSubmit)="onSubmit()" class="login-form" [formGroup]="userForm">
   <mat-form-field class="full-width">
-    <input matInput i18n-placeholder placeholder="Username" name="name" formControlName = "name" planetLowercase planetRestrictDiacritics autofocus/>
+    <mat-label i18n>Username</mat-label>
+    <input matInput name="name" formControlName = "name" planetLowercase planetRestrictDiacritics autofocus required/>
     <mat-error>
       <planet-form-error-messages [control]="userForm.controls.name"></planet-form-error-messages>
     </mat-error>
   </mat-form-field>
   <mat-form-field class="full-width">
-    <input matInput i18n-placeholder placeholder="Password" name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password"/>
-    <button type="button" mat-icon-button matSuffix (click)="showPassword = !showPassword" tabindex="-1">
+    <mat-label i18n>Password</mat-label>
+    <input matInput name="password" [type]="showPassword ? 'text' : 'password'" formControlName = "password" required/>
+    <button type="button" mat-icon-button matIconSuffix (click)="showPassword = !showPassword" tabindex="-1">
       <mat-icon>{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>
@@ -15,8 +17,9 @@
     </mat-error>
   </mat-form-field>
   <mat-form-field class="full-width" *ngIf="createMode">
-    <input matInput i18n-placeholder placeholder="Repeat Password" name="repeatPassword" [type]="showRepeatPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
-    <button type="button" mat-icon-button matSuffix (click)="showRepeatPassword = !showRepeatPassword" tabindex="-1">
+    <mat-label i18n>Repeat Password</mat-label>
+    <input matInput name="repeatPassword" [type]="showRepeatPassword ? 'text' : 'password'"  formControlName = "repeatPassword" />
+    <button type="button" mat-icon-button matIconSuffix (click)="showRepeatPassword = !showRepeatPassword" tabindex="-1">
       <mat-icon>{{showRepeatPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
     </button>
     <mat-error>

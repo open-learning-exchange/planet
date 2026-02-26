@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { Subject } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -73,7 +73,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     ).subscribe((exams) => {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
-    });
+    }, () => this.isLoading = false);
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
