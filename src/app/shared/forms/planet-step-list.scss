@@ -30,7 +30,8 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
 
-  .action-buttons {
+  .action-buttons,
+  .planet-step-list-actions {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -40,12 +41,5 @@
   .planet-step-list-form {
     overflow-y: auto;
     min-height: 0;
-  }
-
-  .planet-step-list-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
   }
 }
