@@ -11,6 +11,7 @@ import { Subject, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { conditionAndTreatmentFields } from './health.constants';
 import { findDocuments } from '../shared/mangoQueries';
+import { hexToString } from '../shared/utils';
 
 @Component({
   templateUrl: './health.component.html',
@@ -44,9 +45,12 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).pipe(switchMap((params: ParamMap) => {
-      const id = `org.couchdb.user:${params.get('id')}`;
-      this.isOwnUser = params.get('id') === null || params.get('id') === this.userService.get().name;
-      return params.get('id') ? this.couchService.get(`_users/${id}`) : of(this.userService.get());
+      const routeId = params.get('id');
+      const decodedId = hexToString(routeId || '');
+      const userName = decodedId || routeId;
+      const id = userName ? `org.couchdb.user:${userName}` : '';
+      this.isOwnUser = userName === null || userName === this.userService.get().name;
+      return userName ? this.couchService.get(`_users/${id}`) : of(this.userService.get());
     })).subscribe((user) => {
       this.userDetail = user;
       this.initData();

@@ -83,7 +83,12 @@ export const toProperCase = (string: string) => `${string.slice(0, 1).toUpperCas
 
 export const stringToHex = (string: string) => string.split('').map(char => char.charCodeAt(0).toString(16)).join('');
 
-export const hexToString = (string: string) => string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
+export const hexToString = (string: string) => {
+  if (!string || string.length % 2 !== 0 || /[^0-9a-f]/i.test(string)) {
+    return '';
+  }
+  return string.match(/.{1,2}/g).map(hex => String.fromCharCode(parseInt(hex, 16))).join('');
+};
 
 export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const now = new Date(currentTime);
