@@ -155,11 +155,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
   }
 
-  isAllSelected() {
+  getVisibleRows() {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
-    const visibleDocs = this.usersTable.filteredData.slice(start, end).map((row: any) => row.doc);
-    return visibleDocs.every(doc => this.isSelected(doc)) && visibleDocs.length > 0;
+    return this.usersTable.filteredData.slice(start, end);
+  }
+
+  isAllSelected() {
+    const visibleRows = this.getVisibleRows();
+    return visibleRows.length > 0 && visibleRows.every((row: any) => this.isSelected(row.doc));
   }
 
   onlyManagerSelected() {
@@ -168,17 +172,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
+    const visibleRows = this.getVisibleRows();
     if (this.isAllSelected()) {
-      this.usersTable.filteredData.slice(start, end).forEach((row: any) => {
-        const found = this.isSelected(row.doc);
-        if (found) {
-          this.selection.deselect(found);
-        }
-      });
+      visibleRows.forEach((row: any) => this.selection.deselect(row.doc));
     } else {
-      this.usersTable.filteredData.slice(start, end).forEach((row: any) => {
+      visibleRows.forEach((row: any) => {
         if (!this.isSelected(row.doc)) {
           this.selection.select(row.doc);
         }
