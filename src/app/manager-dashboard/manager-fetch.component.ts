@@ -58,8 +58,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
     this.pushedItems.filterPredicate = (data: any, filter: string) => {
       const filterValues = JSON.parse(filter);
       const nameMatch = filterValues.name ? (
-        (data.db === 'resources' && data.item.doc?.title?.toLowerCase().includes(filterValues.name)) ||
-        (data.db === 'courses' && data.item.doc?.courseTitle?.toLowerCase().includes(filterValues.name))
+        (data.db === 'resources' && (data.item.doc?.title ?? '').toLowerCase().includes(filterValues.name)) ||
+        (data.db === 'courses' && (data.item.doc?.courseTitle ?? '').toLowerCase().includes(filterValues.name))
       ) : true;
       const dateMatch = filterValues.date ? formatDate(new Date(data.time)) === filterValues.date : true;
       return nameMatch && dateMatch;
@@ -125,6 +125,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
       date: this.filterDate ? formatDate(this.filterDate) : ''
     };
     this.pushedItems.filter = JSON.stringify(filterValues);
+    this.selection.clear();
   }
 
 }
