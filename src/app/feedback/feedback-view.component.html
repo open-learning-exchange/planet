@@ -21,8 +21,9 @@
         </ng-container>
       </ng-container>
       <ng-template #editTitleBlock>
-        <mat-form-field color="accent" class="margin-lr-3 title-edit">
-          <input matInput [(ngModel)]="feedback.title" placeholder="Feedback title" i18n-placeholder />
+        <mat-form-field color="accent" class="margin-lr-4 title-edit mdc-toolbar-input">
+          <mat-label i18n>Feedback title</mat-label>
+          <input matInput [(ngModel)]="feedback.title" />
         </mat-form-field>
         <a (click)="setTitle()" mat-icon-button>
           <mat-icon>check</mat-icon>
@@ -50,20 +51,27 @@
   </mat-toolbar>
   <div class="view-container view-full-height">
     <mat-card *ngIf="showParams==='on'" class="margin-tb">
-      <h4 i18n>Page Parameters</h4>
-      <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
+      <mat-card-content>
+        <h4 i18n>Page Parameters</h4>
+        <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
+      </mat-card-content>
     </mat-card>
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: trackById">
         <div class="chat-list-user">
           <span *ngIf="users[message.user]">{{users[message.user] + ', '}}</span><span class="mat-caption">{{message.time | date:'medium'}}</span>
         </div>
-        <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">{{message.message}}</mat-card>
+        <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
+          <mat-card-content>
+            {{message.message}}
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
     <div class="chat-reply">
       <mat-form-field>
-        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5" placeholder="Type your reply here" i18n-placeholder></textarea>
+        <mat-label i18n>Type your reply here</mat-label>
+        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5"></textarea>
       </mat-form-field>
       <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">
         <mat-icon>reply</mat-icon><span i18n>Reply</span>

@@ -5,7 +5,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';

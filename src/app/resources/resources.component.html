@@ -26,7 +26,7 @@
 <ng-template #collectionRow>
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
-  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
 </ng-template>
@@ -34,8 +34,9 @@
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
   <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
-  <mat-form-field class="font-size-1 margin-lr-4">
-    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+  <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
+    <mat-label i18n>Title</mat-label>
+    <input matInput [(ngModel)]="titleSearch">
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
 </ng-template>
@@ -72,7 +73,7 @@
 
   <ng-template #actionButtons>
     <ng-container *planetAuthorizedRoles="'manager'">
-      <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
@@ -139,16 +140,20 @@
               </ng-container>
             </ng-template>
           </h3>
-          <mat-chip-list #tagsList class="tags-list">
+          <mat-chip-set #tagsList class="tags-list" aria-label="Resource tags" i18n-aria-label>
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
+              <mat-chip *ngIf="tag.isMainTag" highlighted color="primary">
+                <a matChipAction type="button" (click)="addTag(tag._id)">
+                  {{tag.name}}
+                </a>
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
+              <mat-chip *ngFor="let subTag of tag.subTags">
+                <a matChipAction type="button" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </a>
               </mat-chip>
             </ng-container>
-          </mat-chip-list>
+          </mat-chip-set>
           <div class="content">
             <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
             <div *ngIf="showPreviewExpand(element.doc)"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">

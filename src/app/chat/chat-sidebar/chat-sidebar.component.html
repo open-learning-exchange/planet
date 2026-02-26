@@ -12,15 +12,17 @@
         </button>
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
-        <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
+        <mat-label i18n>Search</mat-label>
+        <input matInput [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
       </mat-form-field>
       <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
         <mat-icon>delete</mat-icon>
       </button><br>
       <div class="full-conversation-row">
         <div class="full-conversation-label-row">
-          <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
-          <span class="full-conversation-label" i18n>Full Conversation Search </span>
+          <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()">
+            <span class="full-conversation-label" i18n>Full Conversation Search </span>
+          </mat-checkbox>
         </div>
         <button mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
           <mat-icon>help_outline</mat-icon>

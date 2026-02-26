@@ -1,32 +1,32 @@
-import {
-  Component,
-  Input,
-  EventEmitter,
-  Output,
-  Directive,
-  ContentChildren,
-  ViewChild,
-  TemplateRef,
-  Injectable,
-  OnDestroy,
-  AfterContentChecked,
-  ViewEncapsulation,
-  HostBinding
+import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild,
+  TemplateRef, Injectable, OnDestroy, AfterContentChecked, ViewEncapsulation, HostBinding, QueryList
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UntypedFormArray } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
+
+export type PlanetStepControl = AbstractControl<any, any>;
+export type PlanetStepControls = Record<string, PlanetStepControl>;
+export type PlanetStepFormGroup = FormGroup<PlanetStepControls>;
+export type PlanetStepFormArray = FormArray<PlanetStepFormGroup>;
+export type PlanetStepListSteps = unknown[] | PlanetStepFormArray;
+
+interface StepMoveEvent {
+  index: number;
+  direction: number;
+  listId: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanetStepListService {
 
-  stepMoveClick$ = new Subject<any>();
+  stepMoveClick$ = new Subject<StepMoveEvent>();
   stepAdded$ = new Subject<number>();
 
-  moveStep(index, direction, listId) {
+  moveStep(index: number, direction: number, listId: string) {
     this.stepMoveClick$.next({ index, direction, listId });
   }
 
@@ -58,7 +58,7 @@ export class PlanetStepListItemComponent {
 
   constructor(private planetStepListService: PlanetStepListService) {}
 
-  moveStep(event, direction = 0) {
+  moveStep(event: Event, direction = 0) {
     event.stopPropagation();
     this.planetStepListService.moveStep(this.index, direction, this.listId);
   }
@@ -73,14 +73,14 @@ export class PlanetStepListItemComponent {
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
-  @Input() steps: any[] | UntypedFormArray;
+  @Input() steps: PlanetStepListSteps;
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
   @Output() stepClicked = new EventEmitter<number>();
-  @Output() stepsChange = new EventEmitter<any[]>();
+  @Output() stepsChange = new EventEmitter<unknown[]>();
 
-  @ContentChildren(PlanetStepListItemComponent) stepListItems;
+  @ContentChildren(PlanetStepListItemComponent) stepListItems: QueryList<PlanetStepListItemComponent>;
 
   listMode = true;
   openIndex = -1;
@@ -120,36 +120,40 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     this.stepClicked.emit(-1);
   }
 
-  moveStep({ index, direction, listId }) {
+  moveStep({ index, direction, listId }: StepMoveEvent) {
     if (listId !== this.listId) {
       return;
     }
-    if (this.steps instanceof Array) {
-      this.moveArrayStep(index, direction, this.steps);
-    } else if (this.steps instanceof UntypedFormArray) {
-      this.moveFormArrayStep(index, direction, this.steps);
+    const { steps } = this;
+    if (Array.isArray(steps)) {
+      this.moveArrayStep(index, direction, steps);
+      this.stepsChange.emit(steps);
+      return;
     }
-    if (Array.isArray(this.steps)) {
-      this.stepsChange.emit(this.steps);
+    if (steps instanceof FormArray) {
+      this.moveFormArrayStep(index, direction, steps);
     }
   }
 
-  moveArrayStep(index, direction, steps: any[]) {
+  moveArrayStep(index: number, direction: number, steps: unknown[]) {
     const step = steps.splice(index, 1)[0];
     if (direction !== 0) {
       steps.splice(index + direction, 0, step);
     }
   }
 
-  moveFormArrayStep(index, direction, steps: UntypedFormArray) {
-    const step = steps.at(index);
+  moveFormArrayStep<TControl extends PlanetStepControl>(index: number, direction: number, steps: FormArray<TControl>) {
+    const step = steps.at(index) as TControl | null;
+    if (!step) {
+      return;
+    }
     steps.removeAt(index);
     if (direction !== 0) {
       steps.insert(index + direction, step);
     }
   }
 
-  changeStep(direction) {
+  changeStep(direction: number) {
     this.stepClick(this.openIndex + direction);
   }
 

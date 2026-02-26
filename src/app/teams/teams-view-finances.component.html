@@ -6,20 +6,24 @@
   </div>
   <div class="transaction-date-fields">
     <mat-form-field>
-      <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick Start Date" [max]="endDate">
-      <mat-datepicker-toggle matSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+      <mat-label i18n>Pick Start Date</mat-label>
+      <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
+      <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterStart></mat-datepicker>
       <mat-error i18n *ngIf="startDate > endDate">Start date must be before end date</mat-error>
     </mat-form-field>
     <mat-form-field>
-      <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder placeholder="Pick End Date" [min]="startDate">
-      <mat-datepicker-toggle matSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+      <mat-label i18n>Pick End Date</mat-label>
+      <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" i18n-placeholder [min]="startDate">
+      <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterEnd></mat-datepicker>
     </mat-form-field>
   </div>
 </div>
 <mat-card class="margin-lr" *ngIf="showBalanceWarning">
-  <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  <mat-card-content>
+    <div class="warning-container"><mat-icon color="accent">warning</mat-icon><span i18n>The current balance is negative!</span></div>
+  </mat-card-content>
 </mat-card>
 <ng-container *ngIf="!isLoading; else loadingTpl">
 <mat-table [dataSource]="table" *ngIf="!emptyTable; else emptyMessage">
