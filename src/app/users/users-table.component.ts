@@ -1,10 +1,10 @@
 import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -19,7 +19,6 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
-import { itemsShown } from '../shared/utils';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -150,15 +149,21 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   }
 
   onPaginateChange(e: PageEvent) {
-    this.selection.clear();
   }
 
   isSelected(user) {
     return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
   }
 
+  getVisibleRows() {
+    const start = this.paginator.pageIndex * this.paginator.pageSize;
+    const end = start + this.paginator.pageSize;
+    return this.usersTable.filteredData.slice(start, end);
+  }
+
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    const visibleRows = this.getVisibleRows();
+    return visibleRows.length > 0 && visibleRows.every((row: any) => this.isSelected(row.doc));
   }
 
   onlyManagerSelected() {
@@ -167,11 +172,16 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc));
+    const visibleRows = this.getVisibleRows();
+    if (this.isAllSelected()) {
+      visibleRows.forEach((row: any) => this.selection.deselect(row.doc));
+    } else {
+      visibleRows.forEach((row: any) => {
+        if (!this.isSelected(row.doc)) {
+          this.selection.select(row.doc);
+        }
+      });
+    }
   }
 
   gotoProfileView(userName: string) {
