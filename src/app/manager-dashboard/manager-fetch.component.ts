@@ -23,7 +23,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
       max-width: 150px;
     }
     .fetch-icon {
-      color: #666;
+      color: var(--grey-text-color, #666);
     }
   ` ]
 })

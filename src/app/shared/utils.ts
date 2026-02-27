@@ -35,17 +35,24 @@ export const findByIdInArray = (array = [], id: string) => array.find(item => it
  * See https://github.com/angular/angular-cli/issues/23273
  */
 
+export const getThemeColor = (variableName: string): string => {
+  if (typeof getComputedStyle === 'undefined') {
+    return '';
+  }
+  return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+};
+
 export const styleVariables: any = {
-  primary: '#2196f3',
-  primaryLighter: '#bbdefb',
-  primaryText: 'white',
-  accent: '#ffc107',
-  accentLighter: '#ffecb3',
-  accentText: 'rgba(0, 0, 0, 0.87)',
-  grey: '#bdbdbd',
-  greyText: 'rgba(0, 0, 0, 0.54)',
-  lightGrey: 'whitesmoke'
-};;
+  get primary() { return getThemeColor('--primary-color') || '#2196f3'; },
+  get primaryLighter() { return getThemeColor('--primary-lighter-color') || '#bbdefb'; },
+  get primaryText() { return getThemeColor('--primary-text-color') || 'white'; },
+  get accent() { return getThemeColor('--accent-color') || '#ffc107'; },
+  get accentLighter() { return getThemeColor('--accent-lighter-color') || '#ffecb3'; },
+  get accentText() { return getThemeColor('--accent-text-color') || 'rgba(0, 0, 0, 0.87)'; },
+  get grey() { return getThemeColor('--grey-color') || '#bdbdbd'; },
+  get greyText() { return getThemeColor('--grey-text-color') || 'rgba(0, 0, 0, 0.54)'; },
+  get lightGrey() { return getThemeColor('--light-grey-color') || 'whitesmoke'; }
+};
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
