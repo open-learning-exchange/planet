@@ -22,7 +22,8 @@
     "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
     "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh",
     "starthub-true": "echo \"true\" > /srv/starthub",
-    "starthub-false": "echo \"false\" > /srv/starthub"
+    "starthub-false": "echo \"false\" > /srv/starthub",
+    "analyze": "ng build --stats-json && webpack-bundle-analyzer dist/stats.json -m static -r report.html"
   },
   "private": true,
   "dependencies": {
@@ -98,6 +99,7 @@
     "request-promise": "^4.2.5",
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
-    "typescript": "~4.9.5"
+    "typescript": "~4.9.5",
+    "webpack-bundle-analyzer": "^5.2.0"
   }
 }

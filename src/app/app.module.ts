@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppRoutingModule } from './app-router.module';
+import { SelectedPreloadingStrategy } from './shared/selected-preloading-strategy';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { ImageCropperModule } from 'ngx-image-cropper';
@@ -31,6 +32,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
   declarations: [
     AppComponent, PageNotFoundComponent
   ],
+  providers: [ SelectedPreloadingStrategy ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule {}

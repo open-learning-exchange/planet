@@ -11,7 +11,7 @@ import { MaterialModule } from '../shared/material.module';
 import { CoursesViewComponent } from './view-courses/courses-view.component';
 import { CoursesStepComponent } from './add-courses/courses-step.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
-import { ResourcesModule } from '../resources/resources.module';
+import { ResourcesSharedModule } from '../resources/resources-shared.module';
 import { ExamsModule } from '../exams/exams.module';
 import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
 import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
@@ -36,7 +36,7 @@ import { ChatModule } from '../chat/chat.module';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    ResourcesModule,
+    ResourcesSharedModule,
     ExamsModule,
     SharedComponentsModule,
     DialogsAddResourcesModule,
