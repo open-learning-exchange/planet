@@ -42,12 +42,12 @@ export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
   [K in keyof T]?: DialogControlConfig<T[K]>;
 } & Record<string, DialogControlConfig<any>>;
 
-export type DialogFormGroupInput<T extends DialogFormValueMap> = | FormGroup | DialogFormGroupConfig<T>;
+export type DialogFormGroupInput<T extends DialogFormValueMap> = FormGroup<any> | DialogFormGroupConfig<T>;
 
 export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormValueMap> {
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
-  onSubmit?: (value: T, form: FormGroup) => void;
+  onSubmit?: (value: T, form: FormGroup<any>) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   [key: string]: unknown;
