@@ -401,9 +401,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.expandedElement = this.expandedElement === element ? null : element;
   }
 
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
-  }
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
