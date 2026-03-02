@@ -514,6 +514,22 @@ body {
     min-height: 24px;
   }
 
+  .mat-mdc-chip.chip-outline-accent {
+    background-color: $accent-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-primary {
+    background-color: $primary-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-warn {
+    background-color: $warn-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-grey {
+    background-color: $light-grey;
+  }
+
   .mat-mdc-form-field .mat-mdc-text-field-wrapper,
   .mat-mdc-form-field .mat-mdc-text-field-wrapper:hover,
   .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
