@@ -195,12 +195,9 @@
                     {{resource.linkDoc.title | truncateText:75}}
                   </span>
                 </div>
-                <mat-chip
-                  *ngIf="resource.resource !== undefined"
-                  class="visibility-badge"
-                  [ngClass]="resource.resource?.private === true ? 'chip-private' : 'chip-public'"
-                  (click)="$event.stopPropagation()">
-                  <planet-label [label]="resource.resource?.private === true ? 'Private' : 'Public'"></planet-label>
+                <mat-chip *ngIf="resource.resource !== undefined" class="planet-chip-label visibility-badge" [ngClass]="resource.resource?.private === true ? 'chip-outline-warn' : 'chip-outline-primary'">
+                  <span *ngIf="resource.resource?.private === true" i18n>Private</span>
+                  <span *ngIf="resource.resource?.private !== true" i18n>Public</span>
                 </mat-chip>
                 <mat-card-content>
                   <planet-markdown [content]="resource.resource.description | truncateText:120"></planet-markdown>

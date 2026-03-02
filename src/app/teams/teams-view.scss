@@ -37,24 +37,6 @@
       bottom: 10px;
       right: 12px;
       user-select: none;
-
-      &.chip-public {
-        background-color: #e8f5e9;
-        color: #1b5e20;
-
-        &.mat-mdc-standard-chip {
-          --mdc-theme-primary: #1b5e20;
-        }
-      }
-
-      &.chip-private {
-        background-color: #ffebee;
-        color: #7f0000;
-
-        &.mat-mdc-standard-chip {
-          --mdc-theme-primary: #7f0000;
-        }
-      }
     }
   }
 
