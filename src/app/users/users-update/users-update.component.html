@@ -150,7 +150,7 @@
   <mat-dialog-content class="profile-image-section">
     <img class="profile-image-update" [src]="previewSrc"/>
     <div class="profile-image-upload">
-      <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" (imageCropped)="onImageSelect($event)"></image-cropper>
+      <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
@@ -158,4 +158,3 @@
     <button mat-button mat-dialog-close i18n>Confirm</button>
   </mat-dialog-actions>
 </ng-template>
-
