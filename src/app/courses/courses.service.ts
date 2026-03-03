@@ -27,7 +27,6 @@ export class CoursesService {
     this._course = { ...this._course, ...newCourse };
   }
   progress: any;
-  submission: any = { courseId: '', examId: '' };
   private courseUpdated = new Subject<{ progress: any, course: any }>();
   courseUpdated$ = this.courseUpdated.asObservable();
   private coursesUpdated = new Subject<{ parent: boolean, planetField: string, courses: any[] }>();
@@ -35,7 +34,6 @@ export class CoursesService {
   progressUpdateInProgress = false;
   stepIndex: any;
   returnUrl: string;
-  currentParams: any;
   local = { courses: [], ratings: [], tags: [], courses_progress: [] };
   parent = { courses: [], ratings: [], tags: [], courses_progress: [] };
   isReady = { local: false, parent: false };
@@ -118,7 +116,6 @@ export class CoursesService {
   // Always queries CouchDB for the latest progress by the logged in user
   requestCourse({ courseId, forceLatest = false, parent = false }, opts: any = {}) {
     opts = { ...opts, domain: parent ? this.stateService.configuration.parentDomain : '' };
-    this.currentParams = { ids: [ courseId ], opts };
     const obs = [ parent ? of([]) : this.findOneCourseProgress(courseId) ];
     if (!forceLatest && courseId === this.course._id) {
       obs.push(of(this.course));

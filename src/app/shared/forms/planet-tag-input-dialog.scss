@@ -1,51 +1,43 @@
 :host {
   display: block;
   overflow: hidden;
-}
 
-:host mat-dialog-content {
-  overflow-y: auto;
-  max-height: calc(100vh - 156px);
-  box-sizing: border-box;
-  padding-bottom: 16px;
-}
+  mat-dialog-content {
+    overflow-y: auto;
+    max-height: calc(100vh - 156px);
+    box-sizing: border-box;
+    padding-bottom: 16px;
+  }
 
-:host .mat-list-option span {
-  font-weight: inherit;
-}
+  .mat-mdc-list-item, .mat-mdc-action-list .mat-mdc-list-item {
+    align-items: center;
+    gap: 0.25rem;
+    padding-right: 16px;
+  }
 
-:host p[matLine] *, :host .mat-nav-list .mat-list-item * {
-  margin-right: 0.25rem;
-}
+  .mat-mdc-list-item-meta {
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+  }
 
-:host p[matLine] *:last-child, :host .mat-nav-list .mat-list-item *:last-child {
-  margin-right: 0;
-}
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    padding: 16px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid #e0e0e0;
+  }
 
-:host .mat-nav-list {
-  margin-bottom: 16px;
-}
-
-.mat-list-item:last-of-type {
-  margin-bottom: 8px;
-}
-
-:host mat-dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 4px;
-  padding: 16px;
-  box-sizing: border-box;
-  flex-wrap: wrap;
-  background-color: #fff;
-  position: sticky;
-  bottom: 0;
-  border-top: 1px solid #e0e0e0;
-}
-
-:host mat-dialog-actions button {
-  margin: 0;
-  padding: 4px;
+  mat-dialog-actions button {
+    margin: 0;
+    padding: 4px;
+  }
 }
 
 .icon-spacing,
@@ -60,8 +52,5 @@
 
 .count {
   white-space: nowrap;
-}
-
-.mat-action-list .count {
-  margin-left: 2px;
+  margin-left: 0.25rem;
 }

@@ -10,13 +10,13 @@
   </mat-toolbar>
   <mat-list>
     <mat-list-item *ngFor="let rep of replicators" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
-      <h3 matLine>
+      <h3 matListItemTitle>
         <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
         <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
         {{rep.doc_id}}
-      </h3>
-      <p matLine>
         <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
+      </h3>
+      <span matListItemMeta>
         <ng-container [ngSwitch]="rep?.state">
         <!-- States: initializing, failed, error, running, pending, crashing, completed -->
         <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" class="warn-text-color" i18n-title title="Error">error</mat-icon>
@@ -25,8 +25,8 @@
         <mat-icon *ngSwitchCase="'completed'" i18n-title title="Completed">cloud_done</mat-icon>
         <mat-icon *ngSwitchDefault i18n-title title="In Progress">sync</mat-icon>
         </ng-container>
-      </p>
-      <p matLine class="warn-text-color" *ngIf="rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'">
+      </span>
+      <p matListItemLine class="warn-text-color" *ngIf="rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'">
         {{rep.info}}
       </p>
       <mat-divider></mat-divider>

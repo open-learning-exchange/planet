@@ -60,7 +60,7 @@
       <button mat-raised-button color="accent" *ngSwitchCase="'unrelated'" class="toolbar-button margin-lr-3" (click)="changeMembership('request')">
         <ng-container *ngIf="mode!=='services'" i18n>Request to Join</ng-container>
       </button>
-      <mat-chip-list *ngSwitchCase="'requesting'"><mat-chip color="accent" class="chip-no-style" selected i18n>Request pending</mat-chip></mat-chip-list>
+      <mat-chip-set *ngSwitchCase="'requesting'" aria-label="Request status" i18n-aria-label><mat-chip color="accent" highlighted i18n>Request pending</mat-chip></mat-chip-set>
     </ng-container>
     <ng-container *ngIf="mode!=='services'">
       <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
@@ -71,7 +71,11 @@
     <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
       <mat-tab i18n-label label="Chat">
         <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
+        <planet-loading-spinner *ngIf="newsLoading" text="Loading messages..." i18n-text></planet-loading-spinner>
+        <ng-container *ngIf="!newsLoading">
+          <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
+          <p *ngIf="news?.length === 0" i18n>No messages available.</p>
+        </ng-container>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label i18n>
@@ -98,7 +102,7 @@
         <ng-template mat-tab-label>
           <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length + requests.length}})
         </ng-template>
-        <div *ngIf="requests.length > 0" class="join-requests-section" style="margin-top: 32px;">
+        <div *ngIf="!teamDataLoading && requests.length > 0" class="join-requests-section" style="margin-top: 32px;">
           <h4 i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} } ({{requests.length}})</h4>
           <div class="card-grid member-cards">
             <mat-card *ngFor="let request of requests">
@@ -120,26 +124,29 @@
             </mat-card>
           </div>
         </div>
-        <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
-        <ng-template #memberList>
-          <h4 i18n>Members ({{members.length}})</h4>
-          <div class="card-grid member-cards">
-            <mat-card *ngFor="let member of members">
-              <planet-teams-member
-                [member]="member"
-                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
-                [actionMenu]="[]
-                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                [visits]="visits[member?.name]"
-                [userStatus]="userStatus"
-                [teamLeader]="leader"
-                (actionClick)="memberActionClick($event)">
-              </planet-teams-member>
-            </mat-card>
-          </div>
-        </ng-template>
+        <planet-loading-spinner *ngIf="teamDataLoading" text="Loading members..." i18n-text></planet-loading-spinner>
+        <ng-container *ngIf="!teamDataLoading">
+          <p *ngIf="members.length === 0; else memberList" i18n>No member has joined this { mode, select, team {team} enterprise {enterprise} }.</p>
+          <ng-template #memberList>
+            <h4 i18n>Members ({{members.length}})</h4>
+            <div class="card-grid member-cards">
+              <mat-card *ngFor="let member of members">
+                <planet-teams-member
+                  [member]="member"
+                  [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
+                  [actionMenu]="[]
+                    .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                    .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                    .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                  [visits]="visits[member?.name]"
+                  [userStatus]="userStatus"
+                  [teamLeader]="leader"
+                  (actionClick)="memberActionClick($event)">
+                </planet-teams-member>
+              </mat-card>
+            </div>
+          </ng-template>
+        </ng-container>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab #taskTab>
@@ -161,14 +168,14 @@
           <ng-template mat-tab-label>
             <ng-container i18n>Finances</ng-container> ({{ financesCount }})
           </ng-template>
-          <planet-teams-view-finances [isLoading]="financesLoading" [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
+          <planet-teams-view-finances [isLoading]="teamDataLoading" [finances]="finances" [team]="team" [getMembers]="getMembers" (financesChanged)="resetData()" [editable]="userStatus === 'member'"></planet-teams-view-finances>
         </mat-tab>
       </ng-container>
       <mat-tab *ngIf="mode==='enterprise'" i18n-label label="Reports">
         <ng-template mat-tab-label>
           <ng-container i18n>Reports</ng-container> ({{ reportsCount }})
         </ng-template>
-        <planet-teams-reports [reports]="reports" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
+        <planet-teams-reports [reports]="reports" [isLoading]="teamDataLoading" [editable]="userStatus === 'member'" [team]="team" (reportsChanged)="resetData()"></planet-teams-reports>
       </mat-tab>
       <ng-container *ngIf="team?.public === true || userStatus === 'member'">
         <mat-tab i18n-label label="Resources">
@@ -235,11 +242,11 @@
             </div>
           </ng-template>
         </mat-tab>
-        <mat-tab #surveysTab i18n-label label="Surveys">
+        <mat-tab i18n-label label="Surveys">
           <ng-template mat-tab-label>
-            <ng-container i18n>Surveys</ng-container> <span *ngIf="surveysTab.isActive">({{surveysCount}})</span>
+            <ng-container i18n>Surveys</ng-container> ({{surveysCount}})
           </ng-template>
-          <planet-surveys *ngIf="surveysTab.isActive" [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
+          <planet-surveys [teamId]="teamId" (surveyCount)="surveysCount = $event"></planet-surveys>
         </mat-tab>
       </ng-container>
     </mat-tab-group>

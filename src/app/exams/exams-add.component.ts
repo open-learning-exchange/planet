@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,12 +11,36 @@ import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
 import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
-import { UserService } from '../shared/user.service';
 import { ExamsPreviewComponent } from './exams-preview.component';
-import { StateService } from '../shared/state.service';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+
+interface ExamFormControls {
+  name: FormControl<string>;
+  description: FormControl<string>;
+  passingPercentage: FormControl<number>;
+  questions: FormArray<QuestionFormGroup>;
+  type: FormControl<'courses' | 'surveys'>;
+  teamShareAllowed: FormControl<boolean>;
+}
+
+interface ExamInfo {
+  name: string;
+  description: string;
+  passingPercentage: number;
+  questions: Array<{ marks: number }>;
+  type: 'courses' | 'surveys';
+  teamShareAllowed: boolean;
+  teamId?: string | null;
+  _id?: string;
+  _rev?: string;
+}
+
+interface ExamDocumentInfo {
+  _id?: string;
+  _rev?: string;
+}
 
 @Component({
   templateUrl: 'exams-add.component.html',
@@ -24,8 +48,8 @@ import { findDocuments } from '../shared/mangoQueries';
 })
 export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams';
-  examForm: FormGroup;
-  documentInfo: any = {};
+  examForm!: FormGroup<ExamFormControls>;
+  documentInfo: ExamDocumentInfo = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
   examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
@@ -39,53 +63,49 @@ export class ExamsAddComponent implements OnInit {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  private _question: QuestionFormGroup;
+  private _question!: QuestionFormGroup;
   get question(): QuestionFormGroup {
     return this._question;
   }
   set question(newQuestion: QuestionFormGroup) {
-    const question = (<FormArray<QuestionFormGroup>>this.examForm.controls.questions).at(this.activeQuestionIndex);
+    const question = this.questions.at(this.activeQuestionIndex);
     this.examsService.updateQuestion(question, newQuestion);
     this._question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
   get questions(): FormArray<QuestionFormGroup> {
-    return <FormArray<QuestionFormGroup>>this.examForm.controls.questions;
+    return this.examForm.controls.questions;
   }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
     private coursesService: CoursesService,
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
-    private userService: UserService,
     private dialog: MatDialog,
-    private stateService: StateService,
     private submissionsService: SubmissionsService
   ) {
     this.createForm();
   }
 
   createForm() {
-    this.examForm = this.fb.group({
-      name: this.isCourseContent ? '' : [
-        '',
-        CustomValidators.required,
-        this.nameValidator()
-      ],
-      description: '',
-      passingPercentage: [
-        100,
-        [ CustomValidators.positiveNumberValidator, Validators.max(100) ]
-      ],
-      questions: this.fb.array([]),
-      type: { exam: 'courses', survey: 'surveys' }[this.examType],
-      teamShareAllowed: false
+    const examRecordType: 'courses' | 'surveys' = this.examType === 'exam' ? 'courses' : 'surveys';
+    const nameControlOptions = this.isCourseContent ? undefined : {
+      validators: [ CustomValidators.required ],
+      asyncValidators: [ this.nameValidator() ]
+    };
+    this.examForm = this.fb.group<ExamFormControls>({
+      name: this.fb.control('', nameControlOptions),
+      description: this.fb.control(''),
+      passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
+      questions: this.fb.array<QuestionFormGroup>([]),
+      type: this.fb.control<'courses' | 'surveys'>(examRecordType),
+      teamShareAllowed: this.fb.control(false)
     });
   }
 
@@ -109,7 +129,7 @@ export class ExamsAddComponent implements OnInit {
       if (submissions.length > 0) {
         this.pageType = 'Copy';
         this.documentInfo = {};
-        this.examForm.patchValue({ name: this.examForm.value.name += ' - COPY' });
+        this.examForm.patchValue({ name: `${this.examForm.controls.name.value} - COPY` });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
     }, error => console.log(error));
@@ -117,11 +137,10 @@ export class ExamsAddComponent implements OnInit {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
-      if (this.teamId) {
-        this.examForm.value.teamId = this.teamId;
-      }
+      const formValue = this.examForm.getRawValue();
+      const examInfo: ExamInfo = { ...formValue, ...(this.teamId ? { teamId: this.teamId } : {}) };
       this.showFormError = false;
-      this.addExam(Object.assign({}, this.examForm.value, this.documentInfo), reRoute);
+      this.addExam({ ...examInfo, ...this.documentInfo }, reRoute);
     } else {
       if (this.examForm.controls.name.invalid) {
         this.isQuestionsActive = false;
@@ -130,8 +149,8 @@ export class ExamsAddComponent implements OnInit {
     }
   }
 
-  nameValidator(exception = '') {
-    return ac => this.validatorService.isUnique$(
+  nameValidator(exception = ''): AsyncValidatorFn {
+    return (ac: AbstractControl) => this.validatorService.isUnique$(
       this.dbName, 'name', ac, { exceptions: [ exception ], selectors: { type: this.examType } }
     );
   }
@@ -142,11 +161,11 @@ export class ExamsAddComponent implements OnInit {
     this.stepClick(this.activeQuestionIndex);
   }
 
-  addExam(examInfo, reRoute) {
+  addExam(examInfo: ExamInfo, reRoute: boolean) {
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
     this.couchService.findAll(this.dbName,
-      { selector: { type: this.examForm.value.type, name: { '$regex': namePrefix } } }
-    ).pipe(switchMap((exams) => {
+      { selector: { type: this.examForm.controls.type.value, name: { '$regex': namePrefix } } }
+    ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
@@ -164,44 +183,42 @@ export class ExamsAddComponent implements OnInit {
     });
   }
 
-  appendToCourse(info, type: 'exam' | 'survey') {
+  appendToCourse(info: ExamInfo, type: 'exam' | 'survey') {
     const courseExam = { ...info, ...this.documentInfo, totalMarks: type === 'exam' ? this.totalMarks(info) : undefined };
     this.coursesService.course.steps[this.coursesService.stepIndex][type] = courseExam;
   }
 
-  totalMarks(examInfo) {
-    return examInfo.questions.reduce((total: number, question: any) => total + question.marks, 0);
+  totalMarks(examInfo: ExamInfo) {
+    return examInfo.questions.reduce((total: number, question) => total + question.marks, 0);
   }
 
   stepClick(index: number) {
     this.activeQuestionIndex = index;
     this.isQuestionsActive = index > -1;
     if (index > -1) {
-      this.question = (<FormArray<QuestionFormGroup>>this.examForm.get('questions')).at(index);
+      this.question = this.questions.at(index);
     }
   }
 
-  initializeQuestions(questions: any[]) {
+  initializeQuestions(questions: Array<Record<string, unknown>>) {
     questions.forEach((question) => {
-      (<FormArray<QuestionFormGroup>>this.examForm.controls.questions)
-        .push(this.examsService.newQuestionForm(this.examType === 'exam', question));
+      this.questions.push(this.examsService.newQuestionForm(this.examType === 'exam', question));
     });
   }
 
   addQuestion(type: string) {
-    const questions = (<FormArray<QuestionFormGroup>>this.examForm.get('questions'));
-    questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
-    questions.updateValueAndValidity();
-    this.planetStepListService.addStep(questions.length - 1);
-    this.stepClick(questions.length - 1);
+    this.questions.push(this.examsService.newQuestionForm(this.examType === 'exam', { type }));
+    this.questions.updateValueAndValidity();
+    this.planetStepListService.addStep(this.questions.length - 1);
+    this.stepClick(this.questions.length - 1);
     this.showPreviewError = false;
   }
 
-  removeQuestion(index) {
-    (<FormArray<QuestionFormGroup>>this.examForm.get('questions')).removeAt(index);
+  removeQuestion(index: number) {
+    this.questions.removeAt(index);
   }
 
-  getQuestionLabel(value: any, index: number): string {
+  getQuestionLabel(value: unknown, index: number): string {
     const questionText = markdownToPlainText(value);
     return questionText || $localize`Question ${index + 1}`;
   }
@@ -214,17 +231,17 @@ export class ExamsAddComponent implements OnInit {
     this.router.navigateByUrl(this.returnUrl);
   }
 
-  newExamName(existingExams: any[], namePrefix, nameNumber = 0) {
+  newExamName(existingExams: Array<{ name: string }>, namePrefix: string, nameNumber = 0) {
     const tryNumber = nameNumber || existingExams.length;
     const name = `${namePrefix} - ${tryNumber + 1}`;
-    if (existingExams.findIndex((exam: any) => exam.name === name) === -1) {
+    if (existingExams.findIndex((exam) => exam.name === name) === -1) {
       return name;
     }
     return this.newExamName(existingExams, namePrefix, tryNumber + 1);
   }
 
   showPreviewDialog() {
-    if (this.examForm.value.questions.length === 0) {
+    if (this.questions.length === 0) {
       this.showPreviewError = true;
       return;
     }
@@ -232,7 +249,10 @@ export class ExamsAddComponent implements OnInit {
       this.showErrorMessage();
       return;
     }
-    this.dialog.open(ExamsPreviewComponent, { data: { exam: this.examForm.value, examType: this.examType }, minWidth: '75vw' });
+    this.dialog.open(ExamsPreviewComponent, {
+      data: { exam: this.examForm.getRawValue(), examType: this.examType },
+      minWidth: '75vw'
+    });
   }
 
 }
