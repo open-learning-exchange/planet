@@ -218,10 +218,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ this.redirectUrl ], { relativeTo: this.route });
   }
 
-  fileChangeEvent(event: Event): void {
-    this.imageChangedEvent = event;
-  }
-
   onImageSelect(event: ImageCroppedEvent) {
     this.previewSrc = event.base64;
     this.file = event.base64;

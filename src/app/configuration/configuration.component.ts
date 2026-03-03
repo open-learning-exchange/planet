@@ -204,7 +204,7 @@ export class ConfigurationComponent implements OnInit {
     this.configurationFormGroup.controls.localDomain.setValue(this.defaultLocal);
   }
 
-  planetNameChange(event: Event) {
+  planetNameChange() {
     if (this.configurationType !== 'update') {
       let code = this.configurationFormGroup.controls.name.value;
       // convert special character to dot except last character

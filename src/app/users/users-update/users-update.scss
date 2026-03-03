@@ -75,6 +75,10 @@
 
 .profile-image-upload {
   grid-area: image-rt;
+
+  ::ng-deep image-cropper img.ngx-ic-source-image {
+    width: 100%;
+  }
 }
 
 @media (max-width: $screen-sm) {
