@@ -8,26 +8,32 @@
     <div class="form-container">
       <form class="form-spacing" [formGroup]="profileForm">
         <mat-form-field>
-          <input matInput required i18n-placeholder placeholder="First Name" formControlName="firstName">
+          <mat-label i18n>First Name</mat-label>
+          <input matInput required formControlName="firstName">
           <mat-error><planet-form-error-messages [control]="profileForm.controls.firstName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Middle Name" formControlName="middleName">
+          <mat-label i18n>Middle Name</mat-label>
+          <input matInput formControlName="middleName">
         </mat-form-field>
         <mat-form-field>
-          <input matInput required i18n-placeholder placeholder="Last Name" formControlName="lastName">
+          <mat-label i18n>Last Name</mat-label>
+          <input matInput required formControlName="lastName">
           <mat-error><planet-form-error-messages [control]="profileForm.controls.lastName"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput required i18n-placeholder placeholder="Email" formControlName="email">
+          <mat-label i18n>Email</mat-label>
+          <input matInput required formControlName="email">
           <mat-error><planet-form-error-messages [control]="profileForm.controls.email"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput required i18n-placeholder placeholder="Phone Number" formControlName="phoneNumber">
+          <mat-label i18n>Phone Number</mat-label>
+          <input matInput required formControlName="phoneNumber">
           <mat-error><planet-form-error-messages [control]="profileForm.controls.phoneNumber"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-select required i18n-placeholder placeholder="Language" formControlName="language">
+          <mat-label i18n>Language</mat-label>
+          <mat-select required formControlName="language">
             <mat-option *ngFor="let language of languages" [value]="language.name">
               {{language.name}}
             </mat-option>
@@ -35,41 +41,50 @@
           <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput [min]="minBirthDate" [matDatepicker]="dp" required i18n-placeholder placeholder="Birthdate" formControlName="birthDate">
-          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-label i18n>Birthdate</mat-label>
+          <input matInput [min]="minBirthDate" [matDatepicker]="dp" required formControlName="birthDate">
+          <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.birthDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Birthplace" formControlName="birthplace">
+          <mat-label i18n>Birthplace</mat-label>
+          <input matInput formControlName="birthplace">
         </mat-form-field>
       </form>
       <form class="form-spacing" [formGroup]="healthForm">
         <span class="full-width primary-text-color mat-subtitle-2" i18n>Emergency Contact</span>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Name" formControlName="emergencyContactName">
+          <mat-label i18n>Name</mat-label>
+          <input matInput formControlName="emergencyContactName">
         </mat-form-field>
         <mat-form-field>
-          <mat-select i18n-placeholder placeholder="Contact Type" formControlName="emergencyContactType">
+          <mat-label i18n>Contact Type</mat-label>
+          <mat-select formControlName="emergencyContactType">
             <mat-option value="phone" i18n>Phone</mat-option>
             <mat-option value="email" i18n>Email</mat-option>
           </mat-select>
         </mat-form-field>
         <mat-form-field>
-          <input matInput i18n-placeholder placeholder="Contact" formControlName="emergencyContact">
+          <mat-label i18n>Contact</mat-label>
+          <input matInput formControlName="emergencyContact">
           <mat-error><planet-form-error-messages [control]="healthForm.controls.emergencyContact"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Special Needs" [formControl]="healthForm.controls.specialNeeds"></planet-markdown-textbox>
+          <mat-label i18n>Special Needs</mat-label>
+          <planet-markdown-textbox [formControl]="healthForm.controls.specialNeeds"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Allergies" [formControl]="healthForm.controls.allergies"></planet-markdown-textbox>
+          <mat-label i18n>Allergies</mat-label>
+          <planet-markdown-textbox [formControl]="healthForm.controls.allergies"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Immunization Dates" [formControl]="healthForm.controls.immunizations"></planet-markdown-textbox>
+          <mat-label i18n>Immunization Dates</mat-label>
+          <planet-markdown-textbox [formControl]="healthForm.controls.immunizations"></planet-markdown-textbox>
         </mat-form-field>
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox i18n-placeholder placeholder="Other Notes" [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
+          <mat-label i18n>Other Notes</mat-label>
+          <planet-markdown-textbox [formControl]="healthForm.controls.notes"></planet-markdown-textbox>
         </mat-form-field>
       </form>
     </div>

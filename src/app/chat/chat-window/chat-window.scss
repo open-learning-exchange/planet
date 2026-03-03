@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@import '../../variables';
 
 .full-container {
   display: flex;
@@ -22,18 +22,12 @@
   padding: 10px;
 }
 
-.textarea-container {
-  border: 1px solid $primary;
-  border-radius: 5px;
-  padding: 15px;
-}
-
-.textarea-container textarea {
+textarea {
   resize: none;
   height: 100px;
 }
 
-.textarea-container button {
+button {
   position: absolute;
   top: 70%;
   right: 8px;

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
 import { DialogsAddTableComponent } from '../../shared/dialogs/dialogs-add-table.component';
@@ -10,8 +10,8 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
-interface CertificationFormModel {
-  name: string;
+interface CertificationFormControls {
+  name: FormControl<string>;
 }
 
 @Component({
@@ -21,14 +21,14 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   readonly dbName = 'certifications';
   certificateInfo: { _id?: string, _rev?: string } = {};
-  certificateForm: FormGroup;
+  certificateForm: FormGroup<CertificationFormControls>;
   courseIds: string[] = [];
   pageType = 'Add';
   disableRemove = true;
   @ViewChild(CoursesComponent) courseTable: CoursesComponent;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
@@ -38,11 +38,11 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private cdRef: ChangeDetectorRef
   ) {
     this.certificateForm = this.fb.group({
-      name: this.fb.nonNullable.control('', {
-        validators: CustomValidators.required,
-        asyncValidators: ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
+      name: this.fb.control('', {
+        validators: [ CustomValidators.required ],
+        asyncValidators: [ ac => this.validatorService.isUnique$(this.dbName, 'name', ac, {
           selectors: { _id: { '$ne': this.certificateInfo._id || '' } }
-        })
+        }) ]
       })
     });
   }
@@ -53,7 +53,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       if (id) {
         this.certificateInfo._id = id;
         this.certificationsService.getCertification(id).subscribe(certification => {
-          this.certificateForm.patchValue({ name: certification.name || '' } as Partial<CertificationFormModel>);
+          this.certificateForm.patchValue({ name: certification.name || '' });
           this.certificateInfo._rev = certification._rev;
           this.courseIds = certification.courseIds || [];
           this.pageType = 'Update';
@@ -83,7 +83,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
       showFormErrors(this.certificateForm.controls);
       return;
     }
-    const certificateFormValue: CertificationFormModel = this.certificateForm.getRawValue();
+    const certificateFormValue = this.certificateForm.getRawValue();
     this.certificationsService.addCertification({
       ...this.certificateInfo,
       ...certificateFormValue,

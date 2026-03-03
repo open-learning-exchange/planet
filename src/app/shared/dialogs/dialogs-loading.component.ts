@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './dialogs-loading.component.html',
@@ -11,6 +11,7 @@ import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dia
       overflow: hidden;
       grid-template-rows: 1fr 200px;
       grid-template-columns: 200px;
+      padding: 24px;
     }
     .logo-spinner {
       animation: loading-icon-linear-rotate 4s linear infinite;

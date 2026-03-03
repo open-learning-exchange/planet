@@ -13,19 +13,19 @@
 </mat-button-toggle-group>
 <mat-action-list [disableRipple]="!editable">
   <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="openTaskDetail(task)" [disabled]="!editable">
-    <mat-checkbox [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
-    <p matLine>{{task.title}}</p>
-    <p matLine [ngClass]="{'deadline-soon': isTaskDueSoon(task),
-    'deadline-passed': isTaskOverdue(task)}"><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</p>
-    <p matLine *ngIf="task.completed"><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</p>
-    <img (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" *ngIf="task.assignee" matListAvatar [src]="
+    <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
+    <span matListItemTitle>{{task.title}}</span>
+    <span matListItemLine [ngClass]="{'deadline-soon': isTaskDueSoon(task),
+    'deadline-passed': isTaskOverdue(task)}"><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</span>
+    <span matListItemLine *ngIf="task.completed"><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
+    <img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" *ngIf="task.assignee" [src]="
       task.assignee.attachmentDoc ?
         imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
         task.assignee.avatar ?
         imgUrlPrefix + task.assignee.avatar :
         'assets/image.png'
     ">
-    <ng-container *ngIf="editable">
+    <ng-container matListItemMeta *ngIf="editable">
       <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
       <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
       <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
