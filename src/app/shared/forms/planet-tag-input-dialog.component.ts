@@ -121,10 +121,6 @@ export class PlanetTagInputDialogComponent {
     }
   }
 
-  subTagIds(subTags: any[]) {
-    return subTags.map(subTag => subTag._id || subTag.name);
-  }
-
   updateFilter(value) {
     this.filterValue = value;
     this.tags = this.filterTags(value);
