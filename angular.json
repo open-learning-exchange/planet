@@ -190,34 +190,34 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "planet-app:build",
             "port": 3000,
-            "host": "0.0.0.0"
+            "host": "0.0.0.0",
+            "buildTarget": "planet-app:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "planet-app:build:production"
+              "buildTarget": "planet-app:build:production"
             },
             "dev": {
-              "browserTarget": "planet-app:build:dev"
+              "buildTarget": "planet-app:build:dev"
             },
             "test": {
-              "browserTarget": "planet-app:build:test"
+              "buildTarget": "planet-app:build:test"
             },
             "som": {
-              "browserTarget": "planet-app:build:som"
+              "buildTarget": "planet-app:build:som"
             },
             "fra": {
-              "browserTarget": "planet-app:build:fra"
+              "buildTarget": "planet-app:build:fra"
             },
             "nep": {
-              "browserTarget": "planet-app:build:nep"
+              "buildTarget": "planet-app:build:nep"
             },
             "ara": {
-              "browserTarget": "planet-app:build:ara"
+              "buildTarget": "planet-app:build:ara"
             },
             "spa": {
-              "browserTarget": "planet-app:build:spa"
+              "buildTarget": "planet-app:build:spa"
             }
           },
           "defaultConfiguration": ""
@@ -225,9 +225,9 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "planet-app:build",
             "outputPath": "src/i18n",
-            "format": "xlf"
+            "format": "xlf",
+            "buildTarget": "planet-app:build"
           }
         },
         "test": {
