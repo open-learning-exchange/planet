@@ -38,6 +38,11 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   templateUrl: './courses.component.html',
   styleUrls: [ './courses.scss' ],
   animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
   ],
   encapsulation: ViewEncapsulation.None
 })
@@ -471,6 +476,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   toggleRow(element: any) {
     this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
   }
 
 

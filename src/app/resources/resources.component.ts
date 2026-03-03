@@ -36,6 +36,11 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   styleUrls: [ './resources.scss' ],
   encapsulation: ViewEncapsulation.None,
   animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
   ],
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -394,6 +399,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleRow(element: any) {
     this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
+  onExpansionDone(event: any, element: any) {
+    element.renderContent = (event.toState === 'expanded');
   }
 
 
