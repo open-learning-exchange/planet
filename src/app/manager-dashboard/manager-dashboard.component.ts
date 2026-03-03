@@ -15,7 +15,6 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
@@ -56,8 +55,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
