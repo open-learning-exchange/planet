@@ -37,8 +37,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
+      state('expanded', style({ height: '*', overflow: 'hidden' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
@@ -404,6 +404,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   onExpansionDone(event: any, element: any) {
     element.renderContent = (event.toState === 'expanded');
   }
+
 
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
