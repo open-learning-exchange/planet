@@ -48,7 +48,7 @@
       </mat-form-field>
       <mat-form-field class="new-line">
         <mat-label i18n>Name</mat-label>
-        <input matInput formControlName="name" required (keyup)="planetNameChange($event)">
+        <input matInput formControlName="name" required (keyup)="planetNameChange()">
         <mat-error><planet-form-error-messages [control]="configurationFormGroup.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
       <mat-form-field>
