@@ -155,7 +155,7 @@
             </ng-container>
           </mat-chip-set>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ? '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description : element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true" [limit]="previewLimit"></planet-markdown>
+            <planet-markdown *ngIf="!isExpanded(element) && !element.renderContent" [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ? '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description : element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true" [limit]="previewLimit"></planet-markdown>
             <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
               <planet-markdown *ngIf="isExpanded(element) || element.renderContent" [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ? '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description : element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="false" [limit]="previewLimit"></planet-markdown>
             </div>
