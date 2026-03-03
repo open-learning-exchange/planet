@@ -1,4 +1,4 @@
-@import '../variables.scss';
+@import '../variables';
 
 .mat-column-name,
 .mat-column-courseTitle {
@@ -14,7 +14,7 @@
 }
 
 .mat-column-stepNum {
-  max-width: 90px;
+  max-width: 150px;
 }
 
 @media (max-width: $screen-sm) {

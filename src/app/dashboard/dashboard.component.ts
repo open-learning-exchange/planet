@@ -1,11 +1,9 @@
 import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-
+import { MatDialog } from '@angular/material/dialog';
+import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
+import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-
-import { map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
-import { of, forkJoin, Subject, combineLatest } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -32,7 +30,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   badgesCourses: { [key: string]: any[] } = {};
   badgeGroups = [ ...foundations, 'none' ];
   badgeIcons = foundationIcons;
-
   dateNow: any;
   visits = 0;
   surveysCount = 0;
@@ -43,7 +40,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading = true;
   deviceType: DeviceType;
   isMobile = false;
-
   myLifeItems: any[] = [];
   cardTitles = { myLibrary: $localize`myLibrary`, myCourses: $localize`myCourses`, myTeams: $localize`myTeams`, myLife: $localize`myLife` };
 
@@ -88,7 +84,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.isLoading = true;
     this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
@@ -133,7 +128,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initDashboard() {
-
+    this.isLoading = true;
     const userShelf = this.userService.shelf;
     if (this.isEmptyShelf(userShelf)) {
       this.data = { resources: [], courses: [], meetups: [], myTeams: [] };
@@ -145,14 +140,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
       this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
       this.getTeamMembership()
-    ]).subscribe(dashboardItems => {
+    ]).pipe(finalize(() => this.isLoading = false)).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
       this.data.courses = dashboardItems[1];
       this.data.meetups = dashboardItems[2];
       const allTeams = [ ...dashboardItems[3].map(team => ({ ...team, fromShelf: true })), ...dashboardItems[4] ];
       this.data.myTeams = dedupeObjectArray(allTeams, [ '_id' ])
         .filter(team => team.status !== 'archived');
-      this.isLoading = false;
     });
   }
 

@@ -6,9 +6,6 @@
     grid-template-columns: 1.5fr 1fr;
     grid-template-rows: auto 42px;
     grid-column-gap: 0.25rem;
-    > * {
-      overflow-y: auto;
-    }
   }
 
   .steps-container {

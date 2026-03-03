@@ -37,9 +37,7 @@
         </button>
       </mat-expansion-panel>
     </ng-container>
-    <ng-container *ngIf="isLoading">
-      <mat-panel-title i18n="@@loadingReports">Loading reports...</mat-panel-title>
-    </ng-container>
+    <planet-loading-spinner *ngIf="isLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
     <ng-container *ngIf="!isLoading && isEmpty">
       <mat-panel-title i18n>No record was found</mat-panel-title>
     </ng-container>

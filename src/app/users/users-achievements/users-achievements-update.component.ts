@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subject, interval, of, race } from 'rxjs';
-import { catchError, takeUntil, debounce } from 'rxjs/operators';
+import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
+import { catchError, takeUntil, debounce, filter, startWith, take } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -16,6 +16,52 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 
+type DateValue = string | Date;
+type DateSortOrder = 'none' | 'asc' | 'desc';
+
+interface AchievementFormControls {
+  title: FormControl<string>;
+  description: FormControl<string>;
+  link: FormControl<string>;
+  date: FormControl<DateValue>;
+}
+
+interface ReferenceFormControls {
+  name: FormControl<string>;
+  relationship: FormControl<string>;
+  phone: FormControl<string>;
+  email: FormControl<string>;
+}
+
+interface LinkFormControls {
+  title: FormControl<string>;
+  url: FormControl<string>;
+}
+
+interface EditFormControls {
+  purpose: FormControl<string>;
+  goals: FormControl<string>;
+  achievementsHeader: FormControl<string>;
+  achievements: FormArray<AchievementFormGroup>;
+  references: FormArray<ReferenceFormGroup>;
+  links: FormArray<LinkFormGroup>;
+  otherInfo: FormArray<FormControl<any>>;
+  sendToNation: FormControl<boolean>;
+  dateSortOrder: FormControl<DateSortOrder>;
+}
+
+interface ProfileFormControls {
+  firstName: FormControl<string>;
+  middleName: FormControl<string>;
+  lastName: FormControl<string>;
+  birthDate: FormControl<DateValue>;
+  birthplace: FormControl<string>;
+}
+
+type AchievementFormGroup = FormGroup<AchievementFormControls>;
+type ReferenceFormGroup = FormGroup<ReferenceFormControls>;
+type LinkFormGroup = FormGroup<LinkFormControls>;
+
 @Component({
   templateUrl: './users-achievements-update.component.html',
   styleUrls: [ 'users-achievements-update.scss' ],
@@ -27,24 +73,26 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   achievementNotFound = false;
-  editForm: UntypedFormGroup;
-  profileForm: UntypedFormGroup;
+  editForm!: FormGroup<EditFormControls>;
+  profileForm!: FormGroup<ProfileFormControls>;
   private onDestroy$ = new Subject<void>();
   initialFormValues: any;
   hasUnsavedChanges = false;
-  get achievements(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.achievements;
+  submitAttempted = false;
+  private submitAfterPending = false;
+  get achievements(): FormArray<AchievementFormGroup> {
+    return this.editForm.controls.achievements;
   }
-  get references(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.references;
+  get references(): FormArray<ReferenceFormGroup> {
+    return this.editForm.controls.references;
   }
-  get links(): UntypedFormArray {
-    return <UntypedFormArray>this.editForm.controls.links;
+  get links(): FormArray<LinkFormGroup> {
+    return this.editForm.controls.links;
   }
   minBirthDate: Date = this.userService.minBirthDate;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private route: ActivatedRoute,
     private router: Router,
@@ -67,12 +115,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         catchError(() => this.usersAchievementsService.getAchievements(this.user._id))
       )
       .subscribe((achievements) => {
-        this.editForm.patchValue(achievements);
-        this.editForm.controls.achievements = this.fb.array(achievements.achievements || []);
-        this.editForm.controls.references = this.fb.array(achievements.references || []);
-        this.editForm.controls.links = this.fb.array(achievements.links || []);
+        this.editForm.patchValue({
+          purpose: achievements.purpose,
+          goals: achievements.goals,
+          achievementsHeader: achievements.achievementsHeader,
+          sendToNation: achievements.sendToNation,
+          dateSortOrder: achievements.dateSortOrder || 'none'
+        });
+        this.editForm.setControl('achievements', this.buildAchievementsFormArray(achievements.achievements));
+        this.editForm.setControl('references', this.buildReferencesFormArray(achievements.references));
+        this.editForm.setControl('links', this.buildLinksFormArray(achievements.links));
         // Keeping older otherInfo property so we don't lose this info on database
-        this.editForm.controls.otherInfo = this.fb.array(achievements.otherInfo || []);
+        this.editForm.setControl('otherInfo', this.buildOtherInfoFormArray(achievements.otherInfo));
 
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
@@ -82,6 +136,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       }, (error) => {
         console.log(error);
         this.achievementNotFound = true;
+        this.captureInitialState();
+        this.onFormChanges();
       });
 
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -90,85 +146,117 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
+    const editFormState = this.editForm.getRawValue();
     this.initialFormValues = JSON.stringify({
-      editForm: {
-        ...this.editForm.value,
-        achievements: this.achievements.value,
-        references: this.references.value,
-        links: this.links.value
-      },
-      profileForm: this.profileForm.value
+      editForm: editFormState,
+      profileForm: this.profileForm.getRawValue()
     });
   }
 
   onFormChanges() {
     this.editForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
-      .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
-      });
+      .subscribe(() => this.updateUnsavedChangesFlag());
 
     this.profileForm.valueChanges
       .pipe(
-        debounce(() => race(interval(200), of(true)))
+        debounce(() => race(interval(200), of(true))),
+        takeUntil(this.onDestroy$)
       )
-      .subscribe(() => {
-        const currentState = JSON.stringify({
-          editForm: {
-            ...this.editForm.value,
-            achievements: this.achievements.value,
-            references: this.references.value,
-            links: this.links.value
-          },
-          profileForm: this.profileForm.value
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
-      });
+      .subscribe(() => this.updateUnsavedChangesFlag());
   }
 
   ngOnDestroy() {
+    this.submitAfterPending = false;
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   createForm() {
-    this.editForm = this.fb.group({
-      purpose: '',
-      goals: '',
-      achievementsHeader: '',
-      achievements: this.fb.array([]),
-      references: this.fb.array([]),
-      links: this.fb.array([]),
+    this.editForm = this.fb.group<EditFormControls>({
+      purpose: this.fb.control(''),
+      goals: this.fb.control(''),
+      achievementsHeader: this.fb.control(''),
+      achievements: this.fb.array<AchievementFormGroup>([]),
+      references: this.fb.array<ReferenceFormGroup>([]),
+      links: this.fb.array<LinkFormGroup>([]),
       // Keeping older otherInfo property so we don't lose this info on database
-      otherInfo: this.fb.array([]),
-      sendToNation: false,
-      dateSortOrder: 'none'
+      otherInfo: this.fb.array<FormControl<any>>([]),
+      sendToNation: this.fb.control(false),
+      dateSortOrder: this.fb.control<DateSortOrder>('none')
     });
   }
 
   createProfileForm() {
-    this.profileForm = this.fb.group({
-      firstName: [ '', CustomValidators.required ],
-      middleName: '',
-      lastName: [ '', CustomValidators.required ],
-      birthDate: [
-        '',
-        [ CustomValidators.dateValidRequired ],
-        ac => this.validatorService.notDateInFuture$(ac)
-      ],
-      birthplace: ''
+    this.profileForm = this.fb.group<ProfileFormControls>({
+      firstName: this.fb.control('', { validators: CustomValidators.required }),
+      middleName: this.fb.control(''),
+      lastName: this.fb.control('', { validators: CustomValidators.required }),
+      birthDate: this.fb.control('', {
+        validators: [ CustomValidators.dateValidRequired ],
+        asyncValidators: ac => this.validatorService.notDateInFuture$(ac)
+      }),
+      birthplace: this.fb.control('')
     });
+  }
+
+  private buildAchievementsFormArray(achievements: any[] = []) {
+    return this.fb.array(achievements.map((achievement) => this.createAchievementGroup(achievement)));
+  }
+
+  private buildReferencesFormArray(references: any[] = []) {
+    return this.fb.array(references.map((reference) => this.createReferenceGroup(reference)));
+  }
+
+  private buildLinksFormArray(links: any[] = []) {
+    return this.fb.array(links.map((link) => this.createLinkGroup(link)));
+  }
+
+  private buildOtherInfoFormArray(otherInfo: any[] = []): FormArray<FormControl<any>> {
+    return this.fb.array(otherInfo.map((otherInfoItem) => this.fb.control(otherInfoItem)));
+  }
+
+  private createAchievementGroup(achievement: any = { title: '', description: '', link: '', date: '' }): AchievementFormGroup {
+    if (typeof achievement === 'string') {
+      achievement = { title: '', description: achievement, link: '', date: '' };
+    }
+    return this.fb.group<AchievementFormControls>({
+      title: this.fb.control(achievement.title || '', { validators: CustomValidators.required }),
+      description: this.fb.control(achievement.description || ''),
+      link: this.fb.control(achievement.link || '', { asyncValidators: CustomValidators.validLink }),
+      date: this.fb.control(achievement.date || '', { asyncValidators: ac => this.validatorService.notDateInFuture$(ac) })
+    });
+  }
+
+  private createReferenceGroup(reference: any = { name: '' }): ReferenceFormGroup {
+    return this.fb.group<ReferenceFormControls>({
+      name: this.fb.control(reference.name || '', { validators: CustomValidators.required }),
+      relationship: this.fb.control(reference.relationship || ''),
+      phone: this.fb.control(reference.phone || ''),
+      email: this.fb.control(reference.email || '', { validators: Validators.email })
+    });
+  }
+
+  private createLinkGroup(link: any = { title: '', url: '' }): LinkFormGroup {
+    return this.fb.group<LinkFormControls>({
+      title: this.fb.control(link.title || '', { validators: CustomValidators.required }),
+      url: this.fb.control(link.url || '', {
+        validators: CustomValidators.required,
+        asyncValidators: CustomValidators.validLink
+      })
+    });
+  }
+
+  private updateUnsavedChangesFlag() {
+    const editFormState = this.editForm.getRawValue();
+    const currentState = JSON.stringify({
+      editForm: editFormState,
+      profileForm: this.profileForm.getRawValue()
+    });
+    this.hasUnsavedChanges = currentState !== this.initialFormValues;
   }
 
   addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
@@ -183,13 +271,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
         { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
       ],
-      this.fb.group({
-        ...achievement,
-        title: [ achievement.title, CustomValidators.required ],
-        description: [ achievement.description ],
-        link: [ achievement.link, [], CustomValidators.validLink ],
-        date: [ achievement.date, null, ac => this.validatorService.notDateInFuture$(ac) ]
-      }),
+      this.createAchievementGroup(achievement),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
          formGroup.controls.date.value;
@@ -208,13 +290,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'phone', 'placeholder': $localize`Phone Number`, 'required': false },
         { 'type': 'textbox', 'name': 'email', 'placeholder': $localize`Email`, 'required': false }
       ],
-      this.fb.group({
-        relationship: '',
-        phone: '',
-        ...reference,
-        name: [ reference.name, CustomValidators.required ],
-        email: [ reference.email, Validators.email ],
-      }),
+      this.createReferenceGroup(reference),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
     );
   }
@@ -226,17 +302,13 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
         { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
       ],
-      this.fb.group({
-        ...link,
-        title: [ link.title, CustomValidators.required ],
-        url: [ link.url, CustomValidators.required, CustomValidators.validLink ],
-      }),
+      this.createLinkGroup(link),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
     );
   }
 
-  onDialogSubmit(formArray, index) {
-    return (formValue, formGroup) => {
+  onDialogSubmit<T extends FormGroup>(formArray: FormArray<T>, index: number) {
+    return (formValue: unknown, formGroup: T) => {
       if (formValue === undefined) {
         return;
       }
@@ -244,16 +316,15 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     };
   }
 
-  updateFormArray(formArray: UntypedFormArray, value, index = -1) {
+  updateFormArray<T extends FormGroup>(formArray: FormArray<T>, value: T, index = -1) {
     if (index === -1) {
       formArray.push(value);
     } else {
       formArray.setControl(index, value);
     }
-    if (value.contains('date')) {
-      formArray.setValue(this.sortDate(formArray.value, this.editForm.controls.dateSortOrder.value || 'none'));
+    if (value?.get?.('date')) {
+      formArray.setValue(this.sortDate(formArray.value as any[], this.editForm.controls.dateSortOrder.value || 'none') as any);
     }
-    this.editForm.updateValueAndValidity();
   }
 
   sortAchievements() {
@@ -262,7 +333,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
   }
 
-  sortDate(achievements, sortOrder = 'none') {
+  sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
     if (sortOrder === 'none') {
       return achievements;
     }
@@ -276,9 +347,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   onSubmit() {
-    this.editForm.updateValueAndValidity();
-    this.profileForm.updateValueAndValidity();
+    this.submitAttempted = true;
+    if (this.editForm.pending || this.profileForm.pending) {
+      if (this.submitAfterPending) {
+        return;
+      }
+      this.submitAfterPending = true;
+      this.submitWhenReady();
+      return;
+    }
+    this.submitAfterPending = false;
     if (this.editForm.valid && this.profileForm.valid) {
+      this.submitAttempted = false;
       this.updateAchievements(this.docInfo, this.editForm.value, { ...this.user, ...this.profileForm.value });
       this.hasUnsavedChanges = false;
     } else {
@@ -287,10 +367,46 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
   }
 
-  markAsInvalid(userForm) {
+  private submitWhenReady() {
+    combineLatest([
+      this.editForm.statusChanges.pipe(startWith(this.editForm.status)),
+      this.profileForm.statusChanges.pipe(startWith(this.profileForm.status))
+    ]).pipe(
+      filter(([ editStatus, profileStatus ]) => editStatus !== 'PENDING' && profileStatus !== 'PENDING'),
+      takeUntil(this.onDestroy$),
+      take(1)
+    ).subscribe(() => {
+      if (this.submitAfterPending) {
+        this.onSubmit();
+      }
+    });
+  }
+
+  markAsInvalid(userForm: FormGroup<any>) {
     if (!userForm.valid) {
+      userForm.markAllAsTouched();
       showFormErrors(userForm.controls);
     }
+  }
+
+  sectionError(section: 'achievements' | 'references' | 'links'): string {
+    const index = this.firstInvalidIndex(this.editForm.controls[section]);
+    if (index < 0 || !this.submitAttempted) {
+      return '';
+    }
+    const itemNumber = index + 1;
+    switch (section) {
+      case 'achievements':
+        return $localize`Achievement #${itemNumber} has invalid fields`;
+      case 'references':
+        return $localize`Reference #${itemNumber} has invalid fields`;
+      case 'links':
+        return $localize`Link #${itemNumber} has invalid fields`;
+    }
+  }
+
+  private firstInvalidIndex(formArray: FormArray<FormGroup<any>>): number {
+    return formArray.controls.findIndex((control) => control.invalid);
   }
 
   updateAchievements(docInfo, achievements, userInfo) {
