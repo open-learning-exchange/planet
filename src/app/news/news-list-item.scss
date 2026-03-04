@@ -48,3 +48,11 @@ mat-card-content {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.full-width {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  flex-shrink: 0;
+}
