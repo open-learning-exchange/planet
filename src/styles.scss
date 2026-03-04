@@ -514,6 +514,38 @@ body {
     min-height: 24px;
   }
 
+  // Set Material button/icon tokens at blue toolbar scope so uncolored controls inherit text color.
+  // Apply to both mat-toolbar and mat-toolbar-row since templates use both patterns.
+  mat-toolbar.primary-color,
+  .mat-toolbar.primary-color,
+  mat-toolbar-row.primary-color,
+  .mat-toolbar-row.primary-color {
+    --mdc-text-button-label-text-color: currentColor;
+    --mdc-filled-button-label-text-color: currentColor;
+    --mdc-protected-button-label-text-color: currentColor;
+    --mdc-outlined-button-label-text-color: currentColor;
+    --mdc-icon-button-icon-color: currentColor;
+
+    --mdc-text-button-disabled-label-text-color: rgba(0, 0, 0, 0.5);
+    --mdc-filled-button-disabled-label-text-color: rgba(0, 0, 0, 0.5);
+    --mdc-protected-button-disabled-label-text-color: rgba(0, 0, 0, 0.5);
+    --mdc-outlined-button-disabled-label-text-color: rgba(0, 0, 0, 0.5);
+    --mdc-icon-button-disabled-icon-color: rgba(0, 0, 0, 0.5);
+
+    --mdc-outlined-button-outline-color: rgba(0, 0, 0, 0.38);
+    --mdc-outlined-button-disabled-outline-color: rgba(0, 0, 0, 0.38);
+
+    // Explicit fallback for unthemed toolbar buttons/icons after MDC migration.
+    .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
+      color: inherit !important;
+    }
+
+    .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn):disabled {
+      color: rgba(0, 0, 0, 0.5) !important;
+    }
+  }
+
+  // Material MDC form fields have a default background color which doesn't work with our designs, so we set it to transparent and add a border on hover instead
   .mat-mdc-form-field .mat-mdc-text-field-wrapper,
   .mat-mdc-form-field .mat-mdc-text-field-wrapper:hover,
   .mat-mdc-form-field.mat-focused .mat-mdc-text-field-wrapper {
