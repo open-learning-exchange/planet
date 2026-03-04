@@ -22,12 +22,22 @@
     }
 
     mat-card {
+      position: relative;
+
       mat-card-actions {
         margin-top: auto;
         display: flex;
         justify-content: center;
         gap: 1rem;
       }
+    }
+
+    .visibility-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      user-select: none;
+      pointer-events: none;
     }
   }
 

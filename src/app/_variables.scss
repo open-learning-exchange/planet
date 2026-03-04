@@ -34,6 +34,7 @@ $grey-text: map-get(mat.$light-theme-foreground-palette, 'secondary-text');
 $primary-lighter: mat.get-color-from-palette($planet-app-primary, 100);
 $primary-light: mat.get-color-from-palette($planet-app-primary, 300);
 $accent-lighter: mat.get-color-from-palette($planet-app-accent, 100);
+$warn-lighter: mat.get-color-from-palette($planet-app-warn, 100);
 $primary-dark: mat.get-color-from-palette($planet-app-primary, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);

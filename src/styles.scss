@@ -558,6 +558,22 @@ body {
     border-color: rgba(0, 0, 0, 0.24);
   }
 
+  .mat-mdc-chip.chip-outline-accent {
+    background-color: $accent-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-primary {
+    background-color: $primary-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-warn {
+    background-color: $warn-lighter;
+  }
+
+  .mat-mdc-chip.chip-outline-grey {
+    background-color: $light-grey;
+  }
+
   .form-container {
     width: calc(#{$form-width-3} + 20px);
   }

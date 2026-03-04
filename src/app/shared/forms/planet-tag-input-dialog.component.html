@@ -27,7 +27,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <span><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
+      <span class="add-collection-btn-container"><button type="button" i18n mat-raised-button color="primary" [disabled]="!addTagForm.pending && !addTagForm.valid" (click)="addLabel()">Add Collection</button></span>
     </form>
   </mat-expansion-panel>
   <mat-action-list *ngIf="selectMany">
