@@ -25,7 +25,8 @@
 
 <ng-template #filterDropdown>
   <mat-form-field class="font-size-1 margin-lr-3 status-dropdown">
-    <mat-select i18n-placeholder placeholder="Status" [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
+    <mat-label i18n>Status</mat-label>
+    <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
       <mat-option i18n value="All">All</mat-option>
       <ng-container *ngFor="let option of statusOptions">
         <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
@@ -49,7 +50,8 @@
 <ng-template #filterSearch>
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1">
-    <input matInput (keyup)="applyFilter($event.target.value)" i18n-placeholder placeholder="Type name to search...">
+    <mat-label i18n>Type name to search...</mat-label>
+    <input matInput (keyup)="applyFilter($event.target.value)">
   </mat-form-field>
 </ng-template>
 

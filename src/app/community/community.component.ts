@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
@@ -465,7 +465,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openDescriptionDialog() {
     const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
-      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+      description: this.fb.control(this.team.description || '', { validators: [ CustomValidators.requiredMarkdown ] })
     });
 
     this.dialogsFormService.openDialogsForm(

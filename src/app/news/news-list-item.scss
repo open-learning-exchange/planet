@@ -38,18 +38,6 @@ mat-card-content {
   height: 40px;
 }
 
-.mat-mdc-chip.chip-outline-accent {
-  background-color: $accent-lighter;
-}
-
-.mat-mdc-chip.chip-outline-primary {
-  background-color: $primary-lighter;
-}
-
-.mat-mdc-chip.chip-outline-grey {
-  background-color: $light-grey;
-}
-
 .user-name-truncate {
   flex: 1 1 0;
   justify-content: start;

@@ -1,7 +1,8 @@
 <form class="vertical-form" [formGroup]="questionForm">
   <div class="type-title-container">
     <mat-form-field>
-      <mat-select i18n-placeholder placeholder="Type" formControlName="type" (selectionChange)="clearChoices()" panelClass="exam-question-select">
+      <mat-label i18n>Type</mat-label>
+      <mat-select formControlName="type" (selectionChange)="clearChoices()" panelClass="exam-question-select">
         <mat-option value="input" i18n>Text - Short answer</mat-option>
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
@@ -11,7 +12,8 @@
     </mat-form-field>
   </div>
   <mat-form-field class="full-width mat-form-field-type-no-underline">
-    <planet-markdown-textbox class="full-width" required="true" i18n-placeholder placeholder="Question Detail" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
+    <mat-label i18n>Question Detail</mat-label>
+    <planet-markdown-textbox class="full-width" required="true" [formControl]="questionForm.controls.body"></planet-markdown-textbox>
     <mat-error><planet-form-error-messages [control]="questionForm.controls.body"></planet-form-error-messages></mat-error>
   </mat-form-field>
   <div class="question-choices">
@@ -30,9 +32,10 @@
         [checked]="correctCheckboxes[choice.controls.id.value]"
         *ngIf="examType === 'exam'">
       </mat-checkbox>
-      <mat-form-field>
-        <input matInput i18n-placeholder placeholder="Add Choice" [formControl]="choice.controls.text" #choiceInput>
-        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matSuffix><mat-icon>remove_circle</mat-icon></button>
+      <mat-form-field appearance="outline">
+        <mat-label i18n>Add Choice</mat-label>
+        <input matInput [formControl]="choice.controls.text" #choiceInput>
+        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matIconSuffix><mat-icon>remove_circle</mat-icon></button>
       </mat-form-field>
     </div>
     <mat-checkbox

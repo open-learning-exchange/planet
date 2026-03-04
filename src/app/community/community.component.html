@@ -3,13 +3,14 @@
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
-            <div class="toolbar-row">
-              <mat-form-field class="search-form-field">
-                <mat-icon matPrefix>search</mat-icon>
-                <input matInput i18n-placeholder placeholder="Search voice" [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
+          <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
+              <mat-form-field class="search-form-field mdc-toolbar-input">
+                <mat-label i18n>Search voice</mat-label>
+                <mat-icon matIconPrefix>search</mat-icon>
+                <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
               </mat-form-field>
-              <mat-form-field class="label-filter-field">
+              <mat-form-field class="label-filter-field mdc-toolbar-input">
+                <mat-label i18n>Label</mat-label>
                 <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
                   <mat-select-trigger>
                     <ng-container *ngIf="selectedLabel">
@@ -33,7 +34,6 @@
               <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
                 <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
               </button>
-            </div>
           </mat-toolbar>
           <planet-loading-spinner *ngIf="newsLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
           <ng-template #loaded>
