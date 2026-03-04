@@ -29,10 +29,12 @@ export class UnsavedChangesGuard  {
         const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
         return dialogResult.pipe(
           switchMap(confirmed => {
-            if (confirmed && component.onLeaveConfirmed) {
+            const leaveConfirmed = confirmed === true;
+
+            if (leaveConfirmed && component.onLeaveConfirmed) {
               component.onLeaveConfirmed();
             }
-            return of(confirmed);
+            return of(leaveConfirmed);
           })
         );
       }
