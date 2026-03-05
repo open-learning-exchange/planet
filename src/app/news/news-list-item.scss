@@ -39,8 +39,11 @@ mat-card-content {
 }
 
 .user-name-truncate {
-  flex: 1 1 0;
-  justify-content: start;
+  flex: 1 1 auto;
+  max-width: 50%;
+  display: block;
+  overflow: hidden;
+  text-align: left;
 }
 
 .user-name-truncate-text {
