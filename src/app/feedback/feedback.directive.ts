@@ -6,7 +6,6 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { Router } from '@angular/router';
 import { FeedbackService } from './feedback.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { debug } from '../debug-operator';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
@@ -162,7 +161,6 @@ export class FeedbackDirective {
     };
     this.dialogsFormService
       .confirm(title, fields, formGroup)
-      .pipe(debug('Dialog confirm'))
       .subscribe((response) => {
         if (response !== undefined) {
           this.addFeedback(response);

@@ -6,7 +6,6 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { debug } from '../debug-operator';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -46,7 +45,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.pipe(switchMap((params: ParamMap) => this.getFeedback(params.get('id'))))
-      .pipe(debug('Getting feedback'), takeUntil(this.onDestroy$))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((result) => {
         this.setFeedback(result);
         this.setCouchListener(result.docs[0]._id);

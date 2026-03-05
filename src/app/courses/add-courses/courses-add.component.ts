@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -19,6 +19,21 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 
+interface CourseFormModel {
+  courseTitle: FormControl<string>;
+  description: FormControl<string>;
+  languageOfInstruction: FormControl<string>;
+  gradeLevel: FormControl<string>;
+  subjectLevel: FormControl<string>;
+  createdDate: FormControl<DateValue>;
+  creator: FormControl<string>;
+  sourcePlanet: FormControl<string>;
+  resideOn: FormControl<string>;
+  updatedDate: FormControl<DateValue>;
+}
+
+type DateValue = number | string | CouchService['datePlaceholder'];
+
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: [ './courses-add.scss' ]
@@ -34,11 +49,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private _steps = [];
   savedCourse: any = null;
   draftExists: boolean;
-  courseForm: UntypedFormGroup;
+  courseForm: FormGroup<CourseFormModel>;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
-  tags = this.fb.control([]);
+  tags = this.fb.control<string[]>([]);
   // from the constants import
   gradeLevels = constants.gradeLevels;
   subjectLevels = constants.subjectLevels;
@@ -63,7 +78,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private couchService: CouchService,
     private validatorService: ValidatorService,
     private planetMessageService: PlanetMessageService,
@@ -130,23 +145,22 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   createForm() {
     const configuration = this.stateService.configuration;
-    this.courseForm = this.fb.group({
-      courseTitle: [
-        '',
-        CustomValidators.required,
-        ac => this.validatorService.isUnique$(
+    this.courseForm = this.fb.group<CourseFormModel>({
+      courseTitle: this.fb.control('', {
+        validators: CustomValidators.required,
+        asyncValidators: ac => this.validatorService.isUnique$(
           this.dbName, 'courseTitle', ac, { selectors: { '_id': { '$ne': this.documentInfo._id || '' } } }
         )
-      ],
-      description: [ '', CustomValidators.requiredMarkdown ],
-      languageOfInstruction: '',
-      gradeLevel: '',
-      subjectLevel: '',
-      createdDate: this.couchService.datePlaceholder,
-      creator: this.userService.get().name + '@' + configuration.code,
-      sourcePlanet: configuration.code,
-      resideOn: configuration.code,
-      updatedDate: this.couchService.datePlaceholder
+      }),
+      description: this.fb.control('', { validators: CustomValidators.requiredMarkdown }),
+      languageOfInstruction: this.fb.control(''),
+      gradeLevel: this.fb.control(''),
+      subjectLevel: this.fb.control(''),
+      createdDate: this.fb.control<DateValue>(this.couchService.datePlaceholder),
+      creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
+      sourcePlanet: this.fb.control(configuration.code),
+      resideOn: this.fb.control(configuration.code),
+      updatedDate: this.fb.control<DateValue>(this.couchService.datePlaceholder)
     });
   }
 
@@ -211,7 +225,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateCourse(courseInfo, shouldNavigate) {
+  updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
@@ -237,10 +251,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onSubmit(shouldNavigate = true) {
     if (!this.courseForm.valid) {
-      showFormErrors(this.courseForm.controls);
+      showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
-    this.updateCourse(this.courseForm.value, shouldNavigate);
+    this.updateCourse(this.courseForm.getRawValue(), shouldNavigate);
   }
 
   courseChangeComplete(message, response: any, shouldNavigate) {

@@ -49,14 +49,14 @@ export class ExamsService {
   newQuestionForm(requireCorrect: boolean, initialValue?: Partial<QuestionValue>): QuestionFormGroup {
     const choices = (initialValue && initialValue.choices) || [];
     const formGroup = this.fb.group({
-      body: [ '', CustomValidators.required ],
-      type: 'input',
-      correctChoice: this.fb.control<string | string[]>('', CustomValidators.choiceSelected(requireCorrect)),
-      marks: [ 1, CustomValidators.positiveNumberValidator ],
+      body: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      type: this.fb.control('input'),
+      correctChoice: this.fb.control<string | string[]>('', { validators: [ CustomValidators.choiceSelected(requireCorrect) ] }),
+      marks: this.fb.control(1, { validators: [ CustomValidators.positiveNumberValidator ] }),
       choices: this.fb.array<QuestionChoiceFormGroup>(
         choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice(choice.id ?? '', choice))
       ),
-      hasOtherOption: false
+      hasOtherOption: this.fb.control(false)
     }, { validators: this.choiceRequiredValidator.bind(this) });
 
     return this.setInitalFormValue(formGroup, initialValue);
@@ -69,11 +69,11 @@ export class ExamsService {
      null;
   }
 
-  newQuestionChoice(newId: string, intialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {
+  newQuestionChoice(newId: string, initialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {
     return this.setInitalFormValue(this.fb.group({
-      text: [ '', CustomValidators.required ],
-      id: newId
-    }), intialValue);
+      text: this.fb.control('', { validators: [ CustomValidators.required ] }),
+      id: this.fb.control(newId)
+    }), initialValue);
   }
 
   setInitalFormValue(formGroup: QuestionFormGroup, initialValue?: Partial<QuestionValue>): QuestionFormGroup;

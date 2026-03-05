@@ -51,14 +51,18 @@
       <h3 i18n *ngIf="showParentList">{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3><br />
       <div class="card-container">
         <mat-card class="version-card">
-          <mat-card-title i18n>Planet Version</mat-card-title>
+          <mat-card-header>
+            <mat-card-title i18n>Planet Version</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <p><b i18n>{planetType, select, community {Nation} nation {Center}}:</b> {{versionParent || 'N/A'}}</p>
             <p><b i18n>Local:</b> {{versionLocal}}</p>
           </mat-card-content>
         </mat-card>
         <mat-card class="version-card">
-          <mat-card-title i18n>myPlanet Version</mat-card-title>
+          <mat-card-header>
+            <mat-card-title i18n>myPlanet Version</mat-card-title>
+          </mat-card-header>
           <mat-card-content>
             <p><b i18n>Latest:</b> {{versionLatestApk || 'N/A'}}</p>
             <p><b i18n>Local:</b> {{versionLocalApk || 'N/A'}}</p>

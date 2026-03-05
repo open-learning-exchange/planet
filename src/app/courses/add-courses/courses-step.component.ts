@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -49,10 +49,10 @@ export class CoursesStepComponent implements OnDestroy {
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.stepForm = this.fb.group({
-      id: '',
-      stepTitle: '',
-      description: ''
+    this.stepForm = this.fb.group<CoursesStepForm>({
+      id: this.fb.control(''),
+      stepTitle: this.fb.control(''),
+      description: this.fb.control('')
     });
     this.stepForm.valueChanges.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
       this.steps[this.activeStepIndex] = { ...this.activeStep, ...value };

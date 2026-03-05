@@ -1,5 +1,6 @@
 <div [ngClass]="containerClass">
-  <mat-table #table [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc">
+  <planet-loading-spinner *ngIf="isLoading" text="Loading users..." i18n-text></planet-loading-spinner>
+  <mat-table #table [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -33,7 +34,9 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header="planet" i18n>Planet</mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{element.planet.nameDoc?.name || element.planet.doc.name}}
-        <mat-chip class="planet-chip-label margin-lr-5 chip-no-style" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+        <mat-chip-set aria-label="Planet type" i18n-aria-label>
+          <mat-chip class="planet-chip-label margin-lr-5" i18n>{ element.planet.doc.planetType, select, community {Community} nation {Nation} center {Earth}}</mat-chip>
+        </mat-chip-set>
       </mat-cell>
     </ng-container>
     <ng-container matColumnDef="visitCount">
@@ -85,16 +88,16 @@
     <ng-container class="member-action-buttons" matColumnDef="roles">
       <mat-header-cell *matHeaderCellDef i18n>Roles</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <mat-chip-list>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
+        <mat-chip-set aria-label="Roles" i18n-aria-label>
+          <mat-chip *ngIf="element.doc.roles.length > 0 || element.doc.isUserAdmin" i18n>Learner</mat-chip>
           <ng-container *ngFor="let role of element.doc.roles; index as i">
-            <mat-chip class="chip-no-style" *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
+            <mat-chip *ngIf="role !== 'learner'" [removable]="!element.doc.isUserAdmin && !isDialog" (removed)="removeRole(element.doc,i)">
               <planet-role [role]="role"></planet-role>
               <mat-icon matChipRemove *ngIf="isUserAdmin && !element.doc.isUserAdmin && !isDialog">cancel</mat-icon>
             </mat-chip>
           </ng-container>
-          <mat-chip class="chip-no-style" *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
-        </mat-chip-list>
+          <mat-chip *ngIf="element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Admin</mat-chip>
+        </mat-chip-set>
         <span *ngIf="!element.doc.isUserAdmin && element.doc.roles.length === 0" i18n>Inactive</span>
       </mat-cell>
     </ng-container>
@@ -137,17 +140,10 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row [ngClass]="{'cursor-pointer':!isDialog}" *matRowDef= "let row; columns: displayedColumns;" (click)="gotoProfileView(row.doc.name)" [ngClass]="{highlight:isSelected(row.doc)}"></mat-row>
     <tr class="mat-row" *matNoDataRow>
-      <td>
-        <div class="view-container" *ngIf="isLoading" i18n>
-          Loading Users...
-        </div>
-        <div class="view-container" *ngIf="!isLoading" i18n>
-          No User Found
-        </div>
-      </td>
+      <td><div class="view-container" *ngIf="!isLoading" i18n>No User Found</div></td>
     </tr>
   </mat-table>
-  <mat-paginator #paginator
+  <mat-paginator *ngIf="!isLoading" #paginator
     [pageSize]="50"
     [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
     (page)="onPaginateChange($event)">

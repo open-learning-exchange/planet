@@ -1,0 +1,22 @@
+@import '../variables';
+
+.completion-rate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ListItemMeta doesn't leave any space on the right by default
+.mat-mdc-action-list .mat-mdc-list-item {
+  padding-right: 16px;
+}
+
+.completion-label {
+  white-space: nowrap;
+}
+
+@media (max-width: $screen-sm) {
+  .completion-label {
+    display: none;
+  }
+}

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ImageCropperModule } from 'ngx-image-cropper';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { UsersComponent } from './users.component';
 import { UsersArchiveComponent } from './users-archive/users-archive.component';
 import { UsersProfileComponent } from './users-profile/users-profile.component';
@@ -29,7 +29,7 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     MaterialModule,
     SharedComponentsModule,
     UsersAchievementsModule,
-    ImageCropperModule
+    ImageCropperComponent
   ],
   declarations: [
     UsersComponent,

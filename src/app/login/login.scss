@@ -1,6 +1,6 @@
-@import "../variables.scss";
-@import "../../planet-mat-theme.scss";
-@import "../mixins.scss";
+@import "../variables";
+@import "../../planet-mat-theme";
+@import "../mixins";
 
 :host {
   @include left-right-grid-areas;
@@ -21,6 +21,7 @@
 
       a {
         padding: 0 0.5rem;
+        color: #fff;
       }
     }
   }

@@ -7,7 +7,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { switchMap, map, catchError } from 'rxjs/operators';
-import { debug } from '../debug-operator';
 import { deepEqual } from '../shared/utils';
 
 @Injectable({
@@ -47,7 +46,7 @@ export class ValidatorService {
         }
         return null;
       })
-    ).pipe(debug('Checking uniqueness of ' + fieldName + ' in ' + dbName));
+    );
   }
 
   public checkUniqueResourceTitle$(ac: AbstractControl, id: string, privateFor: any = null) {
