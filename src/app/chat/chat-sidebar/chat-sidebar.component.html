@@ -12,15 +12,17 @@
         </button>
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
-        <input matInput i18n-placeholder placeholder="Search" [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
+        <mat-label i18n>Search</mat-label>
+        <input matInput [(ngModel)]="titleSearch" (input)="onSearchChange($event.target.value)">
       </mat-form-field>
       <button mat-icon-button color="primary" (click)="resetFilter()" [disabled]="!titleSearch && !searchType" matTooltip="Clear search" i18n-matTooltip [matTooltipDisabled]="!titleSearch && !searchType">
         <mat-icon>delete</mat-icon>
       </button><br>
       <div class="full-conversation-row">
         <div class="full-conversation-label-row">
-          <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()"></mat-checkbox>
-          <span class="full-conversation-label" i18n>Full Conversation Search </span>
+          <mat-checkbox [checked]="fullTextSearch" (change)="toggleSearchType()">
+            <span class="full-conversation-label" i18n>Full Conversation Search </span>
+          </mat-checkbox>
         </div>
         <button mat-icon-button (mouseenter)="toggleOverlay()" (mouseleave)="toggleOverlay()" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
           <mat-icon>help_outline</mat-icon>
@@ -37,7 +39,7 @@
       </div>
       <hr>
     </div>
-    <ng-container *ngIf="filteredConversations?.length; else noChats">
+    <ng-container *ngIf="!isLoading && filteredConversations?.length; else noChats">
       <ul>
         <li *ngFor="let conversation of filteredConversations; let i = index; trackBy: trackByFn" class="conversation-list" (click)="selectConversation(conversation, i)">
           <ng-container *ngIf="isEditing; else notEditing">
@@ -75,7 +77,8 @@
       </ul>
     </ng-container>
     <ng-template #noChats>
-      <div class="no-chats-message" i18n>No previous conversations.</div>
+      <planet-loading-spinner *ngIf="isLoading" text="Loading conversations..." i18n-text></planet-loading-spinner>
+      <div class="no-chats-message" *ngIf="!isLoading" i18n>No previous conversations.</div>
     </ng-template>
   </mat-drawer>
 

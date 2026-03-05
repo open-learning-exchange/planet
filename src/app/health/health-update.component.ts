@@ -121,7 +121,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
       email: this.fb.control('', { validators: [ Validators.required, Validators.email ] }),
       language: this.fb.control('', { validators: [ Validators.required ] }),
       phoneNumber: this.fb.control('', { validators: [ CustomValidators.required ] }),
-      birthDate: new FormControl<Date | null>(null, {
+      birthDate: this.fb.control<Date | null>(null, {
         validators: [ CustomValidators.dateValidRequired ],
         asyncValidators: [ ac => this.validatorService.notDateInFuture$(ac) ]
       }),

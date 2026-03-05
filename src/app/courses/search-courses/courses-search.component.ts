@@ -1,7 +1,7 @@
 import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
-import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
+import { MatSelectionList } from '@angular/material/list';
 import * as constants from '../constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
@@ -17,7 +17,7 @@ import { trackByCategory } from '../../shared/table-helpers';
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
       <mat-list-option *ngFor="let item of items" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
-        {{item?.label || 'N/A'}}
+        <span matListItemTitle>{{item?.label || 'N/A'}}</span>
       </mat-list-option>
     </mat-selection-list>
   `,
