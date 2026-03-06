@@ -26,5 +26,14 @@ For those comfortable with GitHub and with the above languages please jump right
 * [Treehouse Project](https://github.com/treehouses/) - A image builder for planet learning deployment in raspberry pi
 * [Pirateship](https://github.com/ole-vi/pirateship) - Our homebrew system CLI tool
 
+
+## Legacy e2e WebDriver script ownership
+
+The `webdriver-set-version` script is still required for our Protractor-based end-to-end tests. It is actively owned through the maintained npm meta-script chain:
+
+- `npm run e2e` -> `npm run e2e:prepare` -> `npm run webdriver-set-version`
+
+Run `npm run webdriver-set-version` whenever your local Chrome/Chromium version changes, or before debugging e2e failures related to browser startup. The script automatically detects the browser version and requests a compatible ChromeDriver release.
+
 # Asking for help // OLE support communities
 OLE maintains a community of developers who actively maintain the Planet Learning system. You can discuss issue and ask for help in via our Gitter channel [here](https://gitter.im/open-learning-exchange/chat).

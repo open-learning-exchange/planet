@@ -116,7 +116,15 @@ Open `localhost:9876` once this is done compiling
 ```
 npm run e2e
 ```
-Results will appear in the console
+Results will appear in the console.
+
+The e2e command now runs `npm run e2e:prepare` first, which executes `scripts/webdriver-set-version.sh` to pin WebDriver to a Chrome-compatible version before Protractor starts.
+
+If Chrome or Chromium is upgraded, run the prep script directly once to refresh the local WebDriver binary:
+```
+npm run webdriver-set-version
+```
+The script reads your installed browser version, resolves the matching ChromeDriver milestone from Chrome for Testing metadata, and updates `webdriver-manager` with that exact version.
 
 ## Additional Commands
 
