@@ -1,5 +1,6 @@
+<h2 mat-dialog-title i18n>Add Link</h2>
 <mat-dialog-content>
-  <mat-form-field class="full-width link-type-field">
+  <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
     <mat-select [(ngModel)]="selectedLink">
       <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
