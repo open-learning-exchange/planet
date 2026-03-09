@@ -112,7 +112,7 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <div *planetAuthorizedRoles="''" class="action-buttons">
+          <div *planetAuthorizedRoles="''">
             <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
             <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
               <span *ngIf="!deleteMode" i18n>Remove Links</span>
