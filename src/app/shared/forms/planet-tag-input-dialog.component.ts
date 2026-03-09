@@ -88,8 +88,8 @@ export class PlanetTagInputDialogComponent {
   }
 
   @HostListener('window:resize') OnResize() {
-      this.deviceType = this.deviceInfoService.getDeviceType();
-    }
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   dataInit() {
     this.tags = this.filterTags(this.filterValue);

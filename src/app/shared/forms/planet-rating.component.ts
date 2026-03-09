@@ -82,8 +82,9 @@ export class PlanetRatingComponent implements OnChanges {
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
       { class: 'primary-light-color',
-        amount: this.rating.totalRating === 0 ? 1
-          : this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
+        amount: this.rating.totalRating === 0 ?
+          1 :
+          this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
         noLabel: true
       },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
