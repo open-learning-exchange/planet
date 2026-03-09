@@ -57,6 +57,7 @@ mat-tab-group, mat-tab {
   z-index: 10;
   display: flex;
   gap: 0.5rem;
+  background: #fff;
 }
 
 .toggle-button {
@@ -110,6 +111,10 @@ mat-tab-group, mat-tab {
 }
 
 @media only screen and (max-width: $screen-xs) {
+  .action-buttons.sticky-button {
+    flex-direction: column;
+  }
+
   .toolbar-row {
     .search-form-field,
     .label-filter-field {
