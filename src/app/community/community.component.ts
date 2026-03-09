@@ -320,7 +320,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setLinksAndFinances({ links, finances, reports }) {
-    this.links = links;
+    this.links = (links || []).map(link => ({
+      ...link,
+      // for backward compatibility, some old links might have 'web' as icon instead of 'website'
+      icon: link.icon === 'web' ? 'website' : link.icon
+    }));
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;

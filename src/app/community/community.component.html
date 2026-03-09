@@ -97,8 +97,8 @@
               <ng-container *ngIf="socialWebLinks.length > 0">
                 <h3 mat-subheader i18n>Social & Web</h3>
                 <a *ngFor="let link of socialWebLinks" mat-list-item [href]="link.route" target="_blank" rel="noopener">
-                  <mat-icon *ngIf="link.icon === 'web'" matListItemIcon>public</mat-icon>
-                  <mat-icon *ngIf="link.icon !== 'web'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
+                  <mat-icon *ngIf="link.icon === 'website'" matListItemIcon>public</mat-icon>
+                  <mat-icon *ngIf="link.icon !== 'website'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
                   <span matListItemTitle>{{link.title}}</span>
                   <span *ngIf="deleteMode" matListItemMeta>
                     <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
@@ -112,7 +112,7 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <div *planetAuthorizedRoles="''" class="action-buttons">
+          <div *planetAuthorizedRoles="''">
             <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
             <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
               <span *ngIf="!deleteMode" i18n>Remove Links</span>
