@@ -1,6 +1,13 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 import { FuzzySearchService } from './fuzzy-search.service';
 
+// Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
+// keys or undefined.
+function getProperty(data: any, fields: string) {
+  const propertyArray = fields.split('.');
+  return propertyArray.reduce((obj, prop) => (obj && obj[prop] !== undefined) ? obj[prop] : undefined, data);
+}
+
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
     // If there is no value to filter, include item.  If the data field is undefined, exclude item.
@@ -77,13 +84,6 @@ export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchSe
     });
   };
 };
-
-// Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
-// keys or undefined.
-function getProperty(data: any, fields: string) {
-  const propertyArray = fields.split('.');
-  return propertyArray.reduce((obj, prop) => (obj && obj[prop] !== undefined) ? obj[prop] : undefined, data);
-}
 
 export const filterDropdowns = (filterObj: any) => {
   return (data: any, filter: string) => {
