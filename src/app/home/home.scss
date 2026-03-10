@@ -1,5 +1,5 @@
 @use '@angular/material' as mat;
-@import '../variables';
+@use '../variables' as v;
 
 :host {
   display: grid;
@@ -26,7 +26,7 @@
       display: inline;
       font-size: 1.5rem;
 
-      @media (max-width: #{$screen-xs}) {
+      @media (max-width: #{v.$screen-xs}) {
         font-size: clamp(0.5rem, calc(0.1rem + 3vw), 1.5rem);
       }
     }
@@ -43,7 +43,7 @@
 
   .header-nav::before {
     height: 3px;
-    background: linear-gradient(to bottom, $shadow, rgba($shadow, 0.2) 25%, rgba($shadow, 0.12) 75%, rgba($shadow, 0));
+    background: linear-gradient(to bottom, v.$shadow, rgba(v.$shadow, 0.2) 25%, rgba(v.$shadow, 0.12) 75%, rgba(v.$shadow, 0));
     width: 100%;
     left: 0;
     top: 100%;
@@ -62,8 +62,8 @@
     grid-area: center;
     justify-self: center;
     a.active {
-      color: $primary-text;
-      background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
+      color: v.$primary-text;
+      background-color: mat.get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
     }
   }
 
@@ -87,7 +87,7 @@
 
   .main-sidenav::before {
     width: 3px;
-    background: linear-gradient(to right, $shadow, rgba($shadow, 0.2) 25%, rgba($shadow, 0.12) 75%, rgba($shadow, 0));
+    background: linear-gradient(to right, v.$shadow, rgba(v.$shadow, 0.2) 25%, rgba(v.$shadow, 0.12) 75%, rgba(v.$shadow, 0));
     height: 100%;
     left: 100%;
     top: 0;
@@ -141,13 +141,13 @@
 
       // takes the left sidenav and alters color of text, background and svg-fill on .active class
       a.active {
-        background-color: $primary-text;
-        color: $primary;
+        background-color: v.$primary-text;
+        color: v.$primary;
         transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1),
           color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
         // Fix SVG icons to use primary color when active
         mat-icon ::ng-deep svg {
-          fill: $primary;
+          fill: v.$primary;
         }
       }
 
@@ -170,7 +170,7 @@
     height: 36px;
     // align with top mat-icon-button
     padding: 0 24px;
-    color: $white;
+    color: v.$white;
 
     > * {
       vertical-align: middle;
@@ -209,7 +209,7 @@
 }
 
 .banner {
-  background-color: $primary;
+  background-color: v.$primary;
   color: white;
   padding: 10px;
   text-align: center;
