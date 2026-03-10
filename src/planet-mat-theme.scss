@@ -1,3 +1,6 @@
+@use "sass:map";
+@use 'app/variables' as v;
+
 @use '@angular/material' as mat;
 
 // Include the common styles for Angular Material. We include this here so that you only have to load a single css file for Angular Material in your app.
@@ -5,47 +8,47 @@
 @include mat.all-component-typographies();
 @include mat.typography-hierarchy(mat.define-typography-config());
 @include mat.core();
-@import './app/variables';
 
-@include mat.all-component-themes($planet-app-theme);
+
+@include mat.all-component-themes(v.$planet-app-theme);
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
-  library: mat.define-palette(mat.$pink-palette, $accent-hue),
-  courses: mat.define-palette(mat.$orange-palette, $accent-hue),
-  meetups: mat.define-palette(mat.$purple-palette, $accent-hue),
-  teams: mat.define-palette(mat.$green-palette, $accent-hue)
+  library: mat.define-palette(mat.$pink-palette, v.$accent-hue),
+  courses: mat.define-palette(mat.$orange-palette, v.$accent-hue),
+  meetups: mat.define-palette(mat.$purple-palette, v.$accent-hue),
+  teams: mat.define-palette(mat.$green-palette, v.$accent-hue)
 );
 
 @each $section in library, courses, meetups, teams {
-  $accent-palette: map-get($accent-map, #{$section});
+  $accent-palette: map.get($accent-map, #{$section});
   $theme: mat.define-light-theme((
     color: (
-      primary: $planet-app-primary,
+      primary: v.$planet-app-primary,
       accent: $accent-palette,
-      warn: $planet-app-warn
+      warn: v.$planet-app-warn
     )
   ));
   .planet-#{$section}-theme {
     @include mat.all-component-themes($theme);
 
     .accent-color {
-      background-color: mat.get-color-from-palette($accent-palette, $accent-hue);
-      color: mat.get-contrast-color-from-palette($accent-palette, $accent-hue);
+      background-color: mat.get-color-from-palette($accent-palette, v.$accent-hue);
+      color: mat.get-contrast-color-from-palette($accent-palette, v.$accent-hue);
     }
   }
 }
 
 // Custom themed material styles below
 .mat-button-toggle-appearance-standard {
-  --mat-standard-button-toggle-selected-state-background-color: #{mat.get-color-from-palette($planet-app-primary, $light-hue)};
-  --mat-standard-button-toggle-selected-state-text-color: #{mat.get-contrast-color-from-palette($planet-app-primary, $light-hue)};
+  --mat-standard-button-toggle-selected-state-background-color: #{mat.get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-standard-button-toggle-selected-state-text-color: #{mat.get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
 }
 
 .mat-mdc-raised-button[color="primary"] {
   transition: background-color 0.3s ease;
   &:hover {
-    background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
+    background-color: mat.get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
   }
 }
 
