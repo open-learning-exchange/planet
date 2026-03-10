@@ -1,8 +1,8 @@
-@import '../variables';
+@use '../variables' as v;
 
 .view-container.community-view {
   &.view-full-height {
-    height: calc(#{$view-container-height-no-toolbar} + 64px);
+    height: calc(#{v.$view-container-height-no-toolbar} + 64px);
   }
 
   display: grid;
@@ -10,7 +10,7 @@
   grid-template-areas: "news calendar";
   gap: 0.5rem;
 
-  @media only screen and (max-width: #{$screen-md}) {
+  @media only screen and (max-width: #{v.$screen-md}) {
     grid-template-columns: 1fr;
     grid-template-areas: "news";
   }
@@ -110,7 +110,7 @@ mat-tab-group, mat-tab {
   }
 }
 
-@media only screen and (max-width: $screen-sm) {
+@media only screen and (max-width: v.$screen-sm) {
   .community-view .responsive-toolbar {
     height: auto;
     gap: 0;
@@ -128,7 +128,7 @@ mat-tab-group, mat-tab {
   }
 }
 
-@media only screen and (max-width: $screen-xs) {
+@media only screen and (max-width: v.$screen-xs) {
   .toolbar-row {
     .search-form-field,
     .label-filter-field {
