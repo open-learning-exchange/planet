@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withJsonpSupport } from '@angular/common/http';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -28,40 +28,33 @@ import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activ
 import { ReportsHealthComponent } from './reports/reports-health.component';
 import { ManagerCurrencyComponent } from './manager-currency.component';
 
-@NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    MaterialModule,
-    PlanetDialogsModule,
-    ManagerDashboardRouterModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
-    ConfigurationModule,
-    SharedComponentsModule
-  ],
-  declarations: [
-    ManagerAIServicesComponent,
-    ManagerDashboardComponent,
-    ManagerSyncComponent,
-    ManagerFetchComponent,
-    ManagerDashboardConfigurationComponent,
-    RequestsComponent,
-    RequestsTableComponent,
-    ReportsComponent,
-    ReportsTableComponent,
-    ReportsDetailComponent,
-    ReportsPendingComponent,
-    PendingTableComponent,
-    ReportsMyPlanetComponent,
-    LogsMyPlanetComponent,
-    MyPlanetToolbarComponent,
-    MyPlanetTableComponent,
-    ReportsDetailActivitiesComponent,
-    ReportsHealthComponent,
-    ManagerCurrencyComponent
-  ]
-})
+@NgModule({ declarations: [
+        ManagerAIServicesComponent,
+        ManagerDashboardComponent,
+        ManagerSyncComponent,
+        ManagerFetchComponent,
+        ManagerDashboardConfigurationComponent,
+        RequestsComponent,
+        RequestsTableComponent,
+        ReportsComponent,
+        ReportsTableComponent,
+        ReportsDetailComponent,
+        ReportsPendingComponent,
+        PendingTableComponent,
+        ReportsMyPlanetComponent,
+        LogsMyPlanetComponent,
+        MyPlanetToolbarComponent,
+        MyPlanetTableComponent,
+        ReportsDetailActivitiesComponent,
+        ReportsHealthComponent,
+        ManagerCurrencyComponent
+    ], imports: [CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        MaterialModule,
+        PlanetDialogsModule,
+        ManagerDashboardRouterModule,
+        ConfigurationModule,
+        SharedComponentsModule], providers: [provideHttpClient(withInterceptorsFromDi(), withJsonpSupport())] })
 export class ManagerDashboardModule {}

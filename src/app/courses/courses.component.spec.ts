@@ -4,7 +4,7 @@ import { CoursesComponent } from './courses.component';
 import { DialogsDeleteComponent } from '../shared/dialogs/dialogs-delete.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { FormErrorMessagesComponent } from '../shared/form-error-messages.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -27,10 +27,10 @@ describe('CoursesComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ CoursesComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService ]
-    });
+    declarations: [CoursesComponent, FormErrorMessagesComponent],
+    imports: [ReactiveFormsModule, FormsModule, RouterTestingModule, MaterialModule, BrowserAnimationsModule],
+    providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
+});
     fixture = TestBed.createComponent(CoursesComponent);
     component = fixture.componentInstance;
     de = fixture.debugElement;
