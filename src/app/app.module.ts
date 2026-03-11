@@ -11,16 +11,20 @@ import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { environment } from '../environments/environment';
 
-@NgModule({ declarations: [
-        AppComponent, PageNotFoundComponent
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MaterialModule,
-        PlanetDialogsModule,
-        FullCalendarModule,
-        environment.production
-            ? ServiceWorkerModule.register('/ngsw-worker.js')
-            : []], providers: [provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations: [AppComponent, PageNotFoundComponent],
+  bootstrap: [AppComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    FullCalendarModule,
+    environment.production
+      ? ServiceWorkerModule.register('/ngsw-worker.js')
+      : []
+  ],
+  providers: [provideHttpClient(withInterceptorsFromDi())]
+})
 export class AppModule {}

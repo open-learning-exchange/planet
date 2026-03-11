@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient, withInterceptorsFromDi, withJsonpSupport } from '@angular/common/http';
 
 import { HomeComponent } from './home.component';
 import { DashboardComponent } from '../dashboard/dashboard.component';
@@ -52,5 +51,5 @@ import { SurveysModule } from '../surveys/surveys.module';
         UsersModule,
         CoursesViewDetailModule,
         ChatModule,
-        SurveysModule], providers: [provideHttpClient(withInterceptorsFromDi(), withJsonpSupport())] })
+        SurveysModule] })
 export class HomeModule {}

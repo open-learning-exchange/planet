@@ -8,7 +8,6 @@ import { ResourcesViewerComponent } from './view-resources/resources-viewer.comp
 import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
-import { provideHttpClient, withInterceptorsFromDi, withJsonpSupport } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
@@ -28,5 +27,5 @@ import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search
         ResourcesRouterModule,
         MaterialModule,
         PlanetDialogsModule,
-        SharedComponentsModule], providers: [provideHttpClient(withInterceptorsFromDi(), withJsonpSupport())] })
+        SharedComponentsModule] })
 export class ResourcesModule {}
