@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CouchService } from '../shared/couchdb.service';
 import { MeetupsComponent } from './meetups.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {} from '@angular/common/http';
 import { By } from '@angular/platform-browser';
 import { MaterialModule } from '../shared/material.module';
 import { of } from 'rxjs/observable/of';
