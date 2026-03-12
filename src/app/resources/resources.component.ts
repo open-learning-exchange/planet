@@ -37,8 +37,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
+      state('expanded', style({ height: '*', overflow: 'hidden' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
