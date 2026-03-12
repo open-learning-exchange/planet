@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 .view-container {
   display: flex;
@@ -10,7 +10,7 @@
 }
 
 .form-container {
-  width: calc(#{$form-width-3} + 120px);
+  width: calc(#{v.$form-width-3} + 120px);
 }
 
 .form-space {
@@ -81,7 +81,7 @@
   }
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .profile-image-section{
     display: flex;
     flex-direction: column;
