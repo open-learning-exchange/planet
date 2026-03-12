@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
@@ -18,10 +18,10 @@ describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ UsersComponent ],
-      providers: [ CouchService, UserService ]
-    });
+    declarations: [UsersComponent],
+    imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+    providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
+});
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
     // let de = fixture.debugElement.query(By.css('#login-status'));
