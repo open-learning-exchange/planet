@@ -482,7 +482,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     element.renderContent = (event.toState === 'expanded');
   }
 
-
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
   }
