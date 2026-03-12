@@ -164,8 +164,8 @@ body {
       grid-area: cn;
       text-align: justify;
       text-justify: inter-word;
-      max-height: none;
-      overflow-y: visible;
+      max-height: 15rem;
+      overflow-y: auto;
       margin: 0.5rem 0;
     }
 
