@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -7,7 +7,7 @@
     grid-auto-rows: 1fr;
 
     &.view-container.view-full-height {
-      height: $view-container-height-no-toolbar;
+      height: v.$view-container-height-no-toolbar;
     }
 
   }
@@ -15,7 +15,7 @@
   form {
     display: grid;
     grid-template-areas: "buttons" "questions";
-    grid-template-rows: auto calc(#{$view-container-height-no-toolbar} - 2rem);
+    grid-template-rows: auto calc(#{v.$view-container-height-no-toolbar} - 2rem);
   }
 
   form.survey-form {
