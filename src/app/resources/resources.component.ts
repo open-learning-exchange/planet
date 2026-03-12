@@ -70,7 +70,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
@@ -216,8 +218,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   updateResource(resource) {
@@ -303,9 +305,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
-    .subscribe((response: any) => {
-      this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
-    }, () => error => this.planetMessageService.showMessage(error));
+      .subscribe((response: any) => {
+        this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
+      }, () => error => this.planetMessageService.showMessage(error));
   }
 
   addTagsToSelected({ selected, indeterminate }) {
@@ -360,16 +362,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
-      const data = { okClick: this.sendResource().bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        ...planet };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, maxHeight: '500px', width: '600px', autoFocus: false
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((planet) => {
+        const data = { okClick: this.sendResource().bind(this),
+          filterPredicate: filterSpecificFields([ 'name' ]),
+          allowMulti: true,
+          ...planet };
+        this.dialogRef = this.dialog.open(DialogsListComponent, {
+          data, maxHeight: '500px', width: '600px', autoFocus: false
+        });
       });
-    });
   }
 
   sendResource() {
@@ -415,7 +417,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description) { return false; }
+    if (!element.description) {
+      return false;
+    }
     return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
   }
 

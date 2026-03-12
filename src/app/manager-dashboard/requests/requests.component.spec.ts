@@ -17,8 +17,7 @@ describe('CommunityComponent', () => {
       imports: [ FormsModule, HttpClientModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule ],
       declarations: [ CommunityComponent ],
       providers: [ CouchService ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

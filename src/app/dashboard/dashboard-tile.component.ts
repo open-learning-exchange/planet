@@ -42,8 +42,12 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   isExpanded = false;
   deviceType: DeviceType;
 
-  @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
-  @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
+  @HostBinding('class.accordion-collapsed') get isCollapsed() {
+    return !this.isExpanded;
+  }
+  @HostBinding('class.accordion-expanded') get isExpandedClass() {
+    return this.isExpanded;
+  }
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -72,7 +76,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   ngAfterViewChecked() {
     const divHeight = this.itemDiv?.nativeElement.offsetHeight;
     const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
-    if (!dashboardItem) { return; }
+    if (!dashboardItem) {
+      return;
+    }
     const itemStyle = window.getComputedStyle(dashboardItem);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
