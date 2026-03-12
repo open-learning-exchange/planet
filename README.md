@@ -102,7 +102,7 @@ To run planet in development with a different locale, you can set the configurat
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
-## Unit & End-to-End Tests
+## Tests
 
 You can run tests directly from the host or within the development container.
 
@@ -113,10 +113,8 @@ npm run test
 Open `localhost:9876` once this is done compiling
 
 ### End-to-End Tests:
-```
-npm run e2e
-```
-Results will appear in the console
+
+End-to-end test automation is not currently wired up in this repository. There is no supported `npm run e2e` workflow on this branch.
 
 ## Additional Commands
 
