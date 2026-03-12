@@ -1,3 +1,4 @@
+@use "sass:map";
 @use '@angular/material' as mat;
 
 $primary-hue: 500;
@@ -30,7 +31,7 @@ $primary-text: mat.get-contrast-color-from-palette($planet-primary, $primary-hue
 $accent-text: mat.get-contrast-color-from-palette($planet-accent, $accent-hue);
 $light-grey: mat.get-color-from-palette(mat.$grey-palette, 100);
 $grey: mat.get-color-from-palette(mat.$grey-palette, 400);
-$grey-text: map-get(mat.$light-theme-foreground-palette, 'secondary-text');
+$grey-text: map.get(mat.$light-theme-foreground-palette, 'secondary-text');
 $primary-lighter: mat.get-color-from-palette($planet-app-primary, 100);
 $primary-light: mat.get-color-from-palette($planet-app-primary, 300);
 $accent-lighter: mat.get-color-from-palette($planet-app-accent, 100);
@@ -39,8 +40,8 @@ $primary-dark: mat.get-color-from-palette($planet-app-primary, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
-$disabled-button: map-get(mat.$light-theme-background-palette, 'disabled-button');
-$disabled-button-text: map-get(mat.$light-theme-foreground-palette, 'disabled-button');
+$disabled-button: map.get(mat.$light-theme-background-palette, 'disabled-button');
+$disabled-button-text: map.get(mat.$light-theme-foreground-palette, 'disabled-button');
 
 $font-family: Roboto, sans-serif;
 
