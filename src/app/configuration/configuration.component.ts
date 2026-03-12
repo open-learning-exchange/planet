@@ -58,8 +58,10 @@ interface ContactForm {
       margin: 0px 2px 2px 0px;
     }
     .configuration-form {
-      grid-template-areas: "none none ." "none none none";
-      justify-items: center;
+      align-items: start;
+      mat-form-field {
+        width: 100%;
+      }
     }
     .advanced {
       grid-column-start: 2;
