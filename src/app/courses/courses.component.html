@@ -161,7 +161,7 @@
           </mat-chip-set>
           <div class="content">
             <div *ngIf="!isExpanded(element)" class="preview-content" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true" [truncatePreview]="false"></planet-markdown>
+              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true"></planet-markdown>
             </div>
             <div *ngIf="showPreviewExpand(element)" class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>

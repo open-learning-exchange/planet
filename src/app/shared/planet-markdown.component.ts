@@ -25,7 +25,6 @@ export class PlanetMarkdownComponent implements OnChanges {
   @Input() imageSource: 'parent' | 'local' = 'local';
   @Input() previewMode: boolean;
   @Input() limit = 450;
-  @Input() truncatePreview = true;
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
@@ -44,9 +43,7 @@ export class PlanetMarkdownComponent implements OnChanges {
 
     if (this.previewMode) {
       const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
-      this.limitedContent = this.truncatePreview ?
-        truncateText(scaledContent, calculateMdAdjustedLimit(scaledContent, this.limit)) :
-        scaledContent;
+      this.limitedContent = truncateText(scaledContent, calculateMdAdjustedLimit(scaledContent, this.limit));
     } else {
       this.limitedContent = truncateText(textOnly, this.limit);
     }
