@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +15,8 @@ import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { warningMsg } from '../shared/unsaved-changes.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
@@ -46,8 +48,9 @@ interface ExamDocumentInfo {
   templateUrl: 'exams-add.component.html',
   styleUrls: [ 'exams-add.scss' ]
 })
-export class ExamsAddComponent implements OnInit {
+export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';
+  hasUnsavedChanges = false;
   examForm!: FormGroup<ExamFormControls>;
   documentInfo: ExamDocumentInfo = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
@@ -110,6 +113,9 @@ export class ExamsAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.examForm.valueChanges.subscribe(() => {
+      this.hasUnsavedChanges = true;
+    });
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     if (this.route.snapshot.url[0].path !== 'update') {
       return;
@@ -132,6 +138,7 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.patchValue({ name: `${this.examForm.controls.name.value} - COPY` });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
+      this.hasUnsavedChanges = false;
     }, error => console.log(error));
   }
 
@@ -170,6 +177,7 @@ export class ExamsAddComponent implements OnInit {
       return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
+      this.hasUnsavedChanges = false;
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
@@ -238,6 +246,17 @@ export class ExamsAddComponent implements OnInit {
       return name;
     }
     return this.newExamName(existingExams, namePrefix, tryNumber + 1);
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = warningMsg;
+    }
+  }
+
+  canDeactivate(): boolean {
+    return !this.hasUnsavedChanges;
   }
 
   showPreviewDialog() {
