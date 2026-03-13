@@ -90,6 +90,15 @@ $label-height: 1rem;
 }
 
 planet-resources {
+  .preview-content {
+    height: 9rem;
+    overflow: hidden;
+  }
+
+  .preview-toggle {
+    text-align: center;
+  }
+
   @media(max-width: $screen-md) {
     .resources-list {
       .mat-column-createdDate {
