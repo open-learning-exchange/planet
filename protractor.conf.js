@@ -26,15 +26,13 @@ exports.config = {
     print: function() {}
   },
   onPrepare() {
-    var defer = protractor.promise.defer();
     require('ts-node').register({
       project: './e2e/tsconfig.e2e.json'
     });
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
     browser.params.user = user.get();
 
-    return user.create().then(function(res) {
-      defer.fulfill();
+    return user.create().then(function() {
     })
     .catch(function(err) {
       console.log(err);
