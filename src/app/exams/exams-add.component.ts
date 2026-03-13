@@ -1,11 +1,9 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { forkJoin, of, combineLatest, race, interval } from 'rxjs';
-import { switchMap, debounce } from 'rxjs/operators';
-import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { warningMsg } from '../shared/unsaved-changes.component';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -48,7 +46,7 @@ interface ExamDocumentInfo {
   templateUrl: 'exams-add.component.html',
   styleUrls: [ 'exams-add.scss' ]
 })
-export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
+export class ExamsAddComponent implements OnInit {
   readonly dbName = 'exams';
   examForm!: FormGroup<ExamFormControls>;
   documentInfo: ExamDocumentInfo = {};
@@ -65,8 +63,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  hasUnsavedChanges = false;
-  private initialState = '';
   private _question!: QuestionFormGroup;
   get question(): QuestionFormGroup {
     return this._question;
@@ -115,8 +111,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
 
   ngOnInit() {
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
-    this.onFormChanges();
-    this.captureInitialState();
     if (this.route.snapshot.url[0].path !== 'update') {
       return;
     }
@@ -179,8 +173,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
-      this.hasUnsavedChanges = false;
-      this.captureInitialState();
       if (reRoute) {
         this.goBack();
       }
@@ -261,42 +253,6 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       data: { exam: this.examForm.getRawValue(), examType: this.examType },
       minWidth: '75vw'
     });
-  }
-
-  private getNormalizedState(): any {
-    const formValue = this.examForm.value;
-    return {
-      name: formValue.name || '',
-      description: formValue.description || '',
-      passingPercentage: formValue.passingPercentage || 100,
-      questions: JSON.stringify(formValue.questions || []),
-      type: formValue.type || '',
-      teamShareAllowed: formValue.teamShareAllowed || false
-    };
-  }
-
-  private captureInitialState() {
-    this.initialState = JSON.stringify(this.getNormalizedState());
-  }
-
-  onFormChanges() {
-    this.examForm.valueChanges
-      .pipe(debounce(() => race(interval(200), of(true))))
-      .subscribe(() => {
-        const currentState = JSON.stringify(this.getNormalizedState());
-        this.hasUnsavedChanges = currentState !== this.initialState;
-      });
-  }
-
-  @HostListener('window:beforeunload', [ '$event' ])
-  unloadNotification($event: BeforeUnloadEvent): void {
-    if (this.hasUnsavedChanges) {
-      $event.returnValue = warningMsg;
-    }
-  }
-
-  canDeactivate(): boolean {
-    return !this.hasUnsavedChanges;
   }
 
 }

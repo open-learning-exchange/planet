@@ -17,12 +17,12 @@ const routes: Routes = [
   { path: 'update/:id', component: CoursesAddComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'view/:id/update', component: CoursesAddComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'view/:id', component: CoursesViewComponent },
-  { path: 'exam', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
-  { path: 'survey', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
+  { path: 'exam', component: ExamsAddComponent },
+  { path: 'survey', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
   { path: 'view/:id/step/:stepNum/exam', component: ExamsViewComponent },
-  { path: 'update/exam/:id', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
-  { path: 'update/survey/:id', component: ExamsAddComponent, canDeactivate: [UnsavedChangesGuard] },
+  { path: 'update/exam/:id', component: ExamsAddComponent },
+  { path: 'update/survey/:id', component: ExamsAddComponent },
   { path: 'progress/:id', component: CoursesProgressLeaderComponent },
   { path: 'enrolled/:id', component: CoursesEnrollComponent }
 ];
