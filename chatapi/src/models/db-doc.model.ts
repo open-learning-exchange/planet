@@ -12,8 +12,10 @@ export interface DbDoc {
 
 export interface Attachment {
   content_type: string;
-  revpos: number;
-  digest: string;
-  length: number;
-  stub: boolean;
+  // Optional CouchDB metadata fields are retained for compatibility with callers
+  // that may consume full attachment metadata in the future.
+  revpos?: number;
+  digest?: string;
+  length?: number;
+  stub?: boolean;
 }
