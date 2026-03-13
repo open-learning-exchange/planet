@@ -24,7 +24,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
+import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
@@ -112,6 +112,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   showFilters = false;
   showFiltersRow = false;
   expandedElement: any = null;
+  private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
@@ -492,7 +493,13 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       return false;
     }
     const previewKey = this.getPreviewKey(element);
-    return hasMarkdownImages(description) || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
+    // isExpanded check keeps the collapse button visible after the preview div unmounts
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
   }
 
   getPreviewKey(element: any): string {

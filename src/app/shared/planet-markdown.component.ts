@@ -1,7 +1,9 @@
 import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
-import { truncateText, calculateMdAdjustedLimit,extractMarkdownImageUrls, markdownImageRegex, normalizeMarkdownWhitespace } from './utils';
+import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
+  markdownImageRegex, normalizeMarkdownWhitespace, truncateText
+} from './utils';
 
 @Component({
   selector: 'planet-markdown',
@@ -39,11 +41,11 @@ export class PlanetMarkdownComponent implements OnChanges {
     this.content = normalizeMarkdownWhitespace(this.content);
 
     this.images = this.extractImageUrls(this.content);
+    const previewText = getMarkdownPreviewText(this.content);
     const textOnly = this.content.replace(new RegExp(markdownImageRegex), '');
 
     if (this.previewMode) {
-      const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
-      this.limitedContent = truncateText(scaledContent, calculateMdAdjustedLimit(scaledContent, this.limit));
+      this.limitedContent = truncateText(previewText, calculateMdAdjustedLimit(previewText, this.limit));
     } else {
       this.limitedContent = truncateText(textOnly, this.limit);
     }

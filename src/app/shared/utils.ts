@@ -141,6 +141,12 @@ export const normalizeMarkdownWhitespace = (content: string) => {
   return content.trim();
 };
 
+export const getMarkdownPreviewText = (content: string) => {
+  const normalizedContent = normalizeMarkdownWhitespace(content);
+  const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
+  return textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+};
+
 export const calculateMdAdjustedLimit = (content, limit) => {
   const hasMdStyles = /#{1,6}\s+.+/g.test(content);
   const hasLists = /^(\*|-|\d+\.)\s+/gm.test(content);
@@ -153,8 +159,12 @@ export const calculateMdAdjustedLimit = (content, limit) => {
 
 export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
 
-export const hasMarkdownImages = (content: string) =>
-  new RegExp(markdownImageRegex).test(content || '');
+export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
+
+export const doesMarkdownPreviewTruncate = (content: string, limit = 450) => {
+  const previewText = getMarkdownPreviewText(content);
+  return previewText.length > calculateMdAdjustedLimit(previewText, limit);
+};
 
 export const extractMarkdownImageUrls = (content: string) => {
   const matches: string[] = [];

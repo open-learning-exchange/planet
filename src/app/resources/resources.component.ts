@@ -23,7 +23,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -100,6 +100,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
+  private previewHasHiddenContent = new Map<string, boolean>();
   private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
@@ -420,8 +421,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return false;
     }
     const previewKey = this.getPreviewKey(element);
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
     // isExpanded check keeps the collapse button visible after the preview div unmounts
-    return hasMarkdownImages(description) || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
   }
 
   getPreviewKey(element: any): string {
