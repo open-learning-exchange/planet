@@ -51,6 +51,7 @@ interface ExamDocumentInfo {
 export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';
   hasUnsavedChanges = false;
+  private initialFormState = '';
   examForm!: FormGroup<ExamFormControls>;
   documentInfo: ExamDocumentInfo = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
@@ -113,8 +114,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   ngOnInit() {
+    this.initialFormState = JSON.stringify(this.examForm.getRawValue());
     this.examForm.valueChanges.subscribe(() => {
-      this.hasUnsavedChanges = true;
+      this.hasUnsavedChanges = JSON.stringify(this.examForm.getRawValue()) !== this.initialFormState;
     });
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     if (this.route.snapshot.url[0].path !== 'update') {
@@ -138,6 +140,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
         this.examForm.patchValue({ name: `${this.examForm.controls.name.value} - COPY` });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
+      this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
     }, error => console.log(error));
   }
@@ -177,6 +180,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
+      this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
