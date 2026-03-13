@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { CouchService } from '../shared/couchdb.service';
 import { finalize, map, switchMap } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
-import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { addDateAndTime, getClockTime } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
 
@@ -20,7 +20,6 @@ export class TasksService {
   constructor(
     private couchService: CouchService,
     private dialogsLoadingService: DialogsLoadingService,
-    private validatorService: ValidatorService,
     private stateService: StateService
   ) {
     this.stateService.couchStateListener(this.dbName).subscribe(res => {
@@ -77,12 +76,18 @@ export class TasksService {
         ] : [
           deadline,
           CustomValidators.dateValidRequired,
-          (ac) => this.validatorService.notDateInPast$(ac)
+          (ac) => this.notDateInPast$(ac)
         ],
         deadlineTime: [ deadlineTime, CustomValidators.dateValidRequired ],
         description: task.description || ''
       }
     };
+  }
+
+  private notDateInPast$(ac: AbstractControl): Observable<ValidationErrors | null> {
+    return this.couchService.currentTime().pipe(
+      map((date) => ac.value < date ? ({ invalidPastDate: true }) : null)
+    );
   }
 
   addTask(task) {
