@@ -17,9 +17,10 @@
     "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
     "lint": "ng lint planet-app",
     "lint-all": "npm run sass-lint && ng lint planet-app --type-check && npm run htmlhint",
-    "e2e": "ng e2e --webdriver-update=false",
+    "e2e": "npm run e2e:prepare && ng e2e --webdriver-update=false",
+    "e2e:prepare": "npm run webdriver-set-version",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
-    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
+    "webdriver-set-version": "bash ./scripts/webdriver-set-version.sh",
     "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh",
     "starthub-true": "echo \"true\" > /srv/starthub",
     "starthub-false": "echo \"false\" > /srv/starthub"
