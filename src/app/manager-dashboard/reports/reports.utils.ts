@@ -3,7 +3,8 @@ import { CsvService } from '../../shared/csv.service';
 
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
-  return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
+  const namesMap = new Map<string, any>(names.map(name => [name.planetId, name]));
+  return planetDocs.map(doc => ({ doc, nameDoc: namesMap.get(doc._id) }));
 };
 
 export const codeToPlanetName = (code: string, configuration: any, childPlanets: any[]) => {
