@@ -12,7 +12,7 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
 
-@NgModule({ 
+@NgModule({
   declarations: [
     ResourcesComponent,
     ResourcesViewComponent,

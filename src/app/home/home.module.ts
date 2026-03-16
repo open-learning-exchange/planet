@@ -25,7 +25,7 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
 import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
-@NgModule({ 
+@NgModule({
   declarations: [
     HomeComponent,
     DashboardComponent,
@@ -37,7 +37,7 @@ import { SurveysModule } from '../surveys/surveys.module';
     CommunityComponent,
     CommunityLinkDialogComponent,
     HealthListComponent,
-  ], 
+  ],
   imports: [
     HomeRouterModule,
     CommonModule,

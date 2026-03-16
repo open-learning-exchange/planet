@@ -27,7 +27,7 @@ import { ReportsDetailActivitiesComponent } from './reports/reports-detail-activ
 import { ReportsHealthComponent } from './reports/reports-health.component';
 import { ManagerCurrencyComponent } from './manager-currency.component';
 
-@NgModule({ 
+@NgModule({
   declarations: [
     ManagerAIServicesComponent,
     ManagerDashboardComponent,
@@ -59,6 +59,6 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
     ManagerDashboardRouterModule,
     ConfigurationModule,
     SharedComponentsModule
-  ] 
+  ]
 })
 export class ManagerDashboardModule {}
