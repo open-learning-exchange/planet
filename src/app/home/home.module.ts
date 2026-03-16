@@ -25,31 +25,36 @@ import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-de
 import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
-@NgModule({ declarations: [
-  HomeComponent,
-  DashboardComponent,
-  DashboardTileComponent,
-  DashboardTileTitleComponent,
-  NotificationsComponent,
-  PulsateIconDirective,
-  UpgradeComponent,
-  CommunityComponent,
-  CommunityLinkDialogComponent,
-  HealthListComponent,
-], imports: [HomeRouterModule,
-  CommonModule,
-  FormsModule,
-  ReactiveFormsModule,
-  PlanetFormsModule,
-  MaterialModule,
-  PlanetDialogsModule,
-  SharedComponentsModule,
-  UsersAchievementsModule,
-  NewsModule,
-  TeamsModule,
-  PlanetCalendarModule,
-  UsersModule,
-  CoursesViewDetailModule,
-  ChatModule,
-  SurveysModule] })
+@NgModule({ 
+  declarations: [
+    HomeComponent,
+    DashboardComponent,
+    DashboardTileComponent,
+    DashboardTileTitleComponent,
+    NotificationsComponent,
+    PulsateIconDirective,
+    UpgradeComponent,
+    CommunityComponent,
+    CommunityLinkDialogComponent,
+    HealthListComponent,
+  ], 
+  imports: [
+    HomeRouterModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    SharedComponentsModule,
+    UsersAchievementsModule,
+    NewsModule,
+    TeamsModule,
+    PlanetCalendarModule,
+    UsersModule,
+    CoursesViewDetailModule,
+    ChatModule,
+    SurveysModule
+  ]
+})
 export class HomeModule {}

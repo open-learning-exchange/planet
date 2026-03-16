@@ -12,8 +12,11 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { environment } from '../environments/environment';
 
 @NgModule({
-  declarations: [AppComponent, PageNotFoundComponent],
-  bootstrap: [AppComponent],
+  declarations: [
+    AppComponent,
+    PageNotFoundComponent
+  ],
+  bootstrap: [ AppComponent ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,6 +28,8 @@ import { environment } from '../environments/environment';
       ? ServiceWorkerModule.register('/ngsw-worker.js')
       : []
   ],
-  providers: [provideHttpClient(withInterceptorsFromDi())]
+  providers: [
+    provideHttpClient(withInterceptorsFromDi())
+  ]
 })
 export class AppModule {}

@@ -12,20 +12,29 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
 
-@NgModule({ declarations: [
-  ResourcesComponent,
-  ResourcesViewComponent,
-  ResourcesViewerComponent,
-  ResourcesAddComponent,
-  ResourcesSearchComponent,
-  ResourcesSearchListComponent
-],
-exports: [ResourcesViewerComponent, ResourcesComponent, ResourcesAddComponent], imports: [CommonModule,
-  FormsModule,
-  ReactiveFormsModule,
-  PlanetFormsModule,
-  ResourcesRouterModule,
-  MaterialModule,
-  PlanetDialogsModule,
-  SharedComponentsModule] })
+@NgModule({ 
+  declarations: [
+    ResourcesComponent,
+    ResourcesViewComponent,
+    ResourcesViewerComponent,
+    ResourcesAddComponent,
+    ResourcesSearchComponent,
+    ResourcesSearchListComponent
+  ],
+  exports: [
+    ResourcesViewerComponent,
+    ResourcesComponent,
+    ResourcesAddComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    ResourcesRouterModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    SharedComponentsModule
+  ]
+})
 export class ResourcesModule {}

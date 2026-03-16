@@ -8,10 +8,18 @@ import { FeedbackComponent } from './feedback.component';
 import { FeedbackRouterModule } from './feedback-router.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
-@NgModule({ declarations: [FeedbackComponent, FeedbackViewComponent], imports: [CommonModule,
-  FormsModule,
-  FeedbackRouterModule,
-  MaterialModule,
-  PlanetDialogsModule,
-  SharedComponentsModule] })
-export class FeedbackModule {}
+@NgModule({
+  declarations: [
+    FeedbackComponent,
+    FeedbackViewComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FeedbackRouterModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    SharedComponentsModule
+  ]
+})
+export class FeedbackModule { }
