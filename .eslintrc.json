@@ -52,7 +52,7 @@
             "accessibility": "explicit"
           }
         ],
-        // "@typescript-eslint/no-use-before-define": "error",
+        "@typescript-eslint/no-use-before-define": "error",
         "brace-style": [
           "error",
           "1tbs"
