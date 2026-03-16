@@ -26,7 +26,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     this._titleSearch = value;
     this.recordSearch();
