@@ -42,8 +42,7 @@ describe('CoursesAddComponent', () => {
 
   // test createForm()
   it('should createForm', () => {
-      expect(component.createForm()).toBe(undefined);
-
+    expect(component.createForm()).toBe(undefined);
   });
 
   // test onSubmit()
@@ -73,7 +72,7 @@ describe('CoursesAddComponent', () => {
 
   // test onDayChange()
   it('should onDayChange', () => {
-      expect(component.onDayChange('Monday', true)).toBe(undefined);
+    expect(component.onDayChange('Monday', true)).toBe(undefined);
   });
 
   // test toogleWeekly()

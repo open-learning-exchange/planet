@@ -14,9 +14,9 @@ describe('CommunityComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    declarations: [CommunityComponent],
-    imports: [FormsModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule],
-    providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
+    declarations: [ CommunityComponent ],
+    imports: [ FormsModule, BrowserAnimationsModule, MaterialModule, RouterTestingModule ],
+    providers: [ CouchService, provideHttpClient(withInterceptorsFromDi()) ]
 })
     .compileComponents();
   }));
