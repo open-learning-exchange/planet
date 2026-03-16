@@ -50,12 +50,9 @@ while getopts "u:w:p:h:ix" option; do
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
-    # i) INSTALLFLAG=1;;
     x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
-
-# ISINSTALL=${INSTALLFLAG:-0}
 
 if [ -z "$HOST" ]
 then
