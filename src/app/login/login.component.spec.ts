@@ -19,10 +19,10 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-    declarations: [LoginComponent],
-    imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
-    providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
-});
+      declarations: [LoginComponent],
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+      providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
+    });
     const fixture = TestBed.createComponent(LoginComponent),
       comp = fixture.componentInstance;
       /*de = fixture.debugElement.query(By.css('#login-status')),

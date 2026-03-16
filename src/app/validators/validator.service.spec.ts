@@ -7,9 +7,9 @@ import { of } from 'rxjs/observable/of';
 describe('ValidatorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [],
-    providers: [ValidatorService, CouchService, provideHttpClient(withInterceptorsFromDi())]
-});
+      imports: [],
+      providers: [ValidatorService, CouchService, provideHttpClient(withInterceptorsFromDi())]
+    });
   });
 
   it('should be created', inject([ ValidatorService ], (service: ValidatorService) => {

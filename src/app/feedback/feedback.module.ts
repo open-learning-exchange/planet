@@ -9,9 +9,9 @@ import { FeedbackRouterModule } from './feedback-router.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({ declarations: [FeedbackComponent, FeedbackViewComponent], imports: [CommonModule,
-        FormsModule,
-        FeedbackRouterModule,
-        MaterialModule,
-        PlanetDialogsModule,
-        SharedComponentsModule] })
+  FormsModule,
+  FeedbackRouterModule,
+  MaterialModule,
+  PlanetDialogsModule,
+  SharedComponentsModule] })
 export class FeedbackModule {}
