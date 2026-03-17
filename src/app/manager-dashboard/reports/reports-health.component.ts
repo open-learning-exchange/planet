@@ -146,9 +146,14 @@ export class ReportsHealthComponent implements OnChanges {
         scales: {
           y: {
             type: 'linear',
-            ticks: {  precision: 0 }
+            ticks: {  precision: 0 },
+            // Formats the user-visible y-axis label text for diagnosis counts.
+            scaleLabel: scaleLabel('Diagnoses')
           },
-          x: { title: { display: true, text: 'Week of' } }
+          x: {
+            // Formats the user-visible x-axis label text showing week ranges.
+            scaleLabel: scaleLabel('Week of')
+          }
         },
       }
     };
