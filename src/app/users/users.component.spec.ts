@@ -24,8 +24,6 @@ describe('Users', () => {
     });
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
-    // let de = fixture.debugElement.query(By.css('#login-status'));
-    // let statusElement = de.nativeElement;
     const couchService = fixture.debugElement.injector.get(CouchService);
     const userService = fixture.debugElement.injector.get(UserService);
     const testUsers: any = {
@@ -103,43 +101,4 @@ describe('Users', () => {
     });
 
   });
-  /*
-  it('Should display create user message', () => {
-    let { fixture, comp, statusElement, couchService, testModel } = setup();
-    spy = spyOn(couchService, 'put').and.returnValue(Promise.resolve({id:'org.couchdb.user:' + testModel.name}));
-    comp.createUser(testModel);
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('User created: ' + testModel.name,'Create user message displays correctly');
-    });
-  });
-
-  it('Should reject nonmatching passwords', () => {
-    let { fixture, comp, statusElement, couchService, testModel } = setup();
-    testModel.repeatPassword = 'passwor';
-    comp.createUser(testModel);
-    fixture.detectChanges();
-    expect(statusElement.textContent).toBe('Passwords do not match','Create user message displays correctly');
-  });
-
-  it('Should greet users', () => {
-    let { fixture, comp, statusElement, couchService, testModel } = setup();
-    spy = spyOn(couchService, 'post').and.returnValue(Promise.resolve({name:testModel.name}));
-    comp.login(testModel);
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('Hi, ' + testModel.name + '!','Create user message displays correctly');
-    });
-  });
-
-  it('Should message when user & password do not match', () => {
-    let { fixture, comp, statusElement, couchService, testModel } = setup();
-    spy = spyOn(couchService, 'post').and.returnValue(Promise.reject({}));
-    comp.login(testModel);
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe('Username and/or password do not match');
-    });
-  });
-  */
 });
