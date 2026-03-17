@@ -88,8 +88,8 @@ export class PlanetTagInputDialogComponent {
   }
 
   @HostListener('window:resize') OnResize() {
-      this.deviceType = this.deviceInfoService.getDeviceType();
-    }
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
@@ -119,10 +119,6 @@ export class PlanetTagInputDialogComponent {
     if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
       updateTag(parentTag._id);
     }
-  }
-
-  subTagIds(subTags: any[]) {
-    return subTags.map(subTag => subTag._id || subTag.name);
   }
 
   updateFilter(value) {

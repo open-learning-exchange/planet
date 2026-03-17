@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-@import '@angular/material/theming';
 
 $primary-hue: 500;
 $accent-hue: 500;
@@ -7,16 +6,16 @@ $warn-hue: 500;
 $light-hue: 100;
 $dark-hue: 700;
 
-$planet-primary: mat.$blue-palette;
-$planet-accent: mat.$amber-palette;
-$planet-warn: mat.$red-palette;
-$planet-green: mat.get-color-from-palette(mat.$green-palette, $primary-hue);
+$planet-primary: mat.$m2-blue-palette;
+$planet-accent: mat.$m2-amber-palette;
+$planet-warn: mat.$m2-red-palette;
+$planet-green: mat.m2-get-color-from-palette(mat.$m2-green-palette, $primary-hue);
 
-$planet-app-primary: mat.define-palette($planet-primary, $primary-hue);
-$planet-app-accent: mat.define-palette($planet-accent, $accent-hue);
-$planet-app-warn: mat.define-palette($planet-warn, $warn-hue);
+$planet-app-primary: mat.m2-define-palette($planet-primary, $primary-hue);
+$planet-app-accent: mat.m2-define-palette($planet-accent, $accent-hue);
+$planet-app-warn: mat.m2-define-palette($planet-warn, $warn-hue);
 
-$planet-app-theme: mat.define-light-theme((
+$planet-app-theme: mat.m2-define-light-theme((
   color: (
     primary: $planet-app-primary,
     accent: $planet-app-accent,
@@ -24,23 +23,24 @@ $planet-app-theme: mat.define-light-theme((
   )
 ));
 
-$primary: mat.get-color-from-palette($planet-app-primary, $primary-hue);
-$accent: mat.get-color-from-palette($planet-app-accent, $accent-hue);
-$warn: mat.get-color-from-palette($planet-app-warn, $warn-hue);
-$primary-text: mat.get-contrast-color-from-palette($planet-primary, $primary-hue);
-$accent-text: mat.get-contrast-color-from-palette($planet-accent, $accent-hue);
-$light-grey: mat.get-color-from-palette(mat.$grey-palette, 100);
-$grey: mat.get-color-from-palette(mat.$grey-palette, 400);
-$grey-text: map-get(mat.$light-theme-foreground-palette, 'secondary-text');
-$primary-lighter: mat.get-color-from-palette($planet-app-primary, 100);
-$primary-light: mat.get-color-from-palette($planet-app-primary, 300);
-$accent-lighter: mat.get-color-from-palette($planet-app-accent, 100);
-$primary-dark: mat.get-color-from-palette($planet-app-primary, $dark-hue);
+$primary: mat.m2-get-color-from-palette($planet-app-primary, $primary-hue);
+$accent: mat.m2-get-color-from-palette($planet-app-accent, $accent-hue);
+$warn: mat.m2-get-color-from-palette($planet-app-warn, $warn-hue);
+$primary-text: mat.m2-get-contrast-color-from-palette($planet-primary, $primary-hue);
+$accent-text: mat.m2-get-contrast-color-from-palette($planet-accent, $accent-hue);
+$light-grey: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 100);
+$grey: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400);
+$grey-text: map-get(mat.$m2-light-theme-foreground-palette, 'secondary-text');
+$primary-lighter: mat.m2-get-color-from-palette($planet-app-primary, 100);
+$primary-light: mat.m2-get-color-from-palette($planet-app-primary, 300);
+$accent-lighter: mat.m2-get-color-from-palette($planet-app-accent, 100);
+$warn-lighter: mat.m2-get-color-from-palette($planet-app-warn, 100);
+$primary-dark: mat.m2-get-color-from-palette($planet-app-primary, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
-$disabled-button: map-get(mat.$light-theme-background-palette, 'disabled-button');
-$disabled-button-text: map-get(mat.$light-theme-foreground-palette, 'disabled-button');
+$disabled-button: map-get(mat.$m2-light-theme-background-palette, 'disabled-button');
+$disabled-button-text: map-get(mat.$m2-light-theme-foreground-palette, 'disabled-button');
 
 $font-family: Roboto, sans-serif;
 

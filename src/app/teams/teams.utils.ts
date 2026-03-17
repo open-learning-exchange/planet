@@ -8,8 +8,8 @@ export const memberNameCompare = (member1, member2) => {
 export const memberSort = (member1, member2, leader) => memberCompare(member1, leader) ?
   -1 :
   memberCompare(member2, leader) ?
-  1 :
-  memberNameCompare(member1, member2);
+    1 :
+    memberNameCompare(member1, member2);
 
 export const convertUtcDate = (date) => {
   const dateObj = new Date(date);
