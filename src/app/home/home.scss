@@ -63,7 +63,7 @@
     justify-self: center;
     a.active {
       color: v.$primary-text;
-      background-color: mat.get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
+      background-color: mat.m2-get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
     }
   }
 

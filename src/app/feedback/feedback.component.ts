@@ -48,7 +48,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     'status': ''
   };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();
