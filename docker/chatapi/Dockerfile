@@ -1,6 +1,6 @@
 ARG BASE_IMAGE=treehouses/node:3.16
 
-FROM ${BASE_IMAGE} AS builder
+FROM ${BASE_IMAGE} as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./chatapi/package.json ./

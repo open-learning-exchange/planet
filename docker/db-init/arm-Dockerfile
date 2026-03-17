@@ -1,19 +1,21 @@
+ARG CROSSCOMPILE_ARCH=armv7
+ARG RUNTIME_IMAGE=treehouses/node-tags:arm
+
 FROM ubuntu:xenial as builder
-LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
+ARG CROSSCOMPILE_ARCH
 
 COPY ./docker/db-init/crosscompile_db-init.sh .
-RUN bash ./crosscompile_db-init.sh armv7 install
+RUN bash ./crosscompile_db-init.sh "${CROSSCOMPILE_ARCH}" install
 
-#####
+FROM ${RUNTIME_IMAGE}
+LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-FROM treehouses/node-tags:arm
-
-RUN apk update ;\
-    apk add --no-cache bash curl git jq ca-certificates;\
-    mkdir -p /usr/local/lib/node_modules; \
-    ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
+RUN apk update \
+    && apk add --no-cache bash curl git jq ca-certificates
 
 COPY --from=builder /usr/lib/node_modules /usr/local/lib/node_modules
+RUN mkdir -p /usr/local/bin \
+    && ln -s /usr/local/lib/node_modules/add-cors-to-couchdb/bin.js /usr/local/bin/add-cors-to-couchdb
 
 WORKDIR /root
 
@@ -21,4 +23,4 @@ COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
 COPY ./couchdb-setup.sh /root/couchdb-setup.sh
 ADD ./design /root/design
 
-CMD bash ./docker-entrypoint.sh
+CMD ["bash", "./docker-entrypoint.sh"]
