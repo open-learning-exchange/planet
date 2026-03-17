@@ -44,7 +44,7 @@ set_couch_per_user() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:ix" option; do
+while getopts "u:w:p:h:x" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
