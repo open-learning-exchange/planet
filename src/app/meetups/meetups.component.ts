@@ -72,8 +72,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((meetups) => {
+    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
@@ -108,8 +107,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {

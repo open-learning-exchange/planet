@@ -88,7 +88,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
-    this.fetchMembers().subscribe(members => { this.members = members; });
+    this.fetchMembers().subscribe(members => {
+      this.members = members;
+    });
     this.coursesService.requestCourses();
     this.newsService.requestNews({
       selectors: {
@@ -137,10 +139,10 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
     news.forEach(post => {
       if (
-      post.doc.user.name === userName &&
-      post.doc.time > this.startDate &&
-      post.doc.time < this.endDate &&
-      !post.doc.replyTo
+        post.doc.user.name === userName &&
+        post.doc.time > this.startDate &&
+        post.doc.time < this.endDate &&
+        !post.doc.replyTo
       ) {
         uniqueDays.add(new Date(post.doc.time).toDateString());
       }
@@ -164,7 +166,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       catchError(() => of([])),
       map((res: any[]) => Array.from(new Set(res.map(doc => doc.user)))),
       switchMap(uniqueUsers => {
-        if (uniqueUsers.length === 0) { return of([]); }
+        if (uniqueUsers.length === 0) {
+          return of([]);
+        }
         return this.couchService.findAll(
           '_users',
           findDocuments({ name: { $in: uniqueUsers } }, [ '_id', 'name' ])
@@ -229,7 +233,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.newsService.newsUpdated$.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe(news => {
-        news.map(post => ({
+      news.map(post => ({
         ...post,
         public: (
           (post.doc.viewIn || []).find(
@@ -238,8 +242,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
               `${this.configuration.code}@${this.configuration.parentCode}`
           ) || {}
         ).public,
-        }));
-        this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
+      }));
+      this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
           const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
           this.submissions = filteredSubmissions.map(submission => ({
@@ -251,7 +255,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
           this.fetchIndividualSummary(news);
           this.isLoading = false;
         }, () => this.isLoading = false);
-      }, () => this.isLoading = false);
+    }, () => this.isLoading = false);
   }
 
   getIndividualMoneyEarned(): number {

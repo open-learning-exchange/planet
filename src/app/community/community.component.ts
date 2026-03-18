@@ -458,8 +458,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const msg = !leadershipTitle ?
           $localize`Title deleted` :
           !councillor.doc.leadershipTitle ?
-          $localize`Title added` :
-          $localize`Title updated`;
+            $localize`Title added` :
+            $localize`Title updated`;
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
