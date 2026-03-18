@@ -122,7 +122,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   extractFormValues(configObject: Record<string, unknown> | undefined, prefix: 'keys_' | 'models_'): Record<string, string> {
     const values: Record<string, string> = {};
-    if (!configObject) { return values; }
+    if (!configObject) {
+      return values;
+    }
     for (const key of Object.keys(configObject)) {
       values[key] = this.getStringControlValue(prefix + key);
     }
