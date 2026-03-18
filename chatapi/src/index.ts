@@ -91,7 +91,7 @@ app.post('/', async (req: any, res: any) => {
   }
 });
 
-app.get('/checkproviders', async (req: any, res: any) => {
+app.get('/checkproviders', async (_req: any, res: any) => {
   res.status(200).json({
     'openai': keys.openai.apiKey ? true : false,
     'perplexity': keys.perplexity.apiKey ? true : false,
