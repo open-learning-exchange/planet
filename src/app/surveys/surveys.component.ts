@@ -87,12 +87,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.checkAuthorization(this.dbName)
       .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
-        this.parentCount = surveys.filter(survey => survey.parent === true).length;
-        this.surveyCount.emit(surveys.length);
-      });
+      this.parentCount = surveys.filter(survey => survey.parent === true).length;
+      this.surveyCount.emit(surveys.length);
+    });
     this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
-        this.availableAIProviders = providers;
-      });
+      this.availableAIProviders = providers;
+    });
   }
 
   ngAfterViewInit() {
@@ -305,10 +305,13 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   submissionDeleteReq(requests, survey) {
     if (survey.sourcePlanet === this.stateService.configuration.code) {
       requests.push(
-        this.couchService.findAll('submissions', findDocuments({
-           'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` }
-          }, 0 ))
-        .pipe(switchMap((submissions) => {
+        this.couchService.findAll(
+          'submissions',
+          findDocuments(
+            { 'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` } },
+            0
+          )
+        ).pipe(switchMap((submissions) => {
           const submissionArray = createDeleteArray(submissions);
           return this.couchService.bulkDocs('submissions', submissionArray);
         }))

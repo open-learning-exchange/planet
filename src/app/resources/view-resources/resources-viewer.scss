@@ -1,5 +1,6 @@
-@import '../../variables';
-$full-height: calc(#{$view-container-height} - 2rem);
+@use '../../variables' as v;
+
+$full-height: calc(#{v.$view-container-height} - 2rem);
 
 :host {
   * {
@@ -20,13 +21,13 @@ $full-height: calc(#{$view-container-height} - 2rem);
   .dialog-view {
 
     iframe {
-      height: calc(#{$dashboard-height});
-      width: calc(#{$dashboard-height} + 20rem);
+      height: calc(#{v.$dashboard-height});
+      width: calc(#{v.$dashboard-height} + 20rem);
     }
 
     img {
-      max-height: calc(#{$dashboard-height});
-      max-width: calc(#{$dashboard-height} + 20rem);
+      max-height: calc(#{v.$dashboard-height});
+      max-width: calc(#{v.$dashboard-height} + 20rem);
     }
 
   }

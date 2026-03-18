@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { LoginComponent } from './login.component';
 import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
@@ -19,9 +19,9 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule.withRoutes([]), FormsModule, CommonModule, HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ LoginComponent ],
-      providers: [ CouchService ]
+      declarations: [LoginComponent],
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+      providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(LoginComponent),
       comp = fixture.componentInstance;

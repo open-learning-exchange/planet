@@ -173,8 +173,8 @@ export class LoginFormComponent {
         switchMap((userCtx) => (this.isDialog ?
           this.userService.setUserAndShelf(userCtx) :
           isCreate ?
-          from(this.router.navigate([ 'users/update/' + name ])) :
-          from(this.reRoute())
+            from(this.router.navigate([ 'users/update/' + name ])) :
+            from(this.reRoute())
         )),
         switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
         switchMap(this.createSession(name, password)),

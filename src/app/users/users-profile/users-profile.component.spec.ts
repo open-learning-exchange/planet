@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { UsersProfileComponent } from './users-profile.component';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { CouchService } from '../../shared/couchdb.service';
@@ -15,9 +15,9 @@ describe('UserProfileComponent', () => {
 
   beforeEach((() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule, MaterialModule ],
-      declarations: [ UsersProfileComponent ],
-      providers: [ CouchService, UserService, DialogsFormService ],
+      declarations: [UsersProfileComponent],
+      imports: [RouterTestingModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule],
+      providers: [CouchService, UserService, DialogsFormService, provideHttpClient(withInterceptorsFromDi())]
     });
     fixture = TestBed.createComponent(UsersProfileComponent);
     component = fixture.componentInstance;

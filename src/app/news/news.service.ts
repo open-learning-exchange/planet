@@ -52,8 +52,8 @@ export class NewsService {
     return attachment ?
       `${this.imgUrlPrefix}/attachments/${attachmentId}/${extractFilename(attachment)}` :
       user._attachments ?
-      `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
-      'assets/image.png';
+        `${this.imgUrlPrefix}/_users/${user._id}/${extractFilename(user)}` :
+        'assets/image.png';
   }
 
   findShareDate(item, viewId) {
