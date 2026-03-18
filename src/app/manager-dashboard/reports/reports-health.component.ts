@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@a
 import { Chart, ChartConfiguration, LineController } from 'chart.js';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
-import { generateWeeksArray, filterByDate, weekDataLabels, scaleLabel } from './reports.utils';
+import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
