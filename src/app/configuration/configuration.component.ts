@@ -53,7 +53,7 @@ interface ContactForm {
 @Component({
   selector: 'planet-configuration',
   templateUrl: './configuration.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
@@ -72,7 +72,8 @@ interface ContactForm {
     .advanced-options-container > * {
       margin-bottom: 10px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;

@@ -37,7 +37,7 @@ interface MeetupFormControls {
 @Component({
   selector: 'planet-meetups-add',
   templateUrl: './meetups-add.component.html',
-  styles: [ `
+  styles: [`
     form.form-spacing {
       width: inherit;
     }
@@ -45,7 +45,8 @@ interface MeetupFormControls {
       min-width: 385px;
       max-width: 750px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 

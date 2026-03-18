@@ -33,7 +33,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
-  styleUrls: [ './resources.scss' ],
+  styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
   animations: [
     trigger('detailExpand', [
@@ -42,6 +42,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
+  standalone: false
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;

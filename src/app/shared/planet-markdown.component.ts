@@ -16,8 +16,9 @@ import { truncateText, calculateMdAdjustedLimit } from './utils';
       <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
-  styleUrls: [ './planet-markdown.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./planet-markdown.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class PlanetMarkdownComponent implements OnChanges {
 

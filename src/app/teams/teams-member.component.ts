@@ -8,7 +8,7 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 @Component({
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-list-item-disabled {
       background-color: white;
     }
@@ -26,7 +26,8 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
     .avatar-spacing {
       margin-right: 5px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 

@@ -14,7 +14,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
         </a>
       </div>
     </mat-dialog-content>
-  `
+  `,
+  standalone: false
 })
 export class LoginDialogComponent {
 

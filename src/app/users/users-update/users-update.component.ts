@@ -34,7 +34,8 @@ interface UsersUpdateFormGroup {
 
 @Component({
   templateUrl: './users-update.component.html',
-  styleUrls: [ './users-update.scss' ]
+  styleUrls: ['./users-update.scss'],
+  standalone: false
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };

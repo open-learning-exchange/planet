@@ -2,7 +2,8 @@ import { Directive, TemplateRef, ViewContainerRef, OnInit, Input } from '@angula
 import { UserService } from './user.service';
 
 @Directive({
-  selector: '[planetBeta]'
+  selector: '[planetBeta]',
+  standalone: false
 })
 export class PlanetBetaDirective implements OnInit {
 

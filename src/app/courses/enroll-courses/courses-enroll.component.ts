@@ -12,7 +12,8 @@ import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.ut
 import { CsvService } from '../../shared/csv.service';
 
 @Component({
-  templateUrl: './courses-enroll.component.html'
+  templateUrl: './courses-enroll.component.html',
+  standalone: false
 })
 
 export class CoursesEnrollComponent {

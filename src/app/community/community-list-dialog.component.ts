@@ -3,11 +3,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './community-list-dialog.component.html',
-  styles: [ `
+  styles: [`
     :host mat-dialog-content {
       min-width: 33vw;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CommunityListDialogComponent {
 

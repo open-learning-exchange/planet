@@ -17,8 +17,9 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   templateUrl: './users-achievements.component.html',
-  styleUrls: [ './users-achievements.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./users-achievements.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class UsersAchievementsComponent implements OnInit {
   user: any = {};

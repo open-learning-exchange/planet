@@ -6,7 +6,8 @@ import { MyPlanetFiltersForm } from './filter.base';
 @Component({
   selector: 'planet-myplanet-toolbar',
   templateUrl: './myplanet-toolbar.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  standalone: false
 })
 export class MyPlanetToolbarComponent {
 

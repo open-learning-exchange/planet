@@ -14,7 +14,8 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
 @Component({
   selector: 'planet-chat-window',
   templateUrl: './chat-window.component.html',
-  styleUrls: [ './chat-window.scss' ],
+  styleUrls: ['./chat-window.scss'],
+  standalone: false
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() context: any;

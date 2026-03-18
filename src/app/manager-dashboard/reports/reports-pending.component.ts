@@ -7,7 +7,8 @@ import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets } from './reports.utils';
 
 @Component({
-  templateUrl: './reports-pending.component.html'
+  templateUrl: './reports-pending.component.html',
+  standalone: false
 })
 export class ReportsPendingComponent implements OnInit {
 

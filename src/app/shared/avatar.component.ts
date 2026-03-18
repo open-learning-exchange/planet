@@ -5,7 +5,8 @@ import { environment } from '../../environments/environment';
   selector: 'planet-avatar',
   template: `
     <img *ngIf="imgSrc" [src]="imgSrc" [ngClass]="imgClass" (error)="imgLoadError()">
-  `
+  `,
+  standalone: false
 })
 export class AvatarComponent implements OnInit {
 

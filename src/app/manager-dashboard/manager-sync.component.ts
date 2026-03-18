@@ -5,11 +5,12 @@ import { forkJoin } from 'rxjs';
 
 @Component({
   templateUrl: './manager-sync.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-button > .mat-icon.svg-icon {
       height: inherit;
     }
-  ` ]
+  `],
+  standalone: false
 })
 
 export class ManagerSyncComponent implements OnInit {

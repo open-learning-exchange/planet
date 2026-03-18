@@ -11,8 +11,9 @@ import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
-  styleUrls: [ './upgrade.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./upgrade.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class UpgradeComponent {
   mode = 'planet';

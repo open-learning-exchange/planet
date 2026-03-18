@@ -18,8 +18,9 @@ interface CoursesStepForm {
 @Component({
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html',
-  styleUrls: [ 'courses-step.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['courses-step.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CoursesStepComponent implements OnDestroy {
 

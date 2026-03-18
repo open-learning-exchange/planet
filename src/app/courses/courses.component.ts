@@ -36,7 +36,7 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
 @Component({
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
-  styleUrls: [ './courses.scss' ],
+  styleUrls: ['./courses.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
@@ -44,7 +44,8 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {

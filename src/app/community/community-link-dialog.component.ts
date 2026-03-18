@@ -32,6 +32,7 @@ interface TeamSelectionEvent {
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
+  standalone: false
 })
 export class CommunityLinkDialogComponent {
 

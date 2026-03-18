@@ -14,11 +14,12 @@ interface ValueWithImages { text: string; images: ImageInfo[]; }
 @Component({
   'selector': 'planet-markdown-textbox',
   'templateUrl': './planet-markdown-textbox.component.html',
-  'styleUrls': [ 'planet-markdown-textbox.scss' ],
+  'styleUrls': ['planet-markdown-textbox.scss'],
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
-  'encapsulation': ViewEncapsulation.None
+  'encapsulation': ViewEncapsulation.None,
+  standalone: false
 })
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
 
