@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
   .view-container {
@@ -25,10 +25,10 @@
   }
 
   .draft-btn {
-    background: $grey;
+    background: v.$grey;
   }
 
-  @media (max-width: $screen-md) {
+  @media (max-width: v.$screen-md) {
     .form-spacing {
       justify-content: center;
     }

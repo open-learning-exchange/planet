@@ -1,7 +1,5 @@
-@import '../variables';
-
-$toolbar-height: 25vh;
-$label-height: 1rem;
+@use '../variables' as v;
+@use './resources-shared' as r;
 
 .resources-list {
   .mat-mdc-row {
@@ -45,11 +43,11 @@ $label-height: 1rem;
   }
 
   .search-bar {
-    height: $toolbar-height;
+    height: r.$toolbar-height;
   }
 
   .view-full-height.view-with-search {
-    height: calc(#{$view-container-height} - #{$toolbar-height});
+    height: calc(#{v.$view-container-height} - #{r.$toolbar-height});
   }
 
   .mat-mdc-button, .mat-mdc-outlined-button {
@@ -90,7 +88,7 @@ $label-height: 1rem;
 }
 
 planet-resources {
-  @media(max-width: $screen-md) {
+  @media(max-width: v.$screen-md) {
     .resources-list {
       .mat-column-createdDate {
         max-width: 100px;
@@ -101,7 +99,7 @@ planet-resources {
     }
   }
 
-  @media(max-width: $screen-sm) {
+  @media(max-width: v.$screen-sm) {
     .resources-list {
       .mat-column-createdDate {
         max-width: fit-content;

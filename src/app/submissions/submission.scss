@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 .mat-column-name,
 .mat-column-courseTitle {
@@ -17,7 +17,7 @@
   max-width: 150px;
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .responsive-table {
     display: block;
     width: 100%;
