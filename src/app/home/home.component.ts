@@ -66,8 +66,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
-    }
-  ));
+    })
+  );
   // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
@@ -119,7 +119,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
-    if (!toolbarElement) { return; }
+    if (!toolbarElement) {
+      return;
+    }
     const toolbarStyle = window.getComputedStyle(toolbarElement);
     const navbarCenter = toolbarElement.querySelector('.navbar-center');
     if (navbarCenter !== null) {
@@ -221,8 +223,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         'status': 'unread'
       },
       0,
-      [ { 'time': 'desc' } ]))
-    .subscribe(data => {
+      [ { 'time': 'desc' } ])
+    ).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }

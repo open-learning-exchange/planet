@@ -73,7 +73,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskDueSoon(task): boolean {
-    if (!task || task.completed || !task.deadline) { return false; }
+    if (!task || task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);
@@ -85,7 +87,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskOverdue(task): boolean {
-    if (task.completed || !task.deadline) { return false; }
+    if (task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);

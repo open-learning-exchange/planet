@@ -65,8 +65,8 @@ export class ExamsService {
   choiceRequiredValidator(ac: QuestionFormGroup) {
     const questionType = ac.controls.type.value;
     return questionType === 'select' || questionType === 'selectMultiple' ?
-     Validators.required(ac.controls.choices) && { noChoices: true } :
-     null;
+      Validators.required(ac.controls.choices) && { noChoices: true } :
+      null;
   }
 
   newQuestionChoice(newId: string, initialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {

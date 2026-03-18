@@ -170,10 +170,11 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   getChildPlanet(url: string) {
-    this.dialogsListService.getListAndColumns(this.dbName,
-    { 'registrationRequest': 'accepted' }, url)
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planets) => {
+    this.dialogsListService.getListAndColumns(
+      this.dbName,
+      { 'registrationRequest': 'accepted' },
+      url
+    ).pipe(takeUntil(this.onDestroy$)).subscribe((planets) => {
       const data = {
         disableSelection: true,
         filterPredicate: filterSpecificFields([ 'name', 'code' ]),

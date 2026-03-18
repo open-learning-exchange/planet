@@ -3,7 +3,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CoursesAddComponent } from './courses-add.component';
 import { FormErrorMessagesComponent } from '../../shared/form-error-messages.component';
 import { ValidatorService } from '../../validators/validator.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
@@ -21,10 +21,11 @@ describe('CoursesAddComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ReactiveFormsModule, FormsModule, RouterTestingModule.withRoutes([
-        { path: 'courses', component: CoursesAddComponent } ]), HttpClientModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ CoursesAddComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, ValidatorService ],
+      declarations: [CoursesAddComponent, FormErrorMessagesComponent],
+      imports: [ReactiveFormsModule, FormsModule, RouterTestingModule.withRoutes([
+        { path: 'courses', component: CoursesAddComponent }
+      ]), MaterialModule, BrowserAnimationsModule],
+      providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
     });
     fixture = TestBed.createComponent(CoursesAddComponent);
     component = fixture.componentInstance;
@@ -41,8 +42,7 @@ describe('CoursesAddComponent', () => {
 
   // test createForm()
   it('should createForm', () => {
-      expect(component.createForm()).toBe(undefined);
-
+    expect(component.createForm()).toBe(undefined);
   });
 
   // test onSubmit()
@@ -72,7 +72,7 @@ describe('CoursesAddComponent', () => {
 
   // test onDayChange()
   it('should onDayChange', () => {
-      expect(component.onDayChange('Monday', true)).toBe(undefined);
+    expect(component.onDayChange('Monday', true)).toBe(undefined);
   });
 
   // test toogleWeekly()
