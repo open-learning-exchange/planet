@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 planet-tasks {
   mat-action-list {
@@ -25,11 +25,11 @@ planet-tasks {
   }
 
   .deadline-soon {
-    color: $accent;
+    color: v.$accent;
   }
 
   .deadline-passed {
-    color: $warn;
+    color: v.$warn;
   }
 
   mat-button-toggle-group {
