@@ -89,6 +89,18 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  // Keep the dashboard grid and overlays in sync with host window events for responsive UX.
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.gridRowHeight = window.innerWidth < 960 ? '2.5rem' : '2rem';
+    this.overlayOpen = false;
+  }
+
+  @HostListener('window:keydown.escape')
+  onEscapeKey() {
+    this.overlayOpen = false;
+  }
+
   getSatellitePin() {
     this.couchService.get('_node/nonode@nohost/_config/satellite/pin').subscribe((res) => this.pin = res);
   }
