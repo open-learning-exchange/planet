@@ -375,7 +375,9 @@ export class SubmissionsService {
     this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
-      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') { continue; }
+      if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') {
+        continue;
+      }
       question.index = i;
       docContent.push({ stack: htmlToPdfmake(`<strong>${$localize`Question `} ${i + 1}:</strong> ${converter.makeHtml(question.body)}`) });
       if (question.type === 'selectMultiple') {
@@ -501,7 +503,9 @@ export class SubmissionsService {
           return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
         })
       ).subscribe(async tuple => {
-        if (!tuple) { return; }
+        if (!tuple) {
+          return;
+        }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
         const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
         if (exportOptions.includeCharts) {
@@ -545,8 +549,8 @@ export class SubmissionsService {
     if (responseHeader) {
       const shortDate = fullLabel(submission.lastUpdateTime);
       const userAge = submission.user.birthDate ?
-       ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
-       submission.user.age;
+        ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
+        submission.user.age;
       const userGender = submission.user.gender;
       const communityOrNation = submission.planetName;
       const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
@@ -589,7 +593,9 @@ export class SubmissionsService {
     const isBar = data.chartType === 'bar';
     const isRatingScale = data.isRatingScale || false;
 
-    if (!ctx) { return ''; }
+    if (!ctx) {
+      return '';
+    }
     const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
 
     if (!hasData) {
@@ -680,7 +686,9 @@ export class SubmissionsService {
         counts[i.toString()] = new Set();
       }
     } else {
-      question.choices.forEach(c => { counts[c.text] = new Set(); });
+      question.choices.forEach(c => {
+        counts[c.text] = new Set();
+      });
       if (question.hasOtherOption) {
         counts[$localize`Other`] = new Set();
       }
@@ -688,7 +696,9 @@ export class SubmissionsService {
 
     submissions.forEach((sub, submissionIndex) => {
       const ans = sub.answers[question.index];
-      if (!ans) { return; }
+      if (!ans) {
+        return;
+      }
 
       const userId = sub.user?._id || sub.user?.name || sub._id || `submission_${submissionIndex}`;
       if (question.type === 'ratingScale') {
@@ -736,8 +746,11 @@ export class SubmissionsService {
       userCounts,
       totalUsers,
       totalSelections,
-      chartType: question.type === 'ratingScale' ? 'bar' :
-        (question.type === 'selectMultiple' ? (mode === 'percent' ? 'bar' : 'pie') :'pie'),
+      chartType: question.type === 'ratingScale' ?
+        'bar' :
+        (question.type === 'selectMultiple' ?
+          (mode === 'percent' ? 'bar' : 'pie') :
+          'pie'),
       isRatingScale: question.type === 'ratingScale'
     };
   }

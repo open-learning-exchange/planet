@@ -184,7 +184,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
-// Only navigate away from page until after successful post (ensures DB is updated for submission list)
+    // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
@@ -198,7 +198,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
           includedCodes.includes(this.stateService.configuration.code) &&
           challengePeriod &&
           this.courseId === challengeCourseId
-          ) {
+        ) {
           this.dialog.open(DialogsAnnouncementComponent, {
             width: '50vw',
             maxHeight: '100vh'
@@ -329,8 +329,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.isNewQuestion = false;
       this.isComplete = this.unansweredQuestions && this.unansweredQuestions.every(number => this.questionNum === number);
       this.isLoading = false;
-  });
-}
+    });
+  }
 
   setAnswer(event: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
     const value: ExamAnswerOption[] = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];
