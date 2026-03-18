@@ -59,9 +59,9 @@ interface ContactForm {
     }
     .configuration-form {
       align-items: start;
-      mat-form-field {
-        width: 100%;
-      }
+    }
+    .configuration-form mat-form-field {
+      width: 100%;
     }
     .advanced {
       grid-column-start: 2;
