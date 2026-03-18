@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -7,7 +7,7 @@
     grid-auto-rows: 1fr;
 
     &.view-container.view-full-height {
-      height: $view-container-height-no-toolbar;
+      height: v.$view-container-height-no-toolbar;
     }
 
   }

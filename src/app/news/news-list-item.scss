@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 mat-card {
   margin: 0.25rem;
@@ -32,7 +32,7 @@ mat-card-content {
 }
 
 .profile-outline {
-  border: 2px solid $primary;
+  border: 2px solid v.$primary;
   border-radius: 50%;
   width: 40px;
   height: 40px;

@@ -46,8 +46,8 @@ export class UsersAchievementsComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      let name = params.get('name'),
-          id;
+      let name = params.get('name');
+      let id;
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
