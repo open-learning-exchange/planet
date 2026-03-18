@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -9,7 +9,7 @@
     "total index user"
     ". . usertotal";
   grid-template-columns: fit-content($cell-size) $cell-size 1fr;
-  grid-template-rows: fit-content(calc(#{$view-container-height} - 2rem - (#{$cell-size} * 3))) calc(#{$cell-size} * 3);
+  grid-template-rows: fit-content(calc(#{v.$view-container-height} - 2rem - (#{$cell-size} * 3))) calc(#{$cell-size} * 3);
 
   &, .errors-container {
     display: grid;
@@ -34,7 +34,7 @@
   .anchor-label {
     position: sticky;
     top: 0;
-    background-color: $white;
+    background-color: v.$white;
     z-index: 20;
   }
 
@@ -71,7 +71,7 @@
     top: 0px;
     height: $cell-size;
     width: calc(#{$cell-size} + #{$column-gap});
-    border-bottom: 3px solid $grey;
+    border-bottom: 3px solid v.$grey;
     z-index: 10;
   }
 
