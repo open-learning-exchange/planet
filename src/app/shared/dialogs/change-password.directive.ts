@@ -184,23 +184,27 @@ export class ChangePasswordDirective implements OnChanges {
   updatePasswordOnParent(userData) {
     const adminName = 'org.couchdb.user:' + userData.name + '@' + this.planetConfiguration.code;
     return this.couchService.get('_users/' + adminName , { domain: this.planetConfiguration.parentDomain })
-      .pipe(catchError(this.passwordError('Error changing password in parent planet')),
-      switchMap((data) => {
-        if (data.ok === false) {
-          return of(data);
-        }
-        const { derived_key, iterations, password_scheme, salt, ...profile } = data;
-        return this.couchService.put(this.dbName + '/' + profile._id, { ...profile, password: userData.password, type: 'user' },
-          { domain: this.planetConfiguration.parentDomain });
-      }));
+      .pipe(
+        catchError(this.passwordError('Error changing password in parent planet')),
+        switchMap((data) => {
+          if (data.ok === false) {
+            return of(data);
+          }
+          const { derived_key, iterations, password_scheme, salt, ...profile } = data;
+          return this.couchService.put(this.dbName + '/' + profile._id, { ...profile, password: userData.password, type: 'user' },
+            { domain: this.planetConfiguration.parentDomain });
+        })
+      );
   }
 
   updateAdminPassword(userData) {
     return this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
-      .pipe(catchError(this.passwordError('Error changing admin password')),
-      switchMap((response) => {
-        return of(response);
-      }));
+      .pipe(
+        catchError(this.passwordError('Error changing admin password')),
+        switchMap((response) => {
+          return of(response);
+        })
+      );
   }
 
 }
