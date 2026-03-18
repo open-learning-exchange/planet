@@ -142,8 +142,8 @@ export class CsvService {
     return key === 'conditions' ?
       this.formatHealthConditions(value) :
       this.isDateKey(key) ?
-      dateString(value) :
-      markdownToPlainText(value);
+        dateString(value) :
+        markdownToPlainText(value);
   }
 
   isDateKey(key: string) {

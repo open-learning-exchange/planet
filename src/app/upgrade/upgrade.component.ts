@@ -109,7 +109,9 @@ export class UpgradeComponent {
   }
 
   addLine(string, cssClass?) {
-    if (!string.length) { return; }
+    if (!string.length) {
+      return;
+    }
     string = string.trim();
     const dTime = this.getDateTime();
     const start = `<span class=\'${cssClass}\'>`;

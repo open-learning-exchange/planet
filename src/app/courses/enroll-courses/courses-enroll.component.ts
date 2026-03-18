@@ -79,12 +79,12 @@ export class CoursesEnrollComponent {
     this.course = this.coursesService.getCourseNameFromId(this.courseId);
     const planets = [ { doc: this.stateService.configuration }, ...attachNamesToPlanets(childPlanets) ];
     this.members = users.map((user: any) => ({
-        ...user,
-        activityDates: this.userProgress(progresses.filter(
-          (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
-        ),
-        planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
-      })).filter(doc => doc.planet !== undefined && (doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id)));
+      ...user,
+      activityDates: this.userProgress(progresses.filter(
+        (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
+      ),
+      planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
+    })).filter(doc => doc.planet !== undefined && (doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id)));
   }
 
   exportCSV() {
