@@ -30,8 +30,7 @@ export class ManagerSyncComponent implements OnInit {
     forkJoin([
       this.couchService.get('_scheduler/docs'),
       this.couchService.findAll('_replicator')
-    ])
-    .subscribe(([ reps, data ]) => {
+    ]).subscribe(([ reps, data ]) => {
       const jobs = reps.docs.filter(replicator => replicator.database === '_replicator');
       this.replicators = data.map((rep: any) => ({ ...rep, ...jobs.find(n => n.doc_id === rep._id) }));
       this.dialogsLoadingService.stop();

@@ -21,8 +21,7 @@ describe('FeedbackDirective', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ FeedbackDirective, TestComponent ]
-    })
-    .compileComponents();
+    }).compileComponents();
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -79,7 +79,8 @@ export class UserService {
   }
 
   setUserAndShelf(user: any) {
-    return this.couchService.findAll('_users').pipe(catchError(() => {
+    return this.couchService.findAll('_users')
+      .pipe(catchError(() => {
         // If not found in users database, just use userCtx object
         this.user = user;
         return of(false);
@@ -162,7 +163,9 @@ export class UserService {
           observer.complete();
         }
       }, 500);
-      return () => { clearInterval(timer); };
+      return () => {
+        clearInterval(timer);
+      };
     });
   }
 
@@ -250,10 +253,10 @@ export class UserService {
     const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
     const newConfig = { ...planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
     return this.couchService.put('configurations/' + planetConfiguration._id, newConfig)
-    .pipe(map((res) => {
-      this.stateService.requestData('configurations', 'local');
-      return res;
-    }));
+      .pipe(map((res) => {
+        this.stateService.requestData('configurations', 'local');
+        return res;
+      }));
   }
 
   doesUserHaveRole(searchRoles: string[]) {
