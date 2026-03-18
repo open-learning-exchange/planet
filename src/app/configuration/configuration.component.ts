@@ -161,8 +161,7 @@ export class ConfigurationComponent implements OnInit {
   initUpdate() {
     this.configurationType = 'update';
     const configurationId = this.stateService.configuration._id;
-    this.couchService.get('configurations/' + configurationId)
-    .subscribe((data: any) => {
+    this.couchService.get('configurations/' + configurationId).subscribe((data: any) => {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);

@@ -39,8 +39,8 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   styleUrls: [ './courses.scss' ],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
+      state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
+      state('expanded', style({ height: '*', overflow: 'hidden' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
@@ -83,7 +83,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
@@ -408,7 +410,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
-    if (this.isForm) { return; }
+    if (this.isForm) {
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -432,9 +436,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((planet) => {
       const data = { okClick: this.sendCourse().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
