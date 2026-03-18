@@ -18,8 +18,7 @@ describe('UserUpdateProfileComponent', () => {
       imports: [ FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule ],
       declarations: [ UsersUpdateComponent, FormErrorMessagesComponent ],
       providers: [ CouchService, HttpClient, HttpClientModule, HttpHandler ]
-    })
-    .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

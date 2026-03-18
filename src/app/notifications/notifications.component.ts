@@ -65,10 +65,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       },
       0,
       [ { 'time': 'desc' } ]))
-    .subscribe(notifications => {
-       this.notifications.data = notifications;
-       this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-    }, (err) => console.log(err.error.reason));
+      .subscribe(notifications => {
+        this.notifications.data = notifications;
+        this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
+      }, (err) => console.log(err.error.reason));
   }
 
   onFilterChange(filterValue: string) {
@@ -79,8 +79,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   readNotification(notification) {
     const updateNotificaton = { ...notification, 'status': 'read' };
     if (notification.status === 'unread') {
-      this.couchService.put('notifications/' + notification._id, updateNotificaton)
-      .subscribe((data) => {
+      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {
           if (n._id === data.id) {
             return Object.assign(updateNotificaton, { _rev: data.rev });
