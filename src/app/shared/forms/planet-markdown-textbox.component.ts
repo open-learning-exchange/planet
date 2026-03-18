@@ -64,7 +64,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   @Input()
-  get required(): boolean { return this._required; }
+  get required(): boolean {
+    return this._required;
+  }
   set required(value: boolean) {
     this._required = value;
     this.stateChanges.next();
@@ -139,10 +141,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
               title: $localize`Quote`
             },
             {
-               name: 'unordered-list',
-               action: (editor: any) => editor.toggleUnorderedList(),
-               className: 'fa fa-list-ul',
-               title: $localize`Unordered List`
+              name: 'unordered-list',
+              action: (editor: any) => editor.toggleUnorderedList(),
+              className: 'fa fa-list-ul',
+              title: $localize`Unordered List`
             },
             {
               name: 'ordered-list',
