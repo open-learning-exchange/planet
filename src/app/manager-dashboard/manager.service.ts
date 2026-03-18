@@ -64,10 +64,13 @@ export class ManagerService {
     // Map random bytes to digits 0-9 without modulo bias
     return Array.from(pinArray, byte => {
       // Discard and retry if value is > 249 to prevent modulo bias
-      let digit = byte;
-      while (digit > 249) {
-        digit = window.crypto.getRandomValues(new Uint8Array(1))[0];
-      }
+      const getValidByte = (initialByte: number): number => {
+        if (initialByte <= 249) {
+          return initialByte;
+        }
+        return getValidByte(window.crypto.getRandomValues(new Uint8Array(1))[0]);
+      };
+      const digit = getValidByte(byte);
       return (digit % 10).toString();
     }).join('');
   }
