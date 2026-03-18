@@ -6,7 +6,7 @@
 // Include the common styles for Angular Material. We include this here so that you only have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
 @include mat.all-component-typographies();
-@include mat.typography-hierarchy(mat.define-typography-config());
+@include mat.typography-hierarchy(mat.m2-define-typography-config());
 @include mat.core();
 
 
@@ -14,15 +14,15 @@
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
-  library: mat.define-palette(mat.$pink-palette, v.$accent-hue),
-  courses: mat.define-palette(mat.$orange-palette, v.$accent-hue),
-  meetups: mat.define-palette(mat.$purple-palette, v.$accent-hue),
-  teams: mat.define-palette(mat.$green-palette, v.$accent-hue)
+  library: mat.m2-define-palette(mat.$m2-pink-palette, v.$accent-hue),
+  courses: mat.m2-define-palette(mat.$m2-orange-palette, v.$accent-hue),
+  meetups: mat.m2-define-palette(mat.$m2-purple-palette, v.$accent-hue),
+  teams: mat.m2-define-palette(mat.$m2-green-palette, v.$accent-hue)
 );
 
 @each $section in library, courses, meetups, teams {
   $accent-palette: map.get($accent-map, #{$section});
-  $theme: mat.define-light-theme((
+  $theme: mat.m2-define-light-theme((
     color: (
       primary: v.$planet-app-primary,
       accent: $accent-palette,
@@ -33,22 +33,22 @@ $accent-map: (
     @include mat.all-component-themes($theme);
 
     .accent-color {
-      background-color: mat.get-color-from-palette($accent-palette, v.$accent-hue);
-      color: mat.get-contrast-color-from-palette($accent-palette, v.$accent-hue);
+      background-color: mat.m2-get-color-from-palette($accent-palette, v.$accent-hue);
+      color: mat.m2-get-contrast-color-from-palette($accent-palette, v.$accent-hue);
     }
   }
 }
 
 // Custom themed material styles below
 .mat-button-toggle-appearance-standard {
-  --mat-standard-button-toggle-selected-state-background-color: #{mat.get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
-  --mat-standard-button-toggle-selected-state-text-color: #{mat.get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-standard-button-toggle-selected-state-background-color: #{mat.m2-get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-standard-button-toggle-selected-state-text-color: #{mat.m2-get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
 }
 
 .mat-mdc-raised-button[color="primary"] {
   transition: background-color 0.3s ease;
   &:hover {
-    background-color: mat.get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
+    background-color: mat.m2-get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
   }
 }
 

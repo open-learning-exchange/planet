@@ -1,4 +1,4 @@
-@import "../variables";
+@use "../variables" as v;
 
 .mat-column-taken {
   max-width: 250px;
@@ -37,7 +37,7 @@
 }
 
 /* Targeting tablet screens */
-@media (max-width: $screen-md) {
+@media (max-width: v.$screen-md) {
 
   .mat-column-name {
     max-width: 125px;
@@ -54,7 +54,7 @@
 }
 
 /* Targeting mobile screens */
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
 
   .mat-column-name {
     max-width: 80px;
