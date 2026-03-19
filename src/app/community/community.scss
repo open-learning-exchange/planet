@@ -82,10 +82,6 @@ mat-tab-group, mat-tab {
   margin-bottom: 1rem;
 }
 
-.community-view .responsive-toolbar {
-  border-radius: 7.5px;
-}
-
 .toolbar-row {
   display: flex;
   width: 100%;
@@ -110,26 +106,15 @@ mat-tab-group, mat-tab {
   }
 }
 
-@media only screen and (max-width: $screen-sm) {
-  .community-view .responsive-toolbar {
-    height: auto;
-    gap: 0;
-  }
-
-  .toolbar-row {
-    .search-form-field,
-    .label-filter-field {
-      min-width: 0;
-    }
-    .new-voice-btn,
-    .pin-btn {
-      min-width: 0;
-    }
-  }
-}
-
 @media only screen and (max-width: $screen-xs) {
+  .action-buttons.sticky-button {
+    flex-direction: column;
+  }
+
   .toolbar-row {
+    flex-wrap: wrap;
+    height: auto;
+
     .search-form-field,
     .label-filter-field {
       flex: 1 1 25%;
