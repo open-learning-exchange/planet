@@ -51,11 +51,19 @@
             "accessibility": "explicit"
           }
         ],
-        // "@typescript-eslint/no-use-before-define": "error",
-        // "brace-style": [
-        //   "error",
-        //   "1tbs"
-        // ],
+        "@typescript-eslint/no-use-before-define": "error",
+        "brace-style": [
+          "error",
+          "1tbs"
+        ],
+        "indent": [
+          "error",
+          2,
+          {
+            "SwitchCase": 1,
+            "flatTernaryExpressions": true
+          }
+        ],
         "id-blacklist": "error",
 
         // From ng-cli-compat
