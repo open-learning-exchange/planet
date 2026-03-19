@@ -28,7 +28,7 @@ export class MyPlanetToolbarComponent {
   @Output() versionChange = new EventEmitter<string>();
   @Output() typeChange = new EventEmitter<string>();
   @Output() timeFilterChange = new EventEmitter<string>();
-  @Output() search = new EventEmitter<string>();
+  @Output() searchChange = new EventEmitter<string>();
   @Output() clear = new EventEmitter<void>();
   @Output() resetDateFilter = new EventEmitter<void>();
   deviceType: DeviceType;
@@ -57,7 +57,7 @@ export class MyPlanetToolbarComponent {
   }
 
   onSearch(value: string) {
-    this.search.emit(value);
+    this.searchChange.emit(value);
   }
 
   onClear() {
