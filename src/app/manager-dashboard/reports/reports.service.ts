@@ -225,7 +225,7 @@ export class ReportsService {
   }
 
   minTime(activities, timeField: string) {
-    return activities.reduce((minTime, { [timeField as keyof Object]: time }) => minTime && minTime < time ? minTime : time, undefined);
+    return activities.reduce((minTime, { [timeField as keyof object]: time }) => minTime && minTime < time ? minTime : time, undefined);
   }
 
   planetTypeText(planetType) {
