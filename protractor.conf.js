@@ -33,12 +33,19 @@ exports.config = {
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
     browser.params.user = user.get();
 
-    return user.create().then(function(res) {
-      defer.fulfill();
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
+    // We return defer.promise (instead of the native user.create() promise) so
+    // Protractor's control flow only starts specs after the explicit readiness
+    // signal and reliably fails startup if user creation cannot complete.
+    user.create()
+      .then(function() {
+        defer.fulfill();
+      })
+      .catch(function(err) {
+        console.log(err);
+        defer.reject(err);
+      });
+
+    return defer.promise;
   },
   onComplete() {
     return user.delete().then(function(res) {
