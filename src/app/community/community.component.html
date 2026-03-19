@@ -3,7 +3,7 @@
     <div class="community-news">
       <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
+          <mat-toolbar class="bg-light-grey font-size-1 toolbar-row responsive-toolbar" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
               <mat-form-field class="search-form-field mdc-toolbar-input">
                 <mat-label i18n>Search voice</mat-label>
                 <mat-icon matIconPrefix>search</mat-icon>
