@@ -119,15 +119,19 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkRequestStatus() {
     this.couchService.post(`communityregistrationrequests/_find`,
-      findDocuments({ 'code': this.planetConfiguration.code }, [ 'registrationRequest' ]),
-      { domain: this.planetConfiguration.parentDomain }).subscribe(data => {
-        if (data.docs.length === 0) {
-          this.showResendConfiguration = true;
-          this.requestStatus = 'deleted';
-        } else {
-          this.requestStatus = data.docs[0].registrationRequest;
-        }
-      }, error => (error));
+      findDocuments(
+        { 'code': this.planetConfiguration.code },
+        [ 'registrationRequest' ]
+      ),
+      { domain: this.planetConfiguration.parentDomain }
+    ).subscribe(data => {
+      if (data.docs.length === 0) {
+        this.showResendConfiguration = true;
+        this.requestStatus = 'deleted';
+      } else {
+        this.requestStatus = data.docs[0].registrationRequest;
+      }
+    }, error => (error));
   }
 
   // Find on the user or shelf db (which have matching ids)
@@ -265,9 +269,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resetPin() {
-  const userName = 'org.couchdb.user:satellite';
-  return this.couchService.get('_users/' + userName)
-    .pipe(
+    const userName = 'org.couchdb.user:satellite';
+    return this.couchService.get('_users/' + userName).pipe(
       switchMap((data) => {
         const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
         satelliteProfile.password = this.managerService.createPin();
@@ -277,7 +280,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         ]);
       })
     );
-}
+  }
 
   setVersions() {
     const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };
