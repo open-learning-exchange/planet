@@ -8,7 +8,7 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, filterByDate, exportMyPlanetCsv } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
