@@ -1,7 +1,5 @@
-@import '../variables';
-
-$toolbar-height: 25vh;
-$label-height: 1rem;
+@use '../variables' as v;
+@use './courses-shared' as c;
 .mat-mdc-table {
   .mat-mdc-row {
     border-bottom-width: 1px;
@@ -67,7 +65,7 @@ $label-height: 1rem;
 }
 
 .search-bar {
-  height: $toolbar-height;
+  height: c.$toolbar-height;
 }
 
 .break-word {
@@ -75,7 +73,7 @@ $label-height: 1rem;
 }
 
 planet-courses {
-  @media(max-width: $screen-md) {
+  @media(max-width: v.$screen-md) {
     .mat-column-info {
       max-width: 120px;
     }
@@ -85,7 +83,7 @@ planet-courses {
     }
   }
 
-  @media(max-width: $screen-sm) {
+  @media(max-width: v.$screen-sm) {
     .created-label {
       display: inline-block;
     }

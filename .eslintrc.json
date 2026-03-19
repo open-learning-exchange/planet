@@ -10,8 +10,7 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
+          "tsconfig.json"
         ],
         "ecmaVersion": 2020,
         "sourceType": "module",
@@ -52,7 +51,7 @@
             "accessibility": "explicit"
           }
         ],
-        // "@typescript-eslint/no-use-before-define": "error",
+        "@typescript-eslint/no-use-before-define": "error",
         "brace-style": [
           "error",
           "1tbs"
