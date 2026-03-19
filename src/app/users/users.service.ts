@@ -162,7 +162,7 @@ export class UsersService {
     const tempUser = {
       ...user,
       roles: roles,
-      oldRoles: [ ...user.roles ] || [ 'learner' ],
+      oldRoles: [ ...(user.roles ?? ['learner']) ],
     };
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
       switchMap(() => this.sendNotifications(user))
