@@ -94,5 +94,10 @@
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
     "typescript": "~5.8.3"
+  },
+  "overrides": {
+    "@typescript-eslint/visitor-keys": {
+      "eslint-visitor-keys": "4.2.1"
+    }
   }
 }
