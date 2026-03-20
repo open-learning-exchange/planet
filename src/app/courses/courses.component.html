@@ -106,7 +106,7 @@
   </ng-template>
 
   <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
-    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
+    <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -160,8 +160,8 @@
             </ng-container>
           </mat-chip-set>
           <div class="content">
-            <div *ngIf="!isExpanded(element)" class="preview-content" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true"></planet-markdown>
+            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
+              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
             </div>
             <div *ngIf="showPreviewExpand(element)" class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
@@ -242,22 +242,8 @@
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'course'" [disabled]="isDialog || isForm"></planet-rating>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="expandedDetail">
-        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
-            <ng-container *ngIf="element.renderContent && isExpanded(element)">
-              <planet-markdown
-                class="img-resize"
-                [imageSource]="parent ? 'parent' : 'local'"
-                [content]="element.doc.description">
-              </planet-markdown>
-            </ng-container>
-          </div>
-        </mat-cell>
-      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
-      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td><div class="view-container" *ngIf="!isLoading" i18n>No Course Found</div></td>
       </tr>

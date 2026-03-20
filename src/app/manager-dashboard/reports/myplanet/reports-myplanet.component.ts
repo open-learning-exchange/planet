@@ -81,8 +81,12 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   getEarliestDate(myPlanets: any[]): Date {
     const earliest = Math.min(...myPlanets.flatMap(planet => {
       const dates = [];
-      if (planet.time) { dates.push(Number(planet.time)); }
-      if (planet.last_synced) { dates.push(Number(planet.last_synced)); }
+      if (planet.time) {
+        dates.push(Number(planet.time));
+      }
+      if (planet.last_synced) {
+        dates.push(Number(planet.last_synced));
+      }
       if (planet.usages) {
         dates.push(...planet.usages.map(usage => Number(usage.time || usage.last_synced)));
       }
@@ -164,8 +168,8 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       [$localize`Last Synced`]: data.time && data.time !== 0 ?
         new Date(data.time).toDateString() :
         data.last_synced && data.last_synced !== 0 ?
-        new Date(data.last_synced).toDateString() :
-        'N/A',
+          new Date(data.last_synced).toDateString() :
+          'N/A',
       [$localize`Version`]: data.versionName,
       [$localize`No of Visits`]: data.count,
       [$localize`Used Time`]: this.timePipe.transform(data.totalUsedTime),

@@ -7,11 +7,11 @@ export const converter = new showdown.Converter();
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
 export const dedupeShelfReduce = (ids, id) => {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  };
+  if (ids.indexOf(id) > -1) {
+    return ids;
+  }
+  return ids.concat(id);
+};
 
 export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
   return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
@@ -91,8 +91,8 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const afterBirthDay = now.getMonth() < birth.getMonth() ?
     false :
     now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-    false :
-    true;
+      false :
+      true;
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
 
@@ -125,7 +125,9 @@ export const markdownToPlainText = (markdown: any) => {
 };
 
 export const truncateText = (text, length) => {
-  if (!text) { return ''; }
+  if (!text) {
+    return '';
+  }
   if (text.length > length) {
     return `${text.slice(0, length)}...`;
   }

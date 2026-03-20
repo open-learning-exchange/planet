@@ -53,7 +53,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() isDialog = false;
   @Input() meetup: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
-  @Output() onGoBack = new EventEmitter<any>();
+  @Output() goBackEvent = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup<MeetupFormControls>;
   readonly dbName = 'meetups'; // database name constant
@@ -103,8 +103,12 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private parseDateValue(value: string | Date | null): number {
-    if (!value) {return NaN;}
-    if (value instanceof Date) {return value.getTime();}
+    if (!value) {
+      return NaN;
+    }
+    if (value instanceof Date) {
+      return value.getTime();
+    }
     return Date.parse(value);
   }
 
@@ -212,14 +216,14 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       '_rev': this.revision,
       'startDate': this.parseDateValue(meetupInfo.startDate),
       'endDate': this.parseDateValue(meetupInfo.endDate)
-     }).pipe(switchMap(() => {
-        return this.couchService.post('shelf/_find', findDocuments({
-          'meetupIds': { '$in': [ this.id ] }
-        }, [ '_id' ], 0));
-      }),
-      switchMap(data => {
-        return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
-      })
+    }).pipe(switchMap(() => {
+      return this.couchService.post('shelf/_find', findDocuments({
+        'meetupIds': { '$in': [ this.id ] }
+      }, [ '_id' ], 0));
+    }),
+    switchMap(data => {
+      return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
+    })
     ).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
@@ -246,7 +250,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   goBack(res?) {
     if (this.isDialog) {
-      this.onGoBack.emit(res);
+      this.goBackEvent.emit(res);
     } else {
       this.router.navigate([ '/meetups' ]);
     }

@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -37,13 +36,6 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: [ './courses.scss' ],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -83,7 +75,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
@@ -409,7 +403,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
-    if (this.isForm) { return; }
+    if (this.isForm) {
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -433,9 +429,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((planet) => {
       const data = { okClick: this.sendCourse().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
@@ -477,10 +473,6 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   toggleRow(element: any) {
     this.expandedElement = this.expandedElement === element ? null : element;
-  }
-
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
   }
 
   isExpanded(element: any): boolean {

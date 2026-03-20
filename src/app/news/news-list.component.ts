@@ -245,9 +245,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.deleteNews(
           news,
           this.viewableId,
-          deleteFromAllViews),
-          this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId
-        )
+          deleteFromAllViews
+        ),
+        this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
       onNext: (data) => {
         if (isMainStory) {
@@ -280,7 +280,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
     this.changeLabelsFilter.emit({ label, action });
-    if (action === 'select') { return; }
+    if (action === 'select') {
+      return;
+    }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);

@@ -80,7 +80,7 @@ export class CoursesStepComponent implements OnDestroy {
         okClick: this.resourcsDialogOkClick.bind(this),
         excludeIds: this.steps[this.activeStepIndex].resources.map((resource: any) => resource._id),
         canAdd: true
-    } });
+      }});
   }
 
   resourcsDialogOkClick(selected: any) {

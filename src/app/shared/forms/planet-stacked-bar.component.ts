@@ -21,6 +21,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
     .stacked-bar {
       overflow: hidden;
       font-size: 0.7em;
+      line-height: 0.75rem;
     }
     .stacked-bar span {
       margin: 0 0.2rem;
