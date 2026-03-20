@@ -47,7 +47,6 @@ export class UsersAchievementsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(pdfMake);
     this.route.paramMap.subscribe((params: ParamMap) => {
       let name = params.get('name');
       let id;
