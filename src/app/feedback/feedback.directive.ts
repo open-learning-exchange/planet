@@ -25,7 +25,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
-  params: Object;
+  params: object;
 }
 
 const dialogFieldOptions = [

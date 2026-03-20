@@ -138,7 +138,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     if (id) {
       try {
         this.chatService.findConversations([ id ]).subscribe(
-          (conversation: Object) => {
+          (conversation: object) => {
             const messages = conversation[0]?.conversations;
             this.conversations = messages;
           }

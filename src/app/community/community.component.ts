@@ -282,7 +282,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
           width: '50vw',
           maxHeight: '100vh'
         });
-        this.userStatusService.updateStatus('hasPost', true);
+        this.userStatusService.updateStatus(
+          'hasPost',
+          { status: true, amount: 1 }
+        );
       }
     });
   }

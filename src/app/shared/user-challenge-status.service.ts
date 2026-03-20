@@ -1,10 +1,22 @@
 import { Injectable } from '@angular/core';
 
+interface UserStatusValue {
+  status: boolean,
+  amount: number
+}
+
+interface UserStatus {
+  joinedCourse: UserStatusValue,
+  surveyComplete: UserStatusValue,
+  hasPost: UserStatusValue,
+  userPosts: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class UserChallengeStatusService {
-  userStatus = {
+  userStatus: UserStatus = {
     joinedCourse: {
       status: false,
       amount: 0
@@ -20,7 +32,7 @@ export class UserChallengeStatusService {
     userPosts: 0
   };
 
-  updateStatus(key: string, value: Object | number) {
+  updateStatus(key: string, value: UserStatusValue | number) {
     this.userStatus[key] = value;
   }
 
