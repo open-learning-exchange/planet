@@ -32,6 +32,12 @@ interface TeamSelectionEvent {
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
+  styles: [ `
+    .platform-icon {
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  ` ]
 })
 export class CommunityLinkDialogComponent {
 
