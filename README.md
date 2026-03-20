@@ -102,6 +102,23 @@ To run planet in development with a different locale, you can set the configurat
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
+## Build Configuration and Environment Mapping
+
+Planet uses Angular `fileReplacements` in `angular.json` to select which environment file is active per build configuration. Keep this mapping intact when editing environment files.
+
+| Build configuration | Active environment file | Notes |
+| --- | --- | --- |
+| default (`ng serve` / `ng build`) | `src/environments/environment.ts` | Baseline local defaults. |
+| `dev` | `src/environments/environment.dev.ts` | Generated from `src/environments/environment.template` by running `./dev-env.sh`. |
+| `production` | `src/environments/environment.prod.ts` | Production endpoints/settings. |
+| `test` | `src/environments/environment.test.ts` | Test-specific CouchDB and flags. |
+
+### Maintainer guidance
+
+* Do **not** remove environment files without also updating `angular.json` replacements and validating all affected build targets.
+* If you need to clean up configuration, prefer consolidating environment keys while preserving existing `fileReplacements` behavior.
+* High risk if files are deleted or replacement mapping is broken: production/test builds can fail or silently point to incorrect endpoints.
+
 ## Unit & End-to-End Tests
 
 You can run tests directly from the host or within the development container.
