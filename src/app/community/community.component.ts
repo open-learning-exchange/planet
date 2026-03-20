@@ -281,7 +281,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
           width: '50vw',
           maxHeight: '100vh'
         });
-        this.userStatusService.updateStatus('hasPost', true);
+        this.userStatusService.updateStatus(
+          'hasPost',
+          { status: true, amount: 1 }
+        );
       }
     });
   }
@@ -320,7 +323,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setLinksAndFinances({ links, finances, reports }) {
-    this.links = links;
+    this.links = (links || []).map(link => ({
+      ...link,
+      // for backward compatibility, some old links might have 'web' as icon instead of 'website'
+      icon: link.icon === 'web' ? 'website' : link.icon
+    }));
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;
@@ -454,8 +461,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const msg = !leadershipTitle ?
           $localize`Title deleted` :
           !councillor.doc.leadershipTitle ?
-          $localize`Title added` :
-          $localize`Title updated`;
+            $localize`Title added` :
+            $localize`Title updated`;
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();

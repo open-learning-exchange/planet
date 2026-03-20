@@ -274,7 +274,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.createAchievementGroup(achievement),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
-         formGroup.controls.date.value;
+          formGroup.controls.date.value;
         formGroup.controls.date.setValue(achievedAt);
         this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
       }, closeOnSubmit: true }

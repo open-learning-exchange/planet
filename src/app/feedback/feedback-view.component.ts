@@ -102,7 +102,9 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         return forkJoin([ this.getFeedback(res.id), this.sendNotifications() ]);
       })
       ).subscribe(
-        ([ feedback, notificationRes ]) => { this.setFeedback(feedback); },
+        ([ feedback, notificationRes ]) => {
+          this.setFeedback(feedback);
+        },
         error => this.planetMessageService.showAlert($localize`There was an error adding your message`)
       );
   }

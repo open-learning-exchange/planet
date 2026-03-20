@@ -7,8 +7,8 @@ import { UserChallengeStatusService } from '../user-challenge-status.service';
 
 interface SessionInfo {
   userCtx: {
-    name: String;
-    roles: String[];
+    name: string;
+    roles: string[];
   };
 }
 @Injectable({

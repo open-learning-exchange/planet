@@ -207,14 +207,14 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   openAddEventDialog(event) {
     const today = new Date();
     const meetup = event?.start
-    ? {
-      startDate: event.start,
-      endDate: this.adjustEndDate(event.end),
-    }
-  : {
-      startDate: today,
-      endDate: today,
-    };
+      ? {
+        startDate: event.start,
+        endDate: this.adjustEndDate(event.end),
+      }
+      : {
+        startDate: today,
+        endDate: today,
+      };
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'no-max-height-dialog'

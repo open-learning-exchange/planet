@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { StateService } from './shared/state.service';
-declare let gtag: Function;
+declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 
 @Component({
   selector: 'planet-app',
