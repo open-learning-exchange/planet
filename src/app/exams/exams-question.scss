@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -20,7 +20,7 @@
 
   .type-title-container {
     display: grid;
-    grid-template-columns: 1fr $form-width-1;
+    grid-template-columns: 1fr v.$form-width-1;
     grid-column-gap: 0.5rem;
   }
 
