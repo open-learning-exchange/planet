@@ -143,6 +143,8 @@ export const normalizeMarkdownWhitespace = (content: string) => {
   return content.trim();
 };
 
+export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
+
 export const getMarkdownPreviewText = (content: string) => {
   const normalizedContent = normalizeMarkdownWhitespace(content);
   const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
@@ -158,8 +160,6 @@ export const calculateMdAdjustedLimit = (content, limit) => {
   const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
   return Math.floor(limit * scaleFactor);
 };
-
-export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
 
 export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
 
