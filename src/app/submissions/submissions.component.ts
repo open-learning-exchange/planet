@@ -91,9 +91,19 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
 
       if (!this.isManagerSurveysRoute) {
+        const firstIndexMap = new Map<string, number>();
         normalized = normalized.reduce((sList, s1) => {
-          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-          if (!s1.user._id || sIndex === -1) {
+          const userId = s1.user?._id;
+          const key = userId ? `${s1.parentId}|${userId}` : null;
+          let sIndex = -1;
+          if (key && s1.type === 'survey' && firstIndexMap.has(key)) {
+            sIndex = firstIndexMap.get(key);
+          }
+
+          if (!userId || sIndex === -1) {
+            if (key && !firstIndexMap.has(key)) {
+              firstIndexMap.set(key, sList.length);
+            }
             sList.push(s1);
           } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
             sList[sIndex] = s1;
