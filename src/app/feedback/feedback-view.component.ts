@@ -19,6 +19,13 @@ import { trackById } from '../shared/table-helpers';
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
+  private readonly navigationLabels: Record<string, string> = {
+    resources: $localize`Go to Resource`,
+    courses: $localize`Go to Course`,
+    meetups: $localize`Go to Meetup`,
+    teams: $localize`Go to Team`,
+    enterprises: $localize`Go to Enterprise`,
+  };
   private onDestroy$ = new Subject<void>();
   @ViewChild('chatList') chatListElement: ElementRef;
   feedback: any = {};
@@ -181,6 +188,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   toggleParams() {
     this.showParams = this.showParams === 'off' ? 'on' : 'off';
+  }
+
+  get feedbackNavigationLabel(): string {
+    return this.navigationLabels[this.feedback?.state] || '';
   }
 
 }
