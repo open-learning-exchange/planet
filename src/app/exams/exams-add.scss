@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -7,7 +7,7 @@
     grid-auto-rows: 1fr;
 
     &.view-container.view-full-height {
-      height: $view-container-height-no-toolbar;
+      height: v.$view-container-height-no-toolbar;
     }
 
   }
@@ -15,12 +15,12 @@
   form {
     display: grid;
     grid-template-areas: "buttons" "questions";
-    grid-template-rows: auto calc(#{$view-container-height-no-toolbar} - 2rem);
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   form.survey-form {
     grid-template-areas: "buttons" "inputs" "questions";
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr);
   }
 
   .exam-buttons {
@@ -50,7 +50,7 @@
 
   .exam-questions {
     grid-area: questions;
-    overflow-y: auto;
+    margin-top: 1rem;
   }
 
 }

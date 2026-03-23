@@ -33,8 +33,8 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   }
 
   @HostListener('window:resize') OnResize() {
-      this.deviceType = this.deviceInfoService.getDeviceType();
-    }
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   setTooltipLabels(selectedIds, allTags) {
     const tagsNames = selectedIds.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
@@ -43,7 +43,7 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
 
   getTruncatedTooltip(): string {
     const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 :
-                      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
+      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
     return truncateText(this.tooltipLabels, maxLength);
   }
 

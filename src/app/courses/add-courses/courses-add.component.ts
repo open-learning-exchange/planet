@@ -293,7 +293,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   deleteDraft() {
-    if (!this.draftExists) { return; }
+    if (!this.draftExists) {
+      return;
+    }
     if (this.savedCourse) {
       this.setFormAndSteps({
         form: this.savedCourse,

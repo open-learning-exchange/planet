@@ -494,7 +494,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }, $localize`Message has been posted successfully`).pipe(
       switchMap(() => this.sendNotifications('message')),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => { this.dialogsFormService.closeDialogsForm(); });
+    ).subscribe(() => {
+      this.dialogsFormService.closeDialogsForm();
+    });
   }
 
   openResourcesDialog(resource?) {
@@ -504,10 +506,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       data: {
         okClick: (resources: any[]) => {
           this.teamsService.linkResourcesToTeam(resources, this.team)
-          .pipe(switchMap(() => this.getMembers())).subscribe(() => {
-            dialogRef.close();
-            this.dialogsLoadingService.stop();
-          });
+            .pipe(switchMap(() => this.getMembers())).subscribe(() => {
+              dialogRef.close();
+              this.dialogsLoadingService.stop();
+            });
         },
         excludeIds: this.resources.filter(r => r.resource).map(r => r.resource._id),
         canAdd: true, db: this.dbName, linkId: this.teamId, resource
@@ -559,8 +561,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openResource(resourceId) {
     this.dialog.open(DialogsResourcesViewerComponent, {
-      data: { resourceId, returnState: { route: `${this.mode}s/view/${this.teamId}` }
-    }, autoFocus: false });
+      data: {
+        resourceId,
+        returnState: { route: `${this.mode}s/view/${this.teamId}` }
+      },
+      autoFocus: false
+    });
   }
 
   openMemberDialog(member) {

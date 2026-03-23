@@ -220,11 +220,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getTeams();
       const msg = team._id
         ? (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
-            : $localize`:@@team-updated-success:Team updated successfully`)
+          ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
+          : $localize`:@@team-updated-success:Team updated successfully`)
         : (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-created-success:Enterprise created successfully`
-            : $localize`:@@team-created-success:Team created successfully`);
+          ? $localize`:@@enterprise-created-success:Enterprise created successfully`
+          : $localize`:@@team-created-success:Team created successfully`);
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -238,7 +238,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           this.removeTeamFromTable(team);
         }
         return this.getMembershipStatus();
-    }));
+      }));
   }
 
   openLeaveDialog(team, membershipDoc) {
@@ -323,7 +323,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   sortbyUserTeams() {
-    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) { return; }
+    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) {
+      return;
+    }
 
     this.sort.active = 'membership';
     this.sort.direction = 'desc';
