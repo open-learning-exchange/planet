@@ -1,7 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.22.5",
+  "version": "0.22.6",
   "myplanet": {
     "latest": "v0.50.5",
     "min": "v0.49.69"
@@ -18,7 +18,7 @@
     "lint": "ng lint planet-app",
     "lint-all": "npm run sass-lint && ng lint planet-app --type-check && npm run htmlhint",
     "install-hooks": "cp -a git-hooks/. .git/hooks/",
-    "generate-yml": "cd $(git rev-parse --show-toplevel)/docker;./generate_yml.sh",
+    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
     "starthub-true": "echo \"true\" > /srv/starthub",
     "starthub-false": "echo \"false\" > /srv/starthub"
   },
