@@ -169,27 +169,26 @@ export class LoginFormComponent {
       if (await this.checkArchiveStatus(name)) {
         return;
       }
+      if (this.isDialog) {
+        this.pouchAuthService.login(name, password).pipe(
+          switchMap((userCtx) => this.userService.setUserAndShelf(userCtx))
+        ).subscribe(() => {
+          this.loginEvent.emit('loggedIn');
+          this.runPostLoginTasks(name, password, isCreate, userId, configuration).pipe(
+            catchError((error) => {
+              console.error('Background post-login task failed:', error);
+              return of(null);
+            })
+          ).subscribe();
+        }, this.loginError.bind(this));
+        return;
+      }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap((userCtx) => (this.isDialog ?
-          this.userService.setUserAndShelf(userCtx) :
-          isCreate ?
-            from(this.router.navigate([ 'users/update/' + name ])) :
-            from(this.reRoute())
+        switchMap(() => (isCreate ?
+          from(this.router.navigate([ 'users/update/' + name ])) :
+          from(this.reRoute())
         )),
-        switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
-        switchMap(this.createSession(name, password)),
-        switchMap((sessionData) => {
-          const adminName = configuration.adminName.split('@')[0];
-          return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-        }),
-        switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
-        map((surveys) => {
-          const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
-          if (uniqueSurveys.length > 0) {
-            this.openNotificationsDialog(uniqueSurveys);
-          }
-        }),
-        switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
+        switchMap(() => this.runPostLoginTasks(name, password, isCreate, userId, configuration)),
         catchError(error => error.status === 404 ? of({}) : throwError(error))
       ).subscribe(() => {
         this.loginEvent.emit('loggedIn');
@@ -260,6 +259,24 @@ export class LoginFormComponent {
       obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
     }
     return obsArr;
+  }
+
+  private runPostLoginTasks(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
+    return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
+      switchMap(this.createSession(name, password)),
+      switchMap((sessionData) => {
+        const adminName = configuration.adminName.split('@')[0];
+        return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
+      }),
+      switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
+      map((surveys) => {
+        const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
+        if (uniqueSurveys.length > 0) {
+          this.openNotificationsDialog(uniqueSurveys);
+        }
+      }),
+      switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId)))
+    );
   }
 
   getConfigurationSyncDown(configuration: { code: string }, credentials: LoginCredentials) {
