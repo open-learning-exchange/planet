@@ -1,4 +1,4 @@
-@import "../variables";
+@use "../variables" as v;
 
 .container {
   padding: 20px;
@@ -52,8 +52,7 @@ mat-list-item.mat-mdc-list-item {
   margin-top: 8px;
 }
 
-/* Tablet */
-@media (max-width: $screen-md) {
+@media (max-width: v.$screen-md) {
   .container { padding: 15px; }
   .card { width: 100%; margin: 0; }
   .list-item-content { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
@@ -62,8 +61,7 @@ mat-list-item.mat-mdc-list-item {
   input { width: 100%; }
 }
 
-/* Mobile */
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .container { padding: 10px; }
   .card { width: 100%; margin: 0; }
   .list-item-content { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 10px; max-width: 70%; overflow-x: hidden; }

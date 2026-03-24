@@ -63,17 +63,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.courseUpdated$,
       this.resourcesService.resourcesListener(this.parent),
       this.stateService.getCouchState('exams', 'local')
-    ).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
-      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
-      if (this.countActivity) {
-        this.coursesService.courseActivity('visit', course, this.stepNum);
-        this.countActivity = false;
-      }
-      this.canManage = this.userService.get().isUserAdmin ||
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(
+      ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+        this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
+        if (this.countActivity) {
+          this.coursesService.courseActivity('visit', course, this.stepNum);
+          this.countActivity = false;
+        }
+        this.canManage = this.userService.get().isUserAdmin ||
         course.creator !== undefined &&
         (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
-    });
+      });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
@@ -90,18 +90,18 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
-      this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-      this.attempts = attempts;
-      const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-      this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-      if (!this.parent && this.progress.passed !== this.examPassed) {
-        this.coursesService.updateProgress({
-          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-        });
-      }
-    });
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+        this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
+        this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        this.attempts = attempts;
+        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
+        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
+        if (!this.parent && this.progress.passed !== this.examPassed) {
+          this.coursesService.updateProgress({
+            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
+          });
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -226,6 +226,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   openReviewDialog() {
     this.dialog.open(DialogsSubmissionsComponent, {
       minWidth: '500px',
+      maxWidth: '90vw',
       maxHeight: '90vh',
       data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
     });

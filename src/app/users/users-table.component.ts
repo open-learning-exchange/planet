@@ -1,8 +1,13 @@
 import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
 } from '@angular/core';
+<<<<<<< HEAD
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+=======
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+>>>>>>> origin
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -78,7 +83,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
-  selection = new SelectionModel(true, []);
+  selection = new SelectionModel(true, [], true,
+    (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
+  );
+  renderedData: any[] = [];
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
@@ -117,6 +125,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     });
     this.usersTable.filterPredicate = this.filterPredicate();
     this.usersTable.connect().subscribe(data => {
+      this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -148,22 +157,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
-  onPaginateChange(e: PageEvent) {
-  }
-
-  isSelected(user) {
-    return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
-  }
-
-  getVisibleRows() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    return this.usersTable.filteredData.slice(start, end);
-  }
-
   isAllSelected() {
-    const visibleRows = this.getVisibleRows();
-    return visibleRows.length > 0 && visibleRows.every((row: any) => this.isSelected(row.doc));
+    return this.renderedData.length > 0 && this.renderedData.every((row: any) => this.selection.isSelected(row.doc));
   }
 
   onlyManagerSelected() {
@@ -172,12 +167,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const visibleRows = this.getVisibleRows();
     if (this.isAllSelected()) {
-      visibleRows.forEach((row: any) => this.selection.deselect(row.doc));
+      this.renderedData.forEach((row: any) => this.selection.deselect(row.doc));
     } else {
-      visibleRows.forEach((row: any) => {
-        if (!this.isSelected(row.doc)) {
+      this.renderedData.forEach((row: any) => {
+        if (!this.selection.isSelected(row.doc)) {
           this.selection.select(row.doc);
         }
       });
@@ -253,10 +247,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.requestUsers(true);
       this.planetMessageService.showMessage($localize`${user.name} roles modified`);
     });
-  }
-
-  onPageChange(e: PageEvent) {
-    console.log(e);
   }
 
 }

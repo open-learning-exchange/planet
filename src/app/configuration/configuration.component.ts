@@ -58,8 +58,10 @@ interface ContactForm {
       margin: 0px 2px 2px 0px;
     }
     .configuration-form {
-      grid-template-areas: "none none ." "none none none";
-      justify-items: center;
+      align-items: start;
+    }
+    .configuration-form mat-form-field {
+      width: 100%;
     }
     .advanced {
       grid-column-start: 2;
@@ -159,8 +161,7 @@ export class ConfigurationComponent implements OnInit {
   initUpdate() {
     this.configurationType = 'update';
     const configurationId = this.stateService.configuration._id;
-    this.couchService.get('configurations/' + configurationId)
-    .subscribe((data: any) => {
+    this.couchService.get('configurations/' + configurationId).subscribe((data: any) => {
       this.configuration = data;
       this.nationOrCommunity = data.planetType;
       this.configurationFormGroup.patchValue(data);
@@ -204,7 +205,7 @@ export class ConfigurationComponent implements OnInit {
     this.configurationFormGroup.controls.localDomain.setValue(this.defaultLocal);
   }
 
-  planetNameChange(event: Event) {
+  planetNameChange() {
     if (this.configurationType !== 'update') {
       let code = this.configurationFormGroup.controls.name.value;
       // convert special character to dot except last character

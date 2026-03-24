@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 mat-card {
   margin: 0.25rem;
@@ -32,33 +32,25 @@ mat-card-content {
 }
 
 .profile-outline {
-  border: 2px solid $primary;
+  border: 2px solid v.$primary;
   border-radius: 50%;
   width: 40px;
   height: 40px;
 }
 
-.mat-mdc-chip.chip-outline-accent {
-  background-color: $accent-lighter;
-}
-
-.mat-mdc-chip.chip-outline-primary {
-  background-color: $primary-lighter;
-}
-
-.mat-mdc-chip.chip-outline-grey {
-  background-color: $light-grey;
-}
-
 .user-name-truncate {
-  flex: 1 1 0;
-  justify-content: start;
+  flex: 1 1 auto;
+  max-width: 50%;
+  display: block;
+  overflow: hidden;
+  text-align: left;
 }
 
 .user-name-truncate-text {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .full-width {
   width: 100%;

@@ -1,4 +1,4 @@
-export const showdown = require('showdown');
+const showdown = require('showdown');
 export const pdfMake = require('pdfmake/build/pdfmake');
 export const pdfFonts = require('pdfmake/build/vfs_fonts');
 export const converter = new showdown.Converter();
@@ -7,11 +7,11 @@ export const converter = new showdown.Converter();
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
 export const dedupeShelfReduce = (ids, id) => {
-    if (ids.indexOf(id) > -1) {
-      return ids;
-    }
-    return ids.concat(id);
-  };
+  if (ids.indexOf(id) > -1) {
+    return ids;
+  }
+  return ids.concat(id);
+};
 
 export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
   return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
@@ -43,8 +43,7 @@ export const styleVariables: any = {
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
   grey: '#bdbdbd',
-  greyText: 'rgba(0, 0, 0, 0.54)',
-  lightGrey: 'whitesmoke'
+  greyText: 'rgba(0, 0, 0, 0.54)'
 };;
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
@@ -92,8 +91,8 @@ export const ageFromBirthDate = (currentTime: number, birthDate: string) => {
   const afterBirthDay = now.getMonth() < birth.getMonth() ?
     false :
     now.getMonth() === birth.getMonth() && now.getDay() < birth.getDay() ?
-    false :
-    true;
+      false :
+      true;
   return yearDiff - (afterBirthDay ? 0 : 1);
 };
 
@@ -126,11 +125,30 @@ export const markdownToPlainText = (markdown: any) => {
 };
 
 export const truncateText = (text, length) => {
-  if (!text) { return ''; }
+  if (!text) {
+    return '';
+  }
   if (text.length > length) {
     return `${text.slice(0, length)}...`;
   }
   return text;
+};
+
+export const normalizeMarkdownWhitespace = (content: string) => {
+  // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
+  // Replace sequences of tabs/spaces with max 2 spaces
+  content = (content || '').replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
+  // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
+  content = content.replace(/\n{3,}/g, '\n\n');
+  return content.trim();
+};
+
+export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
+
+export const getMarkdownPreviewText = (content: string) => {
+  const normalizedContent = normalizeMarkdownWhitespace(content);
+  const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
+  return textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
 };
 
 export const calculateMdAdjustedLimit = (content, limit) => {
@@ -141,4 +159,23 @@ export const calculateMdAdjustedLimit = (content, limit) => {
 
   const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
   return Math.floor(limit * scaleFactor);
+};
+
+export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
+
+export const doesMarkdownPreviewTruncate = (content: string, limit = 450) => {
+  const previewText = getMarkdownPreviewText(content);
+  return previewText.length > calculateMdAdjustedLimit(previewText, limit);
+};
+
+export const extractMarkdownImageUrls = (content: string) => {
+  const matches: string[] = [];
+  const regex = new RegExp(markdownImageRegex);
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(content || '')) !== null) {
+    matches.push(match[1]);
+  }
+
+  return matches;
 };

@@ -130,38 +130,40 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
       this.initializeComparisonDates();
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
-        if (planetState === undefined) {
-          return;
-        }
-        const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        const parseDate = (dateStr) => {
-          if (!dateStr) { return null; }
-          const [ y, m, d ] = dateStr.split('-').map(Number);
-          return new Date(y, m - 1, d);
-        };
-        this.dateQueryParams = {
-          startDate: parseDate(queryParams['startDate']),
-          endDate: parseDate(queryParams['endDate']) || this.today
-        };
-        if (
-          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
+          if (planetState === undefined) {
+            return;
+          }
+          const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+          const parseDate = (dateStr) => {
+            if (!dateStr) {
+              return null;
+            }
+            const [ y, m, d ] = dateStr.split('-').map(Number);
+            return new Date(y, m - 1, d);
+          };
+          this.dateQueryParams = {
+            startDate: parseDate(queryParams['startDate']),
+            endDate: parseDate(queryParams['endDate']) || this.today
+          };
+          if (
+            this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
           this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-        ) {
-          this.selectedTimeFilter = 'custom';
-          this.showCustomDateFields = true;
-        }
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
-        this.codeParam = params.get('code');
-        this.planetCode = this.codeParam || this.stateService.configuration.code;
-        this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-        this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.initializeData(!this.codeParam);
-      });
+          ) {
+            this.selectedTimeFilter = 'custom';
+            this.showCustomDateFields = true;
+          }
+          this.dateFilterForm.controls.endDate.setValue(
+            this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+              ? this.dateQueryParams.endDate : this.today
+          );
+          this.codeParam = params.get('code');
+          this.planetCode = this.codeParam || this.stateService.configuration.code;
+          this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
+          this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+          this.initializeData(!this.codeParam);
+        });
     });
 
     this.stateService.requestData(dbName, 'local');
@@ -279,7 +281,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -691,7 +693,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   sortData(data: any[], sortBy: string): any[] {
     const order = sortBy.endsWith('Asc') ? 1 : -1;
     let field = sortBy.replace(/Asc|Desc/, '');
-    if (field === 'username') { field = 'user'; }
+    if (field === 'username') {
+      field = 'user';
+    }
     return data.sort((a, b) => {
       let comparison = 0;
       if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
@@ -924,7 +928,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   loadComparisonData() {
-    if (!this.comparisonWeek1End || !this.comparisonWeek2End) { return };
+    if (!this.comparisonWeek1End || !this.comparisonWeek2End) {
+      return
+    };
 
     this.comparisonLoading = true;
     this.comparisonTableData = [];
@@ -979,7 +985,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const changeValue = week2Value - week1Value;
       const percentageChange = week1Value > 0 ? Math.round((changeValue / week1Value) * 100 * 10) / 10 : 0;
       const changeText = week1Value === 0 ?
-       (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
+        (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
         (changeValue >= 0 ? `+${changeValue} (+${percentageChange}%)` :
         `${changeValue} (${percentageChange}%)`);
 
@@ -1025,9 +1031,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   hasNonZeroChartData(chartId: string): boolean {
     const chart = this.charts.find(c => c.canvas.id === chartId);
-    if (!chart) { return false; }
+    if (!chart) {
+      return false;
+    }
     const datasets: any[] = (chart.data && (chart.data as any).datasets) || [];
-    if (!datasets.length) { return false; }
+    if (!datasets.length) {
+      return false;
+    }
     return datasets.some(ds => {
       const dataArr = Array.isArray(ds.data) ? ds.data : [];
       return dataArr.some(v => {

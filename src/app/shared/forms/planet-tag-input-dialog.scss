@@ -4,7 +4,6 @@
 
   mat-dialog-content {
     overflow-y: auto;
-    max-height: calc(100vh - 156px);
     box-sizing: border-box;
     padding-bottom: 16px;
   }
@@ -87,4 +86,7 @@
   flex-shrink: 0;
   white-space: nowrap;
   flex: 0 0 auto;
+  
+.add-collection-btn-container {
+  align-self: center;
 }
