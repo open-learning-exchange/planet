@@ -1,16 +1,18 @@
-
 @use "../variables" as v;
 
-.sticky-paginator {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  z-index: 10;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-  padding-bottom: 0.5rem;
-}
-
 :host {
+  .view-container.view-full-height.view-table {
+    .mobile-scroll-wrapper {
+      overflow: auto;
+    }
+
+    .mobile-scroll-wrapper mat-header-row {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+
   .mat-column-doc-teamType {
     max-width: 150px;
     padding-right: 0.5rem;
@@ -77,13 +79,15 @@
       gap: 0.5rem;
     }
 
-    .mobile-scroll-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .view-container.view-full-height.view-table {
+      .mobile-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
 
-    mat-table {
-      min-width: 800px;
+      mat-table {
+        min-width: 800px;
+      }
     }
   }
 
