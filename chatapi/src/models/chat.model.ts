@@ -12,15 +12,9 @@ interface Providers {
   gemini?: string;
 }
 
-interface Assistant {
-  name: string;
-  instructions: string;
-}
-
 export interface ModelsDocument {
   models: Providers;
   keys: Providers;
-  assistant?: Assistant;
 }
 
 export interface ChatMessage {
@@ -33,4 +27,3 @@ export interface ChatItem {
   query: string;
   response: string;
 }
-

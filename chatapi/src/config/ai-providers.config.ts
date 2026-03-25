@@ -6,7 +6,6 @@ import { ModelsDocument } from '../models/chat.model';
 
 let keys: Record<string, any> = {};
 let models: Record<string, any> = {};
-let assistant: Record<string, any> = {};
 
 async function getConfig(): Promise<ModelsDocument | undefined> {
   try {
@@ -54,10 +53,6 @@ const initialize = async () => {
       'gemini': { 'ai': keys.gemini, 'defaultModel': doc?.models.gemini || '' },
     };
 
-    assistant = {
-      'name': doc?.assistant?.name || '',
-      'instructions': doc?.assistant?.instructions || '',
-    };
   } catch (error) {
     console.error(`Error initializing configs: ${error}`);
   }
@@ -67,4 +62,4 @@ const initialize = async () => {
   await initialize();
 })();
 
-export { keys, models, assistant };
+export { keys, models };
