@@ -55,9 +55,12 @@ mat-tab-group, mat-tab {
   position: sticky;
   top: 0;
   z-index: 10;
+  background: #fff;
+}
+
+.button-row {
   display: flex;
   gap: 0.5rem;
-  background: #fff;
 }
 
 .toggle-button {
@@ -89,7 +92,7 @@ mat-tab-group, mat-tab {
 }
 
 @media only screen and (max-width: v.$screen-xs) {
-  .action-buttons.sticky-button {
+  .action-buttons.button-row {
     flex-direction: column;
   }
 
