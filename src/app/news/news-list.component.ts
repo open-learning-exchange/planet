@@ -347,6 +347,5 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
