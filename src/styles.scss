@@ -703,6 +703,15 @@ body {
     padding-top: 0.5rem;
   }
 
+  // Pagination within tabs
+  .tab-scroll-shell {
+    overflow: hidden;
+  }
+
+  .tab-scroll-layout {
+    height: 100%;
+  }
+
   .tags-list .mat-mdc-chip {
     max-width: 200px;
 

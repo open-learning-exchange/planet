@@ -1,32 +1,17 @@
-<ng-container *ngIf="replyViewing._id!=='root'">
-  <div class="action-buttons">
-    <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
-    <button mat-stroked-button type="button" *ngIf="replyViewing.doc.replyTo && replyViewing.doc.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
-  </div>
-  <planet-news-list-item class="main-message"
-    [item]="replyViewing"
-    [replyObject]="replyObject"
-    [replyView]="replyViewing._id!=='root'"
-    [showRepliesButton]="false"
-    [editable]="editable"
-    [isMainPostShared]="showMainPostShare"
-    [shareTarget]="shareTarget"
-    (changeReplyViewing)="showReplies($event)"
-    (updateNews)="openUpdateDialog($event)"
-    (deleteNews)="openDeleteDialog($event)"
-    (shareNews)="shareNews($event)"
-    (changeLabels)="changeLabels($event)">
-  </planet-news-list-item>
-  <mat-divider></mat-divider>
-  <p i18n>Replies ({{ totalReplies }}):</p>
-</ng-container>
-<ng-container *ngFor="let item of displayedItems; trackBy: trackById">
-  <div [attr.id]="'news-' + item._id">
-    <planet-news-list-item
-      [item]="item"
-      [isMainPostShared]="isMainPostShared"
+<div class="news-list-content">
+  <ng-content></ng-content>
+  <ng-container *ngIf="replyViewing._id!=='root'">
+    <div class="action-buttons">
+      <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
+      <button mat-stroked-button type="button" *ngIf="replyViewing.doc.replyTo && replyViewing.doc.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
+    </div>
+    <planet-news-list-item class="main-message"
+      [item]="replyViewing"
       [replyObject]="replyObject"
+      [replyView]="replyViewing._id!=='root'"
+      [showRepliesButton]="false"
       [editable]="editable"
+      [isMainPostShared]="showMainPostShare"
       [shareTarget]="shareTarget"
       (changeReplyViewing)="showReplies($event)"
       (updateNews)="openUpdateDialog($event)"
@@ -34,21 +19,37 @@
       (shareNews)="shareNews($event)"
       (changeLabels)="changeLabels($event)">
     </planet-news-list-item>
-  </div>
-</ng-container>
-<div class="sticky-paginator" *ngIf="replyViewing._id === 'root' && totalItems > 0">
-  <mat-paginator
-    [length]="totalItems"
-    [pageSize]="pageSize"
-    [pageIndex]="pageIndex"
-    [pageSizeOptions]="pageSizeOptions"
-    (page)="onPageChange($event)"
-    showFirstLastButtons>
-  </mat-paginator>
+    <mat-divider></mat-divider>
+    <p i18n>Replies ({{ totalReplies }}):</p>
+  </ng-container>
+  <ng-container *ngFor="let item of displayedItems; trackBy: trackById">
+    <div [attr.id]="'news-' + item._id">
+      <planet-news-list-item
+        [item]="item"
+        [isMainPostShared]="isMainPostShared"
+        [replyObject]="replyObject"
+        [editable]="editable"
+        [shareTarget]="shareTarget"
+        (changeReplyViewing)="showReplies($event)"
+        (updateNews)="openUpdateDialog($event)"
+        (deleteNews)="openDeleteDialog($event)"
+        (shareNews)="shareNews($event)"
+        (changeLabels)="changeLabels($event)">
+      </planet-news-list-item>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="replyViewing._id !== 'root'">
+    <div #anchor class="loading-anchor"></div>
+    <div class="spinner-container" style="text-align: center;">
+      <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
+    </div>
+  </ng-container>
 </div>
-<ng-container *ngIf="replyViewing._id !== 'root'">
-  <div #anchor class="loading-anchor"></div>
-  <div class="spinner-container" style="text-align: center;">
-    <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
-  </div>
-</ng-container>
+<mat-paginator *ngIf="replyViewing._id === 'root' && totalItems > 0"
+  [length]="totalItems"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  [pageSizeOptions]="pageSizeOptions"
+  (page)="onPageChange($event)"
+  showFirstLastButtons>
+</mat-paginator>

@@ -1,12 +1,13 @@
-// Sticky paginator for Community (Voices) & Team Voices
-.sticky-paginator {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  z-index: 10;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
-  padding-bottom: 0.5rem;
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
+
+.news-list-content {
+  overflow-y: auto;
+}
+
 planet-news-list-item {
   display: block;
   margin-bottom: 1rem;
