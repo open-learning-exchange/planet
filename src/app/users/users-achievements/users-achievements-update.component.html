@@ -105,9 +105,14 @@
               <mat-icon color="warn">delete</mat-icon>
             </button>
           </div>
-          <p class="mat-caption" *ngIf="currentResumeFileName">
-            <ng-container i18n>Current CV/Resume:</ng-container> {{ currentResumeFileName }}
-          </p>
+          <div class="existing-file-container" *ngIf="currentResumeFileName">
+            <p class="mat-caption existing-resume">
+              <ng-container i18n>Current CV/Resume:</ng-container> {{ currentResumeFileName }}
+            </p>
+            <button mat-icon-button type="button" (click)="removeExistingResume()" i18n-matTooltip matTooltip="Remove existing attachment">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
           <p class="warn-text-color mat-caption" *ngIf="resumeUploadError">{{ resumeUploadError }}</p>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>

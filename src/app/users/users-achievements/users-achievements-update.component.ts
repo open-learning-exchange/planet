@@ -84,6 +84,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   currentResumeFileName = '';
   resumeFile: string | null = null;
   resumeUploadError = '';
+  resumeMarkedForDeletion = false;
   private submitAfterPending = false;
   @ViewChild('resumeInput') resumeInput?: FileInputComponent;
   get achievements(): FormArray<AchievementFormGroup> {
@@ -265,7 +266,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       resume: {
         fileName: this.currentResumeFileName,
         hasPendingUpload: !!this.resumeFile,
-        uploadError: this.resumeUploadError
+        uploadError: this.resumeUploadError,
+        markedForDeletion: this.resumeMarkedForDeletion
       }
     });
   }
@@ -383,6 +385,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       }
       this.resumeFile = reader.result;
       this.resumeUploadError = '';
+      this.resumeMarkedForDeletion = false;
       this.updateUnsavedChangesFlag();
     };
     reader.readAsDataURL(file);
@@ -393,6 +396,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.resumeUploadError = '';
     this.resumeInput?.clearFile();
     this.updateUnsavedChangesFlag();
+  }
+
+  removeExistingResume() {
+    this.resumeMarkedForDeletion = true;
+    this.currentResumeFileName = '';
+    this.clearResumeSelection();
   }
 
   private createAttachmentObj(file: string) {
@@ -487,7 +496,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       achievementsDoc._attachments = {
         [this.resumeAttachmentKey]: this.createAttachmentObj(this.resumeFile)
       };
-    } else if (this.currentResumeFileName) {
+    } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
       achievementsDoc.resumeFileName = this.currentResumeFileName;
     }
 
@@ -496,6 +505,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.userService.updateUser(userInfo)
     ]).subscribe(() => {
       this.resumeFile = null;
+      this.resumeMarkedForDeletion = false;
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
     }, (err) => {
