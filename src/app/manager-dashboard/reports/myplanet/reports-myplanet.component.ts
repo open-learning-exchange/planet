@@ -8,7 +8,7 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, filterByDate, exportMyPlanetCsv } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, filterByDate, exportMyPlanetCsv, endOfDay } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
@@ -64,11 +64,12 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   };
 
   filterMyPlanetData(data: any[]) {
+    const inclusiveEndDate = endOfDay(this.endDate);
     return data
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
       .filter(item => {
         const itemDate = item.time || item.last_synced;
-        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
+        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= inclusiveEndDate.getTime());
       });
   }
 

@@ -38,7 +38,10 @@ export const filterByDate = (array, dateField, { startDate, endDate, isEndInclus
   if (!startDate || !endDate || new Date(startDate).getTime() > new Date(endDate).getTime()) {
     return [];
   }
-  const endTime = isEndInclusive ? new Date(new Date(endDate).setHours(24)) : endDate;
+  // Reporting date pickers emit local-calendar dates (midnight local time). We normalize
+  // start/end boundaries in local time so records at 23:59:59.999 local are included.
+  // Backend timestamps are stored as epoch milliseconds, so comparisons remain numeric.
+  const endTime = isEndInclusive ? endOfDay(new Date(endDate)) : endDate;
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
 
