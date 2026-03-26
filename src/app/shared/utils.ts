@@ -1,6 +1,4 @@
-const showdown = require('showdown');
-export const pdfMake = require('pdfmake/build/pdfmake');
-export const pdfFonts = require('pdfmake/build/vfs_fonts');
+import * as showdown from 'showdown';
 export const converter = new showdown.Converter();
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
@@ -134,6 +132,23 @@ export const truncateText = (text, length) => {
   return text;
 };
 
+export const normalizeMarkdownWhitespace = (content: string) => {
+  // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
+  // Replace sequences of tabs/spaces with max 2 spaces
+  content = (content || '').replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
+  // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
+  content = content.replace(/\n{3,}/g, '\n\n');
+  return content.trim();
+};
+
+export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
+
+export const getMarkdownPreviewText = (content: string) => {
+  const normalizedContent = normalizeMarkdownWhitespace(content);
+  const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
+  return textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
+};
+
 export const calculateMdAdjustedLimit = (content, limit) => {
   const hasMdStyles = /#{1,6}\s+.+/g.test(content);
   const hasLists = /^(\*|-|\d+\.)\s+/gm.test(content);
@@ -142,4 +157,23 @@ export const calculateMdAdjustedLimit = (content, limit) => {
 
   const scaleFactor = hasLists && !hasRegularText ? 0.2 : hasTables && !hasRegularText ? 0.55 : hasMdStyles ? 0.8 : 1;
   return Math.floor(limit * scaleFactor);
+};
+
+export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
+
+export const doesMarkdownPreviewTruncate = (content: string, limit = 450) => {
+  const previewText = getMarkdownPreviewText(content);
+  return previewText.length > calculateMdAdjustedLimit(previewText, limit);
+};
+
+export const extractMarkdownImageUrls = (content: string) => {
+  const matches: string[] = [];
+  const regex = new RegExp(markdownImageRegex);
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(content || '')) !== null) {
+    matches.push(match[1]);
+  }
+
+  return matches;
 };
