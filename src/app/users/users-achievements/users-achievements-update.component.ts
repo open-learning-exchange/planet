@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
@@ -15,6 +15,7 @@ import { PlanetStepListService } from '../../shared/forms/planet-step-list.compo
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
+import { FileInputComponent } from '../../shared/forms/file-input.component';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -72,6 +73,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
+  readonly resumeAttachmentKey = 'resume.pdf';
   achievementNotFound = false;
   editForm!: FormGroup<EditFormControls>;
   profileForm!: FormGroup<ProfileFormControls>;
@@ -79,7 +81,11 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   initialFormValues: any;
   hasUnsavedChanges = false;
   submitAttempted = false;
+  currentResumeFileName = '';
+  resumeFile: string | null = null;
+  resumeUploadError = '';
   private submitAfterPending = false;
+  @ViewChild('resumeInput') resumeInput?: FileInputComponent;
   get achievements(): FormArray<AchievementFormGroup> {
     return this.editForm.controls.achievements;
   }
@@ -127,6 +133,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.editForm.setControl('links', this.buildLinksFormArray(achievements.links));
         // Keeping older otherInfo property so we don't lose this info on database
         this.editForm.setControl('otherInfo', this.buildOtherInfoFormArray(achievements.otherInfo));
+        this.currentResumeFileName = achievements.resumeFileName || (achievements._attachments?.[this.resumeAttachmentKey] ?
+          this.resumeAttachmentKey : '');
 
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
@@ -146,11 +154,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
-    const editFormState = this.editForm.getRawValue();
-    this.initialFormValues = JSON.stringify({
-      editForm: editFormState,
-      profileForm: this.profileForm.getRawValue()
-    });
+    this.initialFormValues = this.getCurrentState();
   }
 
   onFormChanges() {
@@ -251,12 +255,19 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private updateUnsavedChangesFlag() {
-    const editFormState = this.editForm.getRawValue();
-    const currentState = JSON.stringify({
-      editForm: editFormState,
-      profileForm: this.profileForm.getRawValue()
+    this.hasUnsavedChanges = this.getCurrentState() !== this.initialFormValues;
+  }
+
+  private getCurrentState() {
+    return JSON.stringify({
+      editForm: this.editForm.getRawValue(),
+      profileForm: this.profileForm.getRawValue(),
+      resume: {
+        fileName: this.currentResumeFileName,
+        hasPendingUpload: !!this.resumeFile,
+        uploadError: this.resumeUploadError
+      }
     });
-    this.hasUnsavedChanges = currentState !== this.initialFormValues;
   }
 
   addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
@@ -346,8 +357,61 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     });
   }
 
+  onResumeSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) {
+      return;
+    }
+
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+      this.resumeFile = null;
+      this.resumeUploadError = $localize`Please select a PDF file`;
+      this.resumeInput?.clearFile();
+      this.updateUnsavedChangesFlag();
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') {
+        this.resumeUploadError = $localize`There was an error reading the selected file`;
+        this.resumeFile = null;
+        this.updateUnsavedChangesFlag();
+        return;
+      }
+      this.resumeFile = reader.result;
+      this.resumeUploadError = '';
+      this.updateUnsavedChangesFlag();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearResumeSelection() {
+    this.resumeFile = null;
+    this.resumeUploadError = '';
+    this.resumeInput?.clearFile();
+    this.updateUnsavedChangesFlag();
+  }
+
+  private createAttachmentObj(file: string) {
+    const fileDataArr: string[] = file.split(/;\w+,/);
+    const contentType: string = fileDataArr[0].replace(/data:/, '');
+    const data: string = fileDataArr[1];
+
+    return {
+      content_type: contentType,
+      data
+    };
+  }
+
   onSubmit() {
     this.submitAttempted = true;
+    if (this.resumeUploadError) {
+      this.planetMessageService.showAlert($localize`Please upload your CV/Resume as a PDF file`);
+      return;
+    }
     if (this.editForm.pending || this.profileForm.pending) {
       if (this.submitAfterPending) {
         return;
@@ -410,12 +474,28 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   updateAchievements(docInfo, achievements, userInfo) {
-    // ...is the rest syntax for object destructuring
+    const achievementsDoc: any = {
+      ...docInfo,
+      ...achievements,
+      'createdOn': this.configuration.code,
+      'username': this.user.name,
+      'parentCode': this.configuration.parentCode
+    };
+
+    if (this.resumeFile) {
+      achievementsDoc.resumeFileName = this.resumeInput?.selectedFile?.name || this.currentResumeFileName || this.resumeAttachmentKey;
+      achievementsDoc._attachments = {
+        [this.resumeAttachmentKey]: this.createAttachmentObj(this.resumeFile)
+      };
+    } else if (this.currentResumeFileName) {
+      achievementsDoc.resumeFileName = this.currentResumeFileName;
+    }
+
     forkJoin([
-      this.couchService.post(this.dbName, { ...docInfo, ...achievements,
-        'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
+      this.couchService.post(this.dbName, achievementsDoc),
       this.userService.updateUser(userInfo)
     ]).subscribe(() => {
+      this.resumeFile = null;
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
     }, (err) => {
