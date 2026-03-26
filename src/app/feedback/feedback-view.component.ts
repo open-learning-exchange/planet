@@ -25,6 +25,9 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     meetups: $localize`Go to Meetup`,
     teams: $localize`Go to Team`,
     enterprises: $localize`Go to Enterprise`,
+    myDashboard: $localize`Go to Dashboard`,
+    chat: $localize`Go to Chat`,
+    manager: $localize`Go to Manager`,
   };
   private onDestroy$ = new Subject<void>();
   @ViewChild('chatList') chatListElement: ElementRef;
