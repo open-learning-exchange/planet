@@ -2,32 +2,44 @@
   padding: 0 0.5rem 0 0;
 }
 
-.mat-nav-list.no-pointer .mat-list-item {
+.mat-mdc-nav-list.no-pointer .mat-mdc-list-item {
   cursor: auto;
+}
+
+.mat-mdc-list-item span, button {
+  vertical-align: middle;
+}
+
+.mat-mdc-list-item-unscoped-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0.5rem;
+
+  > span:first-child {
+    flex: 1 1 auto;
+  }
+
+  > span:not(:first-child), > button {
+    flex: 0 0 auto;
+  }
 }
 
 .planet-step-list-form-container {
   display: grid;
-  grid-template-rows: min-content auto min-content;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
 
-  .action-buttons > * {
-    margin: 0.25rem 0 0 0.25rem;
-  }
-
-  .planet-step-list-actions > * {
-    margin: 0.25rem 0 0 0.25rem;
-  }
-
-  .planet-step-list-actions > *:first-child {
-    margin: 0;
+  .action-buttons,
+  .planet-step-list-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
   .planet-step-list-form {
     overflow-y: auto;
-  }
-
-  .planet-step-list-actions {
-    margin: 0.5rem 0 0 0;
+    min-height: 0;
   }
 }

@@ -1,11 +1,12 @@
-import { Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-ChangeDetectorRef, HostBinding, HostListener, OnInit } from '@angular/core';
+import {
+  Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding, HostListener, OnInit
+} from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
@@ -41,8 +42,12 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   isExpanded = false;
   deviceType: DeviceType;
 
-  @HostBinding('class.accordion-collapsed') get isCollapsed() { return !this.isExpanded; }
-  @HostBinding('class.accordion-expanded') get isExpandedClass() { return this.isExpanded; }
+  @HostBinding('class.accordion-collapsed') get isCollapsed() {
+    return !this.isExpanded;
+  }
+  @HostBinding('class.accordion-expanded') get isExpandedClass() {
+    return this.isExpanded;
+  }
   @HostListener('window:resize')
   onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -71,7 +76,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   ngAfterViewChecked() {
     const divHeight = this.itemDiv?.nativeElement.offsetHeight;
     const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
-    if (!dashboardItem) { return; }
+    if (!dashboardItem) {
+      return;
+    }
     const itemStyle = window.getComputedStyle(dashboardItem);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));

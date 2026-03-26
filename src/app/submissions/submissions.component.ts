@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -82,8 +82,12 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.status = '';
     }
     this.coursesService.requestCourses();
-    zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ submissions, courses ]) => {
+    zip(
+      this.submissionsService.submissionsUpdated$,
+      this.coursesService.coursesListener$()
+    ).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ submissions, courses ]) => {
       let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
 
       if (!this.isManagerSurveysRoute) {
@@ -135,8 +139,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.mode = this.route.snapshot.data.mySurveys === true ?
       'survey' :
       this.parentId ?
-      'review' :
-      'grade';
+        'review' :
+        'grade';
   }
 
   submissionQuery() {

@@ -7,8 +7,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
@@ -65,10 +65,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       },
       0,
       [ { 'time': 'desc' } ]))
-    .subscribe(notifications => {
-       this.notifications.data = notifications;
-       this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-    }, (err) => console.log(err.error.reason));
+      .subscribe(notifications => {
+        this.notifications.data = notifications;
+        this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
+      }, (err) => console.log(err.error.reason));
   }
 
   onFilterChange(filterValue: string) {
@@ -79,8 +79,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   readNotification(notification) {
     const updateNotificaton = { ...notification, 'status': 'read' };
     if (notification.status === 'unread') {
-      this.couchService.put('notifications/' + notification._id, updateNotificaton)
-      .subscribe((data) => {
+      this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {
           if (n._id === data.id) {
             return Object.assign(updateNotificaton, { _rev: data.rev });

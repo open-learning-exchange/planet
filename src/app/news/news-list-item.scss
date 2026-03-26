@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 mat-card {
   margin: 0.25rem;
@@ -12,12 +12,7 @@ mat-card {
 }
 
 mat-card-header {
-  width: 100%;
   display: block;
-}
-
-::ng-deep .mat-card-header-text {
-  margin: 0 !important;
 }
 
 .subtitle-row {
@@ -27,7 +22,7 @@ mat-card-header {
 }
 
 mat-card-content {
-  margin-bottom: 0;
+  padding-top: 1rem;
 }
 
 .chat-container {
@@ -37,45 +32,23 @@ mat-card-content {
 }
 
 .profile-outline {
-  border: 2px solid $primary;
+  border: 2px solid v.$primary;
   border-radius: 50%;
   width: 40px;
   height: 40px;
 }
 
-.chip-outline-accent {
-  background-color: $accent-lighter;
-}
-
-.chip-outline-primary {
-  background-color: $primary-lighter;
-}
-
-.chip-outline-grey {
-  background-color: $light-grey;
-}
-
-mat-chip {
-  pointer-events: auto;
-  cursor: pointer;
-}
-
 .user-name-truncate {
-  flex: 1 1 0;
-  justify-content: start;
+  flex: 1 1 auto;
+  max-width: 50%;
+  display: block;
+  overflow: hidden;
+  text-align: left;
 }
 
 .user-name-truncate-text {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-@media (max-width: $screen-xs) {
-  .subtitle-row .label-panel .mat-chip {
-    max-width: 80px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  white-space: nowrap;
 }

@@ -1,10 +1,10 @@
 import {
   Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
 } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -19,7 +19,6 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
-import { itemsShown } from '../shared/utils';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -79,7 +78,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   usersTable = new MatTableDataSource();
   filterType = 'local';
   isUserAdmin = false;
-  selection = new SelectionModel(true, []);
+  selection = new SelectionModel(true, [], true,
+    (o1, o2) => !!o1 && !!o2 && o1._id === o2._id && o1.planetCode === o2.planetCode
+  );
+  renderedData: any[] = [];
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
@@ -118,6 +120,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     });
     this.usersTable.filterPredicate = this.filterPredicate();
     this.usersTable.connect().subscribe(data => {
+      this.renderedData = data;
       if (this.usersTable.paginator) {
         this.tableDataChange.emit(data);
       }
@@ -149,16 +152,8 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
-  onPaginateChange(e: PageEvent) {
-    this.selection.clear();
-  }
-
-  isSelected(user) {
-    return this.selection.selected.find(selected => selected._id === user._id && selected.planetCode === user.planetCode);
-  }
-
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedData.length > 0 && this.renderedData.every((row: any) => this.selection.isSelected(row.doc));
   }
 
   onlyManagerSelected() {
@@ -167,11 +162,15 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.usersTable.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row.doc));
+    if (this.isAllSelected()) {
+      this.renderedData.forEach((row: any) => this.selection.deselect(row.doc));
+    } else {
+      this.renderedData.forEach((row: any) => {
+        if (!this.selection.isSelected(row.doc)) {
+          this.selection.select(row.doc);
+        }
+      });
+    }
   }
 
   gotoProfileView(userName: string) {
@@ -243,10 +242,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
       this.usersService.requestUsers(true);
       this.planetMessageService.showMessage($localize`${user.name} roles modified`);
     });
-  }
-
-  onPageChange(e: PageEvent) {
-    console.log(e);
   }
 
 }

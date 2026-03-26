@@ -26,7 +26,7 @@
 <ng-template #collectionRow>
   <button mat-icon-button (click)="goBack()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>{myView, select, myPersonals {myPersonals} myLibrary {myLibrary} other {Library}}</span>
-  <mat-form-field class="font-size-1 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search margin-lr" *ngIf="myView !== 'myPersonals'">
     <planet-tag-input [formControl]="tagFilter" [db]="dbName" [parent]="parent" [filteredData]="resources.filteredData" [helperText]="false" [largeFont]="true" mode="filter" [selectMany]="false"></planet-tag-input>
   </mat-form-field>
 </ng-template>
@@ -34,8 +34,9 @@
 <ng-template #filterRow>
   <span class="font-size-1 margin-lr-4" i18n>Search by:</span>
   <button mat-stroked-button i18n (click)="this.showFilters = !this.showFilters" *ngIf="myView !== 'myPersonals'">Filter</button>
-  <mat-form-field class="font-size-1 margin-lr-4">
-    <input matInput i18n-placeholder placeholder="Title" [(ngModel)]="titleSearch">
+  <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
+    <mat-label i18n>Title</mat-label>
+    <input matInput [(ngModel)]="titleSearch">
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
 </ng-template>
@@ -72,7 +73,7 @@
 
   <ng-template #actionButtons>
     <ng-container *planetAuthorizedRoles="'manager'">
-      <mat-form-field class="font-size-1 margin-lr-3 mat-form-field-type-no-underline mat-form-field-dynamic-width collections-search">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="font-size-1 margin-lr-3 mdc-form-field-no-outline mat-form-field-dynamic-width collections-search">
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="resources.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
@@ -104,7 +105,7 @@
   </ng-template>
 
   <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
-    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById" multiTemplateDataRows>
+    <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -139,19 +140,25 @@
               </ng-container>
             </ng-template>
           </h3>
-          <mat-chip-list #tagsList class="tags-list">
+          <mat-chip-set #tagsList class="tags-list" aria-label="Resource tags" i18n-aria-label>
             <ng-container *ngFor="let tag of element.tags">
-              <mat-chip *ngIf="tag.isMainTag" (click)="addTag(tag._id)" color="primary" selected>
-                {{tag.name}}
+              <mat-chip *ngIf="tag.isMainTag" highlighted color="primary">
+                <a matChipAction type="button" (click)="addTag(tag._id)">
+                  {{tag.name}}
+                </a>
               </mat-chip>
-              <mat-chip *ngFor="let subTag of tag.subTags" (click)="addTag(subTag._id)">
-                {{subTag.name}}
+              <mat-chip *ngFor="let subTag of tag.subTags">
+                <a matChipAction type="button" (click)="addTag(subTag._id)">
+                  {{subTag.name}}
+                </a>
               </mat-chip>
             </ng-container>
-          </mat-chip-list>
+          </mat-chip-set>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element)" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)" [limit]="previewLimit"></planet-markdown>
-            <div *ngIf="showPreviewExpand(element.doc)"  style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
+              <planet-markdown [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ? '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description : element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
+            </div>
+            <div *ngIf="showPreviewExpand(element)" class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
                 <mat-icon>{{ isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
               </button>
@@ -219,31 +226,10 @@
           <planet-rating class="rating-item compress-rating" [rating]="element.rating" [item]="element.doc" [parent]="parent" [ratingType]="'resource'" [disabled]="isDialog"></planet-rating>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="expandedDetail">
-        <mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-          <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
-            <ng-container *ngIf="element.renderContent && isExpanded(element)">
-              <td-markdown
-                [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ?
-                '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description :
-                element.doc.description">
-              </td-markdown>
-            </ng-container>
-          </div>
-        </mat-cell>
-      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [class.expanded-row]="isExpanded(row)"></mat-row>
-      <mat-row *matRowDef="let row; columns: ['expandedDetail'];" [@detailExpand]="isExpanded(row) ? 'expanded' : 'collapsed'"></mat-row>
       <tr class="mat-row" *matNoDataRow>
-        <td>
-          <div class="view-container" *ngIf="isLoading" i18n>
-            Resources Loading...
-          </div>
-          <div class="view-container" *ngIf="!isLoading" i18n>
-            No Resource Found
-          </div>
-        </td>
+        <td><div class="view-container" *ngIf="!isLoading" i18n>No Resource Found</div></td>
       </tr>
     </mat-table>
     <mat-paginator #paginator

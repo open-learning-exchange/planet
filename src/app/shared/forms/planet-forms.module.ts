@@ -61,7 +61,6 @@ import { FileInputComponent } from './file-input.component';
     PlanetTagInputDialogComponent,
     PlanetTagInputToggleIconComponent,
     PlanetSelectorComponent,
-    PlanetStackedBarComponent,
     PlanetStepListComponent,
     FileInputComponent,
     PlanetStepListFormDirective,

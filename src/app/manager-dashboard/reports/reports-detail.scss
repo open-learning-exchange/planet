@@ -1,9 +1,9 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 $screen-md: 1200px;
 
 :host {
-  @include screen-sizes($screen-md);
+  @include v.screen-sizes($screen-md);
 }
 
 mat-toolbar mat-form-field {
@@ -37,7 +37,7 @@ mat-toolbar mat-form-field {
   h1 {
     display: block;
     margin: 0.4rem 0 0;
-    color: $primary;
+    color: v.$primary;
   }
 
   .chart-wrapper {
@@ -71,7 +71,7 @@ mat-toolbar mat-form-field {
     .comparison-table-container {
       table {
         th {
-          background-color: $primary;
+          background-color: v.$primary;
           color: white;
           font-weight: 600;
         }
@@ -89,16 +89,15 @@ mat-toolbar mat-form-field {
 }
 
 @media(max-width: #{$screen-md}) {
-  .mat-form-field {
+  .mat-mdc-form-field {
     width: 100%;
   }
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-  /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
+
   mat-button-toggle-group {
     width: 100%;
     display: flex;
-    /* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version. */
-    .mat-button-toggle {
+
+    mat-button-toggle {
       flex: 1;
     }
   }

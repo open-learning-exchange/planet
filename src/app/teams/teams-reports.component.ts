@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { CouchService } from '../shared/couchdb.service';
@@ -24,6 +24,7 @@ export class TeamsReportsComponent implements DoCheck {
 
   @Input() reports: any[];
   @Input() editable = false;
+  @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
   columns = 4;
@@ -136,8 +137,8 @@ export class TeamsReportsComponent implements DoCheck {
     return fieldName === 'endDate' ?
       CustomValidators.endDateValidator() :
       [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
-      Validators.min(0) :
-      () => {};
+        Validators.min(0) :
+        () => {};
   }
 
   updateReport(oldReport, newReport: any = {}) {
@@ -146,8 +147,8 @@ export class TeamsReportsComponent implements DoCheck {
     const transformFields = (key: string, value: Date | string) => dateFields.indexOf(key) > -1 ?
       (<Date>value).getTime() :
       numberFields.indexOf(key) > -1 ?
-      +value :
-      value;
+        +value :
+        value;
     const { _id, _rev, ...newDoc } = <any>Object.entries(newReport).reduce(
       (obj, [ key, value ]: [ string, Date | string ]) => ({ ...obj, [key]: transformFields(key, value) }),
       {}

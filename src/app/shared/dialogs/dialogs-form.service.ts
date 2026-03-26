@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { DialogsFormComponent } from './dialogs-form.component';
-import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlState, FormGroup, ValidatorFn } from '@angular/forms';
 
@@ -42,12 +42,12 @@ export type DialogFormGroupConfig<T extends DialogFormValueMap> = {
   [K in keyof T]?: DialogControlConfig<T[K]>;
 } & Record<string, DialogControlConfig<any>>;
 
-export type DialogFormGroupInput<T extends DialogFormValueMap> = | FormGroup | DialogFormGroupConfig<T>;
+export type DialogFormGroupInput<T extends DialogFormValueMap> = FormGroup<any> | DialogFormGroupConfig<T>;
 
 export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormValueMap> {
   autoFocus?: boolean;
   disableIfInvalid?: boolean;
-  onSubmit?: (value: T, form: FormGroup) => void;
+  onSubmit?: (value: T, form: FormGroup<any>) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
   [key: string]: unknown;

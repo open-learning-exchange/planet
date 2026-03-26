@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } 
 import { Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -48,7 +48,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     'status': ''
   };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();

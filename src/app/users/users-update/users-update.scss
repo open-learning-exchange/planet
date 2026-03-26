@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 .view-container {
   display: flex;
@@ -10,7 +10,7 @@
 }
 
 .form-container {
-  width: calc(#{$form-width-3} + 120px);
+  width: calc(#{v.$form-width-3} + 120px);
 }
 
 .form-space {
@@ -66,7 +66,7 @@
   grid-template-columns: 1fr 2fr;
   grid-template-areas: 'image-lt image-rt';
   grid-column-gap: 1rem;
-  padding: 0 1rem;
+  padding: 1rem;
 }
 
 .profile-image-update {
@@ -75,9 +75,13 @@
 
 .profile-image-upload {
   grid-area: image-rt;
+
+  ::ng-deep image-cropper img.ngx-ic-source-image {
+    width: 100%;
+  }
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .profile-image-section{
     display: flex;
     flex-direction: column;

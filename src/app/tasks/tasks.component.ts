@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -73,7 +73,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskDueSoon(task): boolean {
-    if (!task || task.completed || !task.deadline) { return false; }
+    if (!task || task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);
@@ -85,7 +87,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskOverdue(task): boolean {
-    if (task.completed || !task.deadline) { return false; }
+    if (task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);

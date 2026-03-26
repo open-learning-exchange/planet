@@ -12,7 +12,8 @@
     </button>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <mat-table #table [dataSource]="pushedItems" matSort>
+    <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
+    <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -29,7 +30,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="item">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="item" i18n>Title</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.db === 'resources'">
             {{ element.item.doc.title }}
@@ -42,7 +43,7 @@
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="date">
-        <mat-header-cell *matHeaderCellDef i18n>Date Sent</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Date Sent</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

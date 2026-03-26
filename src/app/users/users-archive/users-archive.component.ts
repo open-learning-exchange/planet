@@ -41,7 +41,7 @@ export class UsersArchiveComponent implements OnInit {
 
   createForm() {
     this.archiveForm = this.fb.group({
-      description: [ '', CustomValidators.requiredMarkdown ],
+      description: this.fb.control('', { validators: [ CustomValidators.requiredMarkdown ] })
     });
   }
 

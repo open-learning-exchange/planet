@@ -4,7 +4,8 @@
   <div class="search-container">
     <mat-icon>search</mat-icon>
     <mat-form-field class="search-input">
-      <input matInput [(ngModel)]="searchQuery" i18n-placeholder placeholder="Search by filename">
+      <mat-label i18n>Search by filename</mat-label>
+      <input matInput [(ngModel)]="searchQuery">
     </mat-form-field>
   </div>
   <mat-grid-list cols="3" rowHeight="1:1">

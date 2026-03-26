@@ -1,9 +1,8 @@
-@import "../variables.scss";
-@import "../../planet-mat-theme.scss";
-@import "../mixins.scss";
+@use "../mixins" as m;
+@use "../variables" as v;
 
 :host {
-  @include left-right-grid-areas;
+  @include m.left-right-grid-areas;
 
   text-align: center;
 
@@ -57,7 +56,7 @@
     }
 
     a:hover {
-      color: $primary;
+      color: v.$primary;
     }
   }
 

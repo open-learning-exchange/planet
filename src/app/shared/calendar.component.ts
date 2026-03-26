@@ -4,7 +4,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../meetups/constants';
@@ -207,16 +207,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   openAddEventDialog(event) {
     const today = new Date();
     const meetup = event?.start
-    ? {
-      startDate: event.start,
-      endDate: this.adjustEndDate(event.end),
-    }
-  : {
-      startDate: today,
-      endDate: today,
-    };
+      ? {
+        startDate: event.start,
+        endDate: this.adjustEndDate(event.end),
+      }
+      : {
+        startDate: today,
+        endDate: today,
+      };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      panelClass: 'no-max-height-dialog'
     });
   }
 

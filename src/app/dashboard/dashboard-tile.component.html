@@ -46,7 +46,7 @@
         </span>
       </ng-container>
       <ng-template #loadingMessage>
-        <div *ngIf="cardType === 'myCourses'" class="dashboard-item" i18n>Loading tiles...</div>
+        <planet-loading-spinner text="Loading..." i18n-text></planet-loading-spinner>
       </ng-template>
     </div>
   </div>

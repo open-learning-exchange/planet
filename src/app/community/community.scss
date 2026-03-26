@@ -1,8 +1,8 @@
-@import '../variables';
+@use '../variables' as v;
 
 .view-container.community-view {
   &.view-full-height {
-    height: calc(#{$view-container-height-no-toolbar} + 64px);
+    height: calc(#{v.$view-container-height-no-toolbar} + 64px);
   }
 
   display: grid;
@@ -10,34 +10,14 @@
   grid-template-areas: "news calendar";
   gap: 0.5rem;
 
-  @media only screen and (max-width: #{$screen-md}) {
+  @media only screen and (max-width: #{v.$screen-md}) {
     grid-template-columns: 1fr;
     grid-template-areas: "news";
-  }
-
-  .toggle-button {
-    margin-bottom: 1rem;
-  }
-
-  .action-buttons {
-    button {
-      margin-top: 0.5rem;
-    }
-  }
-
-  .responsive-toolbar {
-    border-radius: 7.5px;
-  }
-
-  .label-icon {
-    vertical-align: middle;
-    margin-right: 4px;
   }
 }
 
 .community-news {
   grid-area: news;
-  overflow-y: auto;
 
   h3 {
     margin: 0;
@@ -66,25 +46,21 @@ planet-calendar {
   word-break: break-word;
 }
 
-mat-tab-group, mat-tab {
-  height: 100%;
-}
-
 .sticky-button {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: white;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
   display: flex;
   gap: 0.5rem;
+  background: #fff;
+}
+
+.toggle-button {
+  margin-bottom: 1rem;
 }
 
 .toolbar-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
   width: 100%;
   gap: 12px;
 
@@ -107,26 +83,15 @@ mat-tab-group, mat-tab {
   }
 }
 
-@media only screen and (max-width: $screen-sm) {
-  .community-view .responsive-toolbar {
+@media only screen and (max-width: v.$screen-xs) {
+  .action-buttons.sticky-button {
+    flex-direction: column;
+  }
+
+  .toolbar-row {
+    flex-wrap: wrap;
     height: auto;
-    gap: 0;
-  }
 
-  .toolbar-row {
-    .search-form-field,
-    .label-filter-field {
-      min-width: 0;
-    }
-    .new-voice-btn,
-    .pin-btn {
-      min-width: 0;
-    }
-  }
-}
-
-@media only screen and (max-width: $screen-xs) {
-  .toolbar-row {
     .search-form-field,
     .label-filter-field {
       flex: 1 1 25%;

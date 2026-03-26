@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -9,7 +9,7 @@
     grid-column-gap: 2rem;
   }
 
-  .mat-list-item p{
+  .mat-mdc-list-item-line p {
     overflow-wrap: break-word;
     white-space: normal;
     word-break: break-word;
@@ -31,7 +31,7 @@
     }
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .profile-image-section {
       grid-area: icon;
       text-align: center;
@@ -56,12 +56,6 @@
       width: 50%;
     }
 
-    .mat-list-item p{
-      overflow-wrap: break-word;
-      white-space: normal;
-      word-break: break-word;
-    }
-
     .view-container {
       overflow-x: auto;
     }
@@ -74,11 +68,6 @@
       min-width: 0;
       overflow-wrap: break-word;
       word-break: break-word;
-    }
-
-    mat-list-item {
-      max-width: 100%;
-      box-sizing: border-box;
     }
 
   }
