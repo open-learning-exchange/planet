@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, Input } from '@angular/core';
 import { truncateText } from '../../shared/utils';
 
 @Component({
@@ -6,13 +6,14 @@ import { truncateText } from '../../shared/utils';
   template: `
     <div class="inner-gaps by-column">
       <button type="button" mat-raised-button (click)="fileInput.click()" color="primary" i18n>Choose File</button>
-      <input hidden (change)="onFileSelected($event)" #fileInput type="file">
+      <input hidden (change)="onFileSelected($event)" #fileInput type="file" [accept]="accept">
       <span class="file-name" i18n>{{ getTruncatedFileName() }}</span>
     </div>
   `,
 })
 export class FileInputComponent {
 
+  @Input() accept = '';
   @Output() fileChange = new EventEmitter<any>();
   @ViewChild('fileInput') fileInput!: HTMLInputElement;
 
