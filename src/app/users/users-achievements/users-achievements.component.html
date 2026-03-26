@@ -12,6 +12,9 @@
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
+      <a mat-raised-button color="primary" class="margin-r-1" *ngIf="resumeUrl" [href]="resumeUrl" target="_blank" rel="noopener noreferrer" i18n>
+        View CV/Resumé
+      </a>
       <a mat-raised-button color="primary" class="margin-r-1" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
         <span i18n>Print Achievements</span>
       </a>
