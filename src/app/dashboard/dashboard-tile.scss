@@ -17,6 +17,7 @@
 
     .left-tile {
       border-radius: 2px 0 0 2px;
+      color: #fff;
       &, & planet-dashboard-tile-title {
         display: flex;
         justify-content: center;
@@ -25,7 +26,6 @@
         flex-wrap: wrap;
         font-size: 1.25rem;
       }
-      color: #fff;
     }
 
     .right-tile {
