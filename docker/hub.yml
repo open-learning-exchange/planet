@@ -5,6 +5,10 @@ services:
     image: treehouses/couchdb:2.3.1
     ports:
       - "2400:5984"
+    volumes:
+      - "/srv/hub/conf:/opt/couchdb/etc/local.d"
+      - "/srv/hub/data:/opt/couchdb/data"
+      - "/srv/hub/log:/opt/couchdb/var/log"
   db-init:
     image: treehouses/planet:db-init-local
     depends_on:
@@ -17,6 +21,8 @@ services:
       - "3200:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/srv/hub/pwd:/usr/share/nginx/html/credentials"
+      - "/srv/hub/fs:/usr/share/nginx/html/fs"
     environment:
       - MULTIPLE_IPS=true
       - HOST_PROTOCOL=http
