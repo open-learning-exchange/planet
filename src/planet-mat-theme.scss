@@ -30,7 +30,7 @@ $accent-map: (
     )
   ));
   .planet-#{$section}-theme {
-    @include mat.all-component-themes($theme);
+    @include mat.all-component-colors($theme);
 
     .accent-color {
       background-color: mat.m2-get-color-from-palette($accent-palette, v.$accent-hue);

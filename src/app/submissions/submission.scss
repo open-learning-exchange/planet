@@ -17,6 +17,15 @@
   max-width: 150px;
 }
 
+.mat-column-status {
+  min-width: 150px;
+}
+
+.mat-column-lastUpdateTime,
+.mat-column-gradeTime {
+  min-width: 165px;
+}
+
 @media (max-width: v.$screen-sm) {
   .responsive-table {
     display: block;

@@ -39,7 +39,13 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm, arm64 ]
+        include:
+          - arch: amd64
+            base_image: treehouses/node:3.16
+          - arch: arm
+            base_image: treehouses/node-tags:arm-3.16
+          - arch: arm64
+            base_image: treehouses/node-tags:arm64-3.16
 
     steps:
       - name: Checkout Code
@@ -54,7 +60,10 @@ jobs:
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build -f './docker/chatapi/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker build \
+            -f './docker/chatapi/Dockerfile' \
+            --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
+            -t $repo .
           docker images
           docker tag $repo $branchrepo
           docker push $repo

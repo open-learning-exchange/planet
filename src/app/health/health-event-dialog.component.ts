@@ -7,8 +7,8 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
   templateUrl: './health-event-dialog.component.html'
@@ -34,7 +34,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService
   ) {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    pdfMake.addVirtualFileSystem(pdfFonts);
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
