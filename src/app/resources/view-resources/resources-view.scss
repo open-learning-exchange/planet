@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -39,7 +39,7 @@
     flex-shrink: 0;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .view-container {
       grid-template-columns: 1fr;
       grid-template-rows: auto;

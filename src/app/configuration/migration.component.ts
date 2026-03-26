@@ -82,11 +82,11 @@ export class MigrationComponent implements OnInit {
     this.credential = { password: this.cloneForm.controls.password.value, name: this.cloneForm.controls.name.value };
     this.dialogsLoadingService.start();
     this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.cloneDomain, protocol: this.cloneProtocol })
-    .pipe(finalize(() => this.dialogsLoadingService.stop()))
-    .subscribe(() => {
-      this.stepper.selected.completed = true;
-      this.stepper.next();
-    }, error => this.planetMessageService.showMessage($localize`Configuration is not valid. Please check again.`));
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(() => {
+        this.stepper.selected.completed = true;
+        this.stepper.next();
+      }, error => this.planetMessageService.showMessage($localize`Configuration is not valid. Please check again.`));
   }
 
   clonePlanet() {
