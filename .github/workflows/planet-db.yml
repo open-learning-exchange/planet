@@ -44,10 +44,10 @@ jobs:
             dockerfile: ./docker/db-init/Dockerfile
             build_args: ""
           - arch: arm
-            dockerfile: ./docker/db-init/arm-Dockerfile
+            dockerfile: ./docker/db-init/crosscompile-Dockerfile
             build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm --build-arg CROSSCOMPILE_ARCH=armv7"
           - arch: arm64
-            dockerfile: ./docker/db-init/arm-Dockerfile
+            dockerfile: ./docker/db-init/crosscompile-Dockerfile
             build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm64 --build-arg CROSSCOMPILE_ARCH=armv8"
 
     steps:
