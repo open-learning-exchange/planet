@@ -26,6 +26,7 @@ import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
+import { PreviewOverflowDirective } from './preview-overflow.directive';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.componen
     ChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    PreviewOverflowDirective
   ],
   declarations: [
     PlanetLoadingSpinnerComponent,
@@ -80,7 +82,8 @@ import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.componen
     RestrictDiacriticsDirective,
     ChatOutputDirective,
     TruncateTextPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    PreviewOverflowDirective
   ],
   providers: [
     TimePipe

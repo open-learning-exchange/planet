@@ -37,13 +37,16 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "assets": [
               "src/assets",
               "src/manifest.json"
@@ -59,12 +62,11 @@
             "scripts": [],
             "i18nMissingTranslation": "ignore",
             "poll": 2000,
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -79,10 +81,7 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json",
+              "serviceWorker": "src/ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -113,7 +112,9 @@
               ]
             },
             "eng": {
-              "outputPath": "dist/eng",
+              "outputPath": {
+                "base": "dist/eng"
+              },
               "localize": [
                 "en"
               ],
@@ -125,7 +126,9 @@
               ]
             },
             "som": {
-              "outputPath": "dist/som",
+              "outputPath": {
+                "base": "dist/som"
+              },
               "localize": [
                 "so"
               ],
@@ -137,7 +140,9 @@
               ]
             },
             "fra": {
-              "outputPath": "dist/fra",
+              "outputPath": {
+                "base": "dist/fra"
+              },
               "localize": [
                 "fr"
               ],
@@ -149,7 +154,9 @@
               ]
             },
             "nep": {
-              "outputPath": "dist/nep",
+              "outputPath": {
+                "base": "dist/nep"
+              },
               "localize": [
                 "ne"
               ],
@@ -161,7 +168,9 @@
               ]
             },
             "ara": {
-              "outputPath": "dist/ara",
+              "outputPath": {
+                "base": "dist/ara"
+              },
               "localize": [
                 "ar"
               ],
@@ -173,7 +182,9 @@
               ]
             },
             "spa": {
-              "outputPath": "dist/spa",
+              "outputPath": {
+                "base": "dist/spa"
+              },
               "localize": [
                 "es"
               ],
@@ -255,20 +266,6 @@
               "src/**/*.ts",
               "src/**/*.html"
             ]
-          }
-        }
-      }
-    },
-    "planet-app-e2e": {
-      "root": "",
-      "sourceRoot": "",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "./protractor.conf.js",
-            "devServerTarget": "planet-app:serve:test"
           }
         }
       }

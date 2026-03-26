@@ -67,7 +67,7 @@ export class DialogsListService {
     );
   }
 
-  attachDocsData(db: string, field: string, callback: Function, initialSelection?: any[]) {
+  attachDocsData(db: string, field: string, callback: () => void, initialSelection?: any[]) {
     return this.getListAndColumns(db).pipe(map((res) => {
       res.tableData = db === 'resources' ? res.tableData.filter((tableValue: any) => tableValue._attachments) : res.tableData;
       return ({ okClick: callback,
