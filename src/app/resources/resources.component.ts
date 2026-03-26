@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -23,7 +22,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -35,13 +34,6 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0', overflow: 'hidden' })),
-      state('expanded', style({ height: '*', overflow: 'hidden' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
   standalone: false
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -103,7 +95,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
-  previewLimit = 450;
+  private previewHasHiddenContent = new Map<string, boolean>();
+  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -404,10 +397,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.expandedElement = this.expandedElement === element ? null : element;
   }
 
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
-  }
-
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
   }
@@ -418,10 +407,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description) {
+    const description = element?.doc?.description;
+    if (!description) {
       return false;
     }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
+    const previewKey = this.getPreviewKey(element);
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
+    // isExpanded check keeps the collapse button visible after the preview div unmounts
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+  }
+
+  getPreviewKey(element: any): string {
+    return element?._id || '';
+  }
+
+  setPreviewOverflow(element: any, hasOverflow: boolean) {
+    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

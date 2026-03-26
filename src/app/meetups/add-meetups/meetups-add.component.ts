@@ -95,7 +95,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           this.captureInitialState();
           this.onFormChanges();
         },
-        error => console.log(error)
+        error => console.error(error)
       );
     } else {
       this.captureInitialState();
@@ -230,7 +230,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -242,7 +242,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
-    }, (err) => console.log(err));
+    }, (err) => console.error(err));
   }
 
   cancel() {
