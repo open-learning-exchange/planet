@@ -8,7 +8,8 @@ import { UserService } from '../../shared/user.service';
 
 @Component({
   templateUrl: 'courses-progress-learner.component.html',
-  styleUrls: [ 'courses-progress.scss' ]
+  styleUrls: ['courses-progress.scss'],
+  standalone: false
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 

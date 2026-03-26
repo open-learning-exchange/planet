@@ -14,7 +14,8 @@ import { findDocuments } from '../shared/mangoQueries';
 
 @Component({
   templateUrl: './health.component.html',
-  styleUrls: [ './health.scss' ]
+  styleUrls: ['./health.scss'],
+  standalone: false
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 

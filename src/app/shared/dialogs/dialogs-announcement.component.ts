@@ -30,13 +30,15 @@ export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Dat
       <p class="success-msg">¡Felicidades reto completado!</p>
     </div>
   `,
-  styleUrls: [ './dialogs-announcement.component.scss' ]
+  styleUrls: ['./dialogs-announcement.component.scss'],
+  standalone: false
 })
 export class DialogsAnnouncementSuccessComponent { }
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
-  styleUrls: [ './dialogs-announcement.component.scss' ]
+  styleUrls: ['./dialogs-announcement.component.scss'],
+  standalone: false
 })
 export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 

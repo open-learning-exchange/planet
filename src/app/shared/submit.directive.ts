@@ -3,7 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsLoadingComponent } from './dialogs/dialogs-loading.component';
 
 @Directive({
-  selector: '[planetSubmit]'
+  selector: '[planetSubmit]',
+  standalone: false
 })
 export class SubmitDirective implements OnChanges, OnDestroy {
 

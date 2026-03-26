@@ -22,8 +22,9 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
   `,
   selector: 'planet-courses-search-list',
-  styleUrls: [ './courses-search.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./courses-search.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CoursesSearchListComponent {
 
@@ -64,9 +65,10 @@ export class CoursesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-courses-search-list>
   `,
-  styleUrls: [ './courses-search.scss' ],
+  styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CoursesSearchComponent implements OnInit, OnChanges {
 

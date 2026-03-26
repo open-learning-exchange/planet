@@ -12,7 +12,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
       </span>
     </div>
   `,
-  styles: [ `
+  styles: [`
     :host {
       height: 0.75rem;
       display: grid;
@@ -26,7 +26,8 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
     .stacked-bar span {
       margin: 0 0.2rem;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class PlanetStackedBarComponent implements OnChanges {
 

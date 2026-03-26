@@ -32,8 +32,9 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
-  styleUrls: [ './resources.scss' ],
+  styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;

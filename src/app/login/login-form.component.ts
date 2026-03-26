@@ -35,7 +35,8 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
 @Component({
   templateUrl: './login-form.component.html',
   selector: 'planet-login-form',
-  styleUrls: [ './login.scss' ]
+  styleUrls: ['./login.scss'],
+  standalone: false
 })
 export class LoginFormComponent {
   public userForm!: LoginFormGroup | RegisterFormGroup;

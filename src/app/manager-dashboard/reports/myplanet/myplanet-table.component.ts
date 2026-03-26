@@ -7,7 +7,8 @@ import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.compo
 
 @Component({
   selector: 'planet-myplanet-table',
-  templateUrl: './myplanet-table.component.html'
+  templateUrl: './myplanet-table.component.html',
+  standalone: false
 })
 export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 

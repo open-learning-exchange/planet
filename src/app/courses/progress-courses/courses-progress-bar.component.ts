@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'planet-courses-progress-bar',
   templateUrl: 'courses-progress-bar.component.html',
-  styleUrls: [ 'courses-progress-bar.scss' ]
+  styleUrls: ['courses-progress-bar.scss'],
+  standalone: false
 })
 export class CoursesProgressBarComponent implements OnChanges {
 

@@ -18,7 +18,8 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
         (switchView)="switchView($event)">
       </planet-meetups-view>
     </ng-container>
-  `
+  `,
+  standalone: false
 })
 export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;

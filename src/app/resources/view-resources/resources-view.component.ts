@@ -13,7 +13,8 @@ import * as constants from '../resources-constants';
 
 @Component({
   templateUrl: './resources-view.component.html',
-  styleUrls: [ './resources-view.scss' ]
+  styleUrls: ['./resources-view.scss'],
+  standalone: false
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {

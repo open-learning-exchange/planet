@@ -25,11 +25,12 @@ interface CommunityForm {
 
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
-  styles: [ `
+  styles: [`
     .mat-expansion-panel {
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();

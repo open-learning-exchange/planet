@@ -11,7 +11,8 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 
 @Component({
-  templateUrl: './health-event-dialog.component.html'
+  templateUrl: './health-event-dialog.component.html',
+  standalone: false
 })
 export class HealthEventDialogComponent implements OnInit, OnDestroy {
 

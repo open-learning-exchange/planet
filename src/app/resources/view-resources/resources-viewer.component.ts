@@ -12,7 +12,8 @@ import { CouchService } from '../../shared/couchdb.service';
 @Component({
   selector: 'planet-resources-viewer',
   templateUrl: './resources-viewer.component.html',
-  styleUrls: [ './resources-viewer.scss' ]
+  styleUrls: ['./resources-viewer.scss'],
+  standalone: false
 })
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 

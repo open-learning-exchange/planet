@@ -16,8 +16,9 @@ import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-view-finances',
-  styleUrls: [ './teams-view-finances.scss' ],
+  styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
+  standalone: false
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 
