@@ -39,7 +39,16 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm, arm64 ]
+        include:
+          - arch: amd64
+            dockerfile: ./docker/db-init/Dockerfile
+            build_args: ""
+          - arch: arm
+            dockerfile: ./docker/db-init/crosscompile-Dockerfile
+            build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm --build-arg CROSSCOMPILE_ARCH=armv7"
+          - arch: arm64
+            dockerfile: ./docker/db-init/crosscompile-Dockerfile
+            build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm64 --build-arg CROSSCOMPILE_ARCH=armv8"
 
     steps:
       - name: Checkout Code
@@ -53,8 +62,9 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
+          build_args="${{ matrix.build_args }}"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build -f './docker/db-init/${{ matrix.arch }}-Dockerfile' -t $repo .
+          docker build -f '${{ matrix.dockerfile }}' $build_args -t $repo .
           docker images
           docker tag $repo $branchrepo
           docker push $repo
