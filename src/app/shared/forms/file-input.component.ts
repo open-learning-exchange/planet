@@ -4,12 +4,22 @@ import { truncateText } from '../../shared/utils';
 @Component({
   selector: 'planet-file-input',
   template: `
-    <div class="inner-gaps by-column">
+    <div class="file-input-container">
       <button type="button" mat-raised-button (click)="fileInput.click()" color="primary" i18n>Choose File</button>
       <input hidden (change)="onFileSelected($event)" #fileInput type="file" [accept]="accept">
       <span class="file-name" i18n>{{ getTruncatedFileName() }}</span>
     </div>
   `,
+  styles: [ `
+    .file-input-container {
+      display: flex;
+      gap: 12px;
+    }
+    .file-name {
+      display: inline-flex;
+      align-items: center;
+    }
+  ` ]
 })
 export class FileInputComponent {
 
