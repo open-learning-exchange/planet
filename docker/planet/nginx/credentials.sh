@@ -27,6 +27,5 @@ if [ ! -z "$PLANET_USER" ] && ([ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_U
     echo "    environment:"
     echo "      - COUCHDB_USER=$PLANET_USER"
     echo "      - COUCHDB_PASS=$PLANET_PASS"
-    echo "version: \"2\""
   } >> $YML_PATH
 fi

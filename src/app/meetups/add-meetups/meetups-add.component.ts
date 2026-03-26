@@ -53,7 +53,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() isDialog = false;
   @Input() meetup: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
-  @Output() onGoBack = new EventEmitter<any>();
+  @Output() goBackEvent = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup<MeetupFormControls>;
   readonly dbName = 'meetups'; // database name constant
@@ -94,7 +94,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           this.captureInitialState();
           this.onFormChanges();
         },
-        error => console.log(error)
+        error => console.error(error)
       );
     } else {
       this.captureInitialState();
@@ -229,7 +229,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -241,7 +241,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
-    }, (err) => console.log(err));
+    }, (err) => console.error(err));
   }
 
   cancel() {
@@ -250,7 +250,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   goBack(res?) {
     if (this.isDialog) {
-      this.onGoBack.emit(res);
+      this.goBackEvent.emit(res);
     } else {
       this.router.navigate([ '/meetups' ]);
     }

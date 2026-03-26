@@ -1,7 +1,0 @@
-services:
-  db-init:
-    image: treehouses/planet:db-init
-    environment:
-      - INSTALL=1
-  planet:
-    image: treehouses/planet:latest

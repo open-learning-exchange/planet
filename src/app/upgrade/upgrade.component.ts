@@ -16,12 +16,12 @@ import { SyncService } from '../shared/sync.service';
 })
 export class UpgradeComponent {
   mode = 'planet';
-  enabled: Boolean = true;
+  enabled = true;
   message = $localize`Start upgrade`;
   output = '';
-  working: Boolean = false;
-  done: Boolean = false;
-  error: Boolean = false;
+  working = false;
+  done = false;
+  error = false;
   cleanOutput = '';
   timeoutTrials = 0;
 
