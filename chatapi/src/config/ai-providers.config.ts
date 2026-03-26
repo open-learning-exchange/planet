@@ -55,6 +55,7 @@ const initialize = async () => {
     };
 
     assistant = {
+      'enabled': doc?.assistant?.enabled ?? true,
       'name': doc?.assistant?.name || '',
       'instructions': doc?.assistant?.instructions || '',
     };
