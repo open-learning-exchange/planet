@@ -226,6 +226,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   openReviewDialog() {
     this.dialog.open(DialogsSubmissionsComponent, {
       minWidth: '500px',
+      maxWidth: '90vw',
       maxHeight: '90vh',
       data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
     });

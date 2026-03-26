@@ -53,7 +53,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() isDialog = false;
   @Input() meetup: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
-  @Output() onGoBack = new EventEmitter<any>();
+  @Output() goBackEvent = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup<MeetupFormControls>;
   readonly dbName = 'meetups'; // database name constant
@@ -250,7 +250,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   goBack(res?) {
     if (this.isDialog) {
-      this.onGoBack.emit(res);
+      this.goBackEvent.emit(res);
     } else {
       this.router.navigate([ '/meetups' ]);
     }

@@ -32,7 +32,7 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return this.formatHttpReq(httpReq, type, this.reqNum);
+    return this.formatHttpReq(httpReq);
   }
 
   constructor(
@@ -40,7 +40,7 @@ export class CouchService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  formatHttpReq(httpReq: Observable<any>, type: string, reqNum: Number) {
+  formatHttpReq(httpReq: Observable<any>) {
     return httpReq
       .pipe(catchError(err => {
         if (err.status === 403) {

@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -89,14 +89,14 @@
     &[data-rating="9"] { background-color: #eafaea; }
 
     &:hover {
-      border-color: $primary;
+      border-color: v.$primary;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     &.selected {
-      background-color: $primary;
+      background-color: v.$primary;
       color: white;
-      border-color: $primary;
+      border-color: v.$primary;
       box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
     }
   }
