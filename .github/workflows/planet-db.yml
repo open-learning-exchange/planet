@@ -41,7 +41,7 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            dockerfile: ./docker/db-init/amd64-Dockerfile
+            dockerfile: ./docker/db-init/Dockerfile
             build_args: ""
           - arch: arm
             dockerfile: ./docker/db-init/arm-Dockerfile
