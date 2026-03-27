@@ -8,10 +8,7 @@ import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
-import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
-import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './notifications.component.html',
@@ -32,8 +29,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   anyUnread = true;
 
   constructor(
-    private dialog: MatDialog,
-    private stateService: StateService,
     private notificationsService: NotificationsService,
     private couchService: CouchService,
     private userService: UserService,
@@ -97,12 +92,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   openAnnouncementDialog() {
-    const challengeActive = includedCodes.includes(this.stateService.configuration.code) && challengePeriod;
-    if (challengeActive) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
-    }
+    // Dec 2024 / Jan 2025 challenge campaign has ended permanently.
   }
 }
