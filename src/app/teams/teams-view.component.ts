@@ -23,7 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort } from './teams.utils';
+import { memberCompare, memberNameCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
@@ -225,7 +225,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       const docsWithName = docs.map(mem => ({ ...mem, name: mem.userId && mem.userId.split(':')[1], avatar: src(mem) }));
       this.leader = docsWithName.find(mem => mem.isLeader) || { userId: this.team.createdBy, userPlanetCode: this.team.teamPlanetCode };
       this.members = docsWithName.filter(mem => mem.docType === 'membership').sort((a, b) => memberSort(a, b, this.leader));
-      this.requests = docsWithName.filter(mem => mem.docType === 'request');
+      this.requests = docsWithName.filter(mem => mem.docType === 'request').sort(memberNameCompare);
       this.disableAddingMembers = this.members.length >= this.team.limit;
       this.finances = docs.filter(doc => doc.docType === 'transaction');
       this.financesCount = this.finances.length;
