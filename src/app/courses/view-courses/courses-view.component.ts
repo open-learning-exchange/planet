@@ -12,7 +12,8 @@ import { trackByIndex } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styleUrls: [ 'courses-view.scss' ]
+  styleUrls: ['courses-view.scss'],
+  standalone: false
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 

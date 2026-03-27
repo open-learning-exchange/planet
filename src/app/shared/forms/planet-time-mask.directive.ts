@@ -3,7 +3,8 @@ import { NgControl } from '@angular/forms';
 import { startWith, pairwise } from 'rxjs/operators';
 
 @Directive({
-  selector: 'input[planetTimeMask]'
+  selector: 'input[planetTimeMask]',
+  standalone: false
 })
 export class PlanetTimeMaskDirective implements OnInit {
 

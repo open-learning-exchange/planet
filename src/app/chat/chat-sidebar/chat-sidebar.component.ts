@@ -20,7 +20,8 @@ interface TitleForm {
 @Component({
   selector: 'planet-chat-sidebar',
   templateUrl: './chat-sidebar.component.html',
-  styleUrls: [ './chat-sidebar.scss' ],
+  styleUrls: ['./chat-sidebar.scss'],
+  standalone: false
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';

@@ -12,7 +12,7 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
-  styles: [ `
+  styles: [`
     .search-bar {
       display: flex;
       align-items: center;
@@ -22,7 +22,8 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       overflow-y: auto;
       height: calc(100% - 160px);
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsListComponent implements AfterViewInit {
 

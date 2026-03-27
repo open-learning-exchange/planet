@@ -64,8 +64,9 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
-  styleUrls: [ 'users-achievements-update.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['users-achievements-update.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();

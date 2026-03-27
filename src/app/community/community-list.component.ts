@@ -6,7 +6,8 @@ import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPl
 
 @Component({
   selector: 'planet-community-list',
-  templateUrl: './community-list.component.html'
+  templateUrl: './community-list.component.html',
+  standalone: false
 })
 export class CommunityListComponent implements OnInit {
 

@@ -17,8 +17,9 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 @Component({
   selector: 'planet-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: [ './tasks.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./tasks.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class TasksComponent implements OnInit {
 
@@ -207,7 +208,8 @@ export class TasksComponent implements OnInit {
 }
 
 @Pipe({
-  name: 'filterAssignee'
+  name: 'filterAssignee',
+  standalone: false
 })
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
@@ -216,7 +218,8 @@ export class FilterAssigneePipe implements PipeTransform {
 }
 
 @Pipe({
-  name: 'assigneeName'
+  name: 'assigneeName',
+  standalone: false
 })
 export class AssigneeNamePipe implements PipeTransform {
   transform(assignee) {

@@ -19,7 +19,7 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-calendar',
-  styleUrls: [ './calendar.component.scss' ],
+  styleUrls: ['./calendar.component.scss'],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
@@ -30,7 +30,8 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
         </div>
       </div>
     </div>
-  `
+  `,
+  standalone: false
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 

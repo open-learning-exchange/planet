@@ -17,7 +17,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './dashboard.component.html',
-  styleUrls: [ './dashboard.scss' ]
+  styleUrls: ['./dashboard.scss'],
+  standalone: false
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 

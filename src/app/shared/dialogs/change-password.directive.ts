@@ -39,7 +39,8 @@ const resetPasswordFields = [
 ];
 
 @Directive({
-  selector: '[planetChangePassword]'
+  selector: '[planetChangePassword]',
+  standalone: false
 })
 export class ChangePasswordDirective implements OnChanges {
 

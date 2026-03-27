@@ -14,7 +14,8 @@ import { exportMyPlanetCsv } from '../reports.utils';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  standalone: false
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

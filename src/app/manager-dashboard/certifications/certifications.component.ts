@@ -11,7 +11,7 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 
 @Component({
   templateUrl: './certifications.component.html',
-  styles: [ `
+  styles: [`
     .action-button {
       min-width: 100px;
       width: 100px;
@@ -20,7 +20,8 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
       max-width: 300px;
       align-self: end;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 

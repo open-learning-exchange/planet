@@ -10,7 +10,8 @@ import { languages } from '../../shared/languages';
 
 @Component({
   selector: 'planet-courses-detail',
-  templateUrl: './courses-view-detail.component.html'
+  templateUrl: './courses-view-detail.component.html',
+  standalone: false
 })
 export class CoursesViewDetailComponent implements OnChanges {
 
@@ -43,7 +44,8 @@ export class CoursesViewDetailComponent implements OnChanges {
         <button mat-dialog-close mat-raised-button color="primary" (click)="routeToCourses(courseDetail._id)" i18n>View Course</button>
       </mat-dialog-actions>
     </ng-container>
-  `
+  `,
+  standalone: false
 })
 export class CoursesViewDetailDialogComponent implements OnInit {
 
