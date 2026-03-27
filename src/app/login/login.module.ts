@@ -21,10 +21,12 @@ import { LoginDialogComponent } from './login-dialog.component';
     ReactiveFormsModule,
     PlanetFormsModule,
     ConfigurationModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    LoginFormComponent,
+    LoginDialogComponent
   ],
   declarations: [
-    LoginComponent, LoginFormComponent, DashboardNotificationsDialogComponent, LoginDialogComponent
+    LoginComponent, DashboardNotificationsDialogComponent
   ],
   providers: [ ConfigurationGuard ]
 })

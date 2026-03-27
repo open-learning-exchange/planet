@@ -1,12 +1,17 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { UserService } from '../shared/user.service';
-import { switchMap, catchError } from 'rxjs/operators';
-import { from, Observable, of, throwError } from 'rxjs';
 import {
-  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ValidationErrors, ValidatorFn, Validators
+  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule,
+  ValidationErrors, ValidatorFn, Validators
 } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { from, Observable, of, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { MaterialModule } from '../shared/material.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
+import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -36,7 +41,8 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
   templateUrl: './login-form.component.html',
   selector: 'planet-login-form',
   styleUrls: ['./login.scss'],
-  standalone: false
+  standalone: true,
+  imports: [ CommonModule, ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule ]
 })
 export class LoginFormComponent {
   public userForm!: LoginFormGroup | RegisterFormGroup;
