@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChil
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
-import { catchError, takeUntil, debounce, filter, startWith, take } from 'rxjs/operators';
+import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -75,6 +75,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
+  readonly maxResumeSizeMb = 512;
   achievementNotFound = false;
   editForm!: FormGroup<EditFormControls>;
   profileForm!: FormGroup<ProfileFormControls>;
@@ -83,9 +84,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   hasUnsavedChanges = false;
   submitAttempted = false;
   currentResumeFileName = '';
-  resumeFile: string | null = null;
+  resumeFile: File | null = null;
   resumeUploadError = '';
-  resumeLoading = false;
   resumeMarkedForDeletion = false;
   existingResumeAttachment: any = null;
   private submitAfterPending = false;
@@ -366,6 +366,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) {
+      this.resumeFile = null;
       this.resumeUploadError = '';
       this.updateUnsavedChangesFlag();
       return;
@@ -380,35 +381,23 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       return;
     }
 
-    const reader = new FileReader();
-    this.resumeLoading = true;
-    reader.onload = () => {
-      if (typeof reader.result !== 'string') {
-        this.resumeUploadError = $localize`There was an error reading the selected file`;
-        this.resumeFile = null;
-        this.resumeLoading = false;
-        this.updateUnsavedChangesFlag();
-        return;
-      }
-      this.resumeFile = reader.result;
-      this.resumeUploadError = '';
-      this.resumeLoading = false;
-      this.resumeMarkedForDeletion = false;
-      this.updateUnsavedChangesFlag();
-    };
-    reader.onerror = () => {
-      this.resumeUploadError = $localize`There was an error reading the selected file`;
+    if (file.size / 1024 / 1024 > this.maxResumeSizeMb) {
       this.resumeFile = null;
-      this.resumeLoading = false;
+      this.resumeUploadError = $localize`Please select a PDF file smaller than ${this.maxResumeSizeMb} MB`;
+      this.resumeInput?.clearFile();
       this.updateUnsavedChangesFlag();
-    };
-    reader.readAsDataURL(file);
+      return;
+    }
+
+    this.resumeFile = file;
+    this.resumeUploadError = '';
+    this.resumeMarkedForDeletion = false;
+    this.updateUnsavedChangesFlag();
   }
 
   clearResumeSelection() {
     this.resumeFile = null;
     this.resumeUploadError = '';
-    this.resumeLoading = false;
     this.resumeInput?.clearFile();
     this.updateUnsavedChangesFlag();
   }
@@ -419,23 +408,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.clearResumeSelection();
   }
 
-  private createAttachmentObj(file: string) {
-    const fileDataArr: string[] = file.split(/;\w+,/);
-    const contentType: string = fileDataArr[0].replace(/data:/, '');
-    const data: string = fileDataArr[1];
-
-    return {
-      content_type: contentType,
-      data
-    };
-  }
-
   onSubmit() {
     this.submitAttempted = true;
-    if (this.resumeLoading) {
-      this.planetMessageService.showAlert($localize`Please wait for the CV/Resume upload to finish`);
-      return;
-    }
     if (this.resumeUploadError) {
       this.planetMessageService.showAlert($localize`Please upload your CV/Resume as a PDF file`);
       return;
@@ -511,10 +485,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     };
 
     if (this.resumeFile) {
-      achievementsDoc.resumeFileName = this.resumeInput?.selectedFile?.name || this.currentResumeFileName || this.resumeAttachmentKey;
-      achievementsDoc._attachments = {
-        [this.resumeAttachmentKey]: this.createAttachmentObj(this.resumeFile)
-      };
+      achievementsDoc.resumeFileName = this.resumeFile.name;
     } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
       achievementsDoc.resumeFileName = this.currentResumeFileName;
       if (this.existingResumeAttachment) {
@@ -524,12 +495,18 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       }
     }
 
-    forkJoin([
-      this.couchService.post(this.dbName, achievementsDoc),
-      this.userService.updateUser(userInfo)
-    ]).subscribe(() => {
+    this.couchService.post(this.dbName, achievementsDoc).pipe(
+      switchMap((achievementsRes) => forkJoin([
+        this.resumeFile ?
+          this.couchService.putAttachment(
+            this.dbName + '/' + achievementsRes.id + '/' + this.resumeAttachmentKey + '?rev=' + achievementsRes.rev,
+            this.resumeFile, { headers: { 'Content-Type': this.resumeFile.type } }
+          ) :
+          of({}),
+        this.userService.updateUser(userInfo)
+      ]))
+    ).subscribe(() => {
       this.resumeFile = null;
-      this.resumeLoading = false;
       this.resumeMarkedForDeletion = false;
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
