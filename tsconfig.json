@@ -1,14 +1,15 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "downlevelIteration": true,
     "importHelpers": true,
     "module": "esnext",
-    "esModuleInterop": true,
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "target": "ES2022",
     "typeRoots": [

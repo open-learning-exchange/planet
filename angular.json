@@ -37,16 +37,13 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": {
-              "base": "dist"
-            },
+            "outputPath": "dist",
             "index": "src/index.html",
+            "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
               "src/manifest.json"
@@ -62,11 +59,12 @@
             "scripts": [],
             "i18nMissingTranslation": "ignore",
             "poll": 2000,
+            "vendorChunk": true,
             "extractLicenses": false,
+            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-            "browser": "src/main.ts"
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -81,7 +79,10 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "serviceWorker": "src/ngsw-config.json",
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -112,9 +113,7 @@
               ]
             },
             "eng": {
-              "outputPath": {
-                "base": "dist/eng"
-              },
+              "outputPath": "dist/eng",
               "localize": [
                 "en"
               ],
@@ -126,9 +125,7 @@
               ]
             },
             "som": {
-              "outputPath": {
-                "base": "dist/som"
-              },
+              "outputPath": "dist/som",
               "localize": [
                 "so"
               ],
@@ -140,9 +137,7 @@
               ]
             },
             "fra": {
-              "outputPath": {
-                "base": "dist/fra"
-              },
+              "outputPath": "dist/fra",
               "localize": [
                 "fr"
               ],
@@ -154,9 +149,7 @@
               ]
             },
             "nep": {
-              "outputPath": {
-                "base": "dist/nep"
-              },
+              "outputPath": "dist/nep",
               "localize": [
                 "ne"
               ],
@@ -168,9 +161,7 @@
               ]
             },
             "ara": {
-              "outputPath": {
-                "base": "dist/ara"
-              },
+              "outputPath": "dist/ara",
               "localize": [
                 "ar"
               ],
@@ -182,9 +173,7 @@
               ]
             },
             "spa": {
-              "outputPath": {
-                "base": "dist/spa"
-              },
+              "outputPath": "dist/spa",
               "localize": [
                 "es"
               ],
