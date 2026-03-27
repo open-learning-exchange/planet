@@ -5,9 +5,9 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
+  <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
     <div>
-      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
+      <span *ngIf="user?.firstName; else elseBlock">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
       <ng-template #elseBlock>{{ user.name | truncateText:40 }}</ng-template>
     </div>
     <span class="toolbar-fill"></span>
