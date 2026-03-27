@@ -270,8 +270,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       resume: {
         fileName: this.currentResumeFileName,
         hasPendingUpload: !!this.resumeFile,
-        uploadError: this.resumeUploadError,
-        loading: this.resumeLoading,
         markedForDeletion: this.resumeMarkedForDeletion
       }
     });
