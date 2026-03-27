@@ -19,7 +19,8 @@ import { truncateText } from '../../shared/utils';
       display: inline-flex;
       align-items: center;
     }
-  ` ]
+  ` ],
+  standalone: false
 })
 export class FileInputComponent {
 

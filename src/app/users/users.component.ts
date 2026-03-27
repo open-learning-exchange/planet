@@ -15,7 +15,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styles: [ `
+  styles: [`
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
@@ -24,7 +24,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     .mat-column-profile {
       max-width: 100px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class UsersComponent implements OnInit, OnDestroy {
 

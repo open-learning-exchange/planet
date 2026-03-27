@@ -7,7 +7,8 @@ declare let gtag: (type: string, account: string, params: { 'page_path': string 
 
 @Component({
   selector: 'planet-app',
-  template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>'
+  template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>',
+  standalone: false
 })
 export class AppComponent {
   constructor(

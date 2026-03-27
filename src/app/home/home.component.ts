@@ -18,7 +18,7 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
 
 @Component({
   templateUrl: './home.component.html',
-  styleUrls: [ './home.scss' ],
+  styleUrls: ['./home.scss'],
   animations: [
     trigger('sidenavState', [
       state('closed', style({
@@ -39,7 +39,8 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
       transition('open => closed', animate('400ms ease-in-out')),
       transition('closed => open', animate('400ms ease-in-out'))
     ]),
-  ]
+  ],
+  standalone: false
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 

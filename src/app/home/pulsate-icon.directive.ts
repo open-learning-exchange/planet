@@ -3,7 +3,8 @@ import { timer } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Directive({
-  selector: '[planetPulsateIcon]'
+  selector: '[planetPulsateIcon]',
+  standalone: false
 })
 export class PulsateIconDirective {
 

@@ -9,7 +9,8 @@ import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-images.component.html',
-  styleUrls: [ './dialogs-images.component.scss' ]
+  styleUrls: ['./dialogs-images.component.scss'],
+  standalone: false
 })
 export class DialogsImagesComponent implements OnInit {
 

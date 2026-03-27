@@ -24,7 +24,8 @@ type TagFormGroup = FormGroup<TagFormControls>;
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styleUrls': [ 'planet-tag-input-dialog.scss' ]
+  'styleUrls': ['planet-tag-input-dialog.scss'],
+  standalone: false
 })
 export class PlanetTagInputDialogComponent {
 
@@ -297,11 +298,12 @@ export class PlanetTagInputDialogComponent {
     <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
     <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
   `,
-  'styles': [ `
+  'styles': [`
     mat-icon {
       vertical-align: middle;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class PlanetTagInputToggleIconComponent {
 

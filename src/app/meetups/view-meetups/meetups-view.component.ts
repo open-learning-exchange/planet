@@ -17,7 +17,8 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 @Component({
   selector: 'planet-meetups-view',
   templateUrl: './meetups-view.component.html',
-  styleUrls: [ './meetups-view.scss' ]
+  styleUrls: ['./meetups-view.scss'],
+  standalone: false
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {

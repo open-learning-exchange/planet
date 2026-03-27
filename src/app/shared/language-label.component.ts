@@ -4,7 +4,8 @@ import { Component, Input, OnChanges } from '@angular/core';
   selector: 'planet-language-label',
   template: `
     {{ displayText }}<ng-content></ng-content>
-  `
+  `,
+  standalone: false
 })
 export class LanguageLabelComponent implements OnChanges {
 

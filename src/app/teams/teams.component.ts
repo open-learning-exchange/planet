@@ -20,8 +20,9 @@ import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/rep
 
 @Component({
   templateUrl: './teams.component.html',
-  styleUrls: [ './teams.scss' ],
-  selector: 'planet-teams'
+  styleUrls: ['./teams.scss'],
+  selector: 'planet-teams',
+  standalone: false
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 

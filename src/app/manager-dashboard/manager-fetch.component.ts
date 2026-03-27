@@ -16,7 +16,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './manager-fetch.component.html',
-  styles: [ `
+  styles: [`
     .mat-column-select {
       max-width: 44px;
     }
@@ -26,7 +26,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     .fetch-icon {
       color: #666;
     }
-  ` ]
+  `],
+  standalone: false
 })
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {
