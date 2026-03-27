@@ -84,7 +84,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   currentResumeFileName = '';
   resumeFile: string | null = null;
   resumeUploadError = '';
+  resumeLoading = false;
   resumeMarkedForDeletion = false;
+  existingResumeAttachment: any = null;
   private submitAfterPending = false;
   @ViewChild('resumeInput') resumeInput?: FileInputComponent;
   get achievements(): FormArray<AchievementFormGroup> {
@@ -136,6 +138,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.editForm.setControl('otherInfo', this.buildOtherInfoFormArray(achievements.otherInfo));
         this.currentResumeFileName = achievements.resumeFileName || (achievements._attachments?.[this.resumeAttachmentKey] ?
           this.resumeAttachmentKey : '');
+        this.existingResumeAttachment = achievements._attachments?.[this.resumeAttachmentKey] || null;
 
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
@@ -267,6 +270,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         fileName: this.currentResumeFileName,
         hasPendingUpload: !!this.resumeFile,
         uploadError: this.resumeUploadError,
+        loading: this.resumeLoading,
         markedForDeletion: this.resumeMarkedForDeletion
       }
     });
@@ -363,6 +367,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
     if (!file) {
+      this.resumeUploadError = '';
+      this.updateUnsavedChangesFlag();
       return;
     }
 
@@ -376,16 +382,25 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
 
     const reader = new FileReader();
+    this.resumeLoading = true;
     reader.onload = () => {
       if (typeof reader.result !== 'string') {
         this.resumeUploadError = $localize`There was an error reading the selected file`;
         this.resumeFile = null;
+        this.resumeLoading = false;
         this.updateUnsavedChangesFlag();
         return;
       }
       this.resumeFile = reader.result;
       this.resumeUploadError = '';
+      this.resumeLoading = false;
       this.resumeMarkedForDeletion = false;
+      this.updateUnsavedChangesFlag();
+    };
+    reader.onerror = () => {
+      this.resumeUploadError = $localize`There was an error reading the selected file`;
+      this.resumeFile = null;
+      this.resumeLoading = false;
       this.updateUnsavedChangesFlag();
     };
     reader.readAsDataURL(file);
@@ -394,6 +409,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   clearResumeSelection() {
     this.resumeFile = null;
     this.resumeUploadError = '';
+    this.resumeLoading = false;
     this.resumeInput?.clearFile();
     this.updateUnsavedChangesFlag();
   }
@@ -417,6 +433,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
 
   onSubmit() {
     this.submitAttempted = true;
+    if (this.resumeLoading) {
+      this.planetMessageService.showAlert($localize`Please wait for the CV/Resume upload to finish`);
+      return;
+    }
     if (this.resumeUploadError) {
       this.planetMessageService.showAlert($localize`Please upload your CV/Resume as a PDF file`);
       return;
@@ -498,6 +518,11 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       };
     } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
       achievementsDoc.resumeFileName = this.currentResumeFileName;
+      if (this.existingResumeAttachment) {
+        achievementsDoc._attachments = {
+          [this.resumeAttachmentKey]: this.existingResumeAttachment
+        };
+      }
     }
 
     forkJoin([
@@ -505,6 +530,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.userService.updateUser(userInfo)
     ]).subscribe(() => {
       this.resumeFile = null;
+      this.resumeLoading = false;
       this.resumeMarkedForDeletion = false;
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
