@@ -127,36 +127,38 @@
   margin-right: 1rem
 }
 
-@media (max-width: v.$screen-sm) {
-  .responsive-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    height: auto;
-    padding-bottom: 0.5rem;
-  }
 
-  .auto-adjust-buttons {
-    display: flex;
-    gap: 0.2rem;
-    width: 100%;
-  }
+// Responsive and desktop toolbar alignment
+.responsive-toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
 
-  .auto-adjust-buttons a {
-    flex-grow: 1;
-    text-align: center;
-  }
+.center-text {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+}
 
-  .auto-adjust-buttons span {
-    font-size: 0.875em;
-  }
+.auto-adjust-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
 
-  .margin-r-1 {
-    margin-right: 0.2rem;
-  }
+.auto-adjust-buttons a,
+.auto-adjust-buttons button {
+  min-width: 140px;
+  text-align: center;
+  margin: 0 0.1rem;
+}
 
-  .center-text div {
-    margin: 0 auto;
-  }
+.margin-r-1 {
+  margin-right: 0.5rem;
 }
