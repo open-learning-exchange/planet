@@ -17,7 +17,6 @@ import { LoginFormComponent } from './login-form.component';
       </div>
     </mat-dialog-content>
   `,
-  standalone: true,
   imports: [ MaterialModule, LoginFormComponent ]
 })
 export class LoginDialogComponent {

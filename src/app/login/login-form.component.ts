@@ -41,7 +41,6 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
   templateUrl: './login-form.component.html',
   selector: 'planet-login-form',
   styleUrls: ['./login.scss'],
-  standalone: true,
   imports: [ CommonModule, ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule ]
 })
 export class LoginFormComponent {

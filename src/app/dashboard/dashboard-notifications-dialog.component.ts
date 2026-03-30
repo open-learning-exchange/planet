@@ -8,7 +8,6 @@ import { MaterialModule } from '../shared/material.module';
 @Component({
   templateUrl: './dashboard-notifications-dialog.component.html',
   styleUrls: ['./dashboard-notifications-dialog.component.scss'],
-  standalone: true,
   imports: [ CommonModule, RouterModule, MaterialModule ]
 })
 export class DashboardNotificationsDialogComponent implements OnInit {
