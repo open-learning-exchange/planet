@@ -27,7 +27,7 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   )
 });
 
-export const itemInDateRange = (item, dateField, startDate, endDate) => {
+const itemInDateRange = (item, dateField, startDate, endDate) => {
   if (!startDate || !endDate || startDate > endDate) {
     return false;
   }
