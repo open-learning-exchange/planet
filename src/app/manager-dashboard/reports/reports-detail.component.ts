@@ -930,7 +930,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   loadComparisonData() {
     if (!this.comparisonWeek1End || !this.comparisonWeek2End) {
-      return
+      return;
     };
 
     this.comparisonLoading = true;

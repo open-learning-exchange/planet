@@ -317,7 +317,7 @@
           "single",
           { "allowTemplateLiterals": "never" }
         ],
-        // Removed in newer @typescript-eslint versions; keep commented as a migration note.
+        "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error"
       }
     },

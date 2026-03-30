@@ -172,7 +172,7 @@ export class CouchService {
     return this.http.get(urlPrefix + '/' + url, opts);
   }
 
-  private compareRev = (parent, local) => {
+  private compareRev(parent, local) {
     if (parent === local) {
       return 'match';
     }
