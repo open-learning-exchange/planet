@@ -169,7 +169,7 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = this.mode === 'services' ? `community` : `/${this.mode}s/view/${this.link.teams}`;
+    const link = this.mode === 'services' ? 'community' : `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
       'message': $localize`You were assigned a new task`,

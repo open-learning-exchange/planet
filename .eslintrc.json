@@ -19,6 +19,7 @@
       "plugins": [
         "@typescript-eslint",
         "@angular-eslint",
+        "@stylistic",
         "eslint-plugin-import",
         "eslint-plugin-jsdoc",
         "eslint-plugin-prefer-arrow"
@@ -310,12 +311,12 @@
         //     }
         //   }
         // ],
-        "quotes": "off"
-        // "@typescript-eslint/quotes": [
-        //   "error",
-        //   "single",
-        //   { "allowTemplateLiterals": true }
-        // ],
+        "quotes": "off",
+        "@stylistic/quotes": [
+          "error",
+          "single",
+          { "allowTemplateLiterals": "never" }
+        ]
         // Removed in newer @typescript-eslint versions; keep commented as a migration note.
         // "@typescript-eslint/type-annotation-spacing": "error"
       }

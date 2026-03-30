@@ -119,7 +119,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   checkRequestStatus() {
-    this.couchService.post(`communityregistrationrequests/_find`,
+    this.couchService.post('communityregistrationrequests/_find',
       findDocuments(
         { 'code': this.planetConfiguration.code },
         [ 'registrationRequest' ]
