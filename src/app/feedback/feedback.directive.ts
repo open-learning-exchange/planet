@@ -95,27 +95,6 @@ export class FeedbackDirective {
       feedback.title = $localize`Feedback regarding home`;
       feedback.routerLink = [ '/home' ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
-    } else if (['myDashboard', 'chat', 'manager'].includes(firstPart)) {
-      // Handle new top-level pages
-      let pageTitle = '';
-      let routerLink = [];
-      switch (firstPart) {
-        case 'myDashboard':
-          pageTitle = $localize`Feedback regarding Dashboard`;
-          routerLink = [ '/myDashboard' ];
-          break;
-        case 'chat':
-          pageTitle = $localize`Feedback regarding Chat`;
-          routerLink = [ '/chat' ];
-          break;
-        case 'manager':
-          pageTitle = $localize`Feedback regarding Manager`;
-          routerLink = [ '/manager' ];
-          break;
-      }
-      feedback.title = pageTitle;
-      feedback.routerLink = routerLink;
-      this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (this.feedbackOf?.name) {
       feedback.title = $localize`Feedback regarding ${firstPart}/${this.feedbackOf.name}`;
       feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
@@ -125,6 +104,7 @@ export class FeedbackDirective {
       feedback.routerLink = [ '/', firstPart ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
+      const fallbackPath = urlParts.slice(1);
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
         (document: any) => {
           const resourceName = document?.type === 'enterprise'
@@ -135,8 +115,8 @@ export class FeedbackDirective {
           this.updateFeedback(feedback, date, user, feedbackUrl);
         },
         (error) => {
-          feedback.title = $localize`Feedback regarding ${firstPart}/${lastPart}`;
-          feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
+          feedback.title = $localize`Feedback regarding ${fallbackPath.join('/')}`;
+          feedback.routerLink = [ '/', ...fallbackPath ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );
