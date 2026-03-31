@@ -52,4 +52,4 @@ planet.yml
 .env
 
 # Dev environment
-environment.dev.ts
+src/environments/environment.dev.ts

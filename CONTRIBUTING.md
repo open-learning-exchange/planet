@@ -28,3 +28,17 @@ For those comfortable with GitHub and with the above languages please jump right
 
 # Asking for help // OLE support communities
 OLE maintains a community of developers who actively maintain the Planet Learning system. You can discuss issue and ask for help in via our Gitter channel [here](https://gitter.im/open-learning-exchange/chat).
+
+
+## Local development environment file (`environment.dev.ts`)
+
+`angular.json` uses the `dev` build configuration to replace `src/environments/environment.ts`
+with `src/environments/environment.dev.ts`. That dev file is generated from
+`src/environments/environment.template` by `dev-env.sh`.
+
+- Use `npm run dev` for local development. It runs `dev-env.sh`, then a preflight check that fails
+  fast if `src/environments/environment.dev.ts` is missing or empty.
+- You can also run `bash dev-env.sh` directly if you only need to regenerate the file.
+- Optionally create a `.env` file in the repo root to override `CHAT_PORT`, `COUCH_PORT`, and
+  `PARENT_PROTOCOL` before running `npm run dev`.
+- Do not commit `src/environments/environment.dev.ts`; it is generated locally and ignored in Git.
