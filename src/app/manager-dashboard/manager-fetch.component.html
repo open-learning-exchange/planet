@@ -11,47 +11,49 @@
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>
-  <div class="view-container view-full-height view-table">
-    <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
-    <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
-      <ng-container matColumnDef="select">
-        <mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-          </mat-checkbox>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row">
-          <mat-checkbox
-            (click)="$event.stopPropagation()"
-            (change)="$event ? selection.toggle(row._id) : null"
-            [checked]="selection.isSelected(row._id)">
-          </mat-checkbox>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="item">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.db === 'resources'">
-            {{ element.item.doc.title }}
-            <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
-          </ng-container>
-          <ng-container *ngIf="element.db === 'courses'">
-            {{ element.item.doc.courseTitle }}
-            <mat-icon class="margin-lr-5 fetch-icon">school</mat-icon>
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Date Sent</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
-      <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>No Record Found</div></td>
-      </tr>
-    </mat-table>
+  <div class="tab-scroll-shell">
+    <div class="tab-scroll-layout">
+      <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
+      <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
+        <ng-container matColumnDef="select">
+          <mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox
+              (click)="$event.stopPropagation()"
+              (change)="$event ? selection.toggle(row._id) : null"
+              [checked]="selection.isSelected(row._id)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="item">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <ng-container *ngIf="element.db === 'resources'">
+              {{ element.item.doc.title }}
+              <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
+            </ng-container>
+            <ng-container *ngIf="element.db === 'courses'">
+              {{ element.item.doc.courseTitle }}
+              <mat-icon class="margin-lr-5 fetch-icon">school</mat-icon>
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header="time" i18n>Date Sent</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.time | date}}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer" [ngClass]="{highlight:selection.isSelected(row._id)}" (click)="selection.toggle(row._id)"></mat-row>
+        <tr class="mat-row" *matNoDataRow>
+          <td><div class="view-container" i18n>No Record Found</div></td>
+        </tr>
+      </mat-table>
+    </div>
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
