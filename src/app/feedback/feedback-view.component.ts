@@ -26,6 +26,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     meetups: $localize`Go to Meetup`,
     teams: $localize`Go to Team`,
     enterprises: $localize`Go to Enterprise`,
+    users: $localize`Go to Users`,
+    upgrade: $localize`Go to Upgrade`,
     myDashboard: $localize`Go to Dashboard`,
     chat: $localize`Go to Chat`,
     manager: $localize`Go to Manager`,
