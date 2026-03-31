@@ -36,7 +36,8 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: [ './courses.scss' ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {

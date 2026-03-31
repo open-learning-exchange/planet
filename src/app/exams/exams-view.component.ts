@@ -34,7 +34,8 @@ interface ExamViewForm {
 @Component({
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
-  styleUrls: [ './exams-view.scss' ]
+  styleUrls: ['./exams-view.scss'],
+  standalone: false
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
 

@@ -17,7 +17,8 @@ import { TimePipe } from '../time.pipe';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  standalone: false
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

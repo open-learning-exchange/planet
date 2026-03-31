@@ -16,7 +16,8 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 
 @Component({
   templateUrl: './requests.component.html',
-  styleUrls: [ './requests.component.scss' ]
+  styleUrls: ['./requests.component.scss'],
+  standalone: false
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 

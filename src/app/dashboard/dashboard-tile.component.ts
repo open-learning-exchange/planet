@@ -14,7 +14,8 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',
-  styleUrls: [ './dashboard-tile.scss' ]
+  styleUrls: ['./dashboard-tile.scss'],
+  standalone: false
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() cardTitle: string;
@@ -180,7 +181,8 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     <mat-icon svgIcon={{cardType}}></mat-icon>
     <span>{{cardTitle}}</span>
   `,
-  styleUrls: [ './dashboard-tile-title.scss' ]
+  styleUrls: ['./dashboard-tile-title.scss'],
+  standalone: false
 })
 export class DashboardTileTitleComponent {
 

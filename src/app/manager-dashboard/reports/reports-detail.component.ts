@@ -38,8 +38,9 @@ interface DateFilterForm {
 
 @Component({
   templateUrl: './reports-detail.component.html',
-  styleUrls: [ 'reports-detail.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['reports-detail.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 

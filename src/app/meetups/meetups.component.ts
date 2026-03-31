@@ -17,7 +17,7 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
 
 @Component({
   templateUrl: './meetups.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-row {
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -35,7 +35,8 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
       max-width: 500px;
       align-self: flex-start;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 

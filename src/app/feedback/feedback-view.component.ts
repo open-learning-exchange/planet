@@ -15,7 +15,8 @@ import { trackById } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './feedback-view.component.html',
-  styleUrls: [ './feedback-view.scss' ]
+  styleUrls: ['./feedback-view.scss'],
+  standalone: false
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';

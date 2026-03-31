@@ -29,8 +29,9 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './teams-view.component.html',
-  styleUrls: [ './teams-view.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./teams-view.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 

@@ -14,11 +14,12 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styles: [ `
+  styles: [`
     mat-toolbar.primary-color {
       padding-top: 8px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 

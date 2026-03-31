@@ -13,7 +13,7 @@ Chart.register(LineController);
 @Component({
   selector: 'planet-reports-health',
   templateUrl: './reports-health.component.html',
-  styles: [ `
+  styles: [`
     div {
       display: grid;
       margin: 0.5rem 0;
@@ -29,7 +29,8 @@ Chart.register(LineController);
     .trend-filters > span {
       align-self: center;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class ReportsHealthComponent implements OnChanges {
 

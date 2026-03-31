@@ -33,7 +33,8 @@ interface SurveyFilterForm {
 @Component({
   selector: 'planet-surveys',
   templateUrl: './surveys.component.html',
-  styleUrls: [ './surveys.component.scss' ]
+  styleUrls: ['./surveys.component.scss'],
+  standalone: false
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);

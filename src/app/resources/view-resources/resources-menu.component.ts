@@ -18,7 +18,8 @@ import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-re
         {{resource.title}}
       </button>
     </mat-menu>
-  `
+  `,
+  standalone: false
 })
 export class ResourcesMenuComponent {
 

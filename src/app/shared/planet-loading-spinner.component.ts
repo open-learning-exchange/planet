@@ -22,7 +22,8 @@ import { Component, Input } from '@angular/core';
         padding: 24px;
       }
     }
-  `]
+  `],
+  standalone: false
 })
 export class PlanetLoadingSpinnerComponent {
   @Input() text = $localize `Loading`;

@@ -6,7 +6,8 @@ import { UsersComponent } from '../../users/users.component';
 import { TeamsComponent } from '../../teams/teams.component';
 
 @Component({
-  templateUrl: 'dialogs-add-table.component.html'
+  templateUrl: 'dialogs-add-table.component.html',
+  standalone: false
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 

@@ -10,6 +10,7 @@ import { truncateText } from '../../shared/utils';
       <span class="file-name" i18n>{{ getTruncatedFileName() }}</span>
     </div>
   `,
+  standalone: false
 })
 export class FileInputComponent {
 
