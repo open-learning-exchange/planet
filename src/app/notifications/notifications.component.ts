@@ -15,7 +15,8 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './notifications.component.html',
-  styleUrls: [ './notifications.component.scss' ]
+  styleUrls: ['./notifications.component.scss'],
+  standalone: false
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;

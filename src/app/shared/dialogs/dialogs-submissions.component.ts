@@ -17,11 +17,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       <button mat-dialog-close mat-raised-button color="primary" i18n>OK</button>
     </mat-dialog-actions>
   `,
-  styles: [ `
+  styles: [`
     h3.mat-mdc-dialog-title {
       text-align: center;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsSubmissionsComponent {
 

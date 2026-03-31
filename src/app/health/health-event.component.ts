@@ -40,7 +40,8 @@ type HealthEventFormFields = keyof HealthEventFormControls;
 
 @Component({
   templateUrl: './health-event.component.html',
-  styleUrls: [ './health-update.scss' ]
+  styleUrls: ['./health-update.scss'],
+  standalone: false
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 

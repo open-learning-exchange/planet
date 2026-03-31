@@ -50,7 +50,8 @@ interface ResourceFormModel {
 @Component({
   selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
-  styleUrls: [ './resources-add.scss' ]
+  styleUrls: ['./resources-add.scss'],
+  standalone: false
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {

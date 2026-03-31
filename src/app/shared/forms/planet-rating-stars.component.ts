@@ -8,17 +8,18 @@ import { UserService } from '../user.service';
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
-  styles: [ `
+  styles: [`
     .stars mat-icon {
       cursor: default;
     }
     .stars.stars-enabled mat-icon {
       cursor: pointer;
     }
-  ` ],
+  `],
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
-  ]
+  ],
+  standalone: false
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 

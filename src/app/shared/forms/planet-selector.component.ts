@@ -12,7 +12,8 @@ import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.ut
         <mat-option *ngFor="let planet of planets" [value]="planet">{{planet.nameDoc ? planet.nameDoc.name : planet.doc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-  `
+  `,
+  standalone: false
 })
 export class PlanetSelectorComponent implements OnChanges {
 

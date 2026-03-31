@@ -3,7 +3,8 @@ import { NgControl } from '@angular/forms';
 
 // For use on input elements within Reactive forms to force text lowercase
 @Directive({
-  selector: '[planetLowercase]'
+  selector: '[planetLowercase]',
+  standalone: false
 })
 export class LowercaseDirective {
 

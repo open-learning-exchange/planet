@@ -9,7 +9,7 @@ import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-fo
 
 @Component({
   templateUrl: './dialogs-form.component.html',
-  styles: [ `
+  styles: [`
     .checkbox-wrapper:last-child {
       margin: 0 0 20px 0;
     }
@@ -21,7 +21,8 @@ import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-fo
     .ng-touched.ng-valid {
       border: none;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsFormComponent {
 

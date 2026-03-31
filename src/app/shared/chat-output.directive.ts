@@ -1,7 +1,8 @@
 import { Directive, ElementRef, Renderer2, Input, SimpleChanges, OnChanges } from '@angular/core';
 
 @Directive({
-  selector: '[planetChatOutput]'
+  selector: '[planetChatOutput]',
+  standalone: false
 })
 export class ChatOutputDirective implements OnChanges {
   @Input('planetChatOutput') text: string;

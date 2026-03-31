@@ -46,7 +46,8 @@ interface ExamDocumentInfo {
 
 @Component({
   templateUrl: 'exams-add.component.html',
-  styleUrls: [ 'exams-add.scss' ]
+  styleUrls: ['exams-add.scss'],
+  standalone: false
 })
 export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';

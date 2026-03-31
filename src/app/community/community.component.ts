@@ -37,8 +37,9 @@ interface CommunityDescriptionForm {
   selector: 'planet-community',
   templateUrl: './community.component.html',
   preserveWhitespaces: true,
-  styleUrls: [ './community.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./community.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 

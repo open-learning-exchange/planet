@@ -15,7 +15,8 @@ interface CertificationFormControls {
 }
 
 @Component({
-  templateUrl: './certifications-add.component.html'
+  templateUrl: './certifications-add.component.html',
+  standalone: false
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
