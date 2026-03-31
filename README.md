@@ -66,11 +66,12 @@ bash couchdb-setup.sh -p 2200 -i
 Install dependencies and serve the app:
 ```
 npm install
-ng serve
+npm run dev
 ```
+`npm run dev` regenerates `src/environments/environment.ts` from `src/environments/environment.template` using values from `.env` (if present).
 
 Visit localhost:3000 to access the Planet app.
-If port 3000 is in use, try ```ng serve --port 3001```
+If port 3000 is in use, try ```npm run dev -- --port 3001```
 
 ## Chatapi Notes
 
@@ -94,9 +95,9 @@ For chatapi development instructions, refer to the [chatapi README](chatapi/READ
 
 To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
 ```
-  npm run dev -- --configuration spa 
+  npm run dev -- --configuration spa
 
-  or 
+  or
 
   ng serve --configuration spa
 ```
@@ -119,7 +120,7 @@ End-to-end test automation is not currently wired up in this repository. There i
 ## Additional Commands
 
 
-Run: `ng serve`
+Run: `npm run dev`
 
 Build: `ng build`
 
@@ -166,7 +167,7 @@ npm install
 ```
 Restart the app:
 `
-ng serve
+npm run dev
 `
 
 ### Error on initial npm install

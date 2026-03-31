@@ -89,14 +89,6 @@
                 }
               ]
             },
-            "dev": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
-            },
             "test": {
               "budgets": [
                 {
@@ -208,9 +200,6 @@
           "configurations": {
             "production": {
               "buildTarget": "planet-app:build:production"
-            },
-            "dev": {
-              "buildTarget": "planet-app:build:dev"
             },
             "test": {
               "buildTarget": "planet-app:build:test"
