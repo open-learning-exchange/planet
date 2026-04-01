@@ -461,6 +461,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagsService.updateManyTags(
       this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
     ).subscribe(() => {
+      this.tagInputComponent?.initTags();
       this.getCourses();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
