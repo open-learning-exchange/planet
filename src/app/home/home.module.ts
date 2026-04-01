@@ -22,6 +22,7 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
+import { CoursesProgressModule } from '../courses/progress-courses/courses-progress.module';
 import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
@@ -53,6 +54,7 @@ import { SurveysModule } from '../surveys/surveys.module';
     PlanetCalendarModule,
     UsersModule,
     CoursesViewDetailModule,
+    CoursesProgressModule,
     ChatModule,
     SurveysModule
   ]
