@@ -17,8 +17,9 @@ import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-reports',
-  styleUrls: [ './teams-reports.scss' ],
-  templateUrl: './teams-reports.component.html'
+  styleUrls: ['./teams-reports.scss'],
+  templateUrl: './teams-reports.component.html',
+  standalone: false
 })
 export class TeamsReportsComponent implements DoCheck {
 

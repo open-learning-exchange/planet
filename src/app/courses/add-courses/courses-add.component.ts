@@ -36,7 +36,8 @@ type DateValue = number | string | CouchService['datePlaceholder'];
 
 @Component({
   templateUrl: 'courses-add.component.html',
-  styleUrls: [ './courses-add.scss' ]
+  styleUrls: ['./courses-add.scss'],
+  standalone: false
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 

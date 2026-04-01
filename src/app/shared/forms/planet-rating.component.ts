@@ -36,10 +36,11 @@ interface PopupFormModel {
 
 @Component({
   templateUrl: './planet-rating.component.html',
-  styles: [ ` .list-item-rating {
+  styles: [` .list-item-rating {
     max-width: 225px;
-  } ` ],
-  selector: 'planet-rating'
+  } `],
+  selector: 'planet-rating',
+  standalone: false
 })
 export class PlanetRatingComponent implements OnChanges {
 

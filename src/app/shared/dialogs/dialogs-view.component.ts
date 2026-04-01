@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
   templateUrl: './dialogs-view.component.html',
-  styles: [ `
+  styles: [`
   	.close {
       float: right;
     }
@@ -10,7 +10,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       max-height: 55vh;
       overflow-y: auto;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsViewComponent {
   message = '';

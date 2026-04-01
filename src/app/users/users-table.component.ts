@@ -29,7 +29,8 @@ export class TableState {
 @Component({
   selector: 'planet-users-table',
   templateUrl: './users-table.component.html',
-  styleUrls: [ './users-table.scss' ]
+  styleUrls: ['./users-table.scss'],
+  standalone: false
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 

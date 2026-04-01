@@ -15,7 +15,8 @@ import { trackById } from '../shared/table-helpers';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styleUrls: [ './news-list.component.scss' ],
+  styleUrls: ['./news-list.component.scss'],
+  standalone: false
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -347,6 +348,5 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

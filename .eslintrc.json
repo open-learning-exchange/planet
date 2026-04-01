@@ -10,8 +10,7 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
+          "tsconfig.json"
         ],
         "ecmaVersion": 2020,
         "sourceType": "module",
@@ -75,11 +74,11 @@
         "@angular-eslint/contextual-lifecycle": "error",
         "@angular-eslint/directive-class-suffix": "error",
         "@angular-eslint/no-conflicting-lifecycle": "error",
-        "@angular-eslint/no-host-metadata-property": "error",
-        // "@angular-eslint/no-input-rename": "error",
+        // "@angular-eslint/no-host-metadata-property": "error",
+        "@angular-eslint/no-input-rename": "error",
         "@angular-eslint/no-inputs-metadata-property": "error",
         "@angular-eslint/no-output-native": "error",
-        // "@angular-eslint/no-output-on-prefix": "error",
+        "@angular-eslint/no-output-on-prefix": "error",
         "@angular-eslint/no-output-rename": "error",
         "@angular-eslint/no-outputs-metadata-property": "error",
         "@angular-eslint/use-lifecycle-interface": "error",
@@ -311,14 +310,14 @@
         //     }
         //   }
         // ],
-        "quotes": "off",
-        "@typescript-eslint/quotes": [
-          "error",
-          "single",
-          { "allowTemplateLiterals": true }
-        ],
-        // "@typescript-eslint/semi": ["error", "always"],
-        "@typescript-eslint/type-annotation-spacing": "error"
+        "quotes": "off"
+        // "@typescript-eslint/quotes": [
+        //   "error",
+        //   "single",
+        //   { "allowTemplateLiterals": true }
+        // ],
+        // Removed in newer @typescript-eslint versions; keep commented as a migration note.
+        // "@typescript-eslint/type-annotation-spacing": "error"
       }
     },
     {

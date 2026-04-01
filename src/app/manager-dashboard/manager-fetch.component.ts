@@ -10,12 +10,13 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { findByIdInArray, itemsShown } from '../shared/utils';
+import { commonSortingDataAccessor } from '../shared/table-helpers';
 import { SyncService } from '../shared/sync.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 
 @Component({
   templateUrl: './manager-fetch.component.html',
-  styles: [ `
+  styles: [`
     .mat-column-select {
       max-width: 44px;
     }
@@ -25,7 +26,8 @@ import { PlanetMessageService } from '../shared/planet-message.service';
     .fetch-icon {
       color: #666;
     }
-  ` ]
+  `],
+  standalone: false
 })
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {
@@ -48,8 +50,13 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.isLoading = true;
+    this.pushedItems.sortingDataAccessor = commonSortingDataAccessor;
+
     this.managerService.getPushedList().subscribe((pushedList: any) => {
-      this.pushedItems.data = pushedList;
+      this.pushedItems.data = pushedList.map((item: any) => ({
+        ...item,
+        title: item.db === 'courses' ? (item.item.doc?.courseTitle ?? '') : (item.item.doc?.title ?? '')
+      }));
       this.isLoading = false;
     }, () => {
       this.isLoading = false;

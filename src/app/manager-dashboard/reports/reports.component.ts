@@ -12,12 +12,13 @@ import { trackById } from '../../shared/table-helpers';
 
 @Component({
   templateUrl: './reports.component.html',
-  styles: [ `
+  styles: [`
     mat-panel-title {
       align-items: center;
     }
-  ` ],
-  styleUrls: [ './reports.components.scss' ]
+  `],
+  styleUrls: ['./reports.components.scss'],
+  standalone: false
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 

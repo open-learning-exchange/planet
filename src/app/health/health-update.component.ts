@@ -45,7 +45,8 @@ type HealthFormGroup = {
 
 @Component({
   templateUrl: './health-update.component.html',
-  styleUrls: [ './health-update.scss' ]
+  styleUrls: ['./health-update.scss'],
+  standalone: false
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 

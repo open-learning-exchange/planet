@@ -11,7 +11,8 @@ import { Component, Input, OnChanges } from '@angular/core';
       manager {Manager}
       admin {Admin}
     }</span>
-  `
+  `,
+  standalone: false
 })
 export class PlanetRoleComponent implements OnChanges {
 

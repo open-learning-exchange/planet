@@ -11,7 +11,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       <button mat-dialog-close mat-raised-button i18n>Close</button>
       <button mat-raised-button color="primary" (click)="viewResources()" i18n>View Resource</button>
     </mat-dialog-actions>
-  `
+  `,
+  standalone: false
 })
 export class DialogsResourcesViewerComponent {
 

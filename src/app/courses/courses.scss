@@ -73,6 +73,19 @@
 }
 
 planet-courses {
+  .preview-content {
+    height: 9rem;
+    overflow: hidden;
+  }
+
+  .preview-toggle {
+    text-align: center;
+  }
+
+  .expanded-row .content {
+    max-height: none;
+  }
+
   @media(max-width: v.$screen-md) {
     .mat-column-info {
       max-width: 120px;

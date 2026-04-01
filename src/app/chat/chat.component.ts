@@ -7,7 +7,8 @@ import { AIProvider, ProviderName } from './chat.model';
 @Component({
   selector: 'planet-chat',
   templateUrl: './chat.component.html',
-  styleUrls: [ './chat.scss' ]
+  styleUrls: ['./chat.scss'],
+  standalone: false
 })
 export class ChatComponent implements OnInit {
   activeService?: ProviderName;

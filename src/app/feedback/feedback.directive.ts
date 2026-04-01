@@ -25,7 +25,7 @@ export class Feedback {
   source: string;
   url: string;
   messages: Array<Message>;
-  params: Object;
+  params: object;
 }
 
 const dialogFieldOptions = [
@@ -59,7 +59,8 @@ const dialogFieldOptions = [
 ];
 
 @Directive({
-  selector: '[planetFeedback]'
+  selector: '[planetFeedback]',
+  standalone: false
 })
 export class FeedbackDirective {
   @Input() feedbackOf: any = {};
