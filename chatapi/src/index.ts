@@ -13,7 +13,11 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-app.use(cors());
+const corsOptions = {
+  'origin': process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : false
+};
+
+app.use(cors(corsOptions));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
