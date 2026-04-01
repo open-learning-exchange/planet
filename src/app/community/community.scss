@@ -69,6 +69,39 @@ planet-calendar {
   }
   .label-filter-field {
     flex: 1 1 0;
+
+    mat-select-trigger {
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .label-trigger-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .label-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      line-height: 16px;
+      margin-right: 4px;
+      vertical-align: middle;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 16px;
+      overflow: visible;
+
+      &.placeholder {
+        visibility: hidden;
+      }
+    }
   }
   .new-voice-btn {
     flex: 0 0 auto;

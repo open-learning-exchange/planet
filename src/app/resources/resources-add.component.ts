@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import * as JSZip from 'jszip/dist/jszip.min';
+import JSZip from 'jszip';
 import * as constants from './resources-constants';
 import { FileInputComponent } from '../shared/forms/file-input.component';
 import { UserService } from '../shared/user.service';
