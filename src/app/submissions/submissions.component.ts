@@ -95,13 +95,17 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
         const firstIndexMap = new Map<string, number>();
         normalized = normalized.reduce((sList, s1) => {
           const userId = s1.user?._id;
-          const key = userId ? `${s1.parentId}|${userId}` : null;
+          const isSurvey = s1.type === 'survey';
+          const key = isSurvey && userId ? `${s1.parentId}|${userId}` : null;
           let sIndex = -1;
-          if (key && s1.type === 'survey' && firstIndexMap.has(key)) {
-            sIndex = firstIndexMap.get(key);
+          if (key) {
+            const existingIndex = firstIndexMap.get(key);
+            if (existingIndex !== undefined) {
+              sIndex = existingIndex;
+            }
           }
 
-          if (!userId || sIndex === -1) {
+          if (!userId || !isSurvey || sIndex === -1) {
             if (key && !firstIndexMap.has(key)) {
               firstIndexMap.set(key, sList.length);
             }
