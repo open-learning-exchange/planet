@@ -16,17 +16,13 @@
                     <mat-label i18n>Label</mat-label>
                     <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
                       <mat-select-trigger>
-                        <mat-icon class="label-icon" [class.placeholder]="!selectedLabel">
-                          {{ selectedLabel ? getLabelIcon(selectedLabel) : 'label_important' }}
-                        </mat-icon>
-                        <span class="label-trigger-text">
-                          <ng-container *ngIf="selectedLabel; else allLabelsText">
-                            <planet-label [label]="selectedLabel"></planet-label>
-                          </ng-container>
-                          <ng-template #allLabelsText>
-                            <span i18n>All</span>
-                          </ng-template>
-                        </span>
+                        <ng-container *ngIf="selectedLabel">
+                          <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
+                          <planet-label [label]="selectedLabel"></planet-label>
+                        </ng-container>
+                        <ng-container *ngIf="!selectedLabel">
+                          <span i18n>All</span>
+                        </ng-container>
                       </mat-select-trigger>
                       <mat-option value=""><span i18n>All</span></mat-option>
                       <mat-option *ngFor="let label of availableLabels" [value]="label">
