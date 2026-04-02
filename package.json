@@ -1,11 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-<<<<<<< 9770-feedback-redirect
   "version": "0.22.29",
-=======
-  "version": "0.22.28",
->>>>>>> master
   "myplanet": {
     "latest": "v0.51.90",
     "min": "v0.49.69"
