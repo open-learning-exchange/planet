@@ -1,11 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
 import { myDashboardRoute } from '../home/router-constants';
+import { MaterialModule } from '../shared/material.module';
 
 @Component({
   templateUrl: './dashboard-notifications-dialog.component.html',
   styleUrls: ['./dashboard-notifications-dialog.component.scss'],
-  standalone: false
+  imports: [ CommonModule, RouterModule, MaterialModule ]
 })
 export class DashboardNotificationsDialogComponent implements OnInit {
 
