@@ -17,7 +17,8 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
-  styleUrls: [ './news-list-item.scss' ]
+  styleUrls: ['./news-list-item.scss'],
+  standalone: false
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 

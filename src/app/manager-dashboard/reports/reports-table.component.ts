@@ -7,7 +7,8 @@ import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-table',
-  templateUrl: './reports-table.component.html'
+  templateUrl: './reports-table.component.html',
+  standalone: false
 })
 export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
 

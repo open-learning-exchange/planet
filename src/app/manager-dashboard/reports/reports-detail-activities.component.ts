@@ -15,7 +15,8 @@ const columns = {
 
 @Component({
   selector: 'planet-reports-detail-activities',
-  templateUrl: './reports-detail-activities.component.html'
+  templateUrl: './reports-detail-activities.component.html',
+  standalone: false
 })
 export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 

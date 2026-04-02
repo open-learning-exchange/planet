@@ -12,7 +12,8 @@ import { truncateText } from '../../shared/utils';
     </span>
     <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
-  selector: 'planet-tag-selected-input'
+  selector: 'planet-tag-selected-input',
+  standalone: false
 })
 export class PlanetTagSelectedInputComponent implements OnChanges {
 

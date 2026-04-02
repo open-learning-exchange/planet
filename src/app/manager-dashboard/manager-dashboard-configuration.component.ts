@@ -7,6 +7,7 @@ import { Component } from '@angular/core';
       <span i18n>Planet Configuration</span>
     </mat-toolbar>
     <planet-configuration></planet-configuration>
-  `
+  `,
+  standalone: false
 })
 export class ManagerDashboardConfigurationComponent { }

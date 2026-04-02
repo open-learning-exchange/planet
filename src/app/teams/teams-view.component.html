@@ -67,14 +67,15 @@
     </ng-container>
   </ng-template>
 
-  <div class="view-container view-full-height">
-    <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding">
+  <div class="view-container view-full-height tab-scroll-shell">
+    <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding tab-scroll-layout">
       <mat-tab i18n-label label="Chat">
-        <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" i18n>New message</button>
         <planet-loading-spinner *ngIf="newsLoading" text="Loading messages..." i18n-text></planet-loading-spinner>
         <ng-container *ngIf="!newsLoading">
-          <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'"></planet-news-list>
-          <p *ngIf="news?.length === 0" i18n>No messages available.</p>
+          <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
+            <button mat-stroked-button (click)="openAddMessageDialog()" *ngIf="isRoot" class="full-width" i18n>New message</button>
+            <p *ngIf="news?.length === 0" i18n>No messages available.</p>
+          </planet-news-list>
         </ng-container>
       </mat-tab>
       <mat-tab>

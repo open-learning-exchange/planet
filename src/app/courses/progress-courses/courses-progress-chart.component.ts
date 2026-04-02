@@ -10,7 +10,8 @@ import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewCh
 @Component({
   selector: 'planet-courses-progress-chart',
   templateUrl: 'courses-progress-chart.component.html',
-  styleUrls: [ 'courses-progress-chart.scss' ]
+  styleUrls: ['courses-progress-chart.scss'],
+  standalone: false
 })
 export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, OnDestroy {
 

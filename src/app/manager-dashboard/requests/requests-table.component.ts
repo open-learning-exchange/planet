@@ -26,7 +26,8 @@ interface EditChildNameFormControls {
 
 @Component({
   selector: 'planet-requests-table',
-  templateUrl: './requests-table.component.html'
+  templateUrl: './requests-table.component.html',
+  standalone: false
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 

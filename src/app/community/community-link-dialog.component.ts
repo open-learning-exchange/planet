@@ -37,7 +37,8 @@ interface TeamSelectionEvent {
       vertical-align: middle;
       margin-right: 5px;
     }
-  ` ]
+  ` ],
+  standalone: false,
 })
 export class CommunityLinkDialogComponent {
 

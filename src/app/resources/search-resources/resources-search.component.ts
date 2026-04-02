@@ -23,8 +23,9 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
   `,
   selector: 'planet-resources-search-list',
-  styleUrls: [ './resources-search.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./resources-search.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class ResourcesSearchListComponent {
 
@@ -65,9 +66,10 @@ export class ResourcesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-resources-search-list>
   `,
-  styleUrls: [ './resources-search.scss' ],
+  styleUrls: ['./resources-search.scss'],
   selector: 'planet-resources-search',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class ResourcesSearchComponent implements OnInit, OnChanges {
 

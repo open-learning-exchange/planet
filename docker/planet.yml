@@ -5,6 +5,10 @@ services:
     image: treehouses/couchdb:2.3.1
     ports:
       - "2200:5984"
+    volumes:
+      - "/srv/planet/conf:/opt/couchdb/etc/local.d"
+      - "/srv/planet/data:/opt/couchdb/data"
+      - "/srv/planet/log:/opt/couchdb/var/log"
   chatapi:
     expose:
       - 5000
@@ -30,6 +34,8 @@ services:
       - "80:80"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/srv/planet/pwd:/usr/share/nginx/html/credentials"
+      - "/srv/planet/fs:/usr/share/nginx/html/fs"
     environment:
       - MULTIPLE_IPS=true
       - HOST_PROTOCOL=http

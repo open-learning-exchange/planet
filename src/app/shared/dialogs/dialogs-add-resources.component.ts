@@ -5,7 +5,8 @@ import { ResourcesAddComponent } from '../../resources/resources-add.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 
 @Component({
-  templateUrl: 'dialogs-add-resources.component.html'
+  templateUrl: 'dialogs-add-resources.component.html',
+  standalone: false
 })
 export class DialogsAddResourcesComponent implements AfterViewInit {
 

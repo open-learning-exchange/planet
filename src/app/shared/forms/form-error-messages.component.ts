@@ -48,7 +48,8 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
     <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
       {{date === undefined ? '' : ' ' + (date | date)}}
     </ng-container>
-  `
+  `,
+  standalone: false
 })
 export class FormErrorMessagesComponent implements OnInit {
 

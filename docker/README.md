@@ -22,7 +22,7 @@ Because we want to run our production Planet mostly in Raspberry Pi, the target 
 
 ### Docker-related files
 * Docker file (`Dockerfile`)
-* Docker compose file (`docker-compose.yml`)
+* Docker compose files (`planet.yml`, `hub.yml`)
 
 This docker compose can be use for your development environment and very handy, you can spawn the development environment in a matter of seconds and start your development. Your code changes in host folder are automatically reflected to docker and ready to test in your browser.
 

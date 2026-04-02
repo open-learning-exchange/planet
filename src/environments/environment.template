@@ -3,6 +3,7 @@ export const environment = {
   test: false,
   chatAddress: window.location.protocol + '//' + window.location.hostname + ':{{CHAT_PORT}}',
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':{{COUCH_PORT}}',
+  backendAddress: window.location.protocol + '//' + window.location.hostname,
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
   parentProtocol: '{{PARENT_PROTOCOL}}',

@@ -18,7 +18,8 @@ import { StateService } from '../shared/state.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styleUrls: [ './manager-dashboard.scss' ]
+  styleUrls: ['./manager-dashboard.scss'],
+  standalone: false
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {

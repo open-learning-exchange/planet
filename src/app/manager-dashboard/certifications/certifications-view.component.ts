@@ -9,12 +9,13 @@ import { UsersService } from '../../users/users.service';
 
 @Component({
   templateUrl: './certifications-view.component.html',
-  styles: [ `
+  styles: [`
     .placeholder-message {
       margin-top: 20px;
       display: block;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 

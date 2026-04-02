@@ -15,7 +15,8 @@ import { TeamsService } from '../../teams/teams.service';
 @Component({
   selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
-  styleUrls: [ './users-profile.scss' ]
+  styleUrls: ['./users-profile.scss'],
+  standalone: false
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
