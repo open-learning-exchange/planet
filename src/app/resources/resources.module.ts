@@ -13,28 +13,26 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
 
 @NgModule({
-  declarations: [
-    ResourcesComponent,
-    ResourcesViewComponent,
-    ResourcesViewerComponent,
-    ResourcesAddComponent,
-    ResourcesSearchComponent,
-    ResourcesSearchListComponent
-  ],
-  exports: [
-    ResourcesViewerComponent,
-    ResourcesComponent,
-    ResourcesAddComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    ResourcesRouterModule,
-    MaterialModule,
-    PlanetDialogsModule,
-    SharedComponentsModule
-  ]
+    exports: [
+        ResourcesViewerComponent,
+        ResourcesComponent,
+        ResourcesAddComponent
+    ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        ResourcesRouterModule,
+        MaterialModule,
+        PlanetDialogsModule,
+        SharedComponentsModule,
+        ResourcesComponent,
+        ResourcesViewComponent,
+        ResourcesViewerComponent,
+        ResourcesAddComponent,
+        ResourcesSearchComponent,
+        ResourcesSearchListComponent
+    ]
 })
 export class ResourcesModule {}

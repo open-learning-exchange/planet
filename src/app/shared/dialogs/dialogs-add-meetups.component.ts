@@ -4,9 +4,11 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
 import { CanComponentDeactivate } from '../unsaved-changes.guard';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.component';
 
 @Component({
-  template: `
+    template: `
     <ng-container [ngSwitch]="view">
       <planet-meetups-add #meetupsAdd *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
         [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
@@ -19,7 +21,7 @@ import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
       </planet-meetups-view>
     </ng-container>
   `,
-  standalone: false
+    imports: [NgSwitch, NgSwitchCase, MeetupsAddComponent, MeetupsViewComponent]
 })
 export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;

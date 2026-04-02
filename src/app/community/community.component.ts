@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -28,18 +28,40 @@ import {
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { NgIf, NgClass, NgFor } from '@angular/common';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { NewsListComponent } from '../news/news-list.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { LabelComponent } from '../shared/label.component';
+import { MatOption } from '@angular/material/autocomplete';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { TeamsMemberComponent } from '../teams/teams-member.component';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { CommunityListComponent } from './community-list.component';
+import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
+import { TeamsReportsComponent } from '../teams/teams-reports.component';
+import { PlanetCalendarComponent } from '../shared/calendar.component';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
 }
 
 @Component({
-  selector: 'planet-community',
-  templateUrl: './community.component.html',
-  preserveWhitespaces: true,
-  styleUrls: ['./community.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    selector: 'planet-community',
+    templateUrl: './community.component.html',
+    preserveWhitespaces: true,
+    styleUrls: ['./community.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [MatTabGroup, MatTab, NgIf, PlanetLoadingSpinnerComponent, NewsListComponent, MatToolbar, NgClass, MatFormField, MatLabel, MatIcon, MatPrefix, MatInput, FormsModule, MatSelect, MatSelectTrigger, LabelComponent, MatOption, NgFor, AuthorizedRolesDirective, MatButton, MatIconButton, MatCard, TeamsMemberComponent, PlanetMarkdownComponent, MatNavList, MatListSubheaderCssMatStyler, MatListItem, RouterLink, MatTooltip, MatListItemIcon, MatListItemTitle, MatListItemMeta, CommunityListComponent, TeamsViewFinancesComponent, TeamsReportsComponent, PlanetCalendarComponent]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 

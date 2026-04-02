@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
+import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
@@ -37,8 +41,8 @@ export class PlanetStepListService {
 }
 
 @Component({
-  selector: 'planet-step-list-item',
-  template: `
+    selector: 'planet-step-list-item',
+    template: `
     <ng-template>
       <ng-content></ng-content>
       <ng-container matListItemMeta>
@@ -48,7 +52,7 @@ export class PlanetStepListService {
       </ng-container>
     </ng-template>
   `,
-  standalone: false
+    imports: [MatListItemMeta, NgIf, MatIconButton, MatIcon]
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -67,11 +71,11 @@ export class PlanetStepListItemComponent {
 }
 
 @Component({
-  selector: 'planet-step-list',
-  templateUrl: './planet-step-list.component.html',
-  styleUrls: ['./planet-step-list.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    selector: 'planet-step-list',
+    templateUrl: './planet-step-list.component.html',
+    styleUrls: ['./planet-step-list.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [NgIf, MatNavList, NgClass, NgFor, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
@@ -166,24 +170,15 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
 }
 
-@Directive({
-  selector: '[planetStepListForm]',
-  standalone: false
-})
+@Directive({ selector: '[planetStepListForm]' })
 export class PlanetStepListFormDirective {
   @HostBinding('class') class = 'planet-step-list-form';
 }
 
-@Directive({
-  selector: '[planetStepListNumber]',
-  standalone: false
-})
+@Directive({ selector: '[planetStepListNumber]' })
 export class PlanetStepListNumberDirective {}
 
-@Directive({
-  selector: '[planetStepListActions]',
-  standalone: false
-})
+@Directive({ selector: '[planetStepListActions]' })
 export class PlanetStepListActionsDirective {
   @HostBinding('class') class = 'planet-step-list-actions';
 }

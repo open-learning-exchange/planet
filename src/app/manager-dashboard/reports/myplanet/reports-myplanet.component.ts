@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
@@ -14,11 +14,18 @@ import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
+import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MyPlanetTableComponent } from './myplanet-table.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
-  standalone: false
+  imports: [MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

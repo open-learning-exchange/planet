@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
@@ -20,6 +20,20 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../shared/submit.directive';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -48,10 +62,10 @@ interface ResourceFormModel {
 }
 
 @Component({
-  selector: 'planet-resources-add',
-  templateUrl: './resources-add.component.html',
-  styleUrls: ['./resources-add.scss'],
-  standalone: false
+    selector: 'planet-resources-add',
+    templateUrl: './resources-add.component.html',
+    styleUrls: ['./resources-add.scss'],
+    imports: [NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent, MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {

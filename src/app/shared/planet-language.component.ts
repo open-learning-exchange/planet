@@ -1,13 +1,16 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-  selector: 'planet-language',
-  templateUrl: './planet-language.component.html',
-  styleUrls: ['./planet-language.scss'],
-  standalone: false
+    selector: 'planet-language',
+    templateUrl: './planet-language.component.html',
+    styleUrls: ['./planet-language.scss'],
+    imports: [MatButton, MatMenuTrigger, MatIcon, NgIf, MatMenu, NgFor, MatMenuItem]
 })
 export class PlanetLanguageComponent implements OnInit {
 

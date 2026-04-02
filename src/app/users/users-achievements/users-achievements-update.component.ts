@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce, filter, startWith, take } from 'rxjs/operators';
@@ -11,10 +11,22 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -63,10 +75,10 @@ type ReferenceFormGroup = FormGroup<ReferenceFormControls>;
 type LinkFormGroup = FormGroup<LinkFormControls>;
 
 @Component({
-  templateUrl: './users-achievements-update.component.html',
-  styleUrls: ['users-achievements-update.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    templateUrl: './users-achievements-update.component.html',
+    styleUrls: ['users-achievements-update.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();

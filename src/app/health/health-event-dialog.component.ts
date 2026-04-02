@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
@@ -9,10 +9,14 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf, DatePipe } from '@angular/common';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: './health-event-dialog.component.html',
-  standalone: false
+    templateUrl: './health-event-dialog.component.html',
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, TdMarkdownComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe]
 })
 export class HealthEventDialogComponent implements OnInit, OnDestroy {
 

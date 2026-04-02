@@ -7,18 +7,16 @@ import { TeamsModule } from '../../teams/teams.module';
 import { DialogsAddTableComponent } from './dialogs-add-table.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MaterialModule,
-    CoursesModule,
-    UsersModule,
-    TeamsModule
-  ],
-  exports: [
-    DialogsAddTableComponent
-  ],
-  declarations: [
-    DialogsAddTableComponent
-  ]
+    imports: [
+        CommonModule,
+        MaterialModule,
+        CoursesModule,
+        UsersModule,
+        TeamsModule,
+        DialogsAddTableComponent
+    ],
+    exports: [
+        DialogsAddTableComponent
+    ]
 })
 export class DialogsAddTableModule {}

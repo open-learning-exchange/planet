@@ -20,29 +20,27 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
-  imports: [
-    TeamsRouterModule,
-    CommonModule,
-    MaterialModule,
-    PlanetDialogsModule,
-    NewsModule,
-    DialogsAddResourcesModule,
-    DialogsResourcesViewerModule,
-    CovalentMarkdownModule,
-    SharedComponentsModule,
-    PlanetCalendarModule,
-    FormsModule,
-    SurveysModule
-  ],
-  declarations: [
-    TeamsComponent,
-    TeamsViewComponent,
-    TeamsViewFinancesComponent,
-    TeamsReportsComponent,
-    TeamsReportsDetailComponent,
-    TeamsMemberComponent,
-    TeamsReportsDialogComponent
-  ]
+    exports: [TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent],
+    imports: [
+        TeamsRouterModule,
+        CommonModule,
+        MaterialModule,
+        PlanetDialogsModule,
+        NewsModule,
+        DialogsAddResourcesModule,
+        DialogsResourcesViewerModule,
+        CovalentMarkdownModule,
+        SharedComponentsModule,
+        PlanetCalendarModule,
+        FormsModule,
+        SurveysModule,
+        TeamsComponent,
+        TeamsViewComponent,
+        TeamsViewFinancesComponent,
+        TeamsReportsComponent,
+        TeamsReportsDetailComponent,
+        TeamsMemberComponent,
+        TeamsReportsDialogComponent
+    ]
 })
 export class TeamsModule {}

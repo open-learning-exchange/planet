@@ -8,10 +8,12 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
+import { NgIf, DatePipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'planet-form-error-messages',
-  template: `
+    selector: 'planet-form-error-messages',
+    template: `
     <span *ngIf="error" [matTooltip]="tooltipText()" i18n>{error, select,
       required {This field is required}
       min {The number cannot be below}
@@ -49,7 +51,7 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
       {{date === undefined ? '' : ' ' + (date | date)}}
     </ng-container>
   `,
-  standalone: false
+    imports: [NgIf, MatTooltip, DatePipe]
 })
 export class FormErrorMessagesComponent implements OnInit {
 

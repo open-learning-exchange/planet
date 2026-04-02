@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -8,12 +8,19 @@ import { of } from 'rxjs';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
-  templateUrl: './upgrade.component.html',
-  styleUrls: ['./upgrade.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    templateUrl: './upgrade.component.html',
+    styleUrls: ['./upgrade.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, NgIf, MatProgressBar, MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions, FeedbackDirective]
 })
 export class UpgradeComponent {
   mode = 'planet';

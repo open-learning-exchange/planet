@@ -13,12 +13,23 @@ import { calculateMdAdjustedLimit } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { NgFor, NgIf, NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { LabelComponent } from '../shared/label.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { ChatOutputDirective } from '../shared/chat-output.directive';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 @Component({
-  selector: 'planet-news-list-item',
-  templateUrl: 'news-list-item.component.html',
-  styleUrls: ['./news-list-item.scss'],
-  standalone: false
+    selector: 'planet-news-list-item',
+    templateUrl: 'news-list-item.component.html',
+    styleUrls: ['./news-list-item.scss'],
+    imports: [MatCard, MatCardHeader, MatCardSubtitle, MatChipSet, NgFor, MatChip, MatIcon, LabelComponent, NgIf, MatChipRemove, MatTooltip, MatCardContent, PlanetMarkdownComponent, ChatOutputDirective, NgClass, MatIconButton, MatCardActions, MatButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatMenuItem, SlicePipe, TimeAgoPipe]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 

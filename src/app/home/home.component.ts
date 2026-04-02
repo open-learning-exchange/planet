@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
@@ -15,32 +15,46 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgIf, NgSwitch, NgSwitchCase, NgFor, NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetBetaDirective } from '../shared/beta.directive';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { SyncDirective } from '../manager-dashboard/sync.directive';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatBadge } from '@angular/material/badge';
+import { ChangePasswordDirective } from '../shared/dialogs/change-password.directive';
+import { MatDivider } from '@angular/material/list';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { PulsateIconDirective } from './pulsate-icon.directive';
 
 @Component({
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.scss'],
-  animations: [
-    trigger('sidenavState', [
-      state('closed', style({
-        width: '72px'
-      })),
-      state('open', style({
-        width: '175px'
-      })),
-      transition('closed <=> open', animate('500ms ease'))
-    ]),
-    trigger('slideInOut', [
-      state('open', style({
-        transform: 'translate3d(0,0,0)'
-      })),
-      state('closed', style({
-        transform: 'translate3d(-100%, 0, 0)'
-      })),
-      transition('open => closed', animate('400ms ease-in-out')),
-      transition('closed => open', animate('400ms ease-in-out'))
-    ]),
-  ],
-  standalone: false
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.scss'],
+    animations: [
+        trigger('sidenavState', [
+            state('closed', style({
+                width: '72px'
+            })),
+            state('open', style({
+                width: '175px'
+            })),
+            transition('closed <=> open', animate('500ms ease'))
+        ]),
+        trigger('slideInOut', [
+            state('open', style({
+                transform: 'translate3d(0,0,0)'
+            })),
+            state('closed', style({
+                transform: 'translate3d(-100%, 0, 0)'
+            })),
+            transition('open => closed', animate('400ms ease-in-out')),
+            transition('closed => open', animate('400ms ease-in-out'))
+        ]),
+    ],
+    imports: [MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, NgSwitch, NgSwitchCase, MatAnchor, RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective, PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective, NgFor, NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent, RouterOutlet, PulsateIconDirective, DatePipe]
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 

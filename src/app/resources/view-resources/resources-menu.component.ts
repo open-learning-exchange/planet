@@ -1,12 +1,14 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { environment } from '../../../environments/environment';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
+import { MatButton } from '@angular/material/button';
+import { NgFor } from '@angular/common';
 
 @Component({
-  selector: 'planet-resources-menu',
-  template: `
+    selector: 'planet-resources-menu',
+    template: `
     <button mat-raised-button [color]="color" class="margin-lr-10" [matMenuTriggerFor]="resourceList" (click)="buttonClick(resources)">
       <ng-content></ng-content>
     </button>
@@ -19,7 +21,7 @@ import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-re
       </button>
     </mat-menu>
   `,
-  standalone: false
+    imports: [MatButton, MatMenuTrigger, MatMenu, NgFor, MatMenuItem]
 })
 export class ResourcesMenuComponent {
 

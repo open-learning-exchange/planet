@@ -28,37 +28,35 @@ import { ReportsHealthComponent } from './reports/reports-health.component';
 import { ManagerCurrencyComponent } from './manager-currency.component';
 
 @NgModule({
-  declarations: [
-    ManagerAIServicesComponent,
-    ManagerDashboardComponent,
-    ManagerSyncComponent,
-    ManagerFetchComponent,
-    ManagerDashboardConfigurationComponent,
-    RequestsComponent,
-    RequestsTableComponent,
-    ReportsComponent,
-    ReportsTableComponent,
-    ReportsDetailComponent,
-    ReportsPendingComponent,
-    PendingTableComponent,
-    ReportsMyPlanetComponent,
-    LogsMyPlanetComponent,
-    MyPlanetToolbarComponent,
-    MyPlanetTableComponent,
-    ReportsDetailActivitiesComponent,
-    ReportsHealthComponent,
-    ManagerCurrencyComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    MaterialModule,
-    PlanetDialogsModule,
-    ManagerDashboardRouterModule,
-    ConfigurationModule,
-    SharedComponentsModule
-  ]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        MaterialModule,
+        PlanetDialogsModule,
+        ManagerDashboardRouterModule,
+        ConfigurationModule,
+        SharedComponentsModule,
+        ManagerAIServicesComponent,
+        ManagerDashboardComponent,
+        ManagerSyncComponent,
+        ManagerFetchComponent,
+        ManagerDashboardConfigurationComponent,
+        RequestsComponent,
+        RequestsTableComponent,
+        ReportsComponent,
+        ReportsTableComponent,
+        ReportsDetailComponent,
+        ReportsPendingComponent,
+        PendingTableComponent,
+        ReportsMyPlanetComponent,
+        LogsMyPlanetComponent,
+        MyPlanetToolbarComponent,
+        MyPlanetTableComponent,
+        ReportsDetailActivitiesComponent,
+        ReportsHealthComponent,
+        ManagerCurrencyComponent
+    ]
 })
 export class ManagerDashboardModule {}

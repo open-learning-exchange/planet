@@ -1,12 +1,23 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { NgIf, NgFor, TitleCasePipe, KeyValuePipe } from '@angular/common';
+import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import { SubmitDirective } from '../shared/submit.directive';
 
 interface FixedConfigFormControls {
   streaming: FormControl<boolean>;
@@ -30,9 +41,9 @@ interface AIConfiguration {
 }
 
 @Component({
-  templateUrl: './manager-aiservices.component.html',
-  styleUrls: ['./manager-settings.shared.scss'],
-  standalone: false
+    templateUrl: './manager-aiservices.component.html',
+    styleUrls: ['./manager-settings.shared.scss'],
+    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle, NgIf, MatCardContent, MatList, NgFor, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatSuffix, MatSlideToggle, MatTooltip, MatButton, SubmitDirective, TitleCasePipe, KeyValuePipe]
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};

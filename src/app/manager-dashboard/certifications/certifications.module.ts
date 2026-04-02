@@ -15,24 +15,22 @@ import { CertificationsViewComponent } from './certifications-view.component';
 import { UsersModule } from '../../users/users.module';
 
 @NgModule({
-  declarations: [
-    CertificationsComponent,
-    CertificationsAddComponent,
-    CertificationsViewComponent
-  ],
-  imports: [
-    CommonModule,
-    CertificationsRouterModule,
-    MaterialModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    FormsModule,
-    MatDialogModule,
-    SharedComponentsModule,
-    PlanetDialogsModule,
-    CoursesModule,
-    DialogsAddTableModule,
-    UsersModule
-  ]
+    imports: [
+        CommonModule,
+        CertificationsRouterModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        FormsModule,
+        MatDialogModule,
+        SharedComponentsModule,
+        PlanetDialogsModule,
+        CoursesModule,
+        DialogsAddTableModule,
+        UsersModule,
+        CertificationsComponent,
+        CertificationsAddComponent,
+        CertificationsViewComponent
+    ]
 })
 export class CertificationsModule {}

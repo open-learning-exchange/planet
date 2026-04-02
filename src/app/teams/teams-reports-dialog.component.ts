@@ -1,9 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { MatButton } from '@angular/material/button';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  templateUrl: './teams-reports-dialog.component.html',
-  styles: [`
+    templateUrl: './teams-reports-dialog.component.html',
+    styles: [`
     h3 {
       margin: 0;
     }
@@ -11,7 +15,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       margin-top: 0;
     }
   `],
-  standalone: false
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, TeamsReportsDetailComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe]
 })
 export class TeamsReportsDialogComponent {
 

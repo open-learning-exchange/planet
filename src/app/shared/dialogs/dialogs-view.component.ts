@@ -1,8 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf, DatePipe } from '@angular/common';
 @Component({
-  templateUrl: './dialogs-view.component.html',
-  styles: [`
+    templateUrl: './dialogs-view.component.html',
+    styles: [`
   	.close {
       float: right;
     }
@@ -11,7 +15,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       overflow-y: auto;
     }
   `],
-  standalone: false
+    imports: [MatIconButton, MatDialogClose, MatIcon, MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, DatePipe]
 })
 export class DialogsViewComponent {
   message = '';

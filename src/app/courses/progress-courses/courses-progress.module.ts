@@ -10,23 +10,21 @@ import { CoursesProgressLeaderComponent } from './courses-progress-leader.compon
 import { CoursesProgressLearnerComponent } from './courses-progress-learner.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MaterialModule,
-    PlanetFormsModule,
-    SharedComponentsModule
-  ],
-  declarations: [
-    CoursesProgressBarComponent,
-    CoursesProgressChartComponent,
-    CoursesProgressLeaderComponent,
-    CoursesProgressLearnerComponent
-  ],
-  exports: [
-    CoursesProgressBarComponent,
-    CoursesProgressChartComponent,
-    CoursesProgressLeaderComponent,
-    CoursesProgressLearnerComponent
-  ]
+    imports: [
+        CommonModule,
+        MaterialModule,
+        PlanetFormsModule,
+        SharedComponentsModule,
+        CoursesProgressBarComponent,
+        CoursesProgressChartComponent,
+        CoursesProgressLeaderComponent,
+        CoursesProgressLearnerComponent
+    ],
+    exports: [
+        CoursesProgressBarComponent,
+        CoursesProgressChartComponent,
+        CoursesProgressLeaderComponent,
+        CoursesProgressLearnerComponent
+    ]
 })
 export class CoursesProgressModule {}

@@ -1,10 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { StateService } from '../shared/state.service';
+import { MatDivider } from '@angular/material/list';
+import { NgIf, CurrencyPipe, DatePipe } from '@angular/common';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 
 @Component({
-  selector: 'planet-teams-reports-detail',
-  templateUrl: './teams-reports-detail.component.html',
-  styles: [`
+    selector: 'planet-teams-reports-detail',
+    templateUrl: './teams-reports-detail.component.html',
+    styles: [`
     .report-grid-container {
       overflow-x: auto;
     }
@@ -21,7 +24,7 @@ import { StateService } from '../shared/state.service';
       position: initial;
     }
   `],
-  standalone: false
+    imports: [MatDivider, NgIf, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
 })
 export class TeamsReportsDetailComponent implements OnChanges {
 

@@ -3,12 +3,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, concat } from 'rxjs';
 import { UsersService } from '../users/users.service';
 import { takeUntil } from 'rxjs/operators';
-import { TableState } from '../users/users-table.component';
+import { TableState, UsersTableComponent } from '../users/users-table.component';
 import { HealthService } from './health.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  templateUrl: './health-list.component.html',
-  standalone: false
+    templateUrl: './health-list.component.html',
+    imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, FormsModule, MatButton, UsersTableComponent]
 })
 export class HealthListComponent implements OnInit, OnDestroy {
 

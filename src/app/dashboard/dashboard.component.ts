@@ -14,11 +14,19 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NgIf, NgFor, NgClass, DecimalPipe, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatCard } from '@angular/material/card';
+import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { DashboardTileComponent } from './dashboard-tile.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.scss'],
-  standalone: false
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.scss'],
+    imports: [NgIf, RouterLink, MatCard, NgFor, PlanetRoleComponent, MatTooltip, MatIcon, NgClass, DashboardTileComponent, DecimalPipe, DatePipe, TruncateTextPipe]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 

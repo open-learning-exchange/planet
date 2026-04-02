@@ -6,19 +6,17 @@ import { SharedComponentsModule } from '../../shared/shared-components.module';
 import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './courses-view-detail.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    PlanetFormsModule,
-    MaterialModule,
-    SharedComponentsModule
-  ],
-  exports: [
-    CoursesViewDetailComponent,
-    CoursesViewDetailDialogComponent
-  ],
-  declarations: [
-    CoursesViewDetailComponent,
-    CoursesViewDetailDialogComponent
-  ]
+    imports: [
+        CommonModule,
+        PlanetFormsModule,
+        MaterialModule,
+        SharedComponentsModule,
+        CoursesViewDetailComponent,
+        CoursesViewDetailDialogComponent
+    ],
+    exports: [
+        CoursesViewDetailComponent,
+        CoursesViewDetailDialogComponent
+    ]
 })
 export class CoursesViewDetailModule {}

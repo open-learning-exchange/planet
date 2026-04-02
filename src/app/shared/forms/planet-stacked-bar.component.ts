@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, HostBinding } from '@angular/core';
+import { NgFor, NgClass, NgStyle, PercentPipe } from '@angular/common';
 
 @Component({
-  selector: 'planet-stacked-bar',
-  template: `
+    selector: 'planet-stacked-bar',
+    template: `
     <div class="stacked-bar"
       *ngFor="let item of data; index as i"
       [ngClass]="item.class"
@@ -12,7 +13,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
       </span>
     </div>
   `,
-  styles: [`
+    styles: [`
     :host {
       height: 0.75rem;
       display: grid;
@@ -27,7 +28,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
       margin: 0 0.2rem;
     }
   `],
-  standalone: false
+    imports: [NgFor, NgClass, NgStyle, PercentPipe]
 })
 export class PlanetStackedBarComponent implements OnChanges {
 

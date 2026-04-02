@@ -1,13 +1,19 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { UsersComponent } from '../../users/users.component';
 import { TeamsComponent } from '../../teams/teams.component';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgSwitch, NgSwitchCase, NgFor, NgIf } from '@angular/common';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: 'dialogs-add-table.component.html',
-  standalone: false
+    templateUrl: 'dialogs-add-table.component.html',
+    imports: [CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, CoursesComponent, UsersComponent, MatFormField, MatLabel, MatSelect, NgFor, MatOption, NgIf, TeamsComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 

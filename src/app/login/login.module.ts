@@ -12,21 +12,19 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { LoginDialogComponent } from './login-dialog.component';
 
 @NgModule({
-  imports: [
-    LoginRouterModule,
-    FormsModule,
-    CommonModule,
-    MaterialModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    ConfigurationModule,
-    SharedComponentsModule,
-    LoginFormComponent,
-    LoginDialogComponent
-  ],
-  declarations: [
-    LoginComponent
-  ],
-  providers: [ ConfigurationGuard ]
+    imports: [
+        LoginRouterModule,
+        FormsModule,
+        CommonModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        ConfigurationModule,
+        SharedComponentsModule,
+        LoginFormComponent,
+        LoginDialogComponent,
+        LoginComponent
+    ],
+    providers: [ConfigurationGuard]
 })
 export class LoginModule { }

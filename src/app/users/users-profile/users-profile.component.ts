@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -11,12 +11,22 @@ import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgFor, DatePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { ChangePasswordDirective } from '../../shared/dialogs/change-password.directive';
+import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
+import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
-  selector: 'planet-users-profile',
-  templateUrl: './users-profile.component.html',
-  styleUrls: ['./users-profile.scss'],
-  standalone: false
+    selector: 'planet-users-profile',
+    templateUrl: './users-profile.component.html',
+    styleUrls: ['./users-profile.scss'],
+    imports: [MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink, MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider, LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';

@@ -1,14 +1,15 @@
 import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
-import { MatSelectionList } from '@angular/material/list';
+import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
 import * as constants from '../resources-constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { trackByCategory } from '../../shared/table-helpers';
+import { NgFor } from '@angular/common';
 
 @Component({
-  template: `
+    template: `
     <span class="mat-caption" i18n>{category, select,
       subject {Subject}
       language {Language}
@@ -22,10 +23,10 @@ import { trackByCategory } from '../../shared/table-helpers';
       </mat-list-option>
     </mat-selection-list>
   `,
-  selector: 'planet-resources-search-list',
-  styleUrls: ['./resources-search.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    selector: 'planet-resources-search-list',
+    styleUrls: ['./resources-search.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class ResourcesSearchListComponent {
 
@@ -57,7 +58,7 @@ export class ResourcesSearchListComponent {
 }
 
 @Component({
-  template: `
+    template: `
     <planet-resources-search-list
       *ngFor="let list of searchLists;trackBy:trackByFn"
       [category]="list.category"
@@ -66,10 +67,10 @@ export class ResourcesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-resources-search-list>
   `,
-  styleUrls: ['./resources-search.scss'],
-  selector: 'planet-resources-search',
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    styleUrls: ['./resources-search.scss'],
+    selector: 'planet-resources-search',
+    encapsulation: ViewEncapsulation.None,
+    imports: [NgFor, ResourcesSearchListComponent]
 })
 export class ResourcesSearchComponent implements OnInit, OnChanges {
 

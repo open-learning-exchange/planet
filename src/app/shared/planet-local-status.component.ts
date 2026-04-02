@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  'selector': 'planet-local-status',
-  'template': `
+    'selector': 'planet-local-status',
+    'template': `
     <ng-container [ngSwitch]="status">
       <mat-icon *ngSwitchCase="'match'" i18n-title title="Upto date">done_all</mat-icon>
       <mat-icon *ngSwitchCase="'newerAvailable'" i18n-title title="Newer">fiber_new</mat-icon>
@@ -10,7 +12,7 @@ import { Component, Input } from '@angular/core';
       <mat-icon *ngSwitchCase="'mismatch'" i18n-title title="Does not match">priority_high</mat-icon>
     </ng-container>
   `,
-  standalone: false
+    imports: [NgSwitch, NgSwitchCase, MatIcon]
 })
 export class PlanetLocalStatusComponent {
   @Input() status: string;

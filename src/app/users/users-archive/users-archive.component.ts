@@ -1,23 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { showFormErrors } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatButton } from '@angular/material/button';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 interface ArchiveFormControls {
   description: FormControl<string>;
 }
 
 @Component({
-  templateUrl: './users-archive.component.html',
-  styles: [`
+    templateUrl: './users-archive.component.html',
+    styles: [`
     :host {
       text-align: center;
     }
   `],
-  standalone: false
+    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatCheckbox, MatButton, SubmitDirective]
 })
 export class UsersArchiveComponent implements OnInit {
   readonly dbName = '_users';

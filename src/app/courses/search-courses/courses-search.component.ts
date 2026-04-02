@@ -1,14 +1,15 @@
 import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
-import { MatSelectionList } from '@angular/material/list';
+import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
 import * as constants from '../constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { trackByCategory } from '../../shared/table-helpers';
+import { NgFor } from '@angular/common';
 
 @Component({
-  template: `
+    template: `
     <span class="mat-caption" i18n>{category, select,
       languageOfInstruction {Language}
       gradeLevel {Grade Level}
@@ -21,10 +22,10 @@ import { trackByCategory } from '../../shared/table-helpers';
       </mat-list-option>
     </mat-selection-list>
   `,
-  selector: 'planet-courses-search-list',
-  styleUrls: ['./courses-search.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    selector: 'planet-courses-search-list',
+    styleUrls: ['./courses-search.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class CoursesSearchListComponent {
 
@@ -56,7 +57,7 @@ export class CoursesSearchListComponent {
 }
 
 @Component({
-  template: `
+    template: `
     <planet-courses-search-list
       *ngFor="let list of searchLists;trackBy:trackByFn"
       [category]="list.category"
@@ -65,10 +66,10 @@ export class CoursesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-courses-search-list>
   `,
-  styleUrls: ['./courses-search.scss'],
-  selector: 'planet-courses-search',
-  encapsulation: ViewEncapsulation.None,
-  standalone: false
+    styleUrls: ['./courses-search.scss'],
+    selector: 'planet-courses-search',
+    encapsulation: ViewEncapsulation.None,
+    imports: [NgFor, CoursesSearchListComponent]
 })
 export class CoursesSearchComponent implements OnInit, OnChanges {
 

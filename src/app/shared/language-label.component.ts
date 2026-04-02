@@ -1,11 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core';
 
 @Component({
-  selector: 'planet-language-label',
-  template: `
+    selector: 'planet-language-label',
+    template: `
     {{ displayText }}<ng-content></ng-content>
-  `,
-  standalone: false
+  `
 })
 export class LanguageLabelComponent implements OnChanges {
 

@@ -1,14 +1,15 @@
 import { Component, Input } from '@angular/core';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'planet-loading-spinner',
-  template: `
+    selector: 'planet-loading-spinner',
+    template: `
     <div class="planet-spinner-container">
       <mat-spinner diameter="40"></mat-spinner>
       <div class="planet-spinner-text">{{ text }}</div>
     </div>
   `,
-  styles: [`
+    styles: [`
     :host {
       align-items: center;
       display: flex;
@@ -23,7 +24,7 @@ import { Component, Input } from '@angular/core';
       }
     }
   `],
-  standalone: false
+    imports: [MatProgressSpinner]
 })
 export class PlanetLoadingSpinnerComponent {
   @Input() text = $localize `Loading`;

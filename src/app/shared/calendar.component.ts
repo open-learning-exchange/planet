@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, NgFor } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -16,11 +16,12 @@ import { TasksService } from '../tasks/tasks.service';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @Component({
-  selector: 'planet-calendar',
-  styleUrls: ['./calendar.component.scss'],
-  template: `
+    selector: 'planet-calendar',
+    styleUrls: ['./calendar.component.scss'],
+    template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
       <div *ngFor="let legend of eventLegend">
@@ -31,7 +32,7 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
       </div>
     </div>
   `,
-  standalone: false
+    imports: [FullCalendarModule, NgIf, NgFor]
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 

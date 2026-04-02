@@ -22,21 +22,19 @@ const routes: Routes = [
 export class SubmissionsRouterModule {}
 
 @NgModule({
-  exports: [
-    SubmissionsComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    PlanetDialogsModule,
-    MaterialModule,
-    ExamsModule,
-    SubmissionsRouterModule
-  ],
-  declarations: [
-    SubmissionsComponent
-  ]
+    exports: [
+        SubmissionsComponent
+    ],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        PlanetDialogsModule,
+        MaterialModule,
+        ExamsModule,
+        SubmissionsRouterModule,
+        SubmissionsComponent
+    ]
 })
 export class SubmissionsModule {}

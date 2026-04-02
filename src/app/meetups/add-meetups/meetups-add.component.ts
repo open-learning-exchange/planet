@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { interval, of, race } from 'rxjs';
 import { debounce, switchMap } from 'rxjs/operators';
 import * as constants from '../constants';
@@ -13,6 +13,22 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
+import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PlanetTimeMaskDirective } from '../../shared/forms/planet-time-mask.directive';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 type DatePlaceholder = CouchService['datePlaceholder'];
 
@@ -35,9 +51,9 @@ interface MeetupFormControls {
 }
 
 @Component({
-  selector: 'planet-meetups-add',
-  templateUrl: './meetups-add.component.html',
-  styles: [`
+    selector: 'planet-meetups-add',
+    templateUrl: './meetups-add.component.html',
+    styles: [`
     form.form-spacing {
       width: inherit;
     }
@@ -46,7 +62,7 @@ interface MeetupFormControls {
       max-width: 750px;
     }
   `],
-  standalone: false
+    imports: [NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetTimeMaskDirective, MatRadioGroup, MatRadioButton, NgFor, MatCheckbox, PlanetNumberValidatorDirective, NgTemplateOutlet, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, SubmitDirective]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 

@@ -3,12 +3,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
 import { AIProvider, ProviderName } from './chat.model';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor } from '@angular/common';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { MatOption } from '@angular/material/autocomplete';
+import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 
 @Component({
-  selector: 'planet-chat',
-  templateUrl: './chat.component.html',
-  styleUrls: ['./chat.scss'],
-  standalone: false
+    selector: 'planet-chat',
+    templateUrl: './chat.component.html',
+    styleUrls: ['./chat.scss'],
+    imports: [MatToolbar, MatIconButton, MatIcon, NgIf, MatFormField, MatSelect, FormsModule, NgFor, MatOption, ChatSidebarComponent]
 })
 export class ChatComponent implements OnInit {
   activeService?: ProviderName;

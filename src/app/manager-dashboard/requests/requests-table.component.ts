@@ -3,8 +3,8 @@ import { CouchService } from '../../shared/couchdb.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
@@ -19,15 +19,19 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 interface EditChildNameFormControls {
   name: FormControl<string>;
 }
 
 @Component({
-  selector: 'planet-requests-table',
-  templateUrl: './requests-table.component.html',
-  standalone: false
+    selector: 'planet-requests-table',
+    templateUrl: './requests-table.component.html',
+    imports: [MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 

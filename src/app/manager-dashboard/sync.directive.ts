@@ -11,10 +11,7 @@ import { StateService } from '../shared/state.service';
 import { ReportsService } from './reports/reports.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
-@Directive({
-  selector: '[planetSync]',
-  standalone: false
-})
+@Directive({ selector: '[planetSync]' })
 export class SyncDirective {
   @Output() syncComplete = new EventEmitter<void>();
 

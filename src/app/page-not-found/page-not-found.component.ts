@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
+import { MatAnchor } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'planet-page-not-found',
-  templateUrl: './page-not-found.component.html',
-  styles: [`
+    selector: 'planet-page-not-found',
+    templateUrl: './page-not-found.component.html',
+    styles: [`
     :host {
       display: flex;
       flex-direction: column;
@@ -11,7 +13,7 @@ import { Component } from '@angular/core';
       padding-top: 10vh;
     }
   `],
-  standalone: false
+    imports: [MatAnchor, RouterLink]
 })
 export class PageNotFoundComponent {
 

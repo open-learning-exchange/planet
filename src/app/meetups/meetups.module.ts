@@ -13,14 +13,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
-  exports: [ MeetupsAddComponent, MeetupsViewComponent ],
-  imports: [
-    MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
-    MatDialogModule, SharedComponentsModule
-  ],
-  declarations: [
-    MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
-  ],
-  providers: [ MeetupService ]
+    exports: [MeetupsAddComponent, MeetupsViewComponent],
+    imports: [
+        MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
+        MatDialogModule, SharedComponentsModule,
+        MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent
+    ],
+    providers: [MeetupService]
 })
 export class MeetupsModule {}

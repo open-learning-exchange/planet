@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
@@ -10,13 +10,27 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
-import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
+import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective } from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgClass, NgIf, NgFor } from '@angular/common';
+import { SubmitDirective } from '../shared/submit.directive';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
+import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
@@ -45,9 +59,9 @@ interface ExamDocumentInfo {
 }
 
 @Component({
-  templateUrl: 'exams-add.component.html',
-  styleUrls: ['exams-add.scss'],
-  standalone: false
+    templateUrl: 'exams-add.component.html',
+    styleUrls: ['exams-add.scss'],
+    imports: [MatToolbar, MatIconAnchor, MatIcon, FormsModule, ReactiveFormsModule, NgClass, MatButton, SubmitDirective, MatMenuTrigger, NgIf, MatCheckbox, MatMenu, MatMenuItem, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemLine, PlanetStepListFormDirective, ExamsQuestionComponent]
 })
 export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';

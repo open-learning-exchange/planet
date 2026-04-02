@@ -8,8 +8,8 @@ describe('FormErrorMessagesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormErrorMessagesComponent ]
-    }).compileComponents();
+    imports: [FormErrorMessagesComponent]
+}).compileComponents();
   }));
 
   beforeEach(() => {

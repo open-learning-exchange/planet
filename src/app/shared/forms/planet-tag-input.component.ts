@@ -11,6 +11,9 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
+import { NgIf, NgSwitch, NgClass, NgSwitchCase } from '@angular/common';
+import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
+import { MatButton } from '@angular/material/button';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 type DialogStartingTag = string | SelectedDialogTag;
@@ -28,13 +31,13 @@ interface PlanetTagDialogData {
 }
 
 @Component({
-  'selector': 'planet-tag-input',
-  'templateUrl': './planet-tag-input.component.html',
-  'styleUrls': ['planet-tag-input.scss'],
-  'providers': [
-    { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
-  ],
-  standalone: false
+    'selector': 'planet-tag-input',
+    'templateUrl': './planet-tag-input.component.html',
+    'styleUrls': ['planet-tag-input.scss'],
+    'providers': [
+        { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
+    ],
+    imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 

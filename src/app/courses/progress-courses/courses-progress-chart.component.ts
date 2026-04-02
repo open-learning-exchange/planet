@@ -6,12 +6,16 @@
  * ]
  */
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { NgIf, NgFor, NgClass } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AvatarComponent } from '../../shared/avatar.component';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
-  selector: 'planet-courses-progress-chart',
-  templateUrl: 'courses-progress-chart.component.html',
-  styleUrls: ['courses-progress-chart.scss'],
-  standalone: false
+    selector: 'planet-courses-progress-chart',
+    templateUrl: 'courses-progress-chart.component.html',
+    styleUrls: ['courses-progress-chart.scss'],
+    imports: [NgIf, NgFor, MatTooltip, NgClass, AvatarComponent, TruncateTextPipe]
 })
 export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, OnDestroy {
 

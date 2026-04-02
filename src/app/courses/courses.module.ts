@@ -25,35 +25,33 @@ import { CoursesSearchComponent, CoursesSearchListComponent } from './search-cou
 import { ChatModule } from '../chat/chat.module';
 
 @NgModule({
-  imports: [
-    CoursesRouterModule,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    PlanetDialogsModule,
-    MaterialModule,
-    ResourcesModule,
-    ExamsModule,
-    SharedComponentsModule,
-    DialogsAddResourcesModule,
-    DialogsSubmissionsModule,
-    UsersModule,
-    CoursesViewDetailModule,
-    ChatModule,
-    CoursesProgressModule
-  ],
-  declarations: [
-    CoursesComponent,
-    CoursesAddComponent,
-    CoursesViewComponent,
-    CoursesStepComponent,
-    CoursesStepViewComponent,
-    CoursesSearchComponent,
-    CoursesSearchListComponent,
-    CoursesEnrollComponent,
-    CoursesIconComponent
-  ],
-  exports: [ CoursesComponent ]
+    imports: [
+        CoursesRouterModule,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        PlanetFormsModule,
+        PlanetDialogsModule,
+        MaterialModule,
+        ResourcesModule,
+        ExamsModule,
+        SharedComponentsModule,
+        DialogsAddResourcesModule,
+        DialogsSubmissionsModule,
+        UsersModule,
+        CoursesViewDetailModule,
+        ChatModule,
+        CoursesProgressModule,
+        CoursesComponent,
+        CoursesAddComponent,
+        CoursesViewComponent,
+        CoursesStepComponent,
+        CoursesStepViewComponent,
+        CoursesSearchComponent,
+        CoursesSearchListComponent,
+        CoursesEnrollComponent,
+        CoursesIconComponent
+    ],
+    exports: [CoursesComponent]
 })
 export class CoursesModule {}

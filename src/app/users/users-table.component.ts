@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -19,6 +19,14 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
+import { NgClass, NgIf, NgFor, DatePipe } from '@angular/common';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -27,10 +35,10 @@ export class TableState {
 }
 
 @Component({
-  selector: 'planet-users-table',
-  templateUrl: './users-table.component.html',
-  styleUrls: ['./users-table.scss'],
-  standalone: false
+    selector: 'planet-users-table',
+    templateUrl: './users-table.component.html',
+    styleUrls: ['./users-table.scss'],
+    imports: [NgClass, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatChipSet, MatChip, MatProgressBar, NgFor, PlanetRoleComponent, MatIcon, MatChipRemove, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 

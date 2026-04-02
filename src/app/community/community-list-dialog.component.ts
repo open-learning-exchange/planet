@@ -1,14 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { CommunityListComponent } from './community-list.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: './community-list-dialog.component.html',
-  styles: [`
+    templateUrl: './community-list-dialog.component.html',
+    styles: [`
     :host mat-dialog-content {
       min-width: 33vw;
     }
   `],
-  standalone: false
+    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, CommunityListComponent, MatDialogActions, MatButton]
 })
 export class CommunityListDialogComponent {
 
