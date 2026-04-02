@@ -47,7 +47,8 @@ export class PlanetStepListService {
         <button mat-icon-button type="button" (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
       </ng-container>
     </ng-template>
-  `
+  `,
+  standalone: false
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -68,8 +69,9 @@ export class PlanetStepListItemComponent {
 @Component({
   selector: 'planet-step-list',
   templateUrl: './planet-step-list.component.html',
-  styleUrls: [ './planet-step-list.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./planet-step-list.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
@@ -165,19 +167,22 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 }
 
 @Directive({
-  selector: '[planetStepListForm]'
+  selector: '[planetStepListForm]',
+  standalone: false
 })
 export class PlanetStepListFormDirective {
   @HostBinding('class') class = 'planet-step-list-form';
 }
 
 @Directive({
-  selector: '[planetStepListNumber]'
+  selector: '[planetStepListNumber]',
+  standalone: false
 })
 export class PlanetStepListNumberDirective {}
 
 @Directive({
-  selector: '[planetStepListActions]'
+  selector: '[planetStepListActions]',
+  standalone: false
 })
 export class PlanetStepListActionsDirective {
   @HostBinding('class') class = 'planet-step-list-actions';

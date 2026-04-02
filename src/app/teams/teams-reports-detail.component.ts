@@ -4,7 +4,7 @@ import { StateService } from '../shared/state.service';
 @Component({
   selector: 'planet-teams-reports-detail',
   templateUrl: './teams-reports-detail.component.html',
-  styles: [ `
+  styles: [`
     .report-grid-container {
       overflow-x: auto;
     }
@@ -20,7 +20,8 @@ import { StateService } from '../shared/state.service';
     .report-grid .mat-divider-horizontal {
       position: initial;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class TeamsReportsDetailComponent implements OnChanges {
 

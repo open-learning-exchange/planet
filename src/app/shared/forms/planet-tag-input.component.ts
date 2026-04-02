@@ -30,10 +30,11 @@ interface PlanetTagDialogData {
 @Component({
   'selector': 'planet-tag-input',
   'templateUrl': './planet-tag-input.component.html',
-  'styleUrls': [ 'planet-tag-input.scss' ],
+  'styleUrls': ['planet-tag-input.scss'],
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
-  ]
+  ],
+  standalone: false
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 

@@ -13,7 +13,8 @@ import { trackByIdVal } from '../shared/table-helpers';
 @Component({
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
-  styleUrls: [ 'exams-question.scss' ]
+  styleUrls: ['exams-question.scss'],
+  standalone: false
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 

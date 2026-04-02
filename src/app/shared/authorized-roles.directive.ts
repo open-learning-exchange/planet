@@ -4,7 +4,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Directive({
-  selector: '[planetAuthorizedRoles]'
+  selector: '[planetAuthorizedRoles]',
+  standalone: false
 })
 export class AuthorizedRolesDirective implements OnInit, OnDestroy {
 

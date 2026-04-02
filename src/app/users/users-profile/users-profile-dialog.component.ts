@@ -17,7 +17,8 @@ import { UsersProfileComponent } from './users-profile.component';
         View full profile
       </button>
     </mat-dialog-actions>
-  `
+  `,
+  standalone: false
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 

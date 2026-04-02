@@ -18,7 +18,8 @@ import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
-  styleUrls: [ './courses-step-view.scss' ]
+  styleUrls: ['./courses-step-view.scss'],
+  standalone: false
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
@@ -226,6 +227,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   openReviewDialog() {
     this.dialog.open(DialogsSubmissionsComponent, {
       minWidth: '500px',
+      maxWidth: '90vw',
       maxHeight: '90vh',
       data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
     });

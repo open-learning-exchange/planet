@@ -1,7 +1,9 @@
 import { Component, Input, ViewEncapsulation, OnChanges } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { StateService } from './state.service';
-import { truncateText, calculateMdAdjustedLimit } from './utils';
+import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
+  markdownImageRegex, normalizeMarkdownWhitespace, truncateText
+} from './utils';
 
 @Component({
   selector: 'planet-markdown',
@@ -16,60 +18,41 @@ import { truncateText, calculateMdAdjustedLimit } from './utils';
       <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
-  styleUrls: [ './planet-markdown.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./planet-markdown.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class PlanetMarkdownComponent implements OnChanges {
 
   @Input() content: string;
   @Input() imageSource: 'parent' | 'local' = 'local';
   @Input() previewMode: boolean;
-  @Input() limit: number;
+  @Input() limit = 450;
   couchAddress: string;
   images: string[] = [];
   limitedContent: string;
-  imageMarkdownRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/g;
 
-  constructor(
-    private stateService: StateService,
-  ) {}
+  constructor(private stateService: StateService) {}
 
   ngOnChanges() {
     this.couchAddress = this.imageSource === 'parent' ?
       `${environment.parentProtocol}://${this.stateService.configuration.parentDomain}/` :
       `${environment.couchAddress}/`;
 
-    this.content = this.normalizeWhitespace(this.content || '');
+    this.content = normalizeMarkdownWhitespace(this.content);
 
     this.images = this.extractImageUrls(this.content);
-    const textOnly = this.content.replace(this.imageMarkdownRegex, '');
+    const previewText = getMarkdownPreviewText(this.content);
+    const textOnly = this.content.replace(new RegExp(markdownImageRegex), '');
 
     if (this.previewMode) {
-      const scaledContent = textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
-      const adjustedLimit = calculateMdAdjustedLimit(scaledContent, this.limit);
-
-      this.limitedContent = truncateText(scaledContent, adjustedLimit);
+      this.limitedContent = truncateText(previewText, calculateMdAdjustedLimit(previewText, this.limit));
     } else {
       this.limitedContent = truncateText(textOnly, this.limit);
     }
   }
 
-  normalizeWhitespace(content: string): string {
-    // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
-    // Replace sequences of tabs/spaces with max 2 spaces
-    content = content.replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
-    // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
-    content = content.replace(/\n{3,}/g, '\n\n');
-    return content.trim();
-  }
-
   extractImageUrls(content: string): string[] {
-    const matches: string[] = [];
-    let match: RegExpExecArray | null;
-    while ((match = this.imageMarkdownRegex.exec(content)) !== null) {
-      const url = match[1];
-      matches.push(url.startsWith('http') ? url : `${this.couchAddress}${url}`);
-    }
-    return matches;
+    return extractMarkdownImageUrls(content).map(url => url.startsWith('http') ? url : `${this.couchAddress}${url}`);
   }
 }

@@ -12,7 +12,8 @@ import { Component, Input } from '@angular/core';
       <span *ngSwitchCase="'done'" i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
       <span *ngSwitchCase="'rotate_right'" i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
     </div>
-  `
+  `,
+  standalone: false
 })
 export class CoursesIconComponent {
 

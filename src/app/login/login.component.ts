@@ -6,7 +6,8 @@ import { ConfigurationCheckService } from '../shared/configuration-check.service
 
 @Component({
   templateUrl: './login.component.html',
-  styleUrls: [ './login.scss' ]
+  styleUrls: ['./login.scss'],
+  standalone: false
 })
 
 export class LoginComponent implements OnInit {

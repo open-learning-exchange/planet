@@ -28,7 +28,7 @@ interface MigrationForm {
 @Component({
   selector: 'planet-migration',
   templateUrl: './migration.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
@@ -39,7 +39,8 @@ interface MigrationForm {
     .advanced {
       grid-column-start: 2;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class MigrationComponent implements OnInit {
 

@@ -8,6 +8,7 @@ import { HealthService } from './health.service';
 
 @Component({
   templateUrl: './health-list.component.html',
+  standalone: false
 })
 export class HealthListComponent implements OnInit, OnDestroy {
 

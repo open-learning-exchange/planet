@@ -31,7 +31,8 @@ interface AIConfiguration {
 
 @Component({
   templateUrl: './manager-aiservices.component.html',
-  styleUrls: [ './manager-settings.shared.scss' ],
+  styleUrls: ['./manager-settings.shared.scss'],
+  standalone: false
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};

@@ -18,7 +18,6 @@
 
 .community-news {
   grid-area: news;
-  overflow-y: auto;
 
   h3 {
     margin: 0;
@@ -45,10 +44,6 @@ planet-calendar {
     right: -0.25rem;
   }
   word-break: break-word;
-}
-
-mat-tab-group, mat-tab {
-  height: 100%;
 }
 
 .sticky-button {

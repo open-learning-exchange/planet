@@ -188,10 +188,6 @@ body {
     letter-spacing: normal;
   }
 
-  .planet-icon-button.mdc-button > .mat-icon {
-    margin: 0;
-  }
-
   .mat-mdc-row.expanded-row {
     border: none;
   }
@@ -709,6 +705,15 @@ body {
 
   mat-tab-group.tabs-padding .mat-mdc-tab-body {
     padding-top: 0.5rem;
+  }
+
+  // Pagination within tabs
+  .tab-scroll-shell {
+    overflow: hidden;
+  }
+
+  .tab-scroll-layout {
+    height: 100%;
   }
 
   .tags-list .mat-mdc-chip {
