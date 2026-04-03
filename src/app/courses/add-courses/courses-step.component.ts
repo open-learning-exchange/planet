@@ -7,7 +7,13 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { DialogsAddResourcesComponent } from '../../shared/dialogs/dialogs-add-resources.component';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
-import { PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective, PlanetStepListActionsDirective } from '../../shared/forms/planet-step-list.component';
+import {
+  PlanetStepListComponent,
+  PlanetStepListItemComponent,
+  PlanetStepListNumberDirective,
+  PlanetStepListFormDirective,
+  PlanetStepListActionsDirective
+} from '../../shared/forms/planet-step-list.component';
 import { NgFor, NgIf } from '@angular/common';
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { CoursesIconComponent } from '../courses-icon.component';
@@ -27,11 +33,17 @@ interface CoursesStepForm {
 }
 
 @Component({
-    selector: 'planet-courses-step',
-    templateUrl: 'courses-step.component.html',
-    styleUrls: ['courses-step.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, NgIf, CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon, PlanetStepListActionsDirective, MatAnchor, MatButton, TruncateTextPipe]
+  selector: 'planet-courses-step',
+  templateUrl: 'courses-step.component.html',
+  styleUrls: ['courses-step.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta,
+    NgIf, CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
+    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
+    MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
+    PlanetStepListActionsDirective, MatAnchor, MatButton, TruncateTextPipe
+  ]
 })
 export class CoursesStepComponent implements OnDestroy {
 

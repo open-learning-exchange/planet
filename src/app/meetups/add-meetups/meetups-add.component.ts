@@ -51,9 +51,9 @@ interface MeetupFormControls {
 }
 
 @Component({
-    selector: 'planet-meetups-add',
-    templateUrl: './meetups-add.component.html',
-    styles: [`
+  selector: 'planet-meetups-add',
+  templateUrl: './meetups-add.component.html',
+  styles: [`
     form.form-spacing {
       width: inherit;
     }
@@ -62,7 +62,12 @@ interface MeetupFormControls {
       max-width: 750px;
     }
   `],
-    imports: [NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetTimeMaskDirective, MatRadioGroup, MatRadioButton, NgFor, MatCheckbox, PlanetNumberValidatorDirective, NgTemplateOutlet, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, SubmitDirective]
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetTimeMaskDirective, MatRadioGroup, MatRadioButton, NgFor, MatCheckbox,
+    PlanetNumberValidatorDirective, NgTemplateOutlet, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, SubmitDirective
+  ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 

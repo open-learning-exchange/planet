@@ -15,9 +15,9 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    selector: 'planet-courses-detail',
-    templateUrl: './courses-view-detail.component.html',
-    imports: [PlanetRatingComponent, LanguageLabelComponent, NgIf, PlanetMarkdownComponent, DatePipe]
+  selector: 'planet-courses-detail',
+  templateUrl: './courses-view-detail.component.html',
+  imports: [PlanetRatingComponent, LanguageLabelComponent, NgIf, PlanetMarkdownComponent, DatePipe]
 })
 export class CoursesViewDetailComponent implements OnChanges {
 
@@ -39,7 +39,7 @@ export class CoursesViewDetailComponent implements OnChanges {
 }
 
 @Component({
-    template: `
+  template: `
     <ng-container *ngIf="courseDetail">
       <h3 mat-dialog-title>{{courseDetail.courseTitle}}</h3>
       <mat-dialog-content>
@@ -51,7 +51,7 @@ export class CoursesViewDetailComponent implements OnChanges {
       </mat-dialog-actions>
     </ng-container>
   `,
-    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
+  imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class CoursesViewDetailDialogComponent implements OnInit {
 

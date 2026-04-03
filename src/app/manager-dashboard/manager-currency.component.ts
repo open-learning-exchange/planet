@@ -16,9 +16,13 @@ import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.
 import { SubmitDirective } from '../shared/submit.directive';
 
 @Component({
-    templateUrl: './manager-currency.component.html',
-    styleUrls: ['./manager-settings.shared.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatList, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatButton, SubmitDirective]
+  templateUrl: './manager-currency.component.html',
+  styleUrls: ['./manager-settings.shared.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle,
+    MatCardContent, MatList, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
+    MatButton, SubmitDirective
+  ]
 })
 export class ManagerCurrencyComponent implements OnInit {
   form: FormGroup<{ code: FormControl<string>; symbol: FormControl<string> }>;

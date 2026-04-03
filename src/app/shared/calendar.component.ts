@@ -19,9 +19,9 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 @Component({
-    selector: 'planet-calendar',
-    styleUrls: ['./calendar.component.scss'],
-    template: `
+  selector: 'planet-calendar',
+  styleUrls: ['./calendar.component.scss'],
+  template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
       <div *ngFor="let legend of eventLegend">
@@ -32,7 +32,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
       </div>
     </div>
   `,
-    imports: [FullCalendarModule, NgIf, NgFor]
+  imports: [FullCalendarModule, NgIf, NgFor]
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 

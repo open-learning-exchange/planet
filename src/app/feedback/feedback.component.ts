@@ -5,7 +5,10 @@ import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
+  MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -32,8 +35,8 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 @Component({
-    templateUrl: './feedback.component.html',
-    styles: [`
+  templateUrl: './feedback.component.html',
+  styles: [`
     .mat-column-type {
       display: flex;
       align-items: center;
@@ -46,7 +49,13 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
       white-space: normal;
     }
   `],
-    imports: [MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatFormField, MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip, NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatFormField,
+    MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort,
+    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip,
+    NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';

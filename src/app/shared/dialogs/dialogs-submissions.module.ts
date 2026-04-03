@@ -7,15 +7,15 @@ import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MaterialModule,
-        SubmissionsModule,
-        ExamsModule,
-        DialogsSubmissionsComponent
-    ],
-    exports: [
-        DialogsSubmissionsComponent
-    ]
+  imports: [
+    CommonModule,
+    MaterialModule,
+    SubmissionsModule,
+    ExamsModule,
+    DialogsSubmissionsComponent
+  ],
+  exports: [
+    DialogsSubmissionsComponent
+  ]
 })
 export class DialogsSubmissionsModule {}

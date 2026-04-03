@@ -21,9 +21,12 @@ import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    templateUrl: './notifications.component.html',
-    styleUrls: ['./notifications.component.scss'],
-    imports: [MatToolbar, MatButton, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatTable, MatColumnDef, MatCellDef, MatCell, NgClass, NgIf, RouterLink, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  templateUrl: './notifications.component.html',
+  styleUrls: ['./notifications.component.scss'],
+  imports: [
+    MatToolbar, MatButton, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatTable, MatColumnDef, MatCellDef,
+    MatCell, NgClass, NgIf, RouterLink, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;

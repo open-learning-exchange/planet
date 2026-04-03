@@ -16,26 +16,26 @@ import { UsersTableComponent } from './users-table.component';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
 
 @NgModule({
-    exports: [
-        UsersTableComponent, UsersComponent
-    ],
-    imports: [
-        UsersRouterModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        PlanetDialogsModule,
-        MaterialModule,
-        SharedComponentsModule,
-        UsersAchievementsModule,
-        ImageCropperComponent,
-        UsersComponent,
-        UsersArchiveComponent,
-        UsersProfileComponent,
-        UsersUpdateComponent,
-        UsersTableComponent,
-        UserProfileDialogComponent
-    ]
+  exports: [
+    UsersTableComponent, UsersComponent
+  ],
+  imports: [
+    UsersRouterModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    PlanetDialogsModule,
+    MaterialModule,
+    SharedComponentsModule,
+    UsersAchievementsModule,
+    ImageCropperComponent,
+    UsersComponent,
+    UsersArchiveComponent,
+    UsersProfileComponent,
+    UsersUpdateComponent,
+    UsersTableComponent,
+    UserProfileDialogComponent
+  ]
 })
 export class UsersModule {}

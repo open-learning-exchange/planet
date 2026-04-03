@@ -4,7 +4,10 @@ import {
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -35,10 +38,15 @@ export class TableState {
 }
 
 @Component({
-    selector: 'planet-users-table',
-    templateUrl: './users-table.component.html',
-    styleUrls: ['./users-table.scss'],
-    imports: [NgClass, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatChipSet, MatChip, MatProgressBar, NgFor, PlanetRoleComponent, MatIcon, MatChipRemove, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  selector: 'planet-users-table',
+  templateUrl: './users-table.component.html',
+  styleUrls: ['./users-table.scss'],
+  imports: [
+    NgClass, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatChipSet, MatChip, MatProgressBar,
+    NgFor, PlanetRoleComponent, MatIcon, MatChipRemove, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 

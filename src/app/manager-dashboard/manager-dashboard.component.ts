@@ -24,9 +24,12 @@ import { PlanetBetaDirective } from '../shared/beta.directive';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 
 @Component({
-    templateUrl: './manager-dashboard.component.html',
-    styleUrls: ['./manager-dashboard.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, AuthorizedRolesDirective, MatAnchor, MatButton, PlanetBetaDirective, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe]
+  templateUrl: './manager-dashboard.component.html',
+  styleUrls: ['./manager-dashboard.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, AuthorizedRolesDirective, MatAnchor, MatButton, PlanetBetaDirective,
+    MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe
+  ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {

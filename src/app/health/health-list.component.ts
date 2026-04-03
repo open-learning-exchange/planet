@@ -13,8 +13,8 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    templateUrl: './health-list.component.html',
-    imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, FormsModule, MatButton, UsersTableComponent]
+  templateUrl: './health-list.component.html',
+  imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, FormsModule, MatButton, UsersTableComponent]
 })
 export class HealthListComponent implements OnInit, OnDestroy {
 

@@ -26,8 +26,8 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
 
 @Component({
-    templateUrl: './dialogs-form.component.html',
-    styles: [`
+  templateUrl: './dialogs-form.component.html',
+  styles: [`
     .checkbox-wrapper:last-child {
       margin: 0 0 20px 0;
     }
@@ -40,7 +40,13 @@ import { SubmitDirective } from '../submit.directive';
       border: none;
     }
   `],
-    imports: [FormsModule, ReactiveFormsModule, MatDialogTitle, MatIcon, CdkScrollable, MatDialogContent, NgFor, NgClass, NgIf, MatCheckbox, MatTooltip, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatIconButton, MatSuffix, MatSelect, MatOption, MatRadioGroup, MatRadioButton, PlanetRatingStarsComponent, PlanetMarkdownTextboxComponent, AuthorizedRolesDirective, MatButton, MatDatepickerInput, MatDatepickerToggle, MatDatepicker, MatSlideToggle, MatDialogActions, SubmitDirective]
+  imports: [
+    FormsModule, ReactiveFormsModule, MatDialogTitle, MatIcon, CdkScrollable, MatDialogContent, NgFor,
+    NgClass, NgIf, MatCheckbox, MatTooltip, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
+    MatIconButton, MatSuffix, MatSelect, MatOption, MatRadioGroup, MatRadioButton, PlanetRatingStarsComponent,
+    PlanetMarkdownTextboxComponent, AuthorizedRolesDirective, MatButton, MatDatepickerInput, MatDatepickerToggle,
+    MatDatepicker, MatSlideToggle, MatDialogActions, SubmitDirective
+  ]
 })
 export class DialogsFormComponent {
 

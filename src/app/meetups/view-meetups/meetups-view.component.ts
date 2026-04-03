@@ -22,10 +22,13 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
-    selector: 'planet-meetups-view',
-    templateUrl: './meetups-view.component.html',
-    styleUrls: ['./meetups-view.scss'],
-    imports: [NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, MatButton, MatTooltip, NgClass, NgFor, TdMarkdownComponent, CdkScrollable, MatDialogContent, NgTemplateOutlet, MatDialogActions, MatDialogClose, TitleCasePipe, DatePipe]
+  selector: 'planet-meetups-view',
+  templateUrl: './meetups-view.component.html',
+  styleUrls: ['./meetups-view.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, MatButton, MatTooltip, NgClass, NgFor, TdMarkdownComponent,
+    CdkScrollable, MatDialogContent, NgTemplateOutlet, MatDialogActions, MatDialogClose, TitleCasePipe, DatePipe
+  ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {

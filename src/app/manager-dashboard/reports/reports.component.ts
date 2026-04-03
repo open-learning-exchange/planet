@@ -17,14 +17,17 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
 import { ReportsTableComponent } from './reports-table.component';
 
 @Component({
-    templateUrl: './reports.component.html',
-    styles: [`
+  templateUrl: './reports.component.html',
+  styles: [`
     mat-panel-title {
       align-items: center;
     }
   `],
-    styleUrls: ['./reports.components.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, MatAnchor, NgIf, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, ReportsTableComponent]
+  styleUrls: ['./reports.components.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, MatAnchor, NgIf, NgFor, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, ReportsTableComponent
+  ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 

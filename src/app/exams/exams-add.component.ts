@@ -1,5 +1,15 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
@@ -10,7 +20,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
-import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective } from '../shared/forms/planet-step-list.component';
+import {
+  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
+} from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
@@ -59,9 +71,15 @@ interface ExamDocumentInfo {
 }
 
 @Component({
-    templateUrl: 'exams-add.component.html',
-    styleUrls: ['exams-add.scss'],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, FormsModule, ReactiveFormsModule, NgClass, MatButton, SubmitDirective, MatMenuTrigger, NgIf, MatCheckbox, MatMenu, MatMenuItem, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemLine, PlanetStepListFormDirective, ExamsQuestionComponent]
+  templateUrl: 'exams-add.component.html',
+  styleUrls: ['exams-add.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, FormsModule, ReactiveFormsModule, NgClass, MatButton,
+    SubmitDirective, MatMenuTrigger, NgIf, MatCheckbox, MatMenu, MatMenuItem, MatAccordion, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, MatFormField, MatLabel, MatInput, MatError,
+    FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetStepListComponent, NgFor,
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemLine, PlanetStepListFormDirective, ExamsQuestionComponent
+  ]
 })
 export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';

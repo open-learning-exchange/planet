@@ -10,9 +10,9 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.scss'],
-    imports: [MatCard, MatAnchor, MatIcon, PlanetLanguageComponent, RouterOutlet]
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.scss'],
+  imports: [MatCard, MatAnchor, MatIcon, PlanetLanguageComponent, RouterOutlet]
 })
 
 export class LoginComponent implements OnInit {

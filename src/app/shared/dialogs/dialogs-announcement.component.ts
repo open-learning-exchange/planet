@@ -25,7 +25,7 @@ export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
 export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2025, 0, 16));
 
 @Component({
-    template: `
+  template: `
     <div class="announcement-container">
       <img
         src="assets/challenge/dec challenge.jpeg"
@@ -35,14 +35,14 @@ export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Dat
       <p class="success-msg">¡Felicidades reto completado!</p>
     </div>
   `,
-    styleUrls: ['./dialogs-announcement.component.scss']
+  styleUrls: ['./dialogs-announcement.component.scss']
 })
 export class DialogsAnnouncementSuccessComponent { }
 
 @Component({
-    templateUrl: './dialogs-announcement.component.html',
-    styleUrls: ['./dialogs-announcement.component.scss'],
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, NgIf, MatProgressSpinner, MatIcon, MatAnchor, NgFor]
+  templateUrl: './dialogs-announcement.component.html',
+  styleUrls: ['./dialogs-announcement.component.scss'],
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, NgIf, MatProgressSpinner, MatIcon, MatAnchor, NgFor]
 })
 export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 

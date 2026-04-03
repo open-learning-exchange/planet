@@ -14,14 +14,14 @@ import { NgIf } from '@angular/common';
 import { CoursesComponent } from '../../courses/courses.component';
 
 @Component({
-    templateUrl: './certifications-view.component.html',
-    styles: [`
+  templateUrl: './certifications-view.component.html',
+  styles: [`
     .placeholder-message {
       margin-top: 20px;
       display: block;
     }
   `],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, NgIf, CoursesComponent, UsersTableComponent]
+  imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, NgIf, CoursesComponent, UsersTableComponent]
 })
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 

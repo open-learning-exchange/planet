@@ -13,9 +13,9 @@ import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/mate
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    selector: 'planet-teams-member',
-    templateUrl: './teams-member.component.html',
-    styles: [`
+  selector: 'planet-teams-member',
+  templateUrl: './teams-member.component.html',
+  styles: [`
     .mat-mdc-list-item-disabled {
       background-color: white;
     }
@@ -34,7 +34,11 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
       margin-right: 5px;
     }
   `],
-    imports: [MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, NgIf, MatIconButton, MatMenuTrigger, MatIcon, MatMenu, MatMenuItem, MatCardContent, MatSelectionList, NgFor, MatListOption, MatListItemTitle, DatePipe, TruncateTextPipe]
+  imports: [
+    MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, NgIf, MatIconButton, MatMenuTrigger,
+    MatIcon, MatMenu, MatMenuItem, MatCardContent, MatSelectionList, NgFor, MatListOption, MatListItemTitle,
+    DatePipe, TruncateTextPipe
+  ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 

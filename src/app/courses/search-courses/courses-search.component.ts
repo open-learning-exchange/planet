@@ -9,7 +9,7 @@ import { trackByCategory } from '../../shared/table-helpers';
 import { NgFor } from '@angular/common';
 
 @Component({
-    template: `
+  template: `
     <span class="mat-caption" i18n>{category, select,
       languageOfInstruction {Language}
       gradeLevel {Grade Level}
@@ -22,10 +22,10 @@ import { NgFor } from '@angular/common';
       </mat-list-option>
     </mat-selection-list>
   `,
-    selector: 'planet-courses-search-list',
-    styleUrls: ['./courses-search.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
+  selector: 'planet-courses-search-list',
+  styleUrls: ['./courses-search.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class CoursesSearchListComponent {
 
@@ -57,7 +57,7 @@ export class CoursesSearchListComponent {
 }
 
 @Component({
-    template: `
+  template: `
     <planet-courses-search-list
       *ngFor="let list of searchLists;trackBy:trackByFn"
       [category]="list.category"
@@ -66,10 +66,10 @@ export class CoursesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-courses-search-list>
   `,
-    styleUrls: ['./courses-search.scss'],
-    selector: 'planet-courses-search',
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgFor, CoursesSearchListComponent]
+  styleUrls: ['./courses-search.scss'],
+  selector: 'planet-courses-search',
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgFor, CoursesSearchListComponent]
 })
 export class CoursesSearchComponent implements OnInit, OnChanges {
 

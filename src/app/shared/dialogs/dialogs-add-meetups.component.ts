@@ -8,7 +8,7 @@ import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.component';
 
 @Component({
-    template: `
+  template: `
     <ng-container [ngSwitch]="view">
       <planet-meetups-add #meetupsAdd *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
         [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
@@ -21,7 +21,7 @@ import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.co
       </planet-meetups-view>
     </ng-container>
   `,
-    imports: [NgSwitch, NgSwitchCase, MeetupsAddComponent, MeetupsViewComponent]
+  imports: [NgSwitch, NgSwitchCase, MeetupsAddComponent, MeetupsViewComponent]
 })
 export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;

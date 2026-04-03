@@ -14,10 +14,14 @@ import { MatInput } from '@angular/material/input';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
-    selector: 'planet-myplanet-toolbar',
-    templateUrl: './myplanet-toolbar.component.html',
-    styleUrls: ['./myplanet.scss'],
-    imports: [MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, RouterLink, MatFormField, MatLabel, MatSelect, MatOption, NgFor, FormsModule, ReactiveFormsModule, MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatButton]
+  selector: 'planet-myplanet-toolbar',
+  templateUrl: './myplanet-toolbar.component.html',
+  styleUrls: ['./myplanet.scss'],
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, RouterLink, MatFormField, MatLabel,
+    MatSelect, MatOption, NgFor, FormsModule, ReactiveFormsModule, MatInput, MatDatepickerInput, MatDatepickerToggle,
+    MatSuffix, MatDatepicker, MatError, MatButton
+  ]
 })
 export class MyPlanetToolbarComponent {
 

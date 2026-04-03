@@ -8,8 +8,8 @@ import { NgIf, NgFor } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
-    selector: 'planet-markdown',
-    template: `
+  selector: 'planet-markdown',
+  template: `
     <ng-container *ngIf="previewMode; else noPreview">
       <td-markdown [content]="limitedContent"></td-markdown>
       <div class="image-gallery" *ngIf="images?.length">
@@ -20,9 +20,9 @@ import { TdMarkdownComponent } from '@covalent/markdown';
       <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
-    styleUrls: ['./planet-markdown.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, TdMarkdownComponent, NgFor]
+  styleUrls: ['./planet-markdown.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgIf, TdMarkdownComponent, NgFor]
 })
 export class PlanetMarkdownComponent implements OnChanges {
 

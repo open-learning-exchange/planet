@@ -28,10 +28,14 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 pdfMake.addVirtualFileSystem(pdfFonts);
 
 @Component({
-    templateUrl: './users-achievements.component.html',
-    styleUrls: ['./users-achievements.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, MatToolbar, MatIconButton, MatIcon, MatAnchor, RouterLink, MatTooltip, PlanetLoadingSpinnerComponent, MatDivider, TdMarkdownComponent, PlanetBetaDirective, MatList, NgFor, MatListItem, MatListItemTitle, MatListItemMeta, NgClass, MatListItemLine, DatePipe, TruncateTextPipe]
+  templateUrl: './users-achievements.component.html',
+  styleUrls: ['./users-achievements.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgIf, MatToolbar, MatIconButton, MatIcon, MatAnchor, RouterLink, MatTooltip, PlanetLoadingSpinnerComponent,
+    MatDivider, TdMarkdownComponent, PlanetBetaDirective, MatList, NgFor, MatListItem, MatListItemTitle, MatListItemMeta,
+    NgClass, MatListItemLine, DatePipe, TruncateTextPipe
+  ]
 })
 export class UsersAchievementsComponent implements OnInit {
   user: any = {};

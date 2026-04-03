@@ -41,39 +41,39 @@ interface TeamSelectionEvent {
 };
 
 @Component({
-    templateUrl: './community-link-dialog.component.html',
-    styles: [`
+  templateUrl: './community-link-dialog.component.html',
+  styles: [`
     .platform-icon {
       vertical-align: middle;
       margin-right: 5px;
     }
   `],
-    imports: [
-        MatDialogTitle,
-        CdkScrollable,
-        MatDialogContent,
-        MatFormField,
-        MatLabel,
-        MatSelect,
-        FormsModule,
-        NgFor,
-        MatOption,
-        NgIf,
-        ReactiveFormsModule,
-        MatStepper,
-        MatStep,
-        TeamsComponent,
-        MatInput,
-        MatError,
-        FormErrorMessagesComponent,
-        MatSelectTrigger,
-        NgSwitch,
-        NgSwitchCase,
-        MatIcon,
-        NgSwitchDefault,
-        MatDialogActions,
-        MatButton,
-    ],
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    FormsModule,
+    NgFor,
+    MatOption,
+    NgIf,
+    ReactiveFormsModule,
+    MatStepper,
+    MatStep,
+    TeamsComponent,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatSelectTrigger,
+    NgSwitch,
+    NgSwitchCase,
+    MatIcon,
+    NgSwitchDefault,
+    MatDialogActions,
+    MatButton,
+  ],
 })
 export class CommunityLinkDialogComponent {
 

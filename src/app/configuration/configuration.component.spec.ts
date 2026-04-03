@@ -15,9 +15,12 @@ describe('ConfigurationComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, ConfigurationComponent, FormErrorMessagesComponent],
-    providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
-});
+      imports: [
+        FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule,
+        ConfigurationComponent, FormErrorMessagesComponent
+      ],
+      providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
+    });
     fixture = TestBed.createComponent(ConfigurationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -22,9 +22,13 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 import { ResourcesViewerComponent } from './resources-viewer.component';
 
 @Component({
-    templateUrl: './resources-view.component.html',
-    styleUrls: ['./resources-view.scss'],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, MatButton, MatAnchor, NgClass, PlanetRatingComponent, TdMarkdownComponent, NgFor, LanguageLabelComponent, PlanetLoadingSpinnerComponent, ResourcesViewerComponent]
+  templateUrl: './resources-view.component.html',
+  styleUrls: ['./resources-view.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu,
+    MatButton, MatAnchor, NgClass, PlanetRatingComponent, TdMarkdownComponent, NgFor, LanguageLabelComponent,
+    PlanetLoadingSpinnerComponent, ResourcesViewerComponent
+  ]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {

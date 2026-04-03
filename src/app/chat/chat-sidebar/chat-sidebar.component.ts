@@ -32,10 +32,36 @@ interface TitleForm {
 }
 
 @Component({
-    selector: 'planet-chat-sidebar',
-    templateUrl: './chat-sidebar.component.html',
-    styleUrls: ['./chat-sidebar.scss'],
-    imports: [MatDrawerContainer, MatDrawer, MatButton, MatIcon, NgIf, MatMiniFabButton, MatFormField, MatLabel, MatInput, FormsModule, MatIconButton, MatTooltip, MatCheckbox, CdkOverlayOrigin, CdkConnectedOverlay, MatButtonToggleGroup, MatButtonToggle, NgFor, ReactiveFormsModule, MatError, FormErrorMessagesComponent, NgTemplateOutlet, PlanetLoadingSpinnerComponent, ChatWindowComponent, TruncateTextPipe]
+  selector: 'planet-chat-sidebar',
+  templateUrl: './chat-sidebar.component.html',
+  styleUrls: ['./chat-sidebar.scss'],
+  imports: [
+    MatDrawerContainer,
+    MatDrawer,
+    MatButton,
+    MatIcon,
+    NgIf,
+    MatMiniFabButton,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatTooltip,
+    MatCheckbox,
+    CdkOverlayOrigin,
+    CdkConnectedOverlay,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    NgFor,
+    ReactiveFormsModule,
+    MatError,
+    FormErrorMessagesComponent,
+    NgTemplateOutlet,
+    PlanetLoadingSpinnerComponent,
+    ChatWindowComponent,
+    TruncateTextPipe
+  ]
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';

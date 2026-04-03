@@ -23,10 +23,14 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
 import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
-    selector: 'planet-users-profile',
-    templateUrl: './users-profile.component.html',
-    styleUrls: ['./users-profile.scss'],
-    imports: [MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink, MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider, LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe]
+  selector: 'planet-users-profile',
+  templateUrl: './users-profile.component.html',
+  styleUrls: ['./users-profile.scss'],
+  imports: [
+    MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink,
+    MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider,
+    LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe
+  ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';

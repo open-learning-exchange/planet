@@ -11,13 +11,16 @@ import { MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLin
 import { NgFor, NgClass, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 @Component({
-    templateUrl: './manager-sync.component.html',
-    styles: [`
+  templateUrl: './manager-sync.component.html',
+  styles: [`
     .mat-mdc-button > .mat-icon.svg-icon {
       height: inherit;
     }
   `],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, SyncDirective, MatList, NgFor, MatListItem, NgClass, MatListItemTitle, NgIf, MatListItemMeta, NgSwitch, NgSwitchCase, NgSwitchDefault, MatListItemLine, MatDivider]
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, SyncDirective, MatList, NgFor, MatListItem, NgClass,
+    MatListItemTitle, NgIf, MatListItemMeta, NgSwitch, NgSwitchCase, NgSwitchDefault, MatListItemLine, MatDivider
+  ]
 })
 
 export class ManagerSyncComponent implements OnInit {

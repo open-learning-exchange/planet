@@ -22,15 +22,18 @@ import { SubmitDirective } from '../submit.directive';
 import { TruncateTextPipe } from '../truncate-text.pipe';
 
 @Component({
-    templateUrl: './dialogs-prompt.component.html',
-    styles: [`
+  templateUrl: './dialogs-prompt.component.html',
+  styles: [`
     .break-word {
       word-wrap: break-word;
       white-space: normal;
       word-break: break-word;
     }
   `],
-    imports: [CdkScrollable, MatDialogContent, NgIf, NgFor, LabelComponent, MatDialogActions, MatButton, MatDialogClose, SubmitDirective, DatePipe, TruncateTextPipe]
+  imports: [
+    CdkScrollable, MatDialogContent, NgIf, NgFor, LabelComponent, MatDialogActions, MatButton, MatDialogClose,
+    SubmitDirective, DatePipe, TruncateTextPipe
+  ]
 })
 export class DialogsPromptComponent {
 

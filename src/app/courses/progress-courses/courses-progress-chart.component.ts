@@ -12,10 +12,10 @@ import { AvatarComponent } from '../../shared/avatar.component';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
-    selector: 'planet-courses-progress-chart',
-    templateUrl: 'courses-progress-chart.component.html',
-    styleUrls: ['courses-progress-chart.scss'],
-    imports: [NgIf, NgFor, MatTooltip, NgClass, AvatarComponent, TruncateTextPipe]
+  selector: 'planet-courses-progress-chart',
+  templateUrl: 'courses-progress-chart.component.html',
+  styleUrls: ['courses-progress-chart.scss'],
+  imports: [NgIf, NgFor, MatTooltip, NgClass, AvatarComponent, TruncateTextPipe]
 })
 export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, OnDestroy {
 

@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulati
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
@@ -51,11 +54,19 @@ import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    selector: 'planet-resources',
-    templateUrl: './resources.component.html',
-    styleUrls: ['./resources.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent, MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput, MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu, AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective, PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective, PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe]
+  selector: 'planet-resources',
+  templateUrl: './resources.component.html',
+  styleUrls: ['./resources.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent,
+    MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput,
+    MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu,
+    AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective,
+    PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective,
+    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+  ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;

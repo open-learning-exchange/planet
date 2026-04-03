@@ -6,14 +6,14 @@ import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MaterialModule,
-        MeetupsModule,
-        DialogsAddMeetupsComponent
-    ],
-    exports: [
-        DialogsAddMeetupsComponent
-    ]
+  imports: [
+    CommonModule,
+    MaterialModule,
+    MeetupsModule,
+    DialogsAddMeetupsComponent
+  ],
+  exports: [
+    DialogsAddMeetupsComponent
+  ]
 })
 export class DialogsAddMeetupsModule {}

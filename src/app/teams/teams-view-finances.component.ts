@@ -1,6 +1,9 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
+  MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -24,10 +27,15 @@ import { MatIcon } from '@angular/material/icon';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 
 @Component({
-    selector: 'planet-teams-view-finances',
-    styleUrls: ['./teams-view-finances.scss'],
-    templateUrl: './teams-view-finances.component.html',
-    imports: [NgIf, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe]
+  selector: 'planet-teams-view-finances',
+  styleUrls: ['./teams-view-finances.scss'],
+  templateUrl: './teams-view-finances.component.html',
+  imports: [
+    NgIf, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
+    MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
+  ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 

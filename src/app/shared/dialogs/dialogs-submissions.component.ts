@@ -7,7 +7,7 @@ import { ExamsViewComponent } from '../../exams/exams-view.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    template: `
+  template: `
     <h3 mat-dialog-title i18n class="mat-subtitle-1">Review Previous Test Attempts</h3>
     <mat-dialog-content>
       <planet-submissions *ngIf="view==='list'" [isDialog]="true" [parentId]="data.parentId"
@@ -22,12 +22,15 @@ import { MatButton } from '@angular/material/button';
       <button mat-dialog-close mat-raised-button color="primary" i18n>OK</button>
     </mat-dialog-actions>
   `,
-    styles: [`
+  styles: [`
     h3.mat-mdc-dialog-title {
       text-align: center;
     }
   `],
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, SubmissionsComponent, ExamsViewComponent, MatDialogActions, MatButton, MatDialogClose]
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, SubmissionsComponent, ExamsViewComponent,
+    MatDialogActions, MatButton, MatDialogClose
+  ]
 })
 export class DialogsSubmissionsComponent {
 

@@ -12,8 +12,11 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: 'dialogs-add-table.component.html',
-    imports: [CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, CoursesComponent, UsersComponent, MatFormField, MatLabel, MatSelect, NgFor, MatOption, NgIf, TeamsComponent, MatDialogActions, MatButton, MatDialogClose]
+  templateUrl: 'dialogs-add-table.component.html',
+  imports: [
+    CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, CoursesComponent, UsersComponent, MatFormField,
+    MatLabel, MatSelect, NgFor, MatOption, NgIf, TeamsComponent, MatDialogActions, MatButton, MatDialogClose
+  ]
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 

@@ -8,7 +8,10 @@ import { ManagerService } from './manager.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
+  MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { findByIdInArray, itemsShown } from '../shared/utils';
 import { commonSortingDataAccessor } from '../shared/table-helpers';
 import { SyncService } from '../shared/sync.service';
@@ -21,8 +24,8 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
-    templateUrl: './manager-fetch.component.html',
-    styles: [`
+  templateUrl: './manager-fetch.component.html',
+  styles: [`
     .mat-column-select {
       max-width: 44px;
     }
@@ -33,7 +36,11 @@ import { MatCheckbox } from '@angular/material/checkbox';
       color: #666;
     }
   `],
-    imports: [MatToolbar, MatIconButton, MatIcon, MatButton, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, DatePipe]
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatButton, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, NgClass, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {

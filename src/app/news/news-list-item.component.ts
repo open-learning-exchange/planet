@@ -26,10 +26,14 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 @Component({
-    selector: 'planet-news-list-item',
-    templateUrl: 'news-list-item.component.html',
-    styleUrls: ['./news-list-item.scss'],
-    imports: [MatCard, MatCardHeader, MatCardSubtitle, MatChipSet, NgFor, MatChip, MatIcon, LabelComponent, NgIf, MatChipRemove, MatTooltip, MatCardContent, PlanetMarkdownComponent, ChatOutputDirective, NgClass, MatIconButton, MatCardActions, MatButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatMenuItem, SlicePipe, TimeAgoPipe]
+  selector: 'planet-news-list-item',
+  templateUrl: 'news-list-item.component.html',
+  styleUrls: ['./news-list-item.scss'],
+  imports: [
+    MatCard, MatCardHeader, MatCardSubtitle, MatChipSet, NgFor, MatChip, MatIcon, LabelComponent,
+    NgIf, MatChipRemove, MatTooltip, MatCardContent, PlanetMarkdownComponent, ChatOutputDirective, NgClass,
+    MatIconButton, MatCardActions, MatButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatMenuItem, SlicePipe, TimeAgoPipe
+  ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 

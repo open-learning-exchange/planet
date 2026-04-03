@@ -44,7 +44,9 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
-import { MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import {
+  MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
+} from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
@@ -56,12 +58,49 @@ interface CommunityDescriptionForm {
 }
 
 @Component({
-    selector: 'planet-community',
-    templateUrl: './community.component.html',
-    preserveWhitespaces: true,
-    styleUrls: ['./community.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatTabGroup, MatTab, NgIf, PlanetLoadingSpinnerComponent, NewsListComponent, MatToolbar, NgClass, MatFormField, MatLabel, MatIcon, MatPrefix, MatInput, FormsModule, MatSelect, MatSelectTrigger, LabelComponent, MatOption, NgFor, AuthorizedRolesDirective, MatButton, MatIconButton, MatCard, TeamsMemberComponent, PlanetMarkdownComponent, MatNavList, MatListSubheaderCssMatStyler, MatListItem, RouterLink, MatTooltip, MatListItemIcon, MatListItemTitle, MatListItemMeta, CommunityListComponent, TeamsViewFinancesComponent, TeamsReportsComponent, PlanetCalendarComponent]
+  selector: 'planet-community',
+  templateUrl: './community.component.html',
+  preserveWhitespaces: true,
+  styleUrls: ['./community.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatTabGroup,
+    MatTab,
+    NgIf,
+    PlanetLoadingSpinnerComponent,
+    NewsListComponent,
+    MatToolbar,
+    NgClass,
+    MatFormField,
+    MatLabel,
+    MatIcon,
+    MatPrefix,
+    MatInput,
+    FormsModule,
+    MatSelect,
+    MatSelectTrigger,
+    LabelComponent,
+    MatOption,
+    NgFor,
+    AuthorizedRolesDirective,
+    MatButton,
+    MatIconButton,
+    MatCard,
+    TeamsMemberComponent,
+    PlanetMarkdownComponent,
+    MatNavList,
+    MatListSubheaderCssMatStyler,
+    MatListItem,
+    RouterLink,
+    MatTooltip,
+    MatListItemIcon,
+    MatListItemTitle,
+    MatListItemMeta,
+    CommunityListComponent,
+    TeamsViewFinancesComponent,
+    TeamsReportsComponent,
+    PlanetCalendarComponent
+  ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 

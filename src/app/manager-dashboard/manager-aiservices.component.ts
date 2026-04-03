@@ -41,9 +41,13 @@ interface AIConfiguration {
 }
 
 @Component({
-    templateUrl: './manager-aiservices.component.html',
-    styleUrls: ['./manager-settings.shared.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle, NgIf, MatCardContent, MatList, NgFor, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatSuffix, MatSlideToggle, MatTooltip, MatButton, SubmitDirective, TitleCasePipe, KeyValuePipe]
+  templateUrl: './manager-aiservices.component.html',
+  styleUrls: ['./manager-settings.shared.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle,
+    NgIf, MatCardContent, MatList, NgFor, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatSuffix,
+    MatSlideToggle, MatTooltip, MatButton, SubmitDirective, TitleCasePipe, KeyValuePipe
+  ]
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};

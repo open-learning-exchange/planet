@@ -1,5 +1,7 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { switchMap } from 'rxjs/operators';
@@ -49,9 +51,15 @@ interface UsersUpdateFormGroup {
 }
 
 @Component({
-    templateUrl: './users-update.component.html',
-    styleUrls: ['./users-update.scss'],
-    imports: [MatToolbar, NgIf, MatIconButton, MatIcon, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton, MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective, CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose]
+  templateUrl: './users-update.component.html',
+  styleUrls: ['./users-update.scss'],
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule,
+    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton,
+    MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective,
+    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose
+  ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };

@@ -36,7 +36,9 @@ import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { TdMarkdownComponent } from '@covalent/markdown';
-import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent } from '@angular/material/card';
+import {
+  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
+} from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -49,10 +51,17 @@ import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    templateUrl: './teams-view.component.html',
-    styleUrls: ['./teams-view.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, MatButton, NgSwitch, NgSwitchCase, MatAnchor, RouterLink, MatChipSet, MatChip, AuthorizedRolesDirective, MatTabGroup, MatTab, PlanetLoadingSpinnerComponent, NewsListComponent, MatTabLabel, TdMarkdownComponent, NgFor, MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, TeamsMemberComponent, MatBadge, TasksComponent, PlanetCalendarComponent, TeamsViewFinancesComponent, TeamsReportsComponent, MatTooltip, NgClass, MatCardContent, PlanetMarkdownComponent, MatMenuItem, SurveysComponent, DatePipe, TruncateTextPipe]
+  templateUrl: './teams-view.component.html',
+  styleUrls: ['./teams-view.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, MatButton,
+    NgSwitch, NgSwitchCase, MatAnchor, RouterLink, MatChipSet, MatChip, AuthorizedRolesDirective, MatTabGroup, MatTab,
+    PlanetLoadingSpinnerComponent, NewsListComponent, MatTabLabel, TdMarkdownComponent, NgFor, MatCard, MatCardHeader,
+    MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, TeamsMemberComponent, MatBadge, TasksComponent,
+    PlanetCalendarComponent, TeamsViewFinancesComponent, TeamsReportsComponent, MatTooltip, NgClass, MatCardContent,
+    PlanetMarkdownComponent, MatMenuItem, SurveysComponent, DatePipe, TruncateTextPipe
+  ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 

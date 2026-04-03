@@ -12,22 +12,22 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ExamsPreviewComponent } from './exams-preview.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        PlanetDialogsModule,
-        MaterialModule,
-        SharedComponentsModule,
-        ExamsAddComponent,
-        ExamsQuestionComponent,
-        ExamsViewComponent,
-        ExamsPreviewComponent
-    ],
-    exports: [
-        ExamsAddComponent,
-        ExamsViewComponent
-    ]
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    PlanetDialogsModule,
+    MaterialModule,
+    SharedComponentsModule,
+    ExamsAddComponent,
+    ExamsQuestionComponent,
+    ExamsViewComponent,
+    ExamsPreviewComponent
+  ],
+  exports: [
+    ExamsAddComponent,
+    ExamsViewComponent
+  ]
 })
 export class ExamsModule {}

@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Outpu
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
@@ -29,10 +32,16 @@ import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    templateUrl: './teams.component.html',
-    styleUrls: ['./teams.scss'],
-    selector: 'planet-teams',
-    imports: [MatToolbar, MatToolbarRow, NgIf, MatIconButton, RouterLink, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatInput, FormsModule, MatButton, NgClass, MatMiniFabButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, FeedbackDirective, AuthorizedRolesDirective, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe]
+  templateUrl: './teams.component.html',
+  styleUrls: ['./teams.scss'],
+  selector: 'planet-teams',
+  imports: [
+    MatToolbar, MatToolbarRow, NgIf, MatIconButton, RouterLink, MatIcon, NgTemplateOutlet, MatFormField,
+    MatLabel, MatInput, FormsModule, MatButton, NgClass, MatMiniFabButton, MatTable, MatSort, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, FeedbackDirective,
+    AuthorizedRolesDirective, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe,
+    TruncateTextPipe
+  ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 

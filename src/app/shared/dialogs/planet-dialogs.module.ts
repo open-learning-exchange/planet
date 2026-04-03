@@ -19,43 +19,43 @@ import { DialogsAnnouncementComponent, DialogsAnnouncementSuccessComponent } fro
 import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-ratings.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        SharedComponentsModule,
-        DialogsFormComponent,
-        DialogsViewComponent,
-        DialogsPromptComponent,
-        FeedbackDirective,
-        DialogsListComponent,
-        DialogsLoadingComponent,
-        DialogsImagesComponent,
-        DialogsRatingsComponent,
-        DialogsRatingsDirective,
-        ChangePasswordDirective,
-        SyncDirective,
-        DialogsAnnouncementComponent,
-        DialogsAnnouncementSuccessComponent
-    ],
-    exports: [
-        DialogsFormComponent,
-        DialogsViewComponent,
-        DialogsPromptComponent,
-        FeedbackDirective,
-        DialogsListComponent,
-        DialogsLoadingComponent,
-        DialogsImagesComponent,
-        DialogsRatingsComponent,
-        DialogsRatingsDirective,
-        ChangePasswordDirective,
-        SyncDirective
-    ],
-    providers: [
-        DialogsFormService,
-        DialogsListService
-    ]
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    SharedComponentsModule,
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    FeedbackDirective,
+    DialogsListComponent,
+    DialogsLoadingComponent,
+    DialogsImagesComponent,
+    DialogsRatingsComponent,
+    DialogsRatingsDirective,
+    ChangePasswordDirective,
+    SyncDirective,
+    DialogsAnnouncementComponent,
+    DialogsAnnouncementSuccessComponent
+  ],
+  exports: [
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    FeedbackDirective,
+    DialogsListComponent,
+    DialogsLoadingComponent,
+    DialogsImagesComponent,
+    DialogsRatingsComponent,
+    DialogsRatingsDirective,
+    ChangePasswordDirective,
+    SyncDirective
+  ],
+  providers: [
+    DialogsFormService,
+    DialogsListService
+  ]
 })
 export class PlanetDialogsModule {}

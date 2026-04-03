@@ -24,9 +24,13 @@ import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
-    templateUrl: './feedback-view.component.html',
-    styleUrls: ['./feedback-view.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgSwitch, NgSwitchCase, NgIf, MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput, FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe]
+  templateUrl: './feedback-view.component.html',
+  styleUrls: ['./feedback-view.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgSwitch, NgSwitchCase, NgIf,
+    MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput,
+    FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe
+  ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';

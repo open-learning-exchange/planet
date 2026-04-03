@@ -23,10 +23,14 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'planet-teams-reports',
-    styleUrls: ['./teams-reports.scss'],
-    templateUrl: './teams-reports.component.html',
-    imports: [NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton, MatIcon, DatePipe]
+  selector: 'planet-teams-reports',
+  styleUrls: ['./teams-reports.scss'],
+  templateUrl: './teams-reports.component.html',
+  imports: [
+    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
+    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
+    MatIcon, DatePipe
+  ]
 })
 export class TeamsReportsComponent implements DoCheck {
 

@@ -19,10 +19,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-    selector: 'planet-news-list',
-    templateUrl: './news-list.component.html',
-    styleUrls: ['./news-list.component.scss'],
-    imports: [NgIf, MatButton, NewsListItemComponent, MatDivider, NgFor, MatProgressSpinner, MatPaginator]
+  selector: 'planet-news-list',
+  templateUrl: './news-list.component.html',
+  styleUrls: ['./news-list.component.scss'],
+  imports: [NgIf, MatButton, NewsListItemComponent, MatDivider, NgFor, MatProgressSpinner, MatPaginator]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 

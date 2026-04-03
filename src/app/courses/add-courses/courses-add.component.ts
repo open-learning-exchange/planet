@@ -47,9 +47,14 @@ interface CourseFormModel {
 type DateValue = number | string | CouchService['datePlaceholder'];
 
 @Component({
-    templateUrl: 'courses-add.component.html',
-    styleUrls: ['./courses-add.scss'],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent, NgClass, CoursesStepComponent, MatButton, SubmitDirective]
+  templateUrl: 'courses-add.component.html',
+  styleUrls: ['./courses-add.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
+    NgClass, CoursesStepComponent, MatButton, SubmitDirective
+  ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 

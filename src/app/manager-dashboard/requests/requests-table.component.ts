@@ -4,7 +4,10 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
@@ -29,9 +32,13 @@ interface EditChildNameFormControls {
 }
 
 @Component({
-    selector: 'planet-requests-table',
-    templateUrl: './requests-table.component.html',
-    imports: [MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  selector: 'planet-requests-table',
+  templateUrl: './requests-table.component.html',
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
+    MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 

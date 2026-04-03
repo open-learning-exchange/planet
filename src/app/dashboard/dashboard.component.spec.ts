@@ -12,9 +12,9 @@ describe('Dashboard', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-    imports: [RouterTestingModule, DashboardComponent],
-    providers: [UserService, CouchService, provideHttpClient(withInterceptorsFromDi())]
-});
+      imports: [RouterTestingModule, DashboardComponent],
+      providers: [UserService, CouchService, provideHttpClient(withInterceptorsFromDi())]
+    });
     const fixture = TestBed.createComponent(DashboardComponent),
       comp = fixture.componentInstance,
       de = fixture.debugElement.query(By.css('#greeting')),

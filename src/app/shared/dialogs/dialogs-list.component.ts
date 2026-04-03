@@ -6,7 +6,10 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
 import { NgIf, NgFor, NgClass } from '@angular/common';
@@ -20,8 +23,8 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-    templateUrl: './dialogs-list.component.html',
-    styles: [`
+  templateUrl: './dialogs-list.component.html',
+  styles: [`
     .search-bar {
       display: flex;
       align-items: center;
@@ -32,7 +35,11 @@ import { MatTooltip } from '@angular/material/tooltip';
       height: calc(100% - 160px);
     }
   `],
-    imports: [NgIf, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, MatFormField, MatSelect, NgFor, MatOption, MatIcon, MatLabel, MatInput, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatPaginator, MatTooltip]
+  imports: [
+    NgIf, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, MatFormField,
+    MatSelect, NgFor, MatOption, MatIcon, MatLabel, MatInput, MatTable, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatPaginator, MatTooltip
+  ]
 })
 export class DialogsListComponent implements AfterViewInit {
 

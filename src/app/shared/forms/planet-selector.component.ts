@@ -8,8 +8,8 @@ import { NgFor } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 
 @Component({
-    selector: 'planet-selector',
-    template: `
+  selector: 'planet-selector',
+  template: `
     <mat-form-field>
       <mat-label i18n>Select Planet</mat-label>
       <mat-select [value]="selectedPlanet" (selectionChange)="onPlanetChange($event.value)">
@@ -17,7 +17,7 @@ import { MatOption } from '@angular/material/autocomplete';
       </mat-select>
     </mat-form-field>
   `,
-    imports: [MatFormField, MatLabel, MatSelect, NgFor, MatOption]
+  imports: [MatFormField, MatLabel, MatSelect, NgFor, MatOption]
 })
 export class PlanetSelectorComponent implements OnChanges {
 

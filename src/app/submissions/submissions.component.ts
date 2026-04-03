@@ -1,7 +1,10 @@
 import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -34,10 +37,15 @@ const columnsByFilterAndMode = {
 };
 
 @Component({
-    selector: 'planet-submissions',
-    templateUrl: './submissions.component.html',
-    styleUrls: ['./submission.scss'],
-    imports: [NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatSelect, MatOption, NgFor, MatButtonToggleGroup, MatButtonToggle, MatInput, NgClass, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, MatChipSet, MatChip, NgSwitchDefault, RouterLink, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  selector: 'planet-submissions',
+  templateUrl: './submissions.component.html',
+  styleUrls: ['./submission.scss'],
+  imports: [
+    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatSelect,
+    MatOption, NgFor, MatButtonToggleGroup, MatButtonToggle, MatInput, NgClass, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, MatChipSet, MatChip, NgSwitchDefault, RouterLink,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 

@@ -13,14 +13,19 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgIf } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import {
+  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions
+} from '@angular/material/card';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
-    templateUrl: './upgrade.component.html',
-    styleUrls: ['./upgrade.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, NgIf, MatProgressBar, MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions, FeedbackDirective]
+  templateUrl: './upgrade.component.html',
+  styleUrls: ['./upgrade.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, NgIf, MatProgressBar, MatCard, MatCardHeader, MatCardAvatar,
+    MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions, FeedbackDirective
+  ]
 })
 export class UpgradeComponent {
   mode = 'planet';

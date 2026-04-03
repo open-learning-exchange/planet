@@ -39,12 +39,12 @@ interface PopupFormModel {
 }
 
 @Component({
-    templateUrl: './planet-rating.component.html',
-    styles: [` .list-item-rating {
+  templateUrl: './planet-rating.component.html',
+  styles: [` .list-item-rating {
     max-width: 225px;
   } `],
-    selector: 'planet-rating',
-    imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
+  selector: 'planet-rating',
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
 

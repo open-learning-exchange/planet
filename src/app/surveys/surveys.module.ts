@@ -12,18 +12,18 @@ import { SurveysRouterModule } from './surveys-router.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        PlanetDialogsModule,
-        MaterialModule,
-        ExamsModule,
-        SurveysRouterModule,
-        SharedComponentsModule,
-        SurveysComponent
-    ],
-    exports: [SurveysComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    PlanetDialogsModule,
+    MaterialModule,
+    ExamsModule,
+    SurveysRouterModule,
+    SharedComponentsModule,
+    SurveysComponent
+  ],
+  exports: [SurveysComponent]
 })
 export class SurveysModule {}

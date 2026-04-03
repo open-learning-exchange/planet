@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
@@ -65,9 +67,9 @@ interface ContactForm {
 }
 
 @Component({
-    selector: 'planet-configuration',
-    templateUrl: './configuration.component.html',
-    styles: [`
+  selector: 'planet-configuration',
+  templateUrl: './configuration.component.html',
+  styles: [`
     .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
@@ -89,7 +91,12 @@ interface ContactForm {
       margin-bottom: 10px;
     }
   `],
-    imports: [MatStepper, NgIf, MatStep, MatStepLabel, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, LowercaseDirective, RestrictDiacriticsDirective, MatError, FormErrorMessagesComponent, MatButton, MatStepperNext, MatSelect, MatOption, NgFor, MatAutocompleteTrigger, MatAutocomplete, MatSlideToggle, MatTooltip, MatIcon, MatCheckbox, MatMiniFabButton, MatStepperPrevious, SubmitDirective]
+  imports: [
+    MatStepper, NgIf, MatStep, MatStepLabel, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, LowercaseDirective, RestrictDiacriticsDirective, MatError, FormErrorMessagesComponent,
+    MatButton, MatStepperNext, MatSelect, MatOption, NgFor, MatAutocompleteTrigger, MatAutocomplete,
+    MatSlideToggle, MatTooltip, MatIcon, MatCheckbox, MatMiniFabButton, MatStepperPrevious, SubmitDirective
+  ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;

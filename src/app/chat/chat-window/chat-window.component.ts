@@ -20,10 +20,24 @@ import { MatIcon } from '@angular/material/icon';
 type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
 
 @Component({
-    selector: 'planet-chat-window',
-    templateUrl: './chat-window.component.html',
-    styleUrls: ['./chat-window.scss'],
-    imports: [NgFor, ChatOutputDirective, NgClass, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatIconButton, MatSuffix, MatTooltip, SubmitDirective, MatIcon]
+  selector: 'planet-chat-window',
+  templateUrl: './chat-window.component.html',
+  styleUrls: ['./chat-window.scss'],
+  imports: [
+    NgFor,
+    ChatOutputDirective,
+    NgClass,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatIconButton,
+    MatSuffix,
+    MatTooltip,
+    SubmitDirective,
+    MatIcon
+  ]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() context: any;

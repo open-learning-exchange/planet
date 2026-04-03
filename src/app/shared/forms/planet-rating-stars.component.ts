@@ -8,9 +8,9 @@ import { NgClass, NgFor, NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'planet-rating-stars',
-    templateUrl: './planet-rating-stars.component.html',
-    styles: [`
+  selector: 'planet-rating-stars',
+  templateUrl: './planet-rating-stars.component.html',
+  styles: [`
     .stars mat-icon {
       cursor: default;
     }
@@ -18,10 +18,10 @@ import { MatIcon } from '@angular/material/icon';
       cursor: pointer;
     }
   `],
-    providers: [
-        { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
-    ],
-    imports: [NgClass, NgFor, MatIcon, NgStyle]
+  providers: [
+    { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
+  ],
+  imports: [NgClass, NgFor, MatIcon, NgStyle]
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 

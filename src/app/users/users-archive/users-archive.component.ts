@@ -17,13 +17,16 @@ interface ArchiveFormControls {
 }
 
 @Component({
-    templateUrl: './users-archive.component.html',
-    styles: [`
+  templateUrl: './users-archive.component.html',
+  styles: [`
     :host {
       text-align: center;
     }
   `],
-    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatCheckbox, MatButton, SubmitDirective]
+  imports: [
+    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, PlanetMarkdownTextboxComponent, MatError,
+    FormErrorMessagesComponent, MatCheckbox, MatButton, SubmitDirective
+  ]
 })
 export class UsersArchiveComponent implements OnInit {
   readonly dbName = '_users';

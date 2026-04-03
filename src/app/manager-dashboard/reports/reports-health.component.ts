@@ -17,9 +17,9 @@ import { ReportsDetailActivitiesComponent } from './reports-detail-activities.co
 Chart.register(LineController);
 
 @Component({
-    selector: 'planet-reports-health',
-    templateUrl: './reports-health.component.html',
-    styles: [`
+  selector: 'planet-reports-health',
+  templateUrl: './reports-health.component.html',
+  styles: [`
     div {
       display: grid;
       margin: 0.5rem 0;
@@ -36,7 +36,7 @@ Chart.register(LineController);
       align-self: center;
     }
   `],
-    imports: [NgIf, NgFor, LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
+  imports: [NgIf, NgFor, LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
 })
 export class ReportsHealthComponent implements OnChanges {
 

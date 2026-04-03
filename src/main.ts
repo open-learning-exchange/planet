@@ -18,11 +18,11 @@ if (environment.production) {
 }
 
 bootstrapApplication(AppComponent, {
-    providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, MaterialModule, PlanetDialogsModule, FullCalendarModule, environment.production
-            ? ServiceWorkerModule.register('/ngsw-worker.js')
-            : []),
-        provideHttpClient(withInterceptorsFromDi()),
-        provideAnimations()
-    ]
+  providers: [
+    importProvidersFrom(BrowserModule, AppRoutingModule, MaterialModule, PlanetDialogsModule, FullCalendarModule, environment.production
+      ? ServiceWorkerModule.register('/ngsw-worker.js')
+      : []),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideAnimations()
+  ]
 });

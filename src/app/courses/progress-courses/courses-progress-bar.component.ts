@@ -4,10 +4,10 @@ import { NgFor, NgClass } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-    selector: 'planet-courses-progress-bar',
-    templateUrl: 'courses-progress-bar.component.html',
-    styleUrls: ['courses-progress-bar.scss'],
-    imports: [NgFor, MatTooltip, NgClass]
+  selector: 'planet-courses-progress-bar',
+  templateUrl: 'courses-progress-bar.component.html',
+  styleUrls: ['courses-progress-bar.scss'],
+  imports: [NgFor, MatTooltip, NgClass]
 })
 export class CoursesProgressBarComponent implements OnChanges {
 

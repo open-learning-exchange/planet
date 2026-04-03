@@ -50,9 +50,13 @@ interface HealthEventFormControls {
 type HealthEventFormFields = keyof HealthEventFormControls;
 
 @Component({
-    templateUrl: './health-event.component.html',
-    styleUrls: ['./health-update.scss'],
-    imports: [MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetNumberValidatorDirective, PlanetRoundDirective, MatError, FormErrorMessagesComponent, NgFor, MatCheckbox, PlanetMarkdownTextboxComponent, MatButton]
+  templateUrl: './health-event.component.html',
+  styleUrls: ['./health-update.scss'],
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
+    MatInput, PlanetNumberValidatorDirective, PlanetRoundDirective, MatError, FormErrorMessagesComponent,
+    NgFor, MatCheckbox, PlanetMarkdownTextboxComponent, MatButton
+  ]
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 

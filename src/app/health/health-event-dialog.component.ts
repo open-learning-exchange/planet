@@ -15,8 +15,11 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: './health-event-dialog.component.html',
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, TdMarkdownComponent, MatDialogActions, MatButton, MatDialogClose, DatePipe]
+  templateUrl: './health-event-dialog.component.html',
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, TdMarkdownComponent,
+    MatDialogActions, MatButton, MatDialogClose, DatePipe
+  ]
 })
 export class HealthEventDialogComponent implements OnInit, OnDestroy {
 

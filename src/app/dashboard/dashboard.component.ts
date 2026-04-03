@@ -24,9 +24,12 @@ import { DashboardTileComponent } from './dashboard-tile.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.scss'],
-    imports: [NgIf, RouterLink, MatCard, NgFor, PlanetRoleComponent, MatTooltip, MatIcon, NgClass, DashboardTileComponent, DecimalPipe, DatePipe, TruncateTextPipe]
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.scss'],
+  imports: [
+    NgIf, RouterLink, MatCard, NgFor, PlanetRoleComponent, MatTooltip, MatIcon, NgClass,
+    DashboardTileComponent, DecimalPipe, DatePipe, TruncateTextPipe
+  ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 

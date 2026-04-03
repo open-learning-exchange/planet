@@ -28,9 +28,14 @@ import { ResourcesViewerComponent } from '../../resources/view-resources/resourc
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
-    templateUrl: './courses-step-view.component.html',
-    styleUrls: ['./courses-step-view.scss'],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, MatButton, MatIconButton, MatAnchor, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink, NgClass, ChatWindowComponent, NgTemplateOutlet, PlanetMarkdownComponent, MatButtonToggleGroup, FormsModule, NgFor, MatButtonToggle, MatTooltip, ResourcesViewerComponent, PlanetLoadingSpinnerComponent]
+  templateUrl: './courses-step-view.component.html',
+  styleUrls: ['./courses-step-view.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, MatButton, MatIconButton, MatAnchor, MatMenuTrigger,
+    MatMenu, MatMenuItem, RouterLink, NgClass, ChatWindowComponent, NgTemplateOutlet,
+    PlanetMarkdownComponent, MatButtonToggleGroup, FormsModule, NgFor, MatButtonToggle, MatTooltip,
+    ResourcesViewerComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {

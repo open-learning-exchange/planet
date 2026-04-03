@@ -9,7 +9,7 @@ import { trackByCategory } from '../../shared/table-helpers';
 import { NgFor } from '@angular/common';
 
 @Component({
-    template: `
+  template: `
     <span class="mat-caption" i18n>{category, select,
       subject {Subject}
       language {Language}
@@ -23,10 +23,10 @@ import { NgFor } from '@angular/common';
       </mat-list-option>
     </mat-selection-list>
   `,
-    selector: 'planet-resources-search-list',
-    styleUrls: ['./resources-search.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
+  selector: 'planet-resources-search-list',
+  styleUrls: ['./resources-search.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class ResourcesSearchListComponent {
 
@@ -58,7 +58,7 @@ export class ResourcesSearchListComponent {
 }
 
 @Component({
-    template: `
+  template: `
     <planet-resources-search-list
       *ngFor="let list of searchLists;trackBy:trackByFn"
       [category]="list.category"
@@ -67,10 +67,10 @@ export class ResourcesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-resources-search-list>
   `,
-    styleUrls: ['./resources-search.scss'],
-    selector: 'planet-resources-search',
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgFor, ResourcesSearchListComponent]
+  styleUrls: ['./resources-search.scss'],
+  selector: 'planet-resources-search',
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgFor, ResourcesSearchListComponent]
 })
 export class ResourcesSearchComponent implements OnInit, OnChanges {
 

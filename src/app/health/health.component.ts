@@ -1,7 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
+  MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { UserService } from '../shared/user.service';
 import { HealthService } from './health.service';
 import { HealthEventDialogComponent } from './health-event-dialog.component';
@@ -23,9 +26,14 @@ import { LabelComponent } from '../shared/label.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    templateUrl: './health.component.html',
-    styleUrls: ['./health.scss'],
-    imports: [MatToolbar, MatIconButton, MatIcon, NgIf, MatAnchor, RouterLink, PlanetLoadingSpinnerComponent, MatDivider, TdMarkdownComponent, MatTable, NgFor, MatColumnDef, MatHeaderCellDef, MatHeaderCell, NgClass, MatTooltip, MatCellDef, MatCell, LabelComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, DatePipe, TruncateTextPipe]
+  templateUrl: './health.component.html',
+  styleUrls: ['./health.scss'],
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, NgIf, MatAnchor, RouterLink, PlanetLoadingSpinnerComponent,
+    MatDivider, TdMarkdownComponent, MatTable, NgFor, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    NgClass, MatTooltip, MatCellDef, MatCell, LabelComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, DatePipe, TruncateTextPipe
+  ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 

@@ -31,30 +31,36 @@ import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/mat
 import { PulsateIconDirective } from './pulsate-icon.directive';
 
 @Component({
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.scss'],
-    animations: [
-        trigger('sidenavState', [
-            state('closed', style({
-                width: '72px'
-            })),
-            state('open', style({
-                width: '175px'
-            })),
-            transition('closed <=> open', animate('500ms ease'))
-        ]),
-        trigger('slideInOut', [
-            state('open', style({
-                transform: 'translate3d(0,0,0)'
-            })),
-            state('closed', style({
-                transform: 'translate3d(-100%, 0, 0)'
-            })),
-            transition('open => closed', animate('400ms ease-in-out')),
-            transition('closed => open', animate('400ms ease-in-out'))
-        ]),
-    ],
-    imports: [MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, NgSwitch, NgSwitchCase, MatAnchor, RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective, PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective, NgFor, NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent, RouterOutlet, PulsateIconDirective, DatePipe]
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.scss'],
+  animations: [
+    trigger('sidenavState', [
+      state('closed', style({
+        width: '72px'
+      })),
+      state('open', style({
+        width: '175px'
+      })),
+      transition('closed <=> open', animate('500ms ease'))
+    ]),
+    trigger('slideInOut', [
+      state('open', style({
+        transform: 'translate3d(0,0,0)'
+      })),
+      state('closed', style({
+        transform: 'translate3d(-100%, 0, 0)'
+      })),
+      transition('open => closed', animate('400ms ease-in-out')),
+      transition('closed => open', animate('400ms ease-in-out'))
+    ]),
+  ],
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, NgSwitch, NgSwitchCase, MatAnchor,
+    RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective,
+    PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective,
+    NgFor, NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent,
+    RouterOutlet, PulsateIconDirective, DatePipe
+  ]
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 

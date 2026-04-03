@@ -1,6 +1,11 @@
 import { Component, Inject, Input, HostListener, forwardRef } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import {
+  AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors,
+  ValidatorFn, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -35,9 +40,35 @@ interface TagFormControls {
 type TagFormGroup = FormGroup<TagFormControls>;
 
 @Component({
-    'templateUrl': 'planet-tag-input-dialog.component.html',
-    'styleUrls': ['planet-tag-input-dialog.scss'],
-    imports: [NgSwitch, NgSwitchCase, MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel, MatInput, FormsModule, AuthorizedRolesDirective, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, ReactiveFormsModule, MatError, FormErrorMessagesComponent, MatSelect, MatOption, NgFor, MatButton, NgIf, MatActionList, MatListItem, forwardRef(() => PlanetTagInputToggleIconComponent), MatCheckbox, MatListItemMeta, MatTooltip, MatIcon, MatListItemIcon, MatDivider, MatNavList, NgClass, MatDialogActions, MatDialogClose]
+  'selector': 'planet-tag-input-toggle-icon',
+  'template': `
+    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
+    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
+  `,
+  'styles': [`
+    mat-icon {
+      vertical-align: middle;
+    }
+  `],
+  imports: [NgIf, MatIcon]
+})
+export class PlanetTagInputToggleIconComponent {
+
+  @Input() isOpen = false;
+
+}
+
+
+@Component({
+  'templateUrl': 'planet-tag-input-dialog.component.html',
+  'styleUrls': ['planet-tag-input-dialog.scss'],
+  imports: [
+    NgSwitch, NgSwitchCase, MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel,
+    MatInput, FormsModule, AuthorizedRolesDirective, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+    ReactiveFormsModule, MatError, FormErrorMessagesComponent, MatSelect, MatOption, NgFor, MatButton, NgIf, MatActionList,
+    MatListItem, forwardRef(() => PlanetTagInputToggleIconComponent), MatCheckbox, MatListItemMeta, MatTooltip, MatIcon,
+    MatListItemIcon, MatDivider, MatNavList, NgClass, MatDialogActions, MatDialogClose
+  ]
 })
 export class PlanetTagInputDialogComponent {
 
@@ -301,24 +332,5 @@ export class PlanetTagInputDialogComponent {
     };
     return checkValue(this.selected.entries());
   }
-
-}
-
-@Component({
-    'selector': 'planet-tag-input-toggle-icon',
-    'template': `
-    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
-    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
-  `,
-    'styles': [`
-    mat-icon {
-      vertical-align: middle;
-    }
-  `],
-    imports: [NgIf, MatIcon]
-})
-export class PlanetTagInputToggleIconComponent {
-
-  @Input() isOpen = false;
 
 }

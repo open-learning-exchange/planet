@@ -7,9 +7,9 @@ import { Dir } from '@angular/cdk/bidi';
 declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 
 @Component({
-    selector: 'planet-app',
-    template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>',
-    imports: [Dir, RouterOutlet]
+  selector: 'planet-app',
+  template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>',
+  imports: [Dir, RouterOutlet]
 })
 export class AppComponent {
   constructor(

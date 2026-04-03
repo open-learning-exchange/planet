@@ -14,8 +14,11 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
 import { PendingTableComponent } from './pending-table.component';
 
 @Component({
-    templateUrl: './reports-pending.component.html',
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, PendingTableComponent]
+  templateUrl: './reports-pending.component.html',
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgFor, MatExpansionPanel, MatExpansionPanelHeader,
+    MatExpansionPanelTitle, PendingTableComponent
+  ]
 })
 export class ReportsPendingComponent implements OnInit {
 

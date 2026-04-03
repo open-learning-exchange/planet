@@ -31,13 +31,13 @@ interface PlanetTagDialogData {
 }
 
 @Component({
-    'selector': 'planet-tag-input',
-    'templateUrl': './planet-tag-input.component.html',
-    'styleUrls': ['planet-tag-input.scss'],
-    'providers': [
-        { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
-    ],
-    imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
+  'selector': 'planet-tag-input',
+  'templateUrl': './planet-tag-input.component.html',
+  'styleUrls': ['planet-tag-input.scss'],
+  'providers': [
+    { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
+  ],
+  imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 

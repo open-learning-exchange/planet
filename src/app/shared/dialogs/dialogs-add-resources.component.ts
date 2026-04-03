@@ -8,8 +8,11 @@ import { NgSwitch, NgSwitchCase, NgIf } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: 'dialogs-add-resources.component.html',
-    imports: [CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, ResourcesComponent, ResourcesAddComponent, MatDialogActions, NgIf, MatButton, MatDialogClose]
+  templateUrl: 'dialogs-add-resources.component.html',
+  imports: [
+    CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, ResourcesComponent, ResourcesAddComponent, MatDialogActions,
+    NgIf, MatButton, MatDialogClose
+  ]
 })
 export class DialogsAddResourcesComponent implements AfterViewInit {
 

@@ -2,7 +2,10 @@ import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angu
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
@@ -17,8 +20,8 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
 @Component({
-    templateUrl: './certifications.component.html',
-    styles: [`
+  templateUrl: './certifications.component.html',
+  styles: [`
     .action-button {
       min-width: 100px;
       width: 100px;
@@ -28,7 +31,11 @@ import { MatInput } from '@angular/material/input';
       align-self: end;
     }
   `],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, MatFormField, MatLabel, MatInput, MatButton, MatToolbarRow, MatMiniFabAnchor, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatAnchor, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator]
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, MatFormField, MatLabel, MatInput, MatButton, MatToolbarRow,
+    MatMiniFabAnchor, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
+    MatAnchor, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator
+  ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 

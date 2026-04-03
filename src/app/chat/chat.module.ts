@@ -13,20 +13,20 @@ import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { DialogsChatShareComponent } from '../shared/dialogs/dialogs-chat-share.component';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        MaterialModule,
-        PlanetFormsModule,
-        ReactiveFormsModule,
-        SharedComponentsModule,
-        ChatRouterModule,
-        TeamsModule,
-        ChatComponent,
-        ChatSidebarComponent,
-        ChatWindowComponent,
-        DialogsChatShareComponent
-    ],
-    exports: [ChatWindowComponent, ChatComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule,
+    PlanetFormsModule,
+    ReactiveFormsModule,
+    SharedComponentsModule,
+    ChatRouterModule,
+    TeamsModule,
+    ChatComponent,
+    ChatSidebarComponent,
+    ChatWindowComponent,
+    DialogsChatShareComponent
+  ],
+  exports: [ChatWindowComponent, ChatComponent]
 })
 export class ChatModule {}

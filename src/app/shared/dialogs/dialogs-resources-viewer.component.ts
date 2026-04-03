@@ -6,7 +6,7 @@ import { ResourcesViewerComponent } from '../../resources/view-resources/resourc
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    template: `
+  template: `
     <mat-dialog-content>
       <planet-resources-viewer [isDialog]="true" [resourceId]="data.resourceId"></planet-resources-viewer>
     </mat-dialog-content>
@@ -15,7 +15,7 @@ import { MatButton } from '@angular/material/button';
       <button mat-raised-button color="primary" (click)="viewResources()" i18n>View Resource</button>
     </mat-dialog-actions>
   `,
-    imports: [CdkScrollable, MatDialogContent, ResourcesViewerComponent, MatDialogActions, MatButton, MatDialogClose]
+  imports: [CdkScrollable, MatDialogContent, ResourcesViewerComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class DialogsResourcesViewerComponent {
 

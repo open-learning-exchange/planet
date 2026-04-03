@@ -14,10 +14,10 @@ import { MatOption } from '@angular/material/autocomplete';
 import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
 
 @Component({
-    selector: 'planet-chat',
-    templateUrl: './chat.component.html',
-    styleUrls: ['./chat.scss'],
-    imports: [MatToolbar, MatIconButton, MatIcon, NgIf, MatFormField, MatSelect, FormsModule, NgFor, MatOption, ChatSidebarComponent]
+  selector: 'planet-chat',
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.scss'],
+  imports: [MatToolbar, MatIconButton, MatIcon, NgIf, MatFormField, MatSelect, FormsModule, NgFor, MatOption, ChatSidebarComponent]
 })
 export class ChatComponent implements OnInit {
   activeService?: ProviderName;

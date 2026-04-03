@@ -4,7 +4,10 @@ import { FormGroup, FormControl, NonNullableFormBuilder, FormsModule } from '@an
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
@@ -43,10 +46,15 @@ interface SurveyFilterForm {
 }
 
 @Component({
-    selector: 'planet-surveys',
-    templateUrl: './surveys.component.html',
-    styleUrls: ['./surveys.component.scss'],
-    imports: [NgIf, MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton, MatButtonToggleGroup, FormsModule, MatButtonToggle, AuthorizedRolesDirective, MatButton, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatTooltip, MatSortHeader, RouterLink, MatMenuTrigger, MatMenu, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe]
+  selector: 'planet-surveys',
+  templateUrl: './surveys.component.html',
+  styleUrls: ['./surveys.component.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton, MatButtonToggleGroup,
+    FormsModule, MatButtonToggle, AuthorizedRolesDirective, MatButton, PlanetLoadingSpinnerComponent, MatTable, MatSort,
+    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatTooltip, MatSortHeader, RouterLink,
+    MatMenuTrigger, MatMenu, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);

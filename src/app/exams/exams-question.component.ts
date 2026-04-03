@@ -21,10 +21,14 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'planet-exam-question',
-    templateUrl: 'exams-question.component.html',
-    styleUrls: ['exams-question.scss'],
-    imports: [FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, NgIf, PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatButton, NgFor, MatCheckbox, MatInput, MatIconButton, MatSuffix, MatIcon]
+  selector: 'planet-exam-question',
+  templateUrl: 'exams-question.component.html',
+  styleUrls: ['exams-question.scss'],
+  imports: [
+    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, NgIf,
+    PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatButton, NgFor, MatCheckbox,
+    MatInput, MatIconButton, MatSuffix, MatIcon
+  ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 

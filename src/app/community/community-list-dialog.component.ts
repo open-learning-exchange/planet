@@ -5,13 +5,13 @@ import { CommunityListComponent } from './community-list.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: './community-list-dialog.component.html',
-    styles: [`
+  templateUrl: './community-list-dialog.component.html',
+  styles: [`
     :host mat-dialog-content {
       min-width: 33vw;
     }
   `],
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, CommunityListComponent, MatDialogActions, MatButton]
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, CommunityListComponent, MatDialogActions, MatButton]
 })
 export class CommunityListDialogComponent {
 

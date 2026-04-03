@@ -24,9 +24,13 @@ import { RequestsTableComponent } from './requests-table.component';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 @Component({
-    templateUrl: './requests.component.html',
-    styleUrls: ['./requests.component.scss'],
-    imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, NgTemplateOutlet, MatButtonToggleGroup, MatButtonToggle, MatFormField, MatLabel, MatInput, MatToolbarRow, MatButton, NgClass, RequestsTableComponent, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatAnchor]
+  templateUrl: './requests.component.html',
+  styleUrls: ['./requests.component.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, NgTemplateOutlet, MatButtonToggleGroup, MatButtonToggle,
+    MatFormField, MatLabel, MatInput, MatToolbarRow, MatButton, NgClass, RequestsTableComponent, NgFor, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, MatAnchor
+  ]
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 

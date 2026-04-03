@@ -20,19 +20,19 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forChild(routes),
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        PlanetDialogsModule,
-        MaterialModule,
-        SharedComponentsModule,
-        HealthComponent,
-        HealthUpdateComponent,
-        HealthEventComponent,
-        HealthEventDialogComponent
-    ]
+  imports: [
+    RouterModule.forChild(routes),
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    PlanetDialogsModule,
+    MaterialModule,
+    SharedComponentsModule,
+    HealthComponent,
+    HealthUpdateComponent,
+    HealthEventComponent,
+    HealthEventDialogComponent
+  ]
 })
 export class HealthModule {}

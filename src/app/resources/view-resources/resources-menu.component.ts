@@ -7,8 +7,8 @@ import { MatButton } from '@angular/material/button';
 import { NgFor } from '@angular/common';
 
 @Component({
-    selector: 'planet-resources-menu',
-    template: `
+  selector: 'planet-resources-menu',
+  template: `
     <button mat-raised-button [color]="color" class="margin-lr-10" [matMenuTriggerFor]="resourceList" (click)="buttonClick(resources)">
       <ng-content></ng-content>
     </button>
@@ -21,7 +21,7 @@ import { NgFor } from '@angular/common';
       </button>
     </mat-menu>
   `,
-    imports: [MatButton, MatMenuTrigger, MatMenu, NgFor, MatMenuItem]
+  imports: [MatButton, MatMenuTrigger, MatMenu, NgFor, MatMenuItem]
 })
 export class ResourcesMenuComponent {
 

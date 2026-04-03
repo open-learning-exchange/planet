@@ -5,9 +5,9 @@ import { NgIf, CurrencyPipe, DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 
 @Component({
-    selector: 'planet-teams-reports-detail',
-    templateUrl: './teams-reports-detail.component.html',
-    styles: [`
+  selector: 'planet-teams-reports-detail',
+  templateUrl: './teams-reports-detail.component.html',
+  styles: [`
     .report-grid-container {
       overflow-x: auto;
     }
@@ -24,7 +24,7 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
       position: initial;
     }
   `],
-    imports: [MatDivider, NgIf, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
+  imports: [MatDivider, NgIf, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
 })
 export class TeamsReportsDetailComponent implements OnChanges {
 

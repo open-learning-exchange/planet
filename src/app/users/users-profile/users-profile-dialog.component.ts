@@ -7,7 +7,7 @@ import { NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    template: `
+  template: `
     <div mat-dialog-title>
       <span i18n>Member Profile</span>
     </div>
@@ -22,7 +22,9 @@ import { RouterLink } from '@angular/router';
       </button>
     </mat-dialog-actions>
   `,
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, UsersProfileComponent, MatDialogActions, MatButton, MatDialogClose, NgIf, RouterLink]
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, UsersProfileComponent, MatDialogActions, MatButton, MatDialogClose, NgIf, RouterLink
+  ]
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 

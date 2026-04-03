@@ -62,10 +62,15 @@ interface ResourceFormModel {
 }
 
 @Component({
-    selector: 'planet-resources-add',
-    templateUrl: './resources-add.component.html',
-    styleUrls: ['./resources-add.scss'],
-    imports: [NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent, MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe]
+  selector: 'planet-resources-add',
+  templateUrl: './resources-add.component.html',
+  styleUrls: ['./resources-add.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule,
+    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent,
+    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe
+  ]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {

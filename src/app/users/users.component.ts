@@ -24,9 +24,9 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-    selector: 'planet-users',
-    templateUrl: './users.component.html',
-    styles: [`
+  selector: 'planet-users',
+  templateUrl: './users.component.html',
+  styles: [`
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
@@ -36,7 +36,11 @@ import { FormsModule } from '@angular/forms';
       max-width: 100px;
     }
   `],
-    imports: [MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatButtonToggleGroup, MatButtonToggle, MatFormField, MatLabel, MatSelect, NgFor, MatOption, PlanetRoleComponent, MatInput, MatButton, FormsModule, UsersTableComponent]
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatButtonToggleGroup,
+    MatButtonToggle, MatFormField, MatLabel, MatSelect, NgFor, MatOption, PlanetRoleComponent, MatInput,
+    MatButton, FormsModule, UsersTableComponent
+  ]
 })
 export class UsersComponent implements OnInit, OnDestroy {
 

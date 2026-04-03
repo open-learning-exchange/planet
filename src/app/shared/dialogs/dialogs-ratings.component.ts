@@ -10,8 +10,12 @@ import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.compone
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: './dialogs-ratings.component.html',
-    imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel, MatSelect, MatOption, NgFor, MatCard, MatCardHeader, MatCardTitle, PlanetRatingStarsComponent, NgIf, MatCardContent, MatDialogActions, MatButton, MatDialogClose, DatePipe]
+  templateUrl: './dialogs-ratings.component.html',
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel, MatSelect, MatOption,
+    NgFor, MatCard, MatCardHeader, MatCardTitle, PlanetRatingStarsComponent, NgIf, MatCardContent,
+    MatDialogActions, MatButton, MatDialogClose, DatePipe
+  ]
 })
 export class DialogsRatingsComponent {
 

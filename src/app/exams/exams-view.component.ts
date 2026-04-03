@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
@@ -43,10 +45,15 @@ interface ExamViewForm {
 }
 
 @Component({
-    selector: 'planet-exams-view',
-    templateUrl: './exams-view.component.html',
-    styleUrls: ['./exams-view.scss'],
-    imports: [NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu, MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput, FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup, NgFor, MatRadioButton, MatCheckbox, MatButton, PlanetLoadingSpinnerComponent, DatePipe]
+  selector: 'planet-exams-view',
+  templateUrl: './exams-view.component.html',
+  styleUrls: ['./exams-view.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu,
+    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput,
+    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup, NgFor,
+    MatRadioButton, MatCheckbox, MatButton, PlanetLoadingSpinnerComponent, DatePipe
+  ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
 

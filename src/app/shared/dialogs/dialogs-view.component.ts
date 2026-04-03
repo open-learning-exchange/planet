@@ -5,8 +5,8 @@ import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { NgIf, DatePipe } from '@angular/common';
 @Component({
-    templateUrl: './dialogs-view.component.html',
-    styles: [`
+  templateUrl: './dialogs-view.component.html',
+  styles: [`
   	.close {
       float: right;
     }
@@ -15,7 +15,7 @@ import { NgIf, DatePipe } from '@angular/common';
       overflow-y: auto;
     }
   `],
-    imports: [MatIconButton, MatDialogClose, MatIcon, MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, DatePipe]
+  imports: [MatIconButton, MatDialogClose, MatIcon, MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, DatePipe]
 })
 export class DialogsViewComponent {
   message = '';

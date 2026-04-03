@@ -1,7 +1,10 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 import { truncateText } from '../../shared/utils';
@@ -17,7 +20,10 @@ const columns = {
 @Component({
   selector: 'planet-reports-detail-activities',
   templateUrl: './reports-detail-activities.component.html',
-  imports: [MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe],
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe
+  ],
   styles: `
     :host {
       display: grid;

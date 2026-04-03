@@ -32,9 +32,9 @@ interface MigrationForm {
 }
 
 @Component({
-    selector: 'planet-migration',
-    templateUrl: './migration.component.html',
-    styles: [`
+  selector: 'planet-migration',
+  templateUrl: './migration.component.html',
+  styles: [`
     .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
@@ -46,7 +46,23 @@ interface MigrationForm {
       grid-column-start: 2;
     }
   `],
-    imports: [MatStepper, MatStep, MatStepLabel, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, LowercaseDirective, RestrictDiacriticsDirective, MatButton, MatStepperNext, MatStepperPrevious]
+  imports: [
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    LowercaseDirective,
+    RestrictDiacriticsDirective,
+    MatButton,
+    MatStepperNext,
+    MatStepperPrevious
+  ]
 })
 export class MigrationComponent implements OnInit {
 

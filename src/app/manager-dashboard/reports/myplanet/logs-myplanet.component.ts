@@ -20,9 +20,12 @@ import { MyPlanetTableComponent } from './myplanet-table.component';
 import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
 
 @Component({
-    templateUrl: './logs-myplanet.component.html',
-    styleUrls: ['./myplanet.scss'],
-    imports: [MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent]
+  templateUrl: './logs-myplanet.component.html',
+  styleUrls: ['./myplanet.scss'],
+  imports: [
+    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor,
+    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

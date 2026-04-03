@@ -22,8 +22,11 @@ interface CertificationFormControls {
 }
 
 @Component({
-    templateUrl: './certifications-add.component.html',
-    imports: [MatToolbar, MatIconButton, MatIcon, MatButton, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, NgIf, CoursesComponent]
+  templateUrl: './certifications-add.component.html',
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatButton, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput,
+    MatError, FormErrorMessagesComponent, NgIf, CoursesComponent
+  ]
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 

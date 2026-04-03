@@ -13,10 +13,10 @@ import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    selector: 'planet-resources-viewer',
-    templateUrl: './resources-viewer.component.html',
-    styleUrls: ['./resources-viewer.scss'],
-    imports: [NgClass, NgSwitch, NgSwitchCase, MatIconButton, MatIcon, MatAnchor]
+  selector: 'planet-resources-viewer',
+  templateUrl: './resources-viewer.component.html',
+  styleUrls: ['./resources-viewer.scss'],
+  imports: [NgClass, NgSwitch, NgSwitchCase, MatIconButton, MatIcon, MatAnchor]
 })
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 

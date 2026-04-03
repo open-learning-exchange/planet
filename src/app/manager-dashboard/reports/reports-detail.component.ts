@@ -43,7 +43,9 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
 
 type ChartModule = typeof import('chart.js');
@@ -56,7 +58,14 @@ interface DateFilterForm {
   templateUrl: './reports-detail.component.html',
   styleUrls: ['reports-detail.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatOptgroup, MatButtonToggleGroup, MatButtonToggle, MatButton, FormsModule, ReactiveFormsModule, MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatTooltip, MatMenuTrigger, MatMenu, MatMenuItem, MatTabGroup, MatTab, MatGridList, MatGridTile, PlanetLoadingSpinnerComponent, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, ReportsDetailActivitiesComponent, ReportsHealthComponent]
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, MatFormField, MatLabel, MatSelect,
+    NgFor, MatOption, MatOptgroup, MatButtonToggleGroup, MatButtonToggle, MatButton, FormsModule, ReactiveFormsModule,
+    MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatTooltip, MatMenuTrigger,
+    MatMenu, MatMenuItem, MatTabGroup, MatTab, MatGridList, MatGridTile, PlanetLoadingSpinnerComponent, MatTable, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    ReportsDetailActivitiesComponent, ReportsHealthComponent
+  ]
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 

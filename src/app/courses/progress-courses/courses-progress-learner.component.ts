@@ -13,9 +13,9 @@ import { CoursesProgressChartComponent } from './courses-progress-chart.componen
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
-    templateUrl: 'courses-progress-learner.component.html',
-    styleUrls: ['courses-progress.scss'],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
+  templateUrl: 'courses-progress-learner.component.html',
+  styleUrls: ['courses-progress.scss'],
+  imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 

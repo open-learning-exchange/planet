@@ -55,9 +55,13 @@ type HealthFormGroup = {
 
 
 @Component({
-    templateUrl: './health-update.component.html',
-    styleUrls: ['./health-update.scss'],
-    imports: [MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatSelect, NgFor, MatOption, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatButton]
+  templateUrl: './health-update.component.html',
+  styleUrls: ['./health-update.scss'],
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
+    MatInput, MatError, FormErrorMessagesComponent, MatSelect, NgFor, MatOption, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatButton
+  ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 

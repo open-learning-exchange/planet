@@ -18,9 +18,9 @@ describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-    imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, UsersComponent],
-    providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
-});
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, UsersComponent],
+      providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
+    });
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
     // let de = fixture.debugElement.query(By.css('#login-status'));

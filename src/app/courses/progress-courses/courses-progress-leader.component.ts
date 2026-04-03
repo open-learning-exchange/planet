@@ -25,13 +25,18 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
-    templateUrl: 'courses-progress-leader.component.html',
-    styles: [`
+  templateUrl: 'courses-progress-leader.component.html',
+  styles: [`
     mat-toolbar.primary-color {
       padding-top: 8px;
     }
   `],
-    imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, PlanetSelectorComponent, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatButton, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent, TruncateTextPipe]
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton,
+    MatMenuTrigger, MatMenu, PlanetSelectorComponent, MatFormField, MatLabel,
+    MatSelect, NgFor, MatOption, MatButton, CoursesProgressChartComponent,
+    PlanetLoadingSpinnerComponent, TruncateTextPipe
+  ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 

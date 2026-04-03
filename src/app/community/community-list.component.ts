@@ -5,15 +5,31 @@ import { ManagerService } from '../manager-dashboard/manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 import { NgIf, NgFor, NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { MatList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import {
+  MatList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
+} from '@angular/material/list';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 
 @Component({
-    selector: 'planet-community-list',
-    templateUrl: './community-list.component.html',
-    imports: [NgIf, PlanetLoadingSpinnerComponent, MatList, NgFor, MatListSubheaderCssMatStyler, MatListItem, NgClass, MatCheckbox, MatListItemIcon, MatListItemTitle, MatListItemMeta, MatAnchor, RouterLink]
+  selector: 'planet-community-list',
+  templateUrl: './community-list.component.html',
+  imports: [
+    NgIf,
+    PlanetLoadingSpinnerComponent,
+    MatList,
+    NgFor,
+    MatListSubheaderCssMatStyler,
+    MatListItem,
+    NgClass,
+    MatCheckbox,
+    MatListItemIcon,
+    MatListItemTitle,
+    MatListItemMeta,
+    MatAnchor,
+    RouterLink
+  ]
 })
 export class CommunityListComponent implements OnInit {
 

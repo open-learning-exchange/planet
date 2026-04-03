@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '../user.service';
@@ -16,9 +18,13 @@ import { MatGridList, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyle
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    templateUrl: './dialogs-images.component.html',
-    styleUrls: ['./dialogs-images.component.scss'],
-    imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatFormField, MatLabel, MatInput, FormsModule, MatGridList, NgFor, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyler, MatDialogActions, MatButton, MatDialogClose]
+  templateUrl: './dialogs-images.component.html',
+  styleUrls: ['./dialogs-images.component.scss'],
+  imports: [
+    NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatFormField, MatLabel,
+    MatInput, FormsModule, MatGridList, NgFor, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyler,
+    MatDialogActions, MatButton, MatDialogClose
+  ]
 })
 export class DialogsImagesComponent implements OnInit {
 

@@ -75,10 +75,15 @@ type ReferenceFormGroup = FormGroup<ReferenceFormControls>;
 type LinkFormGroup = FormGroup<LinkFormControls>;
 
 @Component({
-    templateUrl: './users-achievements-update.component.html',
-    styleUrls: ['users-achievements-update.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective]
+  templateUrl: './users-achievements-update.component.html',
+  styleUrls: ['users-achievements-update.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
+    MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker,
+    PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor,
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective
+  ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();

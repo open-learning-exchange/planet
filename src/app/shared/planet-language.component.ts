@@ -7,10 +7,10 @@ import { MatIcon } from '@angular/material/icon';
 import { NgIf, NgFor } from '@angular/common';
 
 @Component({
-    selector: 'planet-language',
-    templateUrl: './planet-language.component.html',
-    styleUrls: ['./planet-language.scss'],
-    imports: [MatButton, MatMenuTrigger, MatIcon, NgIf, MatMenu, NgFor, MatMenuItem]
+  selector: 'planet-language',
+  templateUrl: './planet-language.component.html',
+  styleUrls: ['./planet-language.scss'],
+  imports: [MatButton, MatMenuTrigger, MatIcon, NgIf, MatMenu, NgFor, MatMenuItem]
 })
 export class PlanetLanguageComponent implements OnInit {
 

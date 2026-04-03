@@ -13,7 +13,9 @@ import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent } from '@angular/material/expansion';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
+} from '@angular/material/expansion';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { NgIf, NgFor } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
@@ -35,13 +37,18 @@ interface CommunityForm {
 }
 
 @Component({
-    templateUrl: './dialogs-chat-share.component.html',
-    styles: [`
+  templateUrl: './dialogs-chat-share.component.html',
+  styles: [`
     .mat-expansion-panel {
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
     }
   `],
-    imports: [CdkScrollable, MatDialogContent, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent, MatCheckbox, FormsModule, ReactiveFormsModule, NgIf, MatFormField, MatLabel, MatInput, MatButton, MatDialogClose, MatSelect, NgFor, MatOption, MatStepper, MatStep, TeamsComponent, MatError, FormErrorMessagesComponent, MatDialogActions]
+  imports: [
+    CdkScrollable, MatDialogContent, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+    MatExpansionPanelContent, MatCheckbox, FormsModule, ReactiveFormsModule, NgIf, MatFormField, MatLabel, MatInput, MatButton,
+    MatDialogClose, MatSelect, NgFor, MatOption, MatStepper, MatStep, TeamsComponent, MatError, FormErrorMessagesComponent,
+    MatDialogActions
+  ]
 })
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();

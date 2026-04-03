@@ -2,7 +2,10 @@ import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, I
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
+  MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -55,11 +58,23 @@ import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
-    selector: 'planet-courses',
-    templateUrl: './courses.component.html',
-    styleUrls: ['./courses.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, NgTemplateOutlet, CoursesSearchComponent, MatButton, MatLabel, MatInput, NgClass, MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu, AuthorizedRolesDirective, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, CoursesProgressBarComponent, MatChipSet, NgFor, MatChip, PreviewOverflowDirective, PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective, LanguageLabelComponent, PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe]
+  selector: 'planet-courses',
+  templateUrl: './courses.component.html',
+  styleUrls: ['./courses.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, MatFormField,
+    PlanetTagInputComponent, FormsModule, ReactiveFormsModule, NgTemplateOutlet,
+    CoursesSearchComponent, MatButton, MatLabel, MatInput, NgClass, MatMiniFabButton,
+    RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent,
+    MatMenuTrigger, MatMenu, AuthorizedRolesDirective, MatMenuItem, MatTable, MatSort,
+    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
+    MatSortHeader, MatTooltip, CoursesProgressBarComponent, MatChipSet, NgFor, MatChip,
+    PreviewOverflowDirective, PlanetMarkdownComponent, PlanetLocalStatusComponent,
+    FeedbackDirective, DialogsRatingsDirective, LanguageLabelComponent,
+    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow,
+    MatPaginator, DatePipe, TruncateTextPipe
+  ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {

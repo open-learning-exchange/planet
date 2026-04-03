@@ -2,7 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -26,8 +29,8 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
-    templateUrl: './meetups.component.html',
-    styles: [`
+  templateUrl: './meetups.component.html',
+  styles: [`
     .mat-mdc-row {
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -46,7 +49,12 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
       align-self: flex-start;
     }
   `],
-    imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, NgIf, MatMiniFabButton, RouterLink, MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, TdMarkdownComponent, MatMenuTrigger, MatMenu, MatMenuItem, FeedbackDirective, NgFor, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, TitleCasePipe, DatePipe]
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, NgIf, MatMiniFabButton, RouterLink,
+    MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
+    MatSortHeader, TdMarkdownComponent, MatMenuTrigger, MatMenu, MatMenuItem, FeedbackDirective, NgFor,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, TitleCasePipe, DatePipe
+  ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 

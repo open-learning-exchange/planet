@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform, Inject, LOCALE_ID } from '@angular/core';
 
 @Pipe({
-    name: 'timeAgo', pure: true
+  name: 'timeAgo', pure: true
 })
 export class TimeAgoPipe implements PipeTransform {
   // Use the current app locale instead of hardcoded 'en'

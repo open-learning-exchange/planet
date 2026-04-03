@@ -8,7 +8,7 @@ import { Component } from '@angular/core/src/metadata/directives';
 // Simple component to test that FeedbackDirective is working on
 // different HTML tags
 @Component({
-    template: `
+  template: `
     <a planetFeedback></a>
     <button planetFeedback></button>
     <div planetFeedback></div>
@@ -22,8 +22,8 @@ describe('FeedbackDirective', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-    imports: [FeedbackDirective, TestComponent]
-}).compileComponents();
+      imports: [FeedbackDirective, TestComponent]
+    }).compileComponents();
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

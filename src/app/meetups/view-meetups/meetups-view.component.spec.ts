@@ -8,8 +8,8 @@ describe('ViewMeetupsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-    imports: [MeetupsViewComponent]
-}).compileComponents();
+      imports: [MeetupsViewComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

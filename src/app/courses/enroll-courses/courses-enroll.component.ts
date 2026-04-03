@@ -15,8 +15,8 @@ import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-    templateUrl: './courses-enroll.component.html',
-    imports: [MatToolbar, MatIconButton, MatIcon, MatButton, UsersTableComponent]
+  templateUrl: './courses-enroll.component.html',
+  imports: [MatToolbar, MatIconButton, MatIcon, MatButton, UsersTableComponent]
 })
 
 export class CoursesEnrollComponent {

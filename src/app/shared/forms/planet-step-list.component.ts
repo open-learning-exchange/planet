@@ -41,8 +41,8 @@ export class PlanetStepListService {
 }
 
 @Component({
-    selector: 'planet-step-list-item',
-    template: `
+  selector: 'planet-step-list-item',
+  template: `
     <ng-template>
       <ng-content></ng-content>
       <ng-container matListItemMeta>
@@ -52,7 +52,7 @@ export class PlanetStepListService {
       </ng-container>
     </ng-template>
   `,
-    imports: [MatListItemMeta, NgIf, MatIconButton, MatIcon]
+  imports: [MatListItemMeta, NgIf, MatIconButton, MatIcon]
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -71,11 +71,11 @@ export class PlanetStepListItemComponent {
 }
 
 @Component({
-    selector: 'planet-step-list',
-    templateUrl: './planet-step-list.component.html',
-    styleUrls: ['./planet-step-list.scss'],
-    encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, MatNavList, NgClass, NgFor, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
+  selector: 'planet-step-list',
+  templateUrl: './planet-step-list.component.html',
+  styleUrls: ['./planet-step-list.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgIf, MatNavList, NgClass, NgFor, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 

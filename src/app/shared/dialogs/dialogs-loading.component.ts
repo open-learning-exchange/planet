@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 
 @Component({
-    templateUrl: './dialogs-loading.component.html',
-    styles: [`
+  templateUrl: './dialogs-loading.component.html',
+  styles: [`
     :host {
       display: grid;
       align-items: center;
@@ -21,7 +21,7 @@ import { MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
       100% { transform: rotate(360deg); }
     }
   `],
-    imports: [MatDialogTitle]
+  imports: [MatDialogTitle]
 })
 
 export class DialogsLoadingComponent {

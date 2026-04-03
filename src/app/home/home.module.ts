@@ -27,34 +27,34 @@ import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
-    imports: [
-        HomeRouterModule,
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        PlanetFormsModule,
-        MaterialModule,
-        PlanetDialogsModule,
-        SharedComponentsModule,
-        UsersAchievementsModule,
-        NewsModule,
-        TeamsModule,
-        PlanetCalendarModule,
-        UsersModule,
-        CoursesViewDetailModule,
-        CoursesProgressModule,
-        ChatModule,
-        SurveysModule,
-        HomeComponent,
-        DashboardComponent,
-        DashboardTileComponent,
-        DashboardTileTitleComponent,
-        NotificationsComponent,
-        PulsateIconDirective,
-        UpgradeComponent,
-        CommunityComponent,
-        CommunityLinkDialogComponent,
-        HealthListComponent
-    ]
+  imports: [
+    HomeRouterModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    SharedComponentsModule,
+    UsersAchievementsModule,
+    NewsModule,
+    TeamsModule,
+    PlanetCalendarModule,
+    UsersModule,
+    CoursesViewDetailModule,
+    CoursesProgressModule,
+    ChatModule,
+    SurveysModule,
+    HomeComponent,
+    DashboardComponent,
+    DashboardTileComponent,
+    DashboardTileTitleComponent,
+    NotificationsComponent,
+    PulsateIconDirective,
+    UpgradeComponent,
+    CommunityComponent,
+    CommunityLinkDialogComponent,
+    HealthListComponent
+  ]
 })
 export class HomeModule {}

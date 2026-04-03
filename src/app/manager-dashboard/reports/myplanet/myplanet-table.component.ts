@@ -1,7 +1,10 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.component';
 import { MatButton } from '@angular/material/button';
@@ -9,9 +12,12 @@ import { DatePipe } from '@angular/common';
 import { TimePipe } from '../time.pipe';
 
 @Component({
-    selector: 'planet-myplanet-table',
-    templateUrl: './myplanet-table.component.html',
-    imports: [MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe, TimePipe]
+  selector: 'planet-myplanet-table',
+  templateUrl: './myplanet-table.component.html',
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatSortHeader, MatButton,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe, TimePipe
+  ]
 })
 export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 

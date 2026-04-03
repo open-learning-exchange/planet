@@ -5,7 +5,7 @@ import { ExamsViewComponent } from './exams-view.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
-    template: `
+  template: `
     <mat-dialog-content>
       <planet-exams-view [isDialog]="true" [questionNum]="1" [exam]="data.exam" [previewExamType]="data.examType"></planet-exams-view>
     </mat-dialog-content>
@@ -13,7 +13,7 @@ import { MatButton } from '@angular/material/button';
       <button color="primary" mat-raised-button mat-dialog-close i18n>Close Preview</button>
     </mat-dialog-actions>
   `,
-    imports: [CdkScrollable, MatDialogContent, ExamsViewComponent, MatDialogActions, MatButton, MatDialogClose]
+  imports: [CdkScrollable, MatDialogContent, ExamsViewComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class ExamsPreviewComponent {
 

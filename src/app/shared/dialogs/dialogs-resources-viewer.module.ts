@@ -6,14 +6,14 @@ import { DialogsResourcesViewerComponent } from './dialogs-resources-viewer.comp
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        MaterialModule,
-        ResourcesModule,
-        DialogsResourcesViewerComponent
-    ],
-    exports: [
-        DialogsResourcesViewerComponent
-    ]
+  imports: [
+    CommonModule,
+    MaterialModule,
+    ResourcesModule,
+    DialogsResourcesViewerComponent
+  ],
+  exports: [
+    DialogsResourcesViewerComponent
+  ]
 })
 export class DialogsResourcesViewerModule {}

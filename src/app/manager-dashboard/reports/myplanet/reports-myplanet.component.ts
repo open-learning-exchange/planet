@@ -25,7 +25,10 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
 @Component({
   templateUrl: './reports-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
-  imports: [MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent]
+  imports: [
+    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton,
+    NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

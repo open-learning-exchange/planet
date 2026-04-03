@@ -2,8 +2,8 @@ import { Component, Input, OnChanges } from '@angular/core';
 import { NgIf } from '@angular/common';
 
 @Component({
-    selector: 'planet-role',
-    template: `
+  selector: 'planet-role',
+  template: `
     <span *ngIf="formattedRole" i18n>{formattedRole, select,
       leader {Leader}
       monitor {Monitor}
@@ -13,7 +13,7 @@ import { NgIf } from '@angular/common';
       admin {Admin}
     }</span>
   `,
-    imports: [NgIf]
+  imports: [NgIf]
 })
 export class PlanetRoleComponent implements OnChanges {
 
