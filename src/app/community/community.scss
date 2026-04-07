@@ -50,13 +50,12 @@ planet-calendar {
   position: sticky;
   top: 0;
   z-index: 10;
-  display: flex;
-  gap: 0.5rem;
   background: #fff;
 }
 
-.toggle-button {
-  margin-bottom: 1rem;
+.button-row {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .toolbar-row {
@@ -84,7 +83,7 @@ planet-calendar {
 }
 
 @media only screen and (max-width: v.$screen-xs) {
-  .action-buttons.sticky-button {
+  .action-buttons.button-row {
     flex-direction: column;
   }
 
