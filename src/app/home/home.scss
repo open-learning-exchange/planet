@@ -145,10 +145,6 @@
         color: v.$primary;
         transition: background-color 0.5s cubic-bezier(0, 0, 0.2, 1),
           color 0.5s cubic-bezier(0, 0, 0.2, 1); // Linear out, slow in;
-        // Fix SVG icons to use primary color when active
-        mat-icon ::ng-deep svg {
-          fill: v.$primary;
-        }
       }
 
       // Animates pulsating icon when navbar link clicked
@@ -180,6 +176,9 @@
       height: 24px;
       width: 24px;
       margin: 0;
+      ::ng-deep svg {
+        fill: currentColor;
+      }
     }
 
     label {
