@@ -1,6 +1,4 @@
-<div class="tab-scroll-shell">
-  <div class="tab-scroll-layout">
-    <mat-table #table [dataSource]="communities" matSort [matSortDisableClear]="true">
+<mat-table #table [dataSource]="communities" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
@@ -56,10 +54,8 @@
   <tr class="mat-row" *matNoDataRow>
     <td><div class="view-container" i18n>No Requests Found</div></td>
   </tr>
-    </mat-table>
-  </div>
-  <mat-paginator #paginator
-    [pageSize]="50"
-    [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
-  </mat-paginator>
-</div>
+</mat-table>
+<mat-paginator #paginator
+  [pageSize]="50"
+  [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+</mat-paginator>
