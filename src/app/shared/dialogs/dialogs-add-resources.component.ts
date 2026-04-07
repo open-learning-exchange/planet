@@ -1,5 +1,6 @@
 import { Component, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { startWith } from 'rxjs/operators';
 import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
@@ -81,8 +82,10 @@ export class DialogsAddResourcesComponent implements AfterViewInit {
         this.resourcesComponent.selection.changed.subscribe((selection) => this.okDisabled = selection.source.selected.length === 0);
         break;
       case 'resourcesAdd':
-        this.resourcesAddComponent.resourceForm.valueChanges.subscribe(
-          () => this.okDisabled = !this.resourcesAddComponent.resourceForm.valid
+        this.resourcesAddComponent.resourceForm.statusChanges.pipe(
+          startWith(this.resourcesAddComponent.resourceForm.status)
+        ).subscribe(
+          (status) => this.okDisabled = status !== 'VALID'
         );
         break;
     }
