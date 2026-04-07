@@ -88,16 +88,21 @@ export async function aiChatNonStream(
   const model = aiProvider.model ?? provider.defaultModel;
 
   if (context.resource && context.resource.attachments) {
-    for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
+    const attachmentEntries = Object.entries(context.resource.attachments);
+    const extractionPromises = attachmentEntries.map(async ([ attachmentName, attachment ]) => {
       const typedAttachment = attachment as Attachment;
       const contentType = typedAttachment.content_type;
 
       if (contentType === 'application/pdf') {
         const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
         const text = await extractTextFromDocument(file as Buffer, contentType);
-        context.data += text;
+        return text;
       }
-    }
+      return '';
+    });
+
+    const results = await Promise.all(extractionPromises);
+    context.data += results.join('');
   }
 
   if (assistant) {
