@@ -12,6 +12,7 @@ import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
+import { memberNameCompare } from '../../teams/teams.utils';
 
 interface TeamForm {
   message: FormControl<string>;
@@ -98,7 +99,9 @@ export class DialogsChatShareComponent implements OnInit {
 
   getTeamMembers(team: any) {
     return this.teamsService.getTeamMembers(team, true).pipe(
-      map(memberships => memberships.filter(membership => membership.docType === 'membership'))
+      map(memberships => memberships
+        .filter(membership => membership.docType === 'membership')
+        .sort(memberNameCompare))
     );
   }
 
