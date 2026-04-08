@@ -245,8 +245,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
   }
 
