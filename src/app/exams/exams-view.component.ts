@@ -11,10 +11,6 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import {
-  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
-} from '../shared/dialogs/dialogs-announcement.component';
-import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 
 interface ExamAnswerOption {
@@ -105,7 +101,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
-    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
   ) {
@@ -193,18 +188,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        // Challenge option only
-        if (
-          isFinish &&
-          includedCodes.includes(this.stateService.configuration.code) &&
-          challengePeriod &&
-          this.courseId === challengeCourseId
-        ) {
-          this.dialog.open(DialogsAnnouncementComponent, {
-            width: '50vw',
-            maxHeight: '100vh'
-          });
-        }
       }
     });
   }

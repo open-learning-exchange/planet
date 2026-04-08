@@ -21,10 +21,7 @@ import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import {
-  DialogsAnnouncementComponent,
-  DialogsAnnouncementSuccessComponent,
-  includedCodes,
-  challengePeriod
+  DialogsAnnouncementSuccessComponent
 } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
@@ -139,7 +136,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setCouncillors(users);
       }
     });
-    this.communityChallenge();
     iif(
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
@@ -161,34 +157,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  communityChallenge() {
-    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-
-    if (challengeActive) {
-      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        if (!this.userStatusService.getCompleteChallenge()) {
-          this.sendChallengeNotification(this.user).subscribe();
-        }
-      });
-    }
-  }
-
-  sendChallengeNotification(user) {
-    const data = {
-      'user': user._id,
-      'message': `El reto está en`,
-      'type': 'challenges',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
-    return this.couchService.updateDocument('notifications', data);
   }
 
   getCommunityData() {
