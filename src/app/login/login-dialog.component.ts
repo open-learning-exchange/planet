@@ -1,5 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MaterialModule } from '../shared/material.module';
+import { LoginFormComponent } from './login-form.component';
 
 @Component({
   template: `
@@ -15,7 +17,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       </div>
     </mat-dialog-content>
   `,
-  standalone: false
+  imports: [ MaterialModule, LoginFormComponent ]
 })
 export class LoginDialogComponent {
 
