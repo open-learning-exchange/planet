@@ -1,4 +1,4 @@
-import { models } from '../config/ai-providers.config';
+import { assistant as assistantConfig, models } from '../config/ai-providers.config';
 import { AIProvider, ChatMessage } from '../models/chat.model';
 import { Attachment } from '../models/db-doc.model';
 import { fetchFileFromCouchDB } from './db.utils';
@@ -13,6 +13,20 @@ import {
 } from './chat-assistant.utils';
 import { extractTextFromDocument } from './text-extraction.utils';
 
+export function validateAssistantCompatibility(aiProvider: AIProvider, assistant: boolean) {
+  if (!assistant) {
+    return;
+  }
+
+  if (assistantConfig.enabled === false) {
+    throw new Error('Assistant mode is disabled in configuration');
+  }
+
+  if (aiProvider.name !== 'openai') {
+    throw new Error(`Assistant mode is only compatible with openai provider, received "${aiProvider.name}"`);
+  }
+}
+
 /**
  * Uses openai's completions endpoint to generate chat completions with streaming enabled
  * @param messages - Array of chat messages
@@ -26,6 +40,7 @@ export async function aiChatStream(
   context: any = '',
   callback?: (response: string) => void
 ): Promise<string> {
+  validateAssistantCompatibility(aiProvider, assistant);
   const provider = models[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');
@@ -81,6 +96,7 @@ export async function aiChatNonStream(
   assistant: boolean,
   context: any = '',
 ): Promise<string> {
+  validateAssistantCompatibility(aiProvider, assistant);
   const provider = models[aiProvider.name];
   if (!provider) {
     throw new Error('Unsupported AI provider');

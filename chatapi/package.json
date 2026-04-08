@@ -7,6 +7,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts",
+    "test:integration": "COUCHDB_HOST=http://localhost:5984 ts-node --transpile-only src/tests/assistant.integration.test.ts",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix"
   },

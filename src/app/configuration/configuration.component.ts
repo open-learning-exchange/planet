@@ -280,6 +280,7 @@ export class ConfigurationComponent implements OnInit {
         gemini: ''
       },
       assistant: {
+        enabled: true,
         name: 'Planet Context',
         instructions: baseContextPrompt,
       }

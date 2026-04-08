@@ -26,6 +26,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   private onDestroy$ = new Subject<void>();
   spinnerOn = true;
   streaming: boolean;
+  assistantEnabled = true;
   disabled = false;
   clearChat = true;
   provider: AIProvider;
@@ -172,6 +173,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   checkStreamingStatusAndInitialize() {
     this.isStreamingEnabled();
+    this.isAssistantEnabled();
     if (this.streaming) {
       this.chatService.initializeWebSocket();
       this.initializeChatStream();
@@ -182,6 +184,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   isStreamingEnabled() {
     const configuration = this.stateService.configuration;
     this.streaming = configuration.streaming;
+  }
+
+  isAssistantEnabled() {
+    const configuration = this.stateService.configuration;
+    this.assistantEnabled = configuration?.assistant?.enabled ?? true;
   }
 
   initializeErrorStream() {
@@ -236,7 +243,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    this.data = { ...this.data, content, aiProvider: this.provider };
+    this.data = {
+      ...this.data,
+      content,
+      aiProvider: this.provider,
+      assistant: this.assistantEnabled && this.provider?.name === 'openai'
+    };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();

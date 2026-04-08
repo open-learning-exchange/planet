@@ -10,6 +10,7 @@ import { StateService } from '../shared/state.service';
 
 interface FixedConfigFormControls {
   streaming: FormControl<boolean>;
+  assistantEnabled: FormControl<boolean>;
   assistantName: FormControl<string>;
   assistantInstructions: FormControl<string>;
 }
@@ -23,6 +24,7 @@ interface AIConfiguration {
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
   assistant?: {
+    enabled?: boolean;
     name?: string;
     instructions?: string;
   };
@@ -51,6 +53,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   ) {
     this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(false),
+      assistantEnabled: this.fb.control(true),
       assistantName: this.fb.control(''),
       assistantInstructions: this.fb.control('')
     });
@@ -70,6 +73,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   initForm() {
     this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(!!this.configuration.streaming),
+      assistantEnabled: this.fb.control(this.configuration.assistant?.enabled ?? true),
       ...this.mapConfigToFormControls(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
       assistantName: this.fb.control(this.configuration.assistant?.name || ''),
@@ -106,6 +110,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
       assistant: {
+        enabled: this.configForm.controls.assistantEnabled.value,
         name: this.getStringControlValue('assistantName'),
         instructions: this.getStringControlValue('assistantInstructions')
       }

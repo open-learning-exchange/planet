@@ -13,6 +13,7 @@ interface Providers {
 }
 
 interface Assistant {
+  enabled?: boolean;
   name: string;
   instructions: string;
 }
@@ -33,4 +34,3 @@ export interface ChatItem {
   query: string;
   response: string;
 }
-
