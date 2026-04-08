@@ -486,6 +486,11 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
 
     if (this.resumeFile) {
       achievementsDoc.resumeFileName = this.resumeFile.name;
+      if (this.existingResumeAttachment) {
+        achievementsDoc._attachments = {
+          [this.resumeAttachmentKey]: this.existingResumeAttachment
+        };
+      }
     } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
       achievementsDoc.resumeFileName = this.currentResumeFileName;
       if (this.existingResumeAttachment) {

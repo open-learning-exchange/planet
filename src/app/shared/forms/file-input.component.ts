@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ViewChild, Input } from '@angular/core';
+import { Component, Output, EventEmitter, ViewChild, Input, ElementRef } from '@angular/core';
 import { truncateText } from '../../shared/utils';
 
 @Component({
@@ -22,7 +22,7 @@ export class FileInputComponent {
 
   @Input() accept = '';
   @Output() fileChange = new EventEmitter<any>();
-  @ViewChild('fileInput') fileInput!: HTMLInputElement;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   selectedFile: any = null;
   onFileSelected(event: any): void {
@@ -40,7 +40,7 @@ export class FileInputComponent {
   clearFile() {
     this.selectedFile = null;
     if (this.fileInput) {
-      this.fileInput.value = '';
+      this.fileInput.nativeElement.value = '';
     }
   }
 
