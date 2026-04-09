@@ -5,7 +5,6 @@ export const environment = {
   // couchAddress: 'planet-db-host:planet-db-port/',
   chatAddress: window.location.origin + '/ml/',
   couchAddress: window.location.origin + '/db',
-  backendAddress: window.location.origin,
   centerAddress: 'planet-center-address',
   centerProtocol: 'https',
   parentProtocol: 'planet-parent-protocol',
