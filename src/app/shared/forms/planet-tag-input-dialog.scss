@@ -14,10 +14,19 @@
     padding-right: 16px;
   }
 
+  .mat-mdc-nav-list .mat-mdc-list-item {
+    display: flex;
+    overflow: hidden;
+  }
+
   .mat-mdc-list-item-meta {
     align-items: center;
     gap: 0.25rem;
     margin-left: auto;
+  }
+
+  .mat-mdc-nav-list .mat-mdc-list-item-meta {
+    flex-shrink: 0;
   }
 
   mat-dialog-actions {
@@ -49,11 +58,36 @@
   margin-left: 8px;
 }
 
+.tag-name-and-meta .ellipsis-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.tag-name-and-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .count {
   white-space: nowrap;
   margin-left: 0.25rem;
 }
 
+.tag-meta-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  flex: 0 0 auto;
+
 .add-collection-btn-container {
   align-self: center;
+}
 }
