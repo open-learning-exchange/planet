@@ -68,6 +68,11 @@ planet-calendar {
   }
   .label-filter-field {
     flex: 1 1 0;
+
+    .label-icon {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
   }
   .new-voice-btn {
     flex: 0 0 auto;
