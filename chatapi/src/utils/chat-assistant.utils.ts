@@ -1,5 +1,6 @@
 import { keys } from '../config/ai-providers.config';
 import { assistant } from '../config/ai-providers.config';
+import { ChatMessage } from '../models/chat.model';
 
 /**
  * Creates an assistant with the specified model
@@ -15,7 +16,15 @@ export async function createAssistant(model: string) {
   });
 }
 
-export async function createThread() {
+export async function createThread(messages?: ChatMessage[]) {
+  if (messages) {
+    return await keys.openai.beta.threads.create({
+      'messages': messages.map((msg) => ({
+        'role': msg.role,
+        'content': msg.content,
+      })),
+    });
+  }
   return await keys.openai.beta.threads.create();
 }
 

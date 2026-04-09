@@ -5,7 +5,6 @@ import { fetchFileFromCouchDB } from './db.utils';
 import {
   createAssistant,
   createThread,
-  addToThread,
   createRun,
   waitForRunCompletion,
   retrieveResponse,
@@ -35,10 +34,7 @@ export async function aiChatStream(
   if (assistant) {
     try {
       const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      const thread = await createThread(messages);
 
       const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
 
@@ -103,10 +99,7 @@ export async function aiChatNonStream(
   if (assistant) {
     try {
       const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      const thread = await createThread(messages);
       const run = await createRun(thread.id, asst.id, context.data);
       await waitForRunCompletion(thread.id, run.id);
 
