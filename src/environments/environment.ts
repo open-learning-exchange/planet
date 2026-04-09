@@ -8,7 +8,6 @@ export const environment = {
   test: false,
   chatAddress: window.location.protocol + '//' + window.location.hostname + ':5000',
   couchAddress: window.location.protocol + '//' + window.location.hostname + ':2200',
-  backendAddress: window.location.protocol + '//' + window.location.hostname,
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
   parentProtocol: 'https',
