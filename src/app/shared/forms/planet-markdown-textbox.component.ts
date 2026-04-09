@@ -7,6 +7,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
+import { EasymdeLoaderService } from './easymde-loader.service';
 
 interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
@@ -49,6 +50,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     }
   }
   @Output() valueChanges = new EventEmitter<string[]>();
+  editorReady = false;
 
   get empty() {
     return (typeof this._value === 'string' ? this._value : this._value.text).length === 0;
@@ -89,7 +91,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private easyMdeLoader: EasymdeLoaderService
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -104,7 +107,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.checkHighlight();
   }
 
-  ngOnInit() {
+  async ngOnInit(): Promise<void> {
+    await this.easyMdeLoader.load();
+
     const imageToolbarIcon = {
       name: 'custom',
       action: this.addImage.bind(this),
@@ -192,6 +197,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
       )
     };
     this._value = this.imageGroup ? { text: '', images: [] } : '';
+    this.editorReady = true;
   }
 
   ngOnDestroy() {

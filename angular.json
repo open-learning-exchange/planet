@@ -49,10 +49,15 @@
             ],
             "assets": [
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              {
+                "glob": "easymde.min.css",
+                "input": "node_modules/easymde/dist",
+                "output": "assets/easymde"
+              }
             ],
             "styles": [
-              "node_modules/material-design-icons/iconfont/material-icons.css",
+              "node_modules/material-icons/iconfont/material-icons.css",
               "src/styles.scss",
               "src/styles/calendar.scss",
               "src/styles/roboto.scss",
@@ -250,12 +255,17 @@
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [],
             "styles": [
-              "node_modules/material-design-icons/iconfont/material-icons.css",
+              "node_modules/material-icons/iconfont/material-icons.css",
               "src/styles.scss"
             ],
             "assets": [
               "src/assets",
-              "src/manifest.json"
+              "src/manifest.json",
+              {
+                "glob": "easymde.min.css",
+                "input": "node_modules/easymde/dist",
+                "output": "assets/easymde"
+              }
             ]
           }
         },
