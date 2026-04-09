@@ -21,11 +21,16 @@ import { trackById } from '../shared/table-helpers';
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
   private readonly navigationLabels: Record<string, string> = {
-    resources: $localize`Go to Resource`,
-    courses: $localize`Go to Course`,
-    meetups: $localize`Go to Meetup`,
-    teams: $localize`Go to Team`,
-    enterprises: $localize`Go to Enterprise`,
+    resources: $localize`Go to Resources`,
+    courses: $localize`Go to Courses`,
+    meetups: $localize`Go to Meetups`,
+    teams: $localize`Go to Teams`,
+    enterprises: $localize`Go to Enterprises`,
+    users: $localize`Go to Users`,
+    upgrade: $localize`Go to Upgrade`,
+    dashboard: $localize`Go to Dashboard`,
+    chat: $localize`Go to Chat`,
+    manager: $localize`Go to Manager`,
   };
   private onDestroy$ = new Subject<void>();
   @ViewChild('chatList') chatListElement: ElementRef;

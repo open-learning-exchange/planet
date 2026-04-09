@@ -156,7 +156,7 @@ export class UserService {
   // Safeguard to make sure user profile has been set by AuthService
   // before running newSessionLog()
   getNewLogObj() {
-    return Observable.create(observer => {
+    return new Observable(observer => {
       const timer = setInterval(() => {
         if (this.user.name) {
           observer.next(this.logObj(this.couchService.datePlaceholder));
