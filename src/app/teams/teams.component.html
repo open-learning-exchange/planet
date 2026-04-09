@@ -39,6 +39,10 @@
     </ng-container>
   </mat-toolbar>
 
+  <div *ngIf="userNotInShelf" i18n style="text-align: center;">
+    Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
+  </div>
+
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
     <div class="mobile-scroll-wrapper">
     <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
@@ -138,9 +142,6 @@
         <td><div class="view-container" *ngIf="!isLoading" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>
     </mat-table>
-  </div>
-    <div *ngIf="userNotInShelf" i18n style="text-align: center;">
-      Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
     </div>
     <mat-paginator #paginator
       [pageSize]="50"
