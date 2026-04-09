@@ -16,6 +16,23 @@ const columns = {
 @Component({
   selector: 'planet-reports-detail-activities',
   templateUrl: './reports-detail-activities.component.html',
+  styles: `
+    :host {
+      display: grid;
+      grid-template-rows: 1fr 56px;
+      height: 100%;
+
+      mat-table {
+        overflow-y: auto;
+
+        mat-header-row {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+      }
+    }
+  `,
   standalone: false
 })
 export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {

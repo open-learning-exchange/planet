@@ -138,8 +138,8 @@
       </mat-menu>
     </mat-toolbar-row>
   </mat-toolbar>
-  <div class="view-container view-full-height">
-    <mat-tab-group>
+  <div class="view-container view-full-height tab-scroll-shell">
+    <mat-tab-group class="tab-scroll-layout">
       <mat-tab i18n-label label="Summary">
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'uniqueVisitChart' }"></ng-container>
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'visitChart' }"></ng-container>
@@ -313,7 +313,7 @@
         <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0">
+        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0" style="height: 100%">
           <planet-reports-detail-activities
             [activitiesByDoc]="resourceActivities.byDoc"
             [ratings]="ratings.resources"
@@ -327,7 +327,7 @@
         <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0">
+        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0" style="height: 100%">
           <planet-reports-detail-activities
             [activitiesByDoc]="courseActivities.byDoc"
             [ratings]="ratings.courses"
@@ -358,7 +358,7 @@
         <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0">
+        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0" style="height: 100%">
           <planet-reports-detail-activities
             [activitiesByDoc]="chatActivities.filteredData"
             activityType="chat">
