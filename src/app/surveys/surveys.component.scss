@@ -60,11 +60,9 @@
     max-width: 80px;
   }
 
-  .mat-column-action {
-    max-width: 125px;
-  }
-
   .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 50px;
+    width: auto;
+    min-width: 0;
+    padding: 0 8px;
   }
 }
