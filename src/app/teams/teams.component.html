@@ -44,8 +44,7 @@
   </div>
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <div class="mobile-scroll-wrapper">
-    <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -142,7 +141,6 @@
         <td><div class="view-container" *ngIf="!isLoading" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>
     </mat-table>
-    </div>
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
