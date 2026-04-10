@@ -39,7 +39,7 @@
       max-width: 200px;
       width: 100%;
       height: auto;
-      border: 1px solid $grey;
+      border: 1px solid v.$grey;
     }
   }
 
@@ -48,7 +48,7 @@
     width: 545px;
   }
 
-  @media (max-width: $screen-md) {
+  @media (max-width: v.$screen-md) {
     .form-spacing {
       justify-content: center;
     }

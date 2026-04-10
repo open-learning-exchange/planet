@@ -3,7 +3,7 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from 
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/couchdb.service';

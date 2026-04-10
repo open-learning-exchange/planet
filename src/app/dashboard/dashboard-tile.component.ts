@@ -190,16 +190,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   styleUrls: ['./dashboard-tile-title.scss'],
   standalone: false
 })
-@Component({
-  selector: 'planet-dashboard-tile-title',
-  template: `
-    <mat-icon svgIcon={{cardType}}></mat-icon>
-    <span>{{cardTitle}}</span>
-  `,
-  styleUrls: [ './dashboard-tile-title.scss' ]
-})
 export class DashboardTileTitleComponent {
-})
   @Input() cardType;
-
+  @Input() cardTitle;
 }
