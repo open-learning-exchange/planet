@@ -7,6 +7,7 @@ import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { languages } from '../../shared/languages';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'planet-courses-detail',
