@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 import { truncateText } from '../../shared/utils';
@@ -15,7 +15,25 @@ const columns = {
 
 @Component({
   selector: 'planet-reports-detail-activities',
-  templateUrl: './reports-detail-activities.component.html'
+  templateUrl: './reports-detail-activities.component.html',
+  styles: `
+    :host {
+      display: grid;
+      grid-template-rows: 1fr 56px;
+      height: 100%;
+
+      mat-table {
+        overflow-y: auto;
+
+        mat-header-row {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+      }
+    }
+  `,
+  standalone: false
 })
 export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 

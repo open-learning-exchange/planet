@@ -12,11 +12,12 @@ interface ArchiveFormControls {
 
 @Component({
   templateUrl: './users-archive.component.html',
-  styles: [ `
+  styles: [`
     :host {
       text-align: center;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class UsersArchiveComponent implements OnInit {
   readonly dbName = '_users';
@@ -41,7 +42,7 @@ export class UsersArchiveComponent implements OnInit {
 
   createForm() {
     this.archiveForm = this.fb.group({
-      description: [ '', CustomValidators.requiredMarkdown ],
+      description: this.fb.control('', { validators: [ CustomValidators.requiredMarkdown ] })
     });
   }
 

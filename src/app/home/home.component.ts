@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
 import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -18,7 +18,7 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
 
 @Component({
   templateUrl: './home.component.html',
-  styleUrls: [ './home.scss' ],
+  styleUrls: ['./home.scss'],
   animations: [
     trigger('sidenavState', [
       state('closed', style({
@@ -39,7 +39,8 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
       transition('open => closed', animate('400ms ease-in-out')),
       transition('closed => open', animate('400ms ease-in-out'))
     ]),
-  ]
+  ],
+  standalone: false
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
@@ -66,8 +67,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     tap(() => {
       this.mainContent.updateContentMargins();
       this.mainContent._changeDetectorRef.markForCheck();
-    }
-  ));
+    })
+  );
   // For disposable returned by observer to unsubscribe
   animDisp: any;
   onlineStatus = 'offline';
@@ -119,7 +120,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
-    if (!toolbarElement) { return; }
+    if (!toolbarElement) {
+      return;
+    }
     const toolbarStyle = window.getComputedStyle(toolbarElement);
     const navbarCenter = toolbarElement.querySelector('.navbar-center');
     if (navbarCenter !== null) {
@@ -221,8 +224,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
         'status': 'unread'
       },
       0,
-      [ { 'time': 'desc' } ]))
-    .subscribe(data => {
+      [ { 'time': 'desc' } ])
+    ).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }

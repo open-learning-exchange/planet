@@ -11,19 +11,20 @@
  * okClick - Optional.  Function to call when user clicks OK.
  */
 import { Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
-  styles: [ `
+  styles: [`
     .break-word {
       word-wrap: break-word;
       white-space: normal;
       word-break: break-word;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsPromptComponent {
 

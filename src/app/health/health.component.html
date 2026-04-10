@@ -12,7 +12,9 @@
     <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <div class="profile-container">
+    <planet-loading-spinner *ngIf="isLoading; else healthContent" text="Loading health..." i18n-text></planet-loading-spinner>
+    <ng-template #healthContent>
+      <div class="profile-container">
       <div>
         <ng-container *ngIf="userDetail._attachments; else noAttachment">
           <img class="profile-image-large" [src]="imageSrc">
@@ -122,6 +124,7 @@
           </mat-table>
         </div>
       </ng-container>
-    </div>
+      </div>
+    </ng-template>
   </div>
 </div>

@@ -1,12 +1,13 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'planet-language',
   templateUrl: './planet-language.component.html',
-  styleUrls: [ './planet-language.scss' ]
+  styleUrls: ['./planet-language.scss'],
+  standalone: false
 })
 export class PlanetLanguageComponent implements OnInit {
 

@@ -8,24 +8,11 @@ import { ResourcesViewerComponent } from './view-resources/resources-viewer.comp
 import { ResourcesAddComponent } from './resources-add.component';
 import { ResourcesRouterModule } from './resources-router.module';
 import { MaterialModule } from '../shared/material.module';
-import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    ResourcesRouterModule,
-    MaterialModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
-    PlanetDialogsModule,
-    SharedComponentsModule
-  ],
   declarations: [
     ResourcesComponent,
     ResourcesViewComponent,
@@ -34,6 +21,20 @@ import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search
     ResourcesSearchComponent,
     ResourcesSearchListComponent
   ],
-  exports: [ ResourcesViewerComponent, ResourcesComponent, ResourcesAddComponent ]
+  exports: [
+    ResourcesViewerComponent,
+    ResourcesComponent,
+    ResourcesAddComponent
+  ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    ResourcesRouterModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    SharedComponentsModule
+  ]
 })
 export class ResourcesModule {}

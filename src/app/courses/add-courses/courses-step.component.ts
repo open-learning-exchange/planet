@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -18,8 +18,9 @@ interface CoursesStepForm {
 @Component({
   selector: 'planet-courses-step',
   templateUrl: 'courses-step.component.html',
-  styleUrls: [ 'courses-step.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['courses-step.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CoursesStepComponent implements OnDestroy {
 
@@ -80,7 +81,7 @@ export class CoursesStepComponent implements OnDestroy {
         okClick: this.resourcsDialogOkClick.bind(this),
         excludeIds: this.steps[this.activeStepIndex].resources.map((resource: any) => resource._id),
         canAdd: true
-    } });
+      }});
   }
 
   resourcsDialogOkClick(selected: any) {

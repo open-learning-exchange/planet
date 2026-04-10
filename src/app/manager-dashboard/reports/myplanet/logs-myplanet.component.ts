@@ -14,7 +14,8 @@ import { exportMyPlanetCsv } from '../reports.utils';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  standalone: false
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
@@ -75,7 +76,9 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   getEarliestDate(logs: any[]): Date {
     const earliest = Math.min(...logs.flatMap(log => {
       const dates = [];
-      if (log.time) { dates.push(Number(log.time)); }
+      if (log.time) {
+        dates.push(Number(log.time));
+      }
       return dates;
     }));
     return new Date(earliest);
@@ -94,7 +97,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
         [ { doc: this.stateService.configuration } ].concat(attachNamesToPlanets(planets))
           .filter((planet: any) => planet.doc.docType !== 'parentName')
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
-          apklogs
+        apklogs
       );
       this.apklogs = this.allPlanets;
       this.onTimeFilterChange(this.selectedTimeFilter);

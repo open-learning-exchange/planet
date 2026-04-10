@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   template: `
@@ -10,7 +10,8 @@ import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/materia
       }</ng-container>
     </span>
   `,
-  selector: 'planet-filtered-amount'
+  selector: 'planet-filtered-amount',
+  standalone: false
 })
 export class FilteredAmountComponent {
 

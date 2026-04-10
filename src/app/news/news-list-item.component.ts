@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -17,7 +17,8 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
-  styleUrls: [ './news-list-item.scss' ]
+  styleUrls: ['./news-list-item.scss'],
+  standalone: false
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 

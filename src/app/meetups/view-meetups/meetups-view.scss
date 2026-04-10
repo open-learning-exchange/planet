@@ -1,23 +1,37 @@
-@import '../../mixins';
-@import '../../variables';
+@use '../../mixins' as m;
+@use '../../variables' as v;
 
 :host {
   .view-container {
-    display: block;
+    @include m.left-right-grid-areas;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "lt rt";
+    column-gap: 1rem;
     max-height: 60vh;
     overflow: auto;
   }
   .left-tile {
     a {
-      color: $primary;
+      color: v.$primary;
     }
   }
 
   .button-group-right {
     display: flex;
-    
+
     button {
       margin-right: 4px;
+    }
+  }
+
+  @media (max-width: v.$screen-sm) {
+    .view-container {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "lt"
+        "rt";
+      row-gap: 1rem;
     }
   }
 }

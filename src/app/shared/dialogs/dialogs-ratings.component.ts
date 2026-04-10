@@ -1,8 +1,9 @@
 import { Component, Inject, Directive, Input, HostListener } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 @Component({
-  templateUrl: './dialogs-ratings.component.html'
+  templateUrl: './dialogs-ratings.component.html',
+  standalone: false
 })
 export class DialogsRatingsComponent {
 
@@ -24,7 +25,8 @@ export class DialogsRatingsComponent {
 }
 
 @Directive({
-  selector: 'button[planetDialogsRatings]'
+  selector: 'button[planetDialogsRatings]',
+  standalone: false
 })
 export class DialogsRatingsDirective {
 

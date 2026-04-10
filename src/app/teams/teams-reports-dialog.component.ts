@@ -1,16 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './teams-reports-dialog.component.html',
-  styles: [ `
+  styles: [`
     h3 {
-      margin-bottom: 0;
+      margin: 0;
     }
     .mat-subtitle-2 {
       margin-top: 0;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class TeamsReportsDialogComponent {
 

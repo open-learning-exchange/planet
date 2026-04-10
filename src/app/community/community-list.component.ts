@@ -6,11 +6,13 @@ import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPl
 
 @Component({
   selector: 'planet-community-list',
-  templateUrl: './community-list.component.html'
+  templateUrl: './community-list.component.html',
+  standalone: false
 })
 export class CommunityListComponent implements OnInit {
 
   planets: { hubs: any[], sandboxPlanets: any[] } = { hubs: [], sandboxPlanets: [] };
+  isLoading = true;
   @Input() selectMode = false;
   @Output() selectionChange = new EventEmitter<any>();
   @Input() excludeIds = [];
@@ -21,6 +23,7 @@ export class CommunityListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.isLoading = true;
     forkJoin([
       this.managerService.getChildPlanets(true),
       this.couchService.findAll('hubs')
@@ -43,6 +46,9 @@ export class CommunityListComponent implements OnInit {
           .filter(hub => hub.children.length > 0),
         sandboxPlanets: allHubs.sandboxPlanets
       };
+      this.isLoading = false;
+    }, () => {
+      this.isLoading = false;
     });
   }
 

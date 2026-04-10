@@ -28,7 +28,7 @@ interface MigrationForm {
 @Component({
   selector: 'planet-migration',
   templateUrl: './migration.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-raised-button {
       margin: 0px 2px 2px 0px;
     }
@@ -39,7 +39,8 @@ interface MigrationForm {
     .advanced {
       grid-column-start: 2;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class MigrationComponent implements OnInit {
 
@@ -63,13 +64,15 @@ export class MigrationComponent implements OnInit {
 
   ngOnInit() {
     this.cloneForm = this.fb.group({
-      url: [ '', Validators.required ],
-      name: [ '', [
-        Validators.required,
-        CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
-        Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i) ]
-      ],
-      password: [ '', Validators.required ]
+      url: this.fb.control('', { validators: [ Validators.required ] }),
+      name: this.fb.control('', {
+        validators: [
+          Validators.required,
+          CustomValidators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9])/i, 'invalidFirstCharacter'),
+          Validators.pattern(/^([^\x00-\x7F]|[A-Za-z0-9_.-])*$/i)
+        ]
+      }),
+      password: this.fb.control('', { validators: [ Validators.required ] })
     });
   }
 
@@ -80,11 +83,11 @@ export class MigrationComponent implements OnInit {
     this.credential = { password: this.cloneForm.controls.password.value, name: this.cloneForm.controls.name.value };
     this.dialogsLoadingService.start();
     this.couchService.post('_session', this.credential, { withCredentials: true, domain: this.cloneDomain, protocol: this.cloneProtocol })
-    .pipe(finalize(() => this.dialogsLoadingService.stop()))
-    .subscribe(() => {
-      this.stepper.selected.completed = true;
-      this.stepper.next();
-    }, error => this.planetMessageService.showMessage($localize`Configuration is not valid. Please check again.`));
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(() => {
+        this.stepper.selected.completed = true;
+        this.stepper.next();
+      }, error => this.planetMessageService.showMessage($localize`Configuration is not valid. Please check again.`));
   }
 
   clonePlanet() {

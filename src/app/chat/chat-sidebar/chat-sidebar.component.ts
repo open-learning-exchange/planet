@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { NonNullableFormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -20,13 +20,16 @@ interface TitleForm {
 @Component({
   selector: 'planet-chat-sidebar',
   templateUrl: './chat-sidebar.component.html',
-  styleUrls: [ './chat-sidebar.scss' ],
+  styleUrls: ['./chat-sidebar.scss'],
+  standalone: false
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     this._titleSearch = value;
     this.recordSearch();
@@ -45,13 +48,14 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   titleForm: Record<string, FormGroup<TitleForm>> = {};
   trackByFn = trackById;
+  isLoading = true;
 
   constructor(
     private chatService: ChatService,
     private couchService: CouchService,
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private searchService: SearchService,
     private userService: UserService
   ) {
@@ -150,13 +154,14 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
 
   initializeFormGroups() {
     this.conversations.forEach((conversation: Conversation) => {
-      this.titleForm[conversation._id] = this.formBuilder.nonNullable.group({
-        title: [ conversation?.title ?? '', Validators.required ]
+      this.titleForm[conversation._id] = this.formBuilder.group({
+        title: this.formBuilder.control(conversation?.title ?? '', { validators: [ Validators.required ] })
       });
     });
   }
 
   getChatHistory(newChat: boolean = false) {
+    this.isLoading = true;
     this.chatService
       .findConversations([], [ this.userService.get().name ])
       .subscribe(
@@ -174,8 +179,11 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
             this.selectConversation(this.filteredConversations[0], 0);
           }
           this.initializeFormGroups();
+          this.isLoading = false;
         },
-        (error) => console.log(error)
+        (error) => {
+          this.isLoading = false;
+        }
       );
   }
 

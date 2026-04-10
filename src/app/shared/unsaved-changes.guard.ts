@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CanDeactivate } from '@angular/router';
+
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UnsavedChangesPromptComponent } from './unsaved-changes.component';
 
 export interface CanComponentDeactivate {
@@ -13,7 +13,7 @@ export interface CanComponentDeactivate {
 @Injectable({
   providedIn: 'root'
 })
-export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate> {
+export class UnsavedChangesGuard  {
 
   constructor(
     private dialog: MatDialog
@@ -28,7 +28,8 @@ export class UnsavedChangesGuard implements CanDeactivate<CanComponentDeactivate
       if (result === false) {
         const dialogResult = UnsavedChangesPromptComponent.open(this.dialog);
         return dialogResult.pipe(
-          switchMap(confirmed => {
+          switchMap(dialogResponse => {
+            const confirmed = dialogResponse === true;
             if (confirmed && component.onLeaveConfirmed) {
               component.onLeaveConfirmed();
             }

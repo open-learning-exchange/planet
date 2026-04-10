@@ -1,9 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, } from '@angular/router';
 import { FormControl } from '@angular/forms';
@@ -24,7 +23,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
+import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TagsService } from '../shared/forms/tags.service';
@@ -37,14 +36,8 @@ import { CoursesSearchComponent } from './search-courses/courses-search.componen
   selector: 'planet-courses',
   templateUrl: './courses.component.html',
   styleUrls: [ './courses.scss' ],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
@@ -83,7 +76,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
@@ -112,7 +107,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   showFilters = false;
   showFiltersRow = false;
   expandedElement: any = null;
-  previewLimit = 450;
+  private previewHasHiddenContent = new Map<string, boolean>();
+  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -167,6 +163,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       this.userShelf = this.userService.shelf;
       this.courses.data = this.setupList(courses, this.userShelf.courseIds)
         .filter((course: any) => this.excludeIds.indexOf(course._id) === -1);
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }, () => {
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
@@ -405,7 +404,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   courseToggle(courseId, type) {
-    if (this.isForm) { return; }
+    if (this.isForm) {
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
       this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
@@ -429,9 +430,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
+    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe((planet) => {
       const data = { okClick: this.sendCourse().bind(this),
         filterPredicate: filterSpecificFields([ 'name' ]),
         allowMulti: true,
@@ -460,6 +461,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.tagsService.updateManyTags(
       this.courses.data, this.dbName, { selectedIds: this.selection.selected, tagIds: selected, indeterminateIds: indeterminate }
     ).subscribe(() => {
+      this.tagInputComponent?.initTags();
       this.getCourses();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
@@ -475,19 +477,31 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.expandedElement = this.expandedElement === element ? null : element;
   }
 
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
-  }
-
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description || !element.images) {
+    const description = element?.doc?.description;
+    if (!description) {
       return false;
     }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit) || element.images.length > 0;
+    const previewKey = this.getPreviewKey(element);
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
+    // isExpanded check keeps the collapse button visible after the preview div unmounts
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+  }
+
+  getPreviewKey(element: any): string {
+    return element?._id || '';
+  }
+
+  setPreviewOverflow(element: any, hasOverflow: boolean) {
+    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

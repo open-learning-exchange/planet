@@ -1,20 +1,21 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 
 @Component({
   selector: 'planet-pending-table',
   templateUrl: './pending-table.component.html',
-  styles: [ `
+  styles: [`
     .mat-column-date {
       max-width: 150px;
     }
     .mat-column-actions {
       max-width: 100px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class PendingTableComponent implements OnChanges, AfterViewInit {
 

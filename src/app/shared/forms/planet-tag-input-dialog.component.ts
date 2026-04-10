@@ -2,9 +2,7 @@ import { Component, Inject, Input, HostListener } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn
 } from '@angular/forms';
-import {
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
-} from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -26,7 +24,8 @@ type TagFormGroup = FormGroup<TagFormControls>;
 
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styleUrls': [ 'planet-tag-input-dialog.scss' ]
+  'styleUrls': ['planet-tag-input-dialog.scss'],
+  standalone: false
 })
 export class PlanetTagInputDialogComponent {
 
@@ -90,8 +89,8 @@ export class PlanetTagInputDialogComponent {
   }
 
   @HostListener('window:resize') OnResize() {
-      this.deviceType = this.deviceInfoService.getDeviceType();
-    }
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   dataInit() {
     this.tags = this.filterTags(this.filterValue);
@@ -121,10 +120,6 @@ export class PlanetTagInputDialogComponent {
     if (parentTag && (newState || parentTag.subTags.every(sub => !this.selected.get(sub._id)))) {
       updateTag(parentTag._id);
     }
-  }
-
-  subTagIds(subTags: any[]) {
-    return subTags.map(subTag => subTag._id || subTag.name);
   }
 
   updateFilter(value) {
@@ -303,11 +298,12 @@ export class PlanetTagInputDialogComponent {
     <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
     <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
   `,
-  'styles': [ `
+  'styles': [`
     mat-icon {
       vertical-align: middle;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class PlanetTagInputToggleIconComponent {
 

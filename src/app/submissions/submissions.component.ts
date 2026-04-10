@@ -1,7 +1,7 @@
 import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
@@ -26,7 +26,8 @@ const columnsByFilterAndMode = {
 @Component({
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
-  styleUrls: [ './submission.scss' ],
+  styleUrls: ['./submission.scss'],
+  standalone: false
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -82,14 +83,32 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       this.filter.status = '';
     }
     this.coursesService.requestCourses();
-    zip(this.submissionsService.submissionsUpdated$, this.coursesService.coursesListener$()).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ submissions, courses ]) => {
+    zip(
+      this.submissionsService.submissionsUpdated$,
+      this.coursesService.coursesListener$()
+    ).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ submissions, courses ]) => {
       let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
 
       if (!this.isManagerSurveysRoute) {
+        const firstIndexMap = new Map<string, number>();
         normalized = normalized.reduce((sList, s1) => {
-          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-          if (!s1.user._id || sIndex === -1) {
+          const userId = s1.user?._id;
+          const isSurvey = s1.type === 'survey';
+          const key = isSurvey && userId ? `${s1.parentId}|${userId}` : null;
+          let sIndex = -1;
+          if (key) {
+            const existingIndex = firstIndexMap.get(key);
+            if (existingIndex !== undefined) {
+              sIndex = existingIndex;
+            }
+          }
+
+          if (!userId || !isSurvey || sIndex === -1) {
+            if (key && !firstIndexMap.has(key)) {
+              firstIndexMap.set(key, sList.length);
+            }
             sList.push(s1);
           } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
             sList[sIndex] = s1;
@@ -135,8 +154,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     this.mode = this.route.snapshot.data.mySurveys === true ?
       'survey' :
       this.parentId ?
-      'review' :
-      'grade';
+        'review' :
+        'grade';
   }
 
   submissionQuery() {

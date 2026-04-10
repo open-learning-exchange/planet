@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -62,12 +62,18 @@
     margin-left: 10px;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .grid-view {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: auto;
     }
+  }
+
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
 }

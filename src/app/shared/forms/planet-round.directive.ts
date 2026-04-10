@@ -2,7 +2,8 @@ import { Directive, Input, HostListener, ElementRef } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
-  selector: 'input[planetRound]'
+  selector: 'input[planetRound]',
+  standalone: false
 })
 export class PlanetRoundDirective {
 

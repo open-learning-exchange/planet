@@ -1,15 +1,17 @@
 import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatTableDataSource } from '@angular/material/table';
+import { finalize } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
 import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/table-helpers';
-import { SelectionModel } from '@angular/cdk/collections';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 
 @Component({
   templateUrl: './certifications.component.html',
-  styles: [ `
+  styles: [`
     .action-button {
       min-width: 100px;
       width: 100px;
@@ -18,7 +20,8 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
       max-width: 300px;
       align-self: end;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 
@@ -33,10 +36,12 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
   showFiltersRow = false;
+  isLoading = true;
 
   constructor(
     private certificationsService: CertificationsService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -72,7 +77,14 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
   }
 
   getCertifications() {
-    this.certificationsService.getCertifications().subscribe((certifications: any) => {
+    this.isLoading = true;
+    this.dialogsLoadingService.start();
+    this.certificationsService.getCertifications().pipe(
+      finalize(() => {
+        this.isLoading = false;
+        this.dialogsLoadingService.stop();
+      })
+    ).subscribe((certifications: any) => {
       this.certifications.data = certifications;
     });
   }

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -15,7 +15,8 @@ import { trackById } from '../shared/table-helpers';
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styleUrls: [ './news-list.component.scss' ],
+  styleUrls: ['./news-list.component.scss'],
+  standalone: false
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -51,6 +52,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  private routerEventsSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -63,7 +65,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ) {}
 
   ngOnInit() {
-    this.router.events.subscribe(() => {
+    this.routerEventsSubscription = this.router.events.subscribe(() => {
       this.initNews();
     });
 
@@ -87,7 +89,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.displayedItems = this.replyObject[this.replyViewing._id];
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
-      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
+      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
+      if (this.replyViewing._id === 'root') {
+        this.displayedItems = this.replyObject.root || [];
+        this.loadPagedItems(true);
+      }
     }
   }
 
@@ -96,6 +102,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnDestroy() {
+    this.routerEventsSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -245,9 +252,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.newsService.deleteNews(
           news,
           this.viewableId,
-          deleteFromAllViews),
-          this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId
-        )
+          deleteFromAllViews
+        ),
+        this.newsService.rearrangeRepliesForDelete(this.replyObject[news._id], parentId)
       ]),
       onNext: (data) => {
         if (isMainStory) {
@@ -280,7 +287,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
     this.changeLabelsFilter.emit({ label, action });
-    if (action === 'select') { return; }
+    if (action === 'select') {
+      return;
+    }
     const labels = action === 'remove' ?
       news.labels.filter(existingLabel => existingLabel !== label) :
       [ ...(news.labels || []), label ].reduce(dedupeShelfReduce, []);
@@ -345,6 +354,5 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

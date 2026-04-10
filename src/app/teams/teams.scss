@@ -1,6 +1,18 @@
-@import "../variables.scss";
+@use "../variables" as v;
 
 :host {
+  .view-container.view-full-height.view-table {
+    .mobile-scroll-wrapper {
+      overflow: auto;
+    }
+
+    .mobile-scroll-wrapper mat-header-row {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  }
+
   .mat-column-doc-teamType {
     max-width: 150px;
     padding-right: 0.5rem;
@@ -8,9 +20,8 @@
 
   .mat-column-visitLog-visitCount {
     justify-content: center;
-    max-width: 80px;
+    max-width: 175px;
     padding-right: 1rem;
-    margin-right: 1rem
   }
 
   mat-row {
@@ -42,7 +53,7 @@
   }
 
   .highlighted {
-    background-color: $accent;
+    background-color: v.$accent;
   }
 
   .team-type-label {
@@ -50,13 +61,13 @@
     color: #666;
   }
 
-  @media (max-width: $screen-md) {
+  @media (max-width: v.$screen-md) {
     .button-container {
       gap: 0.75rem;
     }
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     mat-cell button {
       min-width: 0;
       padding: 0 3px;
@@ -68,17 +79,19 @@
       gap: 0.5rem;
     }
 
-    .mobile-scroll-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
+    .view-container.view-full-height.view-table {
+      .mobile-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
 
-    mat-table {
-      min-width: 800px;
+      mat-table {
+        min-width: 800px;
+      }
     }
   }
 
-  @media (max-width: $screen-xs) {
+  @media (max-width: v.$screen-xs) {
     .button-container button[mat-raised-button] {
       width: 50px;
     }

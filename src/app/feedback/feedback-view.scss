@@ -1,8 +1,7 @@
-@import '../variables';
+@use '../variables' as v;
 
 .title-edit {
   width: 65%;
-  padding-top: 1em;
 }
 
 .view-container {
@@ -21,7 +20,7 @@
   flex-direction: column;
   align-items: flex-start;
   .chat-list-user {
-    color: $primary;
+    color: v.$primary;
   }
   &:not(:last-child) {
     margin-bottom: 0.5rem;

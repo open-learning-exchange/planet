@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { zip } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
@@ -11,13 +11,14 @@ import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
 
-
 @Component({
-  templateUrl: './courses-enroll.component.html'
+  templateUrl: './courses-enroll.component.html',
+  standalone: false
 })
 
 export class CoursesEnrollComponent {
 
+  isLoading = true;
   courseId: string;
   course: any;
   members: any[] = [];
@@ -55,6 +56,10 @@ export class CoursesEnrollComponent {
         );
       }),
       take(1)
+    ).pipe(
+      finalize(() => {
+        this.isLoading = false;
+      })
     ).subscribe((responses) => {
       this.setMembers(responses);
     });
@@ -75,12 +80,12 @@ export class CoursesEnrollComponent {
     this.course = this.coursesService.getCourseNameFromId(this.courseId);
     const planets = [ { doc: this.stateService.configuration }, ...attachNamesToPlanets(childPlanets) ];
     this.members = users.map((user: any) => ({
-        ...user,
-        activityDates: this.userProgress(progresses.filter(
-          (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
-        ),
-        planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
-      })).filter(doc => doc.planet !== undefined && (doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id)));
+      ...user,
+      activityDates: this.userProgress(progresses.filter(
+        (progress: any) => progress.createdOn === user.doc.planetCode && progress.userId === (user.doc.couchId || user._id))
+      ),
+      planet: planets.find(planet => planet.doc.code === user.doc.planetCode)
+    })).filter(doc => doc.planet !== undefined && (doc.activityDates.createdDate || shelfUsers.find((u: any) => u._id === doc._id)));
   }
 
   exportCSV() {

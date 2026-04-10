@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
@@ -23,7 +22,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
@@ -33,15 +32,9 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
-  styleUrls: [ './resources.scss' ],
+  styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  standalone: false
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
@@ -70,7 +63,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
@@ -100,7 +95,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
-  previewLimit = 450;
+  private previewHasHiddenContent = new Map<string, boolean>();
+  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -121,7 +117,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
     this.isTablet = window.innerWidth <= 1040;
   }
@@ -136,6 +131,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.displayedColumns = [ 'select', 'title', 'info', 'createdDate', 'rating' ];
     }
     this.titleSearch = '';
+    this.dialogsLoadingService.start();
     combineLatest(this.resourcesService.resourcesListener(this.parent), this.userService.shelfChange$).pipe(
       startWith([ [], null ]), skip(1), takeUntil(this.onDestroy$),
       map(([ resources, shelf ]) => this.setupList(resources, (shelf || this.userService.shelf).resourceIds)),
@@ -149,6 +145,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
             resource.doc.private !== true)
       );
       this.resources.paginator = this.paginator;
+      this.isLoading = false;
+      this.dialogsLoadingService.stop();
+    }, () => {
       this.isLoading = false;
       this.dialogsLoadingService.stop();
     });
@@ -213,8 +212,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   updateResource(resource) {
@@ -300,13 +299,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
-    .subscribe((response: any) => {
-      this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
-    }, () => error => this.planetMessageService.showMessage(error));
+      .subscribe((response: any) => {
+        this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
+      }, () => error => this.planetMessageService.showMessage(error));
   }
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
+      this.tagInputComponent?.initTags();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
@@ -357,16 +357,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
-      const data = { okClick: this.sendResource().bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        ...planet };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, maxHeight: '500px', width: '600px', autoFocus: false
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((planet) => {
+        const data = { okClick: this.sendResource().bind(this),
+          filterPredicate: filterSpecificFields([ 'name' ]),
+          allowMulti: true,
+          ...planet };
+        this.dialogRef = this.dialog.open(DialogsListComponent, {
+          data, maxHeight: '500px', width: '600px', autoFocus: false
+        });
       });
-    });
   }
 
   sendResource() {
@@ -398,10 +398,6 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.expandedElement = this.expandedElement === element ? null : element;
   }
 
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
-  }
-
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
   }
@@ -412,8 +408,26 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description) { return false; }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
+    const description = element?.doc?.description;
+    if (!description) {
+      return false;
+    }
+    const previewKey = this.getPreviewKey(element);
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
+    // isExpanded check keeps the collapse button visible after the preview div unmounts
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+  }
+
+  getPreviewKey(element: any): string {
+    return element?._id || '';
+  }
+
+  setPreviewOverflow(element: any, hasOverflow: boolean) {
+    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

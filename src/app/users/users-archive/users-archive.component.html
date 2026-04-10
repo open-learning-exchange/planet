@@ -5,12 +5,16 @@
     <div style="display: flex;justify-content: center;">
       <form [formGroup]="archiveForm" (ngSubmit)="onSubmit()">
         <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <planet-markdown-textbox class="full-width" [required]="false" i18n-placeholder placeholder="Additional comments/Reason for data deletion request" [formControl]="archiveForm.controls.description"></planet-markdown-textbox>
+          <mat-label i18n>Additional comments/Reason for data deletion request</mat-label>
+          <planet-markdown-textbox class="full-width" [required]="false" [formControl]="archiveForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="archiveForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <span style="font-style: italic; margin: 1rem;" i18n>I am aware that I will lose access to your account, resources, courses, teams/enterprises and achievements</span>
-        <mat-checkbox [checked]="confirmChoice" (change)="confirmChoice = !confirmChoice"></mat-checkbox><br>
-        <button type="submit" [disabled]="!confirmChoice" [planetSubmit]="spinnerOn && archiveForm.valid" mat-raised-button color="warn" style="margin: 1rem;" i18n>Delete User Data</button>
+        <mat-checkbox [checked]="confirmChoice" (change)="confirmChoice = !confirmChoice">
+          <span style="font-style: italic; margin: 1rem;" i18n>I am aware that I will lose access to your account, resources, courses, teams/enterprises and achievements</span>
+        </mat-checkbox>
+        <div class="action-button">
+          <button type="submit" [disabled]="!confirmChoice" [planetSubmit]="spinnerOn && archiveForm.valid" mat-raised-button color="warn" i18n>Delete User Data</button>
+        </div>
       </form>
     </div>
   </div>

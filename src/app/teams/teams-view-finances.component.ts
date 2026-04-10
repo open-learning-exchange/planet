@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -16,8 +16,9 @@ import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 
 @Component({
   selector: 'planet-teams-view-finances',
-  styleUrls: [ './teams-view-finances.scss' ],
+  styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
+  standalone: false
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 

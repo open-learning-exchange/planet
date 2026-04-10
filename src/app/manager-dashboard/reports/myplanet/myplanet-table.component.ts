@@ -1,13 +1,14 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../../shared/dialogs/dialogs-view.component';
 
 @Component({
   selector: 'planet-myplanet-table',
-  templateUrl: './myplanet-table.component.html'
+  templateUrl: './myplanet-table.component.html',
+  standalone: false
 })
 export class MyPlanetTableComponent implements OnInit, OnChanges, AfterViewInit {
 

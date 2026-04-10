@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../../resources/resources.service';
 import { UserService } from '../user.service';
@@ -9,7 +9,8 @@ import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-images.component.html',
-  styleUrls: [ './dialogs-images.component.scss' ]
+  styleUrls: ['./dialogs-images.component.scss'],
+  standalone: false
 })
 export class DialogsImagesComponent implements OnInit {
 

@@ -1,13 +1,14 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { commonSortingDataAccessor, deepSortingDataAccessor } from '../../shared/table-helpers';
 import { ReportsService } from './reports.service';
 
 @Component({
   selector: 'planet-reports-table',
-  templateUrl: './reports-table.component.html'
+  templateUrl: './reports-table.component.html',
+  standalone: false
 })
 export class ReportsTableComponent implements OnInit, OnChanges, AfterViewInit {
 

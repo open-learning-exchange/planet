@@ -1,66 +1,55 @@
+@use "sass:map";
+@use 'app/variables' as v;
+
 @use '@angular/material' as mat;
-@import '@angular/material/theming';
-// Plus imports for other components in your app.
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
+// Include the common styles for Angular Material. We include this here so that you only have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-typography-config());`
-/* TODO(mdc-migration): Remove all-legacy-component-typographies once all legacy components are migrated*/
-@include mat.all-legacy-component-typographies();
 @include mat.all-component-typographies();
-/* TODO(mdc-migration): Remove legacy-core once all legacy components are migrated*/
-@include mat.legacy-core();
-@include mat.core();
-@import './app/_variables';
+@include mat.typography-hierarchy(mat.m2-define-typography-config());
+@include mat.elevation-classes();
+@include mat.app-background();
 
-/* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-@include mat.all-legacy-component-themes($planet-app-theme);
 
-@include mat.all-component-themes($planet-app-theme);
+@include mat.all-component-themes(v.$planet-app-theme);
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
-  library: mat.define-palette(mat.$pink-palette, $accent-hue),
-  courses: mat.define-palette(mat.$orange-palette, $accent-hue),
-  meetups: mat.define-palette(mat.$purple-palette, $accent-hue),
-  teams: mat.define-palette(mat.$green-palette, $accent-hue)
+  library: mat.m2-define-palette(mat.$m2-pink-palette, v.$accent-hue),
+  courses: mat.m2-define-palette(mat.$m2-orange-palette, v.$accent-hue),
+  meetups: mat.m2-define-palette(mat.$m2-purple-palette, v.$accent-hue),
+  teams: mat.m2-define-palette(mat.$m2-green-palette, v.$accent-hue)
 );
 
 @each $section in library, courses, meetups, teams {
-  $accent-palette: map-get($accent-map, #{$section});
-  $theme: mat.define-light-theme($planet-app-primary, $accent-palette, $planet-app-warn);
+  $accent-palette: map.get($accent-map, #{$section});
+  $theme: mat.m2-define-light-theme((
+    color: (
+      primary: v.$planet-app-primary,
+      accent: $accent-palette,
+      warn: v.$planet-app-warn
+    )
+  ));
   .planet-#{$section}-theme {
-    /* TODO(mdc-migration): Remove all-legacy-component-themes once all legacy components are migrated*/
-    @include mat.all-legacy-component-themes($theme);
-    @include mat.all-component-themes($theme);
+    @include mat.all-component-colors($theme);
 
     .accent-color {
-      background-color: mat.get-color-from-palette($accent-palette, $accent-hue);
-      color: mat.get-contrast-color-from-palette($accent-palette, $accent-hue);
+      background-color: mat.m2-get-color-from-palette($accent-palette, v.$accent-hue);
+      color: mat.m2-get-contrast-color-from-palette($accent-palette, v.$accent-hue);
     }
   }
 }
 
 // Custom themed material styles below
-
-/* TODO(mdc-migration): The following rule targets internal classes of button that may no longer apply for the MDC version.*/
-.mat-button-toggle-checked {
-  background-color: mat.get-color-from-palette($planet-app-primary, $light-hue);
-  color: mat.get-contrast-color-from-palette($planet-app-primary, $light-hue);
+.mat-button-toggle-appearance-standard {
+  --mat-standard-button-toggle-selected-state-background-color: #{mat.m2-get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-standard-button-toggle-selected-state-text-color: #{mat.m2-get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
 }
 
 .mat-mdc-raised-button[color="primary"] {
   transition: background-color 0.3s ease;
   &:hover {
-    background-color: mat.get-color-from-palette($planet-app-primary, $dark-hue);
+    background-color: mat.m2-get-color-from-palette(v.$planet-app-primary, v.$dark-hue);
   }
 }
 

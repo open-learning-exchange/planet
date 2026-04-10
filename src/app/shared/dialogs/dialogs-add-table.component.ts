@@ -1,12 +1,13 @@
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CoursesComponent } from '../../courses/courses.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { UsersComponent } from '../../users/users.component';
 import { TeamsComponent } from '../../teams/teams.component';
 
 @Component({
-  templateUrl: 'dialogs-add-table.component.html'
+  templateUrl: 'dialogs-add-table.component.html',
+  standalone: false
 })
 export class DialogsAddTableComponent implements AfterViewInit {
 

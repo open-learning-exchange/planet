@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   template: `
@@ -17,11 +17,12 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/leg
       <button mat-dialog-close mat-raised-button color="primary" i18n>OK</button>
     </mat-dialog-actions>
   `,
-  styles: [ `
-    h3.mat-dialog-title {
-      margin: 0
+  styles: [`
+    h3.mat-mdc-dialog-title {
+      text-align: center;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsSubmissionsComponent {
 

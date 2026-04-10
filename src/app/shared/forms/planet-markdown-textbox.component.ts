@@ -2,8 +2,8 @@ import {
   Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
@@ -14,11 +14,12 @@ interface ValueWithImages { text: string; images: ImageInfo[]; }
 @Component({
   'selector': 'planet-markdown-textbox',
   'templateUrl': './planet-markdown-textbox.component.html',
-  'styleUrls': [ 'planet-markdown-textbox.scss' ],
+  'styleUrls': ['planet-markdown-textbox.scss'],
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
-  'encapsulation': ViewEncapsulation.None
+  'encapsulation': ViewEncapsulation.None,
+  standalone: false
 })
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
 
@@ -64,7 +65,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   @Input()
-  get required(): boolean { return this._required; }
+  get required(): boolean {
+    return this._required;
+  }
   set required(value: boolean) {
     this._required = value;
     this.stateChanges.next();
@@ -139,10 +142,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
               title: $localize`Quote`
             },
             {
-               name: 'unordered-list',
-               action: (editor: any) => editor.toggleUnorderedList(),
-               className: 'fa fa-list-ul',
-               title: $localize`Unordered List`
+              name: 'unordered-list',
+              action: (editor: any) => editor.toggleUnorderedList(),
+              className: 'fa fa-list-ul',
+              title: $localize`Unordered List`
             },
             {
               name: 'ordered-list',

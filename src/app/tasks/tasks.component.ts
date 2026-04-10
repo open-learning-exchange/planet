@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { trackById } from '../shared/table-helpers';
 import { CouchService } from '../shared/couchdb.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -17,8 +17,9 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
 @Component({
   selector: 'planet-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: [ './tasks.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./tasks.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class TasksComponent implements OnInit {
 
@@ -73,7 +74,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskDueSoon(task): boolean {
-    if (!task || task.completed || !task.deadline) { return false; }
+    if (!task || task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);
@@ -85,7 +88,9 @@ export class TasksComponent implements OnInit {
   }
 
   isTaskOverdue(task): boolean {
-    if (task.completed || !task.deadline) { return false; }
+    if (task.completed || !task.deadline) {
+      return false;
+    }
 
     const now = new Date();
     const deadline = new Date(task.deadline);
@@ -203,7 +208,8 @@ export class TasksComponent implements OnInit {
 }
 
 @Pipe({
-  name: 'filterAssignee'
+  name: 'filterAssignee',
+  standalone: false
 })
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
@@ -212,7 +218,8 @@ export class FilterAssigneePipe implements PipeTransform {
 }
 
 @Pipe({
-  name: 'assigneeName'
+  name: 'assigneeName',
+  standalone: false
 })
 export class AssigneeNamePipe implements PipeTransform {
   transform(assignee) {

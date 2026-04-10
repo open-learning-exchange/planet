@@ -15,10 +15,23 @@ import { trackById } from '../shared/table-helpers';
 
 @Component({
   templateUrl: './feedback-view.component.html',
-  styleUrls: [ './feedback-view.scss' ]
+  styleUrls: ['./feedback-view.scss'],
+  standalone: false
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
+  private readonly navigationLabels: Record<string, string> = {
+    resources: $localize`Go to Resources`,
+    courses: $localize`Go to Courses`,
+    meetups: $localize`Go to Meetups`,
+    teams: $localize`Go to Teams`,
+    enterprises: $localize`Go to Enterprises`,
+    users: $localize`Go to Users`,
+    upgrade: $localize`Go to Upgrade`,
+    dashboard: $localize`Go to Dashboard`,
+    chat: $localize`Go to Chat`,
+    manager: $localize`Go to Manager`,
+  };
   private onDestroy$ = new Subject<void>();
   @ViewChild('chatList') chatListElement: ElementRef;
   feedback: any = {};
@@ -95,7 +108,9 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
         return forkJoin([ this.getFeedback(res.id), this.sendNotifications() ]);
       })
       ).subscribe(
-        ([ feedback, notificationRes ]) => { this.setFeedback(feedback); },
+        ([ feedback, notificationRes ]) => {
+          this.setFeedback(feedback);
+        },
         error => this.planetMessageService.showAlert($localize`There was an error adding your message`)
       );
   }
@@ -179,6 +194,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   toggleParams() {
     this.showParams = this.showParams === 'off' ? 'on' : 'off';
+  }
+
+  get feedbackNavigationLabel(): string {
+    return this.navigationLabels[this.feedback?.state] || '';
   }
 
 }

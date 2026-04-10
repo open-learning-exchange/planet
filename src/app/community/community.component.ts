@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
@@ -37,8 +37,9 @@ interface CommunityDescriptionForm {
   selector: 'planet-community',
   templateUrl: './community.component.html',
   preserveWhitespaces: true,
-  styleUrls: [ './community.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./community.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -51,7 +52,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   filteredNews: any[] = [];
   links: any[] = [];
   finances: any[] = [];
-  financesLoading = false;
+  communityDataLoading = false;
   councillors: any[] = [];
   reports: any[] = [];
   showNewsButton = true;
@@ -64,7 +65,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
-  isLoading = true;
+  newsLoading = true;
+  teamLoading = true;
   currentTab = 0;
   activeReplyId: string | null = null;
   lastReplyId: string | null = null;
@@ -123,9 +125,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.news = news.sort((a, b) => newsSortValue(b) - newsSortValue(a));
       this.filteredNews = this.news;
       this.availableLabels = this.getAvailableLabels(this.news);
-      this.isLoading = false;
+      this.newsLoading = false;
       this.applyFilters();
-    });
+    }, () => this.newsLoading = false);
     this.usersService.usersListener(true).pipe(takeUntil(this.onDestroy$)).subscribe(users => {
       if (!this.planetCode) {
         this.setCouncillors(users);
@@ -190,6 +192,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getCommunityData() {
+    this.teamLoading = true;
     const setShareTarget = (type) => type === 'center' ? 'nation' : type === 'nation' ? 'community' : undefined;
     this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
@@ -205,7 +208,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
-        this.financesLoading = true;
+        this.communityDataLoading = true;
         return this.getLinks(this.planetCode);
       }),
       switchMap((res) => {
@@ -216,6 +219,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(team => {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
+      this.teamLoading = false;
+    }, () => {
+      this.teamLoading = false;
     });
   }
 
@@ -276,7 +282,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
           width: '50vw',
           maxHeight: '100vh'
         });
-        this.userStatusService.updateStatus('hasPost', true);
+        this.userStatusService.updateStatus(
+          'hasPost',
+          { status: true, amount: 1 }
+        );
       }
     });
   }
@@ -315,11 +324,15 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   setLinksAndFinances({ links, finances, reports }) {
-    this.links = links;
+    this.links = (links || []).map(link => ({
+      ...link,
+      // for backward compatibility, some old links might have 'web' as icon instead of 'website'
+      icon: link.icon === 'web' ? 'website' : link.icon
+    }));
     this.deleteMode = this.deleteMode && this.links.length !== 0;
     this.finances = finances;
     this.reports = reports;
-    this.financesLoading = false;
+    this.communityDataLoading = false;
   }
 
   dataChanged() {
@@ -449,8 +462,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         const msg = !leadershipTitle ?
           $localize`Title deleted` :
           !councillor.doc.leadershipTitle ?
-          $localize`Title added` :
-          $localize`Title updated`;
+            $localize`Title added` :
+            $localize`Title updated`;
         this.dialogsFormService.closeDialogsForm();
         this.planetMessageService.showMessage(msg);
         this.usersService.requestUsers();
@@ -460,7 +473,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   openDescriptionDialog() {
     const formGroup: FormGroup<CommunityDescriptionForm> = this.fb.group({
-      description: [ this.team.description || '', [ CustomValidators.requiredMarkdown ] ]
+      description: this.fb.control(this.team.description || '', { validators: [ CustomValidators.requiredMarkdown ] })
     });
 
     this.dialogsFormService.openDialogsForm(

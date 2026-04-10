@@ -6,7 +6,7 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
@@ -15,11 +15,11 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
-import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styleUrls: [ './manager-dashboard.scss' ]
+  styleUrls: ['./manager-dashboard.scss'],
+  standalone: false
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -56,8 +56,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService,
-    private deviceInfoService: DeviceInfoService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -121,15 +120,19 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkRequestStatus() {
     this.couchService.post(`communityregistrationrequests/_find`,
-      findDocuments({ 'code': this.planetConfiguration.code }, [ 'registrationRequest' ]),
-      { domain: this.planetConfiguration.parentDomain }).subscribe(data => {
-        if (data.docs.length === 0) {
-          this.showResendConfiguration = true;
-          this.requestStatus = 'deleted';
-        } else {
-          this.requestStatus = data.docs[0].registrationRequest;
-        }
-      }, error => (error));
+      findDocuments(
+        { 'code': this.planetConfiguration.code },
+        [ 'registrationRequest' ]
+      ),
+      { domain: this.planetConfiguration.parentDomain }
+    ).subscribe(data => {
+      if (data.docs.length === 0) {
+        this.showResendConfiguration = true;
+        this.requestStatus = 'deleted';
+      } else {
+        this.requestStatus = data.docs[0].registrationRequest;
+      }
+    }, error => (error));
   }
 
   // Find on the user or shelf db (which have matching ids)
@@ -267,9 +270,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resetPin() {
-  const userName = 'org.couchdb.user:satellite';
-  return this.couchService.get('_users/' + userName)
-    .pipe(
+    const userName = 'org.couchdb.user:satellite';
+    return this.couchService.get('_users/' + userName).pipe(
       switchMap((data) => {
         const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
         satelliteProfile.password = this.managerService.createPin();
@@ -279,7 +281,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         ]);
       })
     );
-}
+  }
 
   setVersions() {
     const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };

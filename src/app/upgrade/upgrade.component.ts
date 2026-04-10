@@ -11,17 +11,18 @@ import { SyncService } from '../shared/sync.service';
 
 @Component({
   templateUrl: './upgrade.component.html',
-  styleUrls: [ './upgrade.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./upgrade.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class UpgradeComponent {
   mode = 'planet';
-  enabled: Boolean = true;
+  enabled = true;
   message = $localize`Start upgrade`;
   output = '';
-  working: Boolean = false;
-  done: Boolean = false;
-  error: Boolean = false;
+  working = false;
+  done = false;
+  error = false;
   cleanOutput = '';
   timeoutTrials = 0;
 
@@ -109,7 +110,9 @@ export class UpgradeComponent {
   }
 
   addLine(string, cssClass?) {
-    if (!string.length) { return; }
+    if (!string.length) {
+      return;
+    }
     string = string.trim();
     const dTime = this.getDateTime();
     const start = `<span class=\'${cssClass}\'>`;

@@ -4,15 +4,15 @@
  */
 
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
-  styles: [ `
+  styles: [`
     .search-bar {
       display: flex;
       align-items: center;
@@ -22,7 +22,8 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       overflow-y: auto;
       height: calc(100% - 160px);
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsListComponent implements AfterViewInit {
 

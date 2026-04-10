@@ -5,7 +5,7 @@ import { CouchService } from '../../shared/couchdb.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { dedupeShelfReduce, ageFromBirthDate } from '../../shared/utils';
 import { UsersService } from '../../users/users.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
@@ -132,9 +132,9 @@ export class ReportsService {
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
     return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
-    .pipe(map((activities: any) => {
-      return this.filterAdmin(activities, filterAdmin);
-    }));
+      .pipe(map((activities: any) => {
+        return this.filterAdmin(activities, filterAdmin);
+      }));
   }
 
   groupLoginActivities(loginActivities) {
@@ -180,9 +180,9 @@ export class ReportsService {
 
   getAdminActivities({ planetCode, tillDate, domain }: { planetCode?: string, tillDate?: number, domain?: string }) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }), { domain })
-    .pipe(map(adminActivities => {
-      return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
-    }));
+      .pipe(map(adminActivities => {
+        return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
+      }));
   }
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
@@ -225,7 +225,7 @@ export class ReportsService {
   }
 
   minTime(activities, timeField: string) {
-    return activities.reduce((minTime, { [timeField as keyof Object]: time }) => minTime && minTime < time ? minTime : time, undefined);
+    return activities.reduce((minTime, { [timeField as keyof object]: time }) => minTime && minTime < time ? minTime : time, undefined);
   }
 
   planetTypeText(planetType) {
@@ -259,9 +259,9 @@ export class ReportsService {
         })),
         enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
         completions: completions.filter(({ key, value }) => {
-            const course = courses.find(c => c._id === key.courseId);
-            return course && value.count === course.doc.steps.length;
-          })
+          const course = courses.find(c => c._id === key.courseId);
+          return course && value.count === course.doc.steps.length;
+        })
           .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
         steps: steps.map(({ key, value }) => {
           const course = courses.find(c => c._id === key.courseId);
@@ -334,7 +334,7 @@ export class ReportsService {
         startDate = minDate;
         break;
       default:
-        return { startDate: null, endDate: null, showCustomDateFields: false };
+        return { startDate: minDate, endDate, showCustomDateFields: false };
     }
     return { startDate, endDate, showCustomDateFields };
   }

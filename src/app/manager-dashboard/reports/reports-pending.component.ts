@@ -7,7 +7,8 @@ import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets } from './reports.utils';
 
 @Component({
-  templateUrl: './reports-pending.component.html'
+  templateUrl: './reports-pending.component.html',
+  standalone: false
 })
 export class ReportsPendingComponent implements OnInit {
 
@@ -32,10 +33,10 @@ export class ReportsPendingComponent implements OnInit {
 
   filterData() {
     this.planets = this.planets.map((planet: any) => ({
-        ...planet.doc,
-        name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
-        children: this.data.filter((item: any) => item.sendTo === planet.doc.code)
-      }));
+      ...planet.doc,
+      name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name,
+      children: this.data.filter((item: any) => item.sendTo === planet.doc.code)
+    }));
   }
 
   getCommunityList() {

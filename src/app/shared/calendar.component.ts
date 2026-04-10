@@ -4,7 +4,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogsAddMeetupsComponent } from './dialogs/dialogs-add-meetups.component';
 import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../meetups/constants';
@@ -19,7 +19,7 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 
 @Component({
   selector: 'planet-calendar',
-  styleUrls: [ './calendar.component.scss' ],
+  styleUrls: ['./calendar.component.scss'],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
@@ -30,7 +30,8 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
         </div>
       </div>
     </div>
-  `
+  `,
+  standalone: false
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 
@@ -207,16 +208,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   openAddEventDialog(event) {
     const today = new Date();
     const meetup = event?.start
-    ? {
-      startDate: event.start,
-      endDate: this.adjustEndDate(event.end),
-    }
-  : {
-      startDate: today,
-      endDate: today,
-    };
+      ? {
+        startDate: event.start,
+        endDate: this.adjustEndDate(event.end),
+      }
+      : {
+        startDate: today,
+        endDate: today,
+      };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable }
+      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      panelClass: 'no-max-height-dialog'
     });
   }
 

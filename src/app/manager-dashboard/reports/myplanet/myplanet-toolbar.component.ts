@@ -6,7 +6,8 @@ import { MyPlanetFiltersForm } from './filter.base';
 @Component({
   selector: 'planet-myplanet-toolbar',
   templateUrl: './myplanet-toolbar.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  standalone: false
 })
 export class MyPlanetToolbarComponent {
 
@@ -27,7 +28,7 @@ export class MyPlanetToolbarComponent {
   @Output() versionChange = new EventEmitter<string>();
   @Output() typeChange = new EventEmitter<string>();
   @Output() timeFilterChange = new EventEmitter<string>();
-  @Output() search = new EventEmitter<string>();
+  @Output() searchChange = new EventEmitter<string>();
   @Output() clear = new EventEmitter<void>();
   @Output() resetDateFilter = new EventEmitter<void>();
   deviceType: DeviceType;
@@ -56,7 +57,7 @@ export class MyPlanetToolbarComponent {
   }
 
   onSearch(value: string) {
-    this.search.emit(value);
+    this.searchChange.emit(value);
   }
 
   onClear() {

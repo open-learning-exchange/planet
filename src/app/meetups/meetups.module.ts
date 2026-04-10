@@ -9,14 +9,14 @@ import { MeetupsRouterModule } from './meetups-router.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { MeetupService } from './meetups.service';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 
 @NgModule({
   exports: [ MeetupsAddComponent, MeetupsViewComponent ],
   imports: [
     MeetupsRouterModule, ReactiveFormsModule, PlanetFormsModule, CommonModule, FormsModule, PlanetDialogsModule, MaterialModule,
-     MatDialogModule, SharedComponentsModule
+    MatDialogModule, SharedComponentsModule
   ],
   declarations: [
     MeetupsComponent, MeetupsAddComponent, MeetupsViewComponent

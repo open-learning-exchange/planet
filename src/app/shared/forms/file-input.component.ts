@@ -10,6 +10,7 @@ import { truncateText } from '../../shared/utils';
       <span class="file-name" i18n>{{ getTruncatedFileName() }}</span>
     </div>
   `,
+  standalone: false
 })
 export class FileInputComponent {
 
@@ -18,8 +19,8 @@ export class FileInputComponent {
 
   selectedFile: any = null;
   onFileSelected(event: any): void {
-      this.selectedFile = event.target.files[0] ?? null;
-      this.fileChange.emit(event);
+    this.selectedFile = event.target.files[0] ?? null;
+    this.fileChange.emit(event);
   }
 
   getTruncatedFileName(): string {

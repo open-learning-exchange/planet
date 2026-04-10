@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } 
 import { Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -21,7 +21,7 @@ import { truncateText } from '../shared/utils';
 
 @Component({
   templateUrl: './feedback.component.html',
-  styles: [ `
+  styles: [`
     .mat-column-type {
       display: flex;
       align-items: center;
@@ -33,7 +33,8 @@ import { truncateText } from '../shared/utils';
       -webkit-line-clamp: 2;
       white-space: normal;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -48,7 +49,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     'status': ''
   };
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch; }
+  get titleSearch(): string {
+    return this._titleSearch;
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();

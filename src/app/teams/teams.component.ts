@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
@@ -10,9 +10,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { switchMap, map, finalize, catchError } from 'rxjs/operators';
 import { forkJoin, throwError } from 'rxjs';
-import {
-  filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor
-} from '../shared/table-helpers';
+import { filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
@@ -22,8 +20,9 @@ import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/rep
 
 @Component({
   templateUrl: './teams.component.html',
-  styleUrls: [ './teams.scss' ],
-  selector: 'planet-teams'
+  styleUrls: ['./teams.scss'],
+  selector: 'planet-teams',
+  standalone: false
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 
@@ -222,11 +221,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.getTeams();
       const msg = team._id
         ? (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
-            : $localize`:@@team-updated-success:Team updated successfully`)
+          ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
+          : $localize`:@@team-updated-success:Team updated successfully`)
         : (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-created-success:Enterprise created successfully`
-            : $localize`:@@team-created-success:Team created successfully`);
+          ? $localize`:@@enterprise-created-success:Enterprise created successfully`
+          : $localize`:@@team-created-success:Team created successfully`);
       this.planetMessageService.showMessage(msg);
     });
   }
@@ -240,7 +239,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           this.removeTeamFromTable(team);
         }
         return this.getMembershipStatus();
-    }));
+      }));
   }
 
   openLeaveDialog(team, membershipDoc) {
@@ -325,7 +324,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   sortbyUserTeams() {
-    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) { return; }
+    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) {
+      return;
+    }
 
     this.sort.active = 'membership';
     this.sort.direction = 'desc';

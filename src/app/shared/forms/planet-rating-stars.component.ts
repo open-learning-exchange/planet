@@ -1,6 +1,6 @@
 import { Component, HostBinding, Input, OnDestroy, Optional, Self } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field';
+import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UserService } from '../user.service';
@@ -8,17 +8,18 @@ import { UserService } from '../user.service';
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
-  styles: [ `
+  styles: [`
     .stars mat-icon {
       cursor: default;
     }
     .stars.stars-enabled mat-icon {
       cursor: pointer;
     }
-  ` ],
+  `],
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
-  ]
+  ],
+  standalone: false
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 

@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import * as JSZip from 'jszip/dist/jszip.min';
+import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
 import { FileInputComponent } from '../shared/forms/file-input.component';
 import { UserService } from '../shared/user.service';
@@ -50,7 +50,8 @@ interface ResourceFormModel {
 @Component({
   selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
-  styleUrls: [ './resources-add.scss' ]
+  styleUrls: ['./resources-add.scss'],
+  standalone: false
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
@@ -318,7 +319,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   // which resolves with the file's data
   private processZip(zipFile) {
     return function(fileName) {
-      return Observable.create((observer) => {
+      return new Observable((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
           zipFile.file(fileName).async('base64').then(function success(data) {
@@ -348,7 +349,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   zipObs(zipFile) {
     const zip = new JSZip();
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
       zip.loadAsync(zipFile).then((data) => {
         const fileNames = this.getFileNames(data);

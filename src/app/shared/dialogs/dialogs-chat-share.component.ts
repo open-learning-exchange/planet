@@ -2,9 +2,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { MatStepper } from '@angular/material/stepper';
 import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import {
-  MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog
-} from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
@@ -27,11 +25,12 @@ interface CommunityForm {
 
 @Component({
   templateUrl: './dialogs-chat-share.component.html',
-  styles: [ `
+  styles: [`
     .mat-expansion-panel {
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();

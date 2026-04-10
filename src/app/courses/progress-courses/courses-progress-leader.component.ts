@@ -1,13 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { CsvService } from '../../shared/csv.service';
 import { dedupeObjectArray } from '../../shared/utils';
-import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { StateService } from '../../shared/state.service';
@@ -15,11 +14,12 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styles: [ `
+  styles: [`
     mat-toolbar.primary-color {
       padding-top: 8px;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
@@ -48,12 +48,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
-    private dialogsLoadingService: DialogsLoadingService,
     private dialog: MatDialog,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
@@ -71,7 +69,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.setFullCourse(submissions);
       this.filterSubmittedExamSteps(submissions);
       this.isLoading = false;
-      this.dialogsLoadingService.stop();
     });
   }
 

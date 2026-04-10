@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -17,7 +17,16 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
 
 @Component({
   templateUrl: './meetups.component.html',
-  styles: [ `
+  styles: [`
+    .mat-mdc-row {
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-mdc-cell {
+      border: none;
+    }
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
@@ -26,7 +35,8 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
       max-width: 500px;
       align-self: flex-start;
     }
-  ` ]
+  `],
+  standalone: false
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -63,8 +73,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((meetups) => {
+    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
@@ -99,8 +108,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   applyFilter(filterValue: string) {
