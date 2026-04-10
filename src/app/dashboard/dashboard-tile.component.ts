@@ -12,7 +12,6 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { environment } from '../../environments/environment';
 
-// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   selector: 'planet-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',
@@ -86,7 +85,6 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
-    // line-height: normal varies by browser, but should be between 1-1.2
     const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
     if (tileLines !== this.tileLines) {
       this.tileLines = tileLines;
