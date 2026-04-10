@@ -1,4 +1,4 @@
-<mat-table #table class="responsive-table" [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
+<mat-table #table [dataSource]="logs" matSortActive="lastSync" matSortDirection="desc" [matSortDisableClear]="true" matSort>
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Planet</mat-header-cell>
     <mat-cell *matCellDef="let element" class="action-buttons">
