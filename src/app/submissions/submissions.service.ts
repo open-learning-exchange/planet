@@ -561,15 +561,15 @@ export class SubmissionsService {
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
         `<h3>${$localize`Submission`} ${index + 1}</h3>`,
-        `<ul>`,
+        '<ul>',
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>${$localize`Source:`}</strong> ${planetSource}</li>`,
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
-        `</ul>`,
-        `<hr>`
+        '</ul>',
+        '<hr>'
       ].filter(Boolean).join('\n');
     } else {
       return `### ${exam.name} ${$localize`Questions`} \n`;

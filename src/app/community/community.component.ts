@@ -182,7 +182,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   sendChallengeNotification(user) {
     const data = {
       'user': user._id,
-      'message': `El reto está en`,
+      'message': 'El reto está en',
       'type': 'challenges',
       'priority': 1,
       'status': 'unread',

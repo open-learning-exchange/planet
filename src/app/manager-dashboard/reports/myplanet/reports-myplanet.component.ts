@@ -61,7 +61,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       children: this.filterMyPlanetData(
         this.myPlanetGroups(planet, myPlanets).map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
       )
-    }))
+    }));
   };
 
   filterMyPlanetData(data: any[]) {
