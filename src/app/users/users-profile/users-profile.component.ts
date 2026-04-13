@@ -21,6 +21,7 @@ import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } f
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-users-profile',
@@ -29,7 +30,7 @@ import { MatDialogClose } from '@angular/material/dialog';
   imports: [
     MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink,
     MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider,
-    LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe
+    LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe, TruncateTextPipe
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
