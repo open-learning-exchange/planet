@@ -58,10 +58,7 @@ const dialogFieldOptions = [
   }
 ];
 
-@Directive({
-  selector: '[planetFeedback]',
-  standalone: false
-})
+@Directive({ selector: '[planetFeedback]' })
 export class FeedbackDirective {
   @Input() feedbackOf: any = {};
   @Input() message = '';

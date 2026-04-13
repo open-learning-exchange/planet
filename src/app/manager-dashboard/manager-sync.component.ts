@@ -2,6 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { forkJoin } from 'rxjs';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { SyncDirective } from './sync.directive';
+import { MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine, MatDivider } from '@angular/material/list';
+import { NgFor, NgClass, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 @Component({
   templateUrl: './manager-sync.component.html',
@@ -10,7 +17,10 @@ import { forkJoin } from 'rxjs';
       height: inherit;
     }
   `],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, SyncDirective, MatList, NgFor, MatListItem, NgClass,
+    MatListItemTitle, NgIf, MatListItemMeta, NgSwitch, NgSwitchCase, NgSwitchDefault, MatListItemLine, MatDivider
+  ]
 })
 
 export class ManagerSyncComponent implements OnInit {
