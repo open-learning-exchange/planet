@@ -410,8 +410,8 @@ body {
     padding: 0;
     position: relative;
     display: grid;
-    // 56px is height of paginator
-    grid-template-rows: 1fr 56px;
+    // Paginator row grows when controls wrap on narrow screens
+    grid-template-rows: 1fr auto;
     mat-table {
       overflow-y: auto;
       mat-header-row {
