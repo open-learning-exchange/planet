@@ -168,8 +168,15 @@ export class CouchService {
     const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
     const urlPrefix = domain ?
       (protocol || environment.parentProtocol) + '://' + domain :
-      (environment.backendAddress || window.location.origin);
-    return this.http.get(urlPrefix + '/' + url, opts);
+      window.location.origin;
+    return this.http.get(urlPrefix + '/' + url, opts).pipe(
+      map((response: any) => {
+        if (typeof response === 'string' && response.trimStart().startsWith('<!')) {
+          throw new Error('Received HTML instead of expected response');
+        }
+        return response;
+      })
+    );
   }
 
   private compareRev(parent, local) {
