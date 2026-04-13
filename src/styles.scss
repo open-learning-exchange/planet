@@ -422,6 +422,15 @@ body {
     }
   }
 
+  .mat-mdc-paginator-range-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mat-mdc-paginator-range-label {
+    margin: 0 8px;
+  }
+
   .view-container.view-full-height.no-toolbar {
     height: v.$view-container-height-no-toolbar;
   }
