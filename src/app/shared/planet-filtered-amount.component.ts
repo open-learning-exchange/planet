@@ -10,8 +10,7 @@ import { MatTableDataSource } from '@angular/material/table';
       }</ng-container>
     </span>
   `,
-  selector: 'planet-filtered-amount',
-  standalone: false
+  selector: 'planet-filtered-amount'
 })
 export class FilteredAmountComponent {
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTab } from '@angular/material/tabs';
+import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
 import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -26,12 +26,42 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgSwitch, NgSwitchCase, NgFor, NgClass, DatePipe } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { NewsListComponent } from '../news/news-list.component';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import {
+  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
+} from '@angular/material/card';
+import { TeamsMemberComponent } from './teams-member.component';
+import { MatBadge } from '@angular/material/badge';
+import { TasksComponent } from '../tasks/tasks.component';
+import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { TeamsViewFinancesComponent } from './teams-view-finances.component';
+import { TeamsReportsComponent } from './teams-reports.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { SurveysComponent } from '../surveys/surveys.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './teams-view.component.html',
   styleUrls: ['./teams-view.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, MatButton,
+    NgSwitch, NgSwitchCase, MatAnchor, RouterLink, MatChipSet, MatChip, AuthorizedRolesDirective, MatTabGroup, MatTab,
+    PlanetLoadingSpinnerComponent, NewsListComponent, MatTabLabel, TdMarkdownComponent, NgFor, MatCard, MatCardHeader,
+    MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, TeamsMemberComponent, MatBadge, TasksComponent,
+    PlanetCalendarComponent, TeamsViewFinancesComponent, TeamsReportsComponent, MatTooltip, NgClass, MatCardContent,
+    PlanetMarkdownComponent, MatMenuItem, SurveysComponent, DatePipe, TruncateTextPipe
+  ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 

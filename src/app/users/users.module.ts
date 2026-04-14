@@ -29,9 +29,7 @@ import { UserProfileDialogComponent } from './users-profile/users-profile-dialog
     MaterialModule,
     SharedComponentsModule,
     UsersAchievementsModule,
-    ImageCropperComponent
-  ],
-  declarations: [
+    ImageCropperComponent,
     UsersComponent,
     UsersArchiveComponent,
     UsersProfileComponent,

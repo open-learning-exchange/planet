@@ -1,10 +1,7 @@
 import { Directive, HostListener } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
-@Directive({
-  selector: '[planetRestrictDiacritics]',
-  standalone: false
-})
+@Directive({ selector: '[planetRestrictDiacritics]' })
 export class RestrictDiacriticsDirective {
 
   constructor(private controlRef: NgControl) {}

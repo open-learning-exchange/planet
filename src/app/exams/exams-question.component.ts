@@ -2,19 +2,33 @@ import {
   Component, Input, OnInit, OnChanges, EventEmitter, Output, ElementRef,
   ViewChildren, AfterViewChecked, QueryList, ChangeDetectorRef, OnDestroy
 } from '@angular/core';
-import { FormArray } from '@angular/forms';
+import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { uniqueId } from '../shared/utils';
 import { ExamsService, QuestionChoiceFormGroup, QuestionFormGroup } from './exams.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { trackByIdVal } from '../shared/table-helpers';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { NgIf, NgFor } from '@angular/common';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatInput } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'planet-exam-question',
   templateUrl: 'exams-question.component.html',
   styleUrls: ['exams-question.scss'],
-  standalone: false
+  imports: [
+    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, NgIf,
+    PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatButton, NgFor, MatCheckbox,
+    MatInput, MatIconButton, MatSuffix, MatIcon
+  ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 

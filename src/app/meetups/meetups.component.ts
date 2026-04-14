@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -14,6 +17,16 @@ import { MeetupService } from './meetups.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { findByIdInArray, itemsShown } from '../shared/utils';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { NgIf, NgFor, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
   templateUrl: './meetups.component.html',
@@ -36,7 +49,12 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
       align-self: flex-start;
     }
   `],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, NgIf, MatMiniFabButton, RouterLink,
+    MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
+    MatSortHeader, TdMarkdownComponent, MatMenuTrigger, MatMenu, MatMenuItem, FeedbackDirective, NgFor,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, TitleCasePipe, DatePipe
+  ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CoursesService } from '../courses.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -15,11 +15,27 @@ import {
   DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
 } from '../../shared/dialogs/dialogs-announcement.component';
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgClass, NgTemplateOutlet, NgFor } from '@angular/common';
+import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
   styleUrls: ['./courses-step-view.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, MatButton, MatIconButton, MatAnchor, MatMenuTrigger,
+    MatMenu, MatMenuItem, RouterLink, NgClass, ChatWindowComponent, NgTemplateOutlet,
+    PlanetMarkdownComponent, MatButtonToggleGroup, FormsModule, NgFor, MatButtonToggle, MatTooltip,
+    ResourcesViewerComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {

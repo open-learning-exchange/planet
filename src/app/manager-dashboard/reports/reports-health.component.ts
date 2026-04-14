@@ -7,6 +7,12 @@ import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
+import { NgIf, NgFor } from '@angular/common';
+import { LabelComponent } from '../../shared/label.component';
+import { MatFormField } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
 
 Chart.register(LineController);
 
@@ -30,7 +36,7 @@ Chart.register(LineController);
       align-self: center;
     }
   `],
-  standalone: false
+  imports: [NgIf, NgFor, LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
 })
 export class ReportsHealthComponent implements OnChanges {
 

@@ -1,8 +1,14 @@
 import { Component, OnChanges, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { CouchService } from '../../shared/couchdb.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { NgIf, DatePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'planet-pending-table',
@@ -15,7 +21,10 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
       max-width: 100px;
     }
   `],
-  standalone: false
+  imports: [
+    MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgIf, MatIcon, MatButton,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe
+  ]
 })
 export class PendingTableComponent implements OnChanges, AfterViewInit {
 

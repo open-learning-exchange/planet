@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Location } from '@angular/common';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Location, NgIf, NgTemplateOutlet, NgFor, NgClass } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
@@ -29,6 +29,24 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatOptgroup } from '@angular/material/autocomplete';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import {
+  MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
+import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
 
 type ChartModule = typeof import('chart.js');
 interface DateFilterForm {
@@ -40,7 +58,14 @@ interface DateFilterForm {
   templateUrl: './reports-detail.component.html',
   styleUrls: ['reports-detail.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, MatFormField, MatLabel, MatSelect,
+    NgFor, MatOption, MatOptgroup, MatButtonToggleGroup, MatButtonToggle, MatButton, FormsModule, ReactiveFormsModule,
+    MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatTooltip, MatMenuTrigger,
+    MatMenu, MatMenuItem, MatTabGroup, MatTab, MatGridList, MatGridTile, PlanetLoadingSpinnerComponent, MatTable, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    ReportsDetailActivitiesComponent, ReportsHealthComponent
+  ]
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
@@ -930,7 +955,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   loadComparisonData() {
     if (!this.comparisonWeek1End || !this.comparisonWeek2End) {
-      return
+      return;
     };
 
     this.comparisonLoading = true;

@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatStepper } from '@angular/material/stepper';
+import { MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious } from '@angular/material/stepper';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { languages } from '../shared/languages';
@@ -13,6 +15,20 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
 import { baseContextPrompt } from '../shared/ai-prompts.constants';
+import { NgIf, NgFor } from '@angular/common';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { LowercaseDirective } from '../shared/lowercase.directive';
+import { RestrictDiacriticsDirective } from '../shared/restrict-diacritics.directives';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../shared/submit.directive';
 
 const removeProtocol = (str: string) => {
   // RegEx grabs the fragment of the string between '//' and last character
@@ -75,7 +91,12 @@ interface ContactForm {
       margin-bottom: 10px;
     }
   `],
-  standalone: false
+  imports: [
+    MatStepper, NgIf, MatStep, MatStepLabel, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, LowercaseDirective, RestrictDiacriticsDirective, MatError, FormErrorMessagesComponent,
+    MatButton, MatStepperNext, MatSelect, MatOption, NgFor, MatAutocompleteTrigger, MatAutocomplete,
+    MatSlideToggle, MatTooltip, MatIcon, MatCheckbox, MatMiniFabButton, MatStepperPrevious, SubmitDirective
+  ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;

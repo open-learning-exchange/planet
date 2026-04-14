@@ -1,9 +1,12 @@
 import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
@@ -12,6 +15,16 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NgIf, NgTemplateOutlet, NgFor, NgClass, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatInput } from '@angular/material/input';
+import { MatChipSet, MatChip } from '@angular/material/chips';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -27,7 +40,12 @@ const columnsByFilterAndMode = {
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
   styleUrls: ['./submission.scss'],
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatSelect,
+    MatOption, NgFor, MatButtonToggleGroup, MatButtonToggle, MatInput, NgClass, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, MatChipSet, MatChip, NgSwitchDefault, RouterLink,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 

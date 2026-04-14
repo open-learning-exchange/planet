@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { truncateText } from '../../shared/utils';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   template: `
@@ -13,7 +15,7 @@ import { truncateText } from '../../shared/utils';
     <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
   selector: 'planet-tag-selected-input',
-  standalone: false
+  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault, MatTooltip]
 })
 export class PlanetTagSelectedInputComponent implements OnChanges {
 

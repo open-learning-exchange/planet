@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
@@ -29,13 +32,42 @@ import { ResourcesSearchComponent } from './search-resources/resources-search.co
 import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
+import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
+import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent,
+    MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput,
+    MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu,
+    AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective,
+    PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective,
+    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+  ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
@@ -307,6 +339,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
+      this.tagInputComponent?.initTags();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }

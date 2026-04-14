@@ -10,7 +10,7 @@ import { NewsListItemComponent } from './news-list-item.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 
 @NgModule({
-  exports: [ NewsListComponent ],
+  exports: [NewsListComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -18,9 +18,7 @@ import { CommunityListDialogComponent } from '../community/community-list-dialog
     PlanetFormsModule,
     MaterialModule,
     SharedComponentsModule,
-    RouterModule
-  ],
-  declarations: [
+    RouterModule,
     NewsListComponent,
     NewsListItemComponent,
     CommunityListDialogComponent
