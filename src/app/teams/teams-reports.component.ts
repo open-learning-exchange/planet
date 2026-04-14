@@ -14,12 +14,23 @@ import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardFooter } from '@angular/material/card';
+import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'planet-teams-reports',
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
-  standalone: false
+  imports: [
+    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
+    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
+    MatIcon, DatePipe
+  ]
 })
 export class TeamsReportsComponent implements DoCheck {
 

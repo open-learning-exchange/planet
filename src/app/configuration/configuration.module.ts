@@ -14,9 +14,7 @@ import { MigrationComponent } from './migration.component';
     ReactiveFormsModule,
     PlanetFormsModule,
     MaterialModule,
-    SharedComponentsModule
-  ],
-  declarations: [
+    SharedComponentsModule,
     ConfigurationComponent,
     MigrationComponent
   ],

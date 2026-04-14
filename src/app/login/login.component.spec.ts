@@ -19,8 +19,7 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, LoginComponent],
       providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(LoginComponent),

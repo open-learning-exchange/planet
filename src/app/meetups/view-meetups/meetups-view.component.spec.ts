@@ -8,7 +8,7 @@ describe('ViewMeetupsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MeetupsViewComponent ]
+      imports: [MeetupsViewComponent]
     }).compileComponents();
   }));
 

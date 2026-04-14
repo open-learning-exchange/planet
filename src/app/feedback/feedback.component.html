@@ -99,7 +99,7 @@
       <ng-container matColumnDef="owner">
         <mat-header-cell *matHeaderCellDef mat-sort-header="owner" i18n>Owner</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span >{{ element.user?.fullName || element.user?.doc.name || element.owner }}</span>
+          <span>{{ (element.user?.fullName || element.user?.doc.name || element.owner) | truncateText:20 }}</span>
         </mat-cell>
       </ng-container>
       <!-- Status Column -->

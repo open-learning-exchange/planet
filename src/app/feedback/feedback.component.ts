@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow,
+  MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -18,6 +21,18 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { UsersService } from '../users/users.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { truncateText } from '../shared/utils';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgFor, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -34,7 +49,13 @@ import { truncateText } from '../shared/utils';
       white-space: normal;
     }
   `],
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatFormField,
+    MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort,
+    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip,
+    NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';

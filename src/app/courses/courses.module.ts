@@ -41,9 +41,7 @@ import { ChatModule } from '../chat/chat.module';
     UsersModule,
     CoursesViewDetailModule,
     ChatModule,
-    CoursesProgressModule
-  ],
-  declarations: [
+    CoursesProgressModule,
     CoursesComponent,
     CoursesAddComponent,
     CoursesViewComponent,
@@ -54,6 +52,6 @@ import { ChatModule } from '../chat/chat.module';
     CoursesEnrollComponent,
     CoursesIconComponent
   ],
-  exports: [ CoursesComponent ]
+  exports: [CoursesComponent]
 })
 export class CoursesModule {}
