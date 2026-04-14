@@ -1,11 +1,7 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-<<<<<<< 9470-new-resource-level-open-resource
   "version": "0.22.44",
-=======
-  "version": "0.22.43",
->>>>>>> master
   "myplanet": {
     "latest": "v0.52.96",
     "min": "v0.49.69"
