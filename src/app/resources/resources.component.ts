@@ -29,6 +29,7 @@ import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsS
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -436,7 +437,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formatLevels(levels: string | string[] = []): string {
     const arr = Array.isArray(levels) ? levels : String(levels).split(',');
-    return arr.map(s => s.trim()).filter(Boolean).join(', ');
+    return arr.map(s => s.trim()).filter(Boolean)
+      .map(value => levelList.find(option => option.value === value)?.label || value)
+      .join(', ');
   }
 
   showPreviewExpand(element: any): boolean {
