@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { Router, ActivatedRoute } from '@angular/router';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -17,12 +20,28 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgClass, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './teams.component.html',
   styleUrls: ['./teams.scss'],
   selector: 'planet-teams',
-  standalone: false
+  imports: [
+    MatToolbar, MatToolbarRow, NgIf, MatIconButton, RouterLink, MatIcon, NgTemplateOutlet, MatFormField,
+    MatLabel, MatInput, FormsModule, MatButton, NgClass, MatMiniFabButton, MatTable, MatSort, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, FeedbackDirective,
+    AuthorizedRolesDirective, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe,
+    TruncateTextPipe
+  ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 

@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter, ViewChild, Input, ElementRef } from '@angular/core';
 import { truncateText } from '../../shared/utils';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'planet-file-input',
@@ -16,7 +17,7 @@ import { truncateText } from '../../shared/utils';
       align-items: center;
     }
   ` ],
-  standalone: false
+  imports: [MatButton]
 })
 export class FileInputComponent {
 

@@ -20,7 +20,7 @@ import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
-  exports: [ TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent ],
+  exports: [TeamsViewComponent, TeamsComponent, TeamsViewFinancesComponent, TeamsMemberComponent, TeamsReportsComponent],
   imports: [
     TeamsRouterModule,
     CommonModule,
@@ -33,9 +33,7 @@ import { SurveysModule } from '../surveys/surveys.module';
     SharedComponentsModule,
     PlanetCalendarModule,
     FormsModule,
-    SurveysModule
-  ],
-  declarations: [
+    SurveysModule,
     TeamsComponent,
     TeamsViewComponent,
     TeamsViewFinancesComponent,

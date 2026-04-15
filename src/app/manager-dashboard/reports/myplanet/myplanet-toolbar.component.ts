@@ -1,13 +1,27 @@
 import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { MyPlanetFiltersForm } from './filter.base';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 
 @Component({
   selector: 'planet-myplanet-toolbar',
   templateUrl: './myplanet-toolbar.component.html',
   styleUrls: ['./myplanet.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, RouterLink, MatFormField, MatLabel,
+    MatSelect, MatOption, NgFor, FormsModule, ReactiveFormsModule, MatInput, MatDatepickerInput, MatDatepickerToggle,
+    MatSuffix, MatDatepicker, MatError, MatButton
+  ]
 })
 export class MyPlanetToolbarComponent {
 

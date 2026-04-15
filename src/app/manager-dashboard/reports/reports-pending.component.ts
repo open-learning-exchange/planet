@@ -5,10 +5,20 @@ import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets } from './reports.utils';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { NgFor } from '@angular/common';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { PendingTableComponent } from './pending-table.component';
 
 @Component({
   templateUrl: './reports-pending.component.html',
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgFor, MatExpansionPanel, MatExpansionPanelHeader,
+    MatExpansionPanelTitle, PendingTableComponent
+  ]
 })
 export class ReportsPendingComponent implements OnInit {
 

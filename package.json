@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.22.33",
+  "version": "0.22.44",
   "myplanet": {
-    "latest": "v0.52.19",
-    "min": "v0.51.0"
+    "latest": "v0.52.96",
+    "min": "v0.49.69"
   },
   "scripts": {
     "ng": "ng",
@@ -71,14 +71,18 @@
     "@angular/cli": "^19.2.22",
     "@angular/compiler-cli": "19.2.20",
     "@angular/language-service": "19.2.20",
+    "@eslint/compat": "^1.4.1",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^9.39.4",
     "@fortawesome/fontawesome-free": "^5.13.0",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^18.19.130",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
     "@typescript-eslint/parser": "^8.57.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.4",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^46.10.1",
     "eslint-plugin-prefer-arrow": "^1.2.3",

@@ -25,22 +25,7 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    SharedComponentsModule
-  ],
-  exports: [
-    DialogsFormComponent,
-    DialogsViewComponent,
-    DialogsPromptComponent,
-    FeedbackDirective,
-    DialogsListComponent,
-    DialogsLoadingComponent,
-    DialogsImagesComponent,
-    DialogsRatingsComponent,
-    DialogsRatingsDirective,
-    ChangePasswordDirective,
-    SyncDirective
-  ],
-  declarations: [
+    SharedComponentsModule,
     DialogsFormComponent,
     DialogsViewComponent,
     DialogsPromptComponent,
@@ -54,6 +39,19 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     SyncDirective,
     DialogsAnnouncementComponent,
     DialogsAnnouncementSuccessComponent
+  ],
+  exports: [
+    DialogsFormComponent,
+    DialogsViewComponent,
+    DialogsPromptComponent,
+    FeedbackDirective,
+    DialogsListComponent,
+    DialogsLoadingComponent,
+    DialogsImagesComponent,
+    DialogsRatingsComponent,
+    DialogsRatingsDirective,
+    ChangePasswordDirective,
+    SyncDirective
   ],
   providers: [
     DialogsFormService,

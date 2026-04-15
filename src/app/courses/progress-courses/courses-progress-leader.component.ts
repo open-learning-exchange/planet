@@ -11,6 +11,18 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { CoursesProgressChartComponent } from './courses-progress-chart.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
@@ -19,7 +31,12 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
       padding-top: 8px;
     }
   `],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton,
+    MatMenuTrigger, MatMenu, PlanetSelectorComponent, MatFormField, MatLabel,
+    MatSelect, NgFor, MatOption, MatButton, CoursesProgressChartComponent,
+    PlanetLoadingSpinnerComponent, TruncateTextPipe
+  ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 

@@ -1,10 +1,14 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 import { truncateText } from '../../shared/utils';
+import { NgIf, DatePipe } from '@angular/common';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
@@ -16,6 +20,10 @@ const columns = {
 @Component({
   selector: 'planet-reports-detail-activities',
   templateUrl: './reports-detail-activities.component.html',
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe
+  ],
   styles: `
     :host {
       display: grid;
@@ -32,8 +40,7 @@ const columns = {
         }
       }
     }
-  `,
-  standalone: false
+  `
 })
 export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 

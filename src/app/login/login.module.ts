@@ -22,11 +22,9 @@ import { LoginDialogComponent } from './login-dialog.component';
     ConfigurationModule,
     SharedComponentsModule,
     LoginFormComponent,
-    LoginDialogComponent
-  ],
-  declarations: [
+    LoginDialogComponent,
     LoginComponent
   ],
-  providers: [ ConfigurationGuard ]
+  providers: [ConfigurationGuard]
 })
 export class LoginModule { }
