@@ -83,7 +83,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
     MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker,
     PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor,
-    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective, FileInputComponent
   ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
