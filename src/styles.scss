@@ -427,6 +427,28 @@ body {
     margin: 0 8px;
   }
 
+  // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
+  // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
+  // Courses/resources use a separate pattern
+  @media (max-width: v.$screen-sm) {
+    mat-table.responsive-table,
+    table.mat-mdc-table.responsive-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      min-width: var(--responsive-table-min-width, 800px);
+    }
+
+    .responsive-table:not(mat-table):not(table) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+
+      mat-table,
+      table.mat-mdc-table {
+        min-width: var(--responsive-table-min-width, 800px);
+      }
+    }
+  }
+
   // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
   .card-table {
     .mat-mdc-row {
