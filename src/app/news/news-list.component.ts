@@ -11,12 +11,18 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { NewsListItemComponent } from './news-list-item.component';
+import { MatDivider } from '@angular/material/list';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
   styleUrls: ['./news-list.component.scss'],
-  standalone: false
+  imports: [NgIf, MatButton, NewsListItemComponent, MatDivider, NgFor, MatProgressSpinner, MatPaginator]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 

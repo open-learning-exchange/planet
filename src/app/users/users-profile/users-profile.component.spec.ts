@@ -15,8 +15,7 @@ describe('UserProfileComponent', () => {
 
   beforeEach((() => {
     TestBed.configureTestingModule({
-      declarations: [UsersProfileComponent],
-      imports: [RouterTestingModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule],
+      imports: [RouterTestingModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, UsersProfileComponent],
       providers: [CouchService, UserService, DialogsFormService, provideHttpClient(withInterceptorsFromDi())]
     });
     fixture = TestBed.createComponent(UsersProfileComponent);

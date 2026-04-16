@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { MatStepper } from '@angular/material/stepper';
-import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MatStepper, MatStep } from '@angular/material/stepper';
+import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogContent, MatDialogClose, MatDialogActions } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
@@ -12,6 +12,19 @@ import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import {
+  MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
+} from '@angular/material/expansion';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { NgIf, NgFor } from '@angular/common';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { TeamsComponent } from '../../teams/teams.component';
+import { FormErrorMessagesComponent } from '../forms/form-error-messages.component';
 
 interface TeamForm {
   message: FormControl<string>;
@@ -30,7 +43,12 @@ interface CommunityForm {
       box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
     }
   `],
-  standalone: false
+  imports: [
+    CdkScrollable, MatDialogContent, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+    MatExpansionPanelContent, MatCheckbox, FormsModule, ReactiveFormsModule, NgIf, MatFormField, MatLabel, MatInput, MatButton,
+    MatDialogClose, MatSelect, NgFor, MatOption, MatStepper, MatStep, TeamsComponent, MatError, FormErrorMessagesComponent,
+    MatDialogActions
+  ]
 })
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();

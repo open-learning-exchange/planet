@@ -33,9 +33,7 @@ export class SubmissionsRouterModule {}
     PlanetDialogsModule,
     MaterialModule,
     ExamsModule,
-    SubmissionsRouterModule
-  ],
-  declarations: [
+    SubmissionsRouterModule,
     SubmissionsComponent
   ]
 })

@@ -10,11 +10,25 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ResourcesViewerComponent } from './resources-viewer.component';
 
 @Component({
   templateUrl: './resources-view.component.html',
   styleUrls: ['./resources-view.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu,
+    MatButton, MatAnchor, NgClass, PlanetRatingComponent, TdMarkdownComponent, NgFor, LanguageLabelComponent,
+    PlanetLoadingSpinnerComponent, ResourcesViewerComponent
+  ]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {

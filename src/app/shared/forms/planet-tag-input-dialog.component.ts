@@ -1,8 +1,11 @@
-import { Component, Inject, Input, HostListener } from '@angular/core';
+import { Component, Inject, Input, HostListener, forwardRef } from '@angular/core';
 import {
-  AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn
+  AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors,
+  ValidatorFn, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose
+} from '@angular/material/dialog';
 import { TagsService } from './tags.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { ValidatorService } from '../../validators/validator.service';
@@ -14,6 +17,20 @@ import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { Observable } from 'rxjs';
+import { NgSwitch, NgSwitchCase, NgFor, NgIf, NgClass } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { AuthorizedRolesDirective } from '../authorized-roles.directive';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { FormErrorMessagesComponent } from './form-error-messages.component';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButton } from '@angular/material/button';
+import { MatActionList, MatListItem, MatListItemMeta, MatListItemIcon, MatDivider, MatNavList } from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
 
 interface TagFormControls {
   name: FormControl<string>;
@@ -23,9 +40,35 @@ interface TagFormControls {
 type TagFormGroup = FormGroup<TagFormControls>;
 
 @Component({
+  'selector': 'planet-tag-input-toggle-icon',
+  'template': `
+    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
+    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
+  `,
+  'styles': [`
+    mat-icon {
+      vertical-align: middle;
+    }
+  `],
+  imports: [NgIf, MatIcon]
+})
+export class PlanetTagInputToggleIconComponent {
+
+  @Input() isOpen = false;
+
+}
+
+
+@Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styleUrls': ['planet-tag-input-dialog.scss'],
-  standalone: false
+  imports: [
+    NgSwitch, NgSwitchCase, MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel,
+    MatInput, FormsModule, AuthorizedRolesDirective, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+    ReactiveFormsModule, MatError, FormErrorMessagesComponent, MatSelect, MatOption, NgFor, MatButton, NgIf, MatActionList,
+    MatListItem, forwardRef(() => PlanetTagInputToggleIconComponent), MatCheckbox, MatListItemMeta, MatTooltip, MatIcon,
+    MatListItemIcon, MatDivider, MatNavList, NgClass, MatDialogActions, MatDialogClose
+  ]
 })
 export class PlanetTagInputDialogComponent {
 
@@ -289,24 +332,5 @@ export class PlanetTagInputDialogComponent {
     };
     return checkValue(this.selected.entries());
   }
-
-}
-
-@Component({
-  'selector': 'planet-tag-input-toggle-icon',
-  'template': `
-    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
-    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
-  `,
-  'styles': [`
-    mat-icon {
-      vertical-align: middle;
-    }
-  `],
-  standalone: false
-})
-export class PlanetTagInputToggleIconComponent {
-
-  @Input() isOpen = false;
 
 }

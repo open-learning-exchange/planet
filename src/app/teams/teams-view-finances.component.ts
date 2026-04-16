@@ -1,6 +1,9 @@
 import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
+  MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -13,12 +16,26 @@ import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { NgIf, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { FormsModule } from '@angular/forms';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 
 @Component({
   selector: 'planet-teams-view-finances',
   styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
-  standalone: false
+  imports: [
+    NgIf, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
+    MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
+  ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 

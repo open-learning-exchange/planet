@@ -11,13 +11,12 @@ import { UsersAchievementsUpdateComponent } from './users-achievements-update.co
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, PlanetFormsModule, SharedComponentsModule, ClipboardModule
-  ],
-  exports: [
+    CommonModule, FormsModule, ReactiveFormsModule, RouterModule, MaterialModule, PlanetFormsModule, SharedComponentsModule,
+    ClipboardModule,
     UsersAchievementsUpdateComponent,
     UsersAchievementsComponent
   ],
-  declarations: [
+  exports: [
     UsersAchievementsUpdateComponent,
     UsersAchievementsComponent
   ]
