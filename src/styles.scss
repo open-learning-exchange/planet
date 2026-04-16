@@ -153,7 +153,7 @@ body {
       'tags .'
       'cn .';
     grid-template-columns: auto 50px;
-    grid-template-rows: $list-title-height 1fr min-content min-content;
+    grid-template-rows: auto 1fr min-content min-content;
 
     .header {
       grid-area: hd;
@@ -194,10 +194,6 @@ body {
 
   .mat-mdc-row.expanded-row td {
     padding: 0;
-  }
-
-  .list-content-menu-auto {
-    grid-template-rows: auto 1fr min-content;
   }
 
   // the colored stars are placed on top of the uncolored ones
@@ -418,6 +414,89 @@ body {
         position: sticky;
         top: 0;
         z-index: 10;
+      }
+    }
+  }
+
+  // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
+  .card-table {
+    .mat-mdc-row {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-mdc-cell {
+      border: none;
+    }
+
+    .mat-column-info {
+      max-width: 200px;
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-createdDate {
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-rating {
+      max-width: 145px;
+      padding: 0;
+    }
+
+    .created-label {
+      display: none;
+    }
+
+    .rating-header {
+      justify-content: center;
+    }
+
+    .preview-content {
+      height: 9rem;
+      overflow: hidden;
+    }
+
+    .preview-toggle {
+      text-align: center;
+    }
+
+    .expanded-row .content {
+      max-height: none;
+    }
+
+    @media (max-width: v.$screen-md) {
+      .mat-column-info {
+        max-width: 120px;
+      }
+    }
+
+    @media (max-width: v.$screen-sm) {
+      .mat-mdc-header-row {
+        display: none;
+      }
+
+      .mat-mdc-row {
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 24px;
+      }
+
+      .mat-column-info,
+      .mat-column-createdDate {
+        max-width: fit-content;
+      }
+
+      .created-label {
+        display: inline-block;
+      }
+
+      .table-selection-top {
+        display: none;
+      }
+
+      .rating-cell {
+        align-self: flex-end;
       }
     }
   }
