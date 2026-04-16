@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -12,11 +12,25 @@ import { StateService } from '../shared/state.service';
 import { urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { trackById } from '../shared/table-helpers';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgSwitch, NgSwitchCase, NgIf, NgFor, NgClass, DatePipe, KeyValuePipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: ['./feedback-view.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgSwitch, NgSwitchCase, NgIf,
+    MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput,
+    FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe
+  ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';

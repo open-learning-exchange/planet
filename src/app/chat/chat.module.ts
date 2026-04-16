@@ -21,14 +21,12 @@ import { DialogsChatShareComponent } from '../shared/dialogs/dialogs-chat-share.
     ReactiveFormsModule,
     SharedComponentsModule,
     ChatRouterModule,
-    TeamsModule
-  ],
-  declarations: [
+    TeamsModule,
     ChatComponent,
     ChatSidebarComponent,
     ChatWindowComponent,
     DialogsChatShareComponent
   ],
-  exports: [ ChatWindowComponent, ChatComponent ]
+  exports: [ChatWindowComponent, ChatComponent]
 })
 export class ChatModule {}
