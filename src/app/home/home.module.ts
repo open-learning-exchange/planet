@@ -27,18 +27,6 @@ import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-    DashboardComponent,
-    DashboardTileComponent,
-    DashboardTileTitleComponent,
-    NotificationsComponent,
-    PulsateIconDirective,
-    UpgradeComponent,
-    CommunityComponent,
-    CommunityLinkDialogComponent,
-    HealthListComponent,
-  ],
   imports: [
     HomeRouterModule,
     CommonModule,
@@ -56,7 +44,17 @@ import { SurveysModule } from '../surveys/surveys.module';
     CoursesViewDetailModule,
     CoursesProgressModule,
     ChatModule,
-    SurveysModule
+    SurveysModule,
+    HomeComponent,
+    DashboardComponent,
+    DashboardTileComponent,
+    DashboardTileTitleComponent,
+    NotificationsComponent,
+    PulsateIconDirective,
+    UpgradeComponent,
+    CommunityComponent,
+    CommunityLinkDialogComponent,
+    HealthListComponent
   ]
 })
 export class HomeModule {}

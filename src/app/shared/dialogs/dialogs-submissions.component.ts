@@ -1,5 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf } from '@angular/common';
+import { SubmissionsComponent } from '../../submissions/submissions.component';
+import { ExamsViewComponent } from '../../exams/exams-view.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   template: `
@@ -22,7 +27,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       text-align: center;
     }
   `],
-  standalone: false
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, SubmissionsComponent, ExamsViewComponent,
+    MatDialogActions, MatButton, MatDialogClose
+  ]
 })
 export class DialogsSubmissionsComponent {
 

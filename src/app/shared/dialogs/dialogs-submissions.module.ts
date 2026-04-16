@@ -11,12 +11,10 @@ import { DialogsSubmissionsComponent } from './dialogs-submissions.component';
     CommonModule,
     MaterialModule,
     SubmissionsModule,
-    ExamsModule
-  ],
-  exports: [
+    ExamsModule,
     DialogsSubmissionsComponent
   ],
-  declarations: [
+  exports: [
     DialogsSubmissionsComponent
   ]
 })

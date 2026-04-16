@@ -9,12 +9,10 @@ import { DialogsAddMeetupsModule } from './dialogs/dialogs-add-meetups.module';
   imports: [
     CommonModule,
     FullCalendarModule,
-    DialogsAddMeetupsModule
-  ],
-  exports: [
+    DialogsAddMeetupsModule,
     PlanetCalendarComponent
   ],
-  declarations: [
+  exports: [
     PlanetCalendarComponent
   ]
 })
