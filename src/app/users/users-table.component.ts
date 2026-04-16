@@ -118,7 +118,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   ngOnInit() {
@@ -166,7 +166,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   isAllSelected() {
