@@ -42,7 +42,7 @@
         <a [routerLink]="['reports/pending']" mat-raised-button i18n>View</a>
       </p>
     </div>
-    <div class="view-container send-view" *ngIf="planetType !== 'community'">
+    <div class="view-container send-view">
       <h3 i18n>Send On Accept</h3><br />
       <button i18n mat-raised-button (click)="sendOnAccept('resources')">Resources</button>
       <button i18n mat-raised-button (click)="sendOnAccept('courses')">Courses</button>

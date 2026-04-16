@@ -10,7 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, of } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
@@ -29,6 +29,7 @@ import { CoursesService } from './courses.service';
 import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
@@ -95,7 +96,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   message = '';
   deleteDialog: any;
   readonly dbName = 'courses';
@@ -162,6 +163,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private syncService: SyncService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
+    public dialogGuard: DialogGuardService,
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
@@ -467,17 +469,19 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((planet) => {
-      const data = { okClick: this.sendCourse().bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        ...planet };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, maxHeight: '500px', width: '600px', autoFocus: false
-      });
-    });
+    this.dialogGuard.open('send-course', () =>
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+        map(planet => this.dialog.open(DialogsListComponent, {
+          data: {
+            okClick: this.sendCourse().bind(this),
+            filterPredicate: filterSpecificFields([ 'name' ]),
+            allowMulti: true,
+            ...planet
+          },
+          maxHeight: '500px', width: '600px', autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   sendCourse() {

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -9,6 +9,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
 import { NgIf, NgFor } from '@angular/common';
@@ -43,7 +44,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   showMainPostShare = false;
   replyViewing: any = { _id: 'root' };
   deleteDialog: any;
-  shareDialog: MatDialogRef<CommunityListDialogComponent>;
+  shareDialog: MatDialogRef<CommunityListDialogComponent> | null = null;
   isLoadingMore = false;
   hasMoreNews = false;
   pageSize = 10;
@@ -66,6 +67,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
     private planetMessageService: PlanetMessageService,
+    private dialogGuard: DialogGuardService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -281,13 +283,13 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       });
     } else {
       const okClick = (planets) =>
-        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog.close());
-      this.shareDialog = this.dialog.open(CommunityListDialogComponent, {
+        this.newsService.shareNews(news, planets.map(planet => planet.doc)).subscribe(() => this.shareDialog?.close());
+      this.dialogGuard.open('share-news', () => of(this.dialog.open(CommunityListDialogComponent, {
         data: {
           okClick,
           excludeIds: (news.viewIn || []).map(shared => shared._id)
         }
-      });
+      }))).subscribe(ref => this.shareDialog = ref);
     }
   }
 

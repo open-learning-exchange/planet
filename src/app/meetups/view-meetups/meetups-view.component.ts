@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -56,7 +57,8 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private dialogsListService: DialogsListService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogGuard: DialogGuardService
   ) {
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
   }
@@ -116,23 +118,26 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openInviteMemberDialog() {
-    this.dialogsListService.getListAndColumns('_users').pipe(takeUntil(this.onDestroy$)).subscribe((res) => {
-      res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
-      const data = {
-        okClick: this.sendInvitations.bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        itemDescription: 'members',
-        nameProperty: 'name',
-        ...res
-      };
-      this.listDialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    });
+    this.dialogGuard.open('invite-member', () =>
+      this.dialogsListService.getListAndColumns('_users').pipe(
+        map(res => {
+          res.tableData = res.tableData.filter((tableValue: any) => this.members.indexOf(tableValue.name) === -1);
+          return this.dialog.open(DialogsListComponent, {
+            data: {
+              okClick: this.sendInvitations.bind(this),
+              filterPredicate: filterSpecificFields([ 'name' ]),
+              allowMulti: true,
+              itemDescription: 'members',
+              nameProperty: 'name',
+              ...res
+            },
+            maxHeight: '500px',
+            width: '600px',
+            autoFocus: false
+          });
+        })
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.listDialogRef = ref);
   }
 
   sendInvitations(selected: string[]) {
