@@ -53,7 +53,7 @@
 <ng-template #timeFilterSelect>
   <mat-form-field class="margin-lr-5 font-size-1">
     <mat-label i18n>Time Frame</mat-label>
-    <mat-select selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+    <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
       <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
