@@ -105,7 +105,7 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
+  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -122,9 +122,9 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
+        <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+            <ng-container *ngIf="isMobile">
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>
