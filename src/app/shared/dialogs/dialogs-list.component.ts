@@ -4,11 +4,23 @@
  */
 
 import { Component, Inject, ViewChild, AfterViewInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
+import { NgIf, NgFor, NgClass } from '@angular/common';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
@@ -23,7 +35,11 @@ import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
       height: calc(100% - 160px);
     }
   `],
-  standalone: false
+  imports: [
+    NgIf, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, MatFormField,
+    MatSelect, NgFor, MatOption, MatIcon, MatLabel, MatInput, MatTable, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatPaginator, MatTooltip
+  ]
 })
 export class DialogsListComponent implements AfterViewInit {
 

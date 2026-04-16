@@ -40,7 +40,7 @@ export class UsersService {
         const childLocal = checkIfLocal(childUsers);
         return !childLocal ? of([ [], { rows: [] } ]) : forkJoin([
           this.couchService.findAll(this.dbName),
-          this.couchService.get(`login_activities/_design/login_activities/_view/byUser?group=true`),
+          this.couchService.get('login_activities/_design/login_activities/_view/byUser?group=true'),
           of(dataToUse(this.data.childUsers, childUsers, childLocal)),
           of(parentUsers.newData)
         ]);

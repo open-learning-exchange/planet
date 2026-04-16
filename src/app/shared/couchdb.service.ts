@@ -179,7 +179,7 @@ export class CouchService {
     );
   }
 
-  private compareRev = (parent, local) => {
+  private compareRev(parent, local) {
     if (parent === local) {
       return 'match';
     }
