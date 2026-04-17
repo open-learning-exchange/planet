@@ -56,8 +56,8 @@
 </ng-template>
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
-  <div class="view-container view-table responsive-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }">
-    <mat-table #table [dataSource]="submissions" matSort [matSortDisableClear]="true">
+  <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }">
+    <mat-table #table class="responsive-table" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element" class="mat-cell-name"><div class="cell-content" style="cursor: pointer">{{element.parent.name}}</div></mat-cell>

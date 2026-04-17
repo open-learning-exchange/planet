@@ -23,7 +23,7 @@
         <input matInput (keyup)="applyFilter($event.target.value)">
       </mat-form-field>
     </div>
-    <mat-table #table [dataSource]="tableData">
+    <mat-table #table class="responsive-table" [dataSource]="tableData">
       <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
         <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>

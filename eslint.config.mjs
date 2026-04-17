@@ -87,6 +87,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "chatapi/**/*"]), {
         "@angular-eslint/use-pipe-transform-interface": "error",
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
+        "@typescript-eslint/consistent-type-assertions": "error",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "off",
