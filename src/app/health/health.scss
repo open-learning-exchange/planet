@@ -86,8 +86,12 @@ mat-header-cell div .header-date {
   }
 
   .profile-container > div:first-child {
-    justify-self: center;
-    width: min(260px, 100%);
+    text-align: center;
+  }
+
+  .profile-container .profile-image-large {
+    width: clamp(140px, 45vw, 220px);
+    max-height: none;
   }
 
   .profile-container .info-container {
