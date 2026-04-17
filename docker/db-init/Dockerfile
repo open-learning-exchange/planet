@@ -1,4 +1,6 @@
-FROM treehouses/node
+ARG BASE_IMAGE=treehouses/node:3.18
+
+FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 RUN apk update \
