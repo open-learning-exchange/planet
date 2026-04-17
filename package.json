@@ -34,7 +34,7 @@
     "@angular/material": "^19.2.19",
     "@angular/platform-browser": "19.2.20",
     "@angular/platform-browser-dynamic": "19.2.20",
-    "@angular/platform-server": "19.2.20",
+    "@angular/platform-server": "19.2.21",
     "@angular/router": "19.2.20",
     "@angular/service-worker": "19.2.20",
     "@covalent/markdown": "^10.5.3",
