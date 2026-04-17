@@ -36,9 +36,9 @@ export async function aiChatStream(
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      await Promise.all(
+        messages.map((message) => addToThread(thread.id, message.content))
+      );
 
       const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
 
@@ -104,9 +104,9 @@ export async function aiChatNonStream(
     try {
       const asst = await createAssistant(model);
       const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      await Promise.all(
+        messages.map((message) => addToThread(thread.id, message.content))
+      );
       const run = await createRun(thread.id, asst.id, context.data);
       await waitForRunCompletion(thread.id, run.id);
 
