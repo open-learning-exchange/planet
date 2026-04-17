@@ -36,10 +36,6 @@ planet-courses {
     word-break: break-word;
   }
 
-  .search-bar {
-    height: c.$toolbar-height;
-  }
-
   @media(max-width: v.$screen-md) {
     .mat-column-createdDate {
       max-width: 70px;
