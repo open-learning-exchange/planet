@@ -126,6 +126,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   initialSort = '';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
@@ -153,11 +154,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private fuzzySearchService: FuzzySearchService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 

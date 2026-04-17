@@ -142,6 +142,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   showFilters = false;
   showFiltersRow = false;
   expandedElement: any = null;
@@ -176,10 +177,12 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
       });
     this.dialogsLoadingService.start();
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   ngOnInit() {
