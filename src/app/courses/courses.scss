@@ -1,5 +1,6 @@
 @use '../variables' as v;
 @use './courses-shared' as c;
+
 .mat-mdc-table {
   .mat-mdc-row {
     border-bottom-width: 1px;
@@ -60,14 +61,6 @@
   justify-content: center;
 }
 
-.margin-tp {
-  margin-top: 0.75rem;
-}
-
-planet-courses .search-bar {
-  height: c.$toolbar-height;
-}
-
 .break-word {
   word-break: break-word;
 }
@@ -84,6 +77,10 @@ planet-courses {
 
   .expanded-row .content {
     max-height: none;
+  }
+
+  .search-bar {
+    height: c.$toolbar-height;
   }
 
   @media(max-width: v.$screen-md) {
