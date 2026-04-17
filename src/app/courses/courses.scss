@@ -1,15 +1,5 @@
 @use '../variables' as v;
 @use './courses-shared' as c;
-<<<<<<< HEAD
-
-.mat-mdc-table {
-  .mat-mdc-row {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: rgba(0, 0, 0, 0.12);
-  }
-=======
->>>>>>> master
 
 planet-courses {
   .mat-column-select {
@@ -25,45 +15,9 @@ planet-courses {
     display: flex;
     flex-direction: column;
 
-<<<<<<< HEAD
-.column {
-  display: flex;
-  flex-direction: column;
-}
-
-.column > * {
-  line-height: normal;
-}
-
-.course-progress {
-  margin-top: 0.5rem;
-}
-
-.ellipsis-menu {
-  text-align: center;
-}
-
-.created-label {
-  display: none;
-}
-
-.rating-header {
-  justify-content: center;
-}
-
-.break-word {
-  word-break: break-word;
-}
-
-planet-courses {
-  .preview-content {
-    height: 9rem;
-    overflow: hidden;
-=======
     > * {
       line-height: normal;
     }
->>>>>>> master
   }
 
   .course-progress {
@@ -72,10 +26,6 @@ planet-courses {
 
   .ellipsis-menu {
     text-align: center;
-  }
-
-  .margin-tp {
-    margin-top: 0.75rem;
   }
 
   .search-bar {
