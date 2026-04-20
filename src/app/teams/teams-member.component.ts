@@ -86,9 +86,6 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
 
   toggleTask(event: MatSelectionListChange) {
     const [ option ] = event.options;
-    if (!option) {
-      return;
-    }
 
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
