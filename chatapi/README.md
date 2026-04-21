@@ -19,7 +19,7 @@ Run `cd chatapi` and add a .env file in the `chatapi` directory with the followi
 
 By default(linux), the chatapi uses 5000 as the serve port. For *windows* and *macOS* users we recommend using `5400` as the serve port to avoid conflicts with other services.
 
-While developing or testing, if you are using a different port number or 5400(windows & macOs users), use `npm run dev` instead of `ng s` and ensure that the `CHAT_PORT` in the root directory `.env` file is the same as the `SERVE_PORT` in the `/chatapi/.env` file.
+While developing or testing, if you are using a different port number or 5400(windows & macOs users), update the app runtime config (`src/environments/environment.development.ts`) so the `chatAddress` port matches the `SERVE_PORT` in `/chatapi/.env`.
 
 To run the chatapi locally, you need to use node v18. You can use nvm(linux) or fnm(windows/macos) to manage your node versions. To start the chatapi:
 ```
