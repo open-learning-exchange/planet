@@ -11,7 +11,7 @@
     </mat-menu>
   </mat-toolbar>
   <ng-template #actionButtons>
-    <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && (user.name === urlName || user.isUserAdmin) && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
+    <button mat-stroked-button class="margin-lr-3" *ngIf="hasAchievement && !isDialog" [routerLink]="['achievements', { planet: userDetail.planetCode }]">
       <mat-icon class="margin-lr-3">visibility</mat-icon><span i18n>View Achievements</span>
     </button>
     <button mat-raised-button color="accent" class="margin-lr-3" *ngIf="editable && !isDialog" [routerLink]="['../../update/', urlName]">
