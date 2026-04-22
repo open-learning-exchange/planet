@@ -5,7 +5,6 @@ import { fetchFileFromCouchDB } from './db.utils';
 import {
   createAssistant,
   createThread,
-  addToThread,
   createRun,
   waitForRunCompletion,
   retrieveResponse,
@@ -34,11 +33,10 @@ export async function aiChatStream(
 
   if (assistant) {
     try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      const [ asst, thread ] = await Promise.all([
+        createAssistant(model),
+        createThread(messages)
+      ]);
 
       const completionText = await createAndHandleRunWithStreaming(thread.id, asst.id, context.data, callback);
 
@@ -88,25 +86,26 @@ export async function aiChatNonStream(
   const model = aiProvider.model ?? provider.defaultModel;
 
   if (context.resource && context.resource.attachments) {
-    for (const [ attachmentName, attachment ] of Object.entries(context.resource.attachments)) {
-      const typedAttachment = attachment as Attachment;
-      const contentType = typedAttachment.content_type;
-
-      if (contentType === 'application/pdf') {
+    const attachmentPromises = Object.entries(context.resource.attachments)
+      .filter(([ ignoreName, attachment ]) => (attachment as Attachment).content_type === 'application/pdf')
+      .map(async ([ attachmentName, attachment ]) => {
+        const contentType = (attachment as Attachment).content_type;
         const file = await fetchFileFromCouchDB(context.resource.id, attachmentName);
-        const text = await extractTextFromDocument(file as Buffer, contentType);
-        context.data += text;
-      }
+        return await extractTextFromDocument(file as Buffer, contentType);
+      });
+
+    if (attachmentPromises.length > 0) {
+      const extractedTexts = await Promise.all(attachmentPromises);
+      context.data += extractedTexts.join('\n');
     }
   }
 
   if (assistant) {
     try {
-      const asst = await createAssistant(model);
-      const thread = await createThread();
-      for (const message of messages) {
-        await addToThread(thread.id, message.content);
-      }
+      const [ asst, thread ] = await Promise.all([
+        createAssistant(model),
+        createThread(messages)
+      ]);
       const run = await createRun(thread.id, asst.id, context.data);
       await waitForRunCompletion(thread.id, run.id);
 
