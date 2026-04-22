@@ -108,7 +108,8 @@ export const filterFieldExists = (filterFields: string[], trueIfExists: boolean)
 };
 
 const matchAllItems = (filterItems: string[], propItems: string[]) => {
-  return filterItems.reduce((isMatch, filter) => isMatch && propItems.indexOf(filter) > -1, true);
+  const propSet = new Set(propItems);
+  return filterItems.every(filter => propSet.has(filter));
 };
 
 export const filterArrayField = (filterField: string, filterItems: string[]) => {
