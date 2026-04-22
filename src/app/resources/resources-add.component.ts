@@ -139,8 +139,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
           this.pageType = 'Edit';
           const resource = resources.find(r => r._id === this.route.snapshot.paramMap.get('id'));
           this.existingResource = resource;
-        }, (error) => {
-          console.log(error);
+        }, () => {
         });
     } else {
       this.pageType = 'Add';
@@ -348,7 +347,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
             observer.error(e);
           });
         } catch (e) {
-          console.log(fileName + ' has caused error.');
           observer.error(e);
         }
       });
@@ -386,7 +384,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
           observer.next({ resource: { filename: '', mediaType: 'HTML', _attachments: filesObj } });
           observer.complete();
         }, (error) => {
-          console.log(error);
           observer.error(error);
         });
       });
@@ -431,8 +428,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     zip.loadAsync(this.file).then((data) => {
       this.attachedZipFiles = this.getFileNames(data);
     },
-    err => {
-      console.log('error', err.message);
+    () => {
     });
   }
 
