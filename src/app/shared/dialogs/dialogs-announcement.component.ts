@@ -199,12 +199,46 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   fetchGroupSummary(news) {
-    this.members.forEach((member) => {
-      const hasJoinedCourse = this.hasEnrolledCourse(member);
-      const hasCompletedSurvey = this.hasCompletedSurvey(member.name);
-      const userPosts = this.hasSubmittedVoice(news, member.name);
+    const enrolledMemberIds = new Set(
+      this.enrolledMembers
+        .filter(em => em.courseIds?.includes(this.courseId))
+        .map(em => em._id)
+    );
 
-      if (!this.groupSummary.some(m => m.name === member.name)) {
+    const completedSurveyUserNames = new Set(
+      this.submissions
+        .filter(s => s.status === 'complete')
+        .map(s => s.name)
+    );
+
+    const uniqueDaysByUser = new Map<string, Set<string>>();
+    news.forEach(post => {
+      if (
+        post.doc.time > this.startDate &&
+        post.doc.time < this.endDate &&
+        !post.doc.replyTo
+      ) {
+        const userName = post.doc.user.name;
+        let days = uniqueDaysByUser.get(userName);
+        if (!days) {
+          days = new Set();
+          uniqueDaysByUser.set(userName, days);
+        }
+        days.add(new Date(post.doc.time).toDateString());
+      }
+    });
+
+    const addedMembers = new Set<string>(this.groupSummary.map(m => m.name));
+
+    this.members.forEach((member) => {
+      const hasJoinedCourse = enrolledMemberIds.has(member._id);
+      const hasCompletedSurvey = completedSurveyUserNames.has(member.name);
+
+      const userDays = uniqueDaysByUser.get(member.name);
+      const userPosts = userDays ? Math.min(userDays.size, 5) : 0;
+
+      if (!addedMembers.has(member.name)) {
+        addedMembers.add(member.name);
         this.groupSummary.push({
           ...member,
           userPosts,
