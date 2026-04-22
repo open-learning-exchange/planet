@@ -312,7 +312,7 @@ export class SubmissionsService {
           ...submission,
           teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
         }));
-        return <[any[], number, string[]]>[submissionsWithTeamInfo, time, questionTexts];
+        return [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]];
       }),
       tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
@@ -502,7 +502,7 @@ export class SubmissionsService {
             planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
             teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
           }));
-          return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
+          return [submissionsWithPlanetName, time, questionTexts] as [any[], number, string[]];
         })
       ).subscribe(async tuple => {
         if (!tuple) {

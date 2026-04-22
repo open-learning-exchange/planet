@@ -43,16 +43,6 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
       })),
       transition('closed <=> open', animate('500ms ease'))
     ]),
-    trigger('slideInOut', [
-      state('open', style({
-        transform: 'translate3d(0,0,0)'
-      })),
-      state('closed', style({
-        transform: 'translate3d(-100%, 0, 0)'
-      })),
-      transition('open => closed', animate('400ms ease-in-out')),
-      transition('closed => open', animate('400ms ease-in-out'))
-    ]),
   ],
   imports: [
     MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, NgSwitch, NgSwitchCase, MatAnchor,
