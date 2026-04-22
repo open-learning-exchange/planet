@@ -48,7 +48,6 @@ import {
 } from '@angular/material/table';
 import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
 
-type ChartModule = typeof import('chart.js');
 interface DateFilterForm {
   startDate: FormControl<Date>;
   endDate: FormControl<Date>;
