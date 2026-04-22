@@ -63,8 +63,6 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor() {}
-
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?
       item.unique.length :
