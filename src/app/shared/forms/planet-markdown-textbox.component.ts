@@ -249,8 +249,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
         this.editor.options.insertTexts.image = [ markdown, '' ];
         this.editor.easyMDE.drawImage();
         this.value = {
-          ...<ValueWithImages>this._value,
-          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, markdown } ]
+          ...this._value as ValueWithImages,
+          images: [ ...(this._value as ValueWithImages).images, { resourceId: image._id, filename: image.filename, markdown } ]
         };
       }
     });
