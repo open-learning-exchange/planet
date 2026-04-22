@@ -50,10 +50,10 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
-  submissions = [];
+  completedSurveyUserNames = new Set<string>();
   groupSummary = [];
   members: any;
-  enrolledMembers: any;
+  enrolledMemberIds = new Set<string>();
   courseId = challengeCourseId;
   startDate = new Date(2024, 10, 31);
   endDate = new Date(2024, 12, 1);
@@ -137,7 +137,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasCompletedSurvey(userName: string): boolean {
-    return this.submissions.some(submission => submission.name === userName && submission.status === 'complete');
+    return this.completedSurveyUserNames.has(userName);
   }
 
   hasSubmittedVoice(news: any[], userName: string): number {
@@ -157,11 +157,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasEnrolledCourse(member: any): boolean {
-    return this.enrolledMembers.some(
-      (enrolledMember) =>
-        enrolledMember._id === member._id &&
-        enrolledMember.courseIds?.includes(this.courseId)
-    );
+    return this.enrolledMemberIds.has(member._id);
   }
 
   fetchMembers(): Observable<any[]> {
@@ -188,13 +184,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
     }).subscribe((members) => {
-      this.enrolledMembers = members.map((member: any) => {
-        const [ , memberName ] = member?._id.split(':');
-        return {
-          ...member,
-          name: memberName,
-        };
-      });
+      this.enrolledMemberIds = new Set(members.map((member: any) => member._id));
     });
   }
 
@@ -251,12 +241,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       }));
       this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
-          const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          this.submissions = filteredSubmissions.map(submission => ({
-            name: submission.user.name,
-            status: submission.status,
-            time: submission.lastUpdateTime
-          }));
+          this.completedSurveyUserNames = new Set(
+            submissions
+              .filter(s => s.parentId.includes(this.courseId) && s.status === 'complete')
+              .map(s => s.user.name)
+          );
           this.fetchGroupSummary(news);
           this.fetchIndividualSummary(news);
           this.isLoading = false;
