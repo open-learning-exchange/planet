@@ -46,7 +46,9 @@ export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanv
   canvas.style.width = `${width}px`;
   canvas.style.height = `${height}px`;
   const ctx = canvas.getContext('2d');
-  if (ctx) { ctx.scale(dpr, dpr); }
+  if (ctx) {
+    ctx.scale(dpr, dpr);
+  }
   return { canvas, ctx };
 }
 
