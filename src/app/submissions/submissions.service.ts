@@ -605,13 +605,15 @@ export class SubmissionsService {
     }
 
     const maxCount = Math.max(...data.data);
+    const axisTitleFont = { size: 12, weight: 'bold' as const };
+    const xAxisText = isRatingScale ? $localize`Rating` : $localize`Choice`;
+    const yAxisText = isRatingScale ? $localize`Number of responses` : $localize`% of responders`;
     const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
       type: isBar ? 'bar' : 'doughnut',
       data: {
         labels: data.labels,
         datasets: [ {
           data: data.data,
-          label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
           backgroundColor: CHART_COLORS
         } ]
       },
@@ -621,19 +623,24 @@ export class SubmissionsService {
         indexAxis: 'x',
         plugins: {
           legend: {
-            display: true,
+            display: !isBar,
             labels: {
-              boxWidth: isBar ? 0 : 50,
-              boxHeight: isBar ? 0 : 20
+              boxWidth: 50,
+              boxHeight: 20
             }
           }
         },
         scales: isBar ? {
+          x: {
+            type: 'category',
+            title: { display: true, text: xAxisText, font: axisTitleFont }
+          },
           y: {
             type: 'linear',
             beginAtZero: true,
             max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
-            ticks: { precision: 0, stepSize: 2 }
+            ticks: { precision: 0, stepSize: 2 },
+            title: { display: true, text: yAxisText, font: axisTitleFont }
           }
         } : {},
         animation: false
