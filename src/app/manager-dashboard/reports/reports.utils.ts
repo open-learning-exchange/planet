@@ -124,10 +124,6 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
   return weeks;
 };
 
-export const scaleLabel = (labelString: string) => ({
-  display: true, labelString, fontSize: 12, fontStyle: 'bold'
-});
-
 export const sortingOptionsMap = {
   'logins': [
     { name: $localize`Login Time Ascending`, value: 'loginTimeAsc' },
