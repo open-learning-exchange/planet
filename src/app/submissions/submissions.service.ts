@@ -620,6 +620,7 @@ export class SubmissionsService {
       options: {
         responsive: false,
         maintainAspectRatio: false,
+        devicePixelRatio: typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1,
         indexAxis: 'x',
         plugins: {
           legend: {

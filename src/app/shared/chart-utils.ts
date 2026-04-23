@@ -39,10 +39,15 @@ export async function loadChart(keys: RegisterableKey[] = []): Promise<ChartJsMo
 }
 
 export function createChartCanvas(width = 300, height = 400): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D | null } {
+  const dpr = typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1;
   const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  return { canvas, ctx: canvas.getContext('2d') };
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  const ctx = canvas.getContext('2d');
+  if (ctx) { ctx.scale(dpr, dpr); }
+  return { canvas, ctx };
 }
 
 export function renderNoDataPlaceholder(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, message = 'No data available'): string {
