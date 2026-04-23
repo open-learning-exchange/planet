@@ -66,7 +66,6 @@ If you are using an 32bit arm device and encounter a fatal error while running t
     "data": {
       "user": "admin",
       "content": "Hello",
-      "assistant": false,
       "context": "",
       "aiProvider": {
         "name": "openai",
@@ -81,7 +80,7 @@ If you are using an 32bit arm device and encounter a fatal error while running t
   Additional info on data:
   - **user**: string(required) -> Provide the planet/myPlanet username
   - **content**: string(required) -> The latest prompt for the AI to answer
-  - **assistant**: boolean(required) -> Set to true if you want to use the assistants endpoint
+  - **assistant**: deprecated/unsupported -> requests that include this flag are rejected with `400 Bad Request`
   - **context**: string(optional) -> The text context you would like to pre-load the AI Assistant   with
   - **aiProvider**: Object(required)
     - **name**: string(required) -> Name of the API provider to choose from i.e openai, perplexity, deepseek or gemini.
