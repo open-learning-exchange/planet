@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const basePath = __dirname;
 
-const readDirectories = (err, directories) => {
+const readDirectories = (_err, directories) => {
   directories.forEach((dir) => {
     const dirFullPath = path.join(basePath, dir);
-    fs.stat(dirFullPath, (err, stat) => {
+    fs.stat(dirFullPath, (_err, stat) => {
       if (stat.isDirectory()) {
         readDir(dir, readFiles(dir));
       }
@@ -13,10 +13,10 @@ const readDirectories = (err, directories) => {
   });
 };
 
-const readFiles = (dirPath) => (err, files) => {
+const readFiles = (dirPath) => (_err, files) => {
   files.forEach((file) => {
     const filePath = path.join(basePath, dirPath, file);
-    fs.stat(filePath, (err, stat) => {
+    fs.stat(filePath, (_err) => {
       if (path.extname(file) === '.js' && file !== 'create-design-docs.js') {
         const modulePath = './' + path.join(dirPath, file);
         writeDesignDoc(require(modulePath), filePath);
