@@ -38,6 +38,8 @@ pdfMake.addVirtualFileSystem(pdfFonts);
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
+  readonly dbName = 'achievements';
+  readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
   achievements: any;
   achievementNotFound = false;
@@ -130,6 +132,14 @@ export class UsersAchievementsComponent implements OnInit {
       return;
     }
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
+  }
+
+
+  get resumeUrl() {
+    if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id) {
+      return '';
+    }
+    return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
   get profileImg() {

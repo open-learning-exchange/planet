@@ -5,14 +5,17 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1 responsive-toolbar center-text">
+  <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
     <div>
-      <span *ngIf="user?.firstName; else elseBlock" class="center-text">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
+      <span *ngIf="user?.firstName; else elseBlock">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
       <ng-template #elseBlock>{{ user.name | truncateText:40 }}</ng-template>
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
-      <a mat-raised-button color="primary" class="margin-r-1" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
+      <a mat-stroked-button class="margin-r-1" *ngIf="resumeUrl" [href]="resumeUrl" target="_blank" rel="noopener noreferrer" i18n>
+        View CV/Resume
+      </a>
+      <a mat-stroked-button class="margin-r-1" *ngIf="ownAchievements && !achievementNotFound" (click)="generatePDF()">
         <span i18n>Print Achievements</span>
       </a>
       <a mat-raised-button color="accent" routerLink="update" *ngIf="ownAchievements">
