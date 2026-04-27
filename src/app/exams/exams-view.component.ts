@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import {
   AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -86,6 +86,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
   currentOtherOption: ExamOtherAnswerOption = { id: 'other', text: '', isOther: true };
+  slideDirection: 'right' | 'left' = 'right';
+  @ViewChild('singleOtherInput') singleOtherInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('multipleOtherInput') multipleOtherInput?: ElementRef<HTMLInputElement>;
+  progressPercent = 0;
   private readonly answerValidator: ValidatorFn = (ac: AbstractControl<ExamAnswerValue>): ValidationErrors | null => {
     const value = ac.value;
     if (typeof value === 'string') {
@@ -243,6 +247,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   moveQuestion(direction: number) {
+    if (direction !== 0) {
+      this.slideDirection = direction > 0 ? 'right' : 'left';
+    }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();
@@ -291,6 +298,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
+    this.progressPercent = this.maxQuestions ? Math.round(((this.questionNum - 1) / this.maxQuestions) * 100) : 0;
     this.answer.markAsUntouched();
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
   }
@@ -463,12 +471,47 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     return this.isOtherOption(this.answer.value);
   }
 
+  isSelectOptionSelected(option: ExamAnswerOption): boolean {
+    const value = this.answer.value;
+    return this.isAnswerOption(value) && !this.isOtherOption(value) && value.id === option.id;
+  }
+
+  selectOption(option: ExamAnswerOption): void {
+    this.answer.setValue(option);
+    this.answer.updateValueAndValidity();
+  }
+
+  selectOtherRadio(): void {
+    if (this.isOtherSelected()) {
+      this.focusOtherInput('single');
+      return;
+    }
+    this.answer.setValue(this.currentOtherOption);
+    this.answer.updateValueAndValidity();
+    this.focusOtherInput('single');
+  }
+
+  toggleMultipleOption(option: ExamAnswerOption): void {
+    this.setAnswer({ checked: !this.checkboxState[option.id] }, option);
+  }
+
+  toggleOtherCheckbox(): void {
+    this.toggleOtherMultiple({ checked: !this.checkboxState['other'] });
+  }
+
+  ensureOtherCheckboxSelected(): void {
+    if (!this.checkboxState['other']) {
+      this.toggleOtherMultiple({ checked: true });
+    }
+  }
+
   toggleOtherMultiple({ checked }: Pick<MatCheckboxChange, 'checked'>): void {
     this.checkboxState['other'] = checked;
     if (checked) {
       if (this.currentOtherOption) {
         this.setAnswer({ checked: true }, this.currentOtherOption);
       }
+      this.focusOtherInput('multiple');
     } else {
       const remaining = Array.isArray(this.answer.value) ? this.answer.value.filter(o => o.id !== 'other') : [];
       this.answer.setValue(remaining.length ? remaining : null);
@@ -486,6 +529,13 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   private isOtherOption(value: ExamAnswerValue | null): value is ExamOtherAnswerOption {
     return this.isAnswerOption(value) && value.isOther === true;
+  }
+
+  private focusOtherInput(type: 'single' | 'multiple'): void {
+    setTimeout(() => {
+      const inputRef = type === 'single' ? this.singleOtherInput : this.multipleOtherInput;
+      inputRef?.nativeElement.focus();
+    });
   }
 
 }
