@@ -5,6 +5,17 @@
   mat-toolbar.primary-color > span {
     display: inline-flex;
     align-items: center;
+    min-width: 0;
+    overflow: hidden;
+
+    .ellipsis-title {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+  }
+
+  mat-toolbar.primary-color button[mat-icon-button] {
+    flex: 0 0 auto;
   }
 
   .view-container {
@@ -36,6 +47,7 @@
   .option-card {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 14px;
     padding: 14px 16px;
     border: 2px solid #e8e8e8;
@@ -45,6 +57,7 @@
     transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     user-select: none;
     margin: 0;
+    min-width: 0;
 
     &:hover {
       border-color: v.$primary-light;
@@ -71,11 +84,14 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex: 1;
+    flex: 1 1 100%;
+    min-width: 0;
   }
 
   .other-option-input {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
     border: none;
     border-bottom: 2px solid #e0e0e0;
     outline: none;
@@ -111,6 +127,7 @@
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+    max-width: 532px;
   }
 
   .rating-scale-button {
