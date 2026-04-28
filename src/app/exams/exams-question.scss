@@ -5,6 +5,7 @@
   form {
     display: grid;
     grid-template-rows: 56px auto 56px;
+    grid-row-gap: 1rem;
   }
 
   .question-choices {
@@ -20,8 +21,21 @@
 
   .type-title-container {
     display: grid;
-    grid-template-columns: 1fr v.$form-width-1;
-    grid-column-gap: 0.5rem;
+    grid-template-columns: 7fr 3fr;
+    grid-column-gap: 1rem;
+    align-items: center;
+  }
+
+  .scale-max-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .scale-max-label {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
   }
 
 }

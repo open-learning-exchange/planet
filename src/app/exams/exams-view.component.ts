@@ -90,6 +90,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   @ViewChild('singleOtherInput') singleOtherInput?: ElementRef<HTMLInputElement>;
   @ViewChild('multipleOtherInput') multipleOtherInput?: ElementRef<HTMLInputElement>;
   progressPercent = 0;
+  ratingScaleNumbers: number[] = [];
   private readonly answerValidator: ValidatorFn = (ac: AbstractControl<ExamAnswerValue>): ValidationErrors | null => {
     const value = ac.value;
     if (typeof value === 'string') {
@@ -299,6 +300,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.progressPercent = this.maxQuestions ? Math.round(((this.questionNum - 1) / this.maxQuestions) * 100) : 0;
+    const scaleMax = this.question?.scaleMax ?? 9;
+    this.ratingScaleNumbers = Array.from({ length: scaleMax }, (_, i) => i + 1);
     this.answer.markAsUntouched();
     this.currentOtherOption = { id: 'other', text: '', isOther: true };
   }

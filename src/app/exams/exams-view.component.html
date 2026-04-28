@@ -96,17 +96,20 @@
                   </div>
                 </ng-container>
               </div>
-              <div *ngSwitchCase="'ratingScale'" class="rating-scale-keypad">
-                <div class="rating-scale-row">
-                  <button type="button" class="rating-scale-button" *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [class.selected]="answer.value === num.toString()" [attr.data-rating]="num" (click)="setRatingScaleAnswer(num)">
+              <ng-container *ngSwitchCase="'ratingScale'">
+                <div class="rating-scale-keypad rating-scale-keypad--grid" *ngIf="(question?.scaleMax ?? 9) === 9; else ratingScaleRow">
+                  <button type="button" mat-raised-button class="rating-scale-button rating-scale-button--phone" *ngFor="let num of ratingScaleNumbers" [class.selected]="answer.value === num.toString()" [attr.data-rating]="num" (click)="setRatingScaleAnswer(num)">
                     {{num}}
                   </button>
                 </div>
-                <div class="rating-scale-labels">
-                  <span class="rating-scale-label" i18n>Very bad</span>
-                  <span class="rating-scale-label" i18n>Very good</span>
-                </div>
-              </div>
+                <ng-template #ratingScaleRow>
+                  <div class="rating-scale-keypad rating-scale-keypad--row">
+                    <button type="button" class="rating-scale-button rating-scale-button--line" *ngFor="let num of ratingScaleNumbers" [class.selected]="answer.value === num.toString()" (click)="setRatingScaleAnswer(num)">
+                      {{num}}
+                    </button>
+                  </div>
+                </ng-template>
+              </ng-container>
             </ng-container>
           </ng-container>
           <ng-container *ngSwitchCase="'grade'">
