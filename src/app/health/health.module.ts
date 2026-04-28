@@ -28,9 +28,7 @@ const routes: Routes = [
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    SharedComponentsModule
-  ],
-  declarations: [
+    SharedComponentsModule,
     HealthComponent,
     HealthUpdateComponent,
     HealthEventComponent,

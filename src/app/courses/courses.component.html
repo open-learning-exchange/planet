@@ -105,7 +105,7 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
+  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -122,9 +122,9 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
+        <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+            <ng-container *ngIf="isMobile">
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>
@@ -160,11 +160,10 @@
             </ng-container>
           </mat-chip-set>
           <div class="content">
-            <planet-markdown *ngIf="!isExpanded(element) && !element.renderContent" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="true" [limit]="previewLimit"></planet-markdown>
-            <div [@detailExpand]="isExpanded(element) ? 'expanded' : 'collapsed'" (@detailExpand.done)="onExpansionDone($event, element)">
-              <planet-markdown *ngIf="isExpanded(element) || element.renderContent" [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="false" [limit]="previewLimit"></planet-markdown>
+            <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
+              <planet-markdown [content]="element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
             </div>
-            <div *ngIf="showPreviewExpand(element.doc)" style="text-align: center;" (click)="toggleRow(element); $event.stopPropagation()">
+            <div *ngIf="showPreviewExpand(element)" class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">
               <button mat-icon-button>
                 <mat-icon>{{isExpanded(element) ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
               </button>

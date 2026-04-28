@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -58,11 +58,7 @@
     text-overflow: ellipsis;
   }
 
-  .finish-button {
-    margin-left: 10px;
-  }
-
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .grid-view {
       display: grid;
       grid-template-columns: 1fr;

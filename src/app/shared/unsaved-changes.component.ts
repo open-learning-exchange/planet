@@ -6,7 +6,8 @@ import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 export const warningMsg = $localize`You have unsaved changes. Are you sure you want to leave?`;
 
 @Component({
-  template: ''
+  template: '',
+  standalone: false
 })
 export class UnsavedChangesPromptComponent {
   static open(dialog: MatDialog) {
