@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
@@ -8,17 +8,27 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, filterByDate, exportMyPlanetCsv } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
 import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
+import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MyPlanetTableComponent } from './myplanet-table.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './reports-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
-  standalone: false
+  imports: [
+    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton,
+    NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
@@ -61,7 +71,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       children: this.filterMyPlanetData(
         this.myPlanetGroups(planet, myPlanets).map((child: any) => ({ count: child.count, totalUsedTime: child.sum, ...child.max }))
       )
-    }))
+    }));
   };
 
   filterMyPlanetData(data: any[]) {

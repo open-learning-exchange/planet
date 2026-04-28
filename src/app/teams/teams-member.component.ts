@@ -4,6 +4,13 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatIcon } from '@angular/material/icon';
+import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-teams-member',
@@ -27,7 +34,11 @@ import { UserProfileDialogComponent } from '../users/users-profile/users-profile
       margin-right: 5px;
     }
   `],
-  standalone: false
+  imports: [
+    MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, NgIf, MatIconButton, MatMenuTrigger,
+    MatIcon, MatMenu, MatMenuItem, MatCardContent, MatSelectionList, NgFor, MatListOption, MatListItemTitle,
+    DatePipe, TruncateTextPipe
+  ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 
@@ -73,7 +84,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     });
   }
 
-  toggleTask({ option }) {
+  toggleTask(event: MatSelectionListChange) {
+    const [ option ] = event.options;
+
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });

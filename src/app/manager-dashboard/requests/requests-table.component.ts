@@ -1,10 +1,13 @@
-import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
@@ -19,6 +22,11 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 interface EditChildNameFormControls {
   name: FormControl<string>;
@@ -27,7 +35,11 @@ interface EditChildNameFormControls {
 @Component({
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
-  standalone: false
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
+    MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 
@@ -50,6 +62,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -64,8 +78,17 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private validatorService: ValidatorService,
-    private reportsService: ReportsService
-  ) {}
+    private reportsService: ReportsService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
 
   ngOnChanges() {
     this.communities.data = this.data;

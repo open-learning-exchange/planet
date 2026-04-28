@@ -9,12 +9,10 @@ import { DialogsAddResourcesComponent } from './dialogs-add-resources.component'
   imports: [
     CommonModule,
     MaterialModule,
-    ResourcesModule
-  ],
-  exports: [
+    ResourcesModule,
     DialogsAddResourcesComponent
   ],
-  declarations: [
+  exports: [
     DialogsAddResourcesComponent
   ]
 })

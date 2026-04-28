@@ -6,7 +6,7 @@
           <planet-loading-spinner *ngIf="newsLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
           <ng-template #loaded>
             <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
-              <mat-toolbar class="bg-light-grey font-size-1 toolbar-row responsive-toolbar" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
+              <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
                   <mat-form-field class="search-form-field mdc-toolbar-input">
                     <mat-label i18n>Search voice</mat-label>
                     <mat-icon matIconPrefix>search</mat-icon>
@@ -65,7 +65,7 @@
             <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
           </ng-container>
           <ng-container *planetAuthorizedRoles="''">
-            <div *ngIf="!planetCode" class="action-buttons sticky-button">
+            <div *ngIf="!planetCode" class="action-buttons button-row">
               <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
               </button>

@@ -1,9 +1,12 @@
 import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
@@ -12,6 +15,16 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NgIf, NgTemplateOutlet, NgFor, NgClass, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatInput } from '@angular/material/input';
+import { MatChipSet, MatChip } from '@angular/material/chips';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -27,7 +40,12 @@ const columnsByFilterAndMode = {
   selector: 'planet-submissions',
   templateUrl: './submissions.component.html',
   styleUrls: ['./submission.scss'],
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatSelect,
+    MatOption, NgFor, MatButtonToggleGroup, MatButtonToggle, MatInput, NgClass, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, MatChipSet, MatChip, NgSwitchDefault, RouterLink,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 
@@ -92,9 +110,23 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       let normalized = submissions.filter(data => data.user && data.type !== 'photo' && data.parent);
 
       if (!this.isManagerSurveysRoute) {
+        const firstIndexMap = new Map<string, number>();
         normalized = normalized.reduce((sList, s1) => {
-          const sIndex = sList.findIndex(s => (s.parentId === s1.parentId && s.user._id === s1.user._id && s1.type === 'survey'));
-          if (!s1.user._id || sIndex === -1) {
+          const userId = s1.user?._id;
+          const isSurvey = s1.type === 'survey';
+          const key = isSurvey && userId ? `${s1.parentId}|${userId}` : null;
+          let sIndex = -1;
+          if (key) {
+            const existingIndex = firstIndexMap.get(key);
+            if (existingIndex !== undefined) {
+              sIndex = existingIndex;
+            }
+          }
+
+          if (!userId || !isSurvey || sIndex === -1) {
+            if (key && !firstIndexMap.has(key)) {
+              firstIndexMap.set(key, sList.length);
+            }
             sList.push(s1);
           } else if ((s1.parent.updatedDate || 0) > (sList[sIndex].parent.updatedDate || 0)) {
             sList[sIndex] = s1;

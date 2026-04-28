@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, Inject, Optional } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from '../meetups.service';
 import { Subject } from 'rxjs';
 import { UserService } from '../../shared/user.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
@@ -13,12 +13,22 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { NgIf, NgClass, NgFor, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'planet-meetups-view',
   templateUrl: './meetups-view.component.html',
   styleUrls: ['./meetups-view.scss'],
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, MatButton, MatTooltip, NgClass, NgFor, TdMarkdownComponent,
+    CdkScrollable, MatDialogContent, NgTemplateOutlet, MatDialogActions, MatDialogClose, TitleCasePipe, DatePipe
+  ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {

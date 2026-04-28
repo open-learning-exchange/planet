@@ -9,12 +9,10 @@ import { DialogsResourcesViewerComponent } from './dialogs-resources-viewer.comp
   imports: [
     CommonModule,
     MaterialModule,
-    ResourcesModule
-  ],
-  exports: [
+    ResourcesModule,
     DialogsResourcesViewerComponent
   ],
-  declarations: [
+  exports: [
     DialogsResourcesViewerComponent
   ]
 })

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
@@ -13,11 +13,24 @@ import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { attachNamesToPlanets, arrangePlanetsIntoHubs } from '../reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { RequestsTableComponent } from './requests-table.component';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 
 @Component({
   templateUrl: './requests.component.html',
   styleUrls: ['./requests.component.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, NgTemplateOutlet, MatButtonToggleGroup, MatButtonToggle,
+    MatFormField, MatLabel, MatInput, MatToolbarRow, MatButton, NgClass, RequestsTableComponent, NgFor, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, MatAnchor
+  ]
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 

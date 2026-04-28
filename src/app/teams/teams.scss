@@ -66,15 +66,6 @@
       align-items: flex-start;
       gap: 0.5rem;
     }
-
-    .mobile-scroll-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    mat-table {
-      min-width: 800px;
-    }
   }
 
   @media (max-width: v.$screen-xs) {

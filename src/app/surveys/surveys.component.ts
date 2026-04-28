@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormControl, NonNullableFormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { FormGroup, FormControl, NonNullableFormBuilder, FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
@@ -22,6 +25,19 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { ExamsService } from '../exams/exams.service';
+import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NgIf, DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
@@ -34,7 +50,12 @@ interface SurveyFilterForm {
   selector: 'planet-surveys',
   templateUrl: './surveys.component.html',
   styleUrls: ['./surveys.component.scss'],
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton, MatButtonToggleGroup,
+    FormsModule, MatButtonToggle, AuthorizedRolesDirective, MatButton, PlanetLoadingSpinnerComponent, MatTable, MatSort,
+    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatTooltip, MatSortHeader, RouterLink,
+    MatMenuTrigger, MatMenu, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
@@ -60,6 +81,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
   availableAIProviders: any[] = [];
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   constructor(
     private couchService: CouchService,
@@ -74,8 +97,17 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsFormService: DialogsFormService,
     private chatService: ChatService,
     private examsService: ExamsService,
-    private fb: NonNullableFormBuilder
-  ) {}
+    private fb: NonNullableFormBuilder,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
 
   ngOnInit() {
     this.useDialogLoading = !this.teamId && !this.routeTeamId;

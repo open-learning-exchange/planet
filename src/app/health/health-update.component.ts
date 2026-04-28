@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
 import { CustomValidators } from '../validators/custom-validators';
@@ -11,6 +11,17 @@ import { showFormErrors } from '../shared/table-helpers';
 import { languages } from '../shared/languages';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { MatSelect } from '@angular/material/select';
+import { NgFor } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 
 interface ProfileFormValue {
   name: string;
@@ -46,7 +57,11 @@ type HealthFormGroup = {
 @Component({
   templateUrl: './health-update.component.html',
   styleUrls: ['./health-update.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
+    MatInput, MatError, FormErrorMessagesComponent, MatSelect, NgFor, MatOption, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatButton
+  ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 

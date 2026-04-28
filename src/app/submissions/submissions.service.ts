@@ -312,7 +312,7 @@ export class SubmissionsService {
           ...submission,
           teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
         }));
-        return <[any[], number, string[]]>[submissionsWithTeamInfo, time, questionTexts];
+        return [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]];
       }),
       tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
@@ -502,7 +502,7 @@ export class SubmissionsService {
             planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
             teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
           }));
-          return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
+          return [submissionsWithPlanetName, time, questionTexts] as [any[], number, string[]];
         })
       ).subscribe(async tuple => {
         if (!tuple) {
@@ -561,15 +561,15 @@ export class SubmissionsService {
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
         `<h3>${$localize`Submission`} ${index + 1}</h3>`,
-        `<ul>`,
+        '<ul>',
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>${$localize`Source:`}</strong> ${planetSource}</li>`,
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
-        `</ul>`,
-        `<hr>`
+        '</ul>',
+        '<hr>'
       ].filter(Boolean).join('\n');
     } else {
       return `### ${exam.name} ${$localize`Questions`} \n`;

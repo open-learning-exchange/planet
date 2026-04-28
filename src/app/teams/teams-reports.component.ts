@@ -14,12 +14,36 @@ import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardFooter } from '@angular/material/card';
+import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { MatIcon } from '@angular/material/icon';
+
+interface NewReportForm {
+  _id?: string,
+  _rev?: string,
+  beginningBalance: string,
+  description: string,
+  endDate: Date,
+  otherExpenses: number,
+  otherIncome: number,
+  sales: number,
+  startDate: Date,
+  wages: string
+}
 
 @Component({
   selector: 'planet-teams-reports',
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
-  standalone: false
+  imports: [
+    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
+    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
+    MatIcon, DatePipe
+  ]
 })
 export class TeamsReportsComponent implements DoCheck {
 
@@ -142,18 +166,23 @@ export class TeamsReportsComponent implements DoCheck {
         () => {};
   }
 
-  updateReport(oldReport, newReport: any = {}) {
+  updateReport(oldReport, newReport: NewReportForm | {} = {}) {
     const dateFields = [ 'startDate', 'endDate' ];
     const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
-    const transformFields = (key: string, value: Date | string) => dateFields.indexOf(key) > -1 ?
-      (<Date>value).getTime() :
+    const transformFields = (key: string, value: string | Date | number) => dateFields.indexOf(key) > -1 ?
+      (value as Date).getTime() :
       numberFields.indexOf(key) > -1 ?
         +value :
         value;
-    const { _id, _rev, ...newDoc } = <any>Object.entries(newReport).reduce(
-      (obj, [ key, value ]: [ string, Date | string ]) => ({ ...obj, [key]: transformFields(key, value) }),
+    const { _id, _rev, ...newDoc } = Object.entries(newReport).reduce(
+      (obj, [ key, value ]: [ string, string | Date | number ]) => {
+        return {
+          ...obj,
+          [key]: transformFields(key, value)
+        };
+      },
       {}
-    );
+    ) as any;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
     return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
       this.reportsChanged.emit();
