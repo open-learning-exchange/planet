@@ -8,10 +8,11 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { switchMap, takeUntil, finalize } from 'rxjs/operators';
+import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -79,6 +80,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private dialogsLoadingService: DialogsLoadingService,
     private validatorService: ValidatorService,
     private reportsService: ReportsService,
+    private dialogGuard: DialogGuardService,
     private deviceInfoService: DeviceInfoService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
@@ -194,22 +196,24 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   getChildPlanet(url: string) {
-    this.dialogsListService.getListAndColumns(
-      this.dbName,
-      { 'registrationRequest': 'accepted' },
-      url
-    ).pipe(takeUntil(this.onDestroy$)).subscribe((planets) => {
-      const data = {
-        disableSelection: true,
-        filterPredicate: filterSpecificFields([ 'name', 'code' ]),
-        ...planets };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    });
+    this.dialogGuard.open(`child-planet:${url}`, () =>
+      this.dialogsListService.getListAndColumns(
+        this.dbName,
+        { 'registrationRequest': 'accepted' },
+        url
+      ).pipe(
+        map(planets => this.dialog.open(DialogsListComponent, {
+          data: {
+            disableSelection: true,
+            filterPredicate: filterSpecificFields([ 'name', 'code' ]),
+            ...planets
+          },
+          maxHeight: '500px',
+          width: '600px',
+          autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   addHubClick(planetCode, hubName) {

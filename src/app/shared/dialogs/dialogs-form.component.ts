@@ -4,6 +4,8 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, Reacti
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { DialogsListService } from './dialogs-list.service';
 import { DialogsListComponent } from './dialogs-list.component';
+import { DialogGuardService } from './dialog-guard.service';
+import { map } from 'rxjs/operators';
 import { UserService } from '../user.service';
 import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
@@ -76,7 +78,8 @@ export class DialogsFormComponent {
     @Inject(MAT_DIALOG_DATA) public data: DialogsFormData,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsListService: DialogsListService,
-    private userService: UserService
+    private userService: UserService,
+    private dialogGuard: DialogGuardService
   ) {
     if (this.data && this.data.formGroup) {
       this.modalForm = this.createModalForm(this.data.formGroup);
@@ -116,17 +119,25 @@ export class DialogsFormComponent {
     const control = this.modalForm.controls[field.name];
     const currentValue = control.value as Array<{ _id: string }> | null;
     const initialSelection = (currentValue || []).map((value) => value._id);
+    const key = `dialogs-form:${field.db}:${field.name}`;
     this.dialogsLoadingService.start();
-    this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection)
-      .subscribe((data) => {
-        this.dialogsLoadingService.stop();
-        this.dialogListRef = this.dialog.open(DialogsListComponent, {
-          data: data,
+    this.dialogGuard.open(key, () =>
+      this.dialogsListService.attachDocsData(field.db, 'title', this.dialogOkClick(field).bind(this), initialSelection).pipe(
+        map(data => this.dialog.open(DialogsListComponent, {
+          data,
           maxHeight: '500px',
           width: '600px',
           autoFocus: false
-        });
-      });
+        }))
+      )
+    ).subscribe({
+      next: ref => {
+        this.dialogsLoadingService.stop();
+        this.dialogListRef = ref;
+      },
+      error: () => this.dialogsLoadingService.stop(),
+      complete: () => this.dialogsLoadingService.stop()
+    });
   }
 
   dialogOkClick(field: DialogField) {
