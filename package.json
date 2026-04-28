@@ -62,6 +62,8 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.4.7",
+    "@analogjs/vitest-angular": "^2.4.7",
     "@angular-devkit/build-angular": "^19.2.22",
     "@angular-eslint/builder": "19.8.1",
     "@angular-eslint/eslint-plugin": "19.8.1",
@@ -89,6 +91,7 @@
     "htmlhint-ng2": "0.0.13",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
+    "jsdom": "^26.1.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.1.0",
     "karma-cli": "~2.0.0",
