@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
-import { Chart, ChartConfiguration, LineController } from 'chart.js';
+import type { ChartConfiguration } from 'chart.js';
+import { loadChart } from '../../shared/chart-utils';
 import { StateService } from '../../shared/state.service';
 import { HealthService } from '../../health/health.service';
-import { generateWeeksArray, filterByDate, weekDataLabels, scaleLabel } from './reports.utils';
+import { generateWeeksArray, filterByDate, weekDataLabels } from './reports.utils';
 import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
@@ -13,8 +14,6 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
-
-Chart.register(LineController);
 
 @Component({
   selector: 'planet-reports-health',
@@ -130,7 +129,10 @@ export class ReportsHealthComponent implements OnChanges {
     });
   }
 
-  setChart({ data, chartName }) {
+  async setChart({ data, chartName }) {
+    const { Chart } = await loadChart([
+      'LineController', 'LineElement', 'PointElement', 'CategoryScale', 'LinearScale', 'Title', 'Tooltip'
+    ]);
     const updateChart = this.charts.find(chart => chart.canvas.id === chartName);
     if (updateChart) {
       updateChart.data = data;
@@ -141,6 +143,7 @@ export class ReportsHealthComponent implements OnChanges {
       setTimeout(() => this.setChart({ data, chartName }));
       return;
     }
+    const axisTitleFont = { size: 12, weight: 'bold' as const };
     const chartConfig: ChartConfiguration<'line'> = {
       type: 'line',
       data,
@@ -153,9 +156,13 @@ export class ReportsHealthComponent implements OnChanges {
         scales: {
           y: {
             type: 'linear',
-            ticks: {  precision: 0 }
+            ticks: { precision: 0 },
+            title: { display: true, text: $localize`Diagnoses`, font: axisTitleFont }
           },
-          x: { title: { display: true, text: 'Week of' } }
+          x: {
+            type: 'category',
+            title: { display: true, text: $localize`Week of`, font: axisTitleFont }
+          }
         },
       }
     };
