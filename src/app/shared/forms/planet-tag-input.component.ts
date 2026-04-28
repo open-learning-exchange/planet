@@ -218,9 +218,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   tagsInSelection(selectedIds: string[], data: FilteredDataItem[]): SelectedDialogTag[] {
+    const dataMap = new Map<string, FilteredDataItem>();
+    for (const item of data) {
+      dataMap.set(item._id, item);
+    }
     const selectedTagsObject = selectedIds
       .reduce<Record<string, number>>((selectedTags, id) => {
-        const tags = data.find((item) => item._id === id)?.tags || [];
+        const tags = dataMap.get(id)?.tags || [];
         tags.forEach((tag) => {
           selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });
