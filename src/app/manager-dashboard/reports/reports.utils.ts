@@ -27,7 +27,7 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   )
 });
 
-export const itemInDateRange = (item, dateField, startDate, endDate) => {
+const itemInDateRange = (item, dateField, startDate, endDate) => {
   if (!startDate || !endDate || startDate > endDate) {
     return false;
   }
@@ -176,8 +176,6 @@ export const sortingOptionsMap = {
 };
 
 export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
-
-export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
 export const lastThursday = (date: Date) => {
   const d = new Date(date);
