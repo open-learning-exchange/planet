@@ -1,20 +1,52 @@
 import {
-  Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding, HostListener, OnInit
+  Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
+  ChangeDetectorRef, HostBinding, HostListener, OnInit, forwardRef
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatCard } from '@angular/material/card';
+import { NgIf, NgClass, NgFor, NgStyle } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatBadge } from '@angular/material/badge';
+import { MatIconButton } from '@angular/material/button';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+
+@Component({
+  selector: 'planet-dashboard-tile-title',
+  template: `
+    <mat-icon svgIcon={{cardType}}></mat-icon>
+    <span>{{cardTitle}}</span>
+  `,
+  styleUrls: ['./dashboard-tile-title.scss'],
+  imports: [MatIcon]
+})
+export class DashboardTileTitleComponent {
+
+  @Input() cardTitle;
+  @Input() cardType;
+
+}
 
 // Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   selector: 'planet-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',
-  styleUrls: [ './dashboard-tile.scss' ]
+  styleUrls: ['./dashboard-tile.scss'],
+  imports: [
+    MatCard, NgIf, RouterLink, forwardRef(() => DashboardTileTitleComponent), MatIcon,
+    CdkDropList, NgClass, NgFor, AuthorizedRolesDirective, CdkDrag, MatTooltip, MatBadge,
+    NgStyle, MatIconButton, PlanetLoadingSpinnerComponent, TruncateTextPipe
+  ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() cardTitle: string;
@@ -172,19 +204,4 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
   }
-}
-
-@Component({
-  selector: 'planet-dashboard-tile-title',
-  template: `
-    <mat-icon svgIcon={{cardType}}></mat-icon>
-    <span>{{cardTitle}}</span>
-  `,
-  styleUrls: [ './dashboard-tile-title.scss' ]
-})
-export class DashboardTileTitleComponent {
-
-  @Input() cardTitle;
-  @Input() cardType;
-
 }

@@ -1,11 +1,12 @@
 import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
-import { MatSelectionList } from '@angular/material/list';
+import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
 import * as constants from '../constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { trackByCategory } from '../../shared/table-helpers';
+import { NgFor } from '@angular/common';
 
 @Component({
   template: `
@@ -22,8 +23,9 @@ import { trackByCategory } from '../../shared/table-helpers';
     </mat-selection-list>
   `,
   selector: 'planet-courses-search-list',
-  styleUrls: [ './courses-search.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./courses-search.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class CoursesSearchListComponent {
 
@@ -64,9 +66,10 @@ export class CoursesSearchListComponent {
       [selected]="selected[list.category]">
     </planet-courses-search-list>
   `,
-  styleUrls: [ './courses-search.scss' ],
+  styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgFor, CoursesSearchListComponent]
 })
 export class CoursesSearchComponent implements OnInit, OnChanges {
 

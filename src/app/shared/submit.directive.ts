@@ -2,9 +2,7 @@ import { Directive, HostListener, Input, OnChanges, OnDestroy } from '@angular/c
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsLoadingComponent } from './dialogs/dialogs-loading.component';
 
-@Directive({
-  selector: '[planetSubmit]'
-})
+@Directive({ selector: '[planetSubmit]' })
 export class SubmitDirective implements OnChanges, OnDestroy {
 
   constructor(public dialog: MatDialog) { }

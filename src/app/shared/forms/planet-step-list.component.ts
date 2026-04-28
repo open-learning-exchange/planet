@@ -5,6 +5,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
+import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
@@ -47,7 +51,8 @@ export class PlanetStepListService {
         <button mat-icon-button type="button" (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
       </ng-container>
     </ng-template>
-  `
+  `,
+  imports: [MatListItemMeta, NgIf, MatIconButton, MatIcon]
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -68,8 +73,9 @@ export class PlanetStepListItemComponent {
 @Component({
   selector: 'planet-step-list',
   templateUrl: './planet-step-list.component.html',
-  styleUrls: [ './planet-step-list.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./planet-step-list.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgIf, MatNavList, NgClass, NgFor, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
@@ -164,21 +170,15 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
 }
 
-@Directive({
-  selector: '[planetStepListForm]'
-})
+@Directive({ selector: '[planetStepListForm]' })
 export class PlanetStepListFormDirective {
   @HostBinding('class') class = 'planet-step-list-form';
 }
 
-@Directive({
-  selector: '[planetStepListNumber]'
-})
+@Directive({ selector: '[planetStepListNumber]' })
 export class PlanetStepListNumberDirective {}
 
-@Directive({
-  selector: '[planetStepListActions]'
-})
+@Directive({ selector: '[planetStepListActions]' })
 export class PlanetStepListActionsDirective {
   @HostBinding('class') class = 'planet-step-list-actions';
 }

@@ -1,5 +1,8 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { ExamsViewComponent } from './exams-view.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   template: `
@@ -9,7 +12,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     <mat-dialog-actions>
       <button color="primary" mat-raised-button mat-dialog-close i18n>Close Preview</button>
     </mat-dialog-actions>
-  `
+  `,
+  imports: [CdkScrollable, MatDialogContent, ExamsViewComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class ExamsPreviewComponent {
 

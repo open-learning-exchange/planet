@@ -1,4 +1,4 @@
-<mat-table #table [dataSource]="communities" matSort [matSortDisableClear]="true">
+<mat-table #table class="responsive-table" [dataSource]="communities" matSort [matSortDisableClear]="true">
   <ng-container matColumnDef="name">
     <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
     <mat-cell *matCellDef="let element">{{element.nameDoc?.name || element.doc.name}}</mat-cell>
@@ -18,16 +18,25 @@
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef i18n>Actions</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <button mat-raised-button color="primary" (click)="view(element.doc)"><mat-icon>visibility</mat-icon> <span i18n>View</span></button>
+      <button mat-raised-button color="primary" (click)="view(element.doc)" i18n-matTooltip matTooltip="View" [matTooltipDisabled]="!isMobile">
+        <mat-icon>visibility</mat-icon>
+        <label *ngIf="!isMobile" i18n>View</label>
+      </button>
       <ng-container *ngIf="element.doc.registrationRequest === 'accepted'">
-        <button *ngIf="element.doc.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.doc.localDomain)" i18n>
-          Communities
+        <button *ngIf="element.doc.planetType === 'nation'" mat-raised-button color="primary" (click)="getChildPlanet(element.doc.localDomain)" i18n-matTooltip matTooltip="Communities" [matTooltipDisabled]="!isMobile">
+          <mat-icon>groups</mat-icon>
+          <label *ngIf="!isMobile" i18n>Communities</label>
         </button>
-        <button mat-raised-button color="primary" i18n [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1">
-          { hub, select,
-            sandbox {Add to { planetType, select, nation {Network} center {Region} }}
-            other {Move { planetType, select, nation {Networks} center {Regions} }}
-          }
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="hubMenu" *ngIf="(hub==='sandbox' && hubs.length > 0) || hubs.length > 1"
+          i18n-matTooltip matTooltip="{ hub, select, sandbox {Add to { planetType, select, nation {Network} center {Region} }} other {Move { planetType, select, nation {Networks} center {Regions} }} }"
+          [matTooltipDisabled]="!isMobile">
+          <mat-icon>hub</mat-icon>
+          <label *ngIf="!isMobile" i18n>
+            { hub, select,
+              sandbox {Add to { planetType, select, nation {Network} center {Region} }}
+              other {Move { planetType, select, nation {Networks} center {Regions} }}
+            }
+          </label>
         </button>
         <mat-menu #hubMenu="matMenu">
           <ng-container *ngFor="let h of hubs">
@@ -35,17 +44,20 @@
           </ng-container>
           <button (click)="removeHubClick(element.doc.code)" *ngIf="hub!=='sandbox'" mat-menu-item i18n>Sandbox</button>
         </mat-menu>
-        <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n>
-          Edit Name
+        <button mat-raised-button color="primary" (click)="openEditChildNameDialog(element)" i18n-matTooltip matTooltip="Edit Name" [matTooltipDisabled]="!isMobile">
+          <mat-icon>edit</mat-icon>
+          <label *ngIf="!isMobile" i18n>Edit Name</label>
         </button>
       </ng-container>
       <ng-container *ngIf="element.doc.registrationRequest === 'pending'">
-        <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')">
-          <mat-icon>link</mat-icon> <span i18n>Accept</span>
+        <button mat-raised-button color="primary" (click)="updateClick(element, 'accept')" i18n-matTooltip matTooltip="Accept" [matTooltipDisabled]="!isMobile">
+          <mat-icon>link</mat-icon>
+          <label *ngIf="!isMobile" i18n>Accept</label>
         </button>
       </ng-container>
-      <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')">
-        <mat-icon>delete</mat-icon> <span i18n>Delete</span>
+      <button mat-raised-button color="warn" (click)="updateClick(element, 'delete')" i18n-matTooltip matTooltip="Delete" [matTooltipDisabled]="!isMobile">
+        <mat-icon>delete</mat-icon>
+        <label *ngIf="!isMobile" i18n>Delete</label>
       </button>
     </mat-cell>
   </ng-container>

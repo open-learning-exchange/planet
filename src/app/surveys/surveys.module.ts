@@ -21,11 +21,9 @@ import { SharedComponentsModule } from '../shared/shared-components.module';
     MaterialModule,
     ExamsModule,
     SurveysRouterModule,
-    SharedComponentsModule
-  ],
-  exports: [ SurveysComponent ],
-  declarations: [
+    SharedComponentsModule,
     SurveysComponent
-  ]
+  ],
+  exports: [SurveysComponent]
 })
 export class SurveysModule {}

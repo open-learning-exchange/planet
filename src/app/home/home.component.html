@@ -110,7 +110,7 @@
   <mat-sidenav *ngIf="!isMobile && (layout === 'modern' || forceModern)" #sidenav mode="side" class="primary-color nav-shadow" opened="true" [@sidenavState]="sidenavState" (@sidenavState.done)="endAnimation()">
     <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
   </mat-sidenav>
-  <mat-sidenav *ngIf="isMobile && (layout === 'modern' || forceModern)" #sidenav mode="over" class="primary-color nav-shadow" [opened]="sidenavState === 'open'" [@slideInOut]="sidenavState" (openedChange)="sidenavState = $event ? 'open' : 'closed'">
+  <mat-sidenav *ngIf="isMobile && (layout === 'modern' || forceModern)" #sidenav mode="over" class="primary-color nav-shadow" [opened]="sidenavState === 'open'" (openedChange)="sidenavState = $event ? 'open' : 'closed'">
     <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
   </mat-sidenav>
   <mat-sidenav-content [ngClass]="{'gradient-background': backgroundRoute()}">

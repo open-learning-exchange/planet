@@ -10,13 +10,11 @@ import { CoursesViewDetailComponent, CoursesViewDetailDialogComponent } from './
     CommonModule,
     PlanetFormsModule,
     MaterialModule,
-    SharedComponentsModule
-  ],
-  exports: [
+    SharedComponentsModule,
     CoursesViewDetailComponent,
     CoursesViewDetailDialogComponent
   ],
-  declarations: [
+  exports: [
     CoursesViewDetailComponent,
     CoursesViewDetailDialogComponent
   ]

@@ -25,7 +25,7 @@ export const subjectList = [
 ];
 
 export const levelList = [
-  { 'label': $localize`Early Education`, 'value': 'Early Education' },
+  { 'label': $localize`Open`, 'value': 'Early Education' },
   { 'label': $localize`Lower Primary`, 'value': 'Lower Primary' },
   { 'label': $localize`Upper Primary`, 'value': 'Upper Primary' },
   { 'label': $localize`Lower Secondary`, 'value': 'Lower Secondary' },
