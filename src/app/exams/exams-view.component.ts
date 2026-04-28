@@ -299,7 +299,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
-    this.progressPercent = this.maxQuestions ? Math.round(((this.questionNum - 1) / this.maxQuestions) * 100) : 0;
+    this.progressPercent = this.maxQuestions ? Math.round((this.questionNum / this.maxQuestions) * 100) : 0;
     const scaleMax = this.question?.scaleMax ?? 9;
     this.ratingScaleNumbers = Array.from({ length: scaleMax }, (_, i) => i + 1);
     this.answer.markAsUntouched();
