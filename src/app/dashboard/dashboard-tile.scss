@@ -1,9 +1,9 @@
-@import '../mixins';
-@import '../variables';
+@use '../mixins' as m;
+@use '../variables' as v;
 
 :host {
 
-  @include left-right-grid-areas;
+  @include m.left-right-grid-areas;
   // For Firefox.  Otherwise grid tile will expand to fit text.
   min-width: 0;
 
@@ -11,12 +11,13 @@
     display: grid;
     grid-template-areas: "lt rt";
     grid-template-rows: 1fr;
-    grid-template-columns: $dashboard-tile-width 1fr;
+    grid-template-columns: v.$dashboard-tile-width 1fr;
     height: 100%;
     padding: 0;
 
     .left-tile {
       border-radius: 2px 0 0 2px;
+      color: #fff;
       &, & planet-dashboard-tile-title {
         display: flex;
         justify-content: center;
@@ -25,7 +26,6 @@
         flex-wrap: wrap;
         font-size: 1.25rem;
       }
-      color: #fff;
     }
 
     .right-tile {
@@ -39,7 +39,7 @@
 
       .dashboard-items {
         display: grid;
-        grid-auto-columns: $dashboard-tile-width;
+        grid-auto-columns: v.$dashboard-tile-width;
         transition: transform 0.5s;
 
         .dashboard-item {
@@ -86,13 +86,13 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: $grey;
+    background-color: v.$grey;
     border-radius: 0;
     border: 0;
   }
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   :host {
     .dashboard-card {
       grid-template-areas: "lt" "rt";

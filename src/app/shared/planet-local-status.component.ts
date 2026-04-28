@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   'selector': 'planet-local-status',
@@ -9,7 +11,8 @@ import { Component, Input } from '@angular/core';
       <mat-icon *ngSwitchCase="'parentOlder'" i18n-title title="Older">timelapse</mat-icon>
       <mat-icon *ngSwitchCase="'mismatch'" i18n-title title="Does not match">priority_high</mat-icon>
     </ng-container>
-  `
+  `,
+  imports: [NgSwitch, NgSwitchCase, MatIcon]
 })
 export class PlanetLocalStatusComponent {
   @Input() status: string;

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation, forwardRef } from '@angular/core';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
@@ -13,12 +13,43 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import {
+  MatActionList, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemLine, MatListItemAvatar, MatListItemMeta
+} from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+
+@Pipe({ name: 'filterAssignee' })
+export class FilterAssigneePipe implements PipeTransform {
+  transform(assignees: any[], assignee: any) {
+    return assignees.filter(a => a.userId !== assignee.userId);
+  }
+}
+
+@Pipe({ name: 'assigneeName' })
+export class AssigneeNamePipe implements PipeTransform {
+  transform(assignee) {
+    return (assignee.userDoc || {}).fullName || assignee.name;
+  }
+}
+
 
 @Component({
   selector: 'planet-tasks',
   templateUrl: './tasks.component.html',
-  styleUrls: [ './tasks.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./tasks.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgIf, MatButton, MatButtonToggleGroup, MatButtonToggle, MatActionList, NgFor, MatListItem, MatCheckbox,
+    MatListItemIcon, MatListItemTitle, MatListItemLine, NgClass, MatListItemAvatar, MatTooltip, MatListItemMeta,
+    MatIconButton, MatIcon, MatMenuTrigger, MatMenu, MatMenuItem, DatePipe,
+    forwardRef(() => FilterAssigneePipe), forwardRef(() => AssigneeNamePipe)
+  ]
 })
 export class TasksComponent implements OnInit {
 
@@ -168,7 +199,7 @@ export class TasksComponent implements OnInit {
   }
 
   sendNotifications(assignee: any = '') {
-    const link = this.mode === 'services' ? `community` : `/${this.mode}s/view/${this.link.teams}`;
+    const link = this.mode === 'services' ? 'community' : `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
       'message': $localize`You were assigned a new task`,
@@ -204,22 +235,4 @@ export class TasksComponent implements OnInit {
     return task.assignee ? $localize`Reassign Task` : $localize`Assign Task`;
   }
 
-}
-
-@Pipe({
-  name: 'filterAssignee'
-})
-export class FilterAssigneePipe implements PipeTransform {
-  transform(assignees: any[], assignee: any) {
-    return assignees.filter(a => a.userId !== assignee.userId);
-  }
-}
-
-@Pipe({
-  name: 'assigneeName'
-})
-export class AssigneeNamePipe implements PipeTransform {
-  transform(assignee) {
-    return (assignee.userDoc || {}).fullName || assignee.name;
-  }
 }
