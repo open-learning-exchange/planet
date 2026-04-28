@@ -18,8 +18,7 @@ describe('Users', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      declarations: [UsersComponent],
-      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, UsersComponent],
       providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(UsersComponent);

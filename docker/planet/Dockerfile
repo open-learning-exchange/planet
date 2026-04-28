@@ -1,4 +1,7 @@
-FROM treehouses/nginx
+ARG BASE_IMAGE=treehouses/nginx
+
+FROM ${BASE_IMAGE}
+LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 RUN rm -rf /usr/share/nginx/html/*
 RUN apk add --no-cache \

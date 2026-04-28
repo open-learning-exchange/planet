@@ -4,21 +4,24 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UserService } from '../user.service';
+import { NgClass, NgFor, NgStyle } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
-  styles: [ `
+  styles: [`
     .stars mat-icon {
       cursor: default;
     }
     .stars.stars-enabled mat-icon {
       cursor: pointer;
     }
-  ` ],
+  `],
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
-  ]
+  ],
+  imports: [NgClass, NgFor, MatIcon, NgStyle]
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 

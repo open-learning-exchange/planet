@@ -1,12 +1,12 @@
-@import './app/variables';
-@import './planet-mat-theme';
+@use 'app/variables' as v;
+@use 'planet-mat-theme';
 
 body {
-  font-family: $font-family;
+  font-family: v.$font-family;
   margin: 0;
 
   .gradient-background {
-    background: linear-gradient(to bottom, #000000, $primary);
+    background: linear-gradient(to bottom, #000000, v.$primary);
   }
 
   a,
@@ -16,37 +16,37 @@ body {
   }
 
   .primary-text-color {
-    color: $primary;
+    color: v.$primary;
   }
 
   .primary-color {
-    background-color: $primary;
-    color: $primary-text;
+    background-color: v.$primary;
+    color: v.$primary-text;
   }
 
   .accent-color {
-    background-color: $accent;
-    color: $accent-text;
+    background-color: v.$accent;
+    color: v.$accent-text;
   }
 
   .accent-text-color {
-    color: $accent;
+    color: v.$accent;
   }
 
   .warn-text-color {
-    color: $warn;
+    color: v.$warn;
   }
 
   .grey-text-color {
-    color: $grey-text;
+    color: v.$grey-text;
   }
 
   .bg-light-grey {
-    background-color: $light-grey;
+    background-color: v.$light-grey;
   }
 
   .bg-grey {
-    background-color: $grey;
+    background-color: v.$grey;
   }
 
   .display-flex {
@@ -153,7 +153,7 @@ body {
       'tags .'
       'cn .';
     grid-template-columns: auto 50px;
-    grid-template-rows: $list-title-height 1fr min-content min-content;
+    grid-template-rows: auto 1fr min-content min-content;
 
     .header {
       grid-area: hd;
@@ -188,20 +188,12 @@ body {
     letter-spacing: normal;
   }
 
-  .planet-icon-button.mdc-button > .mat-icon {
-    margin: 0;
-  }
-
   .mat-mdc-row.expanded-row {
     border: none;
   }
 
   .mat-mdc-row.expanded-row td {
     padding: 0;
-  }
-
-  .list-content-menu-auto {
-    grid-template-rows: auto 1fr min-content;
   }
 
   // the colored stars are placed on top of the uncolored ones
@@ -211,7 +203,7 @@ body {
   $stars-width: calc(120px + (10 * #{$stars-margin}));
   .stars {
     display: inline-block;
-    color: $grey;
+    color: v.$grey;
     position: relative;
     // Each mat-icon star is 24x24.  Will need to change if star sizes change
     width: $stars-width;
@@ -221,7 +213,7 @@ body {
     }
 
     span {
-      color: $accent;
+      color: v.$accent;
       position: absolute;
       top: 0;
       left: 0;
@@ -317,11 +309,11 @@ body {
   .rating-bar {
     display: block;
     height: 10px;
-    border: 1px solid $accent;
+    border: 1px solid v.$accent;
     margin-top: 0.5em;
 
     div {
-      background-color: $accent;
+      background-color: v.$accent;
       height: 100%;
     }
   }
@@ -331,11 +323,11 @@ body {
   }
 
   mat-table .highlight, .primary-lighter-color {
-    background-color: $primary-lighter;
+    background-color: v.$primary-lighter;
   }
 
   mat-table, .primary-light-color {
-    background-color: $primary-light;
+    background-color: v.$primary-light;
   }
 
   // Fix for checkboxes changing vertical alignment in cells when clicked as of Dec 28, 2017
@@ -393,11 +385,11 @@ body {
   }
 
   .primary-link-hover a:hover {
-    color: $primary;
+    color: v.$primary;
   }
 
   .view-container {
-    background-color: $white;
+    background-color: v.$white;
     padding: 1rem;
   }
 
@@ -405,7 +397,7 @@ body {
   // 352px = 5 * 64px toolbars + 32px of padding
   // Overflow must be set on children
   .view-container.view-full-height {
-    height: $view-container-height;
+    height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
   }
@@ -414,8 +406,8 @@ body {
     padding: 0;
     position: relative;
     display: grid;
-    // 56px is height of paginator
-    grid-template-rows: 1fr 56px;
+    // Paginator row grows when controls wrap on narrow screens
+    grid-template-rows: 1fr auto;
     mat-table {
       overflow-y: auto;
       mat-header-row {
@@ -426,8 +418,122 @@ body {
     }
   }
 
+  .mat-mdc-paginator-range-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mat-mdc-paginator-range-label {
+    margin: 0 8px;
+  }
+
+  // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
+  // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
+  // Courses/resources use a separate pattern
+  @media (max-width: v.$screen-sm) {
+    mat-table.responsive-table,
+    table.mat-mdc-table.responsive-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      min-width: var(--responsive-table-min-width, 800px);
+    }
+
+    .responsive-table:not(mat-table):not(table) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+
+      mat-table,
+      table.mat-mdc-table {
+        min-width: var(--responsive-table-min-width, 800px);
+      }
+    }
+  }
+
+  // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
+  .card-table {
+    .mat-mdc-row {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-mdc-cell {
+      border: none;
+    }
+
+    .mat-column-info {
+      max-width: 200px;
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-createdDate {
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-rating {
+      max-width: 145px;
+      padding: 0;
+    }
+
+    .created-label {
+      display: none;
+    }
+
+    .rating-header {
+      justify-content: center;
+    }
+
+    .preview-content {
+      height: 9rem;
+      overflow: hidden;
+    }
+
+    .preview-toggle {
+      text-align: center;
+    }
+
+    .expanded-row .content {
+      max-height: none;
+    }
+
+    @media (max-width: v.$screen-md) {
+      .mat-column-info {
+        max-width: 120px;
+      }
+    }
+
+    @media (max-width: v.$screen-sm) {
+      .mat-mdc-header-row {
+        display: none;
+      }
+
+      .mat-mdc-row {
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 24px;
+      }
+
+      .mat-column-info,
+      .mat-column-createdDate {
+        max-width: fit-content;
+      }
+
+      .created-label {
+        display: inline-block;
+      }
+
+      .table-selection-top {
+        display: none;
+      }
+
+      .rating-cell {
+        align-self: flex-end;
+      }
+    }
+  }
+
   .view-container.view-full-height.no-toolbar {
-    height: $view-container-height-no-toolbar;
+    height: v.$view-container-height-no-toolbar;
   }
 
   // Width of a form with 3 standard matInputs (180px + 10px of padding)
@@ -496,7 +602,7 @@ body {
     }
   }
 
-  @media only screen and (max-width: $screen-sm) {
+  @media only screen and (max-width: v.$screen-sm) {
     .collections-search {
       display: flex;
       justify-content: center;
@@ -535,6 +641,9 @@ body {
     --mdc-outlined-button-outline-color: rgba(0, 0, 0, 0.38);
     --mdc-outlined-button-disabled-outline-color: rgba(0, 0, 0, 0.38);
 
+    // Keep form-field labels readable on the blue toolbar when focused.
+    --mdc-filled-text-field-focus-label-text-color: currentColor;
+
     // Explicit fallback for unthemed toolbar buttons/icons after MDC migration.
     .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
       color: inherit !important;
@@ -559,30 +668,30 @@ body {
   }
 
   .mat-mdc-chip.chip-outline-accent {
-    background-color: $accent-lighter;
+    background-color: v.$accent-lighter;
   }
 
   .mat-mdc-chip.chip-outline-primary {
-    background-color: $primary-lighter;
+    background-color: v.$primary-lighter;
   }
 
   .mat-mdc-chip.chip-outline-warn {
-    background-color: $warn-lighter;
+    background-color: v.$warn-lighter;
   }
 
   .mat-mdc-chip.chip-outline-grey {
-    background-color: $light-grey;
+    background-color: v.$light-grey;
   }
 
   .form-container {
-    width: calc(#{$form-width-3} + 20px);
+    width: calc(#{v.$form-width-3} + 20px);
   }
 
   .form-spacing {
-    width: $form-width-3;
+    width: v.$form-width-3;
     display: grid;
     grid-column-gap: 5px;
-    grid-template-columns: repeat(auto-fit, $form-field-width);
+    grid-template-columns: repeat(auto-fit, v.$form-field-width);
 
     mat-form-field {
       grid-column: span 1;
@@ -598,7 +707,7 @@ body {
   }
 
   .mat-mdc-input-element[readonly]{
-    color: $grey;
+    color: v.$grey;
   }
 
   .mat-mdc-menu-panel.notification-menu {
@@ -614,7 +723,7 @@ body {
 
       &.primary-text-color,
       &.primary-text-color .mdc-list-item__primary-text {
-        color: $primary;
+        color: v.$primary;
       }
 
       &:hover.primary-text-color,
@@ -626,23 +735,23 @@ body {
     }
   }
 
-  @media only screen and (max-width: $screen-md) {
+  @media only screen and (max-width: v.$screen-md) {
     .form-container {
-      width: calc(#{$form-width-2} + 20px);
+      width: calc(#{v.$form-width-2} + 20px);
     }
 
     .form-spacing {
-      width: $form-width-2;
+      width: v.$form-width-2;
     }
   }
 
-  @media only screen and (max-width: $screen-sm) {
+  @media only screen and (max-width: v.$screen-sm) {
     .form-container {
-      width: calc(#{$form-width-1} + 20px);
+      width: calc(#{v.$form-width-1} + 20px);
     }
 
     .form-spacing {
-      width: $form-width-1;
+      width: v.$form-width-1;
     }
   }
 
@@ -711,6 +820,15 @@ body {
     padding-top: 0.5rem;
   }
 
+  // Pagination within tabs
+  .tab-scroll-shell {
+    overflow: hidden;
+  }
+
+  .tab-scroll-layout {
+    height: 100%;
+  }
+
   .tags-list .mat-mdc-chip {
     max-width: 200px;
 
@@ -754,7 +872,7 @@ body {
     text-align: left;
     padding: 8px;
     border-radius: 5px;
-    background-color: #{$primary};
+    background-color: #{v.$primary};
     color: white;
   }
 
@@ -797,7 +915,7 @@ body {
   }
 
   .copy-btn.copied {
-    color: $primary;
+    color: v.$primary;
   }
 
   .chat-link {
@@ -819,7 +937,7 @@ body {
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: $primary;
+    background-color: v.$primary;
     border-radius: 10px;
     border: 3px solid #f1f1f1;
   }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -9,15 +9,25 @@ import { ManagerService } from '../manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, getDomainParams } from './reports.utils';
 import { StateService } from '../../shared/state.service';
 import { trackById } from '../../shared/table-helpers';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor } from '@angular/common';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { ReportsTableComponent } from './reports-table.component';
 
 @Component({
   templateUrl: './reports.component.html',
-  styles: [ `
+  styles: [`
     mat-panel-title {
       align-items: center;
     }
-  ` ],
-  styleUrls: [ './reports.components.scss' ]
+  `],
+  styleUrls: ['./reports.components.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, MatAnchor, NgIf, NgFor, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, ReportsTableComponent
+  ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 

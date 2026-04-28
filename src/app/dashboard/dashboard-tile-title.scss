@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
 
@@ -8,7 +8,7 @@
     width: 30px;
   }
 
-  @media (max-width: $screen-md) {
+  @media (max-width: v.$screen-md) {
     span {
       font-size: 1rem;
     }

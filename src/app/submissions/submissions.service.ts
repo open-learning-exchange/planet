@@ -8,7 +8,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, pdfMake, pdfFonts, converter } from '../shared/utils';
+import { dedupeShelfReduce, toProperCase, ageFromBirthDate, markdownToPlainText, converter } from '../shared/utils';
 import { CsvService } from '../shared/csv.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -18,8 +18,10 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.addVirtualFileSystem(pdfFonts);
 
 @Injectable({
   providedIn: 'root'
@@ -310,7 +312,7 @@ export class SubmissionsService {
           ...submission,
           teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
         }));
-        return <[any[], number, string[]]>[submissionsWithTeamInfo, time, questionTexts];
+        return [submissionsWithTeamInfo, time, questionTexts] as [any[], number, string[]];
       }),
       tap(([ updatedSubmissions, time, questionTexts ]: [any[], number, string[]]) => {
         const title = `${toProperCase($localize`${type}`)} - ${$localize`${exam.name}`} (${updatedSubmissions.length})`;
@@ -500,7 +502,7 @@ export class SubmissionsService {
             planetName: codeToPlanetName(submission.source, this.stateService.configuration, planetsWithName),
             teamInfo: submission.team ? { name: submission.team.name, type: submission.team.type } : null
           }));
-          return <[any[], number, string[]]>[submissionsWithPlanetName, time, questionTexts];
+          return [submissionsWithPlanetName, time, questionTexts] as [any[], number, string[]];
         })
       ).subscribe(async tuple => {
         if (!tuple) {
@@ -559,15 +561,15 @@ export class SubmissionsService {
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
       return [
         `<h3>${$localize`Submission`} ${index + 1}</h3>`,
-        `<ul>`,
+        '<ul>',
         `<li><strong>Planet ${communityOrNation}</strong></li>`,
         `<li><strong>${$localize`Source:`}</strong> ${planetSource}</li>`,
         `<li><strong>${$localize`Date:`}</strong> ${shortDate}</li>`,
         teamInfo ? `<li>${teamInfo}</li>` : '',
         userGender ? `<li><strong>${$localize`Gender:`}</strong> ${userGender}</li>` : '',
         userAge ? `<li><strong>${$localize`Age:`}</strong> ${userAge}</li>` : '',
-        `</ul>`,
-        `<hr>`
+        '</ul>',
+        '<hr>'
       ].filter(Boolean).join('\n');
     } else {
       return `### ${exam.name} ${$localize`Questions`} \n`;

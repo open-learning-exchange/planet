@@ -12,8 +12,7 @@ describe('Dashboard', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      declarations: [DashboardComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, DashboardComponent],
       providers: [UserService, CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(DashboardComponent),

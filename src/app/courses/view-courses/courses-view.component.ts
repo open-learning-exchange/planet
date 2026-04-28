@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -9,10 +9,33 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
+import { CoursesViewDetailComponent } from './courses-view-detail.component';
+import {
+  MatExpansionPanel,
+  MatExpansionPanelHeader,
+  MatExpansionPanelTitle,
+  MatExpansionPanelDescription,
+  MatExpansionPanelActionRow
+} from '@angular/material/expansion';
+import { CoursesIconComponent } from '../courses-icon.component';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
-  styleUrls: [ 'courses-view.scss' ]
+  styleUrls: ['courses-view.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger,
+    MatMenu, MatButton, CoursesProgressBarComponent, NgClass, CoursesViewDetailComponent, NgFor,
+    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription,
+    CoursesIconComponent, PlanetMarkdownComponent, MatExpansionPanelActionRow, ResourcesMenuComponent,
+    MatAnchor, MatMenuItem, PlanetLoadingSpinnerComponent]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 

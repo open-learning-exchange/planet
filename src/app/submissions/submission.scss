@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 .mat-column-name,
 .mat-column-courseTitle {
@@ -17,13 +17,16 @@
   max-width: 150px;
 }
 
-@media (max-width: $screen-sm) {
-  .responsive-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
+.mat-column-status {
+  min-width: 150px;
+}
 
+.mat-column-lastUpdateTime,
+.mat-column-gradeTime {
+  min-width: 165px;
+}
+
+@media (max-width: v.$screen-sm) {
   mat-header-cell,
   mat-cell {
     min-width: 130px;

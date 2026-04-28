@@ -9,7 +9,6 @@ import { LoginFormComponent } from './login-form.component';
 import { ConfigurationGuard } from '../configuration/configuration-guard.service';
 import { ConfigurationModule } from '../configuration/configuration.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
-import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
 import { LoginDialogComponent } from './login-dialog.component';
 
 @NgModule({
@@ -21,11 +20,11 @@ import { LoginDialogComponent } from './login-dialog.component';
     ReactiveFormsModule,
     PlanetFormsModule,
     ConfigurationModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    LoginFormComponent,
+    LoginDialogComponent,
+    LoginComponent
   ],
-  declarations: [
-    LoginComponent, LoginFormComponent, DashboardNotificationsDialogComponent, LoginDialogComponent
-  ],
-  providers: [ ConfigurationGuard ]
+  providers: [ConfigurationGuard]
 })
 export class LoginModule { }

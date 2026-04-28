@@ -1,48 +1,45 @@
 <div class="space-container">
   <div class="view-container view-full-height community-view">
-    <div class="community-news">
-      <mat-tab-group class="tabs-padding" (selectedTabChange)="tabChanged($event)">
+    <div class="community-news tab-scroll-shell">
+      <mat-tab-group class="tabs-padding tab-scroll-layout" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <mat-toolbar class="bg-light-grey font-size-1 responsive-toolbar toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
-              <mat-form-field class="search-form-field mdc-toolbar-input">
-                <mat-label i18n>Search voice</mat-label>
-                <mat-icon matIconPrefix>search</mat-icon>
-                <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
-              </mat-form-field>
-              <mat-form-field class="label-filter-field mdc-toolbar-input">
-                <mat-label i18n>Label</mat-label>
-                <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
-                  <mat-select-trigger>
-                    <ng-container *ngIf="selectedLabel">
-                      <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
-                      <planet-label [label]="selectedLabel"></planet-label>
-                    </ng-container>
-                    <ng-container *ngIf="!selectedLabel">
-                      <span i18n>All</span>
-                    </ng-container>
-                  </mat-select-trigger>
-                  <mat-option value=""><span i18n>All</span></mat-option>
-                  <mat-option *ngFor="let label of availableLabels" [value]="label">
-                    <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
-                    <planet-label [label]="label"></planet-label>
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              <ng-container *planetAuthorizedRoles="'learner'">
-                <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
-              </ng-container>
-              <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
-                <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
-              </button>
-          </mat-toolbar>
           <planet-loading-spinner *ngIf="newsLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
           <ng-template #loaded>
-            <ng-container *ngIf="filteredNews?.length > 0; else noVoices">
-              <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)"></planet-news-list>
-            </ng-container>
-          </ng-template>
-          <ng-template #noVoices>
-            <p i18n>No Voices available.</p>
+            <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
+              <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
+                  <mat-form-field class="search-form-field mdc-toolbar-input">
+                    <mat-label i18n>Search voice</mat-label>
+                    <mat-icon matIconPrefix>search</mat-icon>
+                    <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
+                  </mat-form-field>
+                  <mat-form-field class="label-filter-field mdc-toolbar-input">
+                    <mat-label i18n>Label</mat-label>
+                    <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
+                      <mat-select-trigger>
+                        <ng-container *ngIf="selectedLabel">
+                          <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
+                          <planet-label [label]="selectedLabel"></planet-label>
+                        </ng-container>
+                        <ng-container *ngIf="!selectedLabel">
+                          <span i18n>All</span>
+                        </ng-container>
+                      </mat-select-trigger>
+                      <mat-option value=""><span i18n>All</span></mat-option>
+                      <mat-option *ngFor="let label of availableLabels" [value]="label">
+                        <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
+                        <planet-label [label]="label"></planet-label>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <ng-container *planetAuthorizedRoles="'learner'">
+                    <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
+                  </ng-container>
+                  <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
+                    <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
+                  </button>
+              </mat-toolbar>
+              <p *ngIf="filteredNews?.length === 0" i18n>No Voices available.</p>
+            </planet-news-list>
           </ng-template>
         </mat-tab>
         <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
@@ -68,7 +65,7 @@
             <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
           </ng-container>
           <ng-container *planetAuthorizedRoles="''">
-            <div *ngIf="!planetCode" class="action-buttons sticky-button">
+            <div *ngIf="!planetCode" class="action-buttons button-row">
               <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
               </button>
@@ -97,8 +94,8 @@
               <ng-container *ngIf="socialWebLinks.length > 0">
                 <h3 mat-subheader i18n>Social & Web</h3>
                 <a *ngFor="let link of socialWebLinks" mat-list-item [href]="link.route" target="_blank" rel="noopener">
-                  <mat-icon *ngIf="link.icon === 'web'" matListItemIcon>public</mat-icon>
-                  <mat-icon *ngIf="link.icon !== 'web'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
+                  <mat-icon *ngIf="link.icon === 'website'" matListItemIcon>public</mat-icon>
+                  <mat-icon *ngIf="link.icon !== 'website'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
                   <span matListItemTitle>{{link.title}}</span>
                   <span *ngIf="deleteMode" matListItemMeta>
                     <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
@@ -112,7 +109,7 @@
           <ng-template #noLinks>
             <p i18n>No links available.</p>
           </ng-template>
-          <div *planetAuthorizedRoles="''" class="action-buttons">
+          <div *planetAuthorizedRoles="''">
             <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
             <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
               <span *ngIf="!deleteMode" i18n>Remove Links</span>

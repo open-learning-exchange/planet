@@ -32,7 +32,7 @@ export class CouchService {
       httpReq = this.http[type](url, opts);
     }
     this.reqNum++;
-    return this.formatHttpReq(httpReq, type, this.reqNum);
+    return this.formatHttpReq(httpReq);
   }
 
   constructor(
@@ -40,7 +40,7 @@ export class CouchService {
     private planetMessageService: PlanetMessageService
   ) {}
 
-  formatHttpReq(httpReq: Observable<any>, type: string, reqNum: Number) {
+  formatHttpReq(httpReq: Observable<any>) {
     return httpReq
       .pipe(catchError(err => {
         if (err.status === 403) {
@@ -166,11 +166,20 @@ export class CouchService {
   getUrl(url: string, reqOpts?: any) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
     const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
-    const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
-    return this.http.get(urlPrefix + '/' + url, opts);
+    const urlPrefix = domain ?
+      (protocol || environment.parentProtocol) + '://' + domain :
+      window.location.origin;
+    return this.http.get(urlPrefix + '/' + url, opts).pipe(
+      map((response: any) => {
+        if (typeof response === 'string' && response.trimStart().startsWith('<!')) {
+          throw new Error('Received HTML instead of expected response');
+        }
+        return response;
+      })
+    );
   }
 
-  private compareRev = (parent, local) => {
+  private compareRev(parent, local) {
     if (parent === local) {
       return 'match';
     }
