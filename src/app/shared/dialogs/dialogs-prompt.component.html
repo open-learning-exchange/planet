@@ -37,7 +37,7 @@
       }
     }
   </p>
-  <p [innerHTML]=data.extraMessage></p>
+  <p [innerHTML]="extraMessage"></p>
   <b class = break-word>{{data.displayName | truncateText:140}}</b>
   <b *ngIf="data.displayDates">{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
   <ng-container *ngFor="let label of labels; last as last">
