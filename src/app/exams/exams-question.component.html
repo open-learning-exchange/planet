@@ -7,9 +7,15 @@
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
         <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
-        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale - 1 to 9</mat-option>
+        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale</mat-option>
       </mat-select>
     </mat-form-field>
+    <div class="scale-max-field" *ngIf="questionForm.controls.type.value === 'ratingScale'">
+      <span class="scale-max-label" i18n>Scale</span>
+      <mat-button-toggle-group formControlName="scaleMax">
+        <mat-button-toggle *ngFor="let n of scaleMaxOptions" [value]="n">{{n}}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
   </div>
   <mat-form-field class="full-width mat-form-field-type-no-underline">
     <mat-label i18n>Question Detail</mat-label>
