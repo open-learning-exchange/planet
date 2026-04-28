@@ -50,6 +50,8 @@ docker/planet-*.yml
 planet.yml
 
 .env
+.codex/*
+!.codex/config.toml
 
 # Dev environment
 environment.dev.ts
