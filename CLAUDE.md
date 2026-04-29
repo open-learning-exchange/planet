@@ -30,7 +30,7 @@ Independent Node service; requires its own `.env` (see `chatapi/README.md`) with
 
 ### CouchDB bootstrap
 
-`bash couchdb-setup.sh -p <port> -i` creates databases, uploads design docs from `design/`, and seeds mock data. Re-run with `-u <admin> -w <password>` if auth breaks. The `design/` tree holds CouchDB map/reduce views per database; `design/create-design-docs.js` walks subdirectories to assemble design documents that the setup script uploads.
+`bash couchdb-setup.sh -p <port>` creates databases and uploads design docs from `design/`. Re-run with `-u <admin> -w <password>` if auth breaks. The `design/` tree holds CouchDB map/reduce views per database; `design/create-design-docs.js` walks subdirectories to assemble design documents that the setup script uploads.
 
 ## Architecture
 
