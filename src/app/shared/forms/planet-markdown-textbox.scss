@@ -48,3 +48,10 @@ planet-markdown-textbox {
     }
   }
 }
+
+// EasyMDE fullscreen surfaces need an explicit background after the MDC form migration;
+// otherwise the app chrome shows through the fixed preview/editor layer.
+.EasyMDEContainer .CodeMirror-fullscreen,
+.editor-preview-full, .editor-toolbar.fullscreen {
+  background: white !important;
+}
