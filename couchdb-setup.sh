@@ -7,14 +7,14 @@ upsert_doc() {
   DOC_LOC=$3
   # Default method is PUT, fourth argument overrides
   METHOD=${4:-"PUT"}
-  DOC=$(curl $COUCHURL/$DB/$DOC_NAME $PROXYHEADER)
+  DOC=$(curl $COUCHURL/$DB/$DOC_NAME)
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
     DOC_REV=$(echo $DOC | jq -r '. | ._rev')
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC $PROXYHEADER
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
   else
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC $PROXYHEADER
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
   fi
 }
 
@@ -30,12 +30,12 @@ insert_dbs() {
   DBS=$1
   for DB in "${DBS[@]}"
   do
-    curl -X PUT $COUCHURL/$DB $PROXYHEADER
+    curl -X PUT $COUCHURL/$DB
   done
 }
 
 set_couch_per_user() {
-  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
+  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true")
   CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
   HEXCODE=$(echo $CODE | tr -d \\n | hexdump -v -e '/1 "%02x"')
   upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
@@ -44,13 +44,12 @@ set_couch_per_user() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:x" option; do
+while getopts "u:w:p:h:" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
-    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
 
