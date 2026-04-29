@@ -23,6 +23,19 @@
     margin-top: 10px;
   }
 
+  .markdown-field {
+    display: block;
+  }
+
+  .markdown-label {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .markdown-error {
+    margin: 0.25rem 0 0;
+  }
+
   .existing-file-container {
     display: flex;
     align-items: center;
