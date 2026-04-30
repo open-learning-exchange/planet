@@ -4,7 +4,7 @@
   .view-container {
     display: grid;
     grid-template-rows: auto 42px;
-    > * {
+    > :first-child {
       overflow-y: auto;
     }
   }

@@ -22,8 +22,8 @@
           <input matInput   formControlName="year">
         </mat-form-field>
         <div class="full-width markdown-field">
-          <label class="header-label markdown-label" i18n>Description</label>
-          <planet-markdown-textbox class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+          <label for="resource-description" class="header-label markdown-label" i18n>Description</label>
+          <planet-markdown-textbox id="resource-description" class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
           <p class="mat-caption warn-text-color markdown-error" *ngIf="resourceForm.controls.description.touched && resourceForm.controls.description.invalid">
             <planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages>
           </p>

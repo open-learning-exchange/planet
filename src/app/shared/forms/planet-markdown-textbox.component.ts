@@ -29,6 +29,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
+  @HostBinding('class.is-invalid') get isInvalid() {
+    return this.errorState;
+  }
+  @HostBinding('class.is-focused') get isFocused() {
+    return this.focused;
+  }
   @ViewChild('editor') editor;
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
