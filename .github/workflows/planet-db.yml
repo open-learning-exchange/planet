@@ -1,6 +1,6 @@
 name: Planet DB-Init Builder
 
-on: 
+on:
   push:
     branches-ignore:
       - l10n_i18n
@@ -41,18 +41,21 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            dockerfile: ./docker/db-init/Dockerfile
-            build_args: ""
+            platform: linux/amd64
           - arch: arm
-            dockerfile: ./docker/db-init/crosscompile-Dockerfile
-            build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm --build-arg CROSSCOMPILE_ARCH=armv7"
+            platform: linux/arm/v7
           - arch: arm64
-            dockerfile: ./docker/db-init/crosscompile-Dockerfile
-            build_args: "--build-arg RUNTIME_IMAGE=treehouses/node-tags:arm64 --build-arg CROSSCOMPILE_ARCH=armv8"
+            platform: linux/arm64
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
@@ -62,13 +65,13 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
-          build_args="${{ matrix.build_args }}"
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build -f '${{ matrix.dockerfile }}' $build_args -t $repo .
-          docker images
-          docker tag $repo $branchrepo
-          docker push $repo
-          docker push $branchrepo
+          docker buildx build \
+            --platform ${{ matrix.platform }} \
+            -f ./docker/db-init/Dockerfile \
+            -t $repo \
+            -t $branchrepo \
+            --push \
+            .
 
   multiarch:
     name: Manifest build
