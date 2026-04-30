@@ -1,30 +1,48 @@
-<div class="fixed action-buttons" *ngIf="editable">
-  <button mat-raised-button color="primary" i18n (click)="openAddReportDialog(false)">Add Report</button>
-  <button mat-raised-button color="accent" i18n *ngIf="reports && reports.length > 0" (click)="exportReports()">
-    Export as CSV
-  </button>
-</div>
-<planet-loading-spinner *ngIf="isLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-<div *ngIf="!isLoading && (!reports || reports?.length === 0)">
-  <p i18n>No reports available at the moment.</p>
-</div>
-<mat-grid-list *ngIf="!isLoading" [cols]="columns" gutterSize="0.5rem" rowHeight="22rem" id="report-grid">
-  <mat-grid-tile *ngFor="let report of reports" (click)="openReportDialog(report)">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title i18n>Financial Report</mat-card-title>
-        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</mat-card-subtitle>
-      </mat-card-header>
+<div class="reports-container">
+
+  <mat-card class="report-toolbar" *ngIf="!isLoading && (editable || reports?.length > 0)">
+    <mat-card-content class="report-toolbar-content">
+      <span class="report-toolbar-count" *ngIf="reports?.length > 0">
+        <mat-icon>description</mat-icon>
+        <strong>{{ reports.length }}</strong>&nbsp;<ng-container i18n>{reports.length, plural, =1 {report} other {reports}}</ng-container>
+      </span>
+      <span class="spacer"></span>
+      <button mat-stroked-button *ngIf="reports?.length > 0" (click)="exportReports()"><mat-icon>file_download</mat-icon><span i18n>Export as CSV</span></button>
+      <button mat-raised-button color="primary" *ngIf="editable" (click)="openAddReportDialog(false)"><mat-icon>add</mat-icon><span i18n>Add Report</span></button>
+    </mat-card-content>
+  </mat-card>
+
+  <planet-loading-spinner *ngIf="isLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
+
+  <p class="report-empty" *ngIf="!isLoading && !reports?.length" i18n>No reports available at the moment.</p>
+
+  <div class="report-grid" *ngIf="!isLoading && reports?.length > 0">
+    <mat-card *ngFor="let report of reports" class="report-card" [ngClass]="{ 'is-loss': reportNet(report) < 0 }" (click)="openReportDialog(report)">
       <mat-card-content>
-        <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
+        <div class="report-card-header">
+          <div class="report-card-range">
+            {{ report.startDate | date : 'mediumDate' : '+0000' }} – {{ report.endDate | date : 'mediumDate' : '+0000' }}
+          </div>
+          <span class="report-card-chip">
+            <ng-container *ngIf="reportNet(report) < 0; else profit" i18n>▼ Loss</ng-container>
+            <ng-template #profit><ng-container i18n>▲ Profit</ng-container></ng-template>
+          </span>
+        </div>
+
+        <div class="report-card-hero-label" i18n>Net (Profit / Loss)</div>
+        <div class="report-card-hero-value">{{ reportNet(report) | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</div>
+
+        <div class="report-card-actions">
+          <ng-container *ngIf="editable">
+            <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report, true)" i18n-aria-label aria-label="Edit"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)" i18n-aria-label aria-label="Delete"><mat-icon>delete_outline</mat-icon></button>
+          </ng-container>
+          <span class="spacer"></span>
+          <button mat-stroked-button (click)="$event.stopPropagation(); openReportDialog(report)">
+            <span i18n>View Report</span><mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
       </mat-card-content>
-      <mat-card-footer class="action-buttons margin-lr-10">
-        <ng-container *ngIf="editable">
-          <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
-          <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report, true)"><mat-icon>edit</mat-icon></button>
-        </ng-container>
-        <button mat-button i18n>View Report</button>
-      </mat-card-footer>
     </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
+  </div>
+</div>
