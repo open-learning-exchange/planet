@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
@@ -16,6 +18,17 @@ import {
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 
 interface ExamAnswerOption {
   id: string;
@@ -34,7 +47,13 @@ interface ExamViewForm {
 @Component({
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
-  styleUrls: [ './exams-view.scss' ]
+  styleUrls: ['./exams-view.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu,
+    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput,
+    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup, NgFor,
+    MatRadioButton, MatCheckbox, MatButton, PlanetLoadingSpinnerComponent, DatePipe
+  ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
@@ -184,7 +203,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.dialogsLoadingService.start();
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable(isFinish);
     const previousStatus = this.previewMode ? 'preview' : this.submissionsService.submission.status;
-// Only navigate away from page until after successful post (ensures DB is updated for submission list)
+    // Only navigate away from page until after successful post (ensures DB is updated for submission list)
     obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
@@ -198,7 +217,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
           includedCodes.includes(this.stateService.configuration.code) &&
           challengePeriod &&
           this.courseId === challengeCourseId
-          ) {
+        ) {
           this.dialog.open(DialogsAnnouncementComponent, {
             width: '50vw',
             maxHeight: '100vh'
@@ -329,8 +348,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.isNewQuestion = false;
       this.isComplete = this.unansweredQuestions && this.unansweredQuestions.every(number => this.questionNum === number);
       this.isLoading = false;
-  });
-}
+    });
+  }
 
   setAnswer(event: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
     const value: ExamAnswerOption[] = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];

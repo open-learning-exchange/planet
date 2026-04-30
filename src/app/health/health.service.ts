@@ -16,9 +16,9 @@ export class HealthService {
   readonly encryptedFields = [
     'events', 'profile', 'lastExamination', 'userKey',
     'allergies', 'createdBy', 'diagnosis', 'immunizations', 'medications', 'notes', 'referrals', 'tests', 'treatments', 'xrays'
-   ];
-   private eventDetail = new BehaviorSubject({});
-   shareEventDetail = this.eventDetail.asObservable();
+  ];
+  private eventDetail = new BehaviorSubject({});
+  shareEventDetail = this.eventDetail.asObservable();
 
   constructor(
     private couchService: CouchService,
@@ -37,8 +37,8 @@ export class HealthService {
         return first.key && first.iv ?
           of({ doc: first }) :
           createIfNone ?
-          this.createUserKey(userDb) :
-          of({ doc: {} });
+            this.createUserKey(userDb) :
+            of({ doc: {} });
       })
     );
   }

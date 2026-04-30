@@ -1,11 +1,11 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 .header {
   padding: 10px;
 
   .icon-button {
     margin-left: 10px;
-    background-color: $accent;
+    background-color: v.$accent;
   }
 }
 
@@ -37,7 +37,7 @@ li:hover {
   top: 80px;
   left: 20px;
   border-radius: 50%;
-  background-color: $accent;
+  background-color: v.$accent;
   transition: width 0.3s ease;
 }
 
@@ -99,7 +99,7 @@ li:hover {
   align-items: center;
   min-width: 0;
 }
-@media only screen and (max-width: $screen-md) {
+@media only screen and (max-width: v.$screen-md) {
   .expand-button {
     top: 10px;
   }

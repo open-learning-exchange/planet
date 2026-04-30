@@ -12,10 +12,14 @@ const routes: Routes = [
     children: [
       { path: '', component: LoginFormComponent },
       { path: 'newmember', component: LoginFormComponent },
-      { path: 'configuration', component: ConfigurationComponent,
-      canActivate: [ ConfigurationGuard ] },
-      { path: 'migration', component: MigrationComponent,
-      canActivate: [ ConfigurationGuard ] }
+      {
+        path: 'configuration', component: ConfigurationComponent,
+        canActivate: [ ConfigurationGuard ]
+      },
+      {
+        path: 'migration', component: MigrationComponent,
+        canActivate: [ ConfigurationGuard ]
+      }
     ]
   }
 ];

@@ -1,9 +1,9 @@
-@import '../../../variables';
+@use '../../../variables' as v;
 
 $screen-md: 1300px;
 
 :host {
-  @include screen-sizes($screen-md, $screen-sm);
+  @include v.screen-sizes($screen-md, v.$screen-sm);
 }
 
 button {

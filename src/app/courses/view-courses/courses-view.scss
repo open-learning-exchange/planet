@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
   .course-container {
@@ -39,7 +39,7 @@
     flex-shrink: 0;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .course-container {
       grid-template-columns: 1fr;
       grid-template-areas: 
@@ -71,11 +71,11 @@ mat-panel-title {
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  @media (max-width: $screen-md) {
+  @media (max-width: v.$screen-md) {
     max-width: 90ch;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     max-width: 45ch;
   }
 }

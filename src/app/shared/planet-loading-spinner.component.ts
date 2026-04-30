@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'planet-loading-spinner',
@@ -22,7 +23,8 @@ import { Component, Input } from '@angular/core';
         padding: 24px;
       }
     }
-  `]
+  `],
+  imports: [MatProgressSpinner]
 })
 export class PlanetLoadingSpinnerComponent {
   @Input() text = $localize `Loading`;

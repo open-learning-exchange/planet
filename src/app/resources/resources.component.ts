@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
@@ -23,25 +25,49 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { findByIdInArray, calculateMdAdjustedLimit, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
+import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
+import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
-  styleUrls: [ './resources.scss' ],
+  styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent,
+    MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput,
+    MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu,
+    AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective,
+    PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective,
+    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+  ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
@@ -70,7 +96,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
@@ -97,10 +125,12 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   initialSort = '';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
-  previewLimit = 450;
+  private previewHasHiddenContent = new Map<string, boolean>();
+  private previewOverflow = new Map<string, boolean>();
 
   @ViewChild(PlanetTagInputComponent)
   private tagInputComponent: PlanetTagInputComponent;
@@ -122,11 +152,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private fuzzySearchService: FuzzySearchService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 
@@ -216,8 +248,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const start = this.paginator.pageIndex * this.paginator.pageSize;
     const end = start + this.paginator.pageSize;
     this.isAllSelected() ?
-    this.selection.clear() :
-    this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.selection.clear() :
+      this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
   }
 
   updateResource(resource) {
@@ -303,13 +335,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const msg = (type === 'pull' ? 'fetch' : 'send'),
       items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
-    .subscribe((response: any) => {
-      this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
-    }, () => error => this.planetMessageService.showMessage(error));
+      .subscribe((response: any) => {
+        this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
+      }, () => error => this.planetMessageService.showMessage(error));
   }
 
   addTagsToSelected({ selected, indeterminate }) {
     this.resourcesService.updateResourceTags(this.selection.selected, selected, indeterminate).subscribe(() => {
+      this.tagInputComponent?.initTags();
       this.planetMessageService.showMessage($localize`Collections updated`);
     });
   }
@@ -360,16 +393,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-    .pipe(takeUntil(this.onDestroy$))
-    .subscribe((planet) => {
-      const data = { okClick: this.sendResource().bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        ...planet };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, maxHeight: '500px', width: '600px', autoFocus: false
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((planet) => {
+        const data = { okClick: this.sendResource().bind(this),
+          filterPredicate: filterSpecificFields([ 'name' ]),
+          allowMulti: true,
+          ...planet };
+        this.dialogRef = this.dialog.open(DialogsListComponent, {
+          data, maxHeight: '500px', width: '600px', autoFocus: false
+        });
       });
-    });
   }
 
   sendResource() {
@@ -401,22 +434,38 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.expandedElement = this.expandedElement === element ? null : element;
   }
 
-  onExpansionDone(event: any, element: any) {
-    element.renderContent = (event.toState === 'expanded');
-  }
-
   isExpanded(element: any): boolean {
     return this.expandedElement === element;
   }
 
   formatLevels(levels: string | string[] = []): string {
     const arr = Array.isArray(levels) ? levels : String(levels).split(',');
-    return arr.map(s => s.trim()).filter(Boolean).join(', ');
+    return arr.map(s => s.trim()).filter(Boolean)
+      .map(value => levelList.find(option => option.value === value)?.label || value)
+      .join(', ');
   }
 
   showPreviewExpand(element: any): boolean {
-    if (!element.description) { return false; }
-    return element.description.length > calculateMdAdjustedLimit(element.description, this.previewLimit);
+    const description = element?.doc?.description;
+    if (!description) {
+      return false;
+    }
+    const previewKey = this.getPreviewKey(element);
+    let hasHiddenContent = this.previewHasHiddenContent.get(previewKey);
+    if (hasHiddenContent === undefined) {
+      hasHiddenContent = hasMarkdownImages(description) || doesMarkdownPreviewTruncate(description);
+      this.previewHasHiddenContent.set(previewKey, hasHiddenContent);
+    }
+    // isExpanded check keeps the collapse button visible after the preview div unmounts
+    return hasHiddenContent || this.isExpanded(element) || this.previewOverflow.get(previewKey) === true;
+  }
+
+  getPreviewKey(element: any): string {
+    return element?._id || '';
+  }
+
+  setPreviewOverflow(element: any, hasOverflow: boolean) {
+    this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
 }

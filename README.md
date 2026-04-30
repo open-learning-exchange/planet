@@ -18,7 +18,7 @@ For development, the following additional tools are required:
 * Git
 * NPM v10
 * Node.js v18
-* Angular CLI v15
+* Angular CLI v18
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -102,7 +102,7 @@ To run planet in development with a different locale, you can set the configurat
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
-## Unit & End-to-End Tests
+## Tests
 
 You can run tests directly from the host or within the development container.
 
@@ -113,10 +113,8 @@ npm run test
 Open `localhost:9876` once this is done compiling
 
 ### End-to-End Tests:
-```
-npm run e2e
-```
-Results will appear in the console
+
+End-to-end test automation is not currently wired up in this repository. There is no supported `npm run e2e` workflow on this branch.
 
 ## Additional Commands
 
@@ -173,6 +171,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v18. Other versions of Node may throw errors when installing dependencies.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

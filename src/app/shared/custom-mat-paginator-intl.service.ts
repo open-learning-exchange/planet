@@ -19,7 +19,9 @@ export class CustomMatPaginatorIntl extends MatPaginatorIntl {
 
   // Custom range label function with translation support
   override getRangeLabel = (page: number, pageSize: number, length: number): string => {
-    if (length === 0 || pageSize === 0) { return $localize`0 of ${length}`; }
+    if (length === 0 || pageSize === 0) {
+      return $localize`0 of ${length}`;
+    }
 
     const startIndex = page * pageSize;
     const endIndex = startIndex < length ? Math.min(startIndex + pageSize, length) : startIndex + pageSize;

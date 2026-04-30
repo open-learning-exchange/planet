@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgIf, NgFor } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -16,10 +16,11 @@ import { TasksService } from '../tasks/tasks.service';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 @Component({
   selector: 'planet-calendar',
-  styleUrls: [ './calendar.component.scss' ],
+  styleUrls: ['./calendar.component.scss'],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
     <div class="calendar-legend" *ngIf="showLegend">
@@ -30,7 +31,8 @@ import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
         </div>
       </div>
     </div>
-  `
+  `,
+  imports: [FullCalendarModule, NgIf, NgFor]
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 
@@ -207,14 +209,14 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   openAddEventDialog(event) {
     const today = new Date();
     const meetup = event?.start
-    ? {
-      startDate: event.start,
-      endDate: this.adjustEndDate(event.end),
-    }
-  : {
-      startDate: today,
-      endDate: today,
-    };
+      ? {
+        startDate: event.start,
+        endDate: this.adjustEndDate(event.end),
+      }
+      : {
+        startDate: today,
+        endDate: today,
+      };
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'no-max-height-dialog'

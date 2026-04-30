@@ -3,7 +3,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CouchService } from '../shared/couchdb.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DashboardComponent } from './dashboard.component';
 import { UserService } from '../shared/user.service';
 import { of } from 'rxjs/observable/of';
@@ -12,9 +12,8 @@ describe('Dashboard', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule, HttpClientModule ],
-      declarations: [ DashboardComponent ],
-      providers: [ UserService, CouchService ]
+      imports: [RouterTestingModule, DashboardComponent],
+      providers: [UserService, CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(DashboardComponent),
       comp = fixture.componentInstance,

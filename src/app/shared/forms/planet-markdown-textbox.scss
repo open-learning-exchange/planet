@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 @mixin editor-border-color($color) {
   border-top-color: $color;
@@ -9,13 +9,13 @@
 
 .mat-form-field-invalid planet-markdown-textbox {
   .editor-toolbar, .CodeMirror {
-    @include editor-border-color($warn);
+    @include editor-border-color(v.$warn);
   }
 }
 
 .mat-focused.ng-valid planet-markdown-textbox, .mat-focused.ng-untouched planet-markdown-textbox {
   .editor-toolbar, .CodeMirror {
-    @include editor-border-color($primary);
+    @include editor-border-color(v.$primary);
   }
 }
 

@@ -4,7 +4,6 @@ import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { ResourcesViewComponent } from './resources-view.component';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from '../../shared/material.module';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';

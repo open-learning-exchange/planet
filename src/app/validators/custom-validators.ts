@@ -16,8 +16,8 @@ export class CustomValidators {
     return typeof ac.value !== 'string' ?
       isValidInt(ac.value) :
       isStringEdgeCase(ac.value) ?
-      error :
-      isValidInt(Number(ac.value));
+        error :
+        isValidInt(Number(ac.value));
   }
 
   static spaceValidator(ac: AbstractControl<string | null>): ValidationErrors | null {
@@ -293,13 +293,15 @@ export class CustomValidators {
   static atLeastOneDaySelected(): ValidatorFn {
     // Control value should be the array of selected weekday identifiers.
     return (control: AbstractControl<string[] | null>): ValidationErrors | null => {
-        if (!control.parent) { return null; }
-        const recurringControl = control.parent.get('recurring');
-        if (!recurringControl || recurringControl.value !== 'weekly') {
-            return null;
-        }
-        const selectedDays = control.value;
-        return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
+      if (!control.parent) {
+        return null;
+      }
+      const recurringControl = control.parent.get('recurring');
+      if (!recurringControl || recurringControl.value !== 'weekly') {
+        return null;
+      }
+      const selectedDays = control.value;
+      return selectedDays && selectedDays.length > 0 ? null : { noDaysSelected: true };
     };
   }
 }

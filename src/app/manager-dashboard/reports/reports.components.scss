@@ -1,6 +1,6 @@
-@import '../../variables';
+@use '../../variables' as v;
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .toolbar-responsive {
     display: flex;
     flex-direction: column;

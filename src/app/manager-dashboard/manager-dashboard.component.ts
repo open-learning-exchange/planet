@@ -1,4 +1,4 @@
-import { Component, OnInit, isDevMode, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -7,7 +7,7 @@ import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
@@ -15,10 +15,21 @@ import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { PlanetBetaDirective } from '../shared/beta.directive';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styleUrls: [ './manager-dashboard.scss' ]
+  styleUrls: ['./manager-dashboard.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, AuthorizedRolesDirective, MatAnchor, MatButton, PlanetBetaDirective,
+    MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe
+  ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -118,16 +129,20 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   checkRequestStatus() {
-    this.couchService.post(`communityregistrationrequests/_find`,
-      findDocuments({ 'code': this.planetConfiguration.code }, [ 'registrationRequest' ]),
-      { domain: this.planetConfiguration.parentDomain }).subscribe(data => {
-        if (data.docs.length === 0) {
-          this.showResendConfiguration = true;
-          this.requestStatus = 'deleted';
-        } else {
-          this.requestStatus = data.docs[0].registrationRequest;
-        }
-      }, error => (error));
+    this.couchService.post('communityregistrationrequests/_find',
+      findDocuments(
+        { 'code': this.planetConfiguration.code },
+        [ 'registrationRequest' ]
+      ),
+      { domain: this.planetConfiguration.parentDomain }
+    ).subscribe(data => {
+      if (data.docs.length === 0) {
+        this.showResendConfiguration = true;
+        this.requestStatus = 'deleted';
+      } else {
+        this.requestStatus = data.docs[0].registrationRequest;
+      }
+    }, error => (error));
   }
 
   // Find on the user or shelf db (which have matching ids)
@@ -265,9 +280,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resetPin() {
-  const userName = 'org.couchdb.user:satellite';
-  return this.couchService.get('_users/' + userName)
-    .pipe(
+    const userName = 'org.couchdb.user:satellite';
+    return this.couchService.get('_users/' + userName).pipe(
       switchMap((data) => {
         const { derived_key, iterations, password_scheme, salt, ...satelliteProfile } = data;
         satelliteProfile.password = this.managerService.createPin();
@@ -277,7 +291,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
         ]);
       })
     );
-}
+  }
 
   setVersions() {
     const opts = { responseType: 'text', withCredentials: false, headers: { 'Content-Type': 'text/plain' } };

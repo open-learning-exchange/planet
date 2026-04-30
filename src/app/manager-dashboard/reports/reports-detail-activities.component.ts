@@ -1,10 +1,14 @@
 import { Component, Input, ViewChild, OnChanges, AfterViewInit, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef,
+  MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 import { truncateText } from '../../shared/utils';
+import { NgIf, DatePipe } from '@angular/common';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
@@ -15,7 +19,28 @@ const columns = {
 
 @Component({
   selector: 'planet-reports-detail-activities',
-  templateUrl: './reports-detail-activities.component.html'
+  templateUrl: './reports-detail-activities.component.html',
+  imports: [
+    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe
+  ],
+  styles: `
+    :host {
+      display: grid;
+      grid-template-rows: 1fr 56px;
+      height: 100%;
+
+      mat-table {
+        overflow-y: auto;
+
+        mat-header-row {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+      }
+    }
+  `
 })
 export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, AfterViewInit {
 
@@ -37,8 +62,6 @@ export class ReportsDetailActivitiesComponent implements OnInit, OnChanges, Afte
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
-  constructor() {}
 
   ngOnInit() {
     this.activities.sortingDataAccessor = (item: any, property: string) => property === 'unique' ?

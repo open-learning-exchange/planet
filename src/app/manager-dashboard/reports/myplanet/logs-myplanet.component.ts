@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../../shared/couchdb.service';
 import { StateService } from '../../../shared/state.service';
@@ -11,10 +11,21 @@ import { CsvService } from '../../../shared/csv.service';
 import { ReportsService } from '../reports.service';
 import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from '../reports.utils';
+import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MyPlanetTableComponent } from './myplanet-table.component';
+import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './logs-myplanet.component.html',
-  styleUrls: [ './myplanet.scss' ]
+  styleUrls: ['./myplanet.scss'],
+  imports: [
+    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor,
+    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 
@@ -75,7 +86,9 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
   getEarliestDate(logs: any[]): Date {
     const earliest = Math.min(...logs.flatMap(log => {
       const dates = [];
-      if (log.time) { dates.push(Number(log.time)); }
+      if (log.time) {
+        dates.push(Number(log.time));
+      }
       return dates;
     }));
     return new Date(earliest);
@@ -94,7 +107,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
         [ { doc: this.stateService.configuration } ].concat(attachNamesToPlanets(planets))
           .filter((planet: any) => planet.doc.docType !== 'parentName')
           .map((planet: any) => ({ ...planet, name: planet.nameDoc ? planet.nameDoc.name : planet.doc.name })),
-          apklogs
+        apklogs
       );
       this.apklogs = this.allPlanets;
       this.onTimeFilterChange(this.selectedTimeFilter);

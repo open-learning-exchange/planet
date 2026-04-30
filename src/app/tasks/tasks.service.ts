@@ -102,8 +102,8 @@ export class TasksService {
     const compare = (a, b) => a > b ?
       1 :
       a < b ?
-      -1 :
-      false;
+        -1 :
+        false;
     return tasks.sort((a, b) =>
       compare(new Date(a.deadline), new Date(b.deadline)) ||
       compare(a.completed, b.completed) ||

@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
   display: grid;
@@ -7,15 +7,15 @@
   grid-auto-flow: column;
 
   div {
-    background-color: $accent;
+    background-color: v.$accent;
   }
 
   div.completed {
-    background-color: $planet-green;
+    background-color: v.$planet-green;
   }
 
   div.not-started {
-    background-color: $grey;
+    background-color: v.$grey;
   }
 
 }

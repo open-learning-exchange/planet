@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { CoursesService } from '../courses.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
@@ -15,10 +15,27 @@ import {
   DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
 } from '../../shared/dialogs/dialogs-announcement.component';
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgClass, NgTemplateOutlet, NgFor } from '@angular/common';
+import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
-  styleUrls: [ './courses-step-view.scss' ]
+  styleUrls: ['./courses-step-view.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, MatButton, MatIconButton, MatAnchor, MatMenuTrigger,
+    MatMenu, MatMenuItem, RouterLink, NgClass, ChatWindowComponent, NgTemplateOutlet,
+    PlanetMarkdownComponent, MatButtonToggleGroup, FormsModule, NgFor, MatButtonToggle, MatTooltip,
+    ResourcesViewerComponent, PlanetLoadingSpinnerComponent
+  ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {
@@ -63,17 +80,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.courseUpdated$,
       this.resourcesService.resourcesListener(this.parent),
       this.stateService.getCouchState('exams', 'local')
-    ).pipe(takeUntil(this.onDestroy$))
-    .subscribe(([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
-      this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
-      if (this.countActivity) {
-        this.coursesService.courseActivity('visit', course, this.stepNum);
-        this.countActivity = false;
-      }
-      this.canManage = this.userService.get().isUserAdmin ||
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(
+      ([ { course, progress = [] }, resources, exams ]: [ { course: any, progress: any }, any[], any[] ]) => {
+        this.initCourse(course, progress, resources.map((resource: any) => resource.doc), exams);
+        if (this.countActivity) {
+          this.coursesService.courseActivity('visit', course, this.stepNum);
+          this.countActivity = false;
+        }
+        this.canManage = this.userService.get().isUserAdmin ||
         course.creator !== undefined &&
         (`${this.userService.get().name}@${this.userService.get().planetCode}` === course.creator);
-    });
+      });
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
@@ -90,18 +107,18 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
-      this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
-      this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
-      this.attempts = attempts;
-      const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
-      this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
-      if (!this.parent && this.progress.passed !== this.examPassed) {
-        this.coursesService.updateProgress({
-          courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
-        });
-      }
-    });
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+        this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
+        this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
+        this.attempts = attempts;
+        const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
+        this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
+        if (!this.parent && this.progress.passed !== this.examPassed) {
+          this.coursesService.updateProgress({
+            courseId: this.courseId, stepNum: this.stepNum, passed: this.examPassed
+          });
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -226,6 +243,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   openReviewDialog() {
     this.dialog.open(DialogsSubmissionsComponent, {
       minWidth: '500px',
+      maxWidth: '90vw',
       maxHeight: '90vh',
       data: { parentId: `${this.stepDetail.exam._id}@${this.courseId}` }
     });

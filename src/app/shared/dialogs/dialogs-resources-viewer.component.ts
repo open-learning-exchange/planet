@@ -1,6 +1,9 @@
 import { Router, ActivatedRoute } from '@angular/router';
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   template: `
@@ -11,7 +14,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
       <button mat-dialog-close mat-raised-button i18n>Close</button>
       <button mat-raised-button color="primary" (click)="viewResources()" i18n>View Resource</button>
     </mat-dialog-actions>
-  `
+  `,
+  imports: [CdkScrollable, MatDialogContent, ResourcesViewerComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class DialogsResourcesViewerComponent {
 

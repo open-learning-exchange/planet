@@ -28,7 +28,7 @@ export class MeetupService {
         this.userShelf = shelf;
         this.meetupUpdated.next(this.meetupList(this.meetups, shelf.meetupIds || []));
       });
-    }
+  }
 
   updateMeetups({ meetupIds = [], opts = {} }: { meetupIds?: string[], opts?: any } = {}) {
     const meetupQuery = meetupIds.length > 0 ?
@@ -90,7 +90,7 @@ export class MeetupService {
         this.userShelf._rev = response.rev;
         this.userService.shelf = this.userShelf;
         return { response, participate };
-    }));
+      }));
   }
 
   openDeleteDialog(meetups: any[] | any, callback) {
@@ -101,10 +101,10 @@ export class MeetupService {
       (meetups[0] || meetups).recurring !== 'none' &&
       (meetups[0] || meetups).recurringNumber
         ? `(Recurs ${(meetups[0] || meetups).recurring} for ${
-            (meetups[0] || meetups).recurringNumber
-          } ${
-            (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
-          })`
+          (meetups[0] || meetups).recurringNumber
+        } ${
+          (meetups[0] || meetups).recurring === 'daily' ? 'days' : 'weeks'
+        })`
         : '';
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {

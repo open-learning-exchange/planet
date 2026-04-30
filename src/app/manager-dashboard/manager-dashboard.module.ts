@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
 import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
@@ -37,12 +36,8 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
     MaterialModule,
     PlanetDialogsModule,
     ManagerDashboardRouterModule,
-    HttpClientModule,
-    HttpClientJsonpModule,
     ConfigurationModule,
-    SharedComponentsModule
-  ],
-  declarations: [
+    SharedComponentsModule,
     ManagerAIServicesComponent,
     ManagerDashboardComponent,
     ManagerSyncComponent,

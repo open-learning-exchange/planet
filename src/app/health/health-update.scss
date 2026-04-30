@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 :host {
   .view-container {
@@ -23,7 +23,7 @@
   }
 
   .view-container.view-full-height {
-    height: $view-container-height-no-toolbar
+    height: v.$view-container-height-no-toolbar
   }
 
 }

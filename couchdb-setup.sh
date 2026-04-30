@@ -44,18 +44,15 @@ set_couch_per_user() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:ix" option; do
+while getopts "u:w:p:h:x" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
-    i) INSTALLFLAG=1;;
     x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
-
-ISINSTALL=${INSTALLFLAG:-0}
 
 if [ -z "$HOST" ]
 then
@@ -184,21 +181,7 @@ upsert_doc resources _index '{"index":{"fields":[{"title":"asc"}]},"name":"time-
 upsert_doc news _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
 upsert_doc tags _index '{"index":{"fields":[{"name":"asc"}]},"name":"name-index"}' POST
 upsert_doc team_activities _index '{"index":{"fields":[{"time":"desc"}]},"name":"time-index"}' POST
-# Only insert dummy data and update security on install
-# _users security is set in app and auto accept will be overwritten if set here
-if (($ISINSTALL))
-then
-  # Insert dummy data docs
-  insert_docs meetups ./design/meetups/meetups-mockup.json
-  insert_docs courses ./design/courses/courses-mockup.json
-  insert_docs resources ./design/resources/resources-mockup.json
-  insert_attachments resources ./design/resources/resources-attachment-mockup.json
-  # When attachment database is implemented in app, uncomment below line and delete above line
-  # insert_attachments attachments ./design/resources/resources-attachment-mockup.json
-  # Add permission in databases
-  SECURITY=$(add_security_admin_roles ./design/security-update/security-update-once.json manager)
-  multi_db_update $SECURITY _security
-fi
+
 SECURITY=$(add_security_admin_roles ./design/security-update/security-update.json manager)
 multi_db_update $SECURITY _security
 set_couch_per_user

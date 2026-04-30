@@ -2,6 +2,8 @@ import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { truncateText } from '../../shared/utils';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   template: `
@@ -12,7 +14,8 @@ import { truncateText } from '../../shared/utils';
     </span>
     <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
-  selector: 'planet-tag-selected-input'
+  selector: 'planet-tag-selected-input',
+  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault, MatTooltip]
 })
 export class PlanetTagSelectedInputComponent implements OnChanges {
 
@@ -33,8 +36,8 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   }
 
   @HostListener('window:resize') OnResize() {
-      this.deviceType = this.deviceInfoService.getDeviceType();
-    }
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
 
   setTooltipLabels(selectedIds, allTags) {
     const tagsNames = selectedIds.map((tag: any) => this.tagsService.findTag(tag, allTags).name);
@@ -43,7 +46,7 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
 
   getTruncatedTooltip(): string {
     const maxLength = this.deviceType === this.deviceTypes.DESKTOP ? 50 :
-                      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
+      this.deviceType === this.deviceTypes.TABLET ? 35 : 20;
     return truncateText(this.tooltipLabels, maxLength);
   }
 
