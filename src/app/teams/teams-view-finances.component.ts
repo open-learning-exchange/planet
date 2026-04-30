@@ -16,7 +16,7 @@ import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -31,7 +31,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
   styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
   imports: [
-    NgIf, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
+    NgIf, NgFor, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
     MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef,
     MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
     PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
@@ -48,14 +48,26 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
   deleteDialog: any;
-  dateNow: any;
   startDate: Date;
   endDate: Date;
   emptyTable = true;
-  showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
   planetName: any;
+  totals = { credit: 0, debit: 0, balance: 0 };
+
+  get stats() {
+    const { credit, debit, balance } = this.totals;
+    const negative = balance < 0;
+    return [
+      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
+      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
+      {
+        label: $localize`Current Balance`, icon: 'account_balance_wallet',
+        tone: negative ? 'warn' : 'net', value: balance, alert: negative
+      }
+    ];
+  }
 
   constructor(
     private csvService: CsvService,
@@ -66,24 +78,15 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private teamsService: TeamsService
-  ) {
-    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
-  }
+  ) {}
 
   ngOnInit() {
     this.table.filterPredicate = (data: any, filter) => {
       const fromDate = this.startDate || -Infinity;
       const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate || data.date === $localize`Total`;
+      return data.date >= fromDate && data.date < toDate;
     };
-    this.table.connect().subscribe(transactions => {
-      if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
-        transactions[0] = this.setTransactionsTable(transactions)[0];
-      }
-      const hasRows = this.table.filteredData && this.table.filteredData.length > 0;
-      this.showBalanceWarning = hasRows && (this.finances && this.finances.length) === (this.table.filteredData.length - 1) &&
-        this.table.filteredData[0].balance < 0;
-    });
+    this.table.connect().subscribe(() => this.updateTotals());
   }
 
   ngOnChanges() {
@@ -96,21 +99,12 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
-    const financeData = transactions.filter(transaction => transaction.status !== 'archived' && transaction.date !== 'Total')
+    const financeData = transactions.filter(transaction => transaction.status !== 'archived')
       // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
-    if (financeData.length === 0) {
-      this.emptyTable = true;
-      return [ { date: $localize`Total` } ];
-    }
-    this.emptyTable = false;
-    const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    return [ { date: $localize`Total`, credit, debit, balance, filter: this.filterString() }, ...financeData ];
-  }
-
-  private filterString() {
-    return (this.startDate || '').toString() + (this.endDate || '').toString();
+    this.emptyTable = financeData.length === 0;
+    return financeData;
   }
 
   transactionFilter() {
@@ -207,14 +201,20 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.startDate = undefined;
     this.endDate = undefined;
     this.table.filter = '';
-    this.emptyTable = this.table.data.length <= 1;
+    this.emptyTable = this.table.data.length === 0;
+  }
+
+  private updateTotals() {
+    const latest = (this.table.filteredData || [])[0];
+    this.totals = {
+      credit: latest?.totalCredits || 0,
+      debit: latest?.totalDebits || 0,
+      balance: latest?.balance || 0
+    };
   }
 
   exportTableData() {
-    let updatedData = [ ...this.table.filteredData ];
-    updatedData.shift();
-
-    updatedData = updatedData.map(row => ({
+    const updatedData = this.table.filteredData.map(row => ({
       [$localize`date`]: fullLabel(row.date),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
