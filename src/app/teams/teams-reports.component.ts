@@ -63,12 +63,17 @@ export class TeamsReportsComponent {
     private planetMessageService: PlanetMessageService,
   ) {}
 
+  private num(value: any): number {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
   reportIncome(report: any): number {
-    return (report?.sales || 0) + (report?.otherIncome || 0);
+    return this.num(report?.sales) + this.num(report?.otherIncome);
   }
 
   reportExpenses(report: any): number {
-    return (report?.wages || 0) + (report?.otherExpenses || 0);
+    return this.num(report?.wages) + this.num(report?.otherExpenses);
   }
 
   reportNet(report: any): number {
@@ -76,7 +81,7 @@ export class TeamsReportsComponent {
   }
 
   reportEnding(report: any): number {
-    return (report?.beginningBalance || 0) + this.reportNet(report);
+    return this.num(report?.beginningBalance) + this.reportNet(report);
   }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {

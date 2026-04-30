@@ -17,7 +17,11 @@
   <p class="report-empty" *ngIf="!isLoading && !reports?.length" i18n>No reports available at the moment.</p>
 
   <div class="report-grid" *ngIf="!isLoading && reports?.length > 0">
-    <mat-card *ngFor="let report of reports" class="report-card" [ngClass]="{ 'is-loss': reportNet(report) < 0 }" (click)="openReportDialog(report)">
+    <mat-card *ngFor="let report of reports" class="report-card" [ngClass]="{ 'is-loss': reportNet(report) < 0 }"
+      role="button" tabindex="0"
+      (click)="openReportDialog(report)"
+      (keydown.enter)="openReportDialog(report)"
+      (keydown.space)="$event.preventDefault(); openReportDialog(report)">
       <mat-card-content>
         <div class="report-card-header">
           <div class="report-card-range">
