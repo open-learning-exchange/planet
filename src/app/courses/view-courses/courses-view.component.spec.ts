@@ -8,7 +8,7 @@ describe('ViewCoursesComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CoursesViewComponent ]
+      imports: [CoursesViewComponent]
     }).compileComponents();
   }));
 

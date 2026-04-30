@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject, of, Observable } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
@@ -13,6 +13,11 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgClass, NgIf, NgFor } from '@angular/common';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatIcon } from '@angular/material/icon';
+import { MatAnchor } from '@angular/material/button';
 
 export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
 export const challengeCourseId = '4e6b78800b6ad18b4e8b0e1e38a98cac';
@@ -30,13 +35,14 @@ export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Dat
       <p class="success-msg">¡Felicidades reto completado!</p>
     </div>
   `,
-  styleUrls: [ './dialogs-announcement.component.scss' ]
+  styleUrls: ['./dialogs-announcement.component.scss']
 })
 export class DialogsAnnouncementSuccessComponent { }
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
-  styleUrls: [ './dialogs-announcement.component.scss' ]
+  styleUrls: ['./dialogs-announcement.component.scss'],
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, NgIf, MatProgressSpinner, MatIcon, MatAnchor, NgFor]
 })
 export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 

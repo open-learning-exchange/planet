@@ -104,7 +104,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table" [ngClass]="{'view-with-search':showFilters}">
+  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search':showFilters}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -121,9 +121,9 @@
       </ng-container>
       <ng-container matColumnDef="title">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.title.length > 50 }">
+        <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
+            <ng-container *ngIf="isMobile">
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>

@@ -15,8 +15,10 @@ describe('ConfigurationComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ConfigurationComponent, FormErrorMessagesComponent],
-      imports: [FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule],
+      imports: [
+        FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule,
+        ConfigurationComponent, FormErrorMessagesComponent
+      ],
       providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
     });
     fixture = TestBed.createComponent(ConfigurationComponent);

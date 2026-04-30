@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'planet-course-icon',
@@ -12,7 +15,8 @@ import { Component, Input } from '@angular/core';
       <span *ngSwitchCase="'done'" i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
       <span *ngSwitchCase="'rotate_right'" i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
     </div>
-  `
+  `,
+  imports: [NgSwitch, NgSwitchCase, MatTooltip, MatIcon]
 })
 export class CoursesIconComponent {
 

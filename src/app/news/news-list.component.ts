@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -11,11 +11,18 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { CommunityListDialogComponent } from '../community/community-list-dialog.component';
 import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
+import { NgIf, NgFor } from '@angular/common';
+import { MatButton } from '@angular/material/button';
+import { NewsListItemComponent } from './news-list-item.component';
+import { MatDivider } from '@angular/material/list';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
-  styleUrls: [ './news-list.component.scss' ],
+  styleUrls: ['./news-list.component.scss'],
+  imports: [NgIf, MatButton, NewsListItemComponent, MatDivider, NgFor, MatProgressSpinner, MatPaginator]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -51,6 +58,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  private routerEventsSubscription: Subscription;
 
   constructor(
     private dialog: MatDialog,
@@ -63,7 +71,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ) {}
 
   ngOnInit() {
-    this.router.events.subscribe(() => {
+    this.routerEventsSubscription = this.router.events.subscribe(() => {
       this.initNews();
     });
 
@@ -87,7 +95,11 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.displayedItems = this.replyObject[this.replyViewing._id];
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
-      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id);
+      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
+      if (this.replyViewing._id === 'root') {
+        this.displayedItems = this.replyObject.root || [];
+        this.loadPagedItems(true);
+      }
     }
   }
 
@@ -96,6 +108,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   ngOnDestroy() {
+    this.routerEventsSubscription?.unsubscribe();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -347,6 +360,5 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.loadPagedItems(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

@@ -4,6 +4,8 @@ import { StateService } from './state.service';
 import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
   markdownImageRegex, normalizeMarkdownWhitespace, truncateText
 } from './utils';
+import { NgIf, NgFor } from '@angular/common';
+import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   selector: 'planet-markdown',
@@ -18,8 +20,9 @@ import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewT
       <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
     </ng-template>
   `,
-  styleUrls: [ './planet-markdown.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./planet-markdown.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [NgIf, TdMarkdownComponent, NgFor]
 })
 export class PlanetMarkdownComponent implements OnChanges {
 

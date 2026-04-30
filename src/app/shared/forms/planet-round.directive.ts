@@ -1,9 +1,7 @@
 import { Directive, Input, HostListener, ElementRef } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
-@Directive({
-  selector: 'input[planetRound]'
-})
+@Directive({ selector: 'input[planetRound]' })
 export class PlanetRoundDirective {
 
   // Maximum precision value is 9. Values are truncated before rounding to avoid incorrect values.

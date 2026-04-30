@@ -100,7 +100,7 @@
       <ng-container *ngIf="events.length > 0">
         <h3 class="full-width examinations-header" i18n>Examinations</h3>
         <div class="full-width table-container" #examsTable>
-          <mat-table [dataSource]="eventTable" *ngIf="events.length > 0">
+          <mat-table class="responsive-table" [dataSource]="eventTable" *ngIf="events.length > 0">
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
               <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
                 <div class="header-items">

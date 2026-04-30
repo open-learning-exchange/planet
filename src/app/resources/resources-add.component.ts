@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import * as JSZip from 'jszip/dist/jszip.min';
+import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
 import { FileInputComponent } from '../shared/forms/file-input.component';
 import { UserService } from '../shared/user.service';
@@ -20,6 +20,20 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../shared/submit.directive';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -50,7 +64,13 @@ interface ResourceFormModel {
 @Component({
   selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
-  styleUrls: [ './resources-add.scss' ]
+  styleUrls: ['./resources-add.scss'],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule,
+    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent,
+    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe
+  ]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
@@ -318,7 +338,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   // which resolves with the file's data
   private processZip(zipFile) {
     return function(fileName) {
-      return Observable.create((observer) => {
+      return new Observable((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
           zipFile.file(fileName).async('base64').then(function success(data) {
@@ -348,7 +368,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   zipObs(zipFile) {
     const zip = new JSZip();
-    return Observable.create((observer) => {
+    return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
       zip.loadAsync(zipFile).then((data) => {
         const fileNames = this.getFileNames(data);

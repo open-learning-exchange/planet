@@ -1,6 +1,4 @@
-const showdown = require('showdown');
-export const pdfMake = require('pdfmake/build/pdfmake');
-export const pdfFonts = require('pdfmake/build/vfs_fonts');
+import * as showdown from 'showdown';
 export const converter = new showdown.Converter();
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps

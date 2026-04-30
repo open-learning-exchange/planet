@@ -4,6 +4,15 @@
 	margin-left: 16px;
 }
 
+.mat-column-message {
+  flex: 1 1 auto;
+}
+
+.mat-column-read {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
 @media (max-width: v.$screen-sm) {
   .responsive-toolbar {
     display: flex;
