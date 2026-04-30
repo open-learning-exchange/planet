@@ -99,12 +99,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
-    const financeData = transactions.filter(transaction => transaction.status !== 'archived')
+    return transactions.filter(transaction => transaction.status !== 'archived')
       // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
-    this.emptyTable = financeData.length === 0;
-    return financeData;
   }
 
   transactionFilter() {
@@ -112,16 +110,10 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
-    const undefinedToNumber = (value: number | undefined) => value || 0;
-    const previousValue = index !== 0 ? newArray[index - 1] : { balance: 0, totalCredits: 0, totalDebits: 0 };
+    const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
     return [
       ...newArray,
-      {
-        ...transaction,
-        balance: previousValue.balance + undefinedToNumber(transaction.credit) - undefinedToNumber(transaction.debit),
-        totalCredits: previousValue.totalCredits + undefinedToNumber(transaction.credit),
-        totalDebits: previousValue.totalDebits + undefinedToNumber(transaction.debit),
-      }
+      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
     ];
   }
 
@@ -201,16 +193,14 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     this.startDate = undefined;
     this.endDate = undefined;
     this.table.filter = '';
-    this.emptyTable = this.table.data.length === 0;
   }
 
   private updateTotals() {
-    const latest = (this.table.filteredData || [])[0];
-    this.totals = {
-      credit: latest?.totalCredits || 0,
-      debit: latest?.totalDebits || 0,
-      balance: latest?.balance || 0
-    };
+    const rows = this.table.filteredData || [];
+    const credit = rows.reduce((sum, r) => sum + (r.credit || 0), 0);
+    const debit = rows.reduce((sum, r) => sum + (r.debit || 0), 0);
+    this.totals = { credit, debit, balance: credit - debit };
+    this.emptyTable = rows.length === 0;
   }
 
   exportTableData() {
