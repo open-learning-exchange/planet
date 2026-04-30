@@ -41,21 +41,15 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            platform: linux/amd64
+            base_image: treehouses/node:3.18
           - arch: arm
-            platform: linux/arm/v7
+            base_image: treehouses/node-tags:arm-3.18
           - arch: arm64
-            platform: linux/arm64
+            base_image: treehouses/node-tags:arm64-3.18
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
@@ -65,13 +59,15 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
-          docker buildx build \
-            --platform ${{ matrix.platform }} \
-            -f ./docker/db-init/Dockerfile \
-            -t $repo \
-            -t $branchrepo \
-            --push \
-            .
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker build \
+            -f './docker/db-init/Dockerfile' \
+            --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
+            -t $repo .
+          docker images
+          docker tag $repo $branchrepo
+          docker push $repo
+          docker push $branchrepo
 
   multiarch:
     name: Manifest build
