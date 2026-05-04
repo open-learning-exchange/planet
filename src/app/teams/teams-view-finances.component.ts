@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
@@ -37,7 +37,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
     PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
   ]
 })
-export class TeamsViewFinancesComponent implements OnInit, OnChanges {
+export class TeamsViewFinancesComponent implements OnChanges {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
@@ -80,10 +80,6 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private stateService: StateService,
     private teamsService: TeamsService
   ) {}
-
-  ngOnInit() {
-    this.table.connect().subscribe(() => this.updateTotals());
-  }
 
   ngOnChanges() {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
