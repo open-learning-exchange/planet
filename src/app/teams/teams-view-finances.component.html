@@ -11,20 +11,20 @@
   </div>
 
   <div class="finance-toolbar">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="finance-date-field">
+    <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
       <mat-label i18n>Start date</mat-label>
       <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
       <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterStart></mat-datepicker>
       <mat-error i18n *ngIf="startDate > endDate">Start date must be before end date</mat-error>
     </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="finance-date-field">
+    <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
       <mat-label i18n>End date</mat-label>
       <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" [min]="startDate">
       <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
       <mat-datepicker #dateFilterEnd></mat-datepicker>
     </mat-form-field>
-    <button *ngIf="startDate || endDate" mat-button color="primary" (click)="resetDateFilter()" i18n>Reset</button>
+    <button *ngIf="startDate || endDate" class="finance-reset-btn" mat-button color="primary" (click)="resetDateFilter()" i18n>Reset</button>
     <span class="spacer"></span>
     <button mat-stroked-button (click)="exportTableData()" *ngIf="!emptyTable"><mat-icon>file_download</mat-icon><span i18n>Export</span></button>
     <button mat-raised-button color="primary" (click)="openEditTransactionDialog()" *ngIf="editable"><mat-icon>add</mat-icon><span i18n>Add Transaction</span></button>
@@ -69,4 +69,7 @@
 </div>
 
 <ng-template #loadingTpl><planet-loading-spinner text="Loading transactions..." i18n-text></planet-loading-spinner></ng-template>
-<ng-template #emptyMessage><p class="finance-empty" i18n>There are no transactions</p></ng-template>
+<ng-template #emptyMessage>
+  <p class="finance-empty" *ngIf="startDate || endDate; else noTransactions" i18n>No transactions match this date range</p>
+  <ng-template #noTransactions><p class="finance-empty" i18n>There are no transactions</p></ng-template>
+</ng-template>

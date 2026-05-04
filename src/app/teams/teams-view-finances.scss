@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding-top: 8px;
 }
 
 .finance-stats {
@@ -74,7 +75,7 @@
 
 .finance-toolbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   flex-wrap: wrap;
   .spacer {
@@ -82,6 +83,11 @@
   }
   .finance-date-field {
     width: 180px;
+    flex: 0 0 180px;
+  }
+  .finance-reset-btn {
+    align-self: flex-start;
+    margin-top: 12px;
   }
 }
 

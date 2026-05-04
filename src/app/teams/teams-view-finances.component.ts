@@ -45,6 +45,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() editable = true;
   @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
+  allTransactions: any[] = [];
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
   deleteDialog: any;
@@ -81,11 +82,6 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    this.table.filterPredicate = (data: any, filter) => {
-      const fromDate = this.startDate || -Infinity;
-      const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate;
-    };
     this.table.connect().subscribe(() => this.updateTotals());
   }
 
@@ -94,7 +90,8 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
       this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
     }
     if (!this.isLoading && this.finances) {
-      this.table.data = this.setTransactionsTable(this.finances);
+      this.allTransactions = this.setTransactionsTable(this.finances);
+      this.applyDateFilter();
     }
   }
 
@@ -106,7 +103,7 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   }
 
   transactionFilter() {
-    this.table.filter = ' ';
+    this.applyDateFilter();
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
@@ -192,19 +189,29 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   resetDateFilter() {
     this.startDate = undefined;
     this.endDate = undefined;
-    this.table.filter = '';
+    this.applyDateFilter();
   }
 
   private updateTotals() {
-    const rows = this.table.filteredData || [];
+    const rows = this.table.data || [];
     const credit = rows.reduce((sum, r) => sum + (r.credit || 0), 0);
     const debit = rows.reduce((sum, r) => sum + (r.debit || 0), 0);
-    this.totals = { credit, debit, balance: credit - debit };
+    // Balance is the team's current running balance — taken from the newest unfiltered row,
+    // so a date filter narrowing the view doesn't make the team look broke.
+    const balance = this.allTransactions[0]?.balance || 0;
+    this.totals = { credit, debit, balance };
     this.emptyTable = rows.length === 0;
   }
 
+  private applyDateFilter() {
+    const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
+    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
+    this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date < toDate);
+    this.updateTotals();
+  }
+
   exportTableData() {
-    const updatedData = this.table.filteredData.map(row => ({
+    const updatedData = this.table.data.map(row => ({
       [$localize`date`]: fullLabel(row.date),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
