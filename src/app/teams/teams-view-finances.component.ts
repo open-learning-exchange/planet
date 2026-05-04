@@ -64,7 +64,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
       { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
       { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
       {
-        label: $localize`Current Balance`, icon: 'account_balance_wallet',
+        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
         tone: negative ? 'warn' : 'net', value: balance, alert: negative
       }
     ];
@@ -192,9 +192,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     const rows = this.table.data || [];
     const credit = rows.reduce((sum, r) => sum + (r.credit || 0), 0);
     const debit = rows.reduce((sum, r) => sum + (r.debit || 0), 0);
-    // Balance is the team's current running balance — taken from the newest unfiltered row,
-    // so a date filter narrowing the view doesn't make the team look broke.
-    const balance = this.allTransactions[0]?.balance || 0;
+    const balance = credit - debit;
     this.totals = { credit, debit, balance };
     this.emptyTable = rows.length === 0;
   }
