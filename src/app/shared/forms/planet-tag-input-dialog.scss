@@ -6,6 +6,7 @@
     overflow-y: auto;
     box-sizing: border-box;
     padding-bottom: 16px;
+    max-height: 65vh;
   }
 
   .mat-mdc-list-item, .mat-mdc-action-list .mat-mdc-list-item {
@@ -63,7 +64,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-  flex: 1 1 auto;
+  max-width: 50%;
+  flex: 0 1 auto;
 }
 
 .tag-name-and-meta {
@@ -86,8 +88,8 @@
   flex-shrink: 0;
   white-space: nowrap;
   flex: 0 0 auto;
+}
 
 .add-collection-btn-container {
   align-self: center;
-}
 }
