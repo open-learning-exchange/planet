@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -18,6 +18,18 @@ import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, NgClass } from '@angular/common';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
+import { MatSelect } from '@angular/material/select';
+import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -36,7 +48,13 @@ type DateValue = number | string | CouchService['datePlaceholder'];
 
 @Component({
   templateUrl: 'courses-add.component.html',
-  styleUrls: [ './courses-add.scss' ]
+  styleUrls: ['./courses-add.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
+    NgClass, CoursesStepComponent, MatButton, SubmitDirective
+  ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 
@@ -244,8 +262,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
   }
 

@@ -18,7 +18,6 @@
 
 .community-news {
   grid-area: news;
-  overflow-y: auto;
 
   h3 {
     margin: 0;
@@ -47,21 +46,16 @@ planet-calendar {
   word-break: break-word;
 }
 
-mat-tab-group, mat-tab {
-  height: 100%;
-}
-
 .sticky-button {
   position: sticky;
   top: 0;
   z-index: 10;
-  display: flex;
-  gap: 0.5rem;
   background: #fff;
 }
 
-.toggle-button {
-  margin-bottom: 1rem;
+.button-row {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .toolbar-row {
@@ -74,6 +68,11 @@ mat-tab-group, mat-tab {
   }
   .label-filter-field {
     flex: 1 1 0;
+
+    .label-icon {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
   }
   .new-voice-btn {
     flex: 0 0 auto;
@@ -89,7 +88,7 @@ mat-tab-group, mat-tab {
 }
 
 @media only screen and (max-width: v.$screen-xs) {
-  .action-buttons.sticky-button {
+  .action-buttons.button-row {
     flex-direction: column;
   }
 

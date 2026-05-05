@@ -7,8 +7,7 @@ import { Observable } from 'rxjs/Observable';
 describe('App', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ RouterTestingModule ],
-      declarations: [ AppComponent ]
+      imports: [RouterTestingModule, AppComponent]
     });
   });
 

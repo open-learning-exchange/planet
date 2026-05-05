@@ -21,10 +21,9 @@ describe('CoursesAddComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CoursesAddComponent, FormErrorMessagesComponent],
       imports: [ReactiveFormsModule, FormsModule, RouterTestingModule.withRoutes([
         { path: 'courses', component: CoursesAddComponent }
-      ]), MaterialModule, BrowserAnimationsModule],
+      ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
       providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
     });
     fixture = TestBed.createComponent(CoursesAddComponent);

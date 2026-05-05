@@ -5,10 +5,17 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../../shared/user.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf } from '@angular/common';
+import { CoursesProgressChartComponent } from './courses-progress-chart.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
   templateUrl: 'courses-progress-learner.component.html',
-  styleUrls: [ 'courses-progress.scss' ]
+  styleUrls: ['courses-progress.scss'],
+  imports: [MatToolbar, MatIconAnchor, MatIcon, NgIf, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 

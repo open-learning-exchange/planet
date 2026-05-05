@@ -32,7 +32,7 @@ export const baseContextPrompt = $localize`
   Maintain a professional yet warm tone, fostering motivation and community spirit.
   Avoid unnecessary technical jargon unless it supports clarity.
   Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
-  `
+  `;
 
 export const surveyAnalysisPrompt = (examType, examName, examDescription, payloadString) =>
   $localize`The following is a ${examType} named “${examName}” with description “${examDescription}”.
