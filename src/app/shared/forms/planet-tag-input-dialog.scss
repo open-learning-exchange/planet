@@ -15,11 +15,6 @@
     padding-right: 16px;
   }
 
-  .mat-mdc-nav-list .mat-mdc-list-item {
-    display: flex;
-    overflow: hidden;
-  }
-
   .mat-mdc-list-item-meta {
     align-items: center;
     gap: 0.25rem;
@@ -60,9 +55,6 @@
 }
 
 .tag-name-and-meta .ellipsis-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   min-width: 0;
   max-width: 50%;
   flex: 0 1 auto;
@@ -85,7 +77,6 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  flex-shrink: 0;
   white-space: nowrap;
   flex: 0 0 auto;
 }
