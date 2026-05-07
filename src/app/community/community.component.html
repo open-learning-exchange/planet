@@ -127,12 +127,7 @@
                     <h3 mat-subheader i18n>Social & Web</h3>
                     @for (link of socialWebLinks; track link) {
                       <a mat-list-item [href]="link.route" target="_blank" rel="noopener">
-                        @if (link.icon === 'website') {
-                          <mat-icon matListItemIcon>public</mat-icon>
-                        }
-                        @if (link.icon !== 'website') {
-                          <mat-icon [svgIcon]="link.icon" matListItemIcon></mat-icon>
-                        }
+                        <mat-icon matListItemIcon [svgIcon]="link.icon === 'website' ? '' : link.icon">{{ link.icon === 'website' ? 'public' : '' }}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
                         @if (deleteMode) {
                           <span matListItemMeta>
