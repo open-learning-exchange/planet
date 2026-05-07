@@ -79,11 +79,11 @@
               <planet-loading-spinner text="Loading description..." i18n-text></planet-loading-spinner>
             }
             @if (!teamLoading) {
-              <p>@if (team.description) {
+              @if (team.description) {
                 <planet-markdown [content]="team.description || ''"></planet-markdown>
               } @else {
                 <p i18n>No description available.</p>
-              }</p>
+              }
             }
             <ng-container *planetAuthorizedRoles="''">
               @if (!planetCode) {

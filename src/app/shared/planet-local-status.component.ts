@@ -7,7 +7,7 @@ import { MatIcon } from '@angular/material/icon';
   'template': `
 @switch (status) {
   @case ('match') {
-    <mat-icon i18n-title title="Upto date">done_all</mat-icon>
+    <mat-icon i18n-title title="Up to date">done_all</mat-icon>
   }
   @case ('newerAvailable') {
     <mat-icon i18n-title title="Newer">fiber_new</mat-icon>
