@@ -8,24 +8,26 @@
     <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
     <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
   } @else {
-    <mat-toolbar-row>
-      @if (!isDialog) {
-        <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
-      }
-      <span i18n>Members</span>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    @if (this.showFiltersRow) {
-      @if (planetType !== 'community' && !hideChildren) {
+    <ng-container>
+      <mat-toolbar-row>
+        @if (!isDialog) {
+          <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+        }
+        <span i18n>Members</span>
+        <span class="toolbar-fill"></span>
+        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+      </mat-toolbar-row>
+      @if (this.showFiltersRow) {
+        @if (planetType !== 'community' && !hideChildren) {
+          <mat-toolbar-row>
+            <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
+          </mat-toolbar-row>
+        }
         <mat-toolbar-row>
-          <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
+          <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
         </mat-toolbar-row>
       }
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
-      </mat-toolbar-row>
-    }
+    </ng-container>
   }
 
 

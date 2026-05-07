@@ -6,16 +6,18 @@
       <ng-container *ngTemplateOutlet="filterRow"></ng-container>
     </mat-toolbar-row>
   } @else {
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    @if (showFiltersRow) {
+    <ng-container>
       <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="filterRow"></ng-container>
+        <ng-container *ngTemplateOutlet="collectionRow"></ng-container>
+        <span class="toolbar-fill"></span>
+        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
-    }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="filterRow"></ng-container>
+        </mat-toolbar-row>
+      }
+    </ng-container>
   }
 
 

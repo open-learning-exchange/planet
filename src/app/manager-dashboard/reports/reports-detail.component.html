@@ -12,43 +12,45 @@
       <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
     </mat-toolbar-row>
   } @else {
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
-        <mat-icon>filter_list</mat-icon>
-      </button>
-    </mat-toolbar-row>
-    @if (showFiltersRow) {
+    <ng-container>
       <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="backBtn"></ng-container>
+        <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
+          <mat-icon>filter_list</mat-icon>
+        </button>
       </mat-toolbar-row>
-    }
-    @if (showFiltersRow && showCustomDateFields) {
-      <mat-toolbar-row>
-        <div class="full-width">
-          <ng-container *ngTemplateOutlet="startDateField"></ng-container>
-        </div>
-      </mat-toolbar-row>
-    }
-    @if (showFiltersRow && showCustomDateFields) {
-      <mat-toolbar-row>
-        <div class="full-width">
-          <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-        </div>
-      </mat-toolbar-row>
-    }
-    @if (showFiltersRow) {
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-      </mat-toolbar-row>
-    }
-    @if (showFiltersRow) {
-      <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
-        <span class="toolbar-fill"></span>
-        <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
-      </mat-toolbar-row>
-    }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <div class="full-width">
+            <ng-container *ngTemplateOutlet="startDateField"></ng-container>
+          </div>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <div class="full-width">
+            <ng-container *ngTemplateOutlet="endDateField"></ng-container>
+          </div>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
+          <span class="toolbar-fill"></span>
+          <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
+        </mat-toolbar-row>
+      }
+    </ng-container>
   }
 
 </mat-toolbar>
