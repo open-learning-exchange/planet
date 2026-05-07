@@ -16,7 +16,7 @@ import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '..
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, NgFor, NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
+import { NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { PlanetBetaDirective } from '../shared/beta.directive';
@@ -45,10 +45,10 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
     ]),
   ],
   imports: [
-    MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, MatAnchor,
+    MatToolbar, MatIconButton, MatIcon, RouterLink, MatAnchor,
     RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective,
     PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective,
-    NgFor, NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent,
+    NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent,
     RouterOutlet, PulsateIconDirective, DatePipe
   ]
 })

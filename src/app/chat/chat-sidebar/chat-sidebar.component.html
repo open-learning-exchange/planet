@@ -45,7 +45,7 @@
       </div>
       @if (!isLoading && filteredConversations?.length) {
         <ul>
-          @for (conversation of filteredConversations; track trackByFn(i, conversation); let i = $index) {
+          @for (conversation of filteredConversations; track trackByFn($index, conversation); let i = $index) {
             <li class="conversation-list" (click)="selectConversation(conversation, i)">
               @if (isEditing) {
                 @if (selectedConversation?._id === conversation?._id) {
