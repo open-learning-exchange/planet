@@ -59,7 +59,7 @@ interface TitleForm {
     PlanetLoadingSpinnerComponent,
     ChatWindowComponent,
     TruncateTextPipe
-]
+  ]
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';

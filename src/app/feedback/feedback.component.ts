@@ -86,7 +86,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatPaginator,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';

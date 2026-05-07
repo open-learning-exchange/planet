@@ -52,7 +52,7 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     MatMenuItem,
     SlicePipe,
     TimeAgoPipe
-]
+  ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 

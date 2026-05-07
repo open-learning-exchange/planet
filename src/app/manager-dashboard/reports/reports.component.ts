@@ -35,7 +35,7 @@ import { ReportsTableComponent } from './reports-table.component';
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     ReportsTableComponent
-]
+  ]
 })
 export class ReportsComponent implements OnInit, OnDestroy {
 

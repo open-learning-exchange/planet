@@ -68,7 +68,7 @@ type HealthEventFormFields = keyof HealthEventFormControls;
     MatCheckbox,
     PlanetMarkdownTextboxComponent,
     MatButton
-]
+  ]
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 

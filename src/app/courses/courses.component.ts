@@ -114,7 +114,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatPaginator,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 
 export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {

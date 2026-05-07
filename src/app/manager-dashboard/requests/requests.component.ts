@@ -45,7 +45,7 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     MatAnchor
-]
+  ]
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 

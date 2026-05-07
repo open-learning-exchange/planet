@@ -68,7 +68,7 @@ interface TeamSelectionEvent {
     MatIcon,
     MatDialogActions,
     MatButton
-],
+  ],
 })
 export class CommunityLinkDialogComponent {
 

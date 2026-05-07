@@ -25,7 +25,7 @@ import { PendingTableComponent } from './pending-table.component';
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     PendingTableComponent
-]
+  ]
 })
 export class ReportsPendingComponent implements OnInit {
 

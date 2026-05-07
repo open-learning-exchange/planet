@@ -41,7 +41,7 @@ import { RouterLink } from '@angular/router';
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;

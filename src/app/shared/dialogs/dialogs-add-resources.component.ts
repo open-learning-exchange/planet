@@ -17,7 +17,7 @@ import { MatButton } from '@angular/material/button';
     MatDialogActions,
     MatButton,
     MatDialogClose
-]
+  ]
 })
 export class DialogsAddResourcesComponent implements AfterViewInit {
 

@@ -67,7 +67,7 @@ interface AIConfiguration {
     SubmitDirective,
     TitleCasePipe,
     KeyValuePipe
-]
+  ]
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};

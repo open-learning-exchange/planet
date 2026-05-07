@@ -72,7 +72,7 @@ const columnsByFilterAndMode = {
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {
 

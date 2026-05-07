@@ -50,7 +50,7 @@ pdfMake.addVirtualFileSystem(pdfFonts);
     MatListItemLine,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class UsersAchievementsComponent implements OnInit {
   user: any = {};

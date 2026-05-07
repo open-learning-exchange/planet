@@ -102,7 +102,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatButton,
     MatCheckbox,
     SubmitDirective
-]
+  ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();

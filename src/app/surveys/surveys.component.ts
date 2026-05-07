@@ -85,7 +85,7 @@ interface SurveyFilterForm {
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);

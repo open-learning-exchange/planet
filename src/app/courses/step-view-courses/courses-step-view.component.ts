@@ -51,7 +51,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatTooltip,
     ResourcesViewerComponent,
     PlanetLoadingSpinnerComponent
-]
+  ]
 })
 
 export class CoursesStepViewComponent implements OnInit, OnDestroy {

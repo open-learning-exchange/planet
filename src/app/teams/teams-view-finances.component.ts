@@ -59,7 +59,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
     PlanetLoadingSpinnerComponent,
     CurrencyPipe,
     DatePipe
-]
+  ]
 })
 export class TeamsViewFinancesComponent implements OnInit, OnChanges {
 

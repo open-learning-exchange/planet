@@ -51,7 +51,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatDialogClose,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';

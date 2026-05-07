@@ -97,7 +97,7 @@ export class PlanetTagInputToggleIconComponent {
     NgClass,
     MatDialogActions,
     MatDialogClose
-]
+  ]
 })
 export class PlanetTagInputDialogComponent {
 

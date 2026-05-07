@@ -52,7 +52,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatRow,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
 

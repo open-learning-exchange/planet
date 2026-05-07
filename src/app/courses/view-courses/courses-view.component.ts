@@ -53,7 +53,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatAnchor,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
-]
+  ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 

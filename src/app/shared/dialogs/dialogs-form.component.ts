@@ -73,7 +73,7 @@ import { SubmitDirective } from '../submit.directive';
     MatSlideToggle,
     MatDialogActions,
     SubmitDirective
-]
+  ]
 })
 export class DialogsFormComponent {
 

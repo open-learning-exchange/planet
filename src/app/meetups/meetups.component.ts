@@ -82,7 +82,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatPaginator,
     TitleCasePipe,
     DatePipe
-]
+  ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 

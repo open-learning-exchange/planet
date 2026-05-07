@@ -60,7 +60,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     NgClass,
     MatPaginator,
     MatTooltip
-]
+  ]
 })
 export class DialogsListComponent implements AfterViewInit {
 

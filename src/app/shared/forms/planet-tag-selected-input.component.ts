@@ -23,9 +23,9 @@ import { MatTooltip } from '@angular/material/tooltip';
         }
       </span>
     `,
-  selector: 'planet-tag-selected-input',
-  imports: [MatTooltip]
-})
+    selector: 'planet-tag-selected-input',
+    imports: [MatTooltip]
+  })
 export class PlanetTagSelectedInputComponent implements OnChanges {
 
   @Input() selectedIds: string[] = [];

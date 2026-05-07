@@ -48,7 +48,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     CoursesProgressChartComponent,
     PlanetLoadingSpinnerComponent,
     TruncateTextPipe
-]
+  ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 

@@ -94,7 +94,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     SurveysComponent,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 

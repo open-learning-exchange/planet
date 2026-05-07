@@ -33,7 +33,7 @@ import { RouterLink } from '@angular/router';
     MatButton,
     MatDialogClose,
     RouterLink
-]
+  ]
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 

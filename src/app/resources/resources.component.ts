@@ -109,7 +109,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatPaginator,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;

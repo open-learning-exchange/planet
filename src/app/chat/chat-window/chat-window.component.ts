@@ -36,7 +36,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
     MatTooltip,
     SubmitDirective,
     MatIcon
-]
+  ]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() context: any;

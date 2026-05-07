@@ -40,7 +40,7 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
     LanguageLabelComponent,
     PlanetLoadingSpinnerComponent,
     ResourcesViewerComponent
-]
+  ]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {

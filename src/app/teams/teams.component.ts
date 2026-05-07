@@ -67,7 +67,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatPaginator,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
 

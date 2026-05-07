@@ -46,7 +46,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
     NgClass,
     DatePipe,
     KeyValuePipe
-]
+  ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';

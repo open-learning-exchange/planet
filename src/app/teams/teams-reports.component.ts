@@ -54,7 +54,7 @@ interface NewReportForm {
     MatIconButton,
     MatIcon,
     DatePipe
-]
+  ]
 })
 export class TeamsReportsComponent implements DoCheck {
 

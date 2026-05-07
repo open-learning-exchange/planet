@@ -70,7 +70,7 @@ interface ExamViewForm {
     MatButton,
     PlanetLoadingSpinnerComponent,
     DatePipe
-]
+  ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
 

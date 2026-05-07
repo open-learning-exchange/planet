@@ -91,7 +91,7 @@ interface ResourceFormModel {
     MatButton,
     SubmitDirective,
     AsyncPipe
-]
+  ]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {

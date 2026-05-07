@@ -91,7 +91,7 @@ interface MeetupFormControls {
     MatDialogActions,
     MatButton,
     SubmitDirective
-]
+  ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 

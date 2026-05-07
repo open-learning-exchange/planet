@@ -83,7 +83,7 @@ interface UsersUpdateFormGroup {
     ImageCropperComponent,
     MatDialogActions,
     MatDialogClose
-]
+  ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };

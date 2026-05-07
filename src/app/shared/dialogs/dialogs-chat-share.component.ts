@@ -67,7 +67,7 @@ interface CommunityForm {
     MatError,
     FormErrorMessagesComponent,
     MatDialogActions
-]
+  ]
 })
 export class DialogsChatShareComponent implements OnInit {
   user = this.userService.get();

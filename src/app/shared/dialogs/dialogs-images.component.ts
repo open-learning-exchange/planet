@@ -36,7 +36,7 @@ import { MatButton } from '@angular/material/button';
     MatDialogActions,
     MatButton,
     MatDialogClose
-]
+  ]
 })
 export class DialogsImagesComponent implements OnInit {
 

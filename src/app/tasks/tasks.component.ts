@@ -66,7 +66,7 @@ export class AssigneeNamePipe implements PipeTransform {
     DatePipe,
     forwardRef(() => FilterAssigneePipe),
     forwardRef(() => AssigneeNamePipe)
-]
+  ]
 })
 export class TasksComponent implements OnInit {
 

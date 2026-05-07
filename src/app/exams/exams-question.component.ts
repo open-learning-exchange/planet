@@ -40,7 +40,7 @@ import { MatIcon } from '@angular/material/icon';
     MatIconButton,
     MatSuffix,
     MatIcon
-]
+  ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 

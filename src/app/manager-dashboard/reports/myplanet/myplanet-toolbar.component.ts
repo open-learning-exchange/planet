@@ -37,7 +37,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
     MatDatepicker,
     MatError,
     MatButton
-]
+  ]
 })
 export class MyPlanetToolbarComponent {
 

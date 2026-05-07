@@ -36,7 +36,7 @@ interface CertificationFormControls {
     MatError,
     FormErrorMessagesComponent,
     CoursesComponent
-]
+  ]
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 

@@ -98,7 +98,7 @@ interface CommunityDescriptionForm {
     TeamsViewFinancesComponent,
     TeamsReportsComponent,
     PlanetCalendarComponent
-]
+  ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 

@@ -34,7 +34,7 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
     MatExpansionPanelTitle,
     MyPlanetTableComponent,
     PlanetLoadingSpinnerComponent
-]
+  ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
 

@@ -67,7 +67,7 @@ export class TableState {
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 

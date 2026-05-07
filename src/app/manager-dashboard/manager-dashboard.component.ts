@@ -41,7 +41,7 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
     MatCardTitle,
     MatCardContent,
     DatePipe
-]
+  ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {

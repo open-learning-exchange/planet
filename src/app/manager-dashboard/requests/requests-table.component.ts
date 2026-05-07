@@ -57,7 +57,7 @@ interface EditChildNameFormControls {
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 

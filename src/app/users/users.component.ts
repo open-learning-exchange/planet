@@ -53,7 +53,7 @@ import { FormsModule } from '@angular/forms';
     MatButton,
     FormsModule,
     UsersTableComponent
-]
+  ]
 })
 export class UsersComponent implements OnInit, OnDestroy {
 

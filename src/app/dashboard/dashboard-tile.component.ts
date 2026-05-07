@@ -57,7 +57,7 @@ export class DashboardTileTitleComponent {
     MatIconButton,
     PlanetLoadingSpinnerComponent,
     TruncateTextPipe
-]
+  ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @Input() cardTitle: string;

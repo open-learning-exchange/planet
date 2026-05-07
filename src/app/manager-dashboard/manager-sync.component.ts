@@ -31,7 +31,7 @@ import { NgClass } from '@angular/common';
     MatListItemMeta,
     MatListItemLine,
     MatDivider
-]
+  ]
 })
 
 export class ManagerSyncComponent implements OnInit {

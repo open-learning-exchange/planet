@@ -62,7 +62,7 @@ interface CoursesStepForm {
     MatAnchor,
     MatButton,
     TruncateTextPipe
-]
+  ]
 })
 export class CoursesStepComponent implements OnDestroy {
 

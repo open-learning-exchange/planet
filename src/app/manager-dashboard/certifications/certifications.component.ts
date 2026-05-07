@@ -57,7 +57,7 @@ import { MatInput } from '@angular/material/input';
     MatRow,
     MatNoDataRow,
     MatPaginator
-]
+  ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
 

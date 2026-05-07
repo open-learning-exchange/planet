@@ -70,7 +70,7 @@ type DateValue = number | string | CouchService['datePlaceholder'];
     CoursesStepComponent,
     MatButton,
     SubmitDirective
-]
+  ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 

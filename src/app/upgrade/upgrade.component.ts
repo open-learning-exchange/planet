@@ -37,7 +37,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatCardContent,
     MatCardActions,
     FeedbackDirective
-]
+  ]
 })
 export class UpgradeComponent {
   mode = 'planet';

@@ -59,7 +59,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
     MatNoDataRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 
 export class ManagerFetchComponent implements OnInit, AfterViewInit {

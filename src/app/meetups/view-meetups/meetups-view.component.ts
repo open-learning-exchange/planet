@@ -42,7 +42,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
     MatDialogClose,
     TitleCasePipe,
     DatePipe
-]
+  ]
 })
 
 export class MeetupsViewComponent implements OnInit, OnDestroy {

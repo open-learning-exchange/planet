@@ -117,7 +117,7 @@ interface ContactForm {
     MatMiniFabButton,
     MatStepperPrevious,
     SubmitDirective
-]
+  ]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;

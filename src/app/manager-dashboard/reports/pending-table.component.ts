@@ -36,7 +36,7 @@ import { MatButton } from '@angular/material/button';
     MatRow,
     MatPaginator,
     DatePipe
-]
+  ]
 })
 export class PendingTableComponent implements OnChanges, AfterViewInit {
 

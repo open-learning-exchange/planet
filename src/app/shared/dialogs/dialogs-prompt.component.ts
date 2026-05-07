@@ -40,7 +40,7 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
     SubmitDirective,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class DialogsPromptComponent {
 

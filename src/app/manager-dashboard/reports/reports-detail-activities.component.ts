@@ -35,7 +35,7 @@ const columns = {
     MatRow,
     MatPaginator,
     DatePipe
-],
+  ],
   styles: `
     :host {
       display: grid;

@@ -37,7 +37,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     DecimalPipe,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 

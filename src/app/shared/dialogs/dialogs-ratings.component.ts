@@ -28,7 +28,7 @@ import { MatButton } from '@angular/material/button';
     MatButton,
     MatDialogClose,
     DatePipe
-]
+  ]
 })
 export class DialogsRatingsComponent {
 

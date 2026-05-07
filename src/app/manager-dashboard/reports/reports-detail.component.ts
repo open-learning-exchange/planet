@@ -102,7 +102,7 @@ interface DateFilterForm {
     MatRow,
     ReportsDetailActivitiesComponent,
     ReportsHealthComponent
-]
+  ]
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 

@@ -50,7 +50,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatListItemTitle,
     DatePipe,
     TruncateTextPipe
-]
+  ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 

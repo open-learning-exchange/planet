@@ -102,7 +102,7 @@ interface ExamDocumentInfo {
     MatListItemLine,
     PlanetStepListFormDirective,
     ExamsQuestionComponent
-]
+  ]
 })
 export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';

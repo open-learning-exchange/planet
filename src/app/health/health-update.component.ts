@@ -76,7 +76,7 @@ type HealthFormGroup = {
     MatDatepicker,
     PlanetMarkdownTextboxComponent,
     MatButton
-]
+  ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
 

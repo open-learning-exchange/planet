@@ -27,7 +27,7 @@ import { RouterLink } from '@angular/router';
     MatListItemMeta,
     MatAnchor,
     RouterLink
-]
+  ]
 })
 export class CommunityListComponent implements OnInit {
 
