@@ -87,6 +87,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   teamId = this.route.snapshot.params.teamId || null;
   currentOtherOption: ExamOtherAnswerOption = { id: 'other', text: '', isOther: true };
   slideDirection: 'right' | 'left' = 'right';
+  slideAnimationVariant: 'a' | 'b' = 'a';
   @ViewChild('singleOtherInput') singleOtherInput?: ElementRef<HTMLInputElement>;
   @ViewChild('multipleOtherInput') multipleOtherInput?: ElementRef<HTMLInputElement>;
   progressPercent = 0;
@@ -250,6 +251,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   moveQuestion(direction: number) {
     if (direction !== 0) {
       this.slideDirection = direction > 0 ? 'right' : 'left';
+      this.slideAnimationVariant = this.slideAnimationVariant === 'a' ? 'b' : 'a';
     }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;

@@ -37,7 +37,9 @@
   </div>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     <ng-container *ngIf="!isLoading; else LoadingContent">
-      <div [ngClass]="slideDirection === 'right' ? 'slide-in-right' : 'slide-in-left'">
+      <div [ngClass]="slideDirection === 'right'
+        ? (slideAnimationVariant === 'a' ? 'slide-in-right-a' : 'slide-in-right-b')
+        : (slideAnimationVariant === 'a' ? 'slide-in-left-a' : 'slide-in-left-b')">
         <td-markdown [content]="question?.body"></td-markdown>
         <div [ngSwitch]="mode">
           <ng-container *ngSwitchCase="'take'">

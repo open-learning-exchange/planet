@@ -29,12 +29,12 @@
   }
 
   .progress-bar-track {
-    background: #e0e0e0;
+    background: #d4deea;
   }
 
   .progress-bar-fill {
-    background: v.$primary;
-    height: 4px;
+    background: #0a2d49;
+    height: 8px;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -206,7 +206,7 @@
     to { opacity: 1; transform: translateX(0); }
   }
 
-  .slide-in-right { animation: slideInRight 0.28s ease; }
-  .slide-in-left { animation: slideInLeft 0.28s ease; }
+  .slide-in-right-a, .slide-in-right-b { animation: slideInRight 0.28s ease; }
+  .slide-in-left-a, .slide-in-left-b { animation: slideInLeft 0.28s ease; }
 
 }
