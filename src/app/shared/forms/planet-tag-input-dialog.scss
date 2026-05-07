@@ -6,6 +6,7 @@
     overflow-y: auto;
     box-sizing: border-box;
     padding-bottom: 16px;
+    max-height: 65vh;
   }
 
   .mat-mdc-list-item, .mat-mdc-action-list .mat-mdc-list-item {
@@ -18,6 +19,10 @@
     align-items: center;
     gap: 0.25rem;
     margin-left: auto;
+  }
+
+  .mat-mdc-nav-list .mat-mdc-list-item-meta {
+    flex-shrink: 0;
   }
 
   mat-dialog-actions {
@@ -49,9 +54,31 @@
   margin-left: 8px;
 }
 
+.tag-name-and-meta .ellipsis-text {
+  min-width: 0;
+  max-width: 50%;
+  flex: 0 1 auto;
+}
+
+.tag-name-and-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .count {
   white-space: nowrap;
   margin-left: 0.25rem;
+}
+
+.tag-meta-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .add-collection-btn-container {
