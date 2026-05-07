@@ -34,7 +34,7 @@
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
     </div>
     }
-    @for (choice of choices.controls; track trackByFn(i, choice); let i = $index) {
+    @for (choice of choices.controls; track choice.controls.id.value; let i = $index) {
       <div>
         @if (examType === 'exam') {
           <mat-checkbox

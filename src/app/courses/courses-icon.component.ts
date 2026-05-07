@@ -32,6 +32,6 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class CoursesIconComponent {
 
-  @Input() icon: '';
+  @Input() icon: 'assignment' | 'attach_file' | 'description' | 'done' | 'rotate_right' | '' = '';
 
 }

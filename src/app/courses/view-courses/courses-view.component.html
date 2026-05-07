@@ -72,7 +72,7 @@
         }
       </div>
       <div class="course-view">
-        @for (step of courseDetail.steps; track trackByFn(stepNum, step); let stepNum = $index) {
+        @for (step of courseDetail.steps; track trackByFn($index); let stepNum = $index) {
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title class="step-title" i18n>

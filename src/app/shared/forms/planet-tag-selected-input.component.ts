@@ -5,33 +5,23 @@ import { truncateText } from '../../shared/utils';
 
 import { MatTooltip } from '@angular/material/tooltip';
 
-@Component({
-  template: `
-    <span class="small margin-lr-5">
-      @switch (selectedIds.length) {
-        @case (0) {
-          <span i18n>No collections selected</span>
+  @Component({
+    template: `
+      <span class="small margin-lr-5">
+        @switch (selectedIds.length) {
+          @case (0) {
+            <span i18n>No collections selected</span>
+          }
+          @case (1) {
+            <span><span i18n>Selected:</span>
+              {{ getTruncatedTooltip() }}
+            </span>
+          }
+          @default {
+            <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
+          }
         }
-        @case (1) {
-          <span><span i18n>Selected:</span>
-          {{ getTruncatedTooltip() }}
-        </span>
-      }
-      @default {
-        <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
-      }
-    }
-    @case (0) {
-      <span i18n>No collections selected</span>
-    }
-    @case (1) {
-      <span><span i18n>Selected:</span>
-      {{ getTruncatedTooltip() }}
-    </span>
-    }
-    @default {
-      <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
-    }
+      </span>
     `,
   selector: 'planet-tag-selected-input',
   imports: [MatTooltip]
