@@ -12,7 +12,7 @@ import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgFor, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
@@ -28,10 +28,30 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
   templateUrl: './users-profile.component.html',
   styleUrls: ['./users-profile.scss'],
   imports: [
-    MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink,
-    MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider,
-    LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe, TruncateTextPipe
-  ]
+    MatToolbar,
+    MatIcon,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    NgTemplateOutlet,
+    MatButton,
+    RouterLink,
+    MatAnchor,
+    ChangePasswordDirective,
+    MatList,
+    MatListItem,
+    MatListItemTitle,
+    MatListItemLine,
+    MatDivider,
+    LanguageLabelComponent,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatDialogClose,
+    DatePipe,
+    TruncateTextPipe
+]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';

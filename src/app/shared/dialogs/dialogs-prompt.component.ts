@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatD
 import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { LabelComponent } from '../label.component';
 import { MatButton } from '@angular/material/button';
 import { SubmitDirective } from '../submit.directive';
@@ -31,9 +31,16 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
     }
   `],
   imports: [
-    CdkScrollable, MatDialogContent, NgIf, NgFor, LabelComponent, MatDialogActions, MatButton, MatDialogClose,
-    SubmitDirective, DatePipe, TruncateTextPipe
-  ]
+    CdkScrollable,
+    MatDialogContent,
+    LabelComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    SubmitDirective,
+    DatePipe,
+    TruncateTextPipe
+]
 })
 export class DialogsPromptComponent {
 

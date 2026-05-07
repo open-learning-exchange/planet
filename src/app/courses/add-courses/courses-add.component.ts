@@ -21,7 +21,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -50,11 +50,27 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
-    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
-    NgClass, CoursesStepComponent, MatButton, SubmitDirective
-  ]
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatSelect,
+    PlanetTagInputComponent,
+    NgClass,
+    CoursesStepComponent,
+    MatButton,
+    SubmitDirective
+]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 

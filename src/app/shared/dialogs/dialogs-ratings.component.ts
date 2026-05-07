@@ -4,7 +4,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { NgFor, NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { MatButton } from '@angular/material/button';
@@ -12,10 +12,23 @@ import { MatButton } from '@angular/material/button';
 @Component({
   templateUrl: './dialogs-ratings.component.html',
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel, MatSelect, MatOption,
-    NgFor, MatCard, MatCardHeader, MatCardTitle, PlanetRatingStarsComponent, NgIf, MatCardContent,
-    MatDialogActions, MatButton, MatDialogClose, DatePipe
-  ]
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    PlanetRatingStarsComponent,
+    MatCardContent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    DatePipe
+]
 })
 export class DialogsRatingsComponent {
 

@@ -22,7 +22,7 @@ import { UsersService } from '../users/users.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { truncateText } from '../shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgFor, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -51,12 +51,42 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     }
   `],
   imports: [
-    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatFormField,
-    MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort,
-    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip,
-    NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
-    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
-  ]
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    NgTemplateOutlet,
+    MatToolbarRow,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatInput,
+    FormsModule,
+    MatButton,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatTooltip,
+    MatChipSet,
+    MatChip,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    RouterLink,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe,
+    TruncateTextPipe
+]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';

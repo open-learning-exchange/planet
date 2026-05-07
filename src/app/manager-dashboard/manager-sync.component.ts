@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { SyncDirective } from './sync.directive';
 import { MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine, MatDivider } from '@angular/material/list';
-import { NgFor, NgClass, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
   templateUrl: './manager-sync.component.html',
@@ -18,9 +18,20 @@ import { NgFor, NgClass, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@
     }
   `],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, SyncDirective, MatList, NgFor, MatListItem, NgClass,
-    MatListItemTitle, NgIf, MatListItemMeta, NgSwitch, NgSwitchCase, NgSwitchDefault, MatListItemLine, MatDivider
-  ]
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatButton,
+    SyncDirective,
+    MatList,
+    MatListItem,
+    NgClass,
+    MatListItemTitle,
+    MatListItemMeta,
+    MatListItemLine,
+    MatDivider
+]
 })
 
 export class ManagerSyncComponent implements OnInit {

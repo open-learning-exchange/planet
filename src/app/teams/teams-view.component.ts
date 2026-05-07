@@ -29,7 +29,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgSwitch, NgSwitchCase, NgFor, NgClass, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
@@ -55,13 +55,46 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./teams-view.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu, MatButton,
-    NgSwitch, NgSwitchCase, MatAnchor, RouterLink, MatChipSet, MatChip, AuthorizedRolesDirective, MatTabGroup, MatTab,
-    PlanetLoadingSpinnerComponent, NewsListComponent, MatTabLabel, TdMarkdownComponent, NgFor, MatCard, MatCardHeader,
-    MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, TeamsMemberComponent, MatBadge, TasksComponent,
-    PlanetCalendarComponent, TeamsViewFinancesComponent, TeamsReportsComponent, MatTooltip, NgClass, MatCardContent,
-    PlanetMarkdownComponent, MatMenuItem, SurveysComponent, DatePipe, TruncateTextPipe
-  ]
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatButton,
+    MatAnchor,
+    RouterLink,
+    MatChipSet,
+    MatChip,
+    AuthorizedRolesDirective,
+    MatTabGroup,
+    MatTab,
+    PlanetLoadingSpinnerComponent,
+    NewsListComponent,
+    MatTabLabel,
+    TdMarkdownComponent,
+    MatCard,
+    MatCardHeader,
+    MatCardAvatar,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardActions,
+    TeamsMemberComponent,
+    MatBadge,
+    TasksComponent,
+    PlanetCalendarComponent,
+    TeamsViewFinancesComponent,
+    TeamsReportsComponent,
+    MatTooltip,
+    NgClass,
+    MatCardContent,
+    PlanetMarkdownComponent,
+    MatMenuItem,
+    SurveysComponent,
+    DatePipe,
+    TruncateTextPipe
+]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 

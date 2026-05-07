@@ -8,7 +8,7 @@ import { ChatService } from '../../shared/chat.service';
 import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
 import { StateService } from '../../shared/state.service';
-import { NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ChatOutputDirective } from '../../shared/chat-output.directive';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -24,7 +24,6 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.scss'],
   imports: [
-    NgFor,
     ChatOutputDirective,
     NgClass,
     FormsModule,
@@ -37,7 +36,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
     MatTooltip,
     SubmitDirective,
     MatIcon
-  ]
+]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() context: any;

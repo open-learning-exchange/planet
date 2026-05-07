@@ -15,7 +15,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
 import { baseContextPrompt } from '../shared/ai-prompts.constants';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { LowercaseDirective } from '../shared/lowercase.directive';
@@ -92,11 +92,32 @@ interface ContactForm {
     }
   `],
   imports: [
-    MatStepper, NgIf, MatStep, MatStepLabel, FormsModule, ReactiveFormsModule, MatFormField,
-    MatLabel, MatInput, LowercaseDirective, RestrictDiacriticsDirective, MatError, FormErrorMessagesComponent,
-    MatButton, MatStepperNext, MatSelect, MatOption, NgFor, MatAutocompleteTrigger, MatAutocomplete,
-    MatSlideToggle, MatTooltip, MatIcon, MatCheckbox, MatMiniFabButton, MatStepperPrevious, SubmitDirective
-  ]
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    LowercaseDirective,
+    RestrictDiacriticsDirective,
+    MatError,
+    FormErrorMessagesComponent,
+    MatButton,
+    MatStepperNext,
+    MatSelect,
+    MatOption,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatSlideToggle,
+    MatTooltip,
+    MatIcon,
+    MatCheckbox,
+    MatMiniFabButton,
+    MatStepperPrevious,
+    SubmitDirective
+]
 })
 export class ConfigurationComponent implements OnInit {
   @ViewChild('stepper') stepper: MatStepper;

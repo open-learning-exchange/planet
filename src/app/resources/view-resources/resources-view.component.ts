@@ -13,7 +13,7 @@ import * as constants from '../resources-constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
 import { TdMarkdownComponent } from '@covalent/markdown';
@@ -25,10 +25,22 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
   templateUrl: './resources-view.component.html',
   styleUrls: ['./resources-view.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger, MatMenu,
-    MatButton, MatAnchor, NgClass, PlanetRatingComponent, TdMarkdownComponent, NgFor, LanguageLabelComponent,
-    PlanetLoadingSpinnerComponent, ResourcesViewerComponent
-  ]
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatButton,
+    MatAnchor,
+    NgClass,
+    PlanetRatingComponent,
+    TdMarkdownComponent,
+    LanguageLabelComponent,
+    PlanetLoadingSpinnerComponent,
+    ResourcesViewerComponent
+]
 })
 
 export class ResourcesViewComponent implements OnInit, OnDestroy {

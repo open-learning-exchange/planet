@@ -12,7 +12,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { composeFilterFunctions, filterDropdowns } from '../table-helpers';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -36,10 +36,31 @@ import { MatTooltip } from '@angular/material/tooltip';
     }
   `],
   imports: [
-    NgIf, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, MatDialogClose, MatFormField,
-    MatSelect, NgFor, MatOption, MatIcon, MatLabel, MatInput, MatTable, MatColumnDef, MatHeaderCellDef,
-    MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatPaginator, MatTooltip
-  ]
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    MatFormField,
+    MatSelect,
+    MatOption,
+    MatIcon,
+    MatLabel,
+    MatInput,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    NgClass,
+    MatPaginator,
+    MatTooltip
+]
 })
 export class DialogsListComponent implements AfterViewInit {
 

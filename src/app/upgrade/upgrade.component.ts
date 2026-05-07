@@ -11,7 +11,7 @@ import { SyncService } from '../shared/sync.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf } from '@angular/common';
+
 import { MatProgressBar } from '@angular/material/progress-bar';
 import {
   MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions
@@ -23,9 +23,21 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
   styleUrls: ['./upgrade.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, NgIf, MatProgressBar, MatCard, MatCardHeader, MatCardAvatar,
-    MatCardTitle, MatCardSubtitle, MatCardContent, MatCardActions, FeedbackDirective
-  ]
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatButton,
+    MatProgressBar,
+    MatCard,
+    MatCardHeader,
+    MatCardAvatar,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatCardContent,
+    MatCardActions,
+    FeedbackDirective
+]
 })
 export class UpgradeComponent {
   mode = 'planet';

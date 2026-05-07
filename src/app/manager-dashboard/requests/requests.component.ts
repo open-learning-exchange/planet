@@ -16,7 +16,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -27,10 +27,25 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
   templateUrl: './requests.component.html',
   styleUrls: ['./requests.component.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, NgTemplateOutlet, MatButtonToggleGroup, MatButtonToggle,
-    MatFormField, MatLabel, MatInput, MatToolbarRow, MatButton, NgClass, RequestsTableComponent, NgFor, MatExpansionPanel,
-    MatExpansionPanelHeader, MatExpansionPanelTitle, MatAnchor
-  ]
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    NgTemplateOutlet,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatToolbarRow,
+    MatButton,
+    NgClass,
+    RequestsTableComponent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatAnchor
+]
 })
 export class RequestsComponent implements OnInit, OnDestroy {
 

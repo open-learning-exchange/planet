@@ -7,9 +7,11 @@
           <mat-icon>add</mat-icon>
           <span i18n>Start New Chat</span>
         </button>
-        <button class="icon-button" *ngIf="deviceType === deviceTypes.DESKTOP" mat-mini-fab (click)="drawer.toggle()">
-          <mat-icon class="material-icons">chevron_left</mat-icon>
-        </button>
+        @if (deviceType === deviceTypes.DESKTOP) {
+          <button class="icon-button" mat-mini-fab (click)="drawer.toggle()">
+            <mat-icon class="material-icons">chevron_left</mat-icon>
+          </button>
+        }
       </div>
       <mat-form-field class="font-size-1 margin-lr-3">
         <mat-label i18n>Search</mat-label>
@@ -32,62 +34,76 @@
         <span class="overlay-text" i18n>Search through the entire conversation, not just the title</span>
       </ng-template>
       <div>
-        <mat-button-toggle-group *ngIf="fullTextSearch" [(ngModel)]="searchType" (change)="filterConversations()">
-          <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
-          <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
-        </mat-button-toggle-group>
+        @if (fullTextSearch) {
+          <mat-button-toggle-group [(ngModel)]="searchType" (change)="filterConversations()">
+            <mat-button-toggle value="questions" i18n>Questions</mat-button-toggle>
+            <mat-button-toggle value="responses" i18n>Responses</mat-button-toggle>
+          </mat-button-toggle-group>
+        }
       </div>
       <hr>
-    </div>
-    <ng-container *ngIf="!isLoading && filteredConversations?.length; else noChats">
-      <ul>
-        <li *ngFor="let conversation of filteredConversations; let i = index; trackBy: trackByFn" class="conversation-list" (click)="selectConversation(conversation, i)">
-          <ng-container *ngIf="isEditing; else notEditing">
-            <ng-container *ngIf="selectedConversation?._id === conversation?._id; else conversationTitle">
-              <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
-                <mat-form-field class="mat-form-field" style="width: 50%;">
-                  <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
-                  <mat-error>
-                    <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
-                  </mat-error>
-                </mat-form-field>
-                <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
-                  <mat-icon>check</mat-icon>
-                </button>
-                <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" matTooltip="Close" i18n-matTooltip>
-                  <mat-icon>close</mat-icon>
-                </button>
-              </form>
-            </ng-container>
-          </ng-container>
-          <ng-template #notEditing>
-            <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
-            <button *ngIf="conversation.shared" mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
-              <mat-icon>done_all</mat-icon>
-            </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="toggleEditTitle()" i18n-matTooltip matTooltip="Edit title">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button class="sidebar-icon" *ngIf="selectedConversation?._id === conversation?._id" (click)="openShareDialog(conversation)" i18n-matTooltip matTooltip="Share conversation">
-              <mat-icon>share</mat-icon>
-            </button>
-          </ng-template>
-          <ng-template #conversationTitle>{{ conversation?.title | truncateText:19 }}</ng-template>
-        </li>
-      </ul>
-    </ng-container>
-    <ng-template #noChats>
-      <planet-loading-spinner *ngIf="isLoading" text="Loading conversations..." i18n-text></planet-loading-spinner>
-      <div class="no-chats-message" *ngIf="!isLoading" i18n>No previous conversations.</div>
-    </ng-template>
-  </mat-drawer>
+      </div>
+      @if (!isLoading && filteredConversations?.length) {
+        <ul>
+          @for (conversation of filteredConversations; track trackByFn(i, conversation); let i = $index) {
+            <li class="conversation-list" (click)="selectConversation(conversation, i)">
+              @if (isEditing) {
+                @if (selectedConversation?._id === conversation?._id) {
+                  <form [formGroup]="titleForm[conversation._id]" (ngSubmit)="submitTitle(conversation)">
+                    <mat-form-field class="mat-form-field" style="width: 50%;">
+                      <input matInput [formControl]="titleForm[conversation._id]?.controls.title" required>
+                      <mat-error>
+                        <planet-form-error-messages [formControl]="titleForm[conversation._id]?.controls.title"></planet-form-error-messages>
+                      </mat-error>
+                    </mat-form-field>
+                    <button mat-icon-button class="sidebar-icon" matTooltip="Submit" i18n-matTooltip>
+                      <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" matTooltip="Close" i18n-matTooltip>
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </form>
+                } @else {
+                  {{ conversation?.title | truncateText:19 }}
+                }
+              } @else {
+                <ng-container *ngTemplateOutlet="conversationTitle"></ng-container>
+                @if (conversation.shared) {
+                  <button mat-icon-button class="sidebar-icon" matTooltip="Conversation shared" i18n-matTooltip>
+                    <mat-icon>done_all</mat-icon>
+                  </button>
+                }
+                @if (selectedConversation?._id === conversation?._id) {
+                  <button mat-icon-button class="sidebar-icon" (click)="toggleEditTitle()" i18n-matTooltip matTooltip="Edit title">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                }
+                @if (selectedConversation?._id === conversation?._id) {
+                  <button mat-icon-button class="sidebar-icon" (click)="openShareDialog(conversation)" i18n-matTooltip matTooltip="Share conversation">
+                    <mat-icon>share</mat-icon>
+                  </button>
+                }
+              }
+              <ng-template #conversationTitle>{{ conversation?.title | truncateText:19 }}</ng-template>
+            </li>
+          }
+        </ul>
+      } @else {
+        @if (isLoading) {
+          <planet-loading-spinner text="Loading conversations..." i18n-text></planet-loading-spinner>
+        }
+        @if (!isLoading) {
+          <div class="no-chats-message" i18n>No previous conversations.</div>
+        }
+      }
+    </mat-drawer>
 
-  <div class="window-box">
-    <div class="expand-button">
-      <button mat-mini-fab (click)="drawer.toggle()">
-        <mat-icon class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
-      </button>
+    <div class="window-box">
+      <div class="expand-button">
+        <button mat-mini-fab (click)="drawer.toggle()">
+          <mat-icon class="material-icons">{{ drawer.opened && deviceType !== deviceTypes.DESKTOP  ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+        </button>
+      </div>
+      <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
     </div>
-    <planet-chat-window [isEditing]="isEditing"></planet-chat-window>
-  </div>
-</mat-drawer-container>
+  </mat-drawer-container>

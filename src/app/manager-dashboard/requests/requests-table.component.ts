@@ -26,7 +26,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 interface EditChildNameFormControls {
@@ -37,10 +37,27 @@ interface EditChildNameFormControls {
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
   imports: [
-    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
-    MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow, MatNoDataRow, MatPaginator, DatePipe
-  ]
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatButton,
+    MatIcon,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
+]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
 

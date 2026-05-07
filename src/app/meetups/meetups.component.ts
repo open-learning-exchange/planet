@@ -22,7 +22,7 @@ import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/bu
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { NgIf, NgFor, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
+import { NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -50,11 +50,39 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     }
   `],
   imports: [
-    MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, NgIf, MatMiniFabButton, RouterLink,
-    MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
-    MatSortHeader, TdMarkdownComponent, MatMenuTrigger, MatMenu, MatMenuItem, FeedbackDirective, NgFor,
-    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, TitleCasePipe, DatePipe
-  ]
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatMiniFabButton,
+    RouterLink,
+    MatButton,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    TdMarkdownComponent,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    FeedbackDirective,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    NgClass,
+    MatNoDataRow,
+    MatPaginator,
+    TitleCasePipe,
+    DatePipe
+]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 

@@ -9,27 +9,44 @@
     <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
   </mat-toolbar>
   <mat-list>
-    <mat-list-item *ngFor="let rep of replicators" [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
-      <h3 matListItemTitle>
-        <mat-icon *ngIf="rep?.continuous; else singleRep">repeat</mat-icon>
-        <ng-template #singleRep><mat-icon>repeat_one</mat-icon></ng-template>
-        {{rep.doc_id}}
-        <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
-      </h3>
-      <span matListItemMeta>
-        <ng-container [ngSwitch]="rep?.state">
-        <!-- States: initializing, failed, error, running, pending, crashing, completed -->
-        <mat-icon *ngSwitchCase="'crashing' || 'error' || 'failed'" class="warn-text-color" i18n-title title="Error">error</mat-icon>
-        <mat-icon *ngSwitchCase="'running'" i18n-title title="In Progress">sync</mat-icon>
-        <mat-icon *ngSwitchCase="'pending'" i18n-title title="Paused">pause</mat-icon>
-        <mat-icon *ngSwitchCase="'completed'" i18n-title title="Completed">cloud_done</mat-icon>
-        <mat-icon *ngSwitchDefault i18n-title title="In Progress">sync</mat-icon>
-        </ng-container>
-      </span>
-      <p matListItemLine class="warn-text-color" *ngIf="rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'">
-        {{rep.info}}
-      </p>
-      <mat-divider></mat-divider>
-    </mat-list-item>
+    @for (rep of replicators; track rep) {
+      <mat-list-item [ngClass]="{'warn-text-color': rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed'}">
+        <h3 matListItemTitle>
+          @if (rep?.continuous) {
+            <mat-icon>repeat</mat-icon>
+          } @else {
+            <mat-icon>repeat_one</mat-icon>
+          }
+          {{rep.doc_id}}
+          <span>{{rep.source}}</span><mat-icon>arrow_forward</mat-icon><span>{{rep.target}}</span>
+        </h3>
+        <span matListItemMeta>
+          @switch (rep?.state) {
+            <!-- States: initializing, failed, error, running, pending, crashing, completed -->
+            @case ('crashing' || 'error' || 'failed') {
+              <mat-icon class="warn-text-color" i18n-title title="Error">error</mat-icon>
+            }
+            @case ('running') {
+              <mat-icon i18n-title title="In Progress">sync</mat-icon>
+            }
+            @case ('pending') {
+              <mat-icon i18n-title title="Paused">pause</mat-icon>
+            }
+            @case ('completed') {
+              <mat-icon i18n-title title="Completed">cloud_done</mat-icon>
+            }
+            @default {
+              <mat-icon i18n-title title="In Progress">sync</mat-icon>
+            }
+          }
+        </span>
+        @if (rep?.state === 'error' || rep?.state === 'crashing' || rep?.state === 'failed') {
+          <p matListItemLine class="warn-text-color">
+            {{rep.info}}
+          </p>
+        }
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    }
   </mat-list>
 </div>

@@ -15,7 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { NgIf } from '@angular/common';
+
 
 interface CertificationFormControls {
   name: FormControl<string>;
@@ -24,9 +24,19 @@ interface CertificationFormControls {
 @Component({
   templateUrl: './certifications-add.component.html',
   imports: [
-    MatToolbar, MatIconButton, MatIcon, MatButton, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput,
-    MatError, FormErrorMessagesComponent, NgIf, CoursesComponent
-  ]
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatButton,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    CoursesComponent
+]
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 

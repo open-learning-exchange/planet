@@ -14,7 +14,7 @@ import { UserService } from '../user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { planetAndParentId } from '../../manager-dashboard/reports/reports.utils';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgClass, NgIf, NgFor } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { MatAnchor } from '@angular/material/button';
@@ -42,7 +42,7 @@ export class DialogsAnnouncementSuccessComponent { }
 @Component({
   templateUrl: './dialogs-announcement.component.html',
   styleUrls: ['./dialogs-announcement.component.scss'],
-  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, NgIf, MatProgressSpinner, MatIcon, MatAnchor, NgFor]
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, NgClass, MatProgressSpinner, MatIcon, MatAnchor]
 })
 export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 

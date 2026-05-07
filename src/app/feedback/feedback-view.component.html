@@ -6,21 +6,28 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <ng-container [ngSwitch]="feedback.type">
-        <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
-        <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-        <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
-      </ng-container>
-      <ng-container *ngIf="!editTitleMode; else editTitleBlock">
+      @switch (feedback.type) {
+        @case ('Bug') {
+          <mat-icon>bug_report</mat-icon>
+        }
+        @case ('Question') {
+          <mat-icon>help_outline</mat-icon>
+        }
+        @case ('Suggestion') {
+          <mat-icon>speaker_notes</mat-icon>
+        }
+      }
+      @if (!editTitleMode) {
         <span class="margin-lr-3 ellipsis-title" matTooltip="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
         <ng-container *planetAuthorizedRoles>
-          <button mat-stroked-button i18n (click)="toggleParams()" *ngIf="showParamsButton">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
+          @if (showParamsButton) {
+            <button mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
+          }
         </ng-container>
-      </ng-container>
-      <ng-template #editTitleBlock>
+      } @else {
         <mat-form-field color="accent" class="margin-lr-4 title-edit mdc-toolbar-input">
           <mat-label i18n>Feedback title</mat-label>
           <input matInput [(ngModel)]="feedback.title" />
@@ -31,47 +38,60 @@
         <a (click)="changeEditTitleMode(false)" mat-icon-button>
           <mat-icon>clear</mat-icon>
         </a>
-      </ng-template>
+      }
       <span class="toolbar-fill"></span>
-      <a
-      *ngIf="feedback?.routerLink && feedbackNavigationLabel"
-      [routerLink]="feedback.routerLink"
-      mat-raised-button
-      color="accent"
-      class="no-shrink-button">
-      {{ feedbackNavigationLabel }}
-      </a>
+      @if (feedback?.routerLink && feedbackNavigationLabel) {
+        <a
+          [routerLink]="feedback.routerLink"
+          mat-raised-button
+          color="accent"
+          class="no-shrink-button">
+          {{ feedbackNavigationLabel }}
+        </a>
+      }
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-card *ngIf="showParams==='on'" class="margin-tb">
-      <mat-card-content>
-        <h4 i18n>Page Parameters</h4>
-        <div class="margin-tb" *ngFor="let prop of feedback.params | keyvalue">{{prop.key}}: {{prop.value}}</div>
-      </mat-card-content>
-    </mat-card>
+    @if (showParams==='on') {
+      <mat-card class="margin-tb">
+        <mat-card-content>
+          <h4 i18n>Page Parameters</h4>
+          @for (prop of feedback.params | keyvalue; track prop) {
+            <div class="margin-tb">{{prop.key}}: {{prop.value}}</div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
     <div class="chat-list" #chatList>
-      <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: trackById">
-        <div class="chat-list-user">
-          <span *ngIf="users[message.user]">{{users[message.user] + ', '}}</span><span class="mat-caption">{{message.time | date:'medium'}}</span>
-        </div>
-        <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
-          <mat-card-content>
-            {{message.message}}
-          </mat-card-content>
-        </mat-card>
+      @for (message of feedback.messages; track trackById($index, message)) {
+        <div class="chat-list-item">
+          <div class="chat-list-user">
+            @if (users[message.user]) {
+              <span>{{users[message.user] + ', '}}</span>
+              }<span class="mat-caption">{{message.time | date:'medium'}}</span>
+            </div>
+            <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
+              <mat-card-content>
+                {{message.message}}
+              </mat-card-content>
+            </mat-card>
+          </div>
+        }
+      </div>
+      <div class="chat-reply">
+        <mat-form-field>
+          <mat-label i18n>Type your reply here</mat-label>
+          <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5"></textarea>
+        </mat-form-field>
+        <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">
+          <mat-icon>reply</mat-icon><span i18n>Reply</span>
+        </button>
+        @if (feedback.status !== 'Closed') {
+          <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" i18n>Close</button>
+        }
+        @if (feedback.status === 'Closed') {
+          <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" i18n>Re-open</button>
+        }
       </div>
     </div>
-    <div class="chat-reply">
-      <mat-form-field>
-        <mat-label i18n>Type your reply here</mat-label>
-        <textarea matInput [(ngModel)]="newMessage" matTextareaAutosize matAutosizeMaxRows="5"></textarea>
-      </mat-form-field>
-      <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">
-        <mat-icon>reply</mat-icon><span i18n>Reply</span>
-      </button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'" i18n>Close</button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="feedback.status === 'Closed'" i18n>Re-open</button>
-    </div>
   </div>
-</div>

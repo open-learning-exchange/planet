@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Location, NgIf, NgTemplateOutlet, NgFor, NgClass } from '@angular/common';
+import { Location, NgTemplateOutlet, NgClass } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
@@ -59,13 +59,50 @@ interface DateFilterForm {
   styleUrls: ['reports-detail.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, MatFormField, MatLabel, MatSelect,
-    NgFor, MatOption, MatOptgroup, MatButtonToggleGroup, MatButtonToggle, MatButton, FormsModule, ReactiveFormsModule,
-    MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatTooltip, MatMenuTrigger,
-    MatMenu, MatMenuItem, MatTabGroup, MatTab, MatGridList, MatGridTile, PlanetLoadingSpinnerComponent, MatTable, MatColumnDef,
-    MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
-    ReportsDetailActivitiesComponent, ReportsHealthComponent
-  ]
+    MatToolbar,
+    MatToolbarRow,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatOptgroup,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatButton,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInput,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatError,
+    MatTooltip,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatTabGroup,
+    MatTab,
+    MatGridList,
+    MatGridTile,
+    PlanetLoadingSpinnerComponent,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    NgClass,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    ReportsDetailActivitiesComponent,
+    ReportsHealthComponent
+]
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 

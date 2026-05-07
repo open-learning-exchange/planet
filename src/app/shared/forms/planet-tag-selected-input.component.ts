@@ -2,20 +2,39 @@ import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { truncateText } from '../../shared/utils';
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   template: `
-    <span [ngSwitch]="selectedIds.length" class="small margin-lr-5">
-      <span *ngSwitchCase="0" i18n>No collections selected</span>
-      <span *ngSwitchCase="1"><span i18n>Selected:</span>
-        {{ getTruncatedTooltip() }}
+    <span class="small margin-lr-5">
+      @switch (selectedIds.length) {
+        @case (0) {
+          <span i18n>No collections selected</span>
+        }
+        @case (1) {
+          <span><span i18n>Selected:</span>
+          {{ getTruncatedTooltip() }}
+        </span>
+      }
+      @default {
+        <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
+      }
+    }
+    @case (0) {
+      <span i18n>No collections selected</span>
+    }
+    @case (1) {
+      <span><span i18n>Selected:</span>
+      {{ getTruncatedTooltip() }}
     </span>
-    <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
-  `,
+    }
+    @default {
+      <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
+    }
+    `,
   selector: 'planet-tag-selected-input',
-  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault, MatTooltip]
+  imports: [MatTooltip]
 })
 export class PlanetTagSelectedInputComponent implements OnChanges {
 

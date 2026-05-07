@@ -26,7 +26,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { ExamsService } from '../exams/exams.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -51,11 +51,41 @@ interface SurveyFilterForm {
   templateUrl: './surveys.component.html',
   styleUrls: ['./surveys.component.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton, MatButtonToggleGroup,
-    FormsModule, MatButtonToggle, AuthorizedRolesDirective, MatButton, PlanetLoadingSpinnerComponent, MatTable, MatSort,
-    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatTooltip, MatSortHeader, RouterLink,
-    MatMenuTrigger, MatMenu, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
-  ]
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatMiniFabButton,
+    MatButtonToggleGroup,
+    FormsModule,
+    MatButtonToggle,
+    AuthorizedRolesDirective,
+    MatButton,
+    PlanetLoadingSpinnerComponent,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatTooltip,
+    MatSortHeader,
+    RouterLink,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
+]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);

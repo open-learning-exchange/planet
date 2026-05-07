@@ -8,7 +8,7 @@ import {
 import { sortNumberOrString } from '../../shared/table-helpers';
 import { ReportsDetailData } from './reports-detail-data';
 import { truncateText } from '../../shared/utils';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 const columns = {
   resources: [ 'title', 'count', 'averageRating' ],
@@ -21,9 +21,21 @@ const columns = {
   selector: 'planet-reports-detail-activities',
   templateUrl: './reports-detail-activities.component.html',
   imports: [
-    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgIf,
-    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatPaginator, DatePipe
-  ],
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatPaginator,
+    DatePipe
+],
   styles: `
     :host {
       display: grid;

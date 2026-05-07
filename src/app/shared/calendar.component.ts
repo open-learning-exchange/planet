@@ -1,5 +1,5 @@
 import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { DOCUMENT, NgIf, NgFor } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -23,16 +23,22 @@ import { FullCalendarModule } from '@fullcalendar/angular';
   styleUrls: ['./calendar.component.scss'],
   template: `
     <full-calendar #calendar [options]="calendarOptions"></full-calendar>
-    <div class="calendar-legend" *ngIf="showLegend">
-      <div *ngFor="let legend of eventLegend">
-        <div class="legend-item" *ngIf="!legend.type || legend.type === type">
-          <div class="legend-color" [style.backgroundColor]="legend.color"></div>
-          <span>{{ legend.label }}</span>
-        </div>
+    @if (showLegend) {
+      <div class="calendar-legend">
+        @for (legend of eventLegend; track legend) {
+          <div>
+            @if (!legend.type || legend.type === type) {
+              <div class="legend-item">
+                <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+                <span>{{ legend.label }}</span>
+              </div>
+            }
+          </div>
+        }
       </div>
-    </div>
-  `,
-  imports: [FullCalendarModule, NgIf, NgFor]
+    }
+    `,
+  imports: [FullCalendarModule]
 })
 export class PlanetCalendarComponent implements OnInit, OnChanges {
 

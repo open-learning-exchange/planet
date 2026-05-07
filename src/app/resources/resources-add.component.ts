@@ -20,7 +20,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
-import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -66,11 +66,32 @@ interface ResourceFormModel {
   templateUrl: './resources-add.component.html',
   styleUrls: ['./resources-add.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule,
-    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent,
-    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe
-  ]
+    MatToolbar,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    NgClass,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent,
+    MatSelect,
+    MatOption,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    FileInputComponent,
+    MatIconButton,
+    MatTooltip,
+    MatCheckbox,
+    MatButton,
+    SubmitDirective,
+    AsyncPipe
+]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {

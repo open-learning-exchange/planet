@@ -11,7 +11,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
-import { NgIf, NgFor, TitleCasePipe, KeyValuePipe } from '@angular/common';
+import { TitleCasePipe, KeyValuePipe } from '@angular/common';
 import { MatList, MatListItem, MatListItemTitle } from '@angular/material/list';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -44,10 +44,30 @@ interface AIConfiguration {
   templateUrl: './manager-aiservices.component.html',
   styleUrls: ['./manager-settings.shared.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, FormsModule, ReactiveFormsModule, MatCard, MatCardHeader, MatCardTitle,
-    NgIf, MatCardContent, MatList, NgFor, MatListItem, MatListItemTitle, MatFormField, MatLabel, MatInput, MatSuffix,
-    MatSlideToggle, MatTooltip, MatButton, SubmitDirective, TitleCasePipe, KeyValuePipe
-  ]
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    MatListItemTitle,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSuffix,
+    MatSlideToggle,
+    MatTooltip,
+    MatButton,
+    SubmitDirective,
+    TitleCasePipe,
+    KeyValuePipe
+]
 })
 export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};

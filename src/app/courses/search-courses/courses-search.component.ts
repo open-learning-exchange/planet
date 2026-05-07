@@ -6,7 +6,7 @@ import * as constants from '../constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { trackByCategory } from '../../shared/table-helpers';
-import { NgFor } from '@angular/common';
+
 
 @Component({
   template: `
@@ -17,15 +17,17 @@ import { NgFor } from '@angular/common';
     }
     </span>
     <mat-selection-list (selectionChange)="selectionChange($event)">
-      <mat-list-option *ngFor="let item of items" [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
-        <span matListItemTitle>{{item?.label || 'N/A'}}</span>
-      </mat-list-option>
+      @for (item of items; track item) {
+        <mat-list-option [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
+          <span matListItemTitle>{{item?.label || 'N/A'}}</span>
+        </mat-list-option>
+      }
     </mat-selection-list>
-  `,
+    `,
   selector: 'planet-courses-search-list',
   styleUrls: ['./courses-search.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
+  imports: [MatSelectionList, MatListOption, MatListItemTitle]
 })
 export class CoursesSearchListComponent {
 
@@ -58,18 +60,19 @@ export class CoursesSearchListComponent {
 
 @Component({
   template: `
-    <planet-courses-search-list
-      *ngFor="let list of searchLists;trackBy:trackByFn"
-      [category]="list.category"
-      [items]="list.items"
-      (selectChange)="selectChange($event)"
-      [selected]="selected[list.category]">
-    </planet-courses-search-list>
-  `,
+    @for (list of searchLists; track trackByFn($index, list)) {
+      <planet-courses-search-list
+        [category]="list.category"
+        [items]="list.items"
+        (selectChange)="selectChange($event)"
+        [selected]="selected[list.category]">
+      </planet-courses-search-list>
+    }
+    `,
   styleUrls: ['./courses-search.scss'],
   selector: 'planet-courses-search',
   encapsulation: ViewEncapsulation.None,
-  imports: [NgFor, CoursesSearchListComponent]
+  imports: [CoursesSearchListComponent]
 })
 export class CoursesSearchComponent implements OnInit, OnChanges {
 

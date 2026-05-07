@@ -7,7 +7,9 @@
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
         <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
-        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale - 1 to 9</mat-option>
+        @if (examType !== 'exam') {
+          <mat-option value="ratingScale" i18n>Rating Scale - 1 to 9</mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </div>
@@ -18,28 +20,39 @@
   </mat-form-field>
   <div class="question-choices">
     <div>
-      <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5" *ngIf="questionForm.controls.type.value.includes('select')" i18n>Add Choice</button>
-      <span i18n class="mat-caption warn-text-color" *ngIf="questionForm.errors?.noChoices && questionForm.touched">
+      @if (questionForm.controls.type.value.includes('select')) {
+        <button type="button" mat-stroked-button (click)="addChoice()" class="margin-lr-5" i18n>Add Choice</button>
+      }
+      @if (questionForm.errors?.noChoices && questionForm.touched) {
+        <span i18n class="mat-caption warn-text-color">
         You must add a choice
       </span>
+      }
     </div>
-    <div i18n class="mat-caption warn-text-color" *ngIf="!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched && questionForm.controls.type.value !== 'ratingScale'">
+    @if (!questionForm.controls.correctChoice.valid && questionForm.controls.correctChoice.touched && questionForm.controls.type.value !== 'ratingScale') {
+      <div i18n class="mat-caption warn-text-color">
       You must select the correct {questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}
     </div>
-    <div *ngFor="let choice of choices.controls; index as i; trackBy: trackByFn">
+    }
+    @for (choice of choices.controls; track trackByFn(i, choice); let i = $index) {
+      <div>
+        @if (examType === 'exam') {
+          <mat-checkbox
+            (change)="setCorrect($event, choice)"
+            [checked]="correctCheckboxes[choice.controls.id.value]"
+            >
+          </mat-checkbox>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label i18n>Add Choice</mat-label>
+          <input matInput [formControl]="choice.controls.text" #choiceInput>
+          <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matIconSuffix><mat-icon>remove_circle</mat-icon></button>
+        </mat-form-field>
+      </div>
+    }
+    @if (questionForm.controls.type.value.includes('select') && examType !=='exam') {
       <mat-checkbox
-        (change)="setCorrect($event, choice)"
-        [checked]="correctCheckboxes[choice.controls.id.value]"
-        *ngIf="examType === 'exam'">
-      </mat-checkbox>
-      <mat-form-field appearance="outline">
-        <mat-label i18n>Add Choice</mat-label>
-        <input matInput [formControl]="choice.controls.text" #choiceInput>
-        <button type="button" mat-icon-button (click)="removeChoice(i)" color="warn" matIconSuffix><mat-icon>remove_circle</mat-icon></button>
-      </mat-form-field>
-    </div>
-    <mat-checkbox
-      *ngIf="questionForm.controls.type.value.includes('select') && examType !=='exam'"
       [formControl]="questionForm.controls.hasOtherOption" i18n>Add "Other"</mat-checkbox>
+    }
   </div>
 </form>
