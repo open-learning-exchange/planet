@@ -26,14 +26,12 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     @if (showLegend) {
       <div class="calendar-legend">
         @for (legend of eventLegend; track legend) {
-          <div>
-            @if (!legend.type || legend.type === type) {
-              <div class="legend-item">
-                <div class="legend-color" [style.backgroundColor]="legend.color"></div>
-                <span>{{ legend.label }}</span>
-              </div>
-            }
-          </div>
+          @if (!legend.type || legend.type === type) {
+            <div class="legend-item">
+              <div class="legend-color" [style.backgroundColor]="legend.color"></div>
+              <span>{{ legend.label }}</span>
+            </div>
+          }
         }
       </div>
     }

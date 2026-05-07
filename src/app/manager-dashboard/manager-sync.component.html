@@ -23,7 +23,13 @@
         <span matListItemMeta>
           @switch (rep?.state) {
             <!-- States: initializing, failed, error, running, pending, crashing, completed -->
-            @case ('crashing' || 'error' || 'failed') {
+            @case ('crashing') {
+              <mat-icon class="warn-text-color" i18n-title title="Error">error</mat-icon>
+            }
+            @case ('error') {
+              <mat-icon class="warn-text-color" i18n-title title="Error">error</mat-icon>
+            }
+            @case ('failed') {
               <mat-icon class="warn-text-color" i18n-title title="Error">error</mat-icon>
             }
             @case ('running') {
