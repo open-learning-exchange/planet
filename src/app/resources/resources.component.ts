@@ -28,6 +28,7 @@ import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
 import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
@@ -79,7 +80,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
@@ -125,6 +126,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   initialSort = '';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
@@ -146,16 +148,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
+    public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 
   @HostListener('window:resize') OnResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.isTablet = window.innerWidth <= 1040;
   }
 
@@ -389,17 +394,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendResourceDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((planet) => {
-        const data = { okClick: this.sendResource().bind(this),
-          filterPredicate: filterSpecificFields([ 'name' ]),
-          allowMulti: true,
-          ...planet };
-        this.dialogRef = this.dialog.open(DialogsListComponent, {
-          data, maxHeight: '500px', width: '600px', autoFocus: false
-        });
-      });
+    this.dialogGuard.open('send-resource', () =>
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+        map(planet => this.dialog.open(DialogsListComponent, {
+          data: {
+            okClick: this.sendResource().bind(this),
+            filterPredicate: filterSpecificFields([ 'name' ]),
+            allowMulti: true,
+            ...planet
+          },
+          maxHeight: '500px', width: '600px', autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   sendResource() {

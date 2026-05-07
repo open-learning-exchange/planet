@@ -211,6 +211,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
+      this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
       this.getCommunityData();
     });
   }

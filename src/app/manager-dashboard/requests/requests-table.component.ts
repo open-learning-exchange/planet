@@ -1,4 +1,4 @@
-import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnChanges, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CouchService } from '../../shared/couchdb.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -8,10 +8,11 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
-import { switchMap, takeUntil, finalize } from 'rxjs/operators';
+import { map, switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { forkJoin, of, Subject } from 'rxjs';
 import { filterSpecificFields, sortNumberOrString } from '../../shared/table-helpers';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '../../shared/dialogs/dialog-guard.service';
 import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.component';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -22,6 +23,7 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { ValidatorService } from '../../validators/validator.service';
 import { ReportsService } from '../reports/reports.service';
 import { findDocuments } from '../../shared/mangoQueries';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgIf, NgFor, DatePipe } from '@angular/common';
@@ -61,6 +63,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   dialogRef: MatDialogRef<DialogsListComponent>;
   onDestroy$ = new Subject<void>();
   planetType = this.stateService.configuration.planetType;
+  deviceType: DeviceType;
+  isMobile: boolean;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -75,8 +79,18 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private validatorService: ValidatorService,
-    private reportsService: ReportsService
-  ) {}
+    private reportsService: ReportsService,
+    private dialogGuard: DialogGuardService,
+    private deviceInfoService: DeviceInfoService
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
 
   ngOnChanges() {
     this.communities.data = this.data;
@@ -182,22 +196,24 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
   }
 
   getChildPlanet(url: string) {
-    this.dialogsListService.getListAndColumns(
-      this.dbName,
-      { 'registrationRequest': 'accepted' },
-      url
-    ).pipe(takeUntil(this.onDestroy$)).subscribe((planets) => {
-      const data = {
-        disableSelection: true,
-        filterPredicate: filterSpecificFields([ 'name', 'code' ]),
-        ...planets };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    });
+    this.dialogGuard.open(`child-planet:${url}`, () =>
+      this.dialogsListService.getListAndColumns(
+        this.dbName,
+        { 'registrationRequest': 'accepted' },
+        url
+      ).pipe(
+        map(planets => this.dialog.open(DialogsListComponent, {
+          data: {
+            disableSelection: true,
+            filterPredicate: filterSpecificFields([ 'name', 'code' ]),
+            ...planets
+          },
+          maxHeight: '500px',
+          width: '600px',
+          autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   addHubClick(planetCode, hubName) {

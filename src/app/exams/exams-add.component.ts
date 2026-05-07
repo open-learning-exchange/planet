@@ -89,9 +89,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   documentInfo: ExamDocumentInfo = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
-  examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
+  examType: 'exam' | 'survey';
   teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
-  successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
+  successMessage: string;
   steps = [];
   showFormError = false;
   showPreviewError = false;
@@ -127,6 +127,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private dialog: MatDialog,
     private submissionsService: SubmissionsService
   ) {
+    const typeParam = this.route.snapshot.paramMap.get('type');
+    this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
+    this.successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
     this.createForm();
   }
 

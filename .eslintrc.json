@@ -86,7 +86,7 @@
         "@angular-eslint/use-pipe-transform-interface": "error",
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
-        // "@typescript-eslint/consistent-type-assertions": "error",
+        "@typescript-eslint/consistent-type-assertions": "error",
         // "@typescript-eslint/member-ordering": "error",
         // "@typescript-eslint/naming-convention": [
         //   "error",
