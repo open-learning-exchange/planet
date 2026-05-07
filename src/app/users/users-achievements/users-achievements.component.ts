@@ -14,7 +14,7 @@ import { CertificationsService } from '../../manager-dashboard/certifications/ce
 import { formatStringDate } from '../../shared/utils';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -32,9 +32,24 @@ pdfMake.addVirtualFileSystem(pdfFonts);
   styleUrls: ['./users-achievements.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    NgIf, MatToolbar, MatIconButton, MatIcon, MatAnchor, RouterLink, MatTooltip, PlanetLoadingSpinnerComponent,
-    MatDivider, TdMarkdownComponent, PlanetBetaDirective, MatList, NgFor, MatListItem, MatListItemTitle, MatListItemMeta,
-    NgClass, MatListItemLine, DatePipe, TruncateTextPipe
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatAnchor,
+    RouterLink,
+    MatTooltip,
+    PlanetLoadingSpinnerComponent,
+    MatDivider,
+    TdMarkdownComponent,
+    PlanetBetaDirective,
+    MatList,
+    MatListItem,
+    MatListItemTitle,
+    MatListItemMeta,
+    NgClass,
+    MatListItemLine,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit {

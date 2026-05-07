@@ -34,7 +34,7 @@ import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -61,13 +61,54 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent,
-    MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput,
-    MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu,
-    AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
-    MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective,
-    PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective,
-    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+    MatToolbar,
+    MatToolbarRow,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatIcon,
+    ResourcesSearchComponent,
+    MatFormField,
+    PlanetTagInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButton,
+    MatLabel,
+    MatInput,
+    MatMiniFabButton,
+    RouterLink,
+    FilteredAmountComponent,
+    PlanetTagSelectedInputComponent,
+    MatMenuTrigger,
+    MatMenu,
+    AuthorizedRolesDirective,
+    NgClass,
+    MatMenuItem,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatTooltip,
+    MatChipSet,
+    MatChip,
+    PreviewOverflowDirective,
+    PlanetMarkdownComponent,
+    PlanetLocalStatusComponent,
+    FeedbackDirective,
+    DialogsRatingsDirective,
+    PlanetRatingComponent,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {

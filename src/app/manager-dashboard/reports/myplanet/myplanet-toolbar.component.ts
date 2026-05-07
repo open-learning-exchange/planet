@@ -3,7 +3,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { MyPlanetFiltersForm } from './filter.base';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -18,9 +18,25 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
   templateUrl: './myplanet-toolbar.component.html',
   styleUrls: ['./myplanet.scss'],
   imports: [
-    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, RouterLink, MatFormField, MatLabel,
-    MatSelect, MatOption, NgFor, FormsModule, ReactiveFormsModule, MatInput, MatDatepickerInput, MatDatepickerToggle,
-    MatSuffix, MatDatepicker, MatError, MatButton
+    MatToolbar,
+    MatToolbarRow,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatIcon,
+    RouterLink,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInput,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatError,
+    MatButton
   ]
 })
 export class MyPlanetToolbarComponent {

@@ -1,49 +1,60 @@
 <!-- Feedback Template -->
 <mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileorTabletView">
+  @if (deviceType === deviceTypes.DESKTOP) {
     <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
     <span i18n>Feedback List</span>
     <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
     <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-  </ng-container>
+  } @else {
+    <ng-container>
+      <mat-toolbar-row>
+        <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+        <span i18n>Feedback List</span>
+        <span class="toolbar-fill"></span>
+        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+      </mat-toolbar-row>
+      @if (deviceType === deviceTypes.TABLET) {
+        @if (showFiltersRow) {
+          <mat-toolbar-row>
+            <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
+            <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
+          </mat-toolbar-row>
+        }
+      }
+      @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
+        @if (showFiltersRow) {
+          <mat-toolbar-row>
+            <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
+          </mat-toolbar-row>
+        }
+        @if (showFiltersRow) {
+          <mat-toolbar-row>
+            <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
+          </mat-toolbar-row>
+        }
+      }
+    </ng-container>
+  }
 
-  <ng-template #mobileorTabletView>
-    <mat-toolbar-row>
-      <button class="btnBack" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-      <span i18n>Feedback List</span>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    <ng-container *ngIf="deviceType === deviceTypes.TABLET">
-      <mat-toolbar-row *ngIf="showFiltersRow">
-        <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-        <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-      </mat-toolbar-row>
-    </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
-      <mat-toolbar-row *ngIf="showFiltersRow">
-        <ng-container *ngTemplateOutlet="filterOptions"></ng-container>
-      </mat-toolbar-row>
-      <mat-toolbar-row *ngIf="showFiltersRow">
-        <ng-container *ngTemplateOutlet="searchOptions"></ng-container>
-      </mat-toolbar-row>
-    </ng-container>
-  </ng-template>
 
   <ng-template #filterOptions>
     <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
       <mat-label i18n>Feedback Type</mat-label>
       <mat-select [value]="filter.type || 'All'" (selectionChange)="onFilterChange($event.value, 'type')">
         <mat-option i18n value="All">All</mat-option>
-        <mat-option *ngFor="let option of typeOptions" value={{option}}>{{option}}</mat-option>
+        @for (option of typeOptions; track option) {
+          <mat-option value={{option}}>{{option}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
       <mat-label i18n>Feedback Status</mat-label>
       <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
         <mat-option i18n value="All">All</mat-option>
-        <mat-option *ngFor="let option of statusOptions" [value]="option.value">{{option.text}}</mat-option>
+        @for (option of statusOptions; track option) {
+          <mat-option [value]="option.value">{{option.text}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </ng-template>
@@ -79,11 +90,17 @@
       <ng-container matColumnDef="type">
         <mat-header-cell *matHeaderCellDef mat-sort-header="type" i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container [ngSwitch]="element.type">
-            <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
-            <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-            <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
-          </ng-container>
+          @switch (element.type) {
+            @case ('Bug') {
+              <mat-icon>bug_report</mat-icon>
+            }
+            @case ('Question') {
+              <mat-icon>help_outline</mat-icon>
+            }
+            @case ('Suggestion') {
+              <mat-icon>speaker_notes</mat-icon>
+            }
+          }
           <span>{{element.type}}</span>
         </mat-cell>
       </ng-container>
@@ -91,8 +108,12 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header="priority" i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-set *ngIf="element.priority==='Yes'" aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent" i18n>Yes</mat-chip></mat-chip-set>
-          <mat-chip-set *ngIf="element.priority==='No'" aria-label="Priority" i18n-aria-label><mat-chip i18n>No</mat-chip></mat-chip-set>
+          @if (element.priority==='Yes') {
+            <mat-chip-set aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent" i18n>Yes</mat-chip></mat-chip-set>
+          }
+          @if (element.priority==='No') {
+            <mat-chip-set aria-label="Priority" i18n-aria-label><mat-chip i18n>No</mat-chip></mat-chip-set>
+          }
         </mat-cell>
       </ng-container>
       <!-- Owner Column -->
@@ -105,10 +126,14 @@
       <!-- Status Column -->
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            <mat-chip-set *ngIf="element.status==='Open' || element.status==='Reopened'" aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.status}}</mat-chip></mat-chip-set>
-            <mat-chip-set *ngIf="element.status==='Closed'" aria-label="Status" i18n-aria-label><mat-chip>{{element.status}}</mat-chip></mat-chip-set>
-          </mat-cell>
+        <mat-cell *matCellDef="let element">
+          @if (element.status==='Open' || element.status==='Reopened') {
+            <mat-chip-set aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.status}}</mat-chip></mat-chip-set>
+          }
+          @if (element.status==='Closed') {
+            <mat-chip-set aria-label="Status" i18n-aria-label><mat-chip>{{element.status}}</mat-chip></mat-chip-set>
+          }
+        </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
       <ng-container matColumnDef="openTime">
@@ -122,9 +147,9 @@
       </ng-container>
       <!-- Source Column -->
       <ng-container matColumnDef="source">
-          <mat-header-cell *matHeaderCellDef mat-sort-header="source" i18n>Source</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
-        </ng-container>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="source" i18n>Source</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.source}}</mat-cell>
+      </ng-container>
       <!-- Action Column -->
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n> Action </mat-header-cell>
@@ -141,14 +166,18 @@
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
-            <button mat-menu-item *ngIf="element.status !== 'Closed'" (click)="closeFeedback(element)">
-              <mat-icon>close</mat-icon>
-              <span i18n>Close</span>
-            </button>
-            <button mat-menu-item *ngIf="element.status === 'Closed'" (click)="openFeedback(element)">
-              <mat-icon>lock_open</mat-icon>
-              <span i18n>Re-open</span>
-            </button>
+            @if (element.status !== 'Closed') {
+              <button mat-menu-item (click)="closeFeedback(element)">
+                <mat-icon>close</mat-icon>
+                <span i18n>Close</span>
+              </button>
+            }
+            @if (element.status === 'Closed') {
+              <button mat-menu-item (click)="openFeedback(element)">
+                <mat-icon>lock_open</mat-icon>
+                <span i18n>Re-open</span>
+              </button>
+            }
           </mat-menu>
         </mat-cell>
       </ng-container>

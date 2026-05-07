@@ -19,7 +19,7 @@ import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix, MatHint } from '@angular/material/form-field';
@@ -54,11 +54,35 @@ interface UsersUpdateFormGroup {
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
-    MatToolbar, NgIf, MatIconButton, MatIcon, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule,
-    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput,
-    MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton,
-    MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective,
-    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatSelect,
+    MatOption,
+    MatRadioGroup,
+    MatRadioButton,
+    MatSlideToggle,
+    MatTooltip,
+    PlanetNumberValidatorDirective,
+    MatHint,
+    MatButton,
+    SubmitDirective,
+    CdkScrollable,
+    MatDialogContent,
+    ImageCropperComponent,
+    MatDialogActions,
+    MatDialogClose
   ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {

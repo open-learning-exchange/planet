@@ -4,7 +4,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { Subject } from 'rxjs';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UserService } from '../user.service';
-import { NgClass, NgFor, NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
   ],
-  imports: [NgClass, NgFor, MatIcon, NgStyle]
+  imports: [NgClass, MatIcon, NgStyle]
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 

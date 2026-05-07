@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { StateService } from '../shared/state.service';
 import { MatDivider } from '@angular/material/list';
-import { NgIf, CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 
 @Component({
@@ -24,7 +24,7 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
       position: initial;
     }
   `],
-  imports: [MatDivider, NgIf, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
+  imports: [MatDivider, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
 })
 export class TeamsReportsDetailComponent implements OnChanges {
 

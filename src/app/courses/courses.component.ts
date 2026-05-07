@@ -35,7 +35,7 @@ import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.compon
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { CoursesSearchComponent } from './search-courses/courses-search.component';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -64,17 +64,56 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./courses.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, MatFormField,
-    PlanetTagInputComponent, FormsModule, ReactiveFormsModule, NgTemplateOutlet,
-    CoursesSearchComponent, MatButton, MatLabel, MatInput, NgClass, MatMiniFabButton,
-    RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent,
-    MatMenuTrigger, MatMenu, AuthorizedRolesDirective, MatMenuItem, MatTable, MatSort,
-    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
-    MatSortHeader, MatTooltip, CoursesProgressBarComponent, MatChipSet, NgFor, MatChip,
-    PreviewOverflowDirective, PlanetMarkdownComponent, PlanetLocalStatusComponent,
-    FeedbackDirective, DialogsRatingsDirective, LanguageLabelComponent,
-    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow,
-    MatPaginator, DatePipe, TruncateTextPipe
+    MatToolbar,
+    MatToolbarRow,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    PlanetTagInputComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    NgTemplateOutlet,
+    CoursesSearchComponent,
+    MatButton,
+    MatLabel,
+    MatInput,
+    NgClass,
+    MatMiniFabButton,
+    RouterLink,
+    FilteredAmountComponent,
+    PlanetTagSelectedInputComponent,
+    MatMenuTrigger,
+    MatMenu,
+    AuthorizedRolesDirective,
+    MatMenuItem,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatTooltip,
+    CoursesProgressBarComponent,
+    MatChipSet,
+    MatChip,
+    PreviewOverflowDirective,
+    PlanetMarkdownComponent,
+    PlanetLocalStatusComponent,
+    FeedbackDirective,
+    DialogsRatingsDirective,
+    LanguageLabelComponent,
+    PlanetRatingComponent,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 

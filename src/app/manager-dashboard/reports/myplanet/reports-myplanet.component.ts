@@ -16,7 +16,7 @@ import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
@@ -26,8 +26,17 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
   templateUrl: './reports-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
   imports: [
-    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton,
-    NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+    MyPlanetToolbarComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatToolbar,
+    MatToolbarRow,
+    MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MyPlanetTableComponent,
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {

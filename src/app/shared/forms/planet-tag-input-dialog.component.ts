@@ -17,7 +17,7 @@ import { mapToArray, isInMap } from '../utils';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 import { Observable } from 'rxjs';
-import { NgSwitch, NgSwitchCase, NgFor, NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -42,15 +42,19 @@ type TagFormGroup = FormGroup<TagFormControls>;
 @Component({
   'selector': 'planet-tag-input-toggle-icon',
   'template': `
-    <mat-icon *ngIf="!isOpen" [inline]="true">expand_more</mat-icon>
-    <mat-icon *ngIf="isOpen" [inline]="true">expand_less</mat-icon>
-  `,
+    @if (!isOpen) {
+      <mat-icon [inline]="true">expand_more</mat-icon>
+    }
+    @if (isOpen) {
+      <mat-icon [inline]="true">expand_less</mat-icon>
+    }
+    `,
   'styles': [`
     mat-icon {
       vertical-align: middle;
     }
   `],
-  imports: [NgIf, MatIcon]
+  imports: [MatIcon]
 })
 export class PlanetTagInputToggleIconComponent {
 
@@ -63,11 +67,36 @@ export class PlanetTagInputToggleIconComponent {
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styleUrls': ['planet-tag-input-dialog.scss'],
   imports: [
-    NgSwitch, NgSwitchCase, MatDialogTitle, CdkScrollable, MatDialogContent, MatFormField, MatLabel,
-    MatInput, FormsModule, AuthorizedRolesDirective, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-    ReactiveFormsModule, MatError, FormErrorMessagesComponent, MatSelect, MatOption, NgFor, MatButton, NgIf, MatActionList,
-    MatListItem, forwardRef(() => PlanetTagInputToggleIconComponent), MatCheckbox, MatListItemMeta, MatTooltip, MatIcon,
-    MatListItemIcon, MatDivider, MatNavList, NgClass, MatDialogActions, MatDialogClose
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    AuthorizedRolesDirective,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    ReactiveFormsModule,
+    MatError,
+    FormErrorMessagesComponent,
+    MatSelect,
+    MatOption,
+    MatButton,
+    MatActionList,
+    MatListItem,
+    forwardRef(() => PlanetTagInputToggleIconComponent),
+    MatCheckbox,
+    MatListItemMeta,
+    MatTooltip,
+    MatIcon,
+    MatListItemIcon,
+    MatDivider,
+    MatNavList,
+    NgClass,
+    MatDialogActions,
+    MatDialogClose
   ]
 })
 export class PlanetTagInputDialogComponent {

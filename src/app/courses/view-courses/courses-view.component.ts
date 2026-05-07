@@ -12,7 +12,7 @@ import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
@@ -31,11 +31,29 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
   templateUrl: './courses-view.component.html',
   styleUrls: ['courses-view.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger,
-    MatMenu, MatButton, CoursesProgressBarComponent, NgClass, CoursesViewDetailComponent, NgFor,
-    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription,
-    CoursesIconComponent, PlanetMarkdownComponent, MatExpansionPanelActionRow, ResourcesMenuComponent,
-    MatAnchor, MatMenuItem, PlanetLoadingSpinnerComponent]
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatButton,
+    CoursesProgressBarComponent,
+    NgClass,
+    CoursesViewDetailComponent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    CoursesIconComponent,
+    PlanetMarkdownComponent,
+    MatExpansionPanelActionRow,
+    ResourcesMenuComponent,
+    MatAnchor,
+    MatMenuItem,
+    PlanetLoadingSpinnerComponent
+  ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 

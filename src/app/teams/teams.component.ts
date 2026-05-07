@@ -21,7 +21,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { attachNamesToPlanets, codeToPlanetName } from '../manager-dashboard/reports/reports.utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgClass, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -36,10 +36,36 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   styleUrls: ['./teams.scss'],
   selector: 'planet-teams',
   imports: [
-    MatToolbar, MatToolbarRow, NgIf, MatIconButton, RouterLink, MatIcon, NgTemplateOutlet, MatFormField,
-    MatLabel, MatInput, FormsModule, MatButton, NgClass, MatMiniFabButton, MatTable, MatSort, MatColumnDef,
-    MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, FeedbackDirective,
-    AuthorizedRolesDirective, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe,
+    MatToolbar,
+    MatToolbarRow,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    NgTemplateOutlet,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatButton,
+    NgClass,
+    MatMiniFabButton,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    FeedbackDirective,
+    AuthorizedRolesDirective,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe,
     TruncateTextPipe
   ]
 })

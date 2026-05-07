@@ -14,7 +14,7 @@ import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
-import { NgIf, NgClass, NgFor, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
+import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -27,8 +27,21 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
   templateUrl: './meetups-view.component.html',
   styleUrls: ['./meetups-view.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, MatButton, MatTooltip, NgClass, NgFor, TdMarkdownComponent,
-    CdkScrollable, MatDialogContent, NgTemplateOutlet, MatDialogActions, MatDialogClose, TitleCasePipe, DatePipe
+    MatToolbar,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    MatButton,
+    MatTooltip,
+    NgClass,
+    TdMarkdownComponent,
+    CdkScrollable,
+    MatDialogContent,
+    NgTemplateOutlet,
+    MatDialogActions,
+    MatDialogClose,
+    TitleCasePipe,
+    DatePipe
   ]
 })
 

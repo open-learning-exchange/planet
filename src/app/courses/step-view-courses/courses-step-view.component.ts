@@ -18,7 +18,7 @@ import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgClass, NgTemplateOutlet, NgFor } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { ChatWindowComponent } from '../../chat/chat-window/chat-window.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -31,10 +31,26 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
   templateUrl: './courses-step-view.component.html',
   styleUrls: ['./courses-step-view.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, MatButton, MatIconButton, MatAnchor, MatMenuTrigger,
-    MatMenu, MatMenuItem, RouterLink, NgClass, ChatWindowComponent, NgTemplateOutlet,
-    PlanetMarkdownComponent, MatButtonToggleGroup, FormsModule, NgFor, MatButtonToggle, MatTooltip,
-    ResourcesViewerComponent, PlanetLoadingSpinnerComponent
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    MatButton,
+    MatIconButton,
+    MatAnchor,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    RouterLink,
+    NgClass,
+    ChatWindowComponent,
+    NgTemplateOutlet,
+    PlanetMarkdownComponent,
+    MatButtonToggleGroup,
+    FormsModule,
+    MatButtonToggle,
+    MatTooltip,
+    ResourcesViewerComponent,
+    PlanetLoadingSpinnerComponent
   ]
 })
 

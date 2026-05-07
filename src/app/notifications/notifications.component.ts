@@ -16,7 +16,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgFor, NgClass, NgIf, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 
@@ -24,8 +24,23 @@ import { RouterLink } from '@angular/router';
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
   imports: [
-    MatToolbar, MatButton, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatTable, MatColumnDef, MatCellDef,
-    MatCell, NgClass, NgIf, RouterLink, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+    MatToolbar,
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatTable,
+    MatColumnDef,
+    MatCellDef,
+    MatCell,
+    NgClass,
+    RouterLink,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {

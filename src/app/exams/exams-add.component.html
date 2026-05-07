@@ -16,47 +16,63 @@
           <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
           <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
         </div>
-        <mat-checkbox *ngIf="isManagerRoute" formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic;" i18n>Allow team view</span></mat-checkbox>
-        <span *ngIf="showFormError" i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
-        <span *ngIf="showPreviewError" i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
+        @if (isManagerRoute) {
+          <mat-checkbox formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic;" i18n>Allow team view</span></mat-checkbox>
+        }
+        @if (showFormError) {
+          <span i18n class="mat-caption warn-text-color">Some required fields are missing.</span>
+        }
+        @if (showPreviewError) {
+          <span i18n class="mat-caption warn-text-color">You must add a question to preview the {examType, select, exam {test} survey {survey}}</span>
+        }
       </div>
       <mat-menu #questionMenu="matMenu" class="exam-question-menu">
         <button mat-menu-item type="button" (click)="addQuestion('input')" i18n>Text - Short answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('textarea')" i18n>Text - Long answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('select')" i18n>Multiple Choice - single answer</button>
         <button mat-menu-item type="button" (click)="addQuestion('selectMultiple')" i18n>Multiple Choice - multiple answer</button>
-        <button *ngIf="examType !== 'exam'" mat-menu-item type="button" (click)="addQuestion('ratingScale')" i18n>Rating Scale - 1 to 9</button>
+        @if (examType !== 'exam') {
+          <button mat-menu-item type="button" (click)="addQuestion('ratingScale')" i18n>Rating Scale - 1 to 9</button>
+        }
       </mat-menu>
-      <mat-accordion class="exam-inputs" *ngIf="!isCourseContent">
-        <mat-expansion-panel [expanded]="!isQuestionsActive">
-          <mat-expansion-panel-header (click)="isQuestionsActive = !isQuestionsActive">
-            <mat-panel-title i18n> Survey Info </mat-panel-title>
-          </mat-expansion-panel-header>
-          <div>
-            <mat-form-field class="full-width">
-              <mat-label i18n>Title</mat-label>
-              <input matInput formControlName="name" required>
-              <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
-            </mat-form-field>
-            <mat-form-field class="full-width mat-form-field-type-no-underline">
-              <mat-label i18n>Survey Description</mat-label>
-              <planet-markdown-textbox class="full-width" [required]="false" [formControl]="examForm.controls.description"></planet-markdown-textbox>
-              <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
-            </mat-form-field>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
+      @if (!isCourseContent) {
+        <mat-accordion class="exam-inputs">
+          <mat-expansion-panel [expanded]="!isQuestionsActive">
+            <mat-expansion-panel-header (click)="isQuestionsActive = !isQuestionsActive">
+              <mat-panel-title i18n> Survey Info </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div>
+              <mat-form-field class="full-width">
+                <mat-label i18n>Title</mat-label>
+                <input matInput formControlName="name" required>
+                <mat-error><planet-form-error-messages [control]="examForm.controls.name"></planet-form-error-messages></mat-error>
+              </mat-form-field>
+              <mat-form-field class="full-width mat-form-field-type-no-underline">
+                <mat-label i18n>Survey Description</mat-label>
+                <planet-markdown-textbox class="full-width" [required]="false" [formControl]="examForm.controls.description"></planet-markdown-textbox>
+                <mat-error><planet-form-error-messages [control]="examForm.controls.description"></planet-form-error-messages></mat-error>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      }
       <planet-step-list class="exam-questions" [steps]="questions" [nameProp]="'title'" (stepClicked)="stepClick($event)">
-        <planet-step-list-item *ngFor="let question of questions?.controls; index as i" >
-          <span matListItemTitle>{{ getQuestionLabel(question.value.body, i) }}</span>
-          <span matListItemLine i18n class="mat-caption warn-text-color exam-error" *ngIf="!question.valid && question.touched">There are missing fields on this question</span>
-        </planet-step-list-item>
+        @for (question of questions?.controls; track question; let i = $index) {
+          <planet-step-list-item >
+            <span matListItemTitle>{{ getQuestionLabel(question.value.body, i) }}</span>
+            @if (!question.valid && question.touched) {
+              <span matListItemLine i18n class="mat-caption warn-text-color exam-error">There are missing fields on this question</span>
+            }
+          </planet-step-list-item>
+        }
         <div planetStepListForm>
           <span class="mat-caption margin-lr-5">
             <span i18n>Editing Question</span>{{ ' ' + (this.activeQuestionIndex + 1) + ' ' }}
             <span i18n>of</span>{{ ' ' + questions?.length }}
           </span>
-          <planet-exam-question [(question)]="question" [examType]="examType" *ngIf="activeQuestionIndex > -1"></planet-exam-question>
+          @if (activeQuestionIndex > -1) {
+            <planet-exam-question [(question)]="question" [examType]="examType"></planet-exam-question>
+          }
         </div>
       </planet-step-list>
     </form>

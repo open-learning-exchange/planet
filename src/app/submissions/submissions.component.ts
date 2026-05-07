@@ -15,7 +15,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NgIf, NgTemplateOutlet, NgFor, NgClass, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -41,10 +41,37 @@ const columnsByFilterAndMode = {
   templateUrl: './submissions.component.html',
   styleUrls: ['./submission.scss'],
   imports: [
-    NgIf, MatToolbar, MatToolbarRow, MatIconButton, MatIcon, NgTemplateOutlet, MatFormField, MatLabel, MatSelect,
-    MatOption, NgFor, MatButtonToggleGroup, MatButtonToggle, MatInput, NgClass, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
-    MatHeaderCell, MatSortHeader, MatCellDef, MatCell, NgSwitch, NgSwitchCase, MatChipSet, MatChip, NgSwitchDefault, RouterLink,
-    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+    MatToolbar,
+    MatToolbarRow,
+    MatIconButton,
+    MatIcon,
+    NgTemplateOutlet,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatInput,
+    NgClass,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatChipSet,
+    MatChip,
+    RouterLink,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy {

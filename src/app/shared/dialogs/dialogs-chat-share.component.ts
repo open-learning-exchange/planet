@@ -17,7 +17,7 @@ import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
 } from '@angular/material/expansion';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
@@ -44,9 +44,28 @@ interface CommunityForm {
     }
   `],
   imports: [
-    CdkScrollable, MatDialogContent, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-    MatExpansionPanelContent, MatCheckbox, FormsModule, ReactiveFormsModule, NgIf, MatFormField, MatLabel, MatInput, MatButton,
-    MatDialogClose, MatSelect, NgFor, MatOption, MatStepper, MatStep, TeamsComponent, MatError, FormErrorMessagesComponent,
+    CdkScrollable,
+    MatDialogContent,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelContent,
+    MatCheckbox,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+    MatDialogClose,
+    MatSelect,
+    MatOption,
+    MatStepper,
+    MatStep,
+    TeamsComponent,
+    MatError,
+    FormErrorMessagesComponent,
     MatDialogActions
   ]
 })

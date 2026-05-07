@@ -3,10 +3,12 @@
     <div class="community-news tab-scroll-shell">
       <mat-tab-group class="tabs-padding tab-scroll-layout" (selectedTabChange)="tabChanged($event)">
         <mat-tab i18n-label label="Our Voices">
-          <planet-loading-spinner *ngIf="newsLoading; else loaded" text="Loading voices..." i18n-text></planet-loading-spinner>
-          <ng-template #loaded>
+          @if (newsLoading) {
+            <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
+          } @else {
             <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
-              <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }" *ngIf="!activeReplyId">
+              @if (!activeReplyId) {
+                <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
                   <mat-form-field class="search-form-field mdc-toolbar-input">
                     <mat-label i18n>Search voice</mat-label>
                     <mat-icon matIconPrefix>search</mat-icon>
@@ -16,122 +18,180 @@
                     <mat-label i18n>Label</mat-label>
                     <mat-select [(ngModel)]="selectedLabel" (selectionChange)="onLabelFilterChange($event.value)">
                       <mat-select-trigger>
-                        <ng-container *ngIf="selectedLabel">
+                        @if (selectedLabel) {
                           <mat-icon class="label-icon">{{ getLabelIcon(selectedLabel) }}</mat-icon>
                           <planet-label [label]="selectedLabel"></planet-label>
-                        </ng-container>
-                        <ng-container *ngIf="!selectedLabel">
+                        }
+                        @if (!selectedLabel) {
                           <span i18n>All</span>
-                        </ng-container>
+                        }
                       </mat-select-trigger>
                       <mat-option value=""><span i18n>All</span></mat-option>
-                      <mat-option *ngFor="let label of availableLabels" [value]="label">
-                        <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
-                        <planet-label [label]="label"></planet-label>
-                      </mat-option>
+                      @for (label of availableLabels; track label) {
+                        <mat-option [value]="label">
+                          <mat-icon class="label-icon">{{ getLabelIcon(label) }}</mat-icon>
+                          <planet-label [label]="label"></planet-label>
+                        </mat-option>
+                      }
                     </mat-select>
                   </mat-form-field>
                   <ng-container *planetAuthorizedRoles="'learner'">
-                    <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" *ngIf="showNewsButton && isLoggedIn" i18n>New Voice</button>
+                    @if (showNewsButton && isLoggedIn) {
+                      <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
+                    }
                   </ng-container>
                   <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
                     <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
                   </button>
-              </mat-toolbar>
-              <p *ngIf="filteredNews?.length === 0" i18n>No Voices available.</p>
+                </mat-toolbar>
+              }
+              @if (filteredNews?.length === 0) {
+                <p i18n>No Voices available.</p>
+              }
             </planet-news-list>
-          </ng-template>
+          }
         </mat-tab>
-        <mat-tab [label]="leadersTabLabel" *ngIf="isLoggedIn">
-          <p *ngIf="councillors.length === 0" i18n>No leaders available.</p>
-          <div class="card-grid">
-            <mat-card *ngFor="let councillor of councillors">
-              <planet-teams-member
-                [leadershipTitle]="councillor.doc.leadershipTitle"
-                [member]="councillor"
-                [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
-                (actionClick)="openChangeTitleDialog($event)">
-              </planet-teams-member>
-            </mat-card>
-          </div>
-        </mat-tab>
-        <mat-tab i18n-label label="Services" *ngIf="isLoggedIn">
-          <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
-          <ng-container *ngIf="!planetCode">
-          </ng-container>
-          <planet-loading-spinner *ngIf="teamLoading" text="Loading description..." i18n-text></planet-loading-spinner>
-          <ng-container *ngIf="!teamLoading">
-            <p><planet-markdown *ngIf="team.description; else noTeamDesc" [content]="team.description || ''"></planet-markdown></p>
-            <ng-template #noTeamDesc><p i18n>No description available.</p></ng-template>
-          </ng-container>
-          <ng-container *planetAuthorizedRoles="''">
-            <div *ngIf="!planetCode" class="action-buttons button-row">
-              <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
+        @if (isLoggedIn) {
+          <mat-tab [label]="leadersTabLabel">
+            @if (councillors.length === 0) {
+              <p i18n>No leaders available.</p>
+            }
+            <div class="card-grid">
+              @for (councillor of councillors; track councillor) {
+                <mat-card>
+                  <planet-teams-member
+                    [leadershipTitle]="councillor.doc.leadershipTitle"
+                    [member]="councillor"
+                    [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                    (actionClick)="openChangeTitleDialog($event)">
+                  </planet-teams-member>
+                </mat-card>
+              }
+            </div>
+          </mat-tab>
+        }
+        @if (isLoggedIn) {
+          <mat-tab i18n-label label="Services">
+            <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
+            @if (!planetCode) {
+            }
+            @if (teamLoading) {
+              <planet-loading-spinner text="Loading description..." i18n-text></planet-loading-spinner>
+            }
+            @if (!teamLoading) {
+              <p>@if (team.description) {
+                <planet-markdown [content]="team.description || ''"></planet-markdown>
+              } @else {
+                <p i18n>No description available.</p>
+              }</p>
+            }
+            <ng-container *planetAuthorizedRoles="''">
+              @if (!planetCode) {
+                <div class="action-buttons button-row">
+                  <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
               </button>
-              <button (click)="confirmDeleteDescription()" mat-stroked-button [disabled]="!(team?.description?.trim()?.length)">
-                <span i18n>Remove Description</span>
+                  <button (click)="confirmDeleteDescription()" mat-stroked-button [disabled]="!(team?.description?.trim()?.length)">
+                    <span i18n>Remove Description</span>
+                  </button>
+                </div>
+              }
+            </ng-container>
+            <ng-container>
+              <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
+              @if (communityDataLoading) {
+                <planet-loading-spinner text="Loading links..." i18n-text></planet-loading-spinner>
+              }
+              @if (!communityDataLoading && links?.length === 0) {
+                <span i18n><p>No links available.</p></span>
+              }
+              @if (!communityDataLoading && links?.length > 0) {
+                <mat-nav-list>
+                  @if (localLinks.length > 0) {
+                    <h3 mat-subheader i18n>Local</h3>
+                    @for (link of localLinks; track link) {
+                      <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
+                        <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
+                        <span matListItemTitle>{{link.title}}</span>
+                        @if (deleteMode) {
+                          <span matListItemMeta>
+                            <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </span>
+                        }
+                      </mat-list-item>
+                    }
+                  }
+                  @if (socialWebLinks.length > 0) {
+                    <h3 mat-subheader i18n>Social & Web</h3>
+                    @for (link of socialWebLinks; track link) {
+                      <a mat-list-item [href]="link.route" target="_blank" rel="noopener">
+                        @if (link.icon === 'website') {
+                          <mat-icon matListItemIcon>public</mat-icon>
+                        }
+                        @if (link.icon !== 'website') {
+                          <mat-icon [svgIcon]="link.icon" matListItemIcon></mat-icon>
+                        }
+                        <span matListItemTitle>{{link.title}}</span>
+                        @if (deleteMode) {
+                          <span matListItemMeta>
+                            <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </span>
+                        }
+                      </a>
+                    }
+                  }
+                </mat-nav-list>
+              }
+            </ng-container>
+            <ng-template #noLinks>
+              <p i18n>No links available.</p>
+            </ng-template>
+            <div *planetAuthorizedRoles="''">
+              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+                @if (!deleteMode) {
+                  <span i18n>Remove Links</span>
+                }
+                @if (deleteMode) {
+                  <span i18n>Done Removing Links</span>
+                }
               </button>
             </div>
-          </ng-container>
-          <ng-container>
-            <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Links</b>
-            <planet-loading-spinner *ngIf="communityDataLoading" text="Loading links..." i18n-text></planet-loading-spinner>
-            <span *ngIf="!communityDataLoading && links?.length === 0" i18n><p>No links available.</p></span>
-            <mat-nav-list *ngIf="!communityDataLoading && links?.length > 0">
-              <ng-container *ngIf="localLinks.length > 0">
-                <h3 mat-subheader i18n>Local</h3>
-                <mat-list-item *ngFor="let link of localLinks" [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
-                  <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
-                  <span matListItemTitle>{{link.title}}</span>
-                  <span *ngIf="deleteMode" matListItemMeta>
-                    <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </span>
-                </mat-list-item>
-              </ng-container>
-              <ng-container *ngIf="socialWebLinks.length > 0">
-                <h3 mat-subheader i18n>Social & Web</h3>
-                <a *ngFor="let link of socialWebLinks" mat-list-item [href]="link.route" target="_blank" rel="noopener">
-                  <mat-icon *ngIf="link.icon === 'website'" matListItemIcon>public</mat-icon>
-                  <mat-icon *ngIf="link.icon !== 'website'" [svgIcon]="link.icon" matListItemIcon></mat-icon>
-                  <span matListItemTitle>{{link.title}}</span>
-                  <span *ngIf="deleteMode" matListItemMeta>
-                    <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </span>
-                </a>
-              </ng-container>
-            </mat-nav-list>
-          </ng-container>
-          <ng-template #noLinks>
-            <p i18n>No links available.</p>
-          </ng-template>
-          <div *planetAuthorizedRoles="''">
-            <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-            <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-              <span *ngIf="!deleteMode" i18n>Remove Links</span>
-              <span *ngIf="deleteMode" i18n>Done Removing Links</span>
-            </button>
-          </div>
-        </mat-tab>
-        <mat-tab *ngIf="configuration.planetType==='nation' && isLoggedIn" i18n-label label="Communities">
-          <planet-community-list></planet-community-list>
-        </mat-tab>
-        <mat-tab i18n-label label="Finances" *ngIf="isLoggedIn">
-          <planet-teams-view-finances [finances]="finances" [isLoading]="communityDataLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
-        </mat-tab>
-        <mat-tab i18n-label label="Reports" *ngIf="isLoggedIn">
-          <planet-loading-spinner *ngIf="communityDataLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-          <planet-teams-reports *ngIf="!communityDataLoading" [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
-        </mat-tab>
-        <mat-tab i18n-label label="Calendar" *ngIf="deviceType !== deviceTypes.DESKTOP">
-          <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
-        </mat-tab>
+          </mat-tab>
+        }
+        @if (configuration.planetType==='nation' && isLoggedIn) {
+          <mat-tab i18n-label label="Communities">
+            <planet-community-list></planet-community-list>
+          </mat-tab>
+        }
+        @if (isLoggedIn) {
+          <mat-tab i18n-label label="Finances">
+            <planet-teams-view-finances [finances]="finances" [isLoading]="communityDataLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
+          </mat-tab>
+        }
+        @if (isLoggedIn) {
+          <mat-tab i18n-label label="Reports">
+            @if (communityDataLoading) {
+              <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+            }
+            @if (!communityDataLoading) {
+              <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
+            }
+          </mat-tab>
+        }
+        @if (deviceType !== deviceTypes.DESKTOP) {
+          <mat-tab i18n-label label="Calendar">
+            <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+          </mat-tab>
+        }
       </mat-tab-group>
     </div>
-    <planet-calendar *ngIf="deviceType === deviceTypes.DESKTOP" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    @if (deviceType === deviceTypes.DESKTOP) {
+      <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+    }
   </div>
 </div>

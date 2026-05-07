@@ -1,19 +1,27 @@
-<mat-toolbar *ngIf="!isDialog">
-  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
-  <span i18n>{examType, select, survey {Survey} exam {Test}}</span>
-  <span class="toolbar-fill"></span>
-</mat-toolbar>
+@if (!isDialog) {
+  <mat-toolbar>
+    <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+    <span i18n>{examType, select, survey {Survey} exam {Test}}</span>
+    <span class="toolbar-fill"></span>
+  </mat-toolbar>
+}
 
 <div [ngClass]="{ 'space-container': !isDialog }">
   <mat-toolbar class="primary-color font-size-1">
-    <span *ngIf="!isLoading">
-      <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
-      <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
-      <span *ngIf="previewMode" i18n>(Preview)</span>
-      <button *ngIf="mode !== 'take'" mat-icon-button [matMenuTriggerFor]="infoMenu">
-        <mat-icon>info</mat-icon>
-      </button>
-    </span>
+    @if (!isLoading) {
+      <span>
+        <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
+        <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
+        @if (previewMode) {
+          <span i18n>(Preview)</span>
+        }
+        @if (mode !== 'take') {
+          <button mat-icon-button [matMenuTriggerFor]="infoMenu">
+            <mat-icon>info</mat-icon>
+          </button>
+        }
+      </span>
+    }
     <mat-menu #infoMenu="matMenu">
       <ng-container>
         <button mat-menu-item disabled>
@@ -21,136 +29,166 @@
           <span i18n>{{ submittedBy || 'Unknown' }}</span>
         </button>
       </ng-container>
-      <ng-container *ngIf="updatedOn">
+      @if (updatedOn) {
         <button mat-menu-item disabled>
           <mat-icon>schedule</mat-icon>
           <span>{{ updatedOn | date:'short' }}</span>
         </button>
-      </ng-container>
+      }
     </mat-menu>
     <span class="toolbar-fill"></span>
     <button mat-icon-button [disabled]="isLoading || questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
     <button mat-icon-button [disabled]="isLoading || questionNum === maxQuestions" (click)="nextQuestion({ nextClicked: true })"><mat-icon>navigate_next</mat-icon></button>
   </mat-toolbar>
   <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
-    <ng-container *ngIf="!isLoading; else LoadingContent">
+    @if (!isLoading) {
       <td-markdown [content]="question?.body"></td-markdown>
-      <div [ngSwitch]="mode">
-        <ng-container *ngSwitchCase="'take'">
-          <ng-container [ngSwitch]="question?.type">
-            <mat-form-field class="full-width" *ngSwitchCase="'input'">
-              <mat-label i18n>Enter answer here</mat-label>
-              <input matInput [formControl]="answer">
-            </mat-form-field>
-            <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
-              <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
-            </mat-form-field>
-            <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
-              <mat-radio-button [value]="option" *ngFor="let option of question?.choices">
-                <span class="multiple-choice-text">{{option.text}}</span>
-              </mat-radio-button>
-              <ng-container *ngIf="question?.hasOtherOption">
-                <div class="other-option-flex">
-                  <mat-radio-button [value]="currentOtherOption">
-                    <span class="multiple-choice-text" i18n>Other: </span>
-                  </mat-radio-button>
-                  <input matInput
-                    class="other-option-input"
-                    [disabled]="!isOtherSelected()"
-                    [(ngModel)]="currentOtherOption.text"
-                    (ngModelChange)="updateOtherText()">
-                </div>
-              </ng-container>
-            </mat-radio-group>
-            <div *ngSwitchCase="'selectMultiple'" class="question-list">
-              <span class="mat-caption" i18n>
+      <div>
+        @switch (mode) {
+          @case ('take') {
+            @switch (question?.type) {
+              @case ('input') {
+                <mat-form-field class="full-width">
+                  <mat-label i18n>Enter answer here</mat-label>
+                  <input matInput [formControl]="answer">
+                </mat-form-field>
+              }
+              @case ('textarea') {
+                <mat-form-field class="full-width mat-form-field-type-no-underline">
+                  <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
+                </mat-form-field>
+              }
+              @case ('select') {
+                <mat-radio-group class="question-list" [formControl]="answer">
+                  @for (option of question?.choices; track option) {
+                    <mat-radio-button [value]="option">
+                      <span class="multiple-choice-text">{{option.text}}</span>
+                    </mat-radio-button>
+                  }
+                  @if (question?.hasOtherOption) {
+                    <div class="other-option-flex">
+                      <mat-radio-button [value]="currentOtherOption">
+                        <span class="multiple-choice-text" i18n>Other: </span>
+                      </mat-radio-button>
+                      <input matInput
+                        class="other-option-input"
+                        [disabled]="!isOtherSelected()"
+                        [(ngModel)]="currentOtherOption.text"
+                        (ngModelChange)="updateOtherText()">
+                    </div>
+                  }
+                </mat-radio-group>
+              }
+              @case ('selectMultiple') {
+                <div class="question-list">
+                  <span class="mat-caption" i18n>
                 {examType, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}
               </span>
-              <mat-checkbox *ngFor="let option of question?.choices" [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
-                <span class="multiple-choice-text">{{option.text}}</span>
-              </mat-checkbox>
-              <ng-container *ngIf="question?.hasOtherOption">
-                <div class="other-option-flex">
-                  <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
-                    <span class="multiple-choice-text" i18n>Other: </span>
-                  </mat-checkbox>
-                  <input matInput class="other-option-input" [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                  @for (option of question?.choices; track option) {
+                    <mat-checkbox [value]="option" (change)="setAnswer($event, option)" [checked]="checkboxState[option.id]">
+                      <span class="multiple-choice-text">{{option.text}}</span>
+                    </mat-checkbox>
+                  }
+                  @if (question?.hasOtherOption) {
+                    <div class="other-option-flex">
+                      <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
+                        <span class="multiple-choice-text" i18n>Other: </span>
+                      </mat-checkbox>
+                      <input matInput class="other-option-input" [disabled]="!checkboxState['other']" [(ngModel)]="currentOtherOption.text" (ngModelChange)="updateOtherText()">
+                    </div>
+                  }
                 </div>
-              </ng-container>
-            </div>
-            <div *ngSwitchCase="'ratingScale'" class="rating-scale-keypad">
-              <div class="rating-scale-grid">
-                <button type="button" mat-raised-button class="rating-scale-button" *ngFor="let num of [1,2,3,4,5,6,7,8,9]" [class.selected]="answer.value === num.toString()" [attr.data-rating]="num" (click)="setRatingScaleAnswer(num)">
-                  {{num}}
-                </button>
-              </div>
-            </div>
-          </ng-container>
-        </ng-container>
-        <ng-container *ngSwitchCase="'grade'">
-          <p><b i18n>Submitted answer:</b></p>
-          <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
-          <mat-radio-group [(ngModel)]="grade" [disabled]="question?.type === 'select' || question?.type === 'selectMultiple'">
-            <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
-            <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
-          </mat-radio-group>
-          <mat-form-field class="full-width mat-form-field-type-no-underline">
-            <mat-label i18n>Comment</mat-label>
-            <planet-markdown-textbox class="full-width" [(ngModel)]="comment"></planet-markdown-textbox>
-          </mat-form-field>
-        </ng-container>
-        <ng-container *ngSwitchCase="'view'">
-          <p><b i18n>Response:</b></p>
-          <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
-          <ng-container *ngIf="grade>=0">
-            <p><b i18n>Grade:</b></p>
-            <p *ngIf="grade===1" i18n>Correct</p>
-            <p *ngIf="grade===0" i18n>Incorrect</p>
-          </ng-container>
-          <ng-container *ngIf="comment">
-            <p><b i18n>Feedback:</b></p>
-            <td-markdown [content]="comment"></td-markdown>
-          </ng-container>
-        </ng-container>
+              }
+              @case ('ratingScale') {
+                <div class="rating-scale-keypad">
+                  <div class="rating-scale-grid">
+                    @for (num of [1,2,3,4,5,6,7,8,9]; track num) {
+                      <button type="button" mat-raised-button class="rating-scale-button" [class.selected]="answer.value === num.toString()" [attr.data-rating]="num" (click)="setRatingScaleAnswer(num)">
+                        {{num}}
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          }
+          @case ('grade') {
+            <p><b i18n>Submitted answer:</b></p>
+            <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+            <mat-radio-group [(ngModel)]="grade" [disabled]="question?.type === 'select' || question?.type === 'selectMultiple'">
+              <mat-radio-button [value]="1" class="planet-radio-button" i18n>Correct</mat-radio-button>
+              <mat-radio-button [value]="0" class="planet-radio-button" i18n>Incorrect</mat-radio-button>
+            </mat-radio-group>
+            <mat-form-field class="full-width mat-form-field-type-no-underline">
+              <mat-label i18n>Comment</mat-label>
+              <planet-markdown-textbox class="full-width" [(ngModel)]="comment"></planet-markdown-textbox>
+            </mat-form-field>
+          }
+          @case ('view') {
+            <p><b i18n>Response:</b></p>
+            <td-markdown [content]="answer?.value?.text || answer?.value"></td-markdown>
+            @if (grade>=0) {
+              <p><b i18n>Grade:</b></p>
+              @if (grade===1) {
+                <p i18n>Correct</p>
+              }
+              @if (grade===0) {
+                <p i18n>Incorrect</p>
+              }
+            }
+            @if (comment) {
+              <p><b i18n>Feedback:</b></p>
+              <td-markdown [content]="comment"></td-markdown>
+            }
+          }
+        }
       </div>
       <div class="v-align-center action-buttons">
-        <button
-          *ngIf="mode !== 'view'"
-          mat-raised-button
-          color="primary"
-          (click)="nextQuestion()"
-          [disabled]="!answer.valid || grade === undefined || grade === null || (mode !== 'grade' && questionNum === maxQuestions)">
-          <ng-container i18n>Submit Answer</ng-container>
-        </button>
-        <button
-          *ngIf="mode === 'take'"
-          mat-raised-button
-          color="accent"
-          (click)="nextQuestion({ isFinish: true })"
-          [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
-          i18n>
+        @if (mode !== 'view') {
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="nextQuestion()"
+            [disabled]="!answer.valid || grade === undefined || grade === null || (mode !== 'grade' && questionNum === maxQuestions)">
+            <ng-container i18n>Submit Answer</ng-container>
+          </button>
+        }
+        @if (mode === 'take') {
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="nextQuestion({ isFinish: true })"
+            [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
+            i18n>
           {examType, select, survey {Finish Survey} exam {Finish Test}}
         </button>
-        <span class="v-align-center small" [ngSwitch]="statusMessage">
-          <div *ngSwitchCase="'incorrect'" class="warn-text-color">
-            <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
-          </div>
-          <div *ngSwitchCase="'complete'" class="primary-text-color">
-            <mat-icon>check_circle</mat-icon>
-            <span>
-              <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
-              {{' '}}
-              <ng-container i18n *ngIf="previewMode; else finishExam">You can close the preview.</ng-container>
-              <ng-template #finishExam>
-                <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
-              </ng-template>
-            </span>
-          </div>
+        }
+        <span class="v-align-center small">
+          @switch (statusMessage) {
+            @case ('incorrect') {
+              <div class="warn-text-color">
+                <mat-icon>error</mat-icon><span i18n>Incorrect answer, please try again</span>
+              </div>
+            }
+            @case ('complete') {
+              <div class="primary-text-color">
+                <mat-icon>check_circle</mat-icon>
+                <span>
+                  <ng-container i18n>{examType, select, survey {Survey is complete.} exam {Test is complete.}}</ng-container>
+                  {{' '}}
+                  @if (previewMode) {
+                    <ng-container i18n>You can close the preview.</ng-container>
+                  } @else {
+                    <ng-container i18n>{examType, select, survey {Click Finish Survey to submit for review.} exam {Click Finish Test to submit for review.}}</ng-container>
+                  }
+                </span>
+              </div>
+            }
+          }
         </span>
       </div>
-    </ng-container>
-    <ng-template #LoadingContent>
+    } @else {
       <planet-loading-spinner text="Loading content..." i18n-text></planet-loading-spinner>
-    </ng-template>
+    }
   </div>
 </div>

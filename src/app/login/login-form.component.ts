@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule,
@@ -41,7 +41,7 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
   templateUrl: './login-form.component.html',
   selector: 'planet-login-form',
   styleUrls: ['./login.scss'],
-  imports: [ CommonModule, ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule ]
+  imports: [ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule]
 })
 export class LoginFormComponent {
   public userForm!: LoginFormGroup | RegisterFormGroup;

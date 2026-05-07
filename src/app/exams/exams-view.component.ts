@@ -18,7 +18,7 @@ import {
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -49,10 +49,27 @@ interface ExamViewForm {
   templateUrl: './exams-view.component.html',
   styleUrls: ['./exams-view.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu,
-    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput,
-    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup, NgFor,
-    MatRadioButton, MatCheckbox, MatButton, PlanetLoadingSpinnerComponent, DatePipe
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgClass,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    TdMarkdownComponent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetMarkdownTextboxComponent,
+    MatRadioGroup,
+    MatRadioButton,
+    MatCheckbox,
+    MatButton,
+    PlanetLoadingSpinnerComponent,
+    DatePipe
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {

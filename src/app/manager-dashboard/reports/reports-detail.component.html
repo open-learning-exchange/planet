@@ -1,47 +1,58 @@
 <mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
+  @if (deviceType === deviceTypes.DESKTOP) {
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-      <ng-container *ngIf="showCustomDateFields">
+      @if (showCustomDateFields) {
         <ng-container *ngTemplateOutlet="startDateField"></ng-container>
         <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-      </ng-container>
+      }
       <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
       <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
       <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
       <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
     </mat-toolbar-row>
-  </ng-container>
+  } @else {
+    <ng-container>
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="backBtn"></ng-container>
+        <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      </mat-toolbar-row>
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <div class="full-width">
+            <ng-container *ngTemplateOutlet="startDateField"></ng-container>
+          </div>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <div class="full-width">
+            <ng-container *ngTemplateOutlet="endDateField"></ng-container>
+          </div>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
+          <span class="toolbar-fill"></span>
+          <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
+        </mat-toolbar-row>
+      }
+    </ng-container>
+  }
 
-  <ng-template #mobileView>
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
-        <mat-icon>filter_list</mat-icon>
-      </button>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <div class="full-width">
-        <ng-container *ngTemplateOutlet="startDateField"></ng-container>
-      </div>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <div class="full-width">
-        <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-      </div>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
-      <span class="toolbar-fill"></span>
-      <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
-    </mat-toolbar-row>
-  </ng-template>
 </mat-toolbar>
 
 <!-- Shared templates -->
@@ -54,7 +65,9 @@
   <mat-form-field class="margin-lr-5 font-size-1">
     <mat-label i18n>Time Frame</mat-label>
     <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-      <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+      @for (option of timeFilterOptions; track option) {
+        <mat-option [value]="option.value">{{option.label}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </ng-template>
@@ -64,10 +77,14 @@
     <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
       <mat-option i18n value="All">All Members</mat-option>
       <mat-optgroup label="Teams" i18n-label>
-        <mat-option *ngFor="let team of teams?.team" [value]="team">{{team.name}}</mat-option>
+        @for (team of teams?.team; track team) {
+          <mat-option [value]="team">{{team.name}}</mat-option>
+        }
       </mat-optgroup>
       <mat-optgroup label="Enterprises" i18n-label>
-        <mat-option *ngFor="let team of teams?.enterprise" [value]="team">{{team.name}}</mat-option>
+        @for (team of teams?.enterprise; track team) {
+          <mat-option [value]="team">{{team.name}}</mat-option>
+        }
       </mat-optgroup>
     </mat-select>
   </mat-form-field>
@@ -89,9 +106,11 @@
       <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
       <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
-      <mat-error i18n *ngIf="dateFilterForm.value.startDate > dateFilterForm.value.endDate">Start date must be before end date</mat-error>
+      @if (dateFilterForm.value.startDate > dateFilterForm.value.endDate) {
+        <mat-error i18n>Start date must be before end date</mat-error>
+      }
     </mat-form-field>
-    </div>
+  </div>
 </ng-template>
 <ng-template #endDateField>
   <div [formGroup]="dateFilterForm">
@@ -126,12 +145,24 @@
         Export
       </button>
       <mat-menu #exportMenu="matMenu">
-        <button mat-menu-item *ngIf="loginActivities" (click)="openExportDialog('logins')" i18n>Login Report</button>
-        <button mat-menu-item *ngIf="resourceActivities.total" (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
-        <button mat-menu-item *ngIf="courseActivities.total" (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
-        <button mat-menu-item *ngIf="progress?.steps" (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
-        <button mat-menu-item *ngIf="healthComponent?.examinations?.length > 0" (click)="openExportDialog('health')" i18n>Health Report</button>
-        <button mat-menu-item *ngIf="chatActivities?.filteredData?.length" (click)="openExportDialog('chat')" i18n>Chat Report</button>
+        @if (loginActivities) {
+          <button mat-menu-item (click)="openExportDialog('logins')" i18n>Login Report</button>
+        }
+        @if (resourceActivities.total) {
+          <button mat-menu-item (click)="openExportDialog('resourceViews')" i18n>Resources View Report</button>
+        }
+        @if (courseActivities.total) {
+          <button mat-menu-item (click)="openExportDialog('courseViews')" i18n>Courses View Report</button>
+        }
+        @if (progress?.steps) {
+          <button mat-menu-item (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
+        }
+        @if (healthComponent?.examinations?.length > 0) {
+          <button mat-menu-item (click)="openExportDialog('health')" i18n>Health Report</button>
+        }
+        @if (chatActivities?.filteredData?.length) {
+          <button mat-menu-item (click)="openExportDialog('chat')" i18n>Chat Report</button>
+        }
         <button mat-menu-item (click)="openExportDialog('resourcesOverview')" i18n>Resources Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('coursesOverview')" i18n>Courses Overview Report</button>
         <button mat-menu-item (click)="openExportDialog('summary')" i18n>Summary</button>
@@ -173,16 +204,16 @@
               <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
               <mat-grid-tile class="subheading label" i18n>Members by Visits</mat-grid-tile>
               <mat-grid-tile i18n class="subheading">Total Visits by Member</mat-grid-tile>
-              <ng-container *ngIf="!reports?.visits || reports?.visits.length === 0">
+              @if (!reports?.visits || reports?.visits.length === 0) {
                 <mat-grid-tile colspan="2" i18n>There are no visits</mat-grid-tile>
-              </ng-container>
-              <ng-container *ngFor="let visit of reports?.visits">
+              }
+              @for (visit of reports?.visits; track visit) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
                   <span class="cursor-pointer" (click)="openMemberView(visit.userDoc?.doc)">{{visit.userDoc?.fullName || visit.user }}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{visit.count}}</mat-grid-tile>
-              </ng-container>
+              }
             </mat-grid-list>
           </div>
           <div>
@@ -194,28 +225,28 @@
               <mat-grid-tile>{{reports?.totalResourceViews}}</mat-grid-tile>
               <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
               <mat-grid-tile class="subheading" i18n>Total Visits by Resource</mat-grid-tile>
-              <ng-container *ngIf="!reports?.resources || reports?.resources.length === 0">
+              @if (!reports?.resources || reports?.resources.length === 0) {
                 <mat-grid-tile colspan="2" i18n>No resources have been visited</mat-grid-tile>
-              </ng-container>
-              <ng-container *ngFor="let resource of reports?.resources">
+              }
+              @for (resource of reports?.resources; track resource) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
                   <span class="cursor-pointer" (click)="openResourceView(resource.resourceId)">{{resource?.max?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{resource.count}}</mat-grid-tile>
-              </ng-container>
+              }
               <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
               <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
-              <ng-container *ngIf="!reports?.resourceRatings || reports?.resourceRatings.length === 0">
+              @if (!reports?.resourceRatings || reports?.resourceRatings.length === 0) {
                 <mat-grid-tile colspan="2" i18n>There are no resource ratings</mat-grid-tile>
-              </ng-container>
-              <ng-container *ngFor="let rating of reports?.resourceRatings">
+              }
+              @for (rating of reports?.resourceRatings; track rating) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
                   <span class="cursor-pointer" (click)="openResourceView(rating.item)">{{rating?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
-              </ng-container>
+              }
             </mat-grid-list>
           </div>
           <div>
@@ -229,28 +260,28 @@
               <mat-grid-tile>{{reports?.totalStepCompleted}}</mat-grid-tile>
               <mat-grid-tile class="subheading label" i18n>Most Visited</mat-grid-tile>
               <mat-grid-tile class="subheading" i18n>Total Visits by Course</mat-grid-tile>
-              <ng-container *ngIf="!reports?.courses || reports?.courses.length === 0">
+              @if (!reports?.courses || reports?.courses.length === 0) {
                 <mat-grid-tile colspan="2" i18n>No courses have been visited</mat-grid-tile>
-              </ng-container>
-              <ng-container *ngFor="let course of reports?.courses">
+              }
+              @for (course of reports?.courses; track course) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
                   <span class="cursor-pointer" (click)="openCourseView(course.courseId)">{{course?.max?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{course.count}}</mat-grid-tile>
-              </ng-container>
+              }
               <mat-grid-tile class="subheading label" i18n>Highest Rated</mat-grid-tile>
               <mat-grid-tile class="subheading" i18n>Average Rating</mat-grid-tile>
-              <ng-container *ngIf="!reports?.courseRatings || reports?.courseRatings.length === 0">
+              @if (!reports?.courseRatings || reports?.courseRatings.length === 0) {
                 <mat-grid-tile colspan="2" i18n>There are no course ratings</mat-grid-tile>
-              </ng-container>
-              <ng-container *ngFor="let rating of reports?.courseRatings">
+              }
+              @for (rating of reports?.courseRatings; track rating) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
                   <span class="cursor-pointer" (click)="openCourseView(rating.item)">{{rating?.title}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{rating?.value}}</mat-grid-tile>
-              </ng-container>
+              }
             </mat-grid-list>
           </div>
         </div>
@@ -276,72 +307,94 @@
               <mat-icon>get_app</mat-icon>
             </button>
           </mat-toolbar>
-          <planet-loading-spinner *ngIf="comparisonLoading || summaryLoading" text="Loading comparison data..." i18n-text></planet-loading-spinner>
-          <div *ngIf="!comparisonLoading && !summaryLoading && comparisonTableData.length > 0" class="comparison-table-container">
-            <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width responsive-table">
-              <ng-container matColumnDef="metric">
-                <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
-                <td mat-cell *matCellDef="let row">{{row.metric}}</td>
-              </ng-container>
-              <ng-container matColumnDef="week1">
-                <th mat-header-cell *matHeaderCellDef>{{week1Label}}</th>
-                <td mat-cell *matCellDef="let row">{{row.week1}}</td>
-              </ng-container>
-              <ng-container matColumnDef="week2">
-                <th mat-header-cell *matHeaderCellDef>{{week2Label}}</th>
-                <td mat-cell *matCellDef="let row">{{row.week2}}</td>
-              </ng-container>
-              <ng-container matColumnDef="change">
-                <th mat-header-cell *matHeaderCellDef i18n>Net Change</th>
-                <td mat-cell *matCellDef="let row">
-                  <span [ngClass]="{'positive-change': row.changeValue > 0, 'negative-change': row.changeValue < 0}">
-                    {{row.change}}
-                  </span>
-                </td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="comparisonColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: comparisonColumns;"></tr>
-            </table>
-          </div>
-          <div *ngIf="!comparisonLoading && !summaryLoading && comparisonTableData.length === 0" class="view-container view-full-height loading-message" i18n>
+          @if (comparisonLoading || summaryLoading) {
+            <planet-loading-spinner text="Loading comparison data..." i18n-text></planet-loading-spinner>
+          }
+          @if (!comparisonLoading && !summaryLoading && comparisonTableData.length > 0) {
+            <div class="comparison-table-container">
+              <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width responsive-table">
+                <ng-container matColumnDef="metric">
+                  <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
+                  <td mat-cell *matCellDef="let row">{{row.metric}}</td>
+                </ng-container>
+                <ng-container matColumnDef="week1">
+                  <th mat-header-cell *matHeaderCellDef>{{week1Label}}</th>
+                  <td mat-cell *matCellDef="let row">{{row.week1}}</td>
+                </ng-container>
+                <ng-container matColumnDef="week2">
+                  <th mat-header-cell *matHeaderCellDef>{{week2Label}}</th>
+                  <td mat-cell *matCellDef="let row">{{row.week2}}</td>
+                </ng-container>
+                <ng-container matColumnDef="change">
+                  <th mat-header-cell *matHeaderCellDef i18n>Net Change</th>
+                  <td mat-cell *matCellDef="let row">
+                    <span [ngClass]="{'positive-change': row.changeValue > 0, 'negative-change': row.changeValue < 0}">
+                      {{row.change}}
+                    </span>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="comparisonColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: comparisonColumns;"></tr>
+              </table>
+            </div>
+          }
+          @if (!comparisonLoading && !summaryLoading && comparisonTableData.length === 0) {
+            <div class="view-container view-full-height loading-message" i18n>
             Select dates and click Compare to view comparison data
           </div>
+          }
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Resources">
-        <planet-loading-spinner *ngIf="resourcesLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-        <div *ngIf="!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+        @if (resourcesLoading) {
+          <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+        }
+        @if (!resourcesLoading && (!resourceActivities?.byDoc || resourceActivities.byDoc.length === 0)) {
+          <div class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0" style="height: 100%">
-          <planet-reports-detail-activities
-            [activitiesByDoc]="resourceActivities.byDoc"
-            [ratings]="ratings.resources"
-            activityType="resources"
-            (itemClick)="openResourceView($event)">
-          </planet-reports-detail-activities>
-        </div>
+        }
+        @if (!resourcesLoading && resourceActivities?.byDoc && resourceActivities.byDoc.length > 0) {
+          <div style="height: 100%">
+            <planet-reports-detail-activities
+              [activitiesByDoc]="resourceActivities.byDoc"
+              [ratings]="ratings.resources"
+              activityType="resources"
+              (itemClick)="openResourceView($event)">
+            </planet-reports-detail-activities>
+          </div>
+        }
       </mat-tab>
       <mat-tab i18n-label label="Courses">
-        <planet-loading-spinner *ngIf="coursesLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-        <div *ngIf="!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)" class="view-container view-full-height loading-message" i18n>
+        @if (coursesLoading) {
+          <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+        }
+        @if (!coursesLoading && (!courseActivities?.byDoc || courseActivities.byDoc.length === 0)) {
+          <div class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0" style="height: 100%">
-          <planet-reports-detail-activities
-            [activitiesByDoc]="courseActivities.byDoc"
-            [ratings]="ratings.courses"
-            [progress]="progress"
-            activityType="courses"
-            (itemClick)="openCourseView($event)">
-          </planet-reports-detail-activities>
-        </div>
+        }
+        @if (!coursesLoading && courseActivities?.byDoc && courseActivities.byDoc.length > 0) {
+          <div style="height: 100%">
+            <planet-reports-detail-activities
+              [activitiesByDoc]="courseActivities.byDoc"
+              [ratings]="ratings.courses"
+              [progress]="progress"
+              activityType="courses"
+              (itemClick)="openCourseView($event)">
+            </planet-reports-detail-activities>
+          </div>
+        }
       </mat-tab>
       <mat-tab i18n-label label="Health" #healthTab>
-        <planet-loading-spinner *ngIf="healthTab.isActive && healthLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-        <div *ngIf="healthTab.isActive && !healthLoading && healthNoData" class="view-container view-full-height loading-message" i18n>
+        @if (healthTab.isActive && healthLoading) {
+          <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+        }
+        @if (healthTab.isActive && !healthLoading && healthNoData) {
+          <div class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
+        }
         <div [hidden]="healthLoading || healthNoData">
           <planet-reports-health
             [planetCode]="planetCode"
@@ -350,20 +403,26 @@
             (changeDateRange)="resetDateFilter($event)"
             (healthLoadingChange)="onHealthLoadingChange($event)"
             (healthNoDataChange)="onHealthNoDataChange($event)">
-        </planet-reports-health>
+          </planet-reports-health>
         </div>
       </mat-tab>
       <mat-tab i18n-label label="Chat">
-        <planet-loading-spinner *ngIf="chatLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-        <div *ngIf="!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)" class="view-container view-full-height loading-message" i18n>
+        @if (chatLoading) {
+          <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+        }
+        @if (!chatLoading && (!chatActivities?.filteredData || chatActivities.filteredData.length === 0)) {
+          <div class="view-container view-full-height loading-message" i18n>
           No data found
         </div>
-        <div *ngIf="!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0" style="height: 100%">
-          <planet-reports-detail-activities
-            [activitiesByDoc]="chatActivities.filteredData"
-            activityType="chat">
-          </planet-reports-detail-activities>
-        </div>
+        }
+        @if (!chatLoading && chatActivities?.filteredData && chatActivities.filteredData.length > 0) {
+          <div style="height: 100%">
+            <planet-reports-detail-activities
+              [activitiesByDoc]="chatActivities.filteredData"
+              activityType="chat">
+            </planet-reports-detail-activities>
+          </div>
+        }
       </mat-tab>
     </mat-tab-group>
   </div>

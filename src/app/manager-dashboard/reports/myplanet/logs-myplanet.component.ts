@@ -13,7 +13,7 @@ import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from '../reports.utils';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
@@ -23,8 +23,17 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
   templateUrl: './logs-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
   imports: [
-    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor,
-    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+    MyPlanetToolbarComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatToolbar,
+    MatToolbarRow,
+    MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MyPlanetTableComponent,
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {

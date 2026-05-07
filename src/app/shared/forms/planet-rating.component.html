@@ -12,12 +12,16 @@
     <span i18n>Average</span>
   </div>
 
-  <div class="your-rating" *ngIf="!parent">
-    <form [formGroup]="rateForm" novalidate>
-      <planet-rating-stars (click)="onStarClick()" formControlName="rate" [disabled]="disabled" [isEnrolled]="isEnrolled" [itemId]="item?._id" [type]="ratingType">
-      </planet-rating-stars>
-    </form>
-  </div>
+  @if (!parent) {
+    <div class="your-rating">
+      <form [formGroup]="rateForm" novalidate>
+        <planet-rating-stars (click)="onStarClick()" formControlName="rate" [disabled]="disabled" [isEnrolled]="isEnrolled" [itemId]="item?._id" [type]="ratingType">
+        </planet-rating-stars>
+      </form>
+    </div>
+  }
 
-  <div class="your-rating-label" *ngIf="!parent" i18n>Your Rating</div>
+  @if (!parent) {
+    <div class="your-rating-label" i18n>Your Rating</div>
+  }
 </div>

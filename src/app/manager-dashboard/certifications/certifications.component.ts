@@ -15,7 +15,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf } from '@angular/common';
+
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 
@@ -32,9 +32,31 @@ import { MatInput } from '@angular/material/input';
     }
   `],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, MatFormField, MatLabel, MatInput, MatButton, MatToolbarRow,
-    MatMiniFabAnchor, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
-    MatAnchor, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+    MatToolbarRow,
+    MatMiniFabAnchor,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatAnchor,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator
   ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {

@@ -1,37 +1,48 @@
 <mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
+  @if (deviceType === deviceTypes.DESKTOP) {
     <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="backAction"></ng-container>
       <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
-      <ng-container *ngIf="showCustomDateFields">
+      @if (showCustomDateFields) {
         <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
         <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
-      </ng-container>
+      }
       <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
     </mat-toolbar-row>
-  </ng-container>
-  <ng-template #mobileView>
-    <mat-toolbar-row>
-      <ng-container *ngTemplateOutlet="backAction"></ng-container>
-      <button mat-icon-button (click)="showFiltersRow = !showFiltersRow"><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow && showCustomDateFields">
-      <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="showFiltersRow">
-      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    </mat-toolbar-row>
-  </ng-template>
+  } @else {
+    <ng-container>
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="backAction"></ng-container>
+        <button mat-icon-button (click)="showFiltersRow = !showFiltersRow"><mat-icon>filter_list</mat-icon></button>
+      </mat-toolbar-row>
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="timeFrameFilter"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="formStartDate"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow && showCustomDateFields) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="formEndDate"></ng-container>
+        </mat-toolbar-row>
+      }
+      @if (showFiltersRow) {
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+        </mat-toolbar-row>
+      }
+    </ng-container>
+  }
 </mat-toolbar>
 
 <ng-template #backAction>
@@ -42,18 +53,24 @@
   <span class="toolbar-fill"></span>
 </ng-template>
 <ng-template #typeVersionFilters>
-  <mat-form-field *ngIf="showTypeFilter" class="margin-lr-5 font-size-1">
-    <mat-label i18n>Type</mat-label>
-    <mat-select (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
-      <mat-option [value]="" i18n>All Types</mat-option>
-      <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  @if (showTypeFilter) {
+    <mat-form-field class="margin-lr-5 font-size-1">
+      <mat-label i18n>Type</mat-label>
+      <mat-select (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
+        <mat-option [value]="" i18n>All Types</mat-option>
+        @for (type of types; track type) {
+          <mat-option [value]="type">{{type}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
   <mat-form-field class="margin-lr-5 font-size-1">
     <mat-label i18n>Version</mat-label>
     <mat-select (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
       <mat-option [value]="" i18n>All Versions</mat-option>
-      <mat-option *ngFor="let version of versions" [value]="version">{{version}}</mat-option>
+      @for (version of versions; track version) {
+        <mat-option [value]="version">{{version}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </ng-template>
@@ -64,7 +81,9 @@
       <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate" [max]="formGroup.controls.endDate.value">
       <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
       <mat-datepicker #startPicker></mat-datepicker>
-      <mat-error i18n *ngIf="formGroup?.errors?.invalidDates">Start date must be before end date</mat-error>
+      @if (formGroup?.errors?.invalidDates) {
+        <mat-error i18n>Start date must be before end date</mat-error>
+      }
     </mat-form-field>
   </div>
 </ng-template>
@@ -82,7 +101,9 @@
   <mat-form-field class="margin-lr-5 font-size-1">
     <mat-label i18n>Time Frame</mat-label>
     <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
-      <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
+      @for (option of timeFilterOptions; track option) {
+        <mat-option [value]="option.value">{{option.label}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
 </ng-template>

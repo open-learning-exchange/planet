@@ -4,98 +4,159 @@
 </mat-toolbar>
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button *ngIf="isOpenai && stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
+    <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}@if (stepDetail.stepTitle) {
+    <span>: </span>
+  }{{stepDetail.stepTitle}}</h3>
+  @if (isOpenai && stepDetail?.description) {
+    <button mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
-    <span class="toolbar-fill"></span>
-    <div class="toolbar-actions">
-      <button mat-icon-button *ngIf="resource?._attachments && !showChat" (click)="this.isGridView = !this.isGridView">
+  }
+  <span class="toolbar-fill"></span>
+  <div class="toolbar-actions">
+    @if (resource?._attachments && !showChat) {
+      <button mat-icon-button (click)="this.isGridView = !this.isGridView">
         <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
       </button>
-      <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
+    }
+    @if (attempts && !parent) {
+      <span class="margin-lr-10" i18n>Past attempts: {{attempts}}</span>
+    }
+    @if (attempts > 0) {
       <a
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="attempts > 0"
         (click)="openReviewDialog()" i18n>
         Review Attempts
       </a>
+    }
+    @if (stepDetail?.exam?.questions.length && isUserEnrolled) {
       <a
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
         (click)="goToExam()" i18n>
         {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
       </a>
+    }
+    @if (stepDetail?.survey?.questions.length && isUserEnrolled) {
       <a
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
         (click)="goToExam('survey')" i18n>
         Take Survey
       </a>
-      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
+    }
+    @if (canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)) {
+      <button class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
         Preview
       </button>
-      <mat-menu #previewMenu="matMenu">
+    }
+    <mat-menu #previewMenu="matMenu">
+      @if (stepDetail?.exam?.questions.length) {
         <a mat-menu-item
-          *ngIf="stepDetail?.exam?.questions.length"
           (click)="goToExam('exam', true)" i18n>
           Preview Test
         </a>
+      }
+      @if (stepDetail?.survey?.questions.length) {
         <a mat-menu-item
-          *ngIf="stepDetail?.survey?.questions.length"
           (click)="goToExam('survey', true)" i18n>
           Preview Survey
         </a>
-      </mat-menu>
+      }
+    </mat-menu>
+    @if (stepDetail.resources.length !== 0) {
       <a
         mat-raised-button
         color="accent"
         class="margin-lr-10"
-        *ngIf="stepDetail.resources.length !== 0"
         [routerLink]="['/resources/view', resource._id]"
         target="_blank"
         i18n>
         View Resource Details
       </a>
-      <span>{{stepNum}}/{{maxStep}}</span>
-      <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1 || isLoading" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
-      <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
-      <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="stepNum === maxStep" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
-    </div>
-  </mat-toolbar>
-  <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
-    <planet-chat-window *ngIf="showChat" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }" [conversations]="conversations"></planet-chat-window>
-    <ng-container *ngIf="showChat; else stepViewContent">
+    }
+    <span>{{stepNum}}/{{maxStep}}</span>
+    @if (maxStep !== 1) {
+      <button mat-icon-button [disabled]="stepNum === 1 || isLoading" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
+    }
+    @if (stepNum !== maxStep) {
+      <button mat-icon-button  [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
+    }
+    @if (stepNum === maxStep) {
+      <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
+    }
+  </div>
+</mat-toolbar>
+@if (stepDetail?.description || resource?._attachments) {
+  <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}">
+    @if (showChat) {
+      <planet-chat-window [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }" [conversations]="conversations"></planet-chat-window>
+    }
+    @if (showChat) {
       <div class="flex-view">
         <ng-container *ngTemplateOutlet="stepViewContent"></ng-container>
       </div>
-    </ng-container>
+    } @else {
+      @if (stepDetail?.description) {
+        <planet-markdown class="description img-resize" [content]="stepDetail.description"></planet-markdown>
+      }
+      @if (resource?._attachments) {
+        <div>
+          @if (stepDetail.resources.length > 1) {
+            <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
+              @for (resource of stepDetail.resources; track resource; let i = $index) {
+                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          }
+          @if (resource?._attachments) {
+            <planet-resources-viewer
+              [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
+              [fetchRating]="false"
+              [resourceId]="resource._id"
+              (resourceUrl)="setResourceUrl($event)">
+            </planet-resources-viewer>
+          }
+        </div>
+      }
+    }
     <ng-template #stepViewContent>
-      <planet-markdown *ngIf="stepDetail?.description" class="description img-resize" [content]="stepDetail.description"></planet-markdown>
-      <div *ngIf="resource?._attachments">
-        <mat-button-toggle-group class="full-width-toggle-group" *ngIf="stepDetail.resources.length > 1" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
-          <mat-button-toggle *ngFor="let resource of stepDetail.resources; index as i" [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
-        </mat-button-toggle-group>
-        <planet-resources-viewer
-          [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
-          *ngIf="resource?._attachments"
-          [fetchRating]="false"
-          [resourceId]="resource._id"
-          (resourceUrl)="setResourceUrl($event)">
-        </planet-resources-viewer>
-      </div>
+      @if (stepDetail?.description) {
+        <planet-markdown class="description img-resize" [content]="stepDetail.description"></planet-markdown>
+      }
+      @if (resource?._attachments) {
+        <div>
+          @if (stepDetail.resources.length > 1) {
+            <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
+              @for (resource of stepDetail.resources; track resource; let i = $index) {
+                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+          }
+          @if (resource?._attachments) {
+            <planet-resources-viewer
+              [ngClass]="{'center-resource': resource?.mediaType !== 'pdf'}"
+              [fetchRating]="false"
+              [resourceId]="resource._id"
+              (resourceUrl)="setResourceUrl($event)">
+            </planet-resources-viewer>
+          }
+        </div>
+      }
     </ng-template>
   </div>
-  <ng-template #emptyRecord>
-    <div class="view-container view-full-height" i18n>
-      <planet-loading-spinner *ngIf="isLoading; else noContent" text="Loading content..." i18n-text></planet-loading-spinner>
-      <ng-template #noContent>No description provided.</ng-template>
+} @else {
+  <div class="view-container view-full-height" i18n>
+      @if (isLoading) {
+<planet-loading-spinner text="Loading content..." i18n-text></planet-loading-spinner>
+} @else {
+No description provided.
+}
+      
     </div>
-  </ng-template>
+}
 </div>
