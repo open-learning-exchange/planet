@@ -60,7 +60,7 @@ Clone and configure the Planet project:
 git clone https://github.com/open-learning-exchange/planet.git
 cd planet
 chmod +x couchdb-setup.sh
-bash couchdb-setup.sh -p 2200 -i
+bash couchdb-setup.sh -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -154,7 +154,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./v-couchdb-setup.sh -u <admin-username> -w <admin-password>
+./couchdb-setup.sh -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 
