@@ -7,16 +7,20 @@
     </a>
   </span>
   <span class="navbar-center" *ngIf="layout === 'classic' && !forceModern">
-    <ng-container [ngSwitch]="configuration.planetType" >
-      <a *ngSwitchCase="'community'" mat-button routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact:true}"
-        i18n-title title="Community" i18n>Community</a>
-      <a *ngSwitchCase="'nation'" mat-button routerLink="/"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{exact:true}"
-        i18n-title title="Nation" i18n>Nation</a>
-    </ng-container>
+    @switch (configuration.planetType) {
+      @case ('community') {
+        <a mat-button routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          i18n-title title="Community" i18n>Community</a>
+      }
+      @case ('nation') {
+        <a mat-button routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{exact:true}"
+          i18n-title title="Nation" i18n>Nation</a>
+      }
+    }
     <a mat-button routerLink="/myDashboard"
       routerLinkActive="active"
       i18n-title title="myDashboard" i18n>myDashboard</a>
@@ -32,10 +36,14 @@
     <a mat-button routerLink="/enterprises"
       routerLinkActive="active"
       i18n-title title="Enterprises" i18n>Enterprises</a>
-    <ng-container [ngSwitch]="configuration.planetType" *planetBeta>
-      <a *ngSwitchCase="'earth'" mat-button routerLink="/earth"
-        routerLinkActive="active"
-        i18n-title title="Earth" i18n>Earth</a>
+    <ng-container *planetBeta>
+      @switch (configuration.planetType) {
+        @case ('earth') {
+          <a mat-button routerLink="/earth"
+            routerLinkActive="active"
+            i18n-title title="Earth" i18n>Earth</a>
+        }
+      }
     </ng-container>
   </span>
   <span class="navbar-right">
@@ -122,28 +130,32 @@
   <div class="main-sidenav">
     <!--Top part, user content etc.-->
     <ul class="top-nav">
-      <ng-container [ngSwitch]="configuration.planetType">
-        <li *ngSwitchCase="'community'">
-          <a mat-button routerLink="/"
-            routerLinkActive="active"
-            planetPulsateIcon
-            i18n-title title="Community"
-            [routerLinkActiveOptions]="{exact:true}">
-            <mat-icon svgIcon="home"></mat-icon>
-            <label i18n>Community</label>
-          </a>
-        </li>
-        <li *ngSwitchCase="'nation'">
-          <a mat-button routerLink="/"
-            routerLinkActive="active"
-            planetPulsateIcon
-            i18n-title title="Nation"
-            [routerLinkActiveOptions]="{exact:true}">
-            <mat-icon>home</mat-icon>
-            <label i18n>Nation</label>
-          </a>
-        </li>
-      </ng-container>
+      @switch (configuration.planetType) {
+        @case ('community') {
+          <li>
+            <a mat-button routerLink="/"
+              routerLinkActive="active"
+              planetPulsateIcon
+              i18n-title title="Community"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon svgIcon="home"></mat-icon>
+              <label i18n>Community</label>
+            </a>
+          </li>
+        }
+        @case ('nation') {
+          <li>
+            <a mat-button routerLink="/"
+              routerLinkActive="active"
+              planetPulsateIcon
+              i18n-title title="Nation"
+              [routerLinkActiveOptions]="{exact:true}">
+              <mat-icon>home</mat-icon>
+              <label i18n>Nation</label>
+            </a>
+          </li>
+        }
+      }
       <li>
         <a mat-button routerLink="/myDashboard"
           routerLinkActive="active"
@@ -189,18 +201,20 @@
           <label i18n>Enterprises</label>
         </a>
       </li>
-      <ng-container [ngSwitch]="configuration.planetType">
-        <ng-container *planetBeta>
-          <li *ngSwitchCase="'earth'">
-            <a mat-button routerLink="/earth"
-              routerLinkActive="active"
-              planetPulsateIcon
-              i18n-title title="Earth">
-              <mat-icon>flag</mat-icon>
-              <label i18n>Earth</label>
-            </a>
-          </li>
-        </ng-container>
+      <ng-container *planetBeta>
+        @switch (configuration.planetType) {
+          @case ('earth') {
+            <li>
+              <a mat-button routerLink="/earth"
+                routerLinkActive="active"
+                planetPulsateIcon
+                i18n-title title="Earth">
+                <mat-icon>flag</mat-icon>
+                <label i18n>Earth</label>
+              </a>
+            </li>
+          }
+        }
       </ng-container>
     </ul>
     <!--Bottom part-->
