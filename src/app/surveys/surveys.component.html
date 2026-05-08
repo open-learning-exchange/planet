@@ -43,7 +43,7 @@
             [checked]="selection.isSelected(row._id)"
             [disabled]="currentFilter.viewMode === 'adopt'"
             [matTooltip]="getActionTooltip(row, 'select')"
-            *ngIf="!row.parent === true">
+            *ngIf="row.parent !== true">
           </mat-checkbox>
         </mat-cell>
       </ng-container>
@@ -68,7 +68,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="!element.parent === true && currentFilter.viewMode !== 'adopt'">
+          <ng-container *ngIf="element.parent !== true && currentFilter.viewMode !== 'adopt'">
             <div [matTooltip]="getActionTooltip(element, 'edit')">
               <button mat-raised-button color="primary" *ngIf="!teamId" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived">
                 <mat-icon>edit</mat-icon>

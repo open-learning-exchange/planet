@@ -273,8 +273,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isRowSelectable(row: any): boolean {
-    const isDisabled = (row.teamId && this.isManagerRoute) || this.currentFilter.viewMode === 'adopt';
-    return row.parent !== true && !isDisabled;
+    return row.parent !== true && this.currentFilter.viewMode !== 'adopt';
   }
 
   masterToggle() {
@@ -599,10 +598,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (action === 'submissions') {
         return $localize`There are no submissions to view`;
       }
-    }
-
-    if (survey.teamId && this.isManagerRoute) {
-      return $localize`This is a team created survey`;
     }
 
     if (this.currentFilter.viewMode === 'adopt') {
