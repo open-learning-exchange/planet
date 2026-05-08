@@ -109,16 +109,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item, property) => {
-      if (property === 'membership') {
-        switch (item.userStatus) {
-          case 'member': return 2;
-          case 'requesting': return 1;
-          default: return 0;
-        }
-      }
-      return deepSortingDataAccessor(item, property);
-    };
+    this.teams.sortingDataAccessor = deepSortingDataAccessor;
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
