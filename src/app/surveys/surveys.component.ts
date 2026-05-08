@@ -13,7 +13,7 @@ import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
 import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
-import { filterSpecificFields, sortNumberOrString, createDeleteArray, selectedOutOfFilter } from '../shared/table-helpers';
+import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -60,6 +60,7 @@ interface SurveyFilterForm {
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   selection = new SelectionModel(true, []);
   surveys = new MatTableDataSource<any>();
+  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
@@ -120,6 +121,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.couchService.checkAuthorization(this.dbName)
       .pipe(takeUntil(this.onDestroy$)).subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.surveys.connect().pipe(takeUntil(this.onDestroy$)).subscribe(surveys => {
+      this.renderedRows = surveys;
       this.parentCount = surveys.filter(survey => survey.parent === true).length;
       this.surveyCount.emit(surveys.length);
     });
@@ -258,18 +260,15 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   applyFilter(filterValue: string) {
     this.surveys.filter = filterValue;
-    this.selection.deselect(...selectedOutOfFilter(this.surveys.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visibleSelection = new Set(this.renderedRows.map(row => row._id));
+      this.selection.deselect(...this.selection.selected.filter(selectedId => !visibleSelection.has(selectedId)));
+    });
   }
 
   isAllSelected() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-
-    const selectableRowsInPage = this.surveys.filteredData
-      .slice(start, end)
-      .filter(row => this.isRowSelectable(row));
-
-    return selectableRowsInPage.every(row => this.selection.isSelected(row._id));
+    const selectableRowsInPage = this.renderedRows.filter(row => this.isRowSelectable(row));
+    return selectableRowsInPage.length > 0 && selectableRowsInPage.every(row => this.selection.isSelected(row._id));
   }
 
   isRowSelectable(row: any): boolean {
@@ -277,12 +276,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
     if (this.isAllSelected()) {
       this.selection.clear();
     } else {
-      this.surveys.filteredData.slice(start, end).forEach((row: any) => {
+      this.renderedRows.forEach((row: any) => {
         if (this.isRowSelectable(row)) {
           this.selection.select(row._id);
         }
@@ -598,6 +595,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (action === 'submissions') {
         return $localize`There are no submissions to view`;
       }
+    }
+
+    if (action === 'select' && survey.parent === true) {
+      return $localize`This survey was created on the parent planet and cannot be managed here`;
     }
 
     if (this.currentFilter.viewMode === 'adopt') {
