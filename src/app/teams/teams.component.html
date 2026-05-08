@@ -44,7 +44,7 @@
   </div>
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table class="responsive-table" [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -90,12 +90,7 @@
         <mat-cell *matCellDef="let element" hidden>{{ element.userStatus }}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>
-          <span>Action</span>
-          <button mat-button *ngIf="showUserTeamsFilter" (click)="sortbyUserTeams()" i18n-title title="Toggle myTeams">
-            <mat-icon>check</mat-icon>
-          </button>
-        </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div class="button-container" [ngClass]="{'horizontal-align': isMobile}">
             <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
