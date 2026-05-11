@@ -45,8 +45,8 @@ run_lint .
 ret_code_tslint=$?
 output_result $ret_code_tslint "eslint" $tslint
 
-echo "Running chatapi linters"
-run_lint chatapi
+echo "Running planet-gateway linters"
+run_lint planet-gateway
 
 ret_code_tslint=$?
 output_result $ret_code_tslint "tslint" $tslint

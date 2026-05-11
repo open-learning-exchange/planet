@@ -13,8 +13,8 @@ function rename {
 
 upgrade "treehouses/planet:$PLANET_VERSION"
 upgrade "treehouses/planet:db-init-$PLANET_VERSION"
-upgrade "treehouses/planet:chatapi-$PLANET_VERSION"
+upgrade "treehouses/planet:planet-gateway-$PLANET_VERSION"
 
 rename "treehouses/planet:$PLANET_VERSION" "treehouses/planet:local"
 rename "treehouses/planet:db-init-$PLANET_VERSION" "treehouses/planet:db-init-local"
-rename "treehouses/planet:chatapi-$PLANET_VERSION" "treehouses/planet:chatapi-local"
+rename "treehouses/planet:planet-gateway-$PLANET_VERSION" "treehouses/planet:planet-gateway-local"

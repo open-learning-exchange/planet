@@ -44,7 +44,7 @@ docker compose -f planet-dev.yml -p planet-dev up -d
 ```
 
 Verify container status:
-Run ```docker ps -a``` after a minute. You should see two containers running: chatapi and couchdb. The db-init container should have exited.
+Run ```docker ps -a``` after a minute. You should see two containers running: planet-gateway and couchdb. The db-init container should have exited.
 
 Configure CORS for CouchDB:
 ```
@@ -72,13 +72,13 @@ ng serve
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
 
-## Chatapi Notes
+## Planet Gateway Notes
 
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
-For chatapi development instructions, refer to the [chatapi README](chatapi/README.md).
+For gateway development instructions, refer to the [planet-gateway README](planet-gateway/README.md).
 
 ## Project Guidelines
 

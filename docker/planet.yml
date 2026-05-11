@@ -9,10 +9,10 @@ services:
       - "/srv/planet/conf:/opt/couchdb/etc/local.d"
       - "/srv/planet/data:/opt/couchdb/data"
       - "/srv/planet/log:/opt/couchdb/var/log"
-  chatapi:
+  planet-gateway:
     expose:
       - 5000
-    image: treehouses/planet:chatapi-local
+    image: treehouses/planet:planet-gateway-local
     depends_on:
       - couchdb
     ports:
