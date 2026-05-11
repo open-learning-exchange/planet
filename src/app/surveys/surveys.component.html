@@ -91,6 +91,18 @@
                 <label *ngIf="!isMobile" i18n> Record</label>
               </button>
             </div>
+            <div *ngIf="element.teamId && (teamId || routeTeamId)" [matTooltip]="getActionTooltip(element, 'public')">
+              <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions.length || element.isArchived">
+                <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
+                <label *ngIf="!isMobile" i18n>{{ element.publicAccess === true ? 'Copy Public Link' : 'Generate Public Link' }}</label>
+              </button>
+            </div>
+            <div *ngIf="element.publicAccess === true && element.teamId && (teamId || routeTeamId)" [matTooltip]="getActionTooltip(element, 'revoke')">
+              <button mat-raised-button color="accent" type="button" (click)="revokeSurveyPublicAccess(element)" [disabled]="element.isArchived">
+                <label *ngIf="!isMobile" i18n>Revoke Public Link</label>
+                <label *ngIf="isMobile" i18n>Revoke</label>
+              </button>
+            </div>
             <ng-container *ngIf="!element.course">
               <div [matTooltip]="getActionTooltip(element, 'archive')">
                 <button mat-raised-button color="primary" (click)="archiveSurvey(element)" [disabled]="element.isArchived">
