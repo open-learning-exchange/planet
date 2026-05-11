@@ -11,37 +11,38 @@ export function registerChatApiRoutes(app: Express) {
     const { data, save } = req.body;
 
     if (!isValidData(data)) {
-      return res.status(400).json({ error: 'Bad Request', message: 'The "data" field must be a non-empty object' });
+      return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
 
     try {
       if (!save) {
         const response = await chatNoSave(data.content, data.aiProvider, data.assistant, data.context);
         return res.status(200).json({
-          status: 'Success',
-          chat: response
+          'status': 'Success',
+          'chat': response
         });
       }
       const response = await chat(data, false);
       return res.status(201).json({
-        status: 'Success',
-        chat: response?.completionText,
-        couchDBResponse: response?.couchSaveResponse
+        'status': 'Success',
+        'chat': response?.completionText,
+        'couchDBResponse': response?.couchSaveResponse
       });
     } catch (error: any) {
       if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
-        return res.status(404).json({ error: 'Not Found', message: 'Conversation not found' });
+        return res.status(404).json({ 'error': 'Not Found', 'message': 'Conversation not found' });
       }
-      return res.status(500).json({ error: 'Internal Server Error', message: error.message });
+      return res.status(500).json({ 'error': 'Internal Server Error', 'message': error.message });
     }
   });
 
-  app.get('/checkproviders', (_req: any, res: any) => {
+  app.get('/checkproviders', (req: any, res: any) => {
+    void req;
     res.status(200).json({
-      openai: keys.openai.apiKey ? true : false,
-      perplexity: keys.perplexity.apiKey ? true : false,
-      deepseek: keys.deepseek.apiKey ? true : false,
-      gemini: keys.gemini.apiKey ? true : false
+      'openai': keys.openai.apiKey ? true : false,
+      'perplexity': keys.perplexity.apiKey ? true : false,
+      'deepseek': keys.deepseek.apiKey ? true : false,
+      'gemini': keys.gemini.apiKey ? true : false
     });
   });
 }
@@ -52,26 +53,26 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       try {
         const payload = JSON.parse(data.toString());
         if (!isValidData(payload)) {
-          ws.send(JSON.stringify({ error: 'Invalid data format.' }));
+          ws.send(JSON.stringify({ 'error': 'Invalid data format.' }));
           return;
         }
 
         const chatResponse = await chat(payload, true, (response) => {
-          ws.send(JSON.stringify({ type: 'partial', response }));
+          ws.send(JSON.stringify({ 'type': 'partial', response }));
         });
 
         if (chatResponse) {
           ws.send(JSON.stringify({
-            type: 'final',
-            completionText: chatResponse.completionText,
-            couchDBResponse: chatResponse.couchSaveResponse
+            'type': 'final',
+            'completionText': chatResponse.completionText,
+            'couchDBResponse': chatResponse.couchSaveResponse
           }));
         }
       } catch (error: any) {
         if (error.message === 'missing' || error.statusCode === 404 || error.error === 'not_found') {
-          ws.send(JSON.stringify({ error: 'Not Found', message: 'Conversation not found' }));
+          ws.send(JSON.stringify({ 'error': 'Not Found', 'message': 'Conversation not found' }));
         } else {
-          ws.send(JSON.stringify({ error: 'Internal Server Error', message: error.message }));
+          ws.send(JSON.stringify({ 'error': 'Internal Server Error', 'message': error.message }));
         }
       }
     });

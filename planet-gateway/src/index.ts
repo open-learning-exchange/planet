@@ -17,10 +17,11 @@ app.use(cors());
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
-app.get('/', (_req: Request, res: Response) => {
+app.get('/', (req: Request, res: Response) => {
+  void req;
   res.status(200).json({
-    status: 'Success',
-    message: 'OLE Planet Gateway Service',
+    'status': 'Success',
+    'message': 'OLE Planet Gateway Service',
   });
 });
 
@@ -28,10 +29,12 @@ registerChatApiRoutes(app);
 registerPublicRoutes(app);
 registerChatApiWebSocket(wss);
 
-app.use((error: any, _req: Request, res: Response, _next: any) => {
+app.use((error: any, req: Request, res: Response, next: any) => {
+  void req;
+  void next;
   res.status(error?.statusCode || 500).json({
-    error: error?.name || 'Internal Server Error',
-    message: error?.message || 'Unexpected error'
+    'error': error?.name || 'Internal Server Error',
+    'message': error?.message || 'Unexpected error'
   });
 });
 

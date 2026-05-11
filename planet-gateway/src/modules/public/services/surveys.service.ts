@@ -46,36 +46,34 @@ const fetchDoc = async <T>(db: any, id: string): Promise<T | null> => {
 
 const fetchConfiguration = async (): Promise<ConfigurationDoc | null> => {
   try {
-    const result = await configurationDB.list({ include_docs: true, limit: 1 });
+    const result = await configurationDB.list({ 'include_docs': true, 'limit': 1 });
     return (result.rows[0]?.doc as ConfigurationDoc) || null;
   } catch {
     return null;
   }
 };
 
-const isPublicSurvey = (survey: SurveyDoc | null, teamId: string): survey is SurveyDoc => {
-  return !!survey &&
+const isPublicSurvey = (survey: SurveyDoc | null, teamId: string): survey is SurveyDoc => !!survey &&
     PUBLIC_SURVEY_TYPES.has(survey.type) &&
     survey.teamId === teamId &&
     survey.publicAccess === true &&
     survey.isArchived !== true &&
     Array.isArray(survey.questions) &&
     survey.questions.length > 0;
-};
 
 const sanitizeSurvey = (survey: SurveyDoc) => ({
-  _id: survey._id,
-  _rev: survey._rev,
-  name: survey.name,
-  description: survey.description || '',
-  questions: survey.questions,
-  type: 'survey'
+  '_id': survey._id,
+  '_rev': survey._rev,
+  'name': survey.name,
+  'description': survey.description || '',
+  'questions': survey.questions,
+  'type': 'survey'
 });
 
 const sanitizeTeam = (team: TeamDoc) => ({
-  _id: team._id,
-  name: team.name,
-  type: team.type || 'team'
+  '_id': team._id,
+  'name': team.name,
+  'type': team.type || 'team'
 });
 
 const buildPublicSubmission = (
@@ -86,18 +84,18 @@ const buildPublicSubmission = (
 ) => {
   const now = Date.now();
   return {
-    parentId: survey._id,
-    parent: sanitizeSurvey(survey),
-    user: {},
-    type: 'survey',
-    answers: payload.answers || [],
-    grade: 0,
-    status: 'complete',
-    team: sanitizeTeam(team),
-    source: 'public-link',
-    parentCode: configuration?.parentCode || configuration?.code || '',
-    startTime: payload.startTime || now,
-    lastUpdateTime: payload.lastUpdateTime || now
+    'parentId': survey._id,
+    'parent': sanitizeSurvey(survey),
+    'user': {},
+    'type': 'survey',
+    'answers': payload.answers || [],
+    'grade': 0,
+    'status': 'complete',
+    'team': sanitizeTeam(team),
+    'source': 'public-link',
+    'parentCode': configuration?.parentCode || configuration?.code || '',
+    'startTime': payload.startTime || now,
+    'lastUpdateTime': payload.lastUpdateTime || now
   };
 };
 
@@ -110,14 +108,14 @@ export const getPublicSurvey = async (req: Request, res: Response) => {
 
   if (!team || !isPublicSurvey(survey, teamId)) {
     return res.status(404).json({
-      error: 'Not Found',
-      message: 'Survey not found or not public'
+      'error': 'Not Found',
+      'message': 'Survey not found or not public'
     });
   }
 
   return res.status(200).json({
-    survey: sanitizeSurvey(survey),
-    team: sanitizeTeam(team)
+    'survey': sanitizeSurvey(survey),
+    'team': sanitizeTeam(team)
   });
 };
 
@@ -128,8 +126,8 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
 
   if (!Array.isArray(answers)) {
     return res.status(400).json({
-      error: 'Bad Request',
-      message: 'answers must be an array'
+      'error': 'Bad Request',
+      'message': 'answers must be an array'
     });
   }
 
@@ -141,8 +139,8 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
 
   if (!team || !isPublicSurvey(survey, teamId)) {
     return res.status(404).json({
-      error: 'Not Found',
-      message: 'Survey not found or not public'
+      'error': 'Not Found',
+      'message': 'Survey not found or not public'
     });
   }
 
@@ -150,8 +148,8 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
   const response = await submissionsDB.insert(submission as any);
 
   return res.status(201).json({
-    status: 'Success',
-    id: response.id,
-    rev: response.rev
+    'status': 'Success',
+    'id': response.id,
+    'rev': response.rev
   });
 };
