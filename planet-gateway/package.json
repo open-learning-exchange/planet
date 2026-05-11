@@ -1,7 +1,7 @@
 {
-  "name": "chatapi",
+  "name": "planet-gateway",
   "version": "0.0.7",
-  "description": "A proxy service to make API calls to GPT and other LLMs",
+  "description": "Gateway service for Planet chat and public operations",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -15,11 +15,11 @@
     "url": "git+https://github.com/open-learning-exchange/planet.git"
   },
   "keywords": [
-    "GPT",
+    "gateway",
+    "planet",
     "chat",
-    "LLM",
-    "API",
-    "proxy"
+    "public",
+    "LLM"
   ],
   "author": "Open Learning Exchange",
   "license": "AGPL-3.0",
