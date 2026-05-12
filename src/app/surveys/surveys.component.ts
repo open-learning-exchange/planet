@@ -675,9 +675,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     if (action === 'public') {
-      return survey.publicAccess === true ?
-        $localize`Copy the public survey link for this community` :
-        $localize`Generate a public survey link for this community`;
+      return survey.publicAccess === true ? $localize`Copy the public survey link` : $localize`Generate a public survey link`;
     }
 
     if (action === 'revoke') {
