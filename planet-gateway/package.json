@@ -1,6 +1,6 @@
 {
   "name": "planet-gateway",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "Gateway service for Planet chat and public operations",
   "main": "index.ts",
   "scripts": {
