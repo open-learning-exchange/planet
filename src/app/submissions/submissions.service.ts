@@ -588,12 +588,13 @@ export class SubmissionsService {
   }
 
   async generateChartImage(data: any): Promise<string> {
-    const { Chart } = await loadChart([
-      'BarController', 'DoughnutController', 'BarElement', 'ArcElement', 'LinearScale', 'CategoryScale', 'Legend', 'Tooltip', 'Title'
-    ]);
-    const { canvas, ctx } = createChartCanvas(300, 400);
     const isBar = data.chartType === 'bar';
     const isRatingScale = data.isRatingScale || false;
+    const { Chart } = await loadChart(isBar
+      ? [ 'BarController', 'BarElement', 'LinearScale', 'CategoryScale', 'Legend', 'Tooltip', 'Title' ]
+      : [ 'DoughnutController', 'ArcElement', 'Legend', 'Tooltip', 'Title' ]
+    );
+    const { canvas, ctx } = createChartCanvas(300, 400);
 
     if (!ctx) {
       return '';
@@ -601,18 +602,21 @@ export class SubmissionsService {
     const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
 
     if (!hasData) {
-      renderNoDataPlaceholder(ctx, canvas, 'No data available');
+      return renderNoDataPlaceholder(ctx, canvas, 'No data available');
     }
 
     const maxCount = Math.max(...data.data);
+    const axisTitleFont = { size: 12, weight: 'bold' as const };
+    const xAxisText = isRatingScale ? $localize`Rating` : $localize`Choice`;
+    const yAxisText = isRatingScale ? $localize`Number of responses` : $localize`% of responders`;
+    const backgroundColor = data.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
     const chartConfig: ChartConfiguration<'bar' | 'doughnut', number[], string> = {
       type: isBar ? 'bar' : 'doughnut',
       data: {
         labels: data.labels,
         datasets: [ {
           data: data.data,
-          label: isRatingScale ? 'selection/choices(1-9)' : (isBar ? '% of responders/selection' : undefined),
-          backgroundColor: CHART_COLORS
+          backgroundColor
         } ]
       },
       options: {
@@ -621,19 +625,24 @@ export class SubmissionsService {
         indexAxis: 'x',
         plugins: {
           legend: {
-            display: true,
+            display: !isBar,
             labels: {
-              boxWidth: isBar ? 0 : 50,
-              boxHeight: isBar ? 0 : 20
+              boxWidth: 50,
+              boxHeight: 20
             }
           }
         },
         scales: isBar ? {
+          x: {
+            type: 'category',
+            title: { display: true, text: xAxisText, font: axisTitleFont }
+          },
           y: {
             type: 'linear',
             beginAtZero: true,
             max: isRatingScale ? maxCount > 0 ? Math.ceil(maxCount / 10) * 10 : 10 : 100,
-            ticks: { precision: 0, stepSize: 2 }
+            ticks: { precision: 0 },
+            title: { display: true, text: yAxisText, font: axisTitleFont }
           }
         } : {},
         animation: false
@@ -644,11 +653,16 @@ export class SubmissionsService {
     try {
       chart.update();
 
+      ctx.fillStyle = '#000000';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '12px sans-serif';
+
       if (isBar && data.userCounts) {
         chart.getDatasetMeta(0).data.forEach((bar, index) => {
           const count = data.userCounts[index];
           if (count > 0) {
-            ctx.fillText(`${count}`, bar.x - 2.5 , bar.y);
+            ctx.fillText(`${count}`, bar.x, bar.y - 6);
           }
         });
       } else {
@@ -658,7 +672,7 @@ export class SubmissionsService {
           const percentage = total > 0 ? ((count / total) * 100).toFixed(1) : '0';
           if (count > 0) {
             const pos = element.tooltipPosition();
-            ctx.fillText(`${count}(${percentage}%)`, pos.x - 15, pos.y);
+            ctx.fillText(`${count} (${percentage}%)`, pos.x, pos.y);
           }
         });
       }

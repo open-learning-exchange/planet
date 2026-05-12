@@ -38,6 +38,8 @@ pdfMake.addVirtualFileSystem(pdfFonts);
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
+  readonly dbName = 'achievements';
+  readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
   achievements: any;
   achievementNotFound = false;
@@ -79,6 +81,9 @@ export class UsersAchievementsComponent implements OnInit {
       }
       this.initAchievements(id);
     });
+    if (this.publicView) {
+      return;
+    }
     combineLatest([
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
@@ -97,11 +102,17 @@ export class UsersAchievementsComponent implements OnInit {
       } else {
         this.achievements = achievements;
       }
+      if (this.publicView) {
+        this.isLoading = false;
+      }
     }, (error) => {
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
         this.planetMessageService.showAlert($localize`There was an error getting achievements`);
+      }
+      if (this.publicView) {
+        this.isLoading = false;
       }
     });
   }
@@ -130,6 +141,14 @@ export class UsersAchievementsComponent implements OnInit {
       return;
     }
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
+  }
+
+
+  get resumeUrl() {
+    if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id) {
+      return '';
+    }
+    return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
   get profileImg() {
