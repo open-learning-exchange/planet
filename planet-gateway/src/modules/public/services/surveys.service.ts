@@ -27,8 +27,6 @@ type ConfigurationDoc = {
 
 type PublicSubmissionPayload = {
   answers?: any[];
-  startTime?: any;
-  lastUpdateTime?: any;
 };
 
 const PUBLIC_SURVEY_TYPES = new Set([ 'survey', 'surveys' ]);
@@ -61,13 +59,17 @@ const isPublicSurvey = (survey: SurveyDoc | null, teamId: string): survey is Sur
     Array.isArray(survey.questions) &&
     survey.questions.length > 0;
 
-const sanitizeSurvey = (survey: SurveyDoc) => ({
+const sanitizePublicSurvey = (survey: SurveyDoc) => ({
   '_id': survey._id,
-  '_rev': survey._rev,
   'name': survey.name,
   'description': survey.description || '',
   'questions': survey.questions,
   'type': 'survey'
+});
+
+const sanitizeSurveySnapshot = (survey: SurveyDoc) => ({
+  ...sanitizePublicSurvey(survey),
+  '_rev': survey._rev
 });
 
 const sanitizeTeam = (team: TeamDoc) => ({
@@ -85,7 +87,7 @@ const buildPublicSubmission = (
   const now = Date.now();
   return {
     'parentId': survey._id,
-    'parent': sanitizeSurvey(survey),
+    'parent': sanitizeSurveySnapshot(survey),
     'user': {},
     'type': 'survey',
     'answers': payload.answers || [],
@@ -94,8 +96,8 @@ const buildPublicSubmission = (
     'team': sanitizeTeam(team),
     'source': 'public-link',
     'parentCode': configuration?.parentCode || configuration?.code || '',
-    'startTime': payload.startTime || now,
-    'lastUpdateTime': payload.lastUpdateTime || now
+    'startTime': now,
+    'lastUpdateTime': now
   };
 };
 
@@ -114,7 +116,7 @@ export const getPublicSurvey = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json({
-    'survey': sanitizeSurvey(survey),
+    'survey': sanitizePublicSurvey(survey),
     'team': sanitizeTeam(team)
   });
 };

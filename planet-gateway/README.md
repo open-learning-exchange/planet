@@ -25,9 +25,11 @@ npm run dev
 ## Modules
 
 - `modules/chatapi`: chat HTTP + WebSocket flow served through `/ml/`
-- `modules/public`: scoped public endpoints served through `/api/`
+- `modules/public`: scoped public endpoints served through `/public/`
 
 ## Public Endpoints
 
 - `GET /public/surveys/:teamId/:surveyId`
 - `POST /public/surveys/:teamId/:surveyId/submissions`
+
+When proxied through nginx in Planet, these are exposed under `/api/public/`.
