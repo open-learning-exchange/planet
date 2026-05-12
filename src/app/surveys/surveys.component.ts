@@ -641,15 +641,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke'
   ): string {
     if (survey.isArchived) {
-      const messages = {
-        edit: $localize`Survey is archived and cannot be edited`,
-        send: $localize`Survey is archived and cannot be sent`,
-        record: $localize`Survey is archived and cannot be recorded`,
-        archive: $localize`Survey is already archived`,
-        public: $localize`Survey is archived and cannot accept responses`,
-        revoke: $localize`Survey is archived and cannot accept responses`
-      };
-      return messages[action];
+      if (action === 'archive') {
+        return $localize`Survey is already archived`;
+      }
+      return $localize`Survey is archived and cannot accept new actions`;
     }
 
     if (!survey.taken) {
