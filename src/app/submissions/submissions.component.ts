@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewChecked, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -83,8 +83,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.showFiltersRow = false;
+    });
     this.surveyId = this.route.snapshot.paramMap.get('surveyId');
     this.isManagerSurveysRoute = !!this.surveyId;
   }
@@ -148,12 +151,6 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     });
     this.submissionsService.updateSubmissions(this.submissionQuery());
     this.setupTable();
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
-    this.showFiltersRow = false;
   }
 
   ngAfterViewChecked() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
@@ -59,13 +59,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.deviceType === DeviceType.MOBILE;
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
-    this.updateMyLifeItemsFormat();
-  }
-
   constructor(
     private userService: UserService,
     private couchService: CouchService,
@@ -90,8 +83,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
       this.setBadgesCourses(courses, certifications);
     });
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
+      this.updateMyLifeItemsFormat();
+    });
     this.initMyLifeItems();
   }
 
