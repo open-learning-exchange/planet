@@ -7,7 +7,7 @@ import {
 } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
 import { UserService } from '../shared/user.service';
@@ -83,11 +83,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+    this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
       this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
       this.showFiltersRow = false;
     });
+    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
     this.surveyId = this.route.snapshot.paramMap.get('surveyId');
     this.isManagerSurveysRoute = !!this.surveyId;
   }

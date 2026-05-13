@@ -83,12 +83,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
       this.setBadgesCourses(courses, certifications);
     });
+    this.initMyLifeItems();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
       this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
       this.updateMyLifeItemsFormat();
     });
-    this.initMyLifeItems();
   }
 
   ngOnInit() {
