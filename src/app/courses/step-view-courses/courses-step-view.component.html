@@ -62,6 +62,7 @@
       Take Survey
     </a>
     <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)"
+      #previewTrigger="matMenuTrigger"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
       Preview

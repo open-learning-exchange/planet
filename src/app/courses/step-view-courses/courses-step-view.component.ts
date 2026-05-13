@@ -63,8 +63,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   isOpenai = false;
   isLoading = true;
   deviceType: DeviceType;
-  deviceTypes: typeof DeviceType = DeviceType;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
+  @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
     private chatService: ChatService,
