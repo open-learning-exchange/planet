@@ -89,6 +89,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
+  get hasActionButtons(): boolean {
+    const hasExam = !!this.stepDetail?.exam?.questions.length;
+    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
+    return (this.isOpenai && !!this.stepDetail?.description) ||
+      this.attempts > 0 ||
+      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
+      (this.canManage && (hasExam || hasSurvey)) ||
+      (this.stepDetail?.resources?.length || 0) !== 0;
+  }
+
   ngOnInit() {
     combineLatest(
       this.coursesService.courseUpdated$,

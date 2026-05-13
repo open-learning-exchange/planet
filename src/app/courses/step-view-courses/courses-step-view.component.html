@@ -14,11 +14,11 @@
       <ng-container *ngIf="!isMobile">
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </ng-container>
-      <ng-container *ngIf="isMobile">
+      <ng-container *ngIf="isMobile && hasActionButtons">
         <button mat-icon-button [matMenuTriggerFor]="mobileActionsMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-menu #mobileActionsMenu="matMenu">
+        <mat-menu #mobileActionsMenu="matMenu" class="actions-menu">
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         </mat-menu>
       </ng-container>
@@ -33,14 +33,14 @@
   <ng-template #actionButtons>
     <button *ngIf="isOpenai && stepDetail?.description"
       mat-stroked-button
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-3': !isMobile }"
+      [ngClass]="{ 'margin-lr-3': !isMobile }"
       (click)="showChat = !showChat" i18n>
       {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
     </button>
     <a
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-10': !isMobile }"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
       *ngIf="attempts > 0"
       (click)="openReviewDialog()" i18n>
       Review Attempts
@@ -48,7 +48,7 @@
     <a
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-10': !isMobile }"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
       *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
       (click)="goToExam()" i18n>
       {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
@@ -56,13 +56,13 @@
     <a
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-10': !isMobile }"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
       *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
       (click)="goToExam('survey')" i18n>
       Take Survey
     </a>
     <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)"
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-10': !isMobile }"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
       color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
       Preview
     </button>
@@ -81,7 +81,7 @@
     <a
       mat-raised-button
       color="accent"
-      [ngClass]="{ 'mat-menu-item': isMobile, 'margin-lr-10': !isMobile }"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
       *ngIf="stepDetail.resources.length !== 0"
       [routerLink]="['/resources/view', resource._id]"
       target="_blank"
