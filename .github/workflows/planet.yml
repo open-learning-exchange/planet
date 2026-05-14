@@ -65,7 +65,8 @@ jobs:
         if: ${{ env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild' }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           mkdir -p ./ng-app/dist
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo .
@@ -76,7 +77,8 @@ jobs:
         if: ${{ (github.ref == 'refs/heads/master' || env.IS_RELEASE == 'true') && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           latestrepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker tag $repo $latestrepo
@@ -105,7 +107,8 @@ jobs:
         continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           prerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           latestprerepo="$DOCKER_ORG/$DOCKER_REPO_PRE:latest"
           docker pull $prerepo
@@ -114,7 +117,8 @@ jobs:
       - name: Build single language build
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_LANG:$PLANET_VERSION-$SAFE_BRANCH"
           export NODE_OPTIONS=--max_old_space_size=4096
@@ -154,7 +158,8 @@ jobs:
       - name: Build image
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-$PLANET_VERSION-$SAFE_BRANCH"
           LANGUAGES=( 'eng' 'ara' 'fra' 'spa' 'nep' 'som')
@@ -201,7 +206,8 @@ jobs:
       - name: Multiarch Deploy
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
@@ -216,7 +222,8 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          SAFE_BRANCH="${BRANCH:0:48}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
           amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
