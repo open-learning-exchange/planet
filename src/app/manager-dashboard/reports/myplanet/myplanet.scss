@@ -1,28 +1,10 @@
-@use '../../../variables' as v;
-
-$screen-md: 1300px;
-
-:host {
-  @include v.screen-sizes($screen-md, v.$screen-sm);
-}
-
 button {
   flex-shrink: 0;
   margin: 4px;
 }
 
-@media(max-width: #{$screen-md}) {
-  .mat-mdc-form-field {
-    width: 100%;
-  }
-
-  mat-toolbar-row {
-    form {
-      width: 100%;
-
-      .mat-mdc-form-field {
-        width: 100%;
-      }
-    }
-  }
+.desktop-toolbar-stacked {
+  height: auto;
+  align-items: center;
+  flex-wrap: wrap;
 }

@@ -57,8 +57,10 @@ jobs:
       - name: Build image
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$BRANCH"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build \
             -f './docker/db-init/Dockerfile' \
@@ -83,10 +85,12 @@ jobs:
       - name: Multiarch Deploy
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
           docker manifest annotate $manifesttag $armtag --os linux --arch arm
@@ -97,9 +101,11 @@ jobs:
         if: ${{ github.event_name == 'release' }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$BRANCH-${GITHUB_SHA::8}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           for tag in "$DOCKER_ORG/$DOCKER_REPO:db-init-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:db-init"; do
             docker manifest create $tag $amd64tag $armtag $arm64tag
             docker manifest annotate $tag $amd64tag --os linux --arch amd64
