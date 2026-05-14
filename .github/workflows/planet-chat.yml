@@ -58,7 +58,7 @@ jobs:
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
-          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -86,7 +86,7 @@ jobs:
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
-          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
           manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
@@ -102,7 +102,7 @@ jobs:
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
-          SAFE_BRANCH="${BRANCH:0:39}-$BRANCH_HASH"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
           amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
