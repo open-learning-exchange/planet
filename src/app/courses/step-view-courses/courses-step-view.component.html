@@ -5,70 +5,91 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title"><ng-container i18n>Step</ng-container> {{stepNum}}<span *ngIf="stepDetail.stepTitle">: </span>{{stepDetail.stepTitle}}</h3>
-    <button *ngIf="isOpenai && stepDetail?.description" mat-stroked-button class="margin-lr-3" (click)="showChat = !showChat" i18n>
-      {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
-    </button>
     <span class="toolbar-fill"></span>
     <div class="toolbar-actions">
       <button mat-icon-button *ngIf="resource?._attachments && !showChat" (click)="this.isGridView = !this.isGridView">
         <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
       </button>
       <span class="margin-lr-10" *ngIf="attempts && !parent" i18n>Past attempts: {{attempts}}</span>
-      <a
-        mat-raised-button
-        color="accent"
-        class="margin-lr-10"
-        *ngIf="attempts > 0"
-        (click)="openReviewDialog()" i18n>
-        Review Attempts
-      </a>
-      <a
-        mat-raised-button
-        color="accent"
-        class="margin-lr-10"
-        *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
-        (click)="goToExam()" i18n>
-        {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
-      </a>
-      <a
-        mat-raised-button
-        color="accent"
-        class="margin-lr-10"
-        *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
-        (click)="goToExam('survey')" i18n>
-        Take Survey
-      </a>
-      <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
-        Preview
-      </button>
-      <mat-menu #previewMenu="matMenu">
-        <a mat-menu-item
-          *ngIf="stepDetail?.exam?.questions.length"
-          (click)="goToExam('exam', true)" i18n>
-          Preview Test
-        </a>
-        <a mat-menu-item
-          *ngIf="stepDetail?.survey?.questions.length"
-          (click)="goToExam('survey', true)" i18n>
-          Preview Survey
-        </a>
-      </mat-menu>
-      <a
-        mat-raised-button
-        color="accent"
-        class="margin-lr-10"
-        *ngIf="stepDetail.resources.length !== 0"
-        [routerLink]="['/resources/view', resource._id]"
-        target="_blank"
-        i18n>
-        View Resource Details
-      </a>
+      <ng-container *ngIf="!isMobile">
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="isMobile && hasActionButtons">
+        <button mat-icon-button [matMenuTriggerFor]="mobileActionsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #mobileActionsMenu="matMenu" class="actions-menu">
+          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+        </mat-menu>
+      </ng-container>
       <span>{{stepNum}}/{{maxStep}}</span>
       <button mat-icon-button *ngIf="maxStep !== 1" [disabled]="stepNum === 1 || isLoading" (click)="changeStep(-1)"><mat-icon>navigate_before</mat-icon></button>
       <button mat-icon-button *ngIf="stepNum !== maxStep"  [disabled]="isLoading || !canProceedToNextStep()" (click)="changeStep(1)"><mat-icon>navigate_next</mat-icon></button>
-      <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="stepNum === maxStep" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
+      <button mat-icon-button i18n-matTooltip matTooltip="Finish" *ngIf="stepNum === maxStep && isMobile" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()"><mat-icon>check</mat-icon></button>
+      <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="stepNum === maxStep && !isMobile" [disabled]="isLoading || !canProceedToNextStep()" (click)="backToCourseDetail()" i18n>Finish</button>
     </div>
   </mat-toolbar>
+
+  <ng-template #actionButtons>
+    <button *ngIf="isOpenai && stepDetail?.description"
+      mat-stroked-button
+      [ngClass]="{ 'margin-lr-3': !isMobile }"
+      (click)="showChat = !showChat" i18n>
+      {{ showChat ? 'Hide Course Chat' : 'Show Course Chat' }}
+    </button>
+    <a
+      mat-raised-button
+      color="accent"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
+      *ngIf="attempts > 0"
+      (click)="openReviewDialog()" i18n>
+      Review Attempts
+    </a>
+    <a
+      mat-raised-button
+      color="accent"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
+      *ngIf="stepDetail?.exam?.questions.length && isUserEnrolled"
+      (click)="goToExam()" i18n>
+      {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
+    </a>
+    <a
+      mat-raised-button
+      color="accent"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
+      *ngIf="stepDetail?.survey?.questions.length && isUserEnrolled"
+      (click)="goToExam('survey')" i18n>
+      Take Survey
+    </a>
+    <button *ngIf="canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)"
+      #previewTrigger="matMenuTrigger"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
+      color="accent" mat-raised-button [matMenuTriggerFor]="previewMenu" (click)="menuTriggerButtonClick()" i18n>
+      Preview
+    </button>
+    <mat-menu #previewMenu="matMenu">
+      <a mat-menu-item
+        *ngIf="stepDetail?.exam?.questions.length"
+        (click)="goToExam('exam', true)" i18n>
+        Preview Test
+      </a>
+      <a mat-menu-item
+        *ngIf="stepDetail?.survey?.questions.length"
+        (click)="goToExam('survey', true)" i18n>
+        Preview Survey
+      </a>
+    </mat-menu>
+    <a
+      mat-raised-button
+      color="accent"
+      [ngClass]="{ 'margin-lr-10': !isMobile }"
+      *ngIf="stepDetail.resources.length !== 0"
+      [routerLink]="['/resources/view', resource._id]"
+      target="_blank"
+      i18n>
+      View Resource Details
+    </a>
+  </ng-template>
   <div class="view-container view-full-height" [ngClass]="{'grid-view': showChat, 'flex-view': !isGridView && !showChat}" *ngIf="stepDetail?.description || resource?._attachments; else emptyRecord">
     <planet-chat-window *ngIf="showChat" [context]="{type: 'coursestep', data: localizedStepInfo, resource: { id: resource?._id, attachments: resource?._attachments } }" [conversations]="conversations"></planet-chat-window>
     <ng-container *ngIf="showChat; else stepViewContent">
