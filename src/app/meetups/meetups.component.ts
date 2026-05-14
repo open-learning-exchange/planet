@@ -7,7 +7,7 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../shared/user.service';
@@ -16,7 +16,7 @@ import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray, itemsShown } from '../shared/utils';
+import { findByIdInArray } from '../shared/utils';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -59,6 +59,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
+  private renderedRows: any[] = [];
   message = '';
   readonly dbName = 'meetups';
   deleteDialog: any;
@@ -107,6 +108,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.countSelectedShelf(source.selected);
     });
     this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.meetups.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
   }
 
   ngAfterViewInit() {
@@ -115,7 +117,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -123,16 +125,19 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
+    }
   }
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    this.selection.deselect(...selectedOutOfFilter(this.meetups.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visible = new Set(this.renderedRows.map((row: any) => row._id));
+      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
+    });
   }
 
   ngOnDestroy() {
