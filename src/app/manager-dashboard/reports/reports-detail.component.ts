@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -146,7 +146,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService
   ) {
     this.initDateFilterForm();
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
@@ -200,11 +202,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
     this.charts.forEach((chart) => chart.destroy());
     this.charts = [];
-  }
-
-  @HostListener('window:resize')
-  OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
   }
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {

@@ -46,7 +46,7 @@
     <ng-container *ngIf="isAuthorized">
       <button *ngIf="!parent && myView !== 'myPersonals'" mat-mini-fab routerLink="add"><mat-icon>add</mat-icon></button>
       <div class="column margin-lr-5">
-        <planet-filtered-amount [table]="resources"></planet-filtered-amount>
+        <planet-filtered-amount class="filtered-amount-label" [table]="resources"></planet-filtered-amount>
         <planet-tag-selected-input *ngIf="myView !== 'myPersonals'" [selectedIds]="tagFilter.value" [allTags]="tagInputComponent?.tags"></planet-tag-selected-input>
       </div>
       <span class="toolbar-fill"></span>

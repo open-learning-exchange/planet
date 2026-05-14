@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -16,7 +16,7 @@ import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, selectedOutOfFilter, trackById
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -25,7 +25,7 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -73,6 +73,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   resources = new MatTableDataSource();
+  private renderedRows: any[] = [];
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -153,15 +154,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-    this.isTablet = window.innerWidth <= 1040;
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-    this.isTablet = window.innerWidth <= 1040;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isTablet = deviceType !== DeviceType.DESKTOP;
+    });
   }
 
   ngOnInit() {
@@ -198,6 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.removeFilteredFromSelection();
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
+    this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -214,7 +212,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFilteredFromSelection() {
-    this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visible = new Set(this.renderedRows.map((row: any) => row._id));
+      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
+    });
   }
 
 
@@ -238,7 +239,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
   }
 
   applyResFilter(filterResValue: string) {
@@ -247,11 +248,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
+    }
   }
 
   updateResource(resource) {
