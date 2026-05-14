@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
+  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -117,8 +117,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -162,11 +164,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   isAllSelected() {
