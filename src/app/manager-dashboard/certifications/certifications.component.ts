@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
+import { Component, DestroyRef, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -38,6 +39,7 @@ import { MatInput } from '@angular/material/input';
   ]
 })
 export class CertificationsComponent implements OnInit, AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   certifications = new MatTableDataSource();
   selection = new SelectionModel(true, []);
@@ -57,11 +59,11 @@ export class CertificationsComponent implements OnInit, AfterViewInit {
     private deviceInfoService: DeviceInfoService,
     private dialogsLoadingService: DialogsLoadingService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+      });
   }
 
   ngOnInit() {

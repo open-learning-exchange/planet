@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -44,6 +45,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   teams = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
@@ -99,8 +101,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+        this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      });
   }
 
   ngOnInit() {
@@ -114,11 +120,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   getTeams() {
