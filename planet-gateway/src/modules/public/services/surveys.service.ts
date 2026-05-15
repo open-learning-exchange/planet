@@ -29,6 +29,12 @@ type PublicSubmissionPayload = {
   answers?: any[];
 };
 
+type StoredPublicAnswer = {
+  value: any;
+  mistakes: number;
+  passed: boolean;
+};
+
 const PUBLIC_SURVEY_TYPES = new Set([ 'survey', 'surveys' ]);
 
 const fetchDoc = async <T>(db: any, id: string): Promise<T | null> => {
@@ -78,6 +84,19 @@ const sanitizeTeam = (team: TeamDoc) => ({
   'type': team.type || 'team'
 });
 
+const isValidAnswer = (answer: any) => {
+  if (Array.isArray(answer)) {
+    return answer.length > 0;
+  }
+  return answer !== undefined && answer !== null && answer !== '';
+};
+
+const normalizeAnswers = (answers: any[] = []): StoredPublicAnswer[] => answers.map((answer) => ({
+  'value': answer,
+  'mistakes': 0,
+  'passed': isValidAnswer(answer)
+}));
+
 const buildPublicSubmission = (
   survey: SurveyDoc,
   team: TeamDoc,
@@ -90,7 +109,7 @@ const buildPublicSubmission = (
     'parent': sanitizeSurveySnapshot(survey),
     'user': {},
     'type': 'survey',
-    'answers': payload.answers || [],
+    'answers': normalizeAnswers(payload.answers),
     'grade': 0,
     'status': 'complete',
     'team': sanitizeTeam(team),
