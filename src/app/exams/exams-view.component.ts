@@ -17,7 +17,7 @@ import {
 } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { NgIf, NgClass, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { NgIf, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -26,11 +26,11 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { ExamTakeComponent } from './exam-take.component';
+import { ExamsTakeFrameComponent } from './exams-take/exams-take-frame.component';
+import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   StoredExamAnswer, ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
-} from './exam-answer.helpers';
+} from './exams-take/exam-answer.helpers';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -39,12 +39,11 @@ interface ExamViewForm {
 @Component({
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
-  styleUrls: ['./exams-view.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu,
+    NgIf, MatToolbar, MatIconAnchor, MatIcon, MatIconButton, MatMenuTrigger, MatMenu,
     MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel,
     FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup,
-    MatRadioButton, MatButton, PlanetLoadingSpinnerComponent, DatePipe, ExamTakeComponent
+    MatRadioButton, MatButton, DatePipe, ExamsTakeFrameComponent, ExamsTakeWidgetComponent
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
