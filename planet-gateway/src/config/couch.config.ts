@@ -6,10 +6,18 @@ dotenv.config();
 const couchUrl = process.env.COUCHDB_HOST;
 const couchUser = process.env.COUCHDB_USER;
 const couchPass = process.env.COUCHDB_PASS;
+const defaultCouchUrl = 'http://couchdb:5984';
+
+const withCredentials = (url: string, user: string, pass: string) => {
+  const parsedUrl = new URL(url);
+  parsedUrl.username = user;
+  parsedUrl.password = pass;
+  return parsedUrl.toString().replace(/\/$/, '');
+};
 
 const couchHost = couchUser && couchPass
-  ? `http://${couchUser}:${couchPass}@${(couchUrl || 'http://couchdb:5984').replace('http://', '')}`
-  : (couchUrl || 'http://couchdb:5984');
+  ? withCredentials(couchUrl || defaultCouchUrl, couchUser, couchPass)
+  : (couchUrl || defaultCouchUrl);
 
 const db = nano(couchHost);
 const chatDB = db.use('chat_history');
