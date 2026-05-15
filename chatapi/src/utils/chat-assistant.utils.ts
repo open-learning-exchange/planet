@@ -15,8 +15,12 @@ export async function createAssistant(model: string) {
   });
 }
 
-export async function createThread() {
-  return await keys.openai.beta.threads.create();
+export async function createThread(messages?: any[]) {
+  const payload: any = {};
+  if (messages && messages.length > 0) {
+    payload.messages = messages.map((msg) => ({ 'role': 'user', 'content': msg.content }));
+  }
+  return await keys.openai.beta.threads.create(payload);
 }
 
 export async function addToThread(threadId: any, message: string) {
