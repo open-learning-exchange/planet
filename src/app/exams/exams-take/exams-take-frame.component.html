@@ -1,0 +1,20 @@
+<div [ngClass]="{ 'space-container': !isDialog }">
+  <mat-toolbar class="primary-color font-size-1">
+    <span *ngIf="!isLoading">
+      <span class="ellipsis-title">{{title ? title + ': ' : ''}}</span>
+      <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
+      <ng-content select="[exam-frame-title-extra]"></ng-content>
+    </span>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button [disabled]="disablePrevious" (click)="previous.emit()"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="disableNext" (click)="next.emit()"><mat-icon>navigate_next</mat-icon></button>
+  </mat-toolbar>
+  <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
+    <ng-container *ngIf="!isLoading; else loadingContent">
+      <ng-content></ng-content>
+    </ng-container>
+    <ng-template #loadingContent>
+      <planet-loading-spinner text="Loading content..." i18n-text></planet-loading-spinner>
+    </ng-template>
+  </div>
+</div>

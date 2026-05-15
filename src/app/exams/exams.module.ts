@@ -10,7 +10,8 @@ import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { MaterialModule } from '../shared/material.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ExamsPreviewComponent } from './exams-preview.component';
-import { ExamTakeComponent } from './exam-take.component';
+import { ExamsTakeFrameComponent } from './exams-take/exams-take-frame.component';
+import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 
 @NgModule({
   imports: [
@@ -25,12 +26,14 @@ import { ExamTakeComponent } from './exam-take.component';
     ExamsQuestionComponent,
     ExamsViewComponent,
     ExamsPreviewComponent,
-    ExamTakeComponent
+    ExamsTakeFrameComponent,
+    ExamsTakeWidgetComponent
   ],
   exports: [
     ExamsAddComponent,
     ExamsViewComponent,
-    ExamTakeComponent
+    ExamsTakeFrameComponent,
+    ExamsTakeWidgetComponent
   ]
 })
 export class ExamsModule {}

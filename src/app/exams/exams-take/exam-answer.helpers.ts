@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-import { ExamQuestion } from './exams.model';
+import { ExamQuestion } from '../exams.model';
 
 export interface ExamAnswerOption {
   id: string;

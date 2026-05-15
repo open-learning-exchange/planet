@@ -6,22 +6,22 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
-import { ExamQuestion } from './exams.model';
+import { ExamQuestion } from '../exams.model';
 import {
   StoredExamAnswer, ExamAnswerOption, ExamAnswerValue, addCheckedAnswer, createOtherAnswerOption, isOtherAnswerOption, restoreExamAnswer
 } from './exam-answer.helpers';
-import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
 
 @Component({
-  selector: 'planet-exam-take',
-  templateUrl: './exam-take.component.html',
-  styleUrls: ['./exam-take.component.scss'],
+  selector: 'planet-exams-take-widget',
+  templateUrl: './exams-take-widget.component.html',
+  styleUrls: ['./exams-take-widget.component.scss'],
   imports: [
     NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput, ReactiveFormsModule, PlanetMarkdownTextboxComponent,
     MatRadioGroup, NgFor, MatRadioButton, MatCheckbox, NgIf, FormsModule
   ]
 })
-export class ExamTakeComponent implements OnChanges {
+export class ExamsTakeWidgetComponent implements OnChanges {
 
   @Input() question: (ExamQuestion & { hasOtherOption?: boolean }) | null = null;
   @Input() answer: FormControl<ExamAnswerValue>;

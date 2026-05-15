@@ -1,4 +1,4 @@
-@use '../variables' as v;
+@use '../../variables' as v;
 
 :host {
   display: block;
@@ -68,7 +68,7 @@
 
     &:hover {
       border-color: v.$primary;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     &.selected {

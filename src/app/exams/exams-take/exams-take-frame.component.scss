@@ -1,0 +1,22 @@
+:host {
+  display: block;
+
+  mat-toolbar.primary-color > span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .view-container {
+    display: grid;
+    grid-template-rows: min-content minmax(auto, min-content) max-content min-content;
+
+    td-markdown {
+      overflow-y: auto;
+    }
+  }
+
+  .v-align-center, .v-align-center > * {
+    display: flex;
+    align-items: center;
+  }
+}
