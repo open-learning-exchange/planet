@@ -11,7 +11,7 @@ Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be
 - `npm install` — install dependencies.
 - `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint` in both the root and `planet-gateway/`.
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
-- `npm run dev` — runs `dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when `planet-gateway` or CouchDB are on non-default ports.
+- `npm run dev` — runs `dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `GATEWAY_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when `planet-gateway` or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
 - `npm run test` — Karma + Jasmine; opens `localhost:9876`. There is no `e2e` workflow wired up on this branch.
 - Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `fdescribe` / `fit`).
@@ -21,7 +21,7 @@ Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be
 
 ### planet-gateway (`planet-gateway/`)
 
-Independent Node service; requires its own `.env` (see `planet-gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`.
+Independent Node service; requires its own `.env` (see `planet-gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `GATEWAY_PORT`.
 
 - `cd planet-gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
@@ -34,7 +34,7 @@ Independent Node service; requires its own `.env` (see `planet-gateway/README.md
 
 ## Architecture
 
-Planet Learning is an Angular 19 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 19 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `gatewayAddress` points at the local Planet gateway base URL.
 
 ### Repository layout
 

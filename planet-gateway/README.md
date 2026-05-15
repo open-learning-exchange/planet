@@ -13,7 +13,7 @@ COUCHDB_USER=planet
 COUCHDB_PASS=planet
 ```
 
-By default on Linux the gateway uses port `5000`. For Windows and macOS, use `5400` if needed and mirror that value in the root `.env` as `CHAT_PORT`.
+By default on Linux the gateway uses port `5000`. For Windows and macOS, use `5400` if needed and mirror that value in the root `.env` as `GATEWAY_PORT`.
 
 To run the gateway locally:
 
