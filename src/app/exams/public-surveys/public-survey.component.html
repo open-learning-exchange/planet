@@ -1,0 +1,63 @@
+<mat-toolbar color="primary" class="header-nav nav-shadow">
+  <span class="navbar-left">
+    <a routerLink="/">
+      <img src="assets/cropped-ole-ico-logo-32x32.png" class="ole-logo"/>
+      <h1><ng-container>Planet</ng-container> {{ stateService.configuration.name }}</h1>
+    </a>
+  </span>
+</mat-toolbar>
+
+<div class="space-container">
+  <mat-toolbar class="primary-color font-size-1">
+    <span *ngIf="!isLoading && survey && !isSubmitted">
+      <span class="ellipsis-title">{{survey.name ? survey.name + ': ' : ''}}</span>
+      <ng-container i18n>Question</ng-container>{{' ' + questionNum + ' '}}<ng-container i18n>of</ng-container>{{' ' + maxQuestions }}
+    </span>
+    <span *ngIf="!isLoading && isSubmitted">
+      <span class="ellipsis-title">{{survey?.name}}</span>
+    </span>
+    <span class="toolbar-fill"></span>
+    <button mat-icon-button [disabled]="isLoading || isSubmitted || questionNum === 1" (click)="moveQuestion(-1)"><mat-icon>navigate_before</mat-icon></button>
+    <button mat-icon-button [disabled]="isLoading || isSubmitted || questionNum === maxQuestions" (click)="moveQuestion(1)"><mat-icon>navigate_next</mat-icon></button>
+  </mat-toolbar>
+  <div class="view-container view-full-height">
+    <ng-container *ngIf="isLoading; else surveyContent">
+      <planet-loading-spinner text="Loading content..." i18n-text></planet-loading-spinner>
+    </ng-container>
+    <ng-template #surveyContent>
+      <div *ngIf="errorMessage && !survey" class="message-block warn-text-color">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <ng-container *ngIf="survey && !isSubmitted">
+        <td-markdown [content]="question?.body"></td-markdown>
+        <planet-exam-take [question]="question" [answer]="answer" [storedAnswer]="currentAnswer"></planet-exam-take>
+        <div class="v-align-center action-buttons">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="moveQuestion(1)"
+            [disabled]="!answer.valid || questionNum === maxQuestions">
+            <ng-container i18n>Submit Answer</ng-container>
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="submitSurvey()"
+            [disabled]="!isComplete || isSubmitting"
+            i18n>
+            Finish Survey
+          </button>
+          <span *ngIf="errorMessage" class="v-align-center small warn-text-color">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </span>
+        </div>
+      </ng-container>
+      <div *ngIf="survey && isSubmitted" class="message-block primary-text-color">
+        <mat-icon>check_circle</mat-icon>
+        <span i18n>Survey is complete. Your response has been submitted.</span>
+      </div>
+    </ng-template>
+  </div>
+</div>

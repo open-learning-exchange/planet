@@ -1,0 +1,81 @@
+@use '../../variables' as v;
+
+:host {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 64px 1fr;
+  height: 100vh;
+
+  .header-nav {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-areas: 'left';
+    width: 100%;
+    align-items: center;
+
+    h1 {
+      display: inline;
+      font-size: 1.5rem;
+    }
+
+    .ole-logo {
+      margin-right: 10px;
+    }
+  }
+
+  .header-nav::before {
+    height: 3px;
+    background: linear-gradient(to bottom, v.$shadow, rgba(v.$shadow, 0.2) 25%, rgba(v.$shadow, 0.12) 75%, rgba(v.$shadow, 0));
+    width: 100%;
+    left: 0;
+    top: 100%;
+  }
+
+  .navbar-left {
+    display: flex;
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .nav-shadow::before {
+    content: '';
+    position: absolute;
+    z-index: 10;
+  }
+
+  mat-toolbar.primary-color > span {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .view-container {
+    display: grid;
+    grid-template-rows: min-content minmax(auto, min-content) max-content min-content;
+
+    td-markdown {
+      overflow-y: auto;
+    }
+  }
+
+  .v-align-center, .v-align-center > * {
+    display: flex;
+    align-items: center;
+  }
+
+  .message-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  :host {
+    grid-template-rows: 56px 1fr;
+  }
+}
