@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -11,7 +11,6 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { ExamTakeComponent } from '../exam-take.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exam-answer.helpers';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { StateService } from '../../shared/state.service';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
 
 @Component({
@@ -19,7 +18,7 @@ import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
   templateUrl: './public-survey.component.html',
   styleUrls: ['./public-survey.component.scss'],
   imports: [
-    NgIf, MatToolbar, RouterLink, MatIcon, MatIconButton, TdMarkdownComponent,
+    NgIf, MatToolbar, MatIcon, MatIconButton, TdMarkdownComponent,
     ExamTakeComponent, MatButton, PlanetLoadingSpinnerComponent, ReactiveFormsModule
   ]
 })
@@ -48,8 +47,7 @@ export class PublicSurveyComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private publicSurveysService: PublicSurveysService,
-    public stateService: StateService
+    private publicSurveysService: PublicSurveysService
   ) {}
 
   ngOnInit() {
