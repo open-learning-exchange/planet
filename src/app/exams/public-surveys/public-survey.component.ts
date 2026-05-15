@@ -4,22 +4,34 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { TdMarkdownComponent } from '@covalent/markdown';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatToolbar } from '@angular/material/toolbar';
 
-import { ExamTakeComponent } from '../exam-take.component';
-import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exam-answer.helpers';
-import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ExamsTakeFrameComponent } from '../exams-take/exams-take-frame.component';
+import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
+import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
 
 @Component({
   selector: 'planet-public-survey',
   templateUrl: './public-survey.component.html',
-  styleUrls: ['./public-survey.component.scss'],
+  styles: [`
+    .state-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-top: 10vh;
+      text-align: center;
+    }
+
+    .state-message {
+      max-width: 480px;
+    }
+  `],
   imports: [
-    NgIf, MatToolbar, MatIcon, MatIconButton, TdMarkdownComponent,
-    ExamTakeComponent, MatButton, PlanetLoadingSpinnerComponent, ReactiveFormsModule
+    NgIf, MatIcon, TdMarkdownComponent, ExamsTakeFrameComponent, ExamsTakeWidgetComponent, MatButton, ReactiveFormsModule
   ]
 })
 export class PublicSurveyComponent implements OnInit {

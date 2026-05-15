@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
-import { ExamAnswerValue } from '../exam-answer.helpers';
+import { ExamAnswerValue } from '../exams-take/exam-answer.helpers';
 
 export interface PublicSurvey {
   _id: string;
