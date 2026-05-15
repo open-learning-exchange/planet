@@ -10,8 +10,9 @@
  *  display to the user what is being deleted.
  * okClick - Optional.  Function to call when user clicks OK.
  */
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, SecurityContext } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -43,10 +44,12 @@ export class DialogsPromptComponent {
   spinnerOn: boolean;
   labels: string[];
   isDateUtc = false;
+  extraMessage = '';
 
   constructor(
     public dialogRef: MatDialogRef<DialogsPromptComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private sanitizer: DomSanitizer
   ) {
     // Support dialogs created before the amount field was added
     this.data.amount = this.setDefault(this.data.amount, 'single');
@@ -56,6 +59,7 @@ export class DialogsPromptComponent {
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
     this.isDateUtc = this.data.isDateUtc;
+    this.extraMessage = this.sanitizer.sanitize(SecurityContext.HTML, this.data.extraMessage) || '';
   }
 
   ok() {
