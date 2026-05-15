@@ -18,6 +18,7 @@ import { ValidatorService } from '../validators/validator.service';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { showFormErrors } from '../shared/table-helpers';
+import { isExternalUrl } from '../shared/utils';
 import { LoginTasksService } from './login-tasks.service';
 
 interface LoginFormControls {
@@ -69,10 +70,11 @@ export class LoginFormComponent {
     this.initUserForm();
   }
 
-  returnUrl = this.route.snapshot.queryParams['returnUrl'] || (this.stateService.configuration.planetType === 'center' ?
-    'myDashboard' :
-    '/'
-  );
+  get returnUrl(): string {
+    const queryParamUrl = this.route.snapshot.queryParams['returnUrl'];
+    const defaultUrl = this.stateService.configuration.planetType === 'center' ? 'myDashboard' : '/';
+    return (queryParamUrl && !isExternalUrl(queryParamUrl)) ? queryParamUrl : defaultUrl;
+  }
 
   initUserForm() {
     this.userForm = this.createMode ? this.createRegisterForm() : this.createLoginForm();
