@@ -1,0 +1,66 @@
+<ng-container [ngSwitch]="question?.type">
+  <mat-form-field class="full-width" *ngSwitchCase="'input'">
+    <mat-label i18n>Enter answer here</mat-label>
+    <input matInput [formControl]="answer">
+  </mat-form-field>
+  <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
+    <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
+  </mat-form-field>
+  <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
+    <mat-radio-button [value]="option" *ngFor="let option of question?.choices">
+      <span class="multiple-choice-text">{{option.text}}</span>
+    </mat-radio-button>
+    <ng-container *ngIf="question?.hasOtherOption">
+      <div class="other-option-flex">
+        <mat-radio-button [value]="currentOtherOption">
+          <span class="multiple-choice-text" i18n>Other: </span>
+        </mat-radio-button>
+        <input
+          matInput
+          class="other-option-input"
+          [disabled]="!isOtherSelected()"
+          [(ngModel)]="currentOtherOption.text"
+          (ngModelChange)="updateOtherText()">
+      </div>
+    </ng-container>
+  </mat-radio-group>
+  <div *ngSwitchCase="'selectMultiple'" class="question-list">
+    <span class="mat-caption" i18n>
+      {examType, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}
+    </span>
+    <mat-checkbox
+      *ngFor="let option of question?.choices"
+      [value]="option"
+      (change)="setAnswer($event, option)"
+      [checked]="checkboxState[option.id]">
+      <span class="multiple-choice-text">{{option.text}}</span>
+    </mat-checkbox>
+    <ng-container *ngIf="question?.hasOtherOption">
+      <div class="other-option-flex">
+        <mat-checkbox [checked]="checkboxState['other']" (change)="toggleOtherMultiple($event)">
+          <span class="multiple-choice-text" i18n>Other: </span>
+        </mat-checkbox>
+        <input
+          matInput
+          class="other-option-input"
+          [disabled]="!checkboxState['other']"
+          [(ngModel)]="currentOtherOption.text"
+          (ngModelChange)="updateOtherText()">
+      </div>
+    </ng-container>
+  </div>
+  <div *ngSwitchCase="'ratingScale'" class="rating-scale-keypad">
+    <div class="rating-scale-grid">
+      <button
+        type="button"
+        mat-raised-button
+        class="rating-scale-button"
+        *ngFor="let num of [1,2,3,4,5,6,7,8,9]"
+        [class.selected]="answer.value === num.toString()"
+        [attr.data-rating]="num"
+        (click)="setRatingScaleAnswer(num)">
+        {{num}}
+      </button>
+    </div>
+  </div>
+</ng-container>
