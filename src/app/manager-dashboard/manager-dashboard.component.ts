@@ -1,15 +1,14 @@
-import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
+import { Component, OnInit, isDevMode, OnDestroy, HostListener } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
-import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from '../courses/courses.service';
@@ -67,8 +66,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService,
-    private dialogGuard: DialogGuardService
+    private managerService: ManagerService
   ) {}
 
   ngOnInit() {
@@ -205,29 +203,25 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   sendOnAccept(db: string) {
-    this.dialogGuard.open(`send-on-accept:${db}`, () =>
-      this.dialogsListService.getListAndColumns(db).pipe(
-        map(res => {
-          const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true);
-          const initialSelection = previousList.map((doc: any) => doc._id);
-          return this.dialog.open(DialogsListComponent, {
-            data: {
-              okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
-              filterPredicate: this.setFilterPredicate(db),
-              itemDescription: db,
-              nameProperty: db === 'courses' ? 'courseTitle' : 'title',
-              allowMulti: true,
-              initialSelection,
-              selectionOptional: true,
-              ...res
-            },
-            maxHeight: '500px',
-            width: '600px',
-            autoFocus: false
-          });
-        })
-      )
-    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
+    this.dialogsListService.getListAndColumns(db).pipe(takeUntil(this.onDestroy$)).subscribe(res => {
+      const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true),
+        initialSelection = previousList.map((doc: any) => doc._id);
+      const data = {
+        okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+        filterPredicate: this.setFilterPredicate(db),
+        itemDescription: db,
+        nameProperty: db === 'courses' ? 'courseTitle' : 'title',
+        allowMulti: true,
+        initialSelection,
+        selectionOptional: true,
+        ...res };
+      this.dialogRef = this.dialog.open(DialogsListComponent, {
+        data: data,
+        maxHeight: '500px',
+        width: '600px',
+        autoFocus: false
+      });
+    });
   }
 
   sendOnAcceptOkClick(db: string, previousList: any) {

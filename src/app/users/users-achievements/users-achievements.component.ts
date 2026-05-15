@@ -79,9 +79,6 @@ export class UsersAchievementsComponent implements OnInit {
       }
       this.initAchievements(id);
     });
-    if (this.publicView) {
-      return;
-    }
     combineLatest([
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
@@ -100,17 +97,11 @@ export class UsersAchievementsComponent implements OnInit {
       } else {
         this.achievements = achievements;
       }
-      if (this.publicView) {
-        this.isLoading = false;
-      }
     }, (error) => {
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
         this.planetMessageService.showAlert($localize`There was an error getting achievements`);
-      }
-      if (this.publicView) {
-        this.isLoading = false;
       }
     });
   }

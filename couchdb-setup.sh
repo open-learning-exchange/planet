@@ -7,15 +7,22 @@ upsert_doc() {
   DOC_LOC=$3
   # Default method is PUT, fourth argument overrides
   METHOD=${4:-"PUT"}
-  DOC=$(curl $COUCHURL/$DB/$DOC_NAME)
+  DOC=$(curl $COUCHURL/$DB/$DOC_NAME $PROXYHEADER)
   # If DOC includes a rev then it exists so we need to update
   # Otherwise we simply insert
   if [[ $DOC == *rev* ]]; then
     DOC_REV=$(echo $DOC | jq -r '. | ._rev')
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME?rev=$DOC_REV -d $DOC_LOC $PROXYHEADER
   else
-    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC
+    curl -H 'Content-Type: application/json' -X $METHOD $COUCHURL/$DB/$DOC_NAME -d $DOC_LOC $PROXYHEADER
   fi
+}
+
+# Function for insert mock data docs
+insert_docs() {
+  DB=$1
+  DOC_LOC=$2
+  curl -H 'Content-Type: application/json' -X POST $COUCHURL/$DB/_bulk_docs -d @$DOC_LOC $PROXYHEADER
 }
 
 # Function to add databases
@@ -23,12 +30,12 @@ insert_dbs() {
   DBS=$1
   for DB in "${DBS[@]}"
   do
-    curl -X PUT $COUCHURL/$DB
+    curl -X PUT $COUCHURL/$DB $PROXYHEADER
   done
 }
 
 set_couch_per_user() {
-  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true")
+  CONFIGURATION=$(curl "$COUCHURL/configurations/_all_docs?include_docs=true" $PROXYHEADER)
   CODE=$(echo $CONFIGURATION | jq -rj '.["rows"][0]["doc"]["code"] // empty')
   HEXCODE=$(echo $CODE | tr -d \\n | hexdump -v -e '/1 "%02x"')
   upsert_doc _node/nonode@nohost/_config couch_peruser/database_prefix '"userdb-'$HEXCODE'-"'
@@ -37,12 +44,13 @@ set_couch_per_user() {
 }
 
 # Options are -u for username -w for passWord and -p for port number
-while getopts "u:w:p:h:" option; do
+while getopts "u:w:p:h:x" option; do
   case $option in
     u) COUCHUSER=${OPTARG};;
     w) COUCHPASSWORD=${OPTARG};;
     p) PORT=${OPTARG};;
     h) HOST=${OPTARG};;
+    x) PROXYHEADER="-H X-Auth-CouchDB-Roles:_admin -H X-Auth-CouchDB-UserName:username";;
   esac
 done
 
@@ -59,6 +67,25 @@ then
 else
   COUCHURL=http://$COUCHUSER:$COUCHPASSWORD@$HOST:$PORT
 fi
+
+# Adding attachments to database documents
+# To add attachment added two file (resources-mock.json and resources-attachment-mockup.json)
+# Ids must match between two files
+insert_attachments() {
+  DB=$1
+  DOC_LOC=$2
+  # Use echo $(<$DOC_LOC) to be able to run in Windows
+  INPUTS=$(echo $(<$DOC_LOC) | jq -c '.[]')
+  for i in $INPUTS
+  do
+    ID=$(echo $i | jq -r '.doc_id' )
+    FILE_NAME=$(echo $i | jq -r '.file_name')
+    FILE_LOCATION=$(echo $i | jq -r '.file_location')
+    FILE_TYPE=$(echo $i | jq -r '.file_type')
+    REV=$(curl $COUCHURL/$DB/$ID | jq -r '._rev' $PROXYHEADER)
+    curl -X PUT $COUCHURL/$DB/$ID/$FILE_NAME?rev=$REV --data-binary @$FILE_LOCATION -H Content-Type:$FILE_TYPE $PROXYHEADER
+  done
+}
 
 # Reads one JSON file to update multiple databases
 # JSON file needs a 'dbName' field with a string and

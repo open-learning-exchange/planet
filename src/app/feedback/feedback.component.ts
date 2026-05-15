@@ -33,7 +33,6 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -55,7 +54,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort,
     MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip,
     NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
-    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
   ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {

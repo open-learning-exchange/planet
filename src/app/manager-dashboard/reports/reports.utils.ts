@@ -27,7 +27,7 @@ export const arrangePlanetsIntoHubs = (planets: any[], hubs: any[]) => ({
   )
 });
 
-const itemInDateRange = (item, dateField, startDate, endDate) => {
+export const itemInDateRange = (item, dateField, startDate, endDate) => {
   if (!startDate || !endDate || startDate > endDate) {
     return false;
   }
@@ -124,6 +124,10 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
   return weeks;
 };
 
+export const scaleLabel = (labelString: string) => ({
+  display: true, labelString, fontSize: 12, fontStyle: 'bold'
+});
+
 export const sortingOptionsMap = {
   'logins': [
     { name: $localize`Login Time Ascending`, value: 'loginTimeAsc' },
@@ -172,6 +176,8 @@ export const sortingOptionsMap = {
 };
 
 export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+
+export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
 
 export const lastThursday = (date: Date) => {
   const d = new Date(date);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { defaultIfEmpty, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
 import { StateService } from '../state.service';
@@ -55,7 +55,6 @@ export class DialogsListService {
         .pipe(map((newData) => ({ tableData: this.filterResults(newData, selector), columns: listColumns[db] })));
     }
     return this.stateService.getCouchState(db, planetField).pipe(
-      defaultIfEmpty([]),
       map((newData: any) => {
         if (db === 'communityregistrationrequests') {
           newData = attachNamesToPlanets(newData).map(

@@ -1,12 +1,12 @@
-ARG BASE_IMAGE=treehouses/node:3.18
-
-FROM ${BASE_IMAGE}
+FROM treehouses/node
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 RUN apk update \
     && apk add --no-cache bash curl git jq ca-certificates
 
-RUN npm install -g add-cors-to-couchdb
+RUN npm config set unsafe-perm true \
+    && npm install -g add-cors-to-couchdb \
+    && npm config set unsafe-perm false
 
 WORKDIR /root
 

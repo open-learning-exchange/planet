@@ -14,7 +14,7 @@ import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
-function dashboardPath(route): string {
+export function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
 }
 
