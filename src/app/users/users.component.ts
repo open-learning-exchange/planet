@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -82,11 +82,9 @@ export class UsersComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { switchMap, takeUntil } from 'rxjs/operators';
@@ -60,8 +60,10 @@ export class RequestsComponent implements OnInit, OnDestroy {
     private managerService: ManagerService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -72,12 +74,6 @@ export class RequestsComponent implements OnInit, OnDestroy {
       this.searchValue = searchValue || '';
       this.getCommunityList();
     });
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnDestroy() {

@@ -1,6 +1,6 @@
 <mat-toolbar>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <mat-toolbar-row>
+    <mat-toolbar-row class="desktop-toolbar-stacked">
       <ng-container *ngTemplateOutlet="backAction"></ng-container>
       <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
       <ng-container *ngIf="showCustomDateFields">
@@ -42,14 +42,14 @@
   <span class="toolbar-fill"></span>
 </ng-template>
 <ng-template #typeVersionFilters>
-  <mat-form-field *ngIf="showTypeFilter" class="margin-lr-5 font-size-1">
+  <mat-form-field *ngIf="showTypeFilter" class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Type</mat-label>
     <mat-select (selectionChange)="onTypeChange($event.value)" [value]="selectedType">
       <mat-option [value]="" i18n>All Types</mat-option>
       <mat-option *ngFor="let type of types" [value]="type">{{type}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field class="margin-lr-5 font-size-1">
+  <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Version</mat-label>
     <mat-select (selectionChange)="onVersionChange($event.value)" [value]="selectedVersion">
       <mat-option [value]="" i18n>All Versions</mat-option>
@@ -58,8 +58,8 @@
   </mat-form-field>
 </ng-template>
 <ng-template #formStartDate>
-  <div [formGroup]="formGroup">
-    <mat-form-field class="margin-lr-5 font-size-1">
+  <div [formGroup]="formGroup" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
+    <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
       <mat-label i18n>Start Date</mat-label>
       <input matInput [matDatepicker]="startPicker" formControlName="startDate" [min]="minDate" [max]="formGroup.controls.endDate.value">
       <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
@@ -69,8 +69,8 @@
   </div>
 </ng-template>
 <ng-template #formEndDate>
-  <div [formGroup]="formGroup">
-    <mat-form-field class="margin-lr-5 font-size-1">
+  <div [formGroup]="formGroup" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
+    <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
       <mat-label i18n>End Date</mat-label>
       <input matInput [matDatepicker]="endPicker" formControlName="endDate" [min]="formGroup.controls.startDate.value" [max]="today">
       <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
@@ -79,7 +79,7 @@
   </div>
 </ng-template>
 <ng-template #timeFrameFilter>
-  <mat-form-field class="margin-lr-5 font-size-1">
+  <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Time Frame</mat-label>
     <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
       <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
@@ -87,7 +87,7 @@
   </mat-form-field>
 </ng-template>
 <ng-template #actionButtons>
-  <mat-form-field class="font-size-1">
+  <mat-form-field class="font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Search</mat-label>
     <input matInput (keyup)="onSearch($event.target.value)" [value]="searchValue">
   </mat-form-field>
