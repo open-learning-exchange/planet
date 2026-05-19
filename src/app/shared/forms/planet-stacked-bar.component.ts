@@ -41,7 +41,8 @@ export class PlanetStackedBarComponent implements OnChanges {
       this.data = this.data.map((item, index) => ({
         ...item,
         class: index === 0 ? 'bg-light-grey' : item.class,
-        percent: index === 0 ? 1 : 0
+        percent: index === 0 ? 1 : 0,
+        noLabel: index === 0 ? true : item.noLabel
       }));
       this.barSizes = '1fr';
       return;
