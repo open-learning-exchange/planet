@@ -1,13 +1,197 @@
-mat-grid-tile .mat-mdc-card {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  height: 100%;
-  width: 100%;
+@use "../variables" as v;
+
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
 }
 
-.fixed {
+.reports-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 10px 16px;
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: white;
-  padding: 0.3rem;
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+  .reports-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: v.$grey-text;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: box-shadow 0.18s, border-color 0.18s;
+
+  &:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: v.$primary-light;
+  }
+
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 auto;
+  }
+}
+
+.report-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.report-card-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: v.$grey-text;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.report-card-range {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  margin-top: 2px;
+}
+
+.report-card-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+  &.profit {
+    background: v.$planet-green-lighter;
+    color: v.$planet-green-dark;
+  }
+  &.loss {
+    background: v.$warn-lighter;
+    color: v.$warn-dark;
+  }
+}
+
+.report-card-hero-label {
+  font-size: 11px;
+  color: v.$grey-text;
+}
+
+.report-card-hero-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+
+  &.credit {
+    color: v.$planet-green-dark;
+  }
+  &.debit {
+    color: v.$warn-dark;
+  }
+}
+
+.report-card-stats {
+  display: flex;
+  gap: 8px;
+}
+
+.report-card-stat {
+  flex: 1;
+  border-radius: 6px;
+  padding: 8px 10px;
+
+  &.credit {
+    background: v.$planet-green-lighter;
+    color: v.$planet-green-dark;
+  }
+  &.debit {
+    background: v.$warn-lighter;
+    color: v.$warn-dark;
+  }
+
+  .report-card-stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .report-card-stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    word-break: break-all;
+  }
+}
+
+.report-card-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: v.$grey-text;
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  padding-top: 10px;
+
+  .num {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.74);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.report-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.reports-empty {
+  text-align: center;
+  color: v.$grey-text;
+  padding: 32px;
 }

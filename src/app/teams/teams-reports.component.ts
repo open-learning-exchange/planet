@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -14,12 +14,10 @@ import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { NgIf, NgFor, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardFooter } from '@angular/material/card';
-import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 
 interface NewReportForm {
@@ -40,22 +38,42 @@ interface NewReportForm {
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
   imports: [
-    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
-    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
-    MatIcon, DatePipe
+    NgIf, NgFor, NgClass, MatButton, MatIconButton, MatIcon, PlanetLoadingSpinnerComponent,
+    MatCard, MatCardContent, MatCardActions, DatePipe, CurrencyPipe
   ]
 })
-export class TeamsReportsComponent implements DoCheck {
+export class TeamsReportsComponent implements OnChanges {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
-  columns = 4;
-  minColumnWidth = 300;
   configuration: any = {};
-  planetName: any;
+  curCode = this.stateService.configuration.currency || {};
+  reportCards: any[] = [];
+
+  ngOnChanges() {
+    this.reportCards = (this.reports || [])
+      .filter(report => report.status !== 'archived')
+      .map(report => {
+        const income = (report.sales || 0) + (report.otherIncome || 0);
+        const expenses = (report.wages || 0) + (report.otherExpenses || 0);
+        const net = income - expenses;
+        return {
+          report,
+          income,
+          expenses,
+          net,
+          endingBalance: net + (report.beginningBalance || 0),
+          isLoss: net < 0
+        };
+      });
+  }
+
+  trackByReport(index: number, card: any) {
+    return card.report._id || index;
+  }
 
   constructor(
     private couchService: CouchService,
@@ -64,24 +82,11 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private csvService: CsvService,
-    private elementRef: ElementRef,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
   ) {}
 
-  ngDoCheck() {
-    const gridElement = this.elementRef.nativeElement.children['report-grid'];
-    if (!gridElement) {
-      return;
-    }
-    const newColumns = Math.floor(gridElement.offsetWidth / this.minColumnWidth);
-    if (this.columns !== newColumns) {
-      this.columns = newColumns;
-    }
-  }
-
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
-    const actionType = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
     const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
 
     this.couchService.currentTime().subscribe((time: number) => {
@@ -138,6 +143,8 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
+    // Only these fields are shown in the dialog, so only these get validators.
+    const formFields = [ 'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
     const initialValues = {
       description: '',
       beginningBalance: 0,
@@ -149,10 +156,9 @@ export class TeamsReportsComponent implements DoCheck {
       startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
       endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
-    const formControl = (initialValue, fieldName: string) => [
-      initialValue,
-      [ CustomValidators.required, this.addFormValidator(fieldName) ]
-    ];
+    const formControl = (initialValue, fieldName: string) => formFields.indexOf(fieldName) > -1 ?
+      [ initialValue, [ CustomValidators.required, this.addFormValidator(fieldName) ] ] :
+      [ initialValue ];
     return Object.entries(initialValues).reduce(
       (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key) }), {}
     );
@@ -198,7 +204,7 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   exportReports() {
-    const exportData = this.reports.map(report => ({
+    const exportData = this.reportCards.map(({ report }) => ({
       [$localize`Start Date`]: fullLabel(report.startDate),
       [$localize`End Date`]: fullLabel(report.endDate),
       [$localize`Created Date`]: fullLabel(report.createdDate),
