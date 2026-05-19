@@ -4,6 +4,7 @@ import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
+import { reportGenderOptions, ReportGenderValue } from './gender.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -103,38 +104,43 @@ export class CsvService {
   private processSection(
     formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
   ): void {
-    const pushRow = (section, month, all, male, female, unspecified) => {
-      formattedData.push({
+    const pushRow = (section: string, month: string, all: number | string, genderCounts: Record<ReportGenderValue, number>) => {
+      const row: Record<string, string | number> = {
         [$localize`Section`]: section,
         [$localize`Month`]: month,
-        [$localize`All`]: all,
-        [$localize`Male`]: male,
-        [$localize`Female`]: female,
-        [$localize`Unspecified`]: unspecified
+        [$localize`All`]: all
+      };
+      reportGenderOptions.forEach((genderOption) => {
+        row[genderOption.label] = genderCounts[genderOption.value];
       });
+      formattedData.push(row);
     };
 
-    pushRow(title, '', '', '', '', '');
+    const totalGenderCounts = reportGenderOptions.reduce((counts, genderOption) => {
+      counts[genderOption.value] = 0;
+      return counts;
+    }, {} as Record<ReportGenderValue, number>);
+    pushRow(title, '', '', totalGenderCounts);
     let totalAll = 0;
-    let totalMale = 0;
-    let totalFemale = 0;
-    let totalUnspecified = 0;
 
     sortedMonths.forEach((month, i) => {
       const monthLabel = monthLabels[i];
       const all = this.getMonthlyData(month, groupedData, countUnique);
-      const male = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'male'), countUnique);
-      const female = this.getMonthlyData(month, groupedData.filter(item => item.gender === 'female'), countUnique);
-      const unspecified = this.getMonthlyData(month, groupedData.filter(item => item.gender === undefined), countUnique);
+      const monthGenderCounts = reportGenderOptions.reduce((counts, genderOption) => {
+        counts[genderOption.value] = this.getMonthlyData(
+          month,
+          groupedData.filter(item => item.gender === genderOption.value),
+          countUnique
+        );
+        totalGenderCounts[genderOption.value] += counts[genderOption.value];
+        return counts;
+      }, {} as Record<ReportGenderValue, number>);
 
       totalAll += all;
-      totalMale += male;
-      totalFemale += female;
-      totalUnspecified += unspecified;
-      pushRow('', monthLabel, all, male, female, unspecified);
+      pushRow('', monthLabel, all, monthGenderCounts);
     });
 
-    pushRow('', $localize`Total`, totalAll, totalMale, totalFemale, totalUnspecified);
+    pushRow('', $localize`Total`, totalAll, totalGenderCounts);
   }
 
   formatValue(key: string, value: any) {

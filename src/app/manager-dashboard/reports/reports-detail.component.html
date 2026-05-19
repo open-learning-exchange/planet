@@ -154,21 +154,13 @@
             <mat-grid-list cols="2" rowHeight="2rem">
               <mat-grid-tile class="subheading label" i18n>Total Members</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalUsers}}</mat-grid-tile>
+              <ng-container *ngFor="let genderOption of reportGenderOptions">
               <mat-grid-tile class="label">
                 <mat-icon>subdirectory_arrow_right</mat-icon>
-                <span i18n>Male</span>
+                <span>{{genderOption.label}}</span>
               </mat-grid-tile>
-              <mat-grid-tile>{{reports?.usersByGender?.male || 0}}</mat-grid-tile>
-              <mat-grid-tile class="label" >
-                <mat-icon>subdirectory_arrow_right</mat-icon>
-                <span i18n>Female</span>
-              </mat-grid-tile>
-              <mat-grid-tile>{{reports?.usersByGender?.female || 0}}</mat-grid-tile>
-              <mat-grid-tile class="label">
-                <mat-icon>subdirectory_arrow_right</mat-icon>
-                <span i18n>Did not specify</span>
-              </mat-grid-tile>
-              <mat-grid-tile>{{reports?.usersByGender?.didNotSpecify || 0}}</mat-grid-tile>
+              <mat-grid-tile>{{reports?.usersByGender?.[genderOption.value] || 0}}</mat-grid-tile>
+              </ng-container>
               <mat-grid-tile class="subheading label" i18n>Total Visits</mat-grid-tile>
               <mat-grid-tile>{{reports?.totalMemberVisits}}</mat-grid-tile>
               <mat-grid-tile class="subheading label" i18n>Members by Visits</mat-grid-tile>
