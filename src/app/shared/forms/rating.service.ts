@@ -5,8 +5,19 @@ import { UserService } from '../user.service';
 import { of, Subject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { StateService } from '../state.service';
+import { normalizeGender } from '../gender.constants';
 
-const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
+const startingRating = {
+  rateSum: 0,
+  totalRating: 0,
+  maleRating: 0,
+  femaleRating: 0,
+  otherRating: 0,
+  preferNotToSayRating: 0,
+  didNotSpecifyRating: 0,
+  userRating: {},
+  allRatings: []
+};
 
 @Injectable({
   providedIn: 'root'
@@ -67,12 +78,21 @@ export class RatingService {
     // If totalRating is undefined, will start count at 1
     ratingInfo.totalRating = ratingInfo.totalRating + 1;
     ratingInfo.rateSum = ratingInfo.rateSum + rating.rate;
-    switch (rating.user.gender) {
+    switch (normalizeGender(rating.user.gender)) {
       case 'male':
         ratingInfo.maleRating = ratingInfo.maleRating + 1;
         break;
       case 'female':
         ratingInfo.femaleRating = ratingInfo.femaleRating + 1;
+        break;
+      case 'other':
+        ratingInfo.otherRating = ratingInfo.otherRating + 1;
+        break;
+      case 'preferNotToSay':
+        ratingInfo.preferNotToSayRating = ratingInfo.preferNotToSayRating + 1;
+        break;
+      default:
+        ratingInfo.didNotSpecifyRating = ratingInfo.didNotSpecifyRating + 1;
         break;
     }
     ratingInfo.userRating = rating.user.name === this.userService.get().name ? rating : ratingInfo.userRating;

@@ -47,7 +47,6 @@ interface PopupFormModel {
   imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
-
   @Input() rating: any = { userRating: {} };
   @Input() item: any;
   @Input() parent;
@@ -83,15 +82,21 @@ export class PlanetRatingComponent implements OnChanges {
 
   ngOnChanges() {
     // After any changes to ratings ensures all properties are set
-    this.rating = Object.assign({ rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {} }, this.rating);
+    this.rating = Object.assign({
+      rateSum: 0,
+      totalRating: 0,
+      maleRating: 0,
+      femaleRating: 0,
+      otherRating: 0,
+      preferNotToSayRating: 0,
+      didNotSpecifyRating: 0,
+      userRating: {}
+    }, this.rating);
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
-      { class: 'primary-light-color',
-        amount: this.rating.totalRating === 0 ?
-          1 :
-          this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
-        noLabel: true
-      },
+      { class: 'primary-light-color', amount: this.rating.otherRating, noLabel: true },
+      { class: 'bg-light-grey', amount: this.rating.didNotSpecifyRating, noLabel: true },
+      { class: 'bg-grey', amount: this.rating.preferNotToSayRating, noLabel: true },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
     this.rateForm.setValue({
