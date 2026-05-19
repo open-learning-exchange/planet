@@ -22,6 +22,7 @@ import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { getGenderIcon } from '../../shared/gender.constants';
 
 @Component({
   selector: 'planet-users-profile',
@@ -49,6 +50,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   isMobile: boolean;
   teams: any[] = [];
   enterprises: any[] = [];
+  profileGenderIcon: string | null = null;
   private onDestroy$ = new Subject<void>();
   @Input() planetCode: string | null = null;
   @Input() isDialog: boolean;
@@ -82,6 +84,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe((user) => {
       if (user._id === this.userDetail._id && user.planetCode === this.userDetail.planetCode) {
         this.userDetail = user;
+        this.profileGenderIcon = getGenderIcon(user.gender as string | undefined);
       }
     });
   }
@@ -120,6 +123,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     this.couchService.get(dbName + '/' + userId).subscribe((response) => {
       const { derived_key, iterations, password_scheme, salt, ...userDetail } = response;
       this.userDetail = userDetail;
+      this.profileGenderIcon = getGenderIcon(userDetail.gender as string | undefined);
       this.editable = relationship === 'local' && (
         userDetail.name === this.userService.get().name ||
         (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)

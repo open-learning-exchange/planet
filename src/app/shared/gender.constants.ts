@@ -18,7 +18,7 @@ export interface ReportGenderOption {
 export const genderOptions: GenderOption[] = [
   { value: 'male', label: $localize`Male`, icon: 'male' },
   { value: 'female', label: $localize`Female`, icon: 'female' },
-  { value: 'other', label: $localize`Other`, icon: null },
+  { value: 'other', label: $localize`Other`, icon: 'other' },
   { value: 'preferNotToSay', label: $localize`Prefer not to say`, icon: null }
 ];
 
@@ -46,7 +46,7 @@ export const createGenderCounts = (): Record<ReportGenderValue, number> => ({
 
 export const getGenderIcon = (gender?: string | null): string | null => {
   const normalizedGender = normalizeGender(gender);
-  if (normalizedGender === 'didNotSpecify' || normalizedGender === 'preferNotToSay' || normalizedGender === 'other') {
+  if (normalizedGender === 'didNotSpecify' || normalizedGender === 'preferNotToSay') {
     return null;
   }
   return normalizedGender;
