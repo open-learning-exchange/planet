@@ -42,14 +42,16 @@ export class PlanetStackedBarComponent implements OnChanges {
         ...item,
         class: index === 0 ? 'bg-light-grey' : item.class,
         percent: index === 0 ? 1 : 0,
-        noLabel: index === 0 ? true : item.noLabel
+        noLabel: true
       }));
-      this.barSizes = '1fr';
+      this.barSizes = this.data
+        .map((_, index) => index === 0 ? '1fr' : '0fr')
+        .join(' ');
       return;
     }
     this.data = this.data.map(item => ({ ...item, percent: (item.amount / total) }));
     this.barSizes = this.data.reduce((sizes, item) => sizes + (item.percent + 'fr '), '');
-    this.barSizes.trim();
+    this.barSizes = this.barSizes.trim();
   }
 
 }

@@ -56,5 +56,6 @@ export const getGenderLabel = (gender?: string | null, { fallback = 'N/A' }: { f
   if (!gender) {
     return fallback;
   }
-  return reportGenderOptions.find((genderOption) => genderOption.value === normalizeGender(gender))?.label || fallback;
+  const normalizedGender = normalizeGender(gender);
+  return reportGenderOptions.find((genderOption) => genderOption.value === normalizedGender)?.label || fallback;
 };
