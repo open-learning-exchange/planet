@@ -104,7 +104,16 @@ export class CsvService {
   private processSection(
     formattedData: any[], title: string, groupedData: any[], countUnique: boolean, sortedMonths: string[], monthLabels: string[]
   ): void {
-    const pushRow = (section: string, month: string, all: number | string, genderCounts: Record<ReportGenderValue, number>) => {
+    const createGenderCounts = <T extends string | number>(initialValue: T): Record<ReportGenderValue, T> => {
+      return reportGenderOptions.reduce((counts, genderOption) => {
+        counts[genderOption.value] = initialValue;
+        return counts;
+      }, {} as Record<ReportGenderValue, T>);
+    };
+
+    const pushRow = (
+      section: string, month: string, all: number | string, genderCounts: Record<ReportGenderValue, number | string>
+    ) => {
       const row: Record<string, string | number> = {
         [$localize`Section`]: section,
         [$localize`Month`]: month,
@@ -116,11 +125,9 @@ export class CsvService {
       formattedData.push(row);
     };
 
-    const totalGenderCounts = reportGenderOptions.reduce((counts, genderOption) => {
-      counts[genderOption.value] = 0;
-      return counts;
-    }, {} as Record<ReportGenderValue, number>);
-    pushRow(title, '', '', totalGenderCounts);
+    const blankGenderCounts = createGenderCounts('');
+    const totalGenderCounts = createGenderCounts(0);
+    pushRow(title, '', '', blankGenderCounts);
     let totalAll = 0;
 
     sortedMonths.forEach((month, i) => {
