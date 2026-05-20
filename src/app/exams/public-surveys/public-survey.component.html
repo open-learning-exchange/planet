@@ -42,4 +42,5 @@
 <div *ngIf="survey && isSubmitted" class="state-view primary-text-color">
   <mat-icon>check_circle</mat-icon>
   <div class="state-message" i18n>Survey is complete. Your response has been submitted.</div>
+  <button mat-raised-button color="primary" (click)="openSignupDialog()" i18n>Become a member</button>
 </div>

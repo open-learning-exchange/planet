@@ -6,11 +6,13 @@ import { switchMap } from 'rxjs/operators';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 
 import { ExamsTakeFrameComponent } from '../exams-take/exams-take-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
+import { LoginDialogComponent } from '../../login/login-dialog.component';
 
 @Component({
   selector: 'planet-public-survey',
@@ -59,7 +61,8 @@ export class PublicSurveyComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private publicSurveysService: PublicSurveysService
+    private publicSurveysService: PublicSurveysService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -116,5 +119,11 @@ export class PublicSurveyComponent implements OnInit {
         ? { value: this.answer.value, valid: this.answer.valid }
         : this.answers[index] || { value: null, valid: false }
     ));
+  }
+
+  openSignupDialog() {
+    this.dialog.open(LoginDialogComponent, {
+      'data': { 'createMode': true }
+    });
   }
 }
