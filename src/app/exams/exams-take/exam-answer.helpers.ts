@@ -80,10 +80,9 @@ export const addCheckedAnswer = (
 
 export const restoreExamAnswer = (
   question: SharedExamQuestion | null | undefined,
-  storedAnswer?: StoredExamAnswer | null
+  answerValue?: ExamAnswerValue | null
 ): RestoredExamAnswer => {
   const currentOtherOption = createOtherAnswerOption();
-  const answerValue = storedAnswer?.value;
 
   if (!question || answerValue === null || answerValue === undefined) {
     return { value: null, checkboxState: {}, currentOtherOption };

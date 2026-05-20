@@ -8,7 +8,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
 import { ExamQuestion } from '../exams.model';
 import {
-  StoredExamAnswer, ExamAnswerOption, ExamAnswerValue, addCheckedAnswer, createOtherAnswerOption, isOtherAnswerOption, restoreExamAnswer
+  ExamAnswerOption, ExamAnswerValue, addCheckedAnswer, createOtherAnswerOption, isOtherAnswerOption, restoreExamAnswer
 } from './exam-answer.helpers';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
 
@@ -26,14 +26,14 @@ export class ExamsTakeWidgetComponent implements OnChanges {
   @Input() question: (ExamQuestion & { hasOtherOption?: boolean }) | null = null;
   @Input() answer: FormControl<ExamAnswerValue>;
   @Input() examType: 'survey' | 'exam' = 'survey';
-  @Input() storedAnswer: StoredExamAnswer | null = null;
+  @Input() storedAnswerValue: ExamAnswerValue | null = null;
 
   checkboxState: Record<string, boolean> = {};
   currentOtherOption = createOtherAnswerOption();
 
   ngOnChanges(changes: SimpleChanges) {
-    if ((changes.question || changes.storedAnswer) && this.answer) {
-      const restoredAnswer = restoreExamAnswer(this.question, this.storedAnswer);
+    if ((changes.question || changes.storedAnswerValue) && this.answer) {
+      const restoredAnswer = restoreExamAnswer(this.question, this.storedAnswerValue);
       this.checkboxState = restoredAnswer.checkboxState;
       this.currentOtherOption = restoredAnswer.currentOtherOption;
       this.answer.setValue(restoredAnswer.value);

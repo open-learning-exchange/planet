@@ -36,7 +36,7 @@
   <td-markdown [content]="question?.body"></td-markdown>
   <div [ngSwitch]="mode">
     <ng-container *ngSwitchCase="'take'">
-      <planet-exams-take-widget [question]="question" [answer]="answer" [examType]="examType" [storedAnswer]="currentAnswer"></planet-exams-take-widget>
+      <planet-exams-take-widget [question]="question" [answer]="answer" [examType]="examType" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
     </ng-container>
     <ng-container *ngSwitchCase="'grade'">
       <p><b i18n>Submitted answer:</b></p>

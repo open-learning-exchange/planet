@@ -29,7 +29,7 @@ import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { ExamsTakeFrameComponent } from './exams-take/exams-take-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
-  StoredExamAnswer, ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
+  ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
 
 interface ExamViewForm {
@@ -75,7 +75,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
-  currentAnswer: StoredExamAnswer | null = null;
+  currentAnswer: ExamAnswerValue | null = null;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -175,7 +175,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
-        this.currentAnswer = { value: null, valid: false };
+        this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
         // Challenge option only
@@ -303,7 +303,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.initialLoad = false;
       }
       if (this.mode === 'take' && this.isNewQuestion) {
-        this.currentAnswer = ans?.value !== undefined ? ans : null;
+        this.currentAnswer = ans?.value !== undefined ? ans.value : null;
       } else if (this.mode !== 'take') {
         this.setViewAnswerText(ans);
       }

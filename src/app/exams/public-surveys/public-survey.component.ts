@@ -39,7 +39,7 @@ export class PublicSurveyComponent implements OnInit {
   errorMessage = '';
   questionNum = 1;
   answers: StoredExamAnswer[] = [];
-  currentAnswer: StoredExamAnswer | null = null;
+  currentAnswer: ExamAnswerValue | null = null;
   isLoading = true;
   isSubmitting = false;
   isSubmitted = false;
@@ -69,7 +69,7 @@ export class PublicSurveyComponent implements OnInit {
       next: ({ survey }) => {
         this.survey = survey;
         this.answers = Array.from({ length: survey.questions.length }, () => ({ value: null, valid: false }));
-        this.currentAnswer = this.answers[0];
+        this.currentAnswer = this.answers[0]?.value ?? null;
         this.isLoading = false;
       },
       error: (error) => {
@@ -82,7 +82,7 @@ export class PublicSurveyComponent implements OnInit {
   moveQuestion(direction: number) {
     this.persistCurrentAnswer();
     this.questionNum = this.questionNum + direction;
-    this.currentAnswer = this.answers[this.questionNum - 1] || null;
+    this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
   }
 
   submitSurvey() {
