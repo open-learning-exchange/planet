@@ -41,7 +41,7 @@ export class ExamsTakeWidgetComponent implements OnChanges {
     }
   }
 
-  setAnswer({ checked }: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
+  setCheckboxAnswer({ checked }: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
     this.answer.setValue(addCheckedAnswer(this.answer.value, option, checked));
     this.answer.updateValueAndValidity();
     this.checkboxState[option.id] = checked;
