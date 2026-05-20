@@ -1,3 +1,5 @@
+import { UsersProfileFormValue, UsersProfileSubmissionPayload } from '../../shared/forms/users-profile-form';
+
 export interface UserAttachment {
   content_type: string;
   data?: string;
@@ -28,19 +30,6 @@ export interface UserDocument {
   [key: string]: unknown;
 }
 
-export interface UsersUpdateFormValue {
-  age: number | null;
-  betaEnabled: boolean;
-  birthDate: string | Date | null;
-  birthYear: number | null;
-  email: string;
-  firstName: string;
-  gender: string;
-  language: string;
-  lastName: string;
-  level: string;
-  middleName: string;
-  phoneNumber: string;
-}
+export type UsersUpdateFormValue = UsersProfileFormValue;
 
-export type SubmissionUserPayload = Omit<UsersUpdateFormValue, 'birthYear'>;
+export type SubmissionUserPayload = UsersProfileSubmissionPayload;
