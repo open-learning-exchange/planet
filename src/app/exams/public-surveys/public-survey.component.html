@@ -7,28 +7,36 @@
   *ngIf="survey && !isSubmitted"
   [title]="survey.name"
   [questionNum]="questionNum"
-  [maxQuestions]="maxQuestions"
+  [maxQuestions]="totalSteps"
   [isLoading]="isLoading"
   [disablePrevious]="isLoading || questionNum === 1"
-  [disableNext]="isLoading || questionNum === maxQuestions"
+  [disableNext]="isLoading || questionNum === totalSteps"
   (previous)="moveQuestion(-1)"
   (next)="moveQuestion(1)"
 >
-  <td-markdown [content]="question?.body"></td-markdown>
-  <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
+  <ng-container *ngIf="!isProfileStep; else profileStep">
+    <td-markdown [content]="question?.body"></td-markdown>
+    <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
+  </ng-container>
+  <ng-template #profileStep>
+    <planet-users-profile-form
+      [form]="usersProfileForm"
+      [submissionMode]="true"
+      [allowAdditionalFields]="false"></planet-users-profile-form>
+  </ng-template>
   <div class="v-align-center action-buttons">
     <button
       mat-raised-button
       color="primary"
       (click)="moveQuestion(1)"
-      [disabled]="!answer.valid || questionNum === maxQuestions">
+      [disabled]="(!isProfileStep && !answer.valid) || questionNum === totalSteps">
       <ng-container i18n>Submit Answer</ng-container>
     </button>
     <button
       mat-raised-button
       color="accent"
       (click)="submitSurvey()"
-      [disabled]="!isComplete || isSubmitting"
+      [disabled]="!isProfileStep || !canSubmit()"
       i18n>
       Finish Survey
     </button>

@@ -27,6 +27,10 @@ type ConfigurationDoc = {
 
 type PublicSubmissionPayload = {
   answers?: any[];
+  user?: {
+    age?: number;
+    gender?: string;
+  };
 };
 
 type StoredPublicAnswer = {
@@ -107,7 +111,7 @@ const buildPublicSubmission = (
   return {
     'parentId': survey._id,
     'parent': sanitizeSurveySnapshot(survey),
-    'user': {},
+    'user': payload.user,
     'type': 'survey',
     'answers': normalizeAnswers(payload.answers),
     'grade': 0,
