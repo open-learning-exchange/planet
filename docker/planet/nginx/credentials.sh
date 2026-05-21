@@ -19,7 +19,7 @@ if [ ! -z "$PLANET_USER" ] && ([ -z "$OLD_USER" ] || [ "$PLANET_USER" == "$OLD_U
   rm -f credentials/credentials.yml
   {
     echo "services:"
-    echo "  planet-gateway:"
+    echo "  gateway:"
     echo "    environment:"
     echo "      - COUCHDB_USER=$PLANET_USER"
     echo "      - COUCHDB_PASS=$PLANET_PASS"

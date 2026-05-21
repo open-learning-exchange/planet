@@ -9,4 +9,4 @@ function upgrade {
 
 upgrade "treehouses/planet:db-init"
 upgrade "treehouses/planet:latest"
-upgrade "treehouses/planet:planet-gateway"
+upgrade "treehouses/planet:gateway"

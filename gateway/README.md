@@ -1,10 +1,10 @@
-## Planet Gateway
+## Gateway
 
 Node gateway service for Planet chat and scoped public operations.
 
 ## Development Notes
 
-Run `cd planet-gateway` and add a `.env` file in the `planet-gateway` directory with:
+Run `cd gateway` and add a `.env` file in the `gateway` directory with:
 
 ```env
 SERVE_PORT=5000

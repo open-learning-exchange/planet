@@ -21,7 +21,7 @@ app.get('/', (req: Request, res: Response) => {
   void req;
   res.status(200).json({
     'status': 'Success',
-    'message': 'OLE Planet Gateway Service',
+    'message': 'OLE Gateway Service',
   });
 });
 
@@ -40,4 +40,4 @@ app.use((error: any, req: Request, res: Response, next: any) => {
 
 const port = Number(process.env.SERVE_PORT || 5000);
 
-server.listen(port, () => console.log(`Planet Gateway running on port ${port}`)); // eslint-disable-line no-console
+server.listen(port, () => console.log(`Gateway running on port ${port}`)); // eslint-disable-line no-console
