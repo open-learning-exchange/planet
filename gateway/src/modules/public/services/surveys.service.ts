@@ -86,7 +86,7 @@ const sanitizeSurveySnapshot = (survey: SurveyDoc) => ({
   'name': survey.name,
   'description': survey.description || '',
   'questions': survey.questions,
-  'type': 'survey'
+  'type': survey.type
 });
 
 const sanitizeTeam = (team: TeamDoc) => ({
@@ -180,6 +180,13 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
     return res.status(400).json({
       'error': 'Bad Request',
       'message': 'answers must contain one entry per survey question'
+    });
+  }
+
+  if (!answers.every((answer) => isValidAnswer(answer))) {
+    return res.status(400).json({
+      'error': 'Bad Request',
+      'message': 'answers must include a response for each survey question'
     });
   }
 
