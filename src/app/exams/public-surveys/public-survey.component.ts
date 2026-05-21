@@ -139,7 +139,6 @@ export class PublicSurveyComponent implements OnInit {
 
   canSubmit() {
     return this.answers.length > 0 &&
-      this.snapshotAnswers().every(storedAnswer => storedAnswer?.valid === true) &&
-      !this.isSubmitting;
+      this.snapshotAnswers().every(storedAnswer => storedAnswer?.valid === true) && this.usersProfileForm.valid && !this.isSubmitting;
   }
 }
