@@ -41,7 +41,7 @@ const fetchDoc = async <T>(db: any, id: string): Promise<T | null> => {
   try {
     return await db.get(id) as T;
   } catch (error: any) {
-    if (error?.statusCode === 404 || error?.statusCode === 401) {
+    if (error?.statusCode === 404) {
       return null;
     }
     throw error;
@@ -65,17 +65,28 @@ const isPublicSurvey = (survey: SurveyDoc | null, teamId: string): survey is Sur
     Array.isArray(survey.questions) &&
     survey.questions.length > 0;
 
+const sanitizePublicQuestion = (question: any) => {
+  const { correctChoice, marks, ...publicQuestion } = question || {};
+  void correctChoice;
+  void marks;
+  return publicQuestion;
+};
+
 const sanitizePublicSurvey = (survey: SurveyDoc) => ({
   '_id': survey._id,
   'name': survey.name,
   'description': survey.description || '',
-  'questions': survey.questions,
+  'questions': survey.questions.map((question) => sanitizePublicQuestion(question)),
   'type': 'survey'
 });
 
 const sanitizeSurveySnapshot = (survey: SurveyDoc) => ({
-  ...sanitizePublicSurvey(survey),
-  '_rev': survey._rev
+  '_id': survey._id,
+  '_rev': survey._rev,
+  'name': survey.name,
+  'description': survey.description || '',
+  'questions': survey.questions,
+  'type': 'survey'
 });
 
 const sanitizeTeam = (team: TeamDoc) => ({
@@ -162,6 +173,13 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
     return res.status(404).json({
       'error': 'Not Found',
       'message': 'Survey not found or not public'
+    });
+  }
+
+  if (answers.length !== survey.questions.length) {
+    return res.status(400).json({
+      'error': 'Bad Request',
+      'message': 'answers must contain one entry per survey question'
     });
   }
 
