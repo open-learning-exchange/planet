@@ -54,7 +54,8 @@ const conditionalValidator = (submissionMode: boolean, validator: ValidatorFn): 
 export const createUsersProfileForm = (
   fb: NonNullableFormBuilder,
   validatorService: ValidatorService,
-  submissionMode: boolean
+  submissionMode: boolean,
+  validateBirthDateInFuture = true
 ): FormGroup<UsersProfileFormGroup> => fb.group<UsersProfileFormGroup>({
   firstName: fb.control('', conditionalValidator(submissionMode, CustomValidators.required)),
   middleName: fb.control(''),
@@ -66,7 +67,7 @@ export const createUsersProfileForm = (
     null,
     {
       validators: conditionalValidator(submissionMode, CustomValidators.dateValidRequired),
-      asyncValidators: submissionMode ? [] : [ (ac: AbstractControl) => validatorService.notDateInFuture$(ac) ]
+      asyncValidators: validateBirthDateInFuture ? [ (ac: AbstractControl) => validatorService.notDateInFuture$(ac) ] : []
     }
   ),
   birthYear: fb.control<number | null>(

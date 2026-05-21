@@ -51,7 +51,7 @@ export class PublicSurveyComponent implements OnInit {
   isSubmitting = false;
   isSubmitted = false;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
-  readonly usersProfileForm = createUsersProfileForm(this.fb, this.validatorService, true);
+  readonly usersProfileForm = createUsersProfileForm(this.fb, this.validatorService, true, false);
 
   get question() {
     return this.survey?.questions[this.questionNum - 1] || null;
