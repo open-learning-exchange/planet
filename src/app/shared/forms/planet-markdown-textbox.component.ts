@@ -29,6 +29,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
+  @HostBinding('class.is-invalid') get isInvalid() {
+    return this.errorState;
+  }
+  @HostBinding('class.is-focused') get isFocused() {
+    return this.focused;
+  }
   @ViewChild('editor') editor;
   @Input() _value: ValueWithImages | string;
   get value(): ValueWithImages | string {
@@ -249,8 +255,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
         this.editor.options.insertTexts.image = [ markdown, '' ];
         this.editor.easyMDE.drawImage();
         this.value = {
-          ...<ValueWithImages>this._value,
-          images: [ ...(<ValueWithImages>this._value).images, { resourceId: image._id, filename: image.filename, markdown } ]
+          ...this._value as ValueWithImages,
+          images: [ ...(this._value as ValueWithImages).images, { resourceId: image._id, filename: image.filename, markdown } ]
         };
       }
     });

@@ -21,11 +21,13 @@
           <mat-label i18n>Year</mat-label>
           <input matInput   formControlName="year">
         </mat-form-field>
-        <mat-form-field class="full-width mat-form-field-type-no-underline">
-          <mat-label i18n>Description</mat-label>
-          <planet-markdown-textbox class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
-          <mat-error><planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages></mat-error>
-        </mat-form-field>
+        <div class="full-width markdown-field">
+          <label for="resource-description" class="header-label markdown-label" i18n>Description</label>
+          <planet-markdown-textbox id="resource-description" class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+          <p class="mat-caption warn-text-color markdown-error" *ngIf="resourceForm.controls.description.touched && resourceForm.controls.description.invalid">
+            <planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages>
+          </p>
+        </div>
         <mat-form-field appearance="outline" subscriptSizing="dynamic" class="full-width mdc-form-field-no-outline">
           <mat-label i18n>Labels</mat-label>
           <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>

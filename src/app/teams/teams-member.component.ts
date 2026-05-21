@@ -9,7 +9,7 @@ import { NgIf, NgFor, DatePipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
-import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
+import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
@@ -84,7 +84,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     });
   }
 
-  toggleTask({ option }) {
+  toggleTask(event: MatSelectionListChange) {
+    const [ option ] = event.options;
+
     this.tasksService.addTask({ ...option.value, completed: option.selected }).subscribe(() => {
       this.tasksService.getTasks();
     });

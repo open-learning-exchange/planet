@@ -1,4 +1,5 @@
-import { Component, Inject, Input, HostListener, forwardRef } from '@angular/core';
+import { Component, DestroyRef, Inject, Input, forwardRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, AsyncValidatorFn, NonNullableFormBuilder, FormControl, FormGroup, ValidationErrors,
   ValidatorFn, FormsModule, ReactiveFormsModule
@@ -71,6 +72,7 @@ export class PlanetTagInputToggleIconComponent {
   ]
 })
 export class PlanetTagInputDialogComponent {
+  private readonly destroyRef = inject(DestroyRef);
 
   deleteDialog: any;
   tags: any[] = [];
@@ -128,11 +130,11 @@ export class PlanetTagInputDialogComponent {
       attachedTo: ['']
     });
     this.isUserAdmin = this.userService.get().isUserAdmin;
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+      });
   }
 
   dataInit() {

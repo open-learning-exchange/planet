@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, HostListener, Input, OnChanges, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, OnChanges, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -10,11 +10,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, of } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, createDeleteArray, filterTags,
-  commonSortingDataAccessor, selectedOutOfFilter, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
+  commonSortingDataAccessor, filterShelf, trackById, filterIds, filterAdvancedSearch, filterSpecificFieldsHybrid
 } from '../shared/table-helpers';
 import * as constants from './constants';
 import { languages } from '../shared/languages';
@@ -26,9 +26,10 @@ import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { CoursesService } from './courses.service';
-import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
+import { dedupeShelfReduce, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { SearchService } from '../shared/forms/search.service';
@@ -87,6 +88,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     return this.courses;
   }
   courses = new MatTableDataSource();
+  private renderedRows: any[] = [];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(CoursesSearchComponent) searchComponent: CoursesSearchComponent;
@@ -95,7 +97,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   @Input() displayedColumns = [ 'select', 'courseTitle', 'info', 'createdDate', 'rating' ];
   @Input() excludeIds = [];
   @Input() includeIds: string[] = [];
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   message = '';
   deleteDialog: any;
   readonly dbName = 'courses';
@@ -141,6 +143,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   trackById = trackById;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   showFilters = false;
   showFiltersRow = false;
   expandedElement: any = null;
@@ -162,6 +165,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private syncService: SyncService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
+    public dialogGuard: DialogGuardService,
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
@@ -173,11 +177,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -186,6 +189,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.userShelf = this.userService.shelf;
     this.courses.filterPredicate = this.filterPredicate;
     this.courses.sortingDataAccessor = commonSortingDataAccessor;
+    this.courses.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
     this.coursesService.coursesListener$(this.parent).pipe(
       takeUntil(this.onDestroy$),
       switchMap((courses: any) => this.parent && courses !== undefined ?
@@ -339,17 +343,15 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
   }
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
     if (this.isAllSelected()) {
       this.selection.clear();
     } else {
-      this.courses.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
     }
   }
 
@@ -378,7 +380,10 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   removeFilteredFromSelection() {
-    this.selection.deselect(...selectedOutOfFilter(this.courses.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visible = new Set(this.renderedRows.map((row: any) => row._id));
+      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
+    });
   }
 
   onSearchChange({ items, category }) {
@@ -467,17 +472,19 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   openSendCourseDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
-      takeUntil(this.onDestroy$)
-    ).subscribe((planet) => {
-      const data = { okClick: this.sendCourse().bind(this),
-        filterPredicate: filterSpecificFields([ 'name' ]),
-        allowMulti: true,
-        ...planet };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data, maxHeight: '500px', width: '600px', autoFocus: false
-      });
-    });
+    this.dialogGuard.open('send-course', () =>
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+        map(planet => this.dialog.open(DialogsListComponent, {
+          data: {
+            okClick: this.sendCourse().bind(this),
+            filterPredicate: filterSpecificFields([ 'name' ]),
+            allowMulti: true,
+            ...planet
+          },
+          maxHeight: '500px', width: '600px', autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   sendCourse() {

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
@@ -168,7 +168,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private configurationCheckService: ConfigurationCheckService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
@@ -211,12 +213,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
+      this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
       this.getCommunityData();
     });
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnDestroy() {

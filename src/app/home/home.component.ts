@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,16 +42,6 @@ import { PulsateIconDirective } from './pulsate-icon.directive';
         width: '175px'
       })),
       transition('closed <=> open', animate('500ms ease'))
-    ]),
-    trigger('slideInOut', [
-      state('open', style({
-        transform: 'translate3d(0,0,0)'
-      })),
-      state('closed', style({
-        transform: 'translate3d(-100%, 0, 0)'
-      })),
-      transition('open => closed', animate('400ms ease-in-out')),
-      transition('closed => open', animate('400ms ease-in-out'))
     ]),
   ],
   imports: [
@@ -112,8 +102,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
@@ -135,7 +127,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngDoCheck() {
-    this.onResize();
+    this.syncToolbarLayout();
   }
 
   ngAfterViewChecked() {
@@ -161,13 +153,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.onDestroy$.complete();
   }
 
-  @HostListener('window:resize') onResize() {
+  syncToolbarLayout() {
     const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
     if (this.forceModern !== isScreenTooNarrow) {
       this.forceModern = isScreenTooNarrow;
     }
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   openLanguageSelector(): void {
