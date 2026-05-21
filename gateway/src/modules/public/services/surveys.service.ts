@@ -124,8 +124,8 @@ const buildPublicSubmission = (
     'grade': 0,
     'status': 'complete',
     'team': sanitizeTeam(team),
-    'source': 'public-link',
-    'parentCode': configuration?.parentCode || configuration?.code || '',
+    'source': configuration?.code || '',
+    'parentCode': configuration?.parentCode || '',
     'startTime': now,
     'lastUpdateTime': now
   };
