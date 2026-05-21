@@ -26,7 +26,7 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { ExamsTakeFrameComponent } from './exams-take/exams-take-frame.component';
+import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
@@ -43,7 +43,7 @@ interface ExamViewForm {
     NgIf, MatToolbar, MatIconAnchor, MatIcon, MatIconButton, MatMenuTrigger, MatMenu,
     MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel,
     FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup,
-    MatRadioButton, MatButton, DatePipe, ExamsTakeFrameComponent, ExamsTakeWidgetComponent
+    MatRadioButton, MatButton, DatePipe, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {

@@ -8,7 +8,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 
-import { ExamsTakeFrameComponent } from '../exams-take/exams-take-frame.component';
+import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
@@ -33,7 +33,7 @@ import { LoginDialogComponent } from '../../login/login-dialog.component';
     }
   `],
   imports: [
-    NgIf, MatIcon, TdMarkdownComponent, ExamsTakeFrameComponent, ExamsTakeWidgetComponent, MatButton, ReactiveFormsModule
+    NgIf, MatIcon, TdMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton, ReactiveFormsModule
   ]
 })
 export class PublicSurveyComponent implements OnInit {

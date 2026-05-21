@@ -3,7 +3,7 @@
   <div class="state-message">{{ errorMessage }}</div>
 </div>
 
-<planet-exams-take-frame
+<planet-exams-question-frame
   *ngIf="survey && !isSubmitted"
   [title]="survey.name"
   [questionNum]="questionNum"
@@ -37,7 +37,7 @@
       <span>{{ errorMessage }}</span>
     </span>
   </div>
-</planet-exams-take-frame>
+</planet-exams-question-frame>
 
 <div *ngIf="survey && isSubmitted" class="state-view primary-text-color">
   <mat-icon>check_circle</mat-icon>
