@@ -34,7 +34,7 @@ export interface UsersProfileFormValue {
 }
 
 export type UsersProfileSubmissionPayload = Omit<UsersProfileFormValue, 'birthYear'>;
-export type UsersProfileDemographicsSubmissionPayload = Pick<UsersProfileSubmissionPayload, 'age' | 'gender'>;
+export type UsersProfileDemographicsSubmissionPayload = Partial<Pick<UsersProfileSubmissionPayload, 'age' | 'gender'>>;
 
 const getNormalizedAge = (birthYear: number | null, age: number | null) => {
   const currentYear = new Date().getFullYear();

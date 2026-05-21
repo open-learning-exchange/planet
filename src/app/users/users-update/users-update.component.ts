@@ -14,7 +14,9 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
-import { UsersProfileFormGroup, createUsersProfileForm, normalizeUsersProfileSubmission } from '../../shared/forms/users-profile-form';
+import {
+  UsersProfileFormGroup, createUsersProfileForm, normalizeUsersProfileSubmission
+} from '../../shared/forms/users-profile-form.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';

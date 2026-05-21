@@ -13,7 +13,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { createUsersProfileForm, normalizeUsersProfileDemographicsSubmission } from '../../shared/forms/users-profile-form';
+import { createUsersProfileForm, normalizeUsersProfileDemographicsSubmission } from '../../shared/forms/users-profile-form.helpers';
 import { UsersProfileFormComponent } from '../../shared/forms/users-profile-form.component';
 import { ValidatorService } from '../../validators/validator.service';
 

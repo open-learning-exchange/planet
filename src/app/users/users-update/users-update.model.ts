@@ -1,4 +1,4 @@
-import { UsersProfileFormValue, UsersProfileSubmissionPayload } from '../../shared/forms/users-profile-form';
+import { UsersProfileFormValue, UsersProfileSubmissionPayload } from '../../shared/forms/users-profile-form.helpers';
 
 export interface UserAttachment {
   content_type: string;

@@ -19,10 +19,7 @@
     <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
   </ng-container>
   <ng-template #profileStep>
-    <planet-users-profile-form
-      [form]="usersProfileForm"
-      [submissionMode]="true"
-      [allowAdditionalFields]="false"></planet-users-profile-form>
+    <planet-users-profile-form [form]="usersProfileForm" [submissionMode]="true" [allowAdditionalFields]="false"></planet-users-profile-form>
   </ng-template>
   <div class="v-align-center action-buttons">
     <button

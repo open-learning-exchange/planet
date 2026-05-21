@@ -128,7 +128,7 @@ const buildPublicSubmission = (
   configuration: ConfigurationDoc | null
 ) => {
   const now = Date.now();
-  const user = sanitizePublicSubmissionUser(payload.user);
+  const user = sanitizePublicSubmissionUser(payload.user) || {};
   return {
     'parentId': survey._id,
     'parent': sanitizeSurveySnapshot(survey),

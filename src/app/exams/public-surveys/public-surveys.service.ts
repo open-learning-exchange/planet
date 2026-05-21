@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
 import { ExamAnswerValue } from '../exams-take/exam-answer.helpers';
-import { UsersProfileDemographicsSubmissionPayload } from '../../shared/forms/users-profile-form';
+import { UsersProfileDemographicsSubmissionPayload } from '../../shared/forms/users-profile-form.helpers';
 
 export interface PublicSurvey {
   _id: string;
