@@ -76,6 +76,9 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     const routeSnapshot = this.route.snapshot;
     if (routeSnapshot.data.submission === true) {
       this.redirectUrl = routeSnapshot.queryParams.teamId ? `/teams/view/${routeSnapshot.queryParams.teamId}` : '/manager/surveys';
+      this.initialFormValues = { ...this.editForm.getRawValue() };
+      this.isFormInitialized = true;
+      this.setupFormValueChanges();
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name') || '';

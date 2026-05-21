@@ -82,7 +82,7 @@ import { UsersProfileFormGroup } from './users-profile-form';
             </mat-error>
           </mat-form-field>
           <mat-form-field>
-            <mat-label i18n>level</mat-label>
+            <mat-label i18n>Level</mat-label>
             <mat-select formControlName="level" [required]="!submissionMode">
               <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
             </mat-select>
@@ -125,7 +125,8 @@ import { UsersProfileFormGroup } from './users-profile-form';
           </mat-form-field>
         </ng-container>
         <button *ngIf="allowAdditionalFields" mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
-          <span>{{ showAdditionalFields ? 'Hide Additional Fields' : 'Show Additional Fields' }}</span>
+          <span *ngIf="showAdditionalFields" i18n>Hide Additional Fields</span>
+          <span *ngIf="!showAdditionalFields" i18n>Show Additional Fields</span>
         </button>
       </ng-container>
     </div>

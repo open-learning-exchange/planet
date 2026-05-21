@@ -13,7 +13,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
-import { createUsersProfileForm, normalizeUsersProfileSubmission } from '../../shared/forms/users-profile-form';
+import { createUsersProfileForm, normalizeUsersProfileDemographicsSubmission } from '../../shared/forms/users-profile-form';
 import { UsersProfileFormComponent } from '../../shared/forms/users-profile-form.component';
 import { ValidatorService } from '../../validators/validator.service';
 
@@ -103,7 +103,7 @@ export class PublicSurveyComponent implements OnInit {
     const teamId = this.route.snapshot.paramMap.get('teamId') || '';
     const surveyId = this.route.snapshot.paramMap.get('surveyId') || '';
     const answers = this.snapshotAnswers().map(storedAnswer => storedAnswer.value || null);
-    const user = this.hasUsersProfileData() ? normalizeUsersProfileSubmission(this.usersProfileForm.getRawValue()) : undefined;
+    const user = normalizeUsersProfileDemographicsSubmission(this.usersProfileForm.getRawValue());
     this.publicSurveysService.submitSurvey(teamId, surveyId, answers, user).subscribe({
       next: () => {
         this.isSubmitted = true;
@@ -141,14 +141,5 @@ export class PublicSurveyComponent implements OnInit {
     return this.answers.length > 0 &&
       this.snapshotAnswers().every(storedAnswer => storedAnswer?.valid === true) &&
       !this.isSubmitting;
-  }
-
-  private hasUsersProfileData() {
-    return Object.values(this.usersProfileForm.getRawValue()).some((value) => {
-      if (typeof value === 'string') {
-        return value.trim() !== '';
-      }
-      return value !== null;
-    });
   }
 }

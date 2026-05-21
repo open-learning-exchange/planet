@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
 import { ExamAnswerValue } from '../exams-take/exam-answer.helpers';
-import { UsersProfileSubmissionPayload } from '../../shared/forms/users-profile-form';
+import { UsersProfileDemographicsSubmissionPayload } from '../../shared/forms/users-profile-form';
 
 export interface PublicSurvey {
   _id: string;
@@ -30,7 +30,7 @@ export class PublicSurveysService {
     return this.http.get<PublicSurveyResponse>(`${this.baseUrl}/${teamId}/${surveyId}`);
   }
 
-  submitSurvey(teamId: string, surveyId: string, answers: ExamAnswerValue[], user?: UsersProfileSubmissionPayload) {
+  submitSurvey(teamId: string, surveyId: string, answers: ExamAnswerValue[], user?: UsersProfileDemographicsSubmissionPayload) {
     return this.http.post(`${this.baseUrl}/${teamId}/${surveyId}/submissions`, { answers, user });
   }
 }

@@ -101,6 +101,26 @@ const normalizeAnswers = (answers: any[] = []): StoredPublicAnswer[] => answers.
   'passed': isValidAnswer(answer)
 }));
 
+const sanitizePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => {
+  if (!user || typeof user !== 'object' || Array.isArray(user)) {
+    return undefined;
+  }
+
+  const sanitizedUser: NonNullable<PublicSubmissionPayload['user']> = {};
+  const age = user.age;
+  const gender = typeof user.gender === 'string' ? user.gender.trim() : '';
+
+  if (typeof age === 'number' && Number.isInteger(age) && age >= 0 && age <= 130) {
+    sanitizedUser.age = age;
+  }
+
+  if (gender === 'male' || gender === 'female') {
+    sanitizedUser.gender = gender;
+  }
+
+  return Object.keys(sanitizedUser).length > 0 ? sanitizedUser : undefined;
+};
+
 const buildPublicSubmission = (
   survey: SurveyDoc,
   team: TeamDoc,
@@ -108,10 +128,11 @@ const buildPublicSubmission = (
   configuration: ConfigurationDoc | null
 ) => {
   const now = Date.now();
+  const user = sanitizePublicSubmissionUser(payload.user);
   return {
     'parentId': survey._id,
     'parent': sanitizeSurveySnapshot(survey),
-    'user': payload.user,
+    user,
     'type': 'survey',
     'answers': normalizeAnswers(payload.answers),
     'grade': 0,

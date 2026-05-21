@@ -34,6 +34,18 @@ export interface UsersProfileFormValue {
 }
 
 export type UsersProfileSubmissionPayload = Omit<UsersProfileFormValue, 'birthYear'>;
+export type UsersProfileDemographicsSubmissionPayload = Pick<UsersProfileSubmissionPayload, 'age' | 'gender'>;
+
+const getNormalizedAge = (birthYear: number | null, age: number | null) => {
+  const currentYear = new Date().getFullYear();
+  const isValidBirthYear = Number.isInteger(birthYear) && birthYear >= 1900 && birthYear <= currentYear - 1;
+
+  if (isValidBirthYear) {
+    return currentYear - Number(birthYear);
+  }
+
+  return age;
+};
 
 const conditionalValidator = (submissionMode: boolean, validator: ValidatorFn): ValidatorFn => (
   (ac) => submissionMode ? null : validator(ac)
@@ -54,7 +66,7 @@ export const createUsersProfileForm = (
     null,
     {
       validators: conditionalValidator(submissionMode, CustomValidators.dateValidRequired),
-      asyncValidators: (ac: AbstractControl) => validatorService.notDateInFuture$(ac)
+      asyncValidators: submissionMode ? [] : [ (ac: AbstractControl) => validatorService.notDateInFuture$(ac) ]
     }
   ),
   birthYear: fb.control<number | null>(
@@ -75,12 +87,28 @@ export const normalizeUsersProfileSubmission = (
   formValue: UsersProfileFormValue
 ): UsersProfileSubmissionPayload => {
   const { birthYear, ...user } = formValue;
-  const normalizedAge = birthYear && birthYear.toString().length === 4
-    ? new Date().getFullYear() - Number(birthYear)
-    : user.age;
+  const normalizedAge = getNormalizedAge(birthYear, user.age);
 
   return {
     ...user,
     'age': normalizedAge
   };
+};
+
+export const normalizeUsersProfileDemographicsSubmission = (
+  formValue: UsersProfileFormValue
+): UsersProfileDemographicsSubmissionPayload | undefined => {
+  const normalizedAge = getNormalizedAge(formValue.birthYear, formValue.age);
+  const normalizedGender = formValue.gender.trim();
+  const user: UsersProfileDemographicsSubmissionPayload = {};
+
+  if (normalizedAge !== null) {
+    user.age = normalizedAge;
+  }
+
+  if (normalizedGender) {
+    user.gender = normalizedGender;
+  }
+
+  return Object.keys(user).length > 0 ? user : undefined;
 };
