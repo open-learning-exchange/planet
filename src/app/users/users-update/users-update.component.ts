@@ -1,6 +1,6 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {
-  AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
+  FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
@@ -8,65 +8,37 @@ import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
-import { languages } from '../../shared/languages';
-import { CustomValidators } from '../../validators/custom-validators';
-import { StateService } from '../../shared/state.service';
 import { ValidatorService } from '../../validators/validator.service';
 import { showFormErrors } from '../../shared/table-helpers';
-import { educationLevel } from '../user-constants';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+import {
+  UsersProfileFormGroup, createUsersProfileForm, normalizeUsersProfileSubmission
+} from '../../shared/forms/users-profile-form.helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+import { NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError, MatSuffix, MatHint } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
-import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/autocomplete';
-import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { MatTooltip } from '@angular/material/tooltip';
-import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-
-interface UsersUpdateFormGroup {
-  firstName: FormControl<string>;
-  middleName: FormControl<string>;
-  lastName: FormControl<string>;
-  email: FormControl<string>;
-  language: FormControl<string>;
-  phoneNumber: FormControl<string>;
-  birthDate: FormControl<string | Date | null>;
-  birthYear: FormControl<number | null>;
-  age: FormControl<number | null>;
-  gender: FormControl<string>;
-  level: FormControl<string>;
-  betaEnabled: FormControl<boolean>;
-}
+import { UsersProfileFormComponent } from '../../shared/forms/users-profile-form.component';
 
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
     MatToolbar, NgIf, MatIconButton, MatIcon, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule,
-    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput,
-    MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton,
-    MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective,
-    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose
+    MatButton, SubmitDirective, CdkScrollable, MatDialogContent, ImageCropperComponent,
+    MatDialogActions, MatDialogClose, UsersProfileFormComponent
   ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
   initialFormValues: UsersUpdateFormValue | null = null;
-  educationLevel = educationLevel;
   readonly dbName = '_users'; // make database name a constant
-  editForm: FormGroup<UsersUpdateFormGroup>;
+  editForm: FormGroup<UsersProfileFormGroup>;
   currentImgKey: string | null = null;
   currentProfileImg = 'assets/image.png';
   previewSrc = 'assets/image.png';
@@ -77,11 +49,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   file: string | null = null;
   title = '';
   roles: string[] = [];
-  languages = languages;
   submissionMode = false;
-  showAdditionalFields = false;
-  planetConfiguration = this.stateService.configuration;
-  minBirthDate: Date = this.userService.minBirthDate;
   hasUnsavedChanges = false;
   avatarChanged = false;
   attachmentDeleted = false;
@@ -97,11 +65,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private stateService: StateService,
     private validatorService: ValidatorService,
     private dialog: MatDialog
   ) {
-    this.userData();
+    this.submissionMode = this.route.snapshot.data.submission === true;
+    this.editForm = createUsersProfileForm(this.fb, this.validatorService, this.submissionMode);
     const nav = this.router.getCurrentNavigation();
     this.title = nav?.extras?.state?.['title'] || '';
   }
@@ -109,8 +77,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   ngOnInit() {
     const routeSnapshot = this.route.snapshot;
     if (routeSnapshot.data.submission === true) {
-      this.submissionMode = true;
       this.redirectUrl = routeSnapshot.queryParams.teamId ? `/teams/view/${routeSnapshot.queryParams.teamId}` : '/manager/surveys';
+      this.initialFormValues = { ...this.editForm.getRawValue() };
+      this.isFormInitialized = true;
+      this.setupFormValueChanges();
       return;
     }
     this.urlName = this.route.snapshot.paramMap.get('name') || '';
@@ -138,37 +108,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       });
   }
 
-  userData() {
-    this.editForm = this.fb.group<UsersUpdateFormGroup>({
-      firstName: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
-      middleName: this.fb.control(''),
-      lastName: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
-      email: this.fb.control('', [ this.conditionalValidator(Validators.required), Validators.email ]),
-      language: this.fb.control('', this.conditionalValidator(Validators.required)),
-      phoneNumber: this.fb.control('', this.conditionalValidator(CustomValidators.required)),
-      birthDate: this.fb.control<string | Date | null>(
-        null,
-        {
-          validators: this.conditionalValidator(CustomValidators.dateValidRequired),
-          asyncValidators: (ac: AbstractControl) => this.validatorService.notDateInFuture$(ac)
-        }
-      ),
-      birthYear: this.fb.control<number | null>(
-        null,
-        [
-          Validators.min(1900),
-          Validators.max(new Date().getFullYear() - 1),
-          Validators.pattern(/^\d{4}$/)
-        ]
-      ),
-      age: this.fb.control<number | null>(null),
-      gender: this.fb.control('', this.conditionalValidator(Validators.required)),
-      level: this.fb.control('', this.conditionalValidator(Validators.required)),
-      betaEnabled: this.fb.control(false)
-    });
-    this.initialFormValues = { ...this.editForm.getRawValue() };
-  }
-
   setupFormValueChanges() {
     this.editForm.valueChanges.subscribe(() => {
       if (this.isFormInitialized) {
@@ -177,18 +116,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     });
   }
 
-  conditionalValidator(validator: ValidatorFn): ValidatorFn {
-    return (ac) => this.submissionMode ? null : validator(ac);
-  }
-
   onSubmit() {
-    // exports don't break: calculate age from birthYear form validation
-    const birthYear = this.editForm.controls.birthYear.value;
-    if (birthYear && birthYear.toString().length === 4) {
-      const calculatedAge = new Date().getFullYear() - Number(birthYear);
-      this.editForm.patchValue({ age: calculatedAge }, { emitEvent: false });
-    }
-
     if (!this.editForm.valid) {
       showFormErrors(this.editForm.controls);
       return;
@@ -199,9 +127,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   submitUser() {
     if (this.submissionMode) {
-      // Remove birthYear from submitted data
-      const { birthYear, ...cleanUserData } = this.editForm.getRawValue();
-      this.appendToSurvey(cleanUserData);
+      this.appendToSurvey(normalizeUsersProfileSubmission(this.editForm.getRawValue()));
     } else {
       const attachment = this.file ? this.createAttachmentObj(this.file) : {};
       const updatedUser: UserDocument = { ...this.user, ...this.editForm.getRawValue(), ...attachment };
@@ -328,10 +254,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
 
   private getHasUnsavedChanges(): boolean {
     return !this.isFormPristine() || this.avatarChanged;
-  }
-
-  get additionalFieldsButtonText(): string {
-    return this.showAdditionalFields ? $localize`Hide Additional Fields` : $localize`Show Additional Fields`;
   }
 
   openImageEditDialog(event: Event): void {

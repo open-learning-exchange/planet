@@ -1,0 +1,32 @@
+.form-space {
+  display: grid;
+  grid-template-areas:
+    'form-names'
+    'form-contacts'
+    'form-dropdowns'
+    'radio-group';
+  gap: 1rem;
+  justify-content: center;
+}
+
+.profile-names {
+  grid-area: form-names;
+}
+
+.profile-contacts {
+  grid-area: form-contacts;
+}
+
+.profile-dropdowns {
+  grid-area: form-dropdowns;
+}
+
+.profile-names mat-form-field,
+.profile-contacts mat-form-field,
+.profile-dropdowns mat-form-field {
+  margin-right: 1rem;
+}
+
+.radio-group {
+  grid-area: radio-group;
+}
