@@ -1,24 +1,36 @@
-import { Component, OnInit, isDevMode, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, isDevMode, OnDestroy } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { filterSpecificFields, createDeleteArray } from '../shared/table-helpers';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
 import { CoursesService } from '../courses/courses.service';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { ManagerService } from './manager.service';
 import { StateService } from '../shared/state.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { PlanetBetaDirective } from '../shared/beta.directive';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 
 @Component({
   templateUrl: './manager-dashboard.component.html',
-  styleUrls: [ './manager-dashboard.scss' ]
+  styleUrls: ['./manager-dashboard.scss'],
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, AuthorizedRolesDirective, MatAnchor, MatButton, PlanetBetaDirective,
+    MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe
+  ]
 })
 
 export class ManagerDashboardComponent implements OnInit, OnDestroy {
@@ -55,7 +67,8 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private configurationService: ConfigurationService,
     private stateService: StateService,
-    private managerService: ManagerService
+    private managerService: ManagerService,
+    private dialogGuard: DialogGuardService
   ) {}
 
   ngOnInit() {
@@ -118,7 +131,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   checkRequestStatus() {
-    this.couchService.post(`communityregistrationrequests/_find`,
+    this.couchService.post('communityregistrationrequests/_find',
       findDocuments(
         { 'code': this.planetConfiguration.code },
         [ 'registrationRequest' ]
@@ -192,25 +205,29 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   sendOnAccept(db: string) {
-    this.dialogsListService.getListAndColumns(db).pipe(takeUntil(this.onDestroy$)).subscribe(res => {
-      const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true),
-        initialSelection = previousList.map((doc: any) => doc._id);
-      const data = {
-        okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
-        filterPredicate: this.setFilterPredicate(db),
-        itemDescription: db,
-        nameProperty: db === 'courses' ? 'courseTitle' : 'title',
-        allowMulti: true,
-        initialSelection,
-        selectionOptional: true,
-        ...res };
-      this.dialogRef = this.dialog.open(DialogsListComponent, {
-        data: data,
-        maxHeight: '500px',
-        width: '600px',
-        autoFocus: false
-      });
-    });
+    this.dialogGuard.open(`send-on-accept:${db}`, () =>
+      this.dialogsListService.getListAndColumns(db).pipe(
+        map(res => {
+          const previousList = res.tableData.filter((doc: any) => doc.sendOnAccept === true);
+          const initialSelection = previousList.map((doc: any) => doc._id);
+          return this.dialog.open(DialogsListComponent, {
+            data: {
+              okClick: this.sendOnAcceptOkClick(db, previousList).bind(this),
+              filterPredicate: this.setFilterPredicate(db),
+              itemDescription: db,
+              nameProperty: db === 'courses' ? 'courseTitle' : 'title',
+              allowMulti: true,
+              initialSelection,
+              selectionOptional: true,
+              ...res
+            },
+            maxHeight: '500px',
+            width: '600px',
+            autoFocus: false
+          });
+        })
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   sendOnAcceptOkClick(db: string, previousList: any) {

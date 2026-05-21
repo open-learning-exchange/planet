@@ -7,7 +7,8 @@
 // Be sure that you only ever include this mixin once!
 @include mat.all-component-typographies();
 @include mat.typography-hierarchy(mat.m2-define-typography-config());
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 
 
 @include mat.all-component-themes(v.$planet-app-theme);
@@ -30,7 +31,7 @@ $accent-map: (
     )
   ));
   .planet-#{$section}-theme {
-    @include mat.all-component-themes($theme);
+    @include mat.all-component-colors($theme);
 
     .accent-color {
       background-color: mat.m2-get-color-from-palette($accent-palette, v.$accent-hue);

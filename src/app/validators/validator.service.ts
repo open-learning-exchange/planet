@@ -77,7 +77,7 @@ export class ValidatorService {
 
   public checkPassword$(ac: AbstractControl): Observable<boolean> {
     return this.couchService.post(
-      'session',
+      '_session',
       { 'name': this.userService.get().name, 'password': ac.value },
       { withCredentials: false }
     ).pipe(

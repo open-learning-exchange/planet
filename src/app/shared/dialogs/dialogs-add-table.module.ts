@@ -12,12 +12,10 @@ import { DialogsAddTableComponent } from './dialogs-add-table.component';
     MaterialModule,
     CoursesModule,
     UsersModule,
-    TeamsModule
-  ],
-  exports: [
+    TeamsModule,
     DialogsAddTableComponent
   ],
-  declarations: [
+  exports: [
     DialogsAddTableComponent
   ]
 })

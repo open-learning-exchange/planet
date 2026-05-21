@@ -1,9 +1,7 @@
 import { Directive, TemplateRef, ViewContainerRef, OnInit, Input } from '@angular/core';
 import { UserService } from './user.service';
 
-@Directive({
-  selector: '[planetBeta]'
-})
+@Directive({ selector: '[planetBeta]' })
 export class PlanetBetaDirective implements OnInit {
 
   constructor(

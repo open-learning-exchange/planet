@@ -1,27 +1,24 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CouchService } from '../shared/couchdb.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { UserService } from '../shared/user.service';
-import { switchMap, catchError, map } from 'rxjs/operators';
-import { from, forkJoin, Observable, of, throwError } from 'rxjs';
 import {
-  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ValidationErrors, ValidatorFn, Validators
+  AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule,
+  ValidationErrors, ValidatorFn, Validators
 } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { from, Observable, of, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { MaterialModule } from '../shared/material.module';
+import { PlanetFormsModule } from '../shared/forms/planet-forms.module';
+import { SharedComponentsModule } from '../shared/shared-components.module';
+import { CouchService } from '../shared/couchdb.service';
+import { UserService } from '../shared/user.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { environment } from '../../environments/environment';
 import { ValidatorService } from '../validators/validator.service';
-import { SyncService } from '../shared/sync.service';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
-import { PouchService } from '../shared/database/pouch.service';
 import { StateService } from '../shared/state.service';
 import { showFormErrors } from '../shared/table-helpers';
-import { HealthService } from '../health/health.service';
-import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-notifications-dialog.component';
-import { SubmissionsService } from '../submissions/submissions.service';
-import { findDocuments } from '../shared/mangoQueries';
-import { dedupeObjectArray } from '../shared/utils';
+import { LoginTasksService } from './login-tasks.service';
 
 interface LoginFormControls {
   name: FormControl<string>;
@@ -43,13 +40,13 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
 @Component({
   templateUrl: './login-form.component.html',
   selector: 'planet-login-form',
-  styleUrls: [ './login.scss' ]
+  styleUrls: ['./login.scss'],
+  imports: [ CommonModule, ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule ]
 })
 export class LoginFormComponent {
   public userForm!: LoginFormGroup | RegisterFormGroup;
   showPassword = false;
   showRepeatPassword = false;
-  notificationDialog!: MatDialogRef<DashboardNotificationsDialogComponent>;
   @Input() createMode = false;
   @Input() isDialog = false;
   @Output() loginEvent = new EventEmitter<'loggedOut' | 'loggedIn'>();
@@ -58,17 +55,13 @@ export class LoginFormComponent {
     private couchService: CouchService,
     private router: Router,
     private route: ActivatedRoute,
-    private dialog: MatDialog,
     private userService: UserService,
     private fb: NonNullableFormBuilder,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private syncService: SyncService,
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
-    private pouchService: PouchService,
-    private healthService: HealthService,
-    private submissionsService: SubmissionsService
+    private loginTasksService: LoginTasksService
   ) {
     if (!this.isDialog) {
       this.createMode = this.router.url.split('?')[0] === '/login/newmember';
@@ -140,12 +133,6 @@ export class LoginFormComponent {
     );
   }
 
-  createParentSession({ name, password }: LoginCredentials) {
-    return this.couchService.post('_session',
-      { 'name': name, 'password': password },
-      { withCredentials: true, domain: this.stateService.configuration.parentDomain });
-  }
-
   async checkArchiveStatus(name: string): Promise<boolean> {
     try {
       const userData = await this.couchService.get('_users/org.couchdb.user:' + name).toPromise();
@@ -169,27 +156,21 @@ export class LoginFormComponent {
       if (await this.checkArchiveStatus(name)) {
         return;
       }
+      if (this.isDialog) {
+        this.pouchAuthService.login(name, password).pipe(
+          switchMap((userCtx) => this.userService.setUserAndShelf(userCtx))
+        ).subscribe(() => {
+          this.loginEvent.emit('loggedIn');
+          this.loginTasksService.runPostLoginTasks(name, password, isCreate, userId, configuration);
+        }, this.loginError.bind(this));
+        return;
+      }
       this.pouchAuthService.login(name, password).pipe(
-        switchMap((userCtx) => (this.isDialog ?
-          this.userService.setUserAndShelf(userCtx) :
-          isCreate ?
-            from(this.router.navigate([ 'users/update/' + name ])) :
-            from(this.reRoute())
+        switchMap(() => (isCreate ?
+          from(this.router.navigate([ 'users/update/' + name ])) :
+          from(this.reRoute())
         )),
-        switchMap(() => forkJoin(this.pouchService.replicateFromRemoteDBs())),
-        switchMap(this.createSession(name, password)),
-        switchMap((sessionData) => {
-          const adminName = configuration.adminName.split('@')[0];
-          return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
-        }),
-        switchMap(() => this.submissionsService.getSubmissions(findDocuments({ type: 'survey', status: 'pending', 'user.name': name }))),
-        map((surveys) => {
-          const uniqueSurveys = dedupeObjectArray(surveys, [ 'parentId' ]);
-          if (uniqueSurveys.length > 0) {
-            this.openNotificationsDialog(uniqueSurveys);
-          }
-        }),
-        switchMap(() => this.healthService.userHealthSecurity(this.healthService.userDatabaseName(userId))),
+        switchMap(() => this.loginTasksService.postLoginTasks$(name, password, isCreate, userId, configuration)),
         catchError(error => error.status === 404 ? of({}) : throwError(error))
       ).subscribe(() => {
         this.loginEvent.emit('loggedIn');
@@ -217,71 +198,6 @@ export class LoginFormComponent {
       this.userForm.setErrors({ 'invalid': true });
       this.planetMessageService.showAlert(message);
     };
-  }
-
-  sendNotifications(userName: string, addedMember: string) {
-    const data = {
-      'user': 'org.couchdb.user:' + userName,
-      'message': $localize`New member <b>${addedMember}</b> has joined.`,
-      'link': '/manager/users/profile/' + addedMember,
-      'type': 'new user',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
-    return this.couchService.updateDocument('notifications', data);
-  }
-
-  createSession(name: string, password: string) {
-    const msg = this.stateService.configuration.planetType === 'community' ? 'nation' : 'center';
-    return () => {
-      // Post new session info to login_activity
-      const obsArr = this.loginObservables(name, password);
-      return forkJoin(obsArr).pipe(catchError(error => {
-        // 401 is for Unauthorized
-        if (error.status === 401) {
-          this.planetMessageService.showMessage($localize`Can not login to ${msg} planet.`);
-        } else {
-          this.planetMessageService.showMessage($localize`Error connecting to ${msg}.`);
-        }
-        return of(error);
-      }));
-    };
-  }
-
-  loginObservables(name: string, password: string) {
-    const obsArr = [ this.userService.newSessionLog() ];
-    const localConfig = this.stateService.configuration;
-    if (environment.test || this.userService.get().roles.indexOf('_admin') === -1 || localConfig.planetType === 'center') {
-      return obsArr;
-    }
-    obsArr.push(this.createParentSession({ 'name': name + '@' + localConfig.code, 'password': password }));
-    if (localConfig.registrationRequest === 'pending') {
-      obsArr.push(this.getConfigurationSyncDown(localConfig, { name, password }));
-    }
-    return obsArr;
-  }
-
-  getConfigurationSyncDown(configuration: { code: string }, credentials: LoginCredentials) {
-    const replicators = {
-      dbSource: 'communityregistrationrequests',
-      dbTarget: 'configurations',
-      type: 'pull',
-      date: true,
-      selector: {
-        code: configuration.code
-      }
-    };
-    return this.syncService.sync(replicators, credentials);
-  }
-
-  openNotificationsDialog(surveys: Array<{ parentId: string }>) {
-    this.notificationDialog = this.dialog.open(DashboardNotificationsDialogComponent, {
-      data: { surveys },
-      maxWidth: '60vw',
-      maxHeight: '90vh',
-      autoFocus: false
-    });
   }
 
   toggleMode() {

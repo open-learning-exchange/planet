@@ -6,8 +6,8 @@
 
 <div class="planet-users-achievements-update space-container">
   <mat-toolbar class="primary-color font-size-1">
-    <span *ngIf="user?.firstName; else elseBlock">{{ user.firstName}} {{user.middleName}} {{user.lastName }}</span>
-    <ng-template #elseBlock>{{ user.name }}</ng-template>
+    <span *ngIf="user?.firstName; else elseBlock">{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
+    <ng-template #elseBlock>{{ user.name | truncateText:40 }}</ng-template>
   </mat-toolbar>
   <div class="view-container view-full-height">
     <div class="achievements-forms-container">
@@ -96,6 +96,24 @@
           </planet-step-list>
           <p class="warn-text-color mat-caption" *ngIf="sectionError('links')">{{ sectionError('links') }}</p>
           <button type="button" (click)="addLink()" mat-stroked-button color="primary" i18n>Enter a Link</button>
+        </div>
+        <div>
+          <p class="mat-hint mat-caption" i18n>Upload your CV/Resume below (PDF only)</p>
+          <div class="existing-file-container">
+            <planet-file-input #resumeInput accept=".pdf,application/pdf" (fileChange)="onResumeSelected($event)"></planet-file-input>
+            <button mat-icon-button type="button" *ngIf="resumeFile" (click)="clearResumeSelection()" i18n-matTooltip matTooltip="Remove new attachment">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
+          <div class="existing-file-container" *ngIf="currentResumeFileName">
+            <p class="mat-caption existing-resume">
+              <ng-container i18n>Current CV/Resume:</ng-container> {{ currentResumeFileName }}
+            </p>
+            <button mat-icon-button type="button" (click)="removeExistingResume()" i18n-matTooltip matTooltip="Remove existing attachment">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
+          <p class="warn-text-color mat-caption" *ngIf="resumeUploadError">{{ resumeUploadError }}</p>
         </div>
         <mat-checkbox formControlName="sendToNation" class="full-width achievements-checkbox" i18n>
           Allow your achievements to be shared with the nation

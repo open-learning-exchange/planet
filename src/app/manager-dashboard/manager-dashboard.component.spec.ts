@@ -9,7 +9,7 @@ describe('ManagerDashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ManagerDashboardComponent ]
+      imports: [ManagerDashboardComponent]
     }).compileComponents();
   }));
 

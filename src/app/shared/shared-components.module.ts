@@ -26,10 +26,35 @@ import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
+import { PreviewOverflowDirective } from './preview-overflow.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule
+    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule,
+    PlanetLoadingSpinnerComponent,
+    PlanetLocalStatusComponent,
+    SubmitDirective,
+    PlanetLanguageComponent,
+    ResourcesMenuComponent,
+    LowercaseDirective,
+    AuthorizedRolesDirective,
+    PlanetBetaDirective,
+    FilteredAmountComponent,
+    TasksComponent,
+    FilterAssigneePipe,
+    AssigneeNamePipe,
+    PlanetRoleComponent,
+    PlanetMarkdownComponent,
+    CommunityListComponent,
+    LabelComponent,
+    LanguageLabelComponent,
+    TimePipe,
+    AvatarComponent,
+    RestrictDiacriticsDirective,
+    ChatOutputDirective,
+    TruncateTextPipe,
+    TimeAgoPipe,
+    PreviewOverflowDirective
   ],
   exports: [
     PlanetLocalStatusComponent,
@@ -55,32 +80,8 @@ import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.componen
     ChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
-    TimeAgoPipe
-  ],
-  declarations: [
-    PlanetLoadingSpinnerComponent,
-    PlanetLocalStatusComponent,
-    SubmitDirective,
-    PlanetLanguageComponent,
-    ResourcesMenuComponent,
-    LowercaseDirective,
-    AuthorizedRolesDirective,
-    PlanetBetaDirective,
-    FilteredAmountComponent,
-    TasksComponent,
-    FilterAssigneePipe,
-    AssigneeNamePipe,
-    PlanetRoleComponent,
-    PlanetMarkdownComponent,
-    CommunityListComponent,
-    LabelComponent,
-    LanguageLabelComponent,
-    TimePipe,
-    AvatarComponent,
-    RestrictDiacriticsDirective,
-    ChatOutputDirective,
-    TruncateTextPipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    PreviewOverflowDirective
   ],
   providers: [
     TimePipe

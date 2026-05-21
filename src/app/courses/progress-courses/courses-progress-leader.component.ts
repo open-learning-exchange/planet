@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -11,14 +11,32 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { CoursesProgressChartComponent } from './courses-progress-chart.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styles: [ `
+  styles: [`
     mat-toolbar.primary-color {
       padding-top: 8px;
     }
-  ` ]
+  `],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton,
+    MatMenuTrigger, MatMenu, PlanetSelectorComponent, MatFormField, MatLabel,
+    MatSelect, NgFor, MatOption, MatButton, CoursesProgressChartComponent,
+    PlanetLoadingSpinnerComponent, TruncateTextPipe
+  ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
 
@@ -51,7 +69,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
@@ -74,11 +94,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   setProgress(course) {

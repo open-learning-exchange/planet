@@ -28,7 +28,16 @@ import { ReportsHealthComponent } from './reports/reports-health.component';
 import { ManagerCurrencyComponent } from './manager-currency.component';
 
 @NgModule({
-  declarations: [
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetFormsModule,
+    MaterialModule,
+    PlanetDialogsModule,
+    ManagerDashboardRouterModule,
+    ConfigurationModule,
+    SharedComponentsModule,
     ManagerAIServicesComponent,
     ManagerDashboardComponent,
     ManagerSyncComponent,
@@ -48,17 +57,6 @@ import { ManagerCurrencyComponent } from './manager-currency.component';
     ReportsDetailActivitiesComponent,
     ReportsHealthComponent,
     ManagerCurrencyComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    PlanetFormsModule,
-    MaterialModule,
-    PlanetDialogsModule,
-    ManagerDashboardRouterModule,
-    ConfigurationModule,
-    SharedComponentsModule
   ]
 })
 export class ManagerDashboardModule {}

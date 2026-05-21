@@ -8,6 +8,8 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
+import { NgIf, DatePipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-form-error-messages',
@@ -48,7 +50,8 @@ import { AbstractControl, AbstractControlDirective } from '@angular/forms';
     <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
       {{date === undefined ? '' : ' ' + (date | date)}}
     </ng-container>
-  `
+  `,
+  imports: [NgIf, MatTooltip, DatePipe]
 })
 export class FormErrorMessagesComponent implements OnInit {
 
