@@ -41,13 +41,13 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            base_image: node:22-bookworm-slim
+            base_image: node:20-bookworm-slim
             platform: linux/amd64
           - arch: arm
-            base_image: node:22-bookworm-slim
+            base_image: node:20-bookworm-slim
             platform: linux/arm/v7
           - arch: arm64
-            base_image: node:22-bookworm-slim
+            base_image: node:20-bookworm-slim
             platform: linux/arm64
 
     steps:
