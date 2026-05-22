@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:20-bookworm-slim
+ARG BASE_IMAGE=node:22-bookworm-slim
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"

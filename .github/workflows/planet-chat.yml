@@ -41,11 +41,11 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            base_image: treehouses/node:3.16
+            base_image: node:22-bookworm-slim
           - arch: arm
-            base_image: treehouses/node-tags:arm-3.16
+            base_image: arm32v7/node:22-bookworm-slim
           - arch: arm64
-            base_image: treehouses/node-tags:arm64-3.16
+            base_image: arm64v8/node:22-bookworm-slim
 
     steps:
       - name: Checkout Code
