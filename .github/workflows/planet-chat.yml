@@ -42,10 +42,13 @@ jobs:
         include:
           - arch: amd64
             base_image: node:22-bookworm-slim
+            platform: linux/amd64
           - arch: arm
-            base_image: arm32v7/node:22-bookworm-slim
+            base_image: node:22-bookworm-slim
+            platform: linux/arm/v7
           - arch: arm64
-            base_image: arm64v8/node:22-bookworm-slim
+            base_image: node:22-bookworm-slim
+            platform: linux/arm64
 
     steps:
       - name: Checkout Code
@@ -62,7 +65,8 @@ jobs:
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build \
+          DOCKER_BUILDKIT=1 docker build \
+            --platform '${{ matrix.platform }}' \
             -f './docker/chatapi/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
             -t $repo .
