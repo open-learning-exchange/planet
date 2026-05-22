@@ -41,11 +41,14 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            base_image: treehouses/node:3.18
+            base_image: node:20-bookworm-slim
+            platform: linux/amd64
           - arch: arm
-            base_image: treehouses/node-tags:arm-3.18
+            base_image: node:20-bookworm-slim
+            platform: linux/arm/v7
           - arch: arm64
-            base_image: treehouses/node-tags:arm64-3.18
+            base_image: node:20-bookworm-slim
+            platform: linux/arm64
 
     steps:
       - name: Checkout Code
@@ -62,7 +65,8 @@ jobs:
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker build \
+          DOCKER_BUILDKIT=1 docker build \
+            --platform '${{ matrix.platform }}' \
             -f './docker/db-init/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
             -t $repo .
