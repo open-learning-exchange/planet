@@ -15,19 +15,20 @@ import { trackById } from '../shared/table-helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgSwitch, NgSwitchCase, NgIf, NgFor, NgClass, DatePipe, KeyValuePipe } from '@angular/common';
+import { NgIf, NgFor, NgClass, DatePipe, KeyValuePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
 
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: ['./feedback-view.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgSwitch, NgSwitchCase, NgIf,
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgIf,
     MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput,
     FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe
   ]
@@ -95,6 +96,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
+    this.feedback.type = normalizeFeedbackType(this.feedback.type);
+    this.feedback.status = normalizeFeedbackStatus(this.feedback.status);
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
@@ -107,8 +110,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   postMessage() {
     let reopen = {};
-    if (this.feedback.status === 'Closed') {
-      reopen = { status: 'Reopened', closeTime: '' };
+    if (this.feedback.status === 'closed') {
+      reopen = { status: normalizeFeedbackStatus('reopened'), closeTime: '' };
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
@@ -212,6 +215,18 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   get feedbackNavigationLabel(): string {
     return this.navigationLabels[this.feedback?.state] || '';
+  }
+
+  get feedbackDisplayTitle(): string {
+    return getFeedbackDisplayTitle(this.feedback);
+  }
+
+  get feedbackTypeIcon(): string {
+    return getFeedbackTypeIcon(this.feedback?.type);
+  }
+
+  get isClosed(): boolean {
+    return normalizeFeedbackStatus(this.feedback?.status) === 'closed';
   }
 
 }
