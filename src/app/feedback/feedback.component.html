@@ -87,8 +87,8 @@
       <ng-container matColumnDef="priority">
         <mat-header-cell *matHeaderCellDef mat-sort-header="priority" i18n>Priority</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <mat-chip-set *ngIf="element.priority === 'yes'" aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent">{{element.displayPriority}}</mat-chip></mat-chip-set>
-          <mat-chip-set *ngIf="element.priority === 'no'" aria-label="Priority" i18n-aria-label><mat-chip>{{element.displayPriority}}</mat-chip></mat-chip-set>
+          <mat-chip-set *ngIf="element.normalizedPriority === 'yes'" aria-label="Priority" i18n-aria-label><mat-chip highlighted color="accent">{{element.displayPriority}}</mat-chip></mat-chip-set>
+          <mat-chip-set *ngIf="element.normalizedPriority === 'no'" aria-label="Priority" i18n-aria-label><mat-chip>{{element.displayPriority}}</mat-chip></mat-chip-set>
         </mat-cell>
       </ng-container>
       <!-- Owner Column -->
@@ -102,8 +102,8 @@
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <mat-chip-set *ngIf="element.status === 'open' || element.status === 'reopened'" aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.displayStatus}}</mat-chip></mat-chip-set>
-            <mat-chip-set *ngIf="element.status === 'closed'" aria-label="Status" i18n-aria-label><mat-chip>{{element.displayStatus}}</mat-chip></mat-chip-set>
+            <mat-chip-set *ngIf="element.normalizedStatus === 'open' || element.normalizedStatus === 'reopened'" aria-label="Status" i18n-aria-label><mat-chip highlighted>{{element.displayStatus}}</mat-chip></mat-chip-set>
+            <mat-chip-set *ngIf="element.normalizedStatus === 'closed'" aria-label="Status" i18n-aria-label><mat-chip>{{element.displayStatus}}</mat-chip></mat-chip-set>
           </mat-cell>
       </ng-container>
       <!-- OpenTime Column -->
@@ -137,11 +137,11 @@
               <mat-icon>delete_forever</mat-icon>
               <span i18n>Delete</span>
             </button>
-            <button mat-menu-item *ngIf="element.status !== 'closed'" (click)="closeFeedback(element)">
+            <button mat-menu-item *ngIf="element.normalizedStatus !== 'closed'" (click)="closeFeedback(element)">
               <mat-icon>close</mat-icon>
               <span i18n>Close</span>
             </button>
-            <button mat-menu-item *ngIf="element.status === 'closed'" (click)="openFeedback(element)">
+            <button mat-menu-item *ngIf="element.normalizedStatus === 'closed'" (click)="openFeedback(element)">
               <mat-icon>lock_open</mat-icon>
               <span i18n>Re-open</span>
             </button>

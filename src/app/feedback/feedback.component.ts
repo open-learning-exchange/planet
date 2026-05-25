@@ -168,9 +168,9 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         const displayTitle = truncateText(getFeedbackDisplayTitle(feedback), 100);
         return {
           ...feedback,
-          type: normalizedType,
-          priority: normalizedPriority,
-          status: normalizedStatus,
+          normalizedType,
+          normalizedPriority,
+          normalizedStatus,
           displayTitle,
           displayType: getFeedbackTypeLabel(normalizedType),
           displayPriority: getFeedbackPriorityLabel(normalizedPriority),

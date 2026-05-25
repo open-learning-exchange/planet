@@ -58,6 +58,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParamsButton = false;
   users = {};
   trackById = trackById;
+  normalizedType = '';
+  normalizedStatus = '';
 
   constructor(
     private couchService: CouchService,
@@ -96,8 +98,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
-    this.feedback.type = normalizeFeedbackType(this.feedback.type);
-    this.feedback.status = normalizeFeedbackStatus(this.feedback.status);
+    this.normalizedType = normalizeFeedbackType(this.feedback.type);
+    this.normalizedStatus = normalizeFeedbackStatus(this.feedback.status);
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
@@ -110,7 +112,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   postMessage() {
     let reopen = {};
-    if (this.feedback.status === 'closed') {
+    if (this.normalizedStatus === 'closed') {
       reopen = { status: normalizeFeedbackStatus('reopened'), closeTime: '' };
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
@@ -222,11 +224,11 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   get feedbackTypeIcon(): string {
-    return getFeedbackTypeIcon(this.feedback?.type);
+    return getFeedbackTypeIcon(this.normalizedType);
   }
 
   get isClosed(): boolean {
-    return normalizeFeedbackStatus(this.feedback?.status) === 'closed';
+    return this.normalizedStatus === 'closed';
   }
 
 }
