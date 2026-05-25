@@ -1,6 +1,6 @@
 import { styleVariables } from './utils';
 
-export type GenderValue = 'male' | 'female' | 'other' | 'preferNotToSay';
+export type GenderValue = 'male' | 'female' | 'other';
 export type ReportGenderValue = GenderValue | 'didNotSpecify';
 
 export interface GenderOption {
@@ -18,15 +18,13 @@ export interface ReportGenderOption {
 export const genderOptions: GenderOption[] = [
   { value: 'male', label: $localize`Male`, icon: 'male' },
   { value: 'female', label: $localize`Female`, icon: 'female' },
-  { value: 'other', label: $localize`Other`, icon: 'other' },
-  { value: 'preferNotToSay', label: $localize`Prefer not to say`, icon: null }
+  { value: 'other', label: $localize`Other`, icon: 'other' }
 ];
 
 export const reportGenderOptions: ReportGenderOption[] = [
   { value: 'male', label: $localize`Male`, color: styleVariables.primaryLighter },
   { value: 'female', label: $localize`Female`, color: styleVariables.accentLighter },
   { value: 'other', label: $localize`Other`, color: '#c8e6c9' },
-  { value: 'preferNotToSay', label: $localize`Prefer not to say`, color: '#d1c4e9' },
   { value: 'didNotSpecify', label: $localize`Did not specify`, color: styleVariables.grey }
 ];
 
@@ -40,13 +38,12 @@ export const createGenderCounts = (): Record<ReportGenderValue, number> => ({
   male: 0,
   female: 0,
   other: 0,
-  preferNotToSay: 0,
   didNotSpecify: 0
 });
 
 export const getGenderIcon = (gender?: string | null): string | null => {
   const normalizedGender = normalizeGender(gender);
-  if (normalizedGender === 'didNotSpecify' || normalizedGender === 'preferNotToSay') {
+  if (normalizedGender === 'didNotSpecify') {
     return null;
   }
   return normalizedGender;

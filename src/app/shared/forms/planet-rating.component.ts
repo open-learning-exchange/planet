@@ -88,7 +88,6 @@ export class PlanetRatingComponent implements OnChanges {
       maleRating: 0,
       femaleRating: 0,
       otherRating: 0,
-      preferNotToSayRating: 0,
       didNotSpecifyRating: 0,
       userRating: {}
     }, this.rating);
@@ -96,7 +95,6 @@ export class PlanetRatingComponent implements OnChanges {
       { class: 'primary-color', amount: this.rating.maleRating },
       { class: 'primary-light-color', amount: this.rating.otherRating, noLabel: true },
       { class: 'bg-light-grey', amount: this.rating.didNotSpecifyRating, noLabel: true },
-      { class: 'bg-grey', amount: this.rating.preferNotToSayRating, noLabel: true },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }
     ];
     this.rateForm.setValue({

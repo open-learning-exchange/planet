@@ -13,7 +13,6 @@ const startingRating = {
   maleRating: 0,
   femaleRating: 0,
   otherRating: 0,
-  preferNotToSayRating: 0,
   didNotSpecifyRating: 0,
   userRating: {},
   allRatings: []
@@ -87,9 +86,6 @@ export class RatingService {
         break;
       case 'other':
         ratingInfo.otherRating = ratingInfo.otherRating + 1;
-        break;
-      case 'preferNotToSay':
-        ratingInfo.preferNotToSayRating = ratingInfo.preferNotToSayRating + 1;
         break;
       default:
         ratingInfo.didNotSpecifyRating = ratingInfo.didNotSpecifyRating + 1;
