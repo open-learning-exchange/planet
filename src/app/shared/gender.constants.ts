@@ -34,12 +34,11 @@ export const normalizeGender = (gender?: string | null): ReportGenderValue => {
   return gender && genderOptionValues.has(gender as GenderValue) ? gender as GenderValue : 'didNotSpecify';
 };
 
-export const createGenderCounts = (): Record<ReportGenderValue, number> => ({
-  male: 0,
-  female: 0,
-  other: 0,
-  didNotSpecify: 0
-});
+export const createGenderCounts = (): Record<ReportGenderValue, number> =>
+  reportGenderOptions.reduce((counts, { value }) => {
+    counts[value] = 0;
+    return counts;
+  }, {} as Record<ReportGenderValue, number>);
 
 export const getGenderIcon = (gender?: string | null): string | null => {
   const normalizedGender = normalizeGender(gender);
