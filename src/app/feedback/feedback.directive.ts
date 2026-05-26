@@ -58,9 +58,7 @@ const dialogFieldOptions = [
   }
 ];
 
-@Directive({
-  selector: '[planetFeedback]'
-})
+@Directive({ selector: '[planetFeedback]' })
 export class FeedbackDirective {
   @Input() feedbackOf: any = {};
   @Input() message = '';
@@ -103,6 +101,7 @@ export class FeedbackDirective {
       feedback.routerLink = [ '/', firstPart ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
+      const fallbackPath = urlParts.slice(1);
       this.couchService.getDocumentByID(firstPart, lastPart).subscribe(
         (document: any) => {
           const resourceName = document?.type === 'enterprise'
@@ -113,8 +112,8 @@ export class FeedbackDirective {
           this.updateFeedback(feedback, date, user, feedbackUrl);
         },
         (error) => {
-          feedback.title = $localize`Feedback regarding ${firstPart}/${lastPart}`;
-          feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
+          feedback.title = $localize`Feedback regarding ${fallbackPath.join('/')}`;
+          feedback.routerLink = [ '/', ...fallbackPath ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         }
       );

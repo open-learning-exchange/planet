@@ -16,21 +16,25 @@ check_protocol() {
   echo "$PROTO"
 }
 
+replace_in_bundles() {
+  find /usr/share/nginx/html -type f \( -name '*.js' -o -name '*.mjs' \) -exec sed -i -e "$1" {} +
+}
+
 PROTOCOL=$(check_protocol $HOST_PROTOCOL "http")
 P_PROTOCOL=$(check_protocol $PARENT_PROTOCOL "https")
 S_ADDRESS=${SYNC_ADDRESS:-http://localhost:5984}
 
 if [ "$MULTIPLE_IPS" = "true" ]
 then
-    sed -i -e 's#couchAddress:"planet-db-host:planet-db-port/"#couchAddress:window.location.protocol+"//"+window.location.hostname+":planet-db-port/"#g' /usr/share/nginx/html/**/main*
+    replace_in_bundles 's#couchAddress:"planet-db-host:planet-db-port/"#couchAddress:window.location.protocol+"//"+window.location.hostname+":planet-db-port/"#g'
 else
-    sed -i -e "s#planet-db-host#$PROTOCOL://$DB_HOST#g" /usr/share/nginx/html/**/main*
+    replace_in_bundles "s#planet-db-host#$PROTOCOL://$DB_HOST#g"
 fi
 
-sed -i -e "s#planet-db-port#$DB_PORT#g" /usr/share/nginx/html/**/main*
-sed -i -e "s#planet-center-address#$CENTER_ADDRESS#g" /usr/share/nginx/html/**/main*
-sed -i -e "s#planet-parent-protocol#$P_PROTOCOL#g" /usr/share/nginx/html/**/main*
-sed -i -e "s#planet-sync-address#$S_ADDRESS#g" /usr/share/nginx/html/**/main*
+replace_in_bundles "s#planet-db-port#$DB_PORT#g"
+replace_in_bundles "s#planet-center-address#$CENTER_ADDRESS#g"
+replace_in_bundles "s#planet-parent-protocol#$P_PROTOCOL#g"
+replace_in_bundles "s#planet-sync-address#$S_ADDRESS#g"
 
 cd / && ./create_version_json.sh
 

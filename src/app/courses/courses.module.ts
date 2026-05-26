@@ -13,10 +13,7 @@ import { CoursesStepComponent } from './add-courses/courses-step.component';
 import { CoursesStepViewComponent } from './step-view-courses/courses-step-view.component';
 import { ResourcesModule } from '../resources/resources.module';
 import { ExamsModule } from '../exams/exams.module';
-import { CoursesProgressLeaderComponent } from './progress-courses/courses-progress-leader.component';
-import { CoursesProgressBarComponent } from './progress-courses/courses-progress-bar.component';
-import { CoursesProgressChartComponent } from './progress-courses/courses-progress-chart.component';
-import { CoursesProgressLearnerComponent } from './progress-courses/courses-progress-learner.component';
+import { CoursesProgressModule } from './progress-courses/courses-progress.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { DialogsAddResourcesModule } from '../shared/dialogs/dialogs-add-resources.module';
 import { CoursesEnrollComponent } from './enroll-courses/courses-enroll.component';
@@ -43,9 +40,8 @@ import { ChatModule } from '../chat/chat.module';
     DialogsSubmissionsModule,
     UsersModule,
     CoursesViewDetailModule,
-    ChatModule
-  ],
-  declarations: [
+    ChatModule,
+    CoursesProgressModule,
     CoursesComponent,
     CoursesAddComponent,
     CoursesViewComponent,
@@ -53,13 +49,9 @@ import { ChatModule } from '../chat/chat.module';
     CoursesStepViewComponent,
     CoursesSearchComponent,
     CoursesSearchListComponent,
-    CoursesProgressLeaderComponent,
-    CoursesProgressLearnerComponent,
-    CoursesProgressBarComponent,
-    CoursesProgressChartComponent,
     CoursesEnrollComponent,
     CoursesIconComponent
   ],
-  exports: [ CoursesComponent ]
+  exports: [CoursesComponent]
 })
 export class CoursesModule {}

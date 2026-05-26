@@ -2,6 +2,10 @@ import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { StateService } from '../state.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { NgFor } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'planet-selector',
@@ -12,7 +16,8 @@ import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.ut
         <mat-option *ngFor="let planet of planets" [value]="planet">{{planet.nameDoc ? planet.nameDoc.name : planet.doc.name}}</mat-option>
       </mat-select>
     </mat-form-field>
-  `
+  `,
+  imports: [MatFormField, MatLabel, MatSelect, NgFor, MatOption]
 })
 export class PlanetSelectorComponent implements OnChanges {
 

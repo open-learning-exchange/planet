@@ -13,8 +13,7 @@ describe('Home', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      declarations: [HomeComponent],
-      imports: [RouterTestingModule, BrowserAnimationsModule, CommonModule, MaterialModule],
+      imports: [RouterTestingModule, BrowserAnimationsModule, CommonModule, MaterialModule, HomeComponent],
       providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(HomeComponent),

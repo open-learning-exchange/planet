@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
 import { timer, of, combineLatest } from 'rxjs';
@@ -7,11 +7,19 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf, DatePipe } from '@angular/common';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { MatButton } from '@angular/material/button';
 
 @Component({
-  templateUrl: './health-event-dialog.component.html'
+  templateUrl: './health-event-dialog.component.html',
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, TdMarkdownComponent,
+    MatDialogActions, MatButton, MatDialogClose, DatePipe
+  ]
 })
 export class HealthEventDialogComponent implements OnInit, OnDestroy {
 
@@ -34,7 +42,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private userService: UserService
   ) {
-    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+    pdfMake.addVirtualFileSystem(pdfFonts);
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');

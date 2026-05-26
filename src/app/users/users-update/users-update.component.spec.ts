@@ -15,9 +15,11 @@ describe('UserUpdateProfileComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule ],
-      declarations: [ UsersUpdateComponent, FormErrorMessagesComponent ],
-      providers: [ CouchService, HttpClient, HttpClientModule, HttpHandler ]
+      imports: [
+        FormsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule, BrowserAnimationsModule,
+        UsersUpdateComponent, FormErrorMessagesComponent
+      ],
+      providers: [CouchService, HttpClient, HttpClientModule, HttpHandler]
     }).compileComponents();
   }));
 
