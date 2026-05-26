@@ -12,10 +12,9 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
-import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
@@ -199,8 +198,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
   private applyDateFilter() {
     const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
-    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-    this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date < toDate);
+    const toDate = this.endDate ? endOfDay(this.endDate).getTime() : Infinity;
+    this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date <= toDate);
     this.updateTotals();
   }
 
