@@ -51,20 +51,20 @@ export class SyncService {
       password: [ '', Validators.required, ac => this.validatorService.checkPassword$(ac) ]
     };
     return this.dialogsFormService
-    .confirm(title, passwordFormFields, formGroup, true)
-    .pipe(
-      switchMap((response: any): Observable<{ name, password, cancelled? }> => {
-        if (response !== undefined) {
-          return this.verifyPassword(response.password);
-        }
-        return of({ name: undefined, password: undefined, cancelled: true });
-      }),
-      takeWhile((value) => value.cancelled !== true),
-      catchError((err) => {
-        const errorMessage = err.error.reason;
-        return throwError(errorMessage === 'Name or password is incorrect.' ? $localize`Password is incorrect.` : errorMessage);
-      })
-    );
+      .confirm(title, passwordFormFields, formGroup, true)
+      .pipe(
+        switchMap((response: any): Observable<{ name, password, cancelled? }> => {
+          if (response !== undefined) {
+            return this.verifyPassword(response.password);
+          }
+          return of({ name: undefined, password: undefined, cancelled: true });
+        }),
+        takeWhile((value) => value.cancelled !== true),
+        catchError((err) => {
+          const errorMessage = err.error.reason;
+          return throwError(errorMessage === 'Name or password is incorrect.' ? $localize`Password is incorrect.` : errorMessage);
+        })
+      );
   }
 
   private verifyPassword(password) {
@@ -182,9 +182,11 @@ export class SyncService {
   coursesItemsToSync(course, type, replicators, allTags) {
     return this.createReplicatorsArray(
       [].concat.apply([], course.doc.steps
-        .map(step => step.resources.map(r => ({ item: r, db: 'resources' }))
-        .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
-        .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : []))
+        .map(
+          step => step.resources.map(r => ({ item: r, db: 'resources' }))
+            .concat(step.exam ? [ { item: step.exam, db: 'exams' } ] : [])
+            .concat(step.survey ? [ { item: step.survey, db: 'exams' } ] : [])
+        )
         .concat(course.tags && course.tags.length > 0 ? [ this.tagsSync(course.tags, type) ] : [])
         .concat(course.doc.images ? course.doc.images.map(image => ({ item: { _id: image.resourceId }, db: 'resources' })) : [] )
       ),

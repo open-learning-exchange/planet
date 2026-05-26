@@ -1,10 +1,4 @@
-@import '../../variables';
-
-$screen-md: 1200px;
-
-:host {
-  @include screen-sizes($screen-md);
-}
+@use '../../variables' as v;
 
 mat-toolbar mat-form-field {
   margin-top: 10px;
@@ -37,7 +31,7 @@ mat-toolbar mat-form-field {
   h1 {
     display: block;
     margin: 0.4rem 0 0;
-    color: $primary;
+    color: v.$primary;
   }
 
   .chart-wrapper {
@@ -71,7 +65,7 @@ mat-toolbar mat-form-field {
     .comparison-table-container {
       table {
         th {
-          background-color: $primary;
+          background-color: v.$primary;
           color: white;
           font-weight: 600;
         }
@@ -86,17 +80,15 @@ mat-toolbar mat-form-field {
       }
     }
   }
+
+  .desktop-toolbar-stacked {
+    height: auto;
+    flex-wrap: wrap;
+  }
 }
 
-@media(max-width: #{$screen-md}) {
-  .mat-mdc-form-field {
-    width: 100%;
-  }
-
-  mat-button-toggle-group {
-    width: 100%;
-    display: flex;
-
+@media(max-width: #{v.$screen-md}) {
+  mat-button-toggle-group.full-width {
     mat-button-toggle {
       flex: 1;
     }

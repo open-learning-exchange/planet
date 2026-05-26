@@ -1,5 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf } from '@angular/common';
+import { SubmissionsComponent } from '../../submissions/submissions.component';
+import { ExamsViewComponent } from '../../exams/exams-view.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   template: `
@@ -17,11 +22,15 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
       <button mat-dialog-close mat-raised-button color="primary" i18n>OK</button>
     </mat-dialog-actions>
   `,
-  styles: [ `
+  styles: [`
     h3.mat-mdc-dialog-title {
       text-align: center;
     }
-  ` ]
+  `],
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, SubmissionsComponent, ExamsViewComponent,
+    MatDialogActions, MatButton, MatDialogClose
+  ]
 })
 export class DialogsSubmissionsComponent {
 

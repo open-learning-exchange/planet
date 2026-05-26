@@ -86,9 +86,9 @@ export class StateService {
   }
 
   getChanges(db: string, opts: any, planetField: string) {
-    return this.couchService
-    .get(db + '/_changes?include_docs=true&since=' + (this.state[planetField][db].lastSeq || 'now'), opts)
-    .pipe(map((res: any) => {
+    return this.couchService.get(
+      db + '/_changes?include_docs=true&since=' + (this.state[planetField][db].lastSeq || 'now'), opts
+    ).pipe(map((res: any) => {
       this.state[planetField][db].lastSeq = res.last_seq;
       return res.results.filter((r: any) => r.doc._id.indexOf('_design') === -1).map((r: any) => r.doc);
     }));
@@ -116,8 +116,8 @@ export class StateService {
     return changesDoc === undefined ?
       oldDoc :
       changesDoc._deleted === true ?
-      [] :
-      changesDoc;
+        [] :
+        changesDoc;
   }
 
   sortDocs(docs, sort) {

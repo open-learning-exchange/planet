@@ -11,6 +11,9 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
+import { NgIf, NgSwitch, NgClass, NgSwitchCase } from '@angular/common';
+import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
+import { MatButton } from '@angular/material/button';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 type DialogStartingTag = string | SelectedDialogTag;
@@ -30,10 +33,11 @@ interface PlanetTagDialogData {
 @Component({
   'selector': 'planet-tag-input',
   'templateUrl': './planet-tag-input.component.html',
-  'styleUrls': [ 'planet-tag-input.scss' ],
+  'styleUrls': ['planet-tag-input.scss'],
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
-  ]
+  ],
+  imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
@@ -214,9 +218,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   tagsInSelection(selectedIds: string[], data: FilteredDataItem[]): SelectedDialogTag[] {
+    const dataMap = new Map<string, FilteredDataItem>();
+    for (const item of data) {
+      dataMap.set(item._id, item);
+    }
     const selectedTagsObject = selectedIds
       .reduce<Record<string, number>>((selectedTags, id) => {
-        const tags = data.find((item) => item._id === id)?.tags || [];
+        const tags = dataMap.get(id)?.tags || [];
         tags.forEach((tag) => {
           selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });

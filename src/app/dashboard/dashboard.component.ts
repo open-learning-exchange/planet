@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { finalize, map, catchError, switchMap, auditTime, takeUntil } from 'rxjs/operators';
 import { of, forkJoin, Subject, combineLatest } from 'rxjs';
@@ -14,10 +14,22 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NgIf, NgFor, NgClass, DecimalPipe, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatCard } from '@angular/material/card';
+import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatIcon } from '@angular/material/icon';
+import { DashboardTileComponent } from './dashboard-tile.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './dashboard.component.html',
-  styleUrls: [ './dashboard.scss' ]
+  styleUrls: ['./dashboard.scss'],
+  imports: [
+    NgIf, RouterLink, MatCard, NgFor, PlanetRoleComponent, MatTooltip, MatIcon, NgClass,
+    DashboardTileComponent, DecimalPipe, DatePipe, TruncateTextPipe
+  ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
@@ -47,13 +59,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.deviceType === DeviceType.MOBILE;
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
-    this.updateMyLifeItemsFormat();
-  }
-
   constructor(
     private userService: UserService,
     private couchService: CouchService,
@@ -78,9 +83,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(auditTime(500), takeUntil(this.onDestroy$)).subscribe(([ courses, certifications ]) => {
       this.setBadgesCourses(courses, certifications);
     });
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
     this.initMyLifeItems();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
+      this.updateMyLifeItemsFormat();
+    });
   }
 
   ngOnInit() {

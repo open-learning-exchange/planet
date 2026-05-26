@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 .announcement-container {
   display: flex;
@@ -52,7 +52,7 @@
 
 .thermometer-bar {
   height: 100%;
-  background-color: $primary;
+  background-color: v.$primary;
   transition: width 0.5s;
   display: flex;
   align-items: center;
@@ -92,5 +92,5 @@
 }
 
 .dot.completed {
-  background-color: $primary;
+  background-color: v.$primary;
 }

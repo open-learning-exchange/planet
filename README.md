@@ -18,7 +18,7 @@ For development, the following additional tools are required:
 * Git
 * NPM v10
 * Node.js v18
-* Angular CLI v15
+* Angular CLI v18
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -60,7 +60,7 @@ Clone and configure the Planet project:
 git clone https://github.com/open-learning-exchange/planet.git
 cd planet
 chmod +x couchdb-setup.sh
-bash couchdb-setup.sh -p 2200 -i
+bash couchdb-setup.sh -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -119,7 +119,7 @@ Planet uses Angular `fileReplacements` in `angular.json` to select which environ
 * If you need to clean up configuration, prefer consolidating environment keys while preserving existing `fileReplacements` behavior.
 * High risk if files are deleted or replacement mapping is broken: production/test builds can fail or silently point to incorrect endpoints.
 
-## Unit & End-to-End Tests
+## Tests
 
 You can run tests directly from the host or within the development container.
 
@@ -130,10 +130,8 @@ npm run test
 Open `localhost:9876` once this is done compiling
 
 ### End-to-End Tests:
-```
-npm run e2e
-```
-Results will appear in the console
+
+End-to-end test automation is not currently wired up in this repository. There is no supported `npm run e2e` workflow on this branch.
 
 ## Additional Commands
 
@@ -173,7 +171,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./v-couchdb-setup.sh -u <admin-username> -w <admin-password>
+./couchdb-setup.sh -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 
@@ -190,6 +188,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v14. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v18. Other versions of Node may throw errors when installing dependencies.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener } from '@angular/core';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
-import { catchError, takeUntil, debounce, filter, startWith, take } from 'rxjs/operators';
+import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -11,10 +11,23 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
-import { PlanetStepListService } from '../../shared/forms/planet-step-list.component';
+import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
+import { FileInputComponent } from '../../shared/forms/file-input.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -64,14 +77,22 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
-  styleUrls: [ 'users-achievements-update.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['users-achievements-update.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
+    MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker,
+    PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor,
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective, FileInputComponent
+  ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();
   configuration = this.stateService.configuration;
   docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
   readonly dbName = 'achievements';
+  readonly resumeAttachmentKey = 'resume.pdf';
+  readonly maxResumeSizeMb = 512;
   achievementNotFound = false;
   editForm!: FormGroup<EditFormControls>;
   profileForm!: FormGroup<ProfileFormControls>;
@@ -79,7 +100,13 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   initialFormValues: any;
   hasUnsavedChanges = false;
   submitAttempted = false;
+  currentResumeFileName = '';
+  resumeFile: File | null = null;
+  resumeUploadError = '';
+  resumeMarkedForDeletion = false;
+  existingResumeAttachment: any = null;
   private submitAfterPending = false;
+  @ViewChild('resumeInput') resumeInput?: FileInputComponent;
   get achievements(): FormArray<AchievementFormGroup> {
     return this.editForm.controls.achievements;
   }
@@ -127,6 +154,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.editForm.setControl('links', this.buildLinksFormArray(achievements.links));
         // Keeping older otherInfo property so we don't lose this info on database
         this.editForm.setControl('otherInfo', this.buildOtherInfoFormArray(achievements.otherInfo));
+        this.currentResumeFileName = achievements.resumeFileName || (achievements._attachments?.[this.resumeAttachmentKey] ?
+          this.resumeAttachmentKey : '');
+        this.existingResumeAttachment = achievements._attachments?.[this.resumeAttachmentKey] || null;
 
         if (this.docInfo._id === achievements._id) {
           this.docInfo._rev = achievements._rev;
@@ -146,11 +176,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private captureInitialState() {
-    const editFormState = this.editForm.getRawValue();
-    this.initialFormValues = JSON.stringify({
-      editForm: editFormState,
-      profileForm: this.profileForm.getRawValue()
-    });
+    this.initialFormValues = this.getCurrentState();
   }
 
   onFormChanges() {
@@ -251,12 +277,19 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   private updateUnsavedChangesFlag() {
-    const editFormState = this.editForm.getRawValue();
-    const currentState = JSON.stringify({
-      editForm: editFormState,
-      profileForm: this.profileForm.getRawValue()
+    this.hasUnsavedChanges = this.getCurrentState() !== this.initialFormValues;
+  }
+
+  private getCurrentState() {
+    return JSON.stringify({
+      editForm: this.editForm.getRawValue(),
+      profileForm: this.profileForm.getRawValue(),
+      resume: {
+        fileName: this.currentResumeFileName,
+        hasPendingUpload: !!this.resumeFile,
+        markedForDeletion: this.resumeMarkedForDeletion
+      }
     });
-    this.hasUnsavedChanges = currentState !== this.initialFormValues;
   }
 
   addAchievement(index = -1, achievement = { title: '', description: '', link: '', date: '' }) {
@@ -274,7 +307,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       this.createAchievementGroup(achievement),
       { onSubmit: (formValue, formGroup) => {
         const achievedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
-         formGroup.controls.date.value;
+          formGroup.controls.date.value;
         formGroup.controls.date.setValue(achievedAt);
         this.onDialogSubmit(this.achievements, index)(formValue, formGroup);
       }, closeOnSubmit: true }
@@ -346,8 +379,58 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     });
   }
 
+  onResumeSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) {
+      this.resumeFile = null;
+      this.resumeUploadError = '';
+      this.updateUnsavedChangesFlag();
+      return;
+    }
+
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (!isPdf) {
+      this.resumeFile = null;
+      this.resumeUploadError = $localize`Please select a PDF file`;
+      this.resumeInput?.clearFile();
+      this.updateUnsavedChangesFlag();
+      return;
+    }
+
+    if (file.size / 1024 / 1024 > this.maxResumeSizeMb) {
+      this.resumeFile = null;
+      this.resumeUploadError = $localize`Please select a PDF file smaller than ${this.maxResumeSizeMb} MB`;
+      this.resumeInput?.clearFile();
+      this.updateUnsavedChangesFlag();
+      return;
+    }
+
+    this.resumeFile = file;
+    this.resumeUploadError = '';
+    this.resumeMarkedForDeletion = false;
+    this.updateUnsavedChangesFlag();
+  }
+
+  clearResumeSelection() {
+    this.resumeFile = null;
+    this.resumeUploadError = '';
+    this.resumeInput?.clearFile();
+    this.updateUnsavedChangesFlag();
+  }
+
+  removeExistingResume() {
+    this.resumeMarkedForDeletion = true;
+    this.currentResumeFileName = '';
+    this.clearResumeSelection();
+  }
+
   onSubmit() {
     this.submitAttempted = true;
+    if (this.resumeUploadError) {
+      this.planetMessageService.showAlert($localize`Please upload your CV/Resume as a PDF file`);
+      return;
+    }
     if (this.editForm.pending || this.profileForm.pending) {
       if (this.submitAfterPending) {
         return;
@@ -410,12 +493,43 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   updateAchievements(docInfo, achievements, userInfo) {
-    // ...is the rest syntax for object destructuring
-    forkJoin([
-      this.couchService.post(this.dbName, { ...docInfo, ...achievements,
-        'createdOn': this.configuration.code, 'username': this.user.name, 'parentCode': this.configuration.parentCode }),
-      this.userService.updateUser(userInfo)
-    ]).subscribe(() => {
+    const achievementsDoc: any = {
+      ...docInfo,
+      ...achievements,
+      'createdOn': this.configuration.code,
+      'username': this.user.name,
+      'parentCode': this.configuration.parentCode
+    };
+
+    if (this.resumeFile) {
+      achievementsDoc.resumeFileName = this.resumeFile.name;
+      if (this.existingResumeAttachment) {
+        achievementsDoc._attachments = {
+          [this.resumeAttachmentKey]: this.existingResumeAttachment
+        };
+      }
+    } else if (!this.resumeMarkedForDeletion && this.currentResumeFileName) {
+      achievementsDoc.resumeFileName = this.currentResumeFileName;
+      if (this.existingResumeAttachment) {
+        achievementsDoc._attachments = {
+          [this.resumeAttachmentKey]: this.existingResumeAttachment
+        };
+      }
+    }
+
+    this.couchService.post(this.dbName, achievementsDoc).pipe(
+      switchMap((achievementsRes) => forkJoin([
+        this.resumeFile ?
+          this.couchService.putAttachment(
+            this.dbName + '/' + achievementsRes.id + '/' + this.resumeAttachmentKey + '?rev=' + achievementsRes.rev,
+            this.resumeFile, { headers: { 'Content-Type': this.resumeFile.type } }
+          ) :
+          of({}),
+        this.userService.updateUser(userInfo)
+      ]))
+    ).subscribe(() => {
+      this.resumeFile = null;
+      this.resumeMarkedForDeletion = false;
       this.planetMessageService.showMessage($localize`Achievements successfully updated`);
       this.goBack();
     }, (err) => {

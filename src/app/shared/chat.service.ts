@@ -87,7 +87,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
     return this.aiProviders$;
   }
 
-  getPrompt(data: Object, save: boolean): Observable<any> {
+  getPrompt(data: object, save: boolean): Observable<any> {
     return this.httpClient.post(this.baseUrl, {
       data,
       save,

@@ -1,13 +1,23 @@
 import { Component, ViewChild, Inject } from '@angular/core';
-import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatStepper } from '@angular/material/stepper';
+import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatStepper, MatStep } from '@angular/material/stepper';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CustomValidators } from '../validators/custom-validators';
 import { TeamsService } from '../teams/teams.service';
 import { switchMap } from 'rxjs/operators';
 import { ValidatorService } from '../validators/validator.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
+import { TeamsComponent } from '../teams/teams.component';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 interface CommunityLinkForm {
   title: FormControl<string>;
@@ -32,6 +42,38 @@ interface TeamSelectionEvent {
 
 @Component({
   templateUrl: './community-link-dialog.component.html',
+  styles: [`
+    .platform-icon {
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+  `],
+  imports: [
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    FormsModule,
+    NgFor,
+    MatOption,
+    NgIf,
+    ReactiveFormsModule,
+    MatStepper,
+    MatStep,
+    TeamsComponent,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatSelectTrigger,
+    NgSwitch,
+    NgSwitchCase,
+    MatIcon,
+    NgSwitchDefault,
+    MatDialogActions,
+    MatButton,
+  ],
 })
 export class CommunityLinkDialogComponent {
 

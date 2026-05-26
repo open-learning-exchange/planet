@@ -1,4 +1,14 @@
-@import '../../variables';
+@use '../../variables' as v;
+
+@mixin form-grid($columns) {
+  display: grid;
+  grid-template-columns: repeat($columns, minmax(0, 1fr));
+  gap: 1rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
 
 .view-container {
   display: flex;
@@ -10,7 +20,7 @@
 }
 
 .form-container {
-  width: calc(#{$form-width-3} + 120px);
+  width: calc(#{v.$form-width-3} + 120px);
 }
 
 .form-space {
@@ -28,26 +38,17 @@
 
 .profile-names {
   grid-area: form-names;
-
-  mat-form-field {
-    margin-right: 1rem;
-  }
+  @include form-grid(3);
 }
 
 .profile-contacts {
   grid-area: form-contacts;
-
-  mat-form-field {
-    margin-right: 1rem;
-  }
+  @include form-grid(3);
 }
 
 .profile-dropdowns {
   grid-area: form-dropdowns;
-
-  mat-form-field {
-    margin-right: 1rem;
-  }
+  @include form-grid(2);
 }
 
 .radio-group {
@@ -59,6 +60,16 @@
   margin-top: 1rem;
   display: flex;
   justify-content: center;
+}
+
+.profile-image-column {
+  flex: 1;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.profile-image-content {
+  text-align: center;
 }
 
 .profile-image-section {
@@ -81,7 +92,11 @@
   }
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
+  .profile-names, .profile-contacts, .profile-dropdowns, .radio-group {
+    grid-template-columns: 1fr;
+  }
+
   .profile-image-section{
     display: flex;
     flex-direction: column;
@@ -89,5 +104,11 @@
 
   .profile-image-upload{
     margin-top: 1rem;
+  }
+}
+
+@media (min-width: calc(#{v.$screen-sm} + 1px)) and (max-width: v.$screen-md) {
+  .profile-names, .profile-contacts, .profile-dropdowns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

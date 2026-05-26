@@ -1,10 +1,10 @@
-@import '../resources';
+@use '../resources-shared' as r;
 
 planet-resources-search {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
-  grid-template-rows: $toolbar-height;
+  grid-template-rows: r.$toolbar-height;
   grid-auto-flow: column;
   align-items: start;
   grid-column-gap: 0.75rem;
@@ -14,10 +14,10 @@ planet-resources-search {
     height: inherit;
     display: grid;
     row-gap: 0.25rem;
-    grid-template-rows: $label-height calc(#{$toolbar-height} - #{$label-height} - 0.25rem);
+    grid-template-rows: r.$label-height calc(#{r.$toolbar-height} - #{r.$label-height} - 0.25rem);
 
     .mat-mdc-selection-list {
-      height: calc(#{$toolbar-height} - #{$label-height} - 0.25rem);
+      height: calc(#{r.$toolbar-height} - #{r.$label-height} - 0.25rem);
       padding: 0;
       overflow-y: auto;
     }

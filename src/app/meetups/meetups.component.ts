@@ -1,23 +1,36 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { filterSpecificFields, selectedOutOfFilter, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
+import { filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MeetupService } from './meetups.service';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { findByIdInArray, itemsShown } from '../shared/utils';
+import { findByIdInArray } from '../shared/utils';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { NgIf, NgFor, NgClass, TitleCasePipe, DatePipe } from '@angular/common';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { FeedbackDirective } from '../feedback/feedback.directive';
 
 @Component({
   templateUrl: './meetups.component.html',
-  styles: [ `
+  styles: [`
     .mat-mdc-row {
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -35,11 +48,18 @@ import { findByIdInArray, itemsShown } from '../shared/utils';
       max-width: 500px;
       align-self: flex-start;
     }
-  ` ]
+  `],
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, NgIf, MatMiniFabButton, RouterLink,
+    MatButton, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell,
+    MatSortHeader, TdMarkdownComponent, MatMenuTrigger, MatMenu, MatMenuItem, FeedbackDirective, NgFor,
+    MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, NgClass, MatNoDataRow, MatPaginator, TitleCasePipe, DatePipe
+  ]
 })
 export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   meetups = new MatTableDataSource();
+  private renderedRows: any[] = [];
   message = '';
   readonly dbName = 'meetups';
   deleteDialog: any;
@@ -72,8 +92,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
-    .subscribe((meetups) => {
+    this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe((meetups) => {
       // Sort in descending createdDate order, so the new meetup can be shown on the top
       meetups.sort((a, b) => b.createdDate - a.createdDate);
       this.meetups.data = meetups;
@@ -89,6 +108,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.countSelectedShelf(source.selected);
     });
     this.couchService.checkAuthorization('meetups').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
+    this.meetups.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
   }
 
   ngAfterViewInit() {
@@ -97,7 +117,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
   }
   onPaginateChange(e: PageEvent) {
     this.selection.clear();
@@ -105,16 +125,19 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-    this.selection.clear() :
-    this.meetups.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
+    }
   }
 
   applyFilter(filterValue: string) {
     this.meetups.filter = filterValue;
-    this.selection.deselect(...selectedOutOfFilter(this.meetups.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visible = new Set(this.renderedRows.map((row: any) => row._id));
+      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
+    });
   }
 
   ngOnDestroy() {

@@ -19,9 +19,7 @@ import { ExamsPreviewComponent } from './exams-preview.component';
     PlanetFormsModule,
     PlanetDialogsModule,
     MaterialModule,
-    SharedComponentsModule
-  ],
-  declarations: [
+    SharedComponentsModule,
     ExamsAddComponent,
     ExamsQuestionComponent,
     ExamsViewComponent,

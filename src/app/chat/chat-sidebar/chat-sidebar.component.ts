@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { NonNullableFormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { NonNullableFormBuilder, FormGroup, Validators, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -12,6 +12,20 @@ import { DialogsChatShareComponent } from '../../shared/dialogs/dialogs-chat-sha
 import { SearchService } from '../../shared/forms/search.service';
 import { showFormErrors, trackById } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
+import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
+import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, NgTemplateOutlet } from '@angular/common';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { CdkOverlayOrigin, CdkConnectedOverlay } from '@angular/cdk/overlay';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ChatWindowComponent } from '../chat-window/chat-window.component';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 interface TitleForm {
   title: FormControl<string>;
@@ -20,13 +34,42 @@ interface TitleForm {
 @Component({
   selector: 'planet-chat-sidebar',
   templateUrl: './chat-sidebar.component.html',
-  styleUrls: [ './chat-sidebar.scss' ],
+  styleUrls: ['./chat-sidebar.scss'],
+  imports: [
+    MatDrawerContainer,
+    MatDrawer,
+    MatButton,
+    MatIcon,
+    NgIf,
+    MatMiniFabButton,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatIconButton,
+    MatTooltip,
+    MatCheckbox,
+    CdkOverlayOrigin,
+    CdkConnectedOverlay,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    NgFor,
+    ReactiveFormsModule,
+    MatError,
+    FormErrorMessagesComponent,
+    NgTemplateOutlet,
+    PlanetLoadingSpinnerComponent,
+    ChatWindowComponent,
+    TruncateTextPipe
+  ]
 })
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
   private _titleSearch = '';
-  get titleSearch(): string { return this._titleSearch.trim(); }
+  get titleSearch(): string {
+    return this._titleSearch.trim();
+  }
   set titleSearch(value: string) {
     this._titleSearch = value;
     this.recordSearch();
@@ -56,7 +99,9 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private userService: UserService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
     this.lastRenderedConversation = -1;
   }
 
@@ -71,10 +116,6 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     this.onDestroy$.next();
     this.onDestroy$.complete();
     this.recordSearch(true);
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   subscribeToNewChats() {

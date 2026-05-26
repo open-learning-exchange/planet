@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Input, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
@@ -11,11 +11,22 @@ import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styles: [ `
+  styles: [`
     /* Column Widths */
     .mat-column-select {
       max-width: 44px;
@@ -24,7 +35,12 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
     .mat-column-profile {
       max-width: 100px;
     }
-  ` ]
+  `],
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatButtonToggleGroup,
+    MatButtonToggle, MatFormField, MatLabel, MatSelect, NgFor, MatOption, PlanetRoleComponent, MatInput,
+    MatButton, FormsModule, UsersTableComponent
+  ]
 })
 export class UsersComponent implements OnInit, OnDestroy {
 
@@ -66,11 +82,9 @@ export class UsersComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService
   ) {
     this.dialogsLoadingService.start();
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {

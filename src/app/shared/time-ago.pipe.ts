@@ -13,7 +13,9 @@ export class TimeAgoPipe implements PipeTransform {
   }
 
   transform(value: string | number | Date): string {
-    if (!value) { return ''; }
+    if (!value) {
+      return '';
+    }
     const then = new Date(value).getTime();
     const now = Date.now();
     const diff = then - now;

@@ -9,12 +9,10 @@ import { DialogsAddMeetupsComponent } from './dialogs-add-meetups.component';
   imports: [
     CommonModule,
     MaterialModule,
-    MeetupsModule
-  ],
-  exports: [
+    MeetupsModule,
     DialogsAddMeetupsComponent
   ],
-  declarations: [
+  exports: [
     DialogsAddMeetupsComponent
   ]
 })

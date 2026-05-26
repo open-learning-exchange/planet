@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Location } from '@angular/common';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Location, NgIf, NgTemplateOutlet, NgFor, NgClass } from '@angular/common';
 import { combineLatest, Subject, of } from 'rxjs';
 import { takeUntil, take, finalize } from 'rxjs/operators';
 import type { Chart as ChartJs, ChartConfiguration } from 'chart.js';
@@ -29,8 +29,25 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatOptgroup } from '@angular/material/autocomplete';
+import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import {
+  MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
+import { ReportsDetailActivitiesComponent } from './reports-detail-activities.component';
 
-type ChartModule = typeof import('chart.js');
 interface DateFilterForm {
   startDate: FormControl<Date>;
   endDate: FormControl<Date>;
@@ -38,8 +55,16 @@ interface DateFilterForm {
 
 @Component({
   templateUrl: './reports-detail.component.html',
-  styleUrls: [ 'reports-detail.scss' ],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['reports-detail.scss'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, MatFormField, MatLabel, MatSelect,
+    NgFor, MatOption, MatOptgroup, MatButtonToggleGroup, MatButtonToggle, MatButton, FormsModule, ReactiveFormsModule,
+    MatInput, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker, MatError, MatTooltip, MatMenuTrigger,
+    MatMenu, MatMenuItem, MatTabGroup, MatTab, MatGridList, MatGridTile, PlanetLoadingSpinnerComponent, MatTable, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, NgClass, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    ReportsDetailActivitiesComponent, ReportsHealthComponent
+  ]
 })
 export class ReportsDetailComponent implements OnInit, OnDestroy {
 
@@ -120,7 +145,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private planetMessageService: PlanetMessageService
   ) {
     this.initDateFilterForm();
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
@@ -130,38 +157,40 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.today = new Date(new Date(currentTime).setHours(0, 0, 0));
       this.initializeComparisonDates();
       combineLatest(this.route.paramMap, this.route.queryParams, this.stateService.couchStateListener(dbName))
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
-        if (planetState === undefined) {
-          return;
-        }
-        const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
-        const parseDate = (dateStr) => {
-          if (!dateStr) { return null; }
-          const [ y, m, d ] = dateStr.split('-').map(Number);
-          return new Date(y, m - 1, d);
-        };
-        this.dateQueryParams = {
-          startDate: parseDate(queryParams['startDate']),
-          endDate: parseDate(queryParams['endDate']) || this.today
-        };
-        if (
-          this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
+        .pipe(takeUntil(this.onDestroy$))
+        .subscribe(([ params, queryParams, planetState ]: [ ParamMap, ParamMap, any ]) => {
+          if (planetState === undefined) {
+            return;
+          }
+          const planets = attachNamesToPlanets((planetState && planetState.newData) || []);
+          const parseDate = (dateStr) => {
+            if (!dateStr) {
+              return null;
+            }
+            const [ y, m, d ] = dateStr.split('-').map(Number);
+            return new Date(y, m - 1, d);
+          };
+          this.dateQueryParams = {
+            startDate: parseDate(queryParams['startDate']),
+            endDate: parseDate(queryParams['endDate']) || this.today
+          };
+          if (
+            this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime()) &&
           this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-        ) {
-          this.selectedTimeFilter = 'custom';
-          this.showCustomDateFields = true;
-        }
-        this.dateFilterForm.controls.endDate.setValue(
-          this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
-          ? this.dateQueryParams.endDate : this.today
-        );
-        this.codeParam = params.get('code');
-        this.planetCode = this.codeParam || this.stateService.configuration.code;
-        this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
-        this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
-        this.initializeData(!this.codeParam);
-      });
+          ) {
+            this.selectedTimeFilter = 'custom';
+            this.showCustomDateFields = true;
+          }
+          this.dateFilterForm.controls.endDate.setValue(
+            this.dateQueryParams.endDate instanceof Date && !isNaN(this.dateQueryParams.endDate.getTime())
+              ? this.dateQueryParams.endDate : this.today
+          );
+          this.codeParam = params.get('code');
+          this.planetCode = this.codeParam || this.stateService.configuration.code;
+          this.parentCode = params.get('parentCode') || this.stateService.configuration.parentCode;
+          this.planetName = codeToPlanetName(this.codeParam, this.stateService.configuration, planets);
+          this.initializeData(!this.codeParam);
+        });
     });
 
     this.stateService.requestData(dbName, 'local');
@@ -172,11 +201,6 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
     this.charts.forEach((chart) => chart.destroy());
     this.charts = [];
-  }
-
-  @HostListener('window:resize')
-  OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1200 });
   }
 
   onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
@@ -279,7 +303,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.minDate = new Date(new Date(this.activityService.minTime(this.loginActivities.data, 'loginTime')).setHours(0, 0, 0, 0));
       this.dateFilterForm.controls.startDate.setValue(
         this.dateQueryParams.startDate instanceof Date && !isNaN(this.dateQueryParams.startDate.getTime())
-        ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
+          ? this.dateQueryParams.startDate : new Date(new Date().setMonth(new Date().getMonth() - 12))
       );
       this.setLoginActivities();
     });
@@ -691,7 +715,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   sortData(data: any[], sortBy: string): any[] {
     const order = sortBy.endsWith('Asc') ? 1 : -1;
     let field = sortBy.replace(/Asc|Desc/, '');
-    if (field === 'username') { field = 'user'; }
+    if (field === 'username') {
+      field = 'user';
+    }
     return data.sort((a, b) => {
       let comparison = 0;
       if ([ 'loginTime', 'logoutTime', 'time' ].includes(field)) {
@@ -924,7 +950,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   loadComparisonData() {
-    if (!this.comparisonWeek1End || !this.comparisonWeek2End) { return };
+    if (!this.comparisonWeek1End || !this.comparisonWeek2End) {
+      return;
+    };
 
     this.comparisonLoading = true;
     this.comparisonTableData = [];
@@ -979,7 +1007,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       const changeValue = week2Value - week1Value;
       const percentageChange = week1Value > 0 ? Math.round((changeValue / week1Value) * 100 * 10) / 10 : 0;
       const changeText = week1Value === 0 ?
-       (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
+        (changeValue >= 0 ? `+${changeValue}` : `${changeValue}`) :
         (changeValue >= 0 ? `+${changeValue} (+${percentageChange}%)` :
         `${changeValue} (${percentageChange}%)`);
 
@@ -1025,9 +1053,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   hasNonZeroChartData(chartId: string): boolean {
     const chart = this.charts.find(c => c.canvas.id === chartId);
-    if (!chart) { return false; }
+    if (!chart) {
+      return false;
+    }
     const datasets: any[] = (chart.data && (chart.data as any).datasets) || [];
-    if (!datasets.length) { return false; }
+    if (!datasets.length) {
+      return false;
+    }
     return datasets.some(ds => {
       const dataArr = Array.isArray(ds.data) ? ds.data : [];
       return dataArr.some(v => {

@@ -1,5 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, HostListener } from '@angular/core';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
@@ -10,11 +20,29 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CoursesService } from '../courses/courses.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { ExamsService, QuestionFormGroup } from './exams.service';
-import { PlanetStepListService } from '../shared/forms/planet-step-list.component';
+import {
+  PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent, PlanetStepListFormDirective
+} from '../shared/forms/planet-step-list.component';
 import { ExamsPreviewComponent } from './exams-preview.component';
 import { markdownToPlainText } from '../shared/utils';
 import { SubmissionsService } from './../submissions/submissions.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { warningMsg } from '../shared/unsaved-changes.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgClass, NgIf, NgFor } from '@angular/common';
+import { SubmitDirective } from '../shared/submit.directive';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
+import { ExamsQuestionComponent } from './exams-question.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
@@ -44,17 +72,26 @@ interface ExamDocumentInfo {
 
 @Component({
   templateUrl: 'exams-add.component.html',
-  styleUrls: [ 'exams-add.scss' ]
+  styleUrls: ['exams-add.scss'],
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, FormsModule, ReactiveFormsModule, NgClass, MatButton,
+    SubmitDirective, MatMenuTrigger, NgIf, MatCheckbox, MatMenu, MatMenuItem, MatAccordion, MatExpansionPanel,
+    MatExpansionPanelHeader, MatExpansionPanelTitle, MatFormField, MatLabel, MatInput, MatError,
+    FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, PlanetStepListComponent, NgFor,
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemLine, PlanetStepListFormDirective, ExamsQuestionComponent
+  ]
 })
-export class ExamsAddComponent implements OnInit {
+export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   readonly dbName = 'exams';
+  hasUnsavedChanges = false;
+  private initialFormState = '';
   examForm!: FormGroup<ExamFormControls>;
   documentInfo: ExamDocumentInfo = {};
   pageType: 'Add' | 'Update' | 'Copy' = 'Add';
   courseName = '';
-  examType: 'exam' | 'survey' = <'exam' | 'survey'>this.route.snapshot.paramMap.get('type') || 'exam';
+  examType: 'exam' | 'survey';
   teamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
-  successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
+  successMessage: string;
   steps = [];
   showFormError = false;
   showPreviewError = false;
@@ -90,6 +127,9 @@ export class ExamsAddComponent implements OnInit {
     private dialog: MatDialog,
     private submissionsService: SubmissionsService
   ) {
+    const typeParam = this.route.snapshot.paramMap.get('type');
+    this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
+    this.successMessage = this.examType === 'survey' ? $localize`New survey added` : $localize`New test added`;
     this.createForm();
   }
 
@@ -110,6 +150,10 @@ export class ExamsAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initialFormState = JSON.stringify(this.examForm.getRawValue());
+    this.examForm.valueChanges.subscribe(() => {
+      this.hasUnsavedChanges = JSON.stringify(this.examForm.getRawValue()) !== this.initialFormState;
+    });
     this.courseName = this.coursesService.course.form ? this.coursesService.course.form.courseTitle : '';
     if (this.route.snapshot.url[0].path !== 'update') {
       return;
@@ -132,6 +176,8 @@ export class ExamsAddComponent implements OnInit {
         this.examForm.patchValue({ name: `${this.examForm.controls.name.value} - COPY` });
         this.examForm.controls.name.setAsyncValidators(this.nameValidator());
       }
+      this.initialFormState = JSON.stringify(this.examForm.getRawValue());
+      this.hasUnsavedChanges = false;
     }, error => console.log(error));
   }
 
@@ -170,6 +216,8 @@ export class ExamsAddComponent implements OnInit {
       return this.examsService.createExamDocument(examInfo);
     })).subscribe((res) => {
       this.documentInfo = { _id: res.id, _rev: res.rev };
+      this.initialFormState = JSON.stringify(this.examForm.getRawValue());
+      this.hasUnsavedChanges = false;
       if (this.examType === 'exam' || this.isCourseContent) {
         this.appendToCourse(examInfo, this.examType);
       }
@@ -238,6 +286,17 @@ export class ExamsAddComponent implements OnInit {
       return name;
     }
     return this.newExamName(existingExams, namePrefix, tryNumber + 1);
+  }
+
+  @HostListener('window:beforeunload', [ '$event' ])
+  unloadNotification($event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = warningMsg;
+    }
+  }
+
+  canDeactivate(): boolean {
+    return !this.hasUnsavedChanges;
   }
 
   showPreviewDialog() {

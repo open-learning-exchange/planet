@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { interval, of, race } from 'rxjs';
 import { debounce, switchMap } from 'rxjs/operators';
 import * as constants from '../constants';
@@ -13,6 +13,22 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
+import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { PlanetTimeMaskDirective } from '../../shared/forms/planet-time-mask.directive';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { SubmitDirective } from '../../shared/submit.directive';
 
 type DatePlaceholder = CouchService['datePlaceholder'];
 
@@ -37,7 +53,7 @@ interface MeetupFormControls {
 @Component({
   selector: 'planet-meetups-add',
   templateUrl: './meetups-add.component.html',
-  styles: [ `
+  styles: [`
     form.form-spacing {
       width: inherit;
     }
@@ -45,7 +61,13 @@ interface MeetupFormControls {
       min-width: 385px;
       max-width: 750px;
     }
-  ` ]
+  `],
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetTimeMaskDirective, MatRadioGroup, MatRadioButton, NgFor, MatCheckbox,
+    PlanetNumberValidatorDirective, NgTemplateOutlet, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, SubmitDirective
+  ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
@@ -53,7 +75,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   @Input() isDialog = false;
   @Input() meetup: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
-  @Output() onGoBack = new EventEmitter<any>();
+  @Output() goBackEvent = new EventEmitter<any>();
   message = '';
   meetupForm: FormGroup<MeetupFormControls>;
   readonly dbName = 'meetups'; // database name constant
@@ -94,7 +116,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
           this.captureInitialState();
           this.onFormChanges();
         },
-        error => console.log(error)
+        error => console.error(error)
       );
     } else {
       this.captureInitialState();
@@ -103,8 +125,12 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private parseDateValue(value: string | Date | null): number {
-    if (!value) {return NaN;}
-    if (value instanceof Date) {return value.getTime();}
+    if (!value) {
+      return NaN;
+    }
+    if (value instanceof Date) {
+      return value.getTime();
+    }
     return Date.parse(value);
   }
 
@@ -212,20 +238,20 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       '_rev': this.revision,
       'startDate': this.parseDateValue(meetupInfo.startDate),
       'endDate': this.parseDateValue(meetupInfo.endDate)
-     }).pipe(switchMap(() => {
-        return this.couchService.post('shelf/_find', findDocuments({
-          'meetupIds': { '$in': [ this.id ] }
-        }, [ '_id' ], 0));
-      }),
-      switchMap(data => {
-        return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
-      })
+    }).pipe(switchMap(() => {
+      return this.couchService.post('shelf/_find', findDocuments({
+        'meetupIds': { '$in': [ this.id ] }
+      }, [ '_id' ], 0));
+    }),
+    switchMap(data => {
+      return this.couchService.updateDocument('notifications/_bulk_docs', this.meetupChangeNotifications(data.docs, meetupInfo, this.id));
+    })
     ).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize`Edited event: ${meetupInfo.title}`);
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -237,7 +263,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     }).subscribe((res) => {
       this.goBack(res);
       this.planetMessageService.showMessage($localize` Added event: ${meetupInfo.title}`);
-    }, (err) => console.log(err));
+    }, (err) => console.error(err));
   }
 
   cancel() {
@@ -246,7 +272,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
 
   goBack(res?) {
     if (this.isDialog) {
-      this.onGoBack.emit(res);
+      this.goBackEvent.emit(res);
     } else {
       this.router.navigate([ '/meetups' ]);
     }

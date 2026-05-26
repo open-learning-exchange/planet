@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
@@ -7,6 +7,10 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { RatingService } from './rating.service';
 import { StateService } from '../state.service';
+import { NgClass, NgIf } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
+import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 
 const popupFormFields = [
   {
@@ -36,10 +40,11 @@ interface PopupFormModel {
 
 @Component({
   templateUrl: './planet-rating.component.html',
-  styles: [ ` .list-item-rating {
+  styles: [` .list-item-rating {
     max-width: 225px;
-  } ` ],
-  selector: 'planet-rating'
+  } `],
+  selector: 'planet-rating',
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
 
@@ -82,8 +87,9 @@ export class PlanetRatingComponent implements OnChanges {
     this.stackedBarData = [
       { class: 'primary-color', amount: this.rating.maleRating },
       { class: 'primary-light-color',
-        amount: this.rating.totalRating === 0 ? 1
-          : this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
+        amount: this.rating.totalRating === 0 ?
+          1 :
+          this.rating.totalRating - this.rating.maleRating - this.rating.femaleRating,
         noLabel: true
       },
       { class: 'accent-color', amount: this.rating.femaleRating, align: 'right' }

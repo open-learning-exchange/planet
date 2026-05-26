@@ -17,6 +17,7 @@ export interface QuestionValue {
   marks: number;
   choices: QuestionChoice[];
   hasOtherOption: boolean;
+  scaleMax: number;
 }
 
 export type QuestionChoiceFormGroup = FormGroup<{
@@ -31,6 +32,7 @@ export type QuestionFormGroup = FormGroup<{
   marks: FormControl<number>;
   choices: FormArray<QuestionChoiceFormGroup>;
   hasOtherOption: FormControl<boolean>;
+  scaleMax: FormControl<number>;
 }>;
 
 @Injectable({
@@ -56,7 +58,8 @@ export class ExamsService {
       choices: this.fb.array<QuestionChoiceFormGroup>(
         choices.length === 0 ? [] : choices.map(choice => this.newQuestionChoice(choice.id ?? '', choice))
       ),
-      hasOtherOption: this.fb.control(false)
+      hasOtherOption: this.fb.control(false),
+      scaleMax: this.fb.control(9)
     }, { validators: this.choiceRequiredValidator.bind(this) });
 
     return this.setInitalFormValue(formGroup, initialValue);
@@ -65,8 +68,8 @@ export class ExamsService {
   choiceRequiredValidator(ac: QuestionFormGroup) {
     const questionType = ac.controls.type.value;
     return questionType === 'select' || questionType === 'selectMultiple' ?
-     Validators.required(ac.controls.choices) && { noChoices: true } :
-     null;
+      Validators.required(ac.controls.choices) && { noChoices: true } :
+      null;
   }
 
   newQuestionChoice(newId: string, initialValue?: Partial<QuestionChoice>): QuestionChoiceFormGroup {

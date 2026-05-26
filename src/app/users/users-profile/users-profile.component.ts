@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, Input, HostListener } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -11,11 +11,27 @@ import { StateService } from '../../shared/state.service';
 import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgFor, DatePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { ChangePasswordDirective } from '../../shared/dialogs/change-password.directive';
+import { MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider } from '@angular/material/list';
+import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatDialogClose } from '@angular/material/dialog';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-users-profile',
   templateUrl: './users-profile.component.html',
-  styleUrls: [ './users-profile.scss' ]
+  styleUrls: ['./users-profile.scss'],
+  imports: [
+    MatToolbar, NgIf, MatIcon, MatIconButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatButton, RouterLink,
+    MatAnchor, ChangePasswordDirective, MatList, MatListItem, MatListItemTitle, MatListItemLine, MatDivider,
+    LanguageLabelComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgFor, MatDialogClose, DatePipe, TruncateTextPipe
+  ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
@@ -48,8 +64,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private deviceInfoService: DeviceInfoService,
     private teamsService: TeamsService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -68,12 +86,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
-
   ngOnDestroy() {
     this.onDestroy$.next();
     this.onDestroy$.complete();
@@ -81,8 +93,10 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
 
   getLoginInfo(name) {
     const createdOn = this.planetCode || this.stateService.configuration.code;
-    this.couchService.findAll('login_activities', findDocuments({ 'user': name, createdOn }, 0, [ { 'loginTime': 'desc' } ]))
-    .subscribe((logins: any) => {
+    this.couchService.findAll(
+      'login_activities',
+      findDocuments({ 'user': name, createdOn },0, [ { 'loginTime': 'desc' } ])
+    ).subscribe((logins: any) => {
       this.totalLogins = logins.length;
       this.lastLogin = logins.length ? logins[0].loginTime : '';
     });
@@ -124,8 +138,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     return planetCode === this.stateService.configuration.parentCode ?
       'parent' :
       planetCode === null || planetCode === this.stateService.configuration.code ?
-      'local' :
-      'child';
+        'local' :
+        'child';
   }
 
   goBack() {

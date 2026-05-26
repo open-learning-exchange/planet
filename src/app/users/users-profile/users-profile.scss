@@ -1,4 +1,4 @@
-@import '../../variables';
+@use '../../variables' as v;
 
 :host {
 
@@ -31,7 +31,7 @@
     }
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: v.$screen-sm) {
     .profile-image-section {
       grid-area: icon;
       text-align: center;

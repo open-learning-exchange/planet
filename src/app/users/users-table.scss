@@ -1,4 +1,4 @@
-@import '../variables';
+@use '../variables' as v;
 
 /* Column Widths */
 .mat-column-profile {
@@ -36,13 +36,13 @@ button-container {
   text-overflow: ellipsis;
 }
 
-@media(max-width: $screen-md) {
+@media(max-width: v.$screen-md) {
   .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
     max-width: 70px;
   }
 }
 
-@media (max-width: $screen-sm) {
+@media (max-width: v.$screen-sm) {
   .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
     width: 50px;
   }
