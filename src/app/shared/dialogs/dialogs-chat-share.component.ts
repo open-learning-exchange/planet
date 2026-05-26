@@ -12,6 +12,7 @@ import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
+import { ChallengesService } from '../challenges/challenges.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
@@ -77,6 +78,7 @@ export class DialogsChatShareComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private userStatusService: UserChallengeStatusService,
+    private challengesService: ChallengesService,
   ) {
     this.conversation = data || this.conversation;
   }
@@ -185,7 +187,8 @@ export class DialogsChatShareComponent implements OnInit {
     ) {
       this.dialog.open(DialogsAnnouncementSuccessComponent, {
         width: '50vw',
-        maxHeight: '100vh'
+        maxHeight: '100vh',
+        data: this.challengesService.getActiveChallenge()
       });
     }
   }
