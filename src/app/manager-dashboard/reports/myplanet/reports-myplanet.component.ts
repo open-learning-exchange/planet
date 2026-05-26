@@ -75,12 +75,11 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   };
 
   filterMyPlanetData(data: any[]) {
-    const inclusiveEndDate = endOfDay(this.endDate);
     return data
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
       .filter(item => {
         const itemDate = item.time || item.last_synced;
-        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= inclusiveEndDate.getTime());
+        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= endOfDay(this.endDate).getTime());
       });
   }
 

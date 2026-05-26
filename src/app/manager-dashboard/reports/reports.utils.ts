@@ -6,6 +6,10 @@ export const attachNamesToPlanets = (planetDocs: any[]) => {
   return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
 };
 
+export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+
+export const endOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
 export const codeToPlanetName = (code: string, configuration: any, childPlanets: any[]) => {
   const planet = childPlanets.find((childPlanet: any) => childPlanet.doc.code === code);
   return planet ? (planet.nameDoc && planet.nameDoc.name) || planet.doc.name : configuration.name;
@@ -38,9 +42,7 @@ export const filterByDate = (array, dateField, { startDate, endDate, isEndInclus
   if (!startDate || !endDate || new Date(startDate).getTime() > new Date(endDate).getTime()) {
     return [];
   }
-  // Reporting date pickers emit local-calendar dates (midnight local time). We normalize
-  // start/end boundaries in local time so records at 23:59:59.999 local are included.
-  // Backend timestamps are stored as epoch milliseconds, so comparisons remain numeric.
+
   const endTime = isEndInclusive ? endOfDay(new Date(endDate)) : endDate;
   return array.filter(item => additionalFilterFunction(item) && itemInDateRange(item, dateField, startDate, endTime));
 };
@@ -173,8 +175,6 @@ export const sortingOptionsMap = {
     { name: $localize`AI Provider (Z-A)`, value: 'aiProviderDesc' }
   ]
 };
-
-export const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
 
 export const lastThursday = (date: Date) => {
   const d = new Date(date);
