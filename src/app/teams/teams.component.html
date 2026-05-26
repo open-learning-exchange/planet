@@ -39,9 +39,12 @@
     </ng-container>
   </mat-toolbar>
 
+  <div *ngIf="userNotInShelf" i18n style="text-align: center;">
+    Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
+  </div>
+
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <div class="mobile-scroll-wrapper">
-    <mat-table #table [dataSource]="teams" matSortActive="visitLog.visitCount" matSortDirection="desc" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -82,17 +85,8 @@
           </ng-container>
         </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="membership">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="membership" hidden>Membership</mat-header-cell>
-        <mat-cell *matCellDef="let element" hidden>{{ element.userStatus }}</mat-cell>
-      </ng-container>
       <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef i18n>
-          <span>Action</span>
-          <button mat-button *ngIf="showUserTeamsFilter" (click)="sortbyUserTeams()" i18n-title title="Toggle myTeams">
-            <mat-icon>check</mat-icon>
-          </button>
-        </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <div class="button-container" [ngClass]="{'horizontal-align': isMobile}">
             <ng-container [ngSwitch]="element.userStatus" *ngIf="user.isUserAdmin || user.roles.length">
@@ -138,10 +132,6 @@
         <td><div class="view-container" *ngIf="!isLoading" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div></td>
       </tr>
     </mat-table>
-  </div>
-    <div *ngIf="userNotInShelf" i18n style="text-align: center;">
-      Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
-    </div>
     <mat-paginator #paginator
       [pageSize]="50"
       [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">

@@ -7,16 +7,26 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
 import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { StateService } from '../shared/state.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatButton } from '@angular/material/button';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatSelect } from '@angular/material/select';
+import { NgFor, NgClass, NgIf, DatePipe } from '@angular/common';
+import { MatOption } from '@angular/material/autocomplete';
+import { RouterLink } from '@angular/router';
 
 @Component({
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatButton, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatTable, MatColumnDef, MatCellDef,
+    MatCell, NgClass, NgIf, RouterLink, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;

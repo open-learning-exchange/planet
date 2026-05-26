@@ -3,10 +3,7 @@ import { UserService } from './user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-@Directive({
-  selector: '[planetAuthorizedRoles]',
-  standalone: false
-})
+@Directive({ selector: '[planetAuthorizedRoles]' })
 export class AuthorizedRolesDirective implements OnInit, OnDestroy {
 
   private onDestroy$ = new Subject<void>();

@@ -11,9 +11,15 @@
  * okClick - Optional.  Function to call when user clicks OK.
  */
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { timer, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { LabelComponent } from '../label.component';
+import { MatButton } from '@angular/material/button';
+import { SubmitDirective } from '../submit.directive';
+import { TruncateTextPipe } from '../truncate-text.pipe';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
@@ -24,7 +30,10 @@ import { catchError, switchMap } from 'rxjs/operators';
       word-break: break-word;
     }
   `],
-  standalone: false
+  imports: [
+    CdkScrollable, MatDialogContent, NgIf, NgFor, LabelComponent, MatDialogActions, MatButton, MatDialogClose,
+    SubmitDirective, DatePipe, TruncateTextPipe
+  ]
 })
 export class DialogsPromptComponent {
 

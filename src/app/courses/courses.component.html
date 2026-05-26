@@ -59,7 +59,7 @@
         <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
           <mat-icon>more_vert</mat-icon>
         </button>
-        <mat-menu #actionsMenu="matMenu" class="ellipsis-menu">
+        <mat-menu #actionsMenu="matMenu" class="actions-menu">
           <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
         </mat-menu>
       </ng-container>
@@ -75,16 +75,16 @@
         <planet-tag-input [db]="dbName" [disabled]="selection?.selected?.length === 0" mode="add" labelType="change" [helperText]="false" [filteredData]="courses.data" [selectedIds]="selection.selected" (finalTags)="addTagsToSelected($event)"></planet-tag-input>
       </mat-form-field>
     </ng-container>
-    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
+    <button mat-button [disabled]="selectedNotEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'add')">
       <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
       <span *ngIf="selectedNotEnrolled > 0"> ({{selectedNotEnrolled}})</span>
     </button>
-    <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
+    <button mat-button [disabled]="selectedEnrolled === 0" (click)="enrollLeaveToggle(selection.selected, 'remove')">
       <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
       <span *ngIf="selectedEnrolled > 0"> ({{selectedEnrolled}})</span>
     </button>
     <ng-container *ngIf="user.isUserAdmin">
-      <button mat-button [ngClass]="{'mat-menu-item': deviceType !== deviceTypes.DESKTOP }" [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
+      <button mat-button [matMenuTriggerFor]="managerMenu" *planetAuthorizedRoles="''" [disabled]="!selection.selected.length" i18n>Manager Actions</button>
       <mat-menu #managerMenu="matMenu">
         <!-- TODO: Need to figure out how to resolve conflicts when sending course back to parent -->
         <button *ngIf="planetType !== 'center' && planetConfiguration.registrationRequest === 'accepted'" mat-menu-item (click)="shareLocal(selection.selected)" [disabled]="selectedLocal === 0">
@@ -92,7 +92,7 @@
           <span i18n>Send Courses</span>
           <span *ngIf="selectedLocal > 0"> ({{selectedLocal}})</span>
         </button>
-        <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length">
+        <button *ngIf="planetType !== 'community'" mat-menu-item (click)="openSendCourseDialog()" [disabled]="!selection.selected.length || dialogGuard.isActive('send-course')">
           <mat-icon aria-hidden="true" class="margin-lr-3" >compare_arrows</mat-icon>
           <span i18n>Push To {planetType, select, center {Nation} other {Community}}</span>
           <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
@@ -105,7 +105,7 @@
     </ng-container>
   </ng-template>
 
-  <div [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
+  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -122,9 +122,9 @@
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n> Title </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="list-content-menu" [ngClass]="{'list-content-menu-auto': element.doc.courseTitle.length > 50 }">
+        <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
-            <ng-container *ngIf="deviceType === deviceTypes.MOBILE">
+            <ng-container *ngIf="isMobile">
               <mat-checkbox (change)="$event ? selection.toggle(element._id) : null"
                 [checked]="selection.isSelected(element._id)">
               </mat-checkbox>

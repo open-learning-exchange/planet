@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { UserService } from '../user.service';
@@ -7,6 +7,10 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { RatingService } from './rating.service';
 import { StateService } from '../state.service';
+import { NgClass, NgIf } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
+import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
 
 const popupFormFields = [
   {
@@ -40,7 +44,7 @@ interface PopupFormModel {
     max-width: 225px;
   } `],
   selector: 'planet-rating',
-  standalone: false
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
 

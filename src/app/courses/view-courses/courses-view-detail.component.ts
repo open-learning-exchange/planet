@@ -1,17 +1,23 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
 import { CoursesService } from '../courses.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { languages } from '../../shared/languages';
+import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
+import { LanguageLabelComponent } from '../../shared/language-label.component';
+import { NgIf, DatePipe } from '@angular/common';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'planet-courses-detail',
   templateUrl: './courses-view-detail.component.html',
-  standalone: false
+  imports: [PlanetRatingComponent, LanguageLabelComponent, NgIf, PlanetMarkdownComponent, DatePipe]
 })
 export class CoursesViewDetailComponent implements OnChanges {
 
@@ -45,7 +51,7 @@ export class CoursesViewDetailComponent implements OnChanges {
       </mat-dialog-actions>
     </ng-container>
   `,
-  standalone: false
+  imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class CoursesViewDetailDialogComponent implements OnInit {
 

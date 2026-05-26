@@ -22,22 +22,11 @@ import { CommunityLinkDialogComponent } from '../community/community-link-dialog
 import { HealthListComponent } from '../health/health-list.component';
 import { UsersModule } from '../users/users.module';
 import { CoursesViewDetailModule } from '../courses/view-courses/courses-view-detail.module';
+import { CoursesProgressModule } from '../courses/progress-courses/courses-progress.module';
 import { ChatModule } from '../chat/chat.module';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
-  declarations: [
-    HomeComponent,
-    DashboardComponent,
-    DashboardTileComponent,
-    DashboardTileTitleComponent,
-    NotificationsComponent,
-    PulsateIconDirective,
-    UpgradeComponent,
-    CommunityComponent,
-    CommunityLinkDialogComponent,
-    HealthListComponent,
-  ],
   imports: [
     HomeRouterModule,
     CommonModule,
@@ -53,8 +42,19 @@ import { SurveysModule } from '../surveys/surveys.module';
     PlanetCalendarModule,
     UsersModule,
     CoursesViewDetailModule,
+    CoursesProgressModule,
     ChatModule,
-    SurveysModule
+    SurveysModule,
+    HomeComponent,
+    DashboardComponent,
+    DashboardTileComponent,
+    DashboardTileTitleComponent,
+    NotificationsComponent,
+    PulsateIconDirective,
+    UpgradeComponent,
+    CommunityComponent,
+    CommunityLinkDialogComponent,
+    HealthListComponent
   ]
 })
 export class HomeModule {}

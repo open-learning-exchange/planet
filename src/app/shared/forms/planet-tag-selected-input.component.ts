@@ -1,7 +1,10 @@
-import { Component, Input, OnChanges, HostListener } from '@angular/core';
+import { Component, DestroyRef, Input, OnChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { truncateText } from '../../shared/utils';
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   template: `
@@ -13,9 +16,10 @@ import { truncateText } from '../../shared/utils';
     <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
   `,
   selector: 'planet-tag-selected-input',
-  standalone: false
+  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault, MatTooltip]
 })
 export class PlanetTagSelectedInputComponent implements OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() selectedIds: string[] = [];
   @Input() allTags: any[] = [];
@@ -27,14 +31,16 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   constructor(
     private tagsService: TagsService,
     private deviceInfoService: DeviceInfoService
-  ) {}
+  ) {
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+      });
+  }
 
   ngOnChanges() {
     this.setTooltipLabels(this.selectedIds, this.allTags);
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   setTooltipLabels(selectedIds, allTags) {

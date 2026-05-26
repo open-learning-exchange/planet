@@ -15,11 +15,6 @@ import { CertificationsViewComponent } from './certifications-view.component';
 import { UsersModule } from '../../users/users.module';
 
 @NgModule({
-  declarations: [
-    CertificationsComponent,
-    CertificationsAddComponent,
-    CertificationsViewComponent
-  ],
   imports: [
     CommonModule,
     CertificationsRouterModule,
@@ -32,7 +27,10 @@ import { UsersModule } from '../../users/users.module';
     PlanetDialogsModule,
     CoursesModule,
     DialogsAddTableModule,
-    UsersModule
+    UsersModule,
+    CertificationsComponent,
+    CertificationsAddComponent,
+    CertificationsViewComponent
   ]
 })
 export class CertificationsModule {}

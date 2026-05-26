@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { ConfigurationComponent } from '../configuration/configuration.component';
 
 @Component({
   template: `
@@ -8,6 +13,6 @@ import { Component } from '@angular/core';
     </mat-toolbar>
     <planet-configuration></planet-configuration>
   `,
-  standalone: false
+  imports: [MatToolbar, MatIconAnchor, RouterLink, MatIcon, ConfigurationComponent]
 })
 export class ManagerDashboardConfigurationComponent { }

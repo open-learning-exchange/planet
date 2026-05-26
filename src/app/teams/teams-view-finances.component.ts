@@ -1,6 +1,9 @@
-import { Component, Input, OnChanges, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
+  MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
+} from '@angular/material/table';
 import { map } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -13,14 +16,28 @@ import { millisecondsToDay } from '../meetups/constants';
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { FormsModule } from '@angular/forms';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 
 @Component({
   selector: 'planet-teams-view-finances',
   styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
-  standalone: false
+  imports: [
+    NgIf, NgFor, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
+    MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
+    PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
+  ]
 })
-export class TeamsViewFinancesComponent implements OnInit, OnChanges {
+export class TeamsViewFinancesComponent implements OnChanges {
 
   @Input() finances: any[] = [];
   @Input() team: any = {};
@@ -28,17 +45,30 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   @Input() editable = true;
   @Input() isLoading = false;
   @Output() financesChanged = new EventEmitter<void>();
+  allTransactions: any[] = [];
   table = new MatTableDataSource<any>();
   displayedColumns = [ 'date', 'description', 'credit', 'debit', 'balance' ];
   deleteDialog: any;
-  dateNow: any;
   startDate: Date;
   endDate: Date;
   emptyTable = true;
-  showBalanceWarning = false;
   curCode = this.stateService.configuration.currency || {};
   configuration: any = {};
   planetName: any;
+  totals = { credit: 0, debit: 0, balance: 0 };
+
+  get stats() {
+    const { credit, debit, balance } = this.totals;
+    const negative = balance < 0;
+    return [
+      { label: $localize`Total Credits`, icon: 'trending_up', tone: 'credit', value: credit },
+      { label: $localize`Total Debits`, icon: 'trending_down', tone: 'debit', value: debit },
+      {
+        label: $localize`Balance (Net change)`, icon: 'account_balance_wallet',
+        tone: negative ? 'warn' : 'net', value: balance, alert: negative
+      }
+    ];
+  }
 
   constructor(
     private csvService: CsvService,
@@ -49,68 +79,34 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
     private teamsService: TeamsService
-  ) {
-    this.couchService.currentTime().subscribe((date) => this.dateNow = date);
-  }
-
-  ngOnInit() {
-    this.table.filterPredicate = (data: any, filter) => {
-      const fromDate = this.startDate || -Infinity;
-      const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
-      return data.date >= fromDate && data.date < toDate || data.date === $localize`Total`;
-    };
-    this.table.connect().subscribe(transactions => {
-      if (transactions.length > 0 && transactions[0].filter !== this.filterString()) {
-        transactions[0] = this.setTransactionsTable(transactions)[0];
-      }
-      const hasRows = this.table.filteredData && this.table.filteredData.length > 0;
-      this.showBalanceWarning = hasRows && (this.finances && this.finances.length) === (this.table.filteredData.length - 1) &&
-        this.table.filteredData[0].balance < 0;
-    });
-  }
+  ) {}
 
   ngOnChanges() {
     if (this.editable !== this.displayedColumns.indexOf('action') > -1) {
       this.displayedColumns = [ ...this.displayedColumns, this.editable ? 'action' : [] ].flat();
     }
     if (!this.isLoading && this.finances) {
-      this.table.data = this.setTransactionsTable(this.finances);
+      this.allTransactions = this.setTransactionsTable(this.finances);
+      this.applyDateFilter();
     }
   }
 
   private setTransactionsTable(transactions: any[]): any[] {
-    const financeData = transactions.filter(transaction => transaction.status !== 'archived' && transaction.date !== 'Total')
+    return transactions.filter(transaction => transaction.status !== 'archived')
       // Overwrite values for credit and debit from early document versions on database
       .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
-    if (financeData.length === 0) {
-      this.emptyTable = true;
-      return [ { date: $localize`Total` } ];
-    }
-    this.emptyTable = false;
-    const { totalCredits: credit, totalDebits: debit, balance } = financeData[0];
-    return [ { date: $localize`Total`, credit, debit, balance, filter: this.filterString() }, ...financeData ];
-  }
-
-  private filterString() {
-    return (this.startDate || '').toString() + (this.endDate || '').toString();
   }
 
   transactionFilter() {
-    this.table.filter = ' ';
+    this.applyDateFilter();
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
-    const undefinedToNumber = (value: number | undefined) => value || 0;
-    const previousValue = index !== 0 ? newArray[index - 1] : { balance: 0, totalCredits: 0, totalDebits: 0 };
+    const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
     return [
       ...newArray,
-      {
-        ...transaction,
-        balance: previousValue.balance + undefinedToNumber(transaction.credit) - undefinedToNumber(transaction.debit),
-        totalCredits: previousValue.totalCredits + undefinedToNumber(transaction.credit),
-        totalDebits: previousValue.totalDebits + undefinedToNumber(transaction.debit),
-      }
+      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
     ];
   }
 
@@ -189,15 +185,27 @@ export class TeamsViewFinancesComponent implements OnInit, OnChanges {
   resetDateFilter() {
     this.startDate = undefined;
     this.endDate = undefined;
-    this.table.filter = '';
-    this.emptyTable = this.table.data.length <= 1;
+    this.applyDateFilter();
+  }
+
+  private updateTotals() {
+    const rows = this.table.data || [];
+    const credit = rows.reduce((sum, r) => sum + (r.credit || 0), 0);
+    const debit = rows.reduce((sum, r) => sum + (r.debit || 0), 0);
+    const balance = credit - debit;
+    this.totals = { credit, debit, balance };
+    this.emptyTable = rows.length === 0;
+  }
+
+  private applyDateFilter() {
+    const fromDate = this.startDate ? this.startDate.getTime() : -Infinity;
+    const toDate = this.endDate ? this.endDate.getTime() + millisecondsToDay : Infinity;
+    this.table.data = this.allTransactions.filter(transaction => transaction.date >= fromDate && transaction.date < toDate);
+    this.updateTotals();
   }
 
   exportTableData() {
-    let updatedData = [ ...this.table.filteredData ];
-    updatedData.shift();
-
-    updatedData = updatedData.map(row => ({
+    const updatedData = this.table.data.map(row => ({
       [$localize`date`]: fullLabel(row.date),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,

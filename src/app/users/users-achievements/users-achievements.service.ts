@@ -19,6 +19,8 @@ export class UsersAchievementsService {
 
   isEmpty(achievement) {
     return (!achievement.purpose && !achievement.goals && !achievement.achievementsHeader
-            && achievement.achievements.length === 0 && achievement.references.length === 0);
+            && achievement.achievements.length === 0 && achievement.references.length === 0
+            && (achievement.links?.length ?? 0) === 0
+            && !achievement.resumeFileName && !achievement._attachments?.['resume.pdf']);
   }
 }

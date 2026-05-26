@@ -66,7 +66,7 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  putAttachment(db: string, file: FormData, opts?: any) {
+  putAttachment(db: string, file: File | FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
   }
 
@@ -166,11 +166,20 @@ export class CouchService {
   getUrl(url: string, reqOpts?: any) {
     const [ domainWithPort = '', protocol, opts ] = this.setOpts(reqOpts);
     const domain = domainWithPort ? domainWithPort.split(':')[0].split('/db')[0] : '';
-    const urlPrefix = domain ? (protocol || environment.parentProtocol) + '://' + domain : window.location.origin;
-    return this.http.get(urlPrefix + '/' + url, opts);
+    const urlPrefix = domain ?
+      (protocol || environment.parentProtocol) + '://' + domain :
+      window.location.origin;
+    return this.http.get(urlPrefix + '/' + url, opts).pipe(
+      map((response: any) => {
+        if (typeof response === 'string' && response.trimStart().startsWith('<!')) {
+          throw new Error('Received HTML instead of expected response');
+        }
+        return response;
+      })
+    );
   }
 
-  private compareRev = (parent, local) => {
+  private compareRev(parent, local) {
     if (parent === local) {
       return 'match';
     }

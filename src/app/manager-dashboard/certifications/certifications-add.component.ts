@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
@@ -9,6 +9,13 @@ import { CoursesComponent } from '../../courses/courses.component';
 import { showFormErrors } from '../../shared/table-helpers';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { NgIf } from '@angular/common';
 
 interface CertificationFormControls {
   name: FormControl<string>;
@@ -16,7 +23,10 @@ interface CertificationFormControls {
 
 @Component({
   templateUrl: './certifications-add.component.html',
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, MatIcon, MatButton, FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput,
+    MatError, FormErrorMessagesComponent, NgIf, CoursesComponent
+  ]
 })
 export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 

@@ -27,12 +27,6 @@
 }
 
 @media (max-width: v.$screen-sm) {
-  .responsive-table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-
   mat-header-cell,
   mat-cell {
     min-width: 130px;
