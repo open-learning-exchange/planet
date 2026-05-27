@@ -216,7 +216,7 @@ export class TeamsService {
     };
   }
 
-  getTeamMembers(team, withAllLinks = false) {
+  getTeamMembers(team, withAllLinks = false): Observable<any[]> {
     const selector = {
       teamId: team._id,
       teamPlanetCode: team.teamPlanetCode,
@@ -225,10 +225,19 @@ export class TeamsService {
     };
     this.usersService.requestUserData();
     return forkJoin([
-      this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
+      this.couchService.findAll(this.dbName, findDocuments(selector)).pipe(
+        // Silent fallback: still render the team page with an empty membership list.
+        catchError(() => of([]))
+      ),
+      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)).pipe(
+        // Silent fallback: legacy shelf memberships are optional enrichment.
+        catchError(() => of([]))
+      ),
       this.usersService.usersListener(true).pipe(take(1)),
-      this.couchService.findAll('attachments')
+      this.couchService.findAll('attachments').pipe(
+        // Silent fallback: show members without profile attachments.
+        catchError(() => of([]))
+      )
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
       ...membershipDocs.map(doc => ({
         ...doc,
@@ -239,7 +248,7 @@ export class TeamsService {
     ]));
   }
 
-  getTeamResources(linkDocs: any[]) {
+  getTeamResources(linkDocs: any[]): Observable<any[]> {
     return this.stateService.getCouchState('resources', 'local').pipe(map((resources: any[]) =>
       linkDocs.map(linkDoc => ({
         linkDoc,
@@ -250,7 +259,7 @@ export class TeamsService {
     ));
   }
 
-  isTeamEmpty(team) {
+  isTeamEmpty(team): Observable<boolean> {
     return this.getTeamMembers(team).pipe(map((docs) => docs.length === 0));
   }
 
@@ -381,7 +390,7 @@ export class TeamsService {
     return this.updateTeam(newServicesDoc);
   }
 
-  getTeamsByUser(userName: string, userPlanetCode: string) {
+  getTeamsByUser(userName: string, userPlanetCode: string): Observable<any[]> {
     const selector = {
       '$or': [
         { 'userId': `org.couchdb.user:${userName}` },
@@ -390,9 +399,14 @@ export class TeamsService {
       'docType': 'membership'
     };
     return this.couchService.findAll('teams', findDocuments(selector)).pipe(
+      // Silent fallback: keep account views usable when memberships cannot be fetched.
+      catchError(() => of([])),
       switchMap(memberships => {
         const teamIds = memberships.map((doc: any) => doc.teamId);
-        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } })).pipe(
+          // Silent fallback: do not block user list views if team documents fail to load.
+          catchError(() => of([]))
+        );
       }),
       map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
     );
