@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, of, Observable } from 'rxjs';
+import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
@@ -94,21 +94,23 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
-    this.fetchMembers().subscribe(members => {
-      this.members = members;
-    });
     this.coursesService.requestCourses();
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [
-          { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
-        ]
-      },
-      viewId: this.teamId
-    });
-    this.fetchCourseAndNews();
-    this.fetchEnrolledMembers();
+    forkJoin([ this.fetchMembers(), this.fetchEnrolledMembers() ]).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ members, enrolledMemberIds ]) => {
+      this.members = members;
+      this.enrolledMemberIds = enrolledMemberIds;
+      this.fetchCourseAndNews();
+      this.newsService.requestNews({
+        selectors: {
+          '$or': [
+            { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
+            { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+          ]
+        },
+        viewId: this.teamId
+      });
+    }, () => this.isLoading = false);
   }
 
   joinCourse() {
@@ -180,12 +182,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     );
   }
 
-  fetchEnrolledMembers() {
-    this.couchService.findAll('shelf', {
+  fetchEnrolledMembers(): Observable<Set<string>> {
+    return this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
-    }).subscribe((members) => {
-      this.enrolledMemberIds = new Set(members.map((member: any) => member._id));
-    });
+    }).pipe(
+      map((members: any[]) => new Set<string>(members.map((member: any) => member._id)))
+    );
   }
 
   fetchGroupSummary(news) {
