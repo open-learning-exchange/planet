@@ -59,8 +59,8 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
-          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-gateway-$PLANET_VERSION-$SAFE_BRANCH"
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH"
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build \
             -f './docker/gateway/Dockerfile' \
@@ -87,10 +87,10 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
-          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
           docker manifest annotate $manifesttag $armtag --os linux --arch arm
@@ -103,10 +103,10 @@ jobs:
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
-          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-gateway-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
-          for tag in "$DOCKER_ORG/$DOCKER_REPO:gateway-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:gateway"; do
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          for tag in "$DOCKER_ORG/$DOCKER_REPO:chatapi-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:chatapi"; do
             docker manifest create $tag $amd64tag $armtag $arm64tag
             docker manifest annotate $tag $amd64tag --os linux --arch amd64
             docker manifest annotate $tag $armtag --os linux --arch arm

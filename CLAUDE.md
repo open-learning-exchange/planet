@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `gateway` on port 5000).
+Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `chatapi` on port 5000).
 
 ### Angular app (root)
 
 - `npm install` — install dependencies.
 - `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint` in both the root and `gateway/`.
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
-- `npm run dev` — runs `dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when `gateway` or CouchDB are on non-default ports.
+- `npm run dev` — runs `dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
 - `npm run test` — Karma + Jasmine; opens `localhost:9876`. There is no `e2e` workflow wired up on this branch.
 - Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `fdescribe` / `fit`).
