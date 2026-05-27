@@ -1,16 +1,9 @@
-ARG BASE_IMAGE=node:20-bookworm-slim
+ARG BASE_IMAGE=node:20-alpine3.22
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-      bash \
-      curl \
-      git \
-      jq \
-      ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache bash curl git jq ca-certificates
 
 RUN npm install -g add-cors-to-couchdb
 

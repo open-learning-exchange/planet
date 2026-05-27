@@ -41,13 +41,13 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            base_image: node:20-bookworm-slim
+            base_image: node:20-alpine3.22
             platform: linux/amd64
           - arch: arm
-            base_image: node:20-bookworm-slim
-            platform: linux/arm/v7
+            base_image: arm32v6/node:20-alpine3.22
+            platform: linux/arm/v6
           - arch: arm64
-            base_image: node:20-bookworm-slim
+            base_image: arm64v8/node:20-alpine3.22
             platform: linux/arm64
 
     steps:
@@ -97,8 +97,8 @@ jobs:
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
-          docker manifest annotate $manifesttag $armtag --os linux --arch arm
-          docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
+          docker manifest annotate $manifesttag $armtag --os linux --arch arm --variant v6
+          docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64 --variant v8
           docker manifest push $manifesttag
 
       - name: Multiarch Deploy Versioned
@@ -113,7 +113,7 @@ jobs:
           for tag in "$DOCKER_ORG/$DOCKER_REPO:chatapi-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:chatapi"; do
             docker manifest create $tag $amd64tag $armtag $arm64tag
             docker manifest annotate $tag $amd64tag --os linux --arch amd64
-            docker manifest annotate $tag $armtag --os linux --arch arm
-            docker manifest annotate $tag $arm64tag --os linux --arch arm64
+            docker manifest annotate $tag $armtag --os linux --arch arm --variant v6
+            docker manifest annotate $tag $arm64tag --os linux --arch arm64 --variant v8
             docker manifest push $tag
           done

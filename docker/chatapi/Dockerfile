@@ -1,6 +1,6 @@
-ARG BASE_IMAGE=node:20-bookworm-slim
+ARG BASE_IMAGE=node:20-alpine3.22
 
-FROM ${BASE_IMAGE} as builder
+FROM ${BASE_IMAGE} AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./chatapi/package.json ./
@@ -15,9 +15,7 @@ RUN npm run build
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends poppler-utils \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache poppler-utils
 COPY ./chatapi/package.json ./
 
 RUN npm install --production
