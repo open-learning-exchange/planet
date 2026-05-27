@@ -153,7 +153,7 @@ body {
       'tags .'
       'cn .';
     grid-template-columns: auto 50px;
-    grid-template-rows: $list-title-height 1fr min-content min-content;
+    grid-template-rows: auto 1fr min-content min-content;
 
     .header {
       grid-area: hd;
@@ -194,10 +194,6 @@ body {
 
   .mat-mdc-row.expanded-row td {
     padding: 0;
-  }
-
-  .list-content-menu-auto {
-    grid-template-rows: auto 1fr min-content;
   }
 
   // the colored stars are placed on top of the uncolored ones
@@ -410,14 +406,128 @@ body {
     padding: 0;
     position: relative;
     display: grid;
-    // 56px is height of paginator
-    grid-template-rows: 1fr 56px;
+    // Paginator row grows when controls wrap on narrow screens
+    grid-template-rows: 1fr auto;
     mat-table {
       overflow-y: auto;
       mat-header-row {
         position: sticky;
         top: 0;
         z-index: 10;
+      }
+    }
+  }
+
+  .mat-mdc-paginator-range-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mat-mdc-paginator-range-label {
+    margin: 0 8px;
+  }
+
+  // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
+  // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
+  // Courses/resources use a separate pattern
+  @media (max-width: v.$screen-sm) {
+    mat-table.responsive-table,
+    table.mat-mdc-table.responsive-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      min-width: var(--responsive-table-min-width, 800px);
+    }
+
+    .responsive-table:not(mat-table):not(table) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+
+      mat-table,
+      table.mat-mdc-table {
+        min-width: var(--responsive-table-min-width, 800px);
+      }
+    }
+  }
+
+  // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
+  .card-table {
+    .mat-mdc-row {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .mat-mdc-cell {
+      border: none;
+    }
+
+    .mat-column-info {
+      max-width: 200px;
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-createdDate {
+      align-self: start;
+      padding: 0;
+    }
+
+    .mat-column-rating {
+      max-width: 145px;
+      padding: 0;
+    }
+
+    .created-label {
+      display: none;
+    }
+
+    .rating-header {
+      justify-content: center;
+    }
+
+    .preview-content {
+      height: 9rem;
+      overflow: hidden;
+    }
+
+    .preview-toggle {
+      text-align: center;
+    }
+
+    .expanded-row .content {
+      max-height: none;
+    }
+
+    @media (max-width: v.$screen-md) {
+      .mat-column-info {
+        max-width: 120px;
+      }
+    }
+
+    @media (max-width: v.$screen-sm) {
+      .mat-mdc-header-row {
+        display: none;
+      }
+
+      .mat-mdc-row {
+        flex-direction: column;
+        align-items: start;
+        padding: 8px 24px;
+      }
+
+      .mat-column-info,
+      .mat-column-createdDate {
+        max-width: fit-content;
+      }
+
+      .created-label {
+        display: inline-block;
+      }
+
+      .table-selection-top {
+        display: none;
+      }
+
+      .rating-cell {
+        align-self: flex-end;
       }
     }
   }

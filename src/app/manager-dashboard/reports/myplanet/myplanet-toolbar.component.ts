@@ -1,4 +1,5 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, Output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeviceInfoService, DeviceType } from '../../../shared/device-info.service';
 import { MyPlanetFiltersForm } from './filter.base';
@@ -24,6 +25,7 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular
   ]
 })
 export class MyPlanetToolbarComponent {
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() title = '';
   @Input() versions: string[] = [];
@@ -50,12 +52,11 @@ export class MyPlanetToolbarComponent {
   showFiltersRow = false;
 
   constructor(private deviceInfoService: DeviceInfoService) {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
-  }
-
-  @HostListener('window:resize')
-  OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType({ tablet: 1300 });
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+      });
   }
 
   onVersionChange(value: string) {

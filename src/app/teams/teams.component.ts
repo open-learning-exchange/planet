@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, HostListener } from '@angular/core';
+import { Component, DestroyRef, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
@@ -44,6 +45,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   ]
 })
 export class TeamsComponent implements OnInit, AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
 
   teams = new MatTableDataSource<any>();
   @ViewChild(MatSort) sort: MatSort;
@@ -86,7 +88,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   get tableData() {
     return this.teams;
   }
-  showUserTeamsFilter = false;
 
   constructor(
     private userService: UserService,
@@ -100,8 +101,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+        this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      });
   }
 
   ngOnInit() {
@@ -110,25 +115,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       filterSpecificFieldsByWord([ 'doc.name' ]),
       (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
-    this.teams.sortingDataAccessor = (item, property) => {
-      if (property === 'membership') {
-        switch (item.userStatus) {
-          case 'member': return 2;
-          case 'requesting': return 1;
-          default: return 0;
-        }
-      }
-      return deepSortingDataAccessor(item, property);
-    };
+    this.teams.sortingDataAccessor = deepSortingDataAccessor;
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
       [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   getTeams() {
@@ -160,8 +151,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
       this.dialogsLoadingService.stop();
       this.isLoading = false;
-      this.showUserTeamsFilter = this.myTeamsFilter === 'off' &&
-       this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting');
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
@@ -219,6 +208,20 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         default:
           return { ...team, userStatus: 'unrelated' };
       }
+    }).sort((teamA, teamB) => {
+      const membershipOrder = { member: 2, requesting: 1, unrelated: 0 };
+      const membershipDifference = membershipOrder[teamB.userStatus] - membershipOrder[teamA.userStatus];
+      if (membershipDifference !== 0) {
+        return membershipDifference;
+      }
+
+      const lastVisitA = teamA.visitLog.lastVisit || 0;
+      const lastVisitB = teamB.visitLog.lastVisit || 0;
+      if (lastVisitB !== lastVisitA) {
+        return lastVisitB - lastVisitA;
+      }
+
+      return teamA.doc.name.localeCompare(teamB.doc.name);
     });
   }
 
@@ -340,19 +343,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   applyFilter(filterValue: string) {
     this.teams.filter = filterValue || (this.myTeamsFilter ? ' ' : '');
-  }
-
-  sortbyUserTeams() {
-    if (!this.teams.data.some(e => e.userStatus === 'member' || e.userStatus === 'requesting')) {
-      return;
-    }
-
-    this.sort.active = 'membership';
-    this.sort.direction = 'desc';
-    this.sort.sortChange.emit({
-      active: this.sort.active,
-      direction: this.sort.direction
-    });
   }
 
   getTeamTypeLabel(team: any): string {

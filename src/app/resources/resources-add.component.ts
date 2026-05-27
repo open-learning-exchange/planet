@@ -356,14 +356,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private getFileNames(data) {
-    // Add file names to array for mapping
-    const fileNames = [];
-    for (const path in data.files) {
-      if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
-        fileNames.push(path);
-      }
-    }
-    return fileNames;
+    const files = data.files;
+    return Object.keys(files).filter(path => !files[path].dir && path.indexOf('DS_Store') === -1);
   }
 
   zipObs(zipFile) {

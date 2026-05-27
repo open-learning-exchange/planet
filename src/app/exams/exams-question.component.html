@@ -1,5 +1,11 @@
 <form class="vertical-form" [formGroup]="questionForm">
   <div class="type-title-container">
+    <div class="scale-max-field" *ngIf="questionForm.controls.type.value === 'ratingScale'">
+      <span class="scale-max-label" i18n>Scale</span>
+      <mat-button-toggle-group formControlName="scaleMax">
+        <mat-button-toggle *ngFor="let n of scaleMaxOptions" [value]="n">{{n}}</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
     <mat-form-field>
       <mat-label i18n>Type</mat-label>
       <mat-select formControlName="type" (selectionChange)="clearChoices()" panelClass="exam-question-select">
@@ -7,7 +13,7 @@
         <mat-option value="textarea" i18n>Text - Long answer</mat-option>
         <mat-option value="select" i18n>Multiple Choice - single answer</mat-option>
         <mat-option value="selectMultiple" i18n>Multiple Choice - multiple answer</mat-option>
-        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale - 1 to 9</mat-option>
+        <mat-option *ngIf="examType !== 'exam'" value="ratingScale" i18n>Rating Scale</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

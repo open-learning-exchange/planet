@@ -1,6 +1,6 @@
 <mat-toolbar>
   <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <mat-toolbar-row>
+    <mat-toolbar-row [ngClass]="{ 'desktop-toolbar-stacked': showCustomDateFields }">
       <ng-container *ngTemplateOutlet="backBtn"></ng-container>
       <ng-container *ngIf="showCustomDateFields">
         <ng-container *ngTemplateOutlet="startDateField"></ng-container>
@@ -51,15 +51,15 @@
   <span class="toolbar-fill"></span>
 </ng-template>
 <ng-template #timeFilterSelect>
-  <mat-form-field class="margin-lr-5 font-size-1">
+  <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Time Frame</mat-label>
-    <mat-select selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
+    <mat-select (selectionChange)="onTimeFilterChange($event.value)" [value]="selectedTimeFilter">
       <mat-option *ngFor="let option of timeFilterOptions" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </mat-form-field>
 </ng-template>
 <ng-template #teamsFilterSelect>
-  <mat-form-field class="font-size-1 margin-lr-5">
+  <mat-form-field class="font-size-1 margin-lr-5" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
     <mat-label i18n>Filter Member</mat-label>
     <mat-select (selectionChange)="onTeamsFilterChange($event.value)" [value]="selectedTeam">
       <mat-option i18n value="All">All Members</mat-option>
@@ -73,7 +73,7 @@
   </mat-form-field>
 </ng-template>
 <ng-template #planetToggleGroup>
-  <mat-button-toggle-group class="font-size-1 margin-lr-5" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
+  <mat-button-toggle-group class="font-size-1 margin-lr-5" [class.full-width]="deviceType !== deviceTypes.DESKTOP" (change)="onFilterChange($event.value)" #filterGroup="matButtonToggleGroup">
     <mat-button-toggle value="planet" [checked]="this.filter.app === 'planet'" i18n>Planet</mat-button-toggle>
     <mat-button-toggle value="myplanet" [checked]="this.filter.app === 'myplanet'" i18n>myPlanet</mat-button-toggle>
     <mat-button-toggle value="" [checked]="this.filter.app === ''" i18n>Both</mat-button-toggle>
@@ -83,8 +83,8 @@
   <button mat-raised-button color="primary" (click)="clearFilters()" class="margin-lr-5"><span i18n>Clear</span></button>
 </ng-template>
 <ng-template #startDateField>
-  <div [formGroup]="dateFilterForm">
-    <mat-form-field class="margin-lr-5 font-size-1">
+  <div [formGroup]="dateFilterForm" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
+    <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
       <mat-label i18n>Start Date</mat-label>
       <input matInput formControlName="startDate" [matDatepicker]="startPicker" [min]="minDate" [max]="dateFilterForm.value.endDate || today">
       <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
@@ -94,8 +94,8 @@
     </div>
 </ng-template>
 <ng-template #endDateField>
-  <div [formGroup]="dateFilterForm">
-    <mat-form-field class="margin-lr-5 font-size-1">
+  <div [formGroup]="dateFilterForm" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
+    <mat-form-field class="margin-lr-5 font-size-1" [class.full-width]="deviceType !== deviceTypes.DESKTOP">
       <mat-label i18n>End Date</mat-label>
       <input matInput formControlName="endDate" [matDatepicker]="endPicker" [min]="dateFilterForm.value.startDate || minDate" [max]="today">
       <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
@@ -278,7 +278,7 @@
           </mat-toolbar>
           <planet-loading-spinner *ngIf="comparisonLoading || summaryLoading" text="Loading comparison data..." i18n-text></planet-loading-spinner>
           <div *ngIf="!comparisonLoading && !summaryLoading && comparisonTableData.length > 0" class="comparison-table-container">
-            <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width">
+            <table mat-table [dataSource]="comparisonTableData" class="mat-elevation-z2 full-width responsive-table">
               <ng-container matColumnDef="metric">
                 <th mat-header-cell *matHeaderCellDef i18n>Metric</th>
                 <td mat-cell *matCellDef="let row">{{row.metric}}</td>

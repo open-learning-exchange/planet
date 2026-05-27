@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
@@ -119,11 +119,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private tasksService: TasksService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
