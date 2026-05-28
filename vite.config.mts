@@ -7,16 +7,15 @@ import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-
   plugins: [angular(), viteTsConfigPaths()],
-
+  optimizeDeps: {
+    include: ['@angular/compiler', '@angular/localize/init'],
+  },
   test: {
     globals: true,
-
     environment: 'jsdom',
-
     setupFiles: ['src/test-setup.ts'],
-    include: ['**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
     reporters: ['default'],
   },
   define: {
