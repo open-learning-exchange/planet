@@ -1,13 +1,117 @@
-mat-grid-tile .mat-mdc-card {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  height: 100%;
-  width: 100%;
+@use "../variables" as v;
+
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.fixed {
+.report-toolbar {
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: white;
-  padding: 0.3rem;
+}
+
+.report-toolbar-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.report-toolbar-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: v.$grey-text;
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    align-self: center;
+  }
+  strong {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.74);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.report-empty {
+  text-align: center;
+  color: v.$grey-text;
+  padding: 32px;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.report-card {
+  cursor: pointer;
+  transition: box-shadow 0.18s;
+  &:hover, &:focus-visible {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  &:focus-visible { outline: 2px solid v.$primary-lighter; outline-offset: 2px; }
+
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .report-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .report-card-range {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .report-card-chip {
+    padding: 2px 8px;
+    height: fit-content;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border-radius: 12px;
+    background: rgba(99, 173, 61, 0.12);
+    color: v.$planet-green;
+  }
+  &.is-loss .report-card-chip {
+    background: rgba(244, 67, 54, 0.1);
+    color: v.$warn;
+  }
+
+  .report-card-hero-label {
+    font-size: 11px;
+    color: v.$grey-text;
+  }
+  .report-card-hero-value {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    word-break: break-all;
+  }
+
+  .report-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    .spacer {
+      flex: 1 1 auto;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -14,12 +14,10 @@ import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardFooter } from '@angular/material/card';
-import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
 import { MatIcon } from '@angular/material/icon';
 
 interface NewReportForm {
@@ -40,22 +38,19 @@ interface NewReportForm {
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
   imports: [
-    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
-    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
-    MatIcon, DatePipe
+    NgIf, NgFor, NgClass, MatButton, MatCard, MatCardContent, PlanetLoadingSpinnerComponent, MatIconButton, MatIcon, CurrencyPipe, DatePipe
   ]
 })
-export class TeamsReportsComponent implements DoCheck {
+export class TeamsReportsComponent {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
-  columns = 4;
-  minColumnWidth = 300;
   configuration: any = {};
   planetName: any;
+  curCode = this.stateService.configuration.currency || {};
 
   constructor(
     private couchService: CouchService,
@@ -64,20 +59,29 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private csvService: CsvService,
-    private elementRef: ElementRef,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
   ) {}
 
-  ngDoCheck() {
-    const gridElement = this.elementRef.nativeElement.children['report-grid'];
-    if (!gridElement) {
-      return;
-    }
-    const newColumns = Math.floor(gridElement.offsetWidth / this.minColumnWidth);
-    if (this.columns !== newColumns) {
-      this.columns = newColumns;
-    }
+  private num(value: any): number {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  reportIncome(report: any): number {
+    return this.num(report?.sales) + this.num(report?.otherIncome);
+  }
+
+  reportExpenses(report: any): number {
+    return this.num(report?.wages) + this.num(report?.otherExpenses);
+  }
+
+  reportNet(report: any): number {
+    return this.reportIncome(report) - this.reportExpenses(report);
+  }
+
+  reportEnding(report: any): number {
+    return this.num(report?.beginningBalance) + this.reportNet(report);
   }
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
