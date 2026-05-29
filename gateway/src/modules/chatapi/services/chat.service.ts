@@ -1,6 +1,6 @@
 import { DocumentInsertResponse } from 'nano';
 
-import { chatDB } from '../config/nano.config';
+import { chatDB } from '../../../config/couch.config';
 import { retrieveChatHistory } from '../utils/db.utils';
 import { aiChat } from '../utils/chat.utils';
 import { AIProvider, ChatMessage } from '../models/chat.model';
