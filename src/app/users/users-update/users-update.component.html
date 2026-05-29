@@ -133,8 +133,8 @@
         </div>
       </form>
     </div>
-    <div *ngIf="!submissionMode">
-      <div style="text-align: center;">
+    <div *ngIf="!submissionMode" class="profile-image-column">
+      <div class="profile-image-content">
         <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
         <div class="action-buttons">
           <button mat-raised-button color="secondary" (click)="fileInput.click()"><span i18n>Choose Image</span></button>
