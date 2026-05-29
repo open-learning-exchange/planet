@@ -44,7 +44,7 @@ docker compose -f planet-dev.yml -p planet-dev up -d
 ```
 
 Verify container status:
-Run ```docker ps -a``` after a minute. You should see two containers running: planet-gateway and couchdb. The db-init container should have exited.
+Run ```docker ps -a``` after a minute. You should see two containers running: chatapi and couchdb. The db-init container should have exited.
 
 Configure CORS for CouchDB:
 ```

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `planet-gateway` on port 5000).
+Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and gateway on port 5000).
 
 ### Angular app (root)
 
