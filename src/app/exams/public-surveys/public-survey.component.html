@@ -14,28 +14,41 @@
   (previous)="moveQuestion(-1)"
   (next)="moveQuestion(1)"
 >
-  <td-markdown [content]="question?.body"></td-markdown>
+  <td-markdown class="question-body" [content]="question?.body"></td-markdown>
   <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
-  <div class="v-align-center action-buttons">
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="moveQuestion(1)"
-      [disabled]="!answer.valid || questionNum === maxQuestions">
-      <ng-container i18n>Submit Answer</ng-container>
-    </button>
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="submitSurvey()"
-      [disabled]="!isComplete || isSubmitting"
-      i18n>
-      Finish Survey
-    </button>
-    <span *ngIf="errorMessage" class="v-align-center small warn-text-color">
-      <mat-icon>error</mat-icon>
-      <span>{{ errorMessage }}</span>
-    </span>
+  <div class="action-buttons action-buttons--split">
+    <div class="action-buttons__left">
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="moveQuestion(-1)"
+        [disabled]="isLoading || questionNum === 1"
+        i18n>
+        Previous
+      </button>
+    </div>
+    <div class="action-buttons__right">
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="moveQuestion(1)"
+        [disabled]="!answer.valid || questionNum === maxQuestions"
+        i18n>
+        Next
+      </button>
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="submitSurvey()"
+        [disabled]="!isComplete || isSubmitting"
+        i18n>
+        Finish Survey
+      </button>
+      <span *ngIf="errorMessage" class="v-align-center small warn-text-color">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </span>
+    </div>
   </div>
 </planet-exams-question-frame>
 
