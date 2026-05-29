@@ -13,7 +13,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 }) export class ChatService {
   readonly dbName = 'chat_history';
 
-  private baseUrl = `${environment.gatewayAddress}${environment.production ? '/ml' : ''}`;
+  private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private socket: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();

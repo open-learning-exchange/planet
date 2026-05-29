@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   test: true,
-  gatewayAddress: window.location.origin,
+  chatAddress: window.location.origin,
   couchAddress: 'http://127.0.0.1:5984',
   centerAddress: 'planet.earth.ole.org/db',
   centerProtocol: 'https',
