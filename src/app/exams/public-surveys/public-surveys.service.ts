@@ -21,7 +21,7 @@ export interface PublicSurveyResponse {
   providedIn: 'root'
 })
 export class PublicSurveysService {
-  private readonly baseUrl = `${environment.gatewayAddress}${environment.production ? '/api' : ''}/public/surveys`;
+  private readonly baseUrl = `${environment.chatAddress}${environment.production ? '/api' : ''}/public/surveys`;
 
   constructor(private http: HttpClient) {}
 
