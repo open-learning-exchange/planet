@@ -37,9 +37,21 @@ export class PlanetStackedBarComponent implements OnChanges {
 
   ngOnChanges() {
     const total = this.data.reduce((t, item) => t + item.amount, 0);
+    if (total === 0) {
+      this.data = this.data.map((item, index) => ({
+        ...item,
+        class: index === 0 ? 'bg-light-grey' : item.class,
+        percent: index === 0 ? 1 : 0,
+        noLabel: true
+      }));
+      this.barSizes = this.data
+        .map((_, index) => index === 0 ? '1fr' : '0fr')
+        .join(' ');
+      return;
+    }
     this.data = this.data.map(item => ({ ...item, percent: (item.amount / total) }));
     this.barSizes = this.data.reduce((sizes, item) => sizes + (item.percent + 'fr '), '');
-    this.barSizes.trim();
+    this.barSizes = this.barSizes.trim();
   }
 
 }

@@ -29,6 +29,7 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { reportGenderOptions, ReportGenderValue } from '../../shared/gender.constants';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -118,6 +119,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   comparisonLoading = false;
   comparisonTableData: any[] = [];
   comparisonColumns = ['metric', 'week1', 'week2', 'change'];
+  reportGenderOptions = reportGenderOptions;
   week1Label = $localize`Week 1`;
   week2Label = $localize`Week 2`;
   comparisonData1: any = {};
@@ -479,7 +481,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     });
     const labels = months.map(month => monthDataLabels(month));
 
-    const genderFilter = (gender: string) =>
+    // `data` is expected to have already passed through normalizeGender in the reports service.
+    const genderFilter = (gender: ReportGenderValue) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
     const monthlyObj = (month) => {
       const monthlyData = data.filter((datum: any) => datum.date === month);
@@ -492,9 +495,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     return ({
       data: {
         datasets: [
-          datasetObject($localize`Male`, xyChartData(genderFilter('male'), unique), styleVariables.primaryLighter),
-          datasetObject($localize`Female`, xyChartData(genderFilter('female'), unique), styleVariables.accentLighter),
-          datasetObject($localize`Did not specify`, xyChartData(genderFilter(undefined), unique), styleVariables.grey),
+          ...this.reportGenderOptions.map((genderOption) =>
+            datasetObject(genderOption.label, xyChartData(genderFilter(genderOption.value), unique), genderOption.color)
+          ),
           datasetObject($localize`Total`, xyChartData(totals(), unique), styleVariables.primary)
         ]
       },

@@ -6,6 +6,7 @@ import { StateService } from '../shared/state.service';
 import { UsersService } from '../users/users.service';
 import { stringToHex, ageFromBirthDate } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
+import { normalizeGender } from '../shared/gender.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -109,7 +110,13 @@ export class HealthService {
         const eventData = this.newEventDoc(oldEvent, newEvent, time);
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
-          this.postHealthDoc({}, { ...eventData, profileId: userKey, creatorId: creatorKey, gender: user.gender, age }, keyDoc),
+          this.postHealthDoc({}, {
+            ...eventData,
+            profileId: userKey,
+            creatorId: creatorKey,
+            gender: normalizeGender(user.gender),
+            age
+          }, keyDoc),
           creatorHealthDoc.userKey || newEvent.selfExamination ?
             of({}) :
             this.postHealthDoc(creatorHealthDoc, { userKey: creatorKey }, creatorKeyDoc)

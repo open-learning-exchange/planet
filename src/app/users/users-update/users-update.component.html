@@ -89,18 +89,12 @@
             </mat-form-field>
           </div>
         </ng-container>
-        <mat-radio-group class="radio-group" formControlName="gender" [required]="!submissionMode" class="full-width">
+        <mat-radio-group class="radio-group full-width" formControlName="gender" [required]="!submissionMode">
           <label i18n>Gender</label>
-          <mat-radio-button class="planet-radio-button" value="male">
+          <mat-radio-button *ngFor="let genderOption of genderOptions" class="planet-radio-button" [value]="genderOption.value">
             <div class="radio-icon-label">
-              <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span
-                i18n>Male</span>
-            </div>
-          </mat-radio-button>
-          <mat-radio-button class="planet-radio-button" value="female">
-            <div class="radio-icon-label">
-              <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span
-                i18n>Female</span>
+              <mat-icon *ngIf="genderOption.icon" [svgIcon]="genderOption.icon" class="margin-lr-3"></mat-icon>
+              <span>{{ genderOption.label }}</span>
             </div>
           </mat-radio-button>
           <mat-error i18n *ngIf="editForm.controls.gender.invalid && editForm.controls.gender.touched">
