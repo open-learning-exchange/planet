@@ -1,0 +1,56 @@
+@use "../variables" as v;
+
+.report-grid-container {
+  overflow-x: auto;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  // grid-row-gap: 0.25rem;
+  overflow-wrap: break-word;
+
+  .full-width {
+    grid-column: 1 / -1;
+  }
+
+  .mat-divider-horizontal {
+    position: initial;
+  }
+}
+
+.report-hero {
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  font-weight: 600;
+
+  &.profit {
+    background: v.$planet-green-lighter;
+
+    .report-hero-value {
+      color: v.$planet-green-dark;
+    }
+  }
+  &.loss {
+    background: v.$warn-lighter;
+
+    .report-hero-value {
+      color: v.$warn-dark;
+    }
+  }
+}
+
+.report-hero-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: v.$grey-text;
+}
+
+.report-hero-value {
+  font-size: 32px;
+  line-height: 1.15;
+  word-break: break-all;
+}
