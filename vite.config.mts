@@ -16,8 +16,14 @@ export default defineConfig(({ mode }) => ({
     environment: 'jsdom',
 
     setupFiles: ['src/test-setup.ts'],
-    include: ['**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
+    exclude: [],
     reporters: ['default'],
+    server: {
+      deps: {
+        inline: [/fesm2022/]
+      }
+    }
   },
   define: {
     'import.meta.vitest': mode !== 'production',
