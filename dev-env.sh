@@ -14,6 +14,6 @@ sed \
   -e "s/{{PARENT_PROTOCOL}}/${PARENT_PROTOCOL}/g" \
   src/environments/environment.template > src/environments/environment.dev.ts
 
-echo "planet-gateway running on port: ${GATEWAY_PORT}"
+echo "gateway running on port: ${GATEWAY_PORT}"
 echo "couchdb running on port: ${COUCH_PORT}"
 echo "parent protocol: ${PARENT_PROTOCOL}"

@@ -1,9 +1,22 @@
+@use '../variables' as v;
+
 :host {
   display: block;
 
   mat-toolbar.primary-color > span {
     display: inline-flex;
     align-items: center;
+    min-width: 0;
+    overflow: hidden;
+
+    .ellipsis-title {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+  }
+
+  mat-toolbar.primary-color button[mat-icon-button] {
+    flex: 0 0 auto;
   }
 
   .view-container {
@@ -15,8 +28,44 @@
     }
   }
 
+  .view-container.view-full-height {
+    height: auto;
+    min-height: calc(#{v.$view-container-height} - 4px);
+  }
+
+  .progress-bar-track {
+    background: #d4deea;
+  }
+
+  .progress-bar-fill {
+    background: #0a2d49;
+    height: 8px;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   .v-align-center, .v-align-center > * {
     display: flex;
     align-items: center;
   }
+
+  .action-buttons {
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .slide-in-right-a, .slide-in-right-b { animation: slideInRight 0.28s ease; }
+  .slide-in-left-a, .slide-in-left-b { animation: slideInLeft 0.28s ease; }
 }

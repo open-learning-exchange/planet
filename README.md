@@ -72,13 +72,13 @@ ng serve
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
 
-## Planet Gateway Notes
+## Gateway Notes
 
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
-For gateway development instructions, refer to the [planet-gateway README](planet-gateway/README.md).
+For gateway development instructions, refer to the [gateway README](gateway/README.md).
 
 ## Project Guidelines
 

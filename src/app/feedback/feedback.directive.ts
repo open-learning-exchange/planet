@@ -9,6 +9,10 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { AuthService } from '../shared/auth-guard.service';
+import {
+  FEEDBACK_PRIORITY_OPTIONS, FEEDBACK_TYPE_OPTIONS, FeedbackTitleContext,
+  normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
+} from './feedback.utils';
 
 export class Message {
   message: string;
@@ -17,9 +21,10 @@ export class Message {
 }
 export class Feedback {
   type: string;
-  priority: boolean;
+  priority: string;
   owner: string;
   title: string;
+  titleContext?: FeedbackTitleContext;
   openTime: any;
   closeTime: any;
   source: string;
@@ -33,21 +38,14 @@ const dialogFieldOptions = [
     'label': $localize`Is your feedback Urgent?`,
     'type': 'radio',
     'name': 'priority',
-    'options': [
-      $localize`Yes`,
-      $localize`No`,
-    ],
+    'options': FEEDBACK_PRIORITY_OPTIONS.map(option => ({ name: option.label, value: option.value })),
     'required': true
   },
   {
     'label': $localize`Feedback Type:`,
     'type': 'radio',
     'name': 'type',
-    'options': [
-      $localize`Question`,
-      $localize`Bug`,
-      $localize`Suggestion`,
-    ],
+    'options': FEEDBACK_TYPE_OPTIONS.map(option => ({ name: option.label, value: option.value })),
     'required': true
   },
   {
@@ -87,17 +85,18 @@ export class FeedbackDirective {
       ...post,
       routerLink: null,
       state: firstPart,
+      titleContext: null,
     };
     if (firstPart === 'home') {
-      feedback.title = $localize`Feedback regarding home`;
+      feedback.titleContext = { kind: 'home' };
       feedback.routerLink = [ '/home' ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (this.feedbackOf?.name) {
-      feedback.title = $localize`Feedback regarding ${firstPart}/${this.feedbackOf.name}`;
+      feedback.titleContext = { kind: 'item', state: firstPart, name: this.feedbackOf.name };
       feedback.routerLink = [ '/', firstPart, 'view', this.feedbackOf.item ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (urlParts.length === 2) {
-      feedback.title = $localize`Feedback regarding ${firstPart}`;
+      feedback.titleContext = { kind: 'section', state: firstPart };
       feedback.routerLink = [ '/', firstPart ];
       this.updateFeedback(feedback, date, user, feedbackUrl);
     } else if (lastPart) {
@@ -107,12 +106,12 @@ export class FeedbackDirective {
           const resourceName = document?.type === 'enterprise'
             ? document?.name
             : document?.title || document?.courseTitle || document?.name || lastPart;
-          feedback.title = $localize`Feedback regarding ${firstPart}/${resourceName}`;
+          feedback.titleContext = { kind: 'item', state: firstPart, name: resourceName };
           feedback.routerLink = [ '/', firstPart, 'view', lastPart ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         },
         (error) => {
-          feedback.title = $localize`Feedback regarding ${fallbackPath.join('/')}`;
+          feedback.titleContext = { kind: 'path', path: fallbackPath };
           feedback.routerLink = [ '/', ...fallbackPath ];
           this.updateFeedback(feedback, date, user, feedbackUrl);
         }
@@ -126,7 +125,9 @@ export class FeedbackDirective {
       owner: user,
       ...feedback,
       openTime: date,
-      status: 'Open',
+      status: normalizeFeedbackStatus('open'),
+      type: normalizeFeedbackType(feedback.type),
+      priority: normalizeFeedbackPriority(feedback.priority),
       messages: [ startingMessage ],
       url,
       source: this.stateService.configuration.code,
@@ -151,11 +152,10 @@ export class FeedbackDirective {
 
   openFeedback() {
     const title = $localize`Feedback`;
-    const type = 'feedback';
     const fields = dialogFieldOptions;
     const formGroup = {
-      priority: [ this.priority, Validators.required ],
-      type: [ this.type, Validators.required ],
+      priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : '', Validators.required ],
+      type: [ this.type ? normalizeFeedbackType(this.type) : '', Validators.required ],
       message: [ this.message, CustomValidators.required ]
     };
     this.dialogsFormService

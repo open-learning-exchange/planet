@@ -19,7 +19,7 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default defineConfig([globalIgnores(["projects/**/*", "planet-gateway/**/*"]), {
+export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
     files: ["**/*.ts"],
     extends: compat.extends("plugin:@angular-eslint/template/process-inline-templates"),
 

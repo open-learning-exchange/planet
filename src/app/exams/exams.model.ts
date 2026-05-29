@@ -17,4 +17,5 @@ export interface ExamQuestion {
   correctChoice: string[];
   marks: number;
   choices: { text: string, id: string }[];
+  scaleMax?: number;
 }

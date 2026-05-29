@@ -12,6 +12,8 @@
   [isDialog]="isDialog"
   [disablePrevious]="isLoading || questionNum === 1"
   [disableNext]="isLoading || questionNum === maxQuestions"
+  [slideDirection]="slideDirection"
+  [slideAnimationVariant]="slideAnimationVariant"
   (previous)="moveQuestion(-1)"
   (next)="nextQuestion({ nextClicked: true })"
 >
@@ -36,7 +38,12 @@
   <td-markdown [content]="question?.body"></td-markdown>
   <div [ngSwitch]="mode">
     <ng-container *ngSwitchCase="'take'">
-      <planet-exams-take-widget [question]="question" [answer]="answer" [examType]="examType" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
+      <planet-exams-take-widget
+        [question]="question"
+        [answer]="answer"
+        [examType]="examType"
+        [storedAnswerValue]="currentAnswer">
+      </planet-exams-take-widget>
     </ng-container>
     <ng-container *ngSwitchCase="'grade'">
       <p><b i18n>Submitted answer:</b></p>
@@ -75,8 +82,8 @@
     </button>
     <button
       *ngIf="mode === 'take'"
-      mat-raised-button
-      color="accent"
+      mat-stroked-button
+      color="primary"
       (click)="nextQuestion({ isFinish: true })"
       [disabled]="!isComplete || !answer.valid || grade === undefined || grade === null"
       i18n>

@@ -76,6 +76,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
   currentAnswer: ExamAnswerValue | null = null;
+  slideDirection: 'right' | 'left' = 'right';
+  slideAnimationVariant: 'a' | 'b' = 'a';
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -210,6 +212,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   moveQuestion(direction: number) {
+    if (direction !== 0) {
+      this.slideDirection = direction > 0 ? 'right' : 'left';
+      this.slideAnimationVariant = this.slideAnimationVariant === 'a' ? 'b' : 'a';
+    }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
       this.setExamPreview();

@@ -20,7 +20,19 @@ export class ExamsQuestionFrameComponent {
   @Input() isDialog = false;
   @Input() disablePrevious = false;
   @Input() disableNext = false;
+  @Input() slideDirection: 'right' | 'left' = 'right';
+  @Input() slideAnimationVariant: 'a' | 'b' = 'a';
 
   @Output() previous = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+
+  get progressPercent() {
+    return this.maxQuestions ? Math.round((this.questionNum / this.maxQuestions) * 100) : 0;
+  }
+
+  get slideClass() {
+    return this.slideDirection === 'right'
+      ? (this.slideAnimationVariant === 'a' ? 'slide-in-right-a' : 'slide-in-right-b')
+      : (this.slideAnimationVariant === 'a' ? 'slide-in-left-a' : 'slide-in-left-b');
+  }
 }
