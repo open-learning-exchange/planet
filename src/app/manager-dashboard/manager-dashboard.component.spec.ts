@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
 
 import { ManagerDashboardComponent } from './manager-dashboard.component';
-import { of } from 'rxjs/observable/of';
 
 describe('ManagerDashboardComponent', () => {
   let component: ManagerDashboardComponent;
@@ -9,7 +11,11 @@ describe('ManagerDashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ManagerDashboardComponent]
+      imports: [ManagerDashboardComponent],
+      providers: [
+        { provide: HttpClient, useValue: HttpTestingController},
+        { provide: ActivatedRoute, useValue: {} }
+      ]
     }).compileComponents();
   }));
 

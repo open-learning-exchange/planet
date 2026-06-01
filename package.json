@@ -62,6 +62,8 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "2.0.5",
+    "@analogjs/vitest-angular": "2.0.5",
     "@angular-devkit/build-angular": "19.2.22",
     "@angular-eslint/builder": "19.8.1",
     "@angular-eslint/eslint-plugin": "19.8.1",
@@ -77,7 +79,7 @@
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/jasmine": "~3.6.0",
-    "@types/node": "^18.19.130",
+    "@types/node": "^20.19.39",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
@@ -89,6 +91,7 @@
     "htmlhint-ng2": "0.0.13",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
+    "jsdom": "^26.1.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.1.0",
     "karma-cli": "~2.0.0",
@@ -97,7 +100,8 @@
     "karma-jasmine-html-reporter": "1.5.0",
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "vite-tsconfig-paths": "^6.1.1"
   },
   "overrides": {
     "@typescript-eslint/visitor-keys": {

@@ -2,17 +2,15 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
-import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs/observable/of';
+import { of } from 'rxjs';
 
 describe('Users', () => {
 
