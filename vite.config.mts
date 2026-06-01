@@ -16,8 +16,11 @@ export default defineConfig(({ mode }) => ({
     environment: 'jsdom',
 
     setupFiles: ['src/test-setup.ts'],
-    include: ['**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
     reporters: ['default'],
+  },
+  optimizeDeps: {
+    include: ['@angular/compiler', '@angular/localize/init'],
   },
   define: {
     'import.meta.vitest': mode !== 'production',

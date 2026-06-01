@@ -10,9 +10,8 @@ import { FormErrorMessagesComponent } from '../shared/form-error-messages.compon
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from '../shared/material.module';
 import { By } from '@angular/platform-browser';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
+import { of } from 'rxjs';
+import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 
 describe('CoursesComponent', () => {
   let component: CoursesComponent;
@@ -31,7 +30,16 @@ describe('CoursesComponent', () => {
         ReactiveFormsModule, FormsModule, RouterTestingModule, MaterialModule,
         BrowserAnimationsModule, CoursesComponent, FormErrorMessagesComponent
       ],
-      providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [
+        CouchService,
+        provideHttpClient(withInterceptorsFromDi()),
+        {
+          provide: DialogsListService,
+          useValue: {
+            getListAndColumns: () => of({ tableData: [], columns: [] })
+          }
+        }
+      ]
     });
     fixture = TestBed.createComponent(CoursesComponent);
     component = fixture.componentInstance;

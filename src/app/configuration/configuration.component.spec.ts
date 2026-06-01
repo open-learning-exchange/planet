@@ -8,6 +8,8 @@ import { FormErrorMessagesComponent } from '../shared/form-error-messages.compon
 import { RouterTestingModule } from '@angular/router/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigurationComponent } from './configuration.component';
+import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { of } from 'rxjs';
 
 describe('ConfigurationComponent', () => {
   let component: ConfigurationComponent;
@@ -19,7 +21,20 @@ describe('ConfigurationComponent', () => {
         FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule,
         ConfigurationComponent, FormErrorMessagesComponent
       ],
-      providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [
+        CouchService,
+        ValidatorService,
+        provideHttpClient(withInterceptorsFromDi()),
+        {
+          provide: DialogsFormService,
+          useValue: {
+            confirm: () => of({}),
+            openDialogsForm: () => {},
+            closeDialogsForm: () => {},
+            showErrorMessage: () => {}
+          }
+        }
+      ]
     });
     fixture = TestBed.createComponent(ConfigurationComponent);
     component = fixture.componentInstance;
