@@ -101,7 +101,8 @@
     "sass-lint": "^1.13.1",
     "ts-node": "~8.5.4",
     "typescript": "~5.8.3",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.8"
   },
   "overrides": {
     "@typescript-eslint/visitor-keys": {
