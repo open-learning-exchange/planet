@@ -15,7 +15,7 @@ import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemCompo
 import { showFormErrors } from '../../shared/table-helpers';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { FileInputComponent } from '../../shared/forms/file-input.component';
+import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -83,7 +83,7 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
     MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker,
     PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor,
-    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective, FileInputComponent
+    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective, FileUploadComponent
   ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
@@ -106,7 +106,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   resumeMarkedForDeletion = false;
   existingResumeAttachment: any = null;
   private submitAfterPending = false;
-  @ViewChild('resumeInput') resumeInput?: FileInputComponent;
+  @ViewChild('resumeInput') resumeInput?: FileUploadComponent;
   get achievements(): FormArray<AchievementFormGroup> {
     return this.editForm.controls.achievements;
   }
@@ -379,21 +379,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     });
   }
 
-  onResumeSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    if (!file) {
-      this.resumeFile = null;
-      this.resumeUploadError = '';
-      this.updateUnsavedChangesFlag();
-      return;
-    }
-
+  onResumeSelected(file: File) {
     const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
     if (!isPdf) {
       this.resumeFile = null;
       this.resumeUploadError = $localize`Please select a PDF file`;
-      this.resumeInput?.clearFile();
+      this.resumeInput?.clear();
       this.updateUnsavedChangesFlag();
       return;
     }
@@ -401,7 +392,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     if (file.size / 1024 / 1024 > this.maxResumeSizeMb) {
       this.resumeFile = null;
       this.resumeUploadError = $localize`Please select a PDF file smaller than ${this.maxResumeSizeMb} MB`;
-      this.resumeInput?.clearFile();
+      this.resumeInput?.clear();
       this.updateUnsavedChangesFlag();
       return;
     }
@@ -415,7 +406,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   clearResumeSelection() {
     this.resumeFile = null;
     this.resumeUploadError = '';
-    this.resumeInput?.clearFile();
+    this.resumeInput?.clear();
     this.updateUnsavedChangesFlag();
   }
 
