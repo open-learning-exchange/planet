@@ -1,0 +1,24 @@
+<input #fileInput hidden type="file" [accept]="accept" (change)="onInputChange($event)">
+
+<button *ngIf="!file" type="button" class="dropzone" [class.dragging]="isDragging"
+  (click)="openPicker()"
+  (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+  <span class="dz-icon"><mat-icon>{{ isDragging ? 'file_download' : 'cloud_upload' }}</mat-icon></span>
+  <span class="dz-title" *ngIf="isDragging" i18n>Drop to upload</span>
+  <span class="dz-title" *ngIf="!isDragging" i18n>Drag &amp; drop a file here, or <span class="dz-browse">browse</span></span>
+  <span class="dz-sub">{{ hint }}</span>
+  <span class="dz-types" *ngIf="typePills.length">
+    <span class="dz-type" *ngFor="let pill of typePills">{{ pill }}</span>
+  </span>
+</button>
+
+<div *ngIf="file" class="filecard">
+  <div class="fc-thumb"><mat-icon>{{ fileMeta.icon }}</mat-icon></div>
+  <div class="fc-main">
+    <div class="fc-name">{{ displayName }}</div>
+    <div class="fc-meta">{{ formattedSize }} · {{ fileMeta.label }}</div>
+  </div>
+  <button mat-icon-button type="button" (click)="remove()" i18n-aria-label aria-label="Remove file">
+    <mat-icon color="warn">delete</mat-icon>
+  </button>
+</div>
