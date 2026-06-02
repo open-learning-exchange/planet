@@ -21,9 +21,9 @@
   <div class="reports-grid" *ngIf="reportCards.length > 0">
     <mat-card class="report-card" *ngFor="let card of reportCards; trackBy: trackByReport"
       role="button" tabindex="0"
-      (click)="openReportDialog(card.report)"
-      (keydown.enter)="openReportDialog(card.report)"
-      (keydown.space)="$event.preventDefault(); openReportDialog(card.report)">
+      (click)="openReportCard($event, card.report)"
+      (keydown.enter)="openReportCard($event, card.report)"
+      (keydown.space)="openReportCard($event, card.report)">
       <mat-card-content>
         <div class="report-card-header">
           <div>

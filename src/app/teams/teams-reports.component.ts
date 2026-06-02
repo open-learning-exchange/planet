@@ -75,6 +75,17 @@ export class TeamsReportsComponent implements OnChanges {
     return card.report._id || index;
   }
 
+  openReportCard(event: MouseEvent | KeyboardEvent, report: any) {
+    const target = event.target as HTMLElement;
+    if (target.closest('button, a, input, select, textarea, [tabindex]:not(.report-card)')) {
+      return;
+    }
+    if (event instanceof KeyboardEvent && event.key === ' ') {
+      event.preventDefault();
+    }
+    this.openReportDialog(report);
+  }
+
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
