@@ -96,14 +96,12 @@ export class TeamsReportEditorDialogComponent implements OnDestroy {
     }
 
     const remainingSlots = this.maxImages - this.receiptImages.length;
-    const validFiles: File[] = [];
+    const validFiles: Array<{ file: File; contentType: string }> = [];
     const errors: string[] = [];
 
     files.forEach((file) => {
-      const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type;
-      const isAllowedType = this.allowedImageTypes.includes(normalizedType) ||
-        /\.(jpe?g|png|webp)$/i.test(file.name);
-      if (!isAllowedType) {
+      const contentType = this.imageContentType(file);
+      if (!contentType) {
         errors.push($localize`${file.name} is not a supported image format`);
         return;
       }
@@ -111,12 +109,12 @@ export class TeamsReportEditorDialogComponent implements OnDestroy {
         errors.push($localize`${file.name} exceeds ${this.maxImageSizeMb} MB`);
         return;
       }
-      validFiles.push(file);
+      validFiles.push({ file, contentType });
     });
 
-    validFiles.slice(0, remainingSlots).forEach((file) => {
+    validFiles.slice(0, remainingSlots).forEach(({ file, contentType }) => {
       this.receiptImages.push({
-        contentType: file.type === 'image/jpg' ? 'image/jpeg' : file.type,
+        contentType,
         file,
         name: file.name,
         previewUrl: URL.createObjectURL(file)
@@ -165,6 +163,20 @@ export class TeamsReportEditorDialogComponent implements OnDestroy {
         name: attachmentKey,
         previewUrl: `${environment.couchAddress}/teams/${report._id}/${encodeURIComponent(attachmentKey)}`
       }));
+  }
+
+  private imageContentType(file: File) {
+    const normalizedType = file.type === 'image/jpg' ? 'image/jpeg' : file.type;
+    if (this.allowedImageTypes.includes(normalizedType)) {
+      return normalizedType;
+    }
+    const extensionType = {
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      webp: 'image/webp'
+    }[ (file.name.split('.').pop() || '').toLowerCase() ];
+    return extensionType || '';
   }
 
 }

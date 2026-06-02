@@ -235,10 +235,11 @@ export class TeamsReportsComponent implements OnChanges {
 
   private resolveReceiptFile(image: any, key: string) {
     if (image.file) {
-      return of({ file: image.file, key });
+      return of({ contentType: image.contentType || image.file.type, file: image.file, key });
     }
 
     return this.couchService.getAttachment(image.previewUrl).pipe(map((blob: Blob) => ({
+      contentType: image.contentType || blob.type,
       file: new File([ blob ], key, { type: image.contentType || blob.type }),
       key
     })));
@@ -249,7 +250,7 @@ export class TeamsReportsComponent implements OnChanges {
       switchMap((rev) => this.couchService.putAttachment(
         `teams/${reportId}/${upload.key}?rev=${rev}`,
         upload.file,
-        { headers: { 'Content-Type': upload.file.type } }
+        { headers: { 'Content-Type': upload.contentType || upload.file.type } }
       ).pipe(map((response: any) => response.rev)))
     ), of(startingRev));
   }
