@@ -20,6 +20,9 @@ describe('ResourcesViewComponent', () => {
 
   let component: ResourcesViewComponent;
   let fixture: ComponentFixture<ResourcesViewComponent>;
+  let statusElement;
+  let testimage;
+  let de;
 
   const dialogsFormServiceMock = {
     confirm: vi.fn().mockReturnValue(of({})),
@@ -43,6 +46,10 @@ describe('ResourcesViewComponent', () => {
     isActiveResourceFetch: false
   };
 
+  const couchServiceMock = {
+    get: vi.fn().mockReturnValue(of({}))
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ ResourcesViewComponent, NoopAnimationsModule ],
@@ -54,7 +61,7 @@ describe('ResourcesViewComponent', () => {
         { provide: ResourcesService, useValue: resourcesServiceMock },
         PlanetMessageService,
         DeviceInfoService,
-        CouchService,
+        { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
         {
           provide: ActivatedRoute,
@@ -69,6 +76,10 @@ describe('ResourcesViewComponent', () => {
     });
     fixture = TestBed.createComponent(ResourcesViewComponent);
     component = fixture.componentInstance;
+    de = fixture.debugElement;
+    statusElement = de.nativeElement.querySelector('.km-resource-view img');
+    testimage = { filename: 'scenery.png', id: 'scenery.png', mediaType: 'img',
+      attachments: { 'scenery.png': { content_type: 'application/image' } } };
   });
 
   it('should be created', () => {
@@ -78,7 +89,7 @@ describe('ResourcesViewComponent', () => {
 
   /* TODO: Update tests to use vitest spies
     it('should make a get request to couchService', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage.id));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(of(testimage.id));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -87,7 +98,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(of(testimage));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -96,7 +107,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should There was a problem getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(Rx.Observable.throw({ Error }));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(throwError({ Error }));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
