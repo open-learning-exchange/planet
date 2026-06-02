@@ -7,7 +7,7 @@
 .report-grid {
   display: grid;
   grid-template-columns: 4fr 1fr;
-  // grid-row-gap: 0.25rem;
+  grid-row-gap: 0.25rem;
   overflow-wrap: break-word;
 
   .full-width {
