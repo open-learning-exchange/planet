@@ -1,4 +1,4 @@
-FROM treehouses/node:3.20
+FROM treehouses/node:3.21
 
 WORKDIR /ng-app
 
