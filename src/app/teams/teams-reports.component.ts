@@ -57,15 +57,15 @@ export class TeamsReportsComponent implements OnChanges {
     this.reportCards = (this.reports || [])
       .filter(report => report.status !== 'archived')
       .map(report => {
-        const income = (report.sales || 0) + (report.otherIncome || 0);
-        const expenses = (report.wages || 0) + (report.otherExpenses || 0);
+        const income = (+report.sales || 0) + (+report.otherIncome || 0);
+        const expenses = (+report.wages || 0) + (+report.otherExpenses || 0);
         const net = income - expenses;
         return {
           report,
           income,
           expenses,
           net,
-          endingBalance: net + (report.beginningBalance || 0),
+          endingBalance: net + (+report.beginningBalance || 0),
           isLoss: net < 0
         };
       });
