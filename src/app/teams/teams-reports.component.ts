@@ -49,7 +49,7 @@ export class TeamsReportsComponent implements OnChanges {
   @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
-  configuration: any = {};
+  configuration = this.stateService.configuration;
   curCode = this.stateService.configuration.currency || {};
   reportCards: any[] = [];
 
