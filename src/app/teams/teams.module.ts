@@ -17,6 +17,7 @@ import { TeamsMemberComponent } from './teams-member.component';
 import { TeamsReportsComponent } from './teams-reports.component';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { TeamsReportEditorDialogComponent } from './teams-report-editor-dialog.component';
 import { SurveysModule } from '../surveys/surveys.module';
 
 @NgModule({
@@ -38,6 +39,7 @@ import { SurveysModule } from '../surveys/surveys.module';
     TeamsViewComponent,
     TeamsViewFinancesComponent,
     TeamsReportsComponent,
+    TeamsReportEditorDialogComponent,
     TeamsReportsDetailComponent,
     TeamsMemberComponent,
     TeamsReportsDialogComponent

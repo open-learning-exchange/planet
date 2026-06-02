@@ -1,15 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { CustomValidators } from '../validators/custom-validators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { forkJoin, of, throwError } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap } from 'rxjs/operators';
-import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -19,19 +16,7 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
-
-interface NewReportForm {
-  _id?: string,
-  _rev?: string,
-  beginningBalance: string,
-  description: string,
-  endDate: Date,
-  otherExpenses: number,
-  otherIncome: number,
-  sales: number,
-  startDate: Date,
-  wages: string
-}
+import { TeamsReportEditorDialogComponent } from './teams-report-editor-dialog.component';
 
 @Component({
   selector: 'planet-teams-reports',
@@ -44,6 +29,7 @@ interface NewReportForm {
 })
 export class TeamsReportsComponent implements OnChanges {
 
+  readonly maxReportImages = 2;
   @Input() reports: any[];
   @Input() editable = false;
   @Input() isLoading = false;
@@ -62,6 +48,8 @@ export class TeamsReportsComponent implements OnChanges {
         const net = income - expenses;
         return {
           report,
+          receiptImageCount: Object.values(report._attachments || {})
+            .filter((attachment: any) => attachment?.content_type?.startsWith('image/')).length,
           income,
           expenses,
           net,
@@ -89,7 +77,6 @@ export class TeamsReportsComponent implements OnChanges {
   constructor(
     private couchService: CouchService,
     private dialog: MatDialog,
-    private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
     private csvService: CsvService,
@@ -97,35 +84,23 @@ export class TeamsReportsComponent implements OnChanges {
     private planetMessageService: PlanetMessageService,
   ) {}
 
-  openAddReportDialog(oldReport = {}, isEdit: boolean) {
+  openAddReportDialog(oldReport: any = {}, isEdit = false) {
     const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
-
     this.couchService.currentTime().subscribe((time: number) => {
       const currentDate = new Date(time);
       const lastMonthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-      const lastMonthEnd = currentDate.setDate(0);
-      this.dialogsFormService.openDialogsForm(
-        dialogTitle,
-        [
-          { name: 'startDate', placeholder: $localize`Start Date`, type: 'date', required: true },
-          { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
-          { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
-          { name: 'beginningBalance', placeholder: $localize`Beginning Balance`, type: 'textbox', inputType: 'number', required: true },
-          { name: 'sales', placeholder: $localize`Sales`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherIncome', placeholder: $localize`Other Income`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'wages', placeholder: $localize`Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 }
-        ],
-        this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
-        {
-          disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
-            this.dialogsFormService.closeDialogsForm();
-            const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
-            this.planetMessageService.showMessage($localize`Report ${action}`);
-          })
-        }
-      );
+      const lastMonthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+      this.dialog.open(TeamsReportEditorDialogComponent, {
+        data: {
+          defaultDates: { startDate: lastMonthStart, endDate: lastMonthEnd },
+          maxImages: this.maxReportImages,
+          report: this.reportFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
+          saveReport: (result: any) => this.saveReport(oldReport, result, isEdit),
+          title: dialogTitle
+        },
+        maxWidth: '90vw',
+        width: '72ch'
+      });
     });
   }
 
@@ -137,7 +112,7 @@ export class TeamsReportsComponent implements OnChanges {
         displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
           ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
         okClick: {
-          request: this.updateReport(report),
+          request: this.archiveReport(report),
           onNext: () => {
             this.planetMessageService.showMessage($localize`Report deleted`);
             this.dialogsLoadingService.stop();
@@ -153,80 +128,27 @@ export class TeamsReportsComponent implements OnChanges {
     });
   }
 
-  addFormInitialValues(oldReport, { startDate, endDate }) {
-    // Only these fields are shown in the dialog, so only these get validators.
-    const formFields = [ 'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
-    const initialValues = {
-      description: '',
-      beginningBalance: 0,
-      sales: 0,
-      otherIncome: 0,
-      wages: 0,
-      otherExpenses: 0,
-      ...oldReport,
-      startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
-      endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
-    };
-    const formControl = (initialValue, fieldName: string) => formFields.indexOf(fieldName) > -1 ?
-      [ initialValue, [ CustomValidators.required, this.addFormValidator(fieldName) ] ] :
-      [ initialValue ];
-    return Object.entries(initialValues).reduce(
-      (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key) }), {}
-    );
-  }
-
-  addFormValidator(fieldName) {
-    return fieldName === 'endDate' ?
-      CustomValidators.endDateValidator() :
-      [ 'sales', 'otherIncome', 'wages', 'otherExpenses' ].indexOf(fieldName) > -1 ?
-        Validators.min(0) :
-        () => {};
-  }
-
-  updateReport(oldReport, newReport: NewReportForm | {} = {}) {
-    const dateFields = [ 'startDate', 'endDate' ];
-    const numberFields = [ 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
-    const transformFields = (key: string, value: string | Date | number) => dateFields.indexOf(key) > -1 ?
-      (value as Date).getTime() :
-      numberFields.indexOf(key) > -1 ?
-        +value :
-        value;
-    const { _id, _rev, ...newDoc } = Object.entries(newReport).reduce(
-      (obj, [ key, value ]: [ string, string | Date | number ]) => {
-        return {
-          ...obj,
-          [key]: transformFields(key, value)
-        };
-      },
-      {}
-    ) as any;
-    const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
-      this.reportsChanged.emit();
-      this.dialogsLoadingService.stop();
-    }));
-  }
-
   openReportDialog(report) {
     this.dialog.open(TeamsReportsDialogComponent, {
       data: { report, team: this.team },
-      width: '70ch'
+      maxWidth: '90vw',
+      width: '80ch'
     });
   }
 
   exportReports() {
-    const exportData = this.reportCards.map(({ report }) => ({
+    const exportData = this.reportCards.map(({ report, net, endingBalance }) => ({
       [$localize`Start Date`]: fullLabel(report.startDate),
       [$localize`End Date`]: fullLabel(report.endDate),
       [$localize`Created Date`]: fullLabel(report.createdDate),
       [$localize`Updated Date`]: fullLabel(report.updatedDate),
-      [$localize`Beginning Balance`]: report.beginningBalance,
-      [$localize`Sales`]: report.sales,
-      [$localize`Other Income`]: report.otherIncome,
-      [$localize`Wages`]: report.wages,
-      [$localize`Other Expenses`]: report.otherExpenses,
-      [$localize`Profit/Loss`]: report.sales + report.otherIncome - report.wages - report.otherExpenses,
-      [$localize`Ending Balance`]: report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
+      [$localize`Beginning Balance`]: this.num(report.beginningBalance),
+      [$localize`Sales`]: this.num(report.sales),
+      [$localize`Other Income`]: this.num(report.otherIncome),
+      [$localize`Wages`]: this.num(report.wages),
+      [$localize`Other Expenses`]: this.num(report.otherExpenses),
+      [$localize`Profit/Loss`]: net,
+      [$localize`Ending Balance`]: endingBalance
     }));
     const planetName = this.stateService.configuration.name || 'Unnamed';
     const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
@@ -235,6 +157,132 @@ export class TeamsReportsComponent implements OnChanges {
       data: exportData,
       title: $localize`Financial Summary for ${titleName}`
     });
+  }
+
+  private reportFormInitialValues(oldReport, { startDate, endDate }) {
+    return {
+      description: oldReport.description || '',
+      beginningBalance: this.num(oldReport.beginningBalance),
+      sales: this.num(oldReport.sales),
+      otherIncome: this.num(oldReport.otherIncome),
+      wages: this.num(oldReport.wages),
+      otherExpenses: this.num(oldReport.otherExpenses),
+      ...oldReport,
+      startDate: new Date(oldReport.startDate || startDate),
+      endDate: new Date(oldReport.endDate || endDate)
+    };
+  }
+
+  private archiveReport(report) {
+    return this.teamsService.updateAdditionalDocs([ { ...report, status: 'archived' } ], this.team, 'report').pipe(tap(() => {
+      this.reportsChanged.emit();
+      this.dialogsLoadingService.stop();
+    }));
+  }
+
+  private saveReport(oldReport, { report, receiptImages }: any, isEdit: boolean) {
+    const dateFields = [ 'startDate', 'endDate' ];
+    const newDoc = this.transformReport(report);
+    const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
+    const newDocIndex = docs.length - 1;
+
+    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
+      switchMap((response: any) => {
+        const newDocResponse = response.res[newDocIndex];
+        return this.prepareReceiptUploads(receiptImages).pipe(
+          switchMap((uploads) => uploads.length === 0 ?
+            of(undefined) :
+            this.uploadReceiptImages(newDocResponse.id, newDocResponse.rev, uploads)
+          )
+        );
+      }),
+      tap(() => {
+        this.reportsChanged.emit();
+        const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
+        this.planetMessageService.showMessage($localize`Report ${action}`);
+      }),
+      catchError((error) => {
+        this.planetMessageService.showAlert(isEdit ?
+          $localize`There was a problem updating the report.` :
+          $localize`There was a problem adding the report.`
+        );
+        return throwError(error);
+      })
+    );
+  }
+
+  private transformReport(report: any) {
+    return {
+      ...report,
+      startDate: report.startDate.getTime(),
+      endDate: report.endDate.getTime(),
+      beginningBalance: +report.beginningBalance,
+      sales: +report.sales,
+      otherIncome: +report.otherIncome,
+      wages: +report.wages,
+      otherExpenses: +report.otherExpenses
+    };
+  }
+
+  private prepareReceiptUploads(receiptImages: any[]) {
+    return receiptImages.length === 0 ?
+      of([]) :
+      forkJoin(receiptImages.map((image, index) =>
+        this.resolveReceiptFile(image, this.attachmentKey(image, index, receiptImages))
+      ));
+  }
+
+  private resolveReceiptFile(image: any, key: string) {
+    if (image.file) {
+      return of({ file: image.file, key });
+    }
+
+    return this.couchService.getAttachment(image.previewUrl).pipe(map((blob: Blob) => ({
+      file: new File([ blob ], key, { type: image.contentType || blob.type }),
+      key
+    })));
+  }
+
+  private uploadReceiptImages(reportId: string, startingRev: string, uploads: any[]) {
+    return uploads.reduce((request$, upload) => request$.pipe(
+      switchMap((rev) => this.couchService.putAttachment(
+        `teams/${reportId}/${upload.key}?rev=${rev}`,
+        upload.file,
+        { headers: { 'Content-Type': upload.file.type } }
+      ).pipe(map((response: any) => response.rev)))
+    ), of(startingRev));
+  }
+
+  private attachmentKey(image: any, index: number, images: any[]) {
+    const key = this.sanitizeAttachmentName(image.name, image.contentType);
+    const duplicateIndex = images
+      .slice(0, index)
+      .filter((existingImage) => this.sanitizeAttachmentName(existingImage.name, existingImage.contentType) === key)
+      .length;
+    return duplicateIndex === 0 ? key : key.replace(/(\.[^.]+)?$/, `-${duplicateIndex + 1}$1`);
+  }
+
+  private sanitizeAttachmentName(name: string, contentType: string) {
+    const extension = (name.split('.').pop() || '').toLowerCase();
+    const typeMap = {
+      'image/jpeg': 'jpeg',
+      'image/png': 'png',
+      'image/webp': 'webp'
+    };
+    const safeExtension = [ 'jpg', 'jpeg', 'png', 'webp' ].indexOf(extension) > -1 ? extension : typeMap[contentType] || 'jpeg';
+    const baseName = name
+      .replace(/\.[^.]*$/, '')
+      .trim()
+      .replace(/[\\/?#%:*|"<>]/g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '') || 'image';
+    return `${baseName}.${safeExtension}`;
+  }
+
+  private num(value: any): number {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
   }
 
 }

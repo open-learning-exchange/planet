@@ -1,0 +1,78 @@
+<div mat-dialog-title>
+  <h3>{{ data.title }}</h3>
+</div>
+
+<mat-dialog-content>
+  <form [formGroup]="reportForm" class="report-form">
+    <div class="report-form-grid">
+      <mat-form-field>
+        <mat-label i18n>Start Date</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
+        <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="reportForm.controls.startDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label i18n>End Date</mat-label>
+        <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" required>
+        <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+        <mat-error><planet-form-error-messages [control]="reportForm.controls.endDate"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="full-width mat-form-field-type-no-underline">
+      <mat-label i18n>Summary</mat-label>
+      <planet-markdown-textbox class="full-width" [formControl]="reportForm.controls.description"></planet-markdown-textbox>
+      <mat-error><planet-form-error-messages [control]="reportForm.controls.description"></planet-form-error-messages></mat-error>
+    </mat-form-field>
+
+    <div class="report-form-grid">
+      <mat-form-field *ngFor="let field of amountFields">
+        <mat-label>{{ field.label }}</mat-label>
+        <input matInput type="number" [formControlName]="field.name" required>
+        <mat-error><planet-form-error-messages [control]="reportForm.controls[field.name]"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+    </div>
+
+    <section class="receipt-images-section">
+      <div class="receipt-images-header">
+        <div>
+          <h4 i18n>Receipt Images</h4>
+          <p class="mat-caption" i18n>Upload up to {{ maxImages }} JPG, PNG, or WEBP receipt images.</p>
+        </div>
+        <button type="button" mat-stroked-button (click)="openImagePicker()" [disabled]="!canAddMoreImages">
+          <mat-icon>add_photo_alternate</mat-icon>
+          <span i18n>Add Image</span>
+        </button>
+      </div>
+
+      <input #imageInput hidden type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple
+        (change)="onFilesSelected($event)">
+
+      <p class="warn-text-color mat-caption" *ngIf="imageError">{{ imageError }}</p>
+
+      <div class="receipt-images-grid" *ngIf="receiptImages.length > 0; else noImages">
+        <article class="receipt-images-card" *ngFor="let image of receiptImages; index as i">
+          <img class="receipt-images-preview" [src]="image.previewUrl" [alt]="image.name">
+          <div class="receipt-images-meta">
+            <span class="receipt-images-name">{{ image.name }}</span>
+            <button type="button" mat-icon-button (click)="removeImage(i)" i18n-aria-label aria-label="Remove image">
+              <mat-icon color="warn">delete</mat-icon>
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <ng-template #noImages>
+        <p class="mat-caption receipt-images-empty" i18n>No receipt images added.</p>
+      </ng-template>
+    </section>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close i18n>Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" i18n>Save Report</button>
+</mat-dialog-actions>
