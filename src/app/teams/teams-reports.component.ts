@@ -194,6 +194,10 @@ export class TeamsReportsComponent implements OnChanges {
           switchMap((uploads) => uploads.length === 0 ?
             of(undefined) :
             this.uploadReceiptImages(newDocResponse.id, newDocResponse.rev, uploads)
+              .pipe(catchError(() => {
+                this.planetMessageService.showAlert($localize`Report saved, but there was a problem uploading receipt images.`);
+                return of(undefined);
+              }))
           )
         );
       }),
