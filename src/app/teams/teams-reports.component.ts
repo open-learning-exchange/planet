@@ -11,6 +11,7 @@ import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { convertUtcDate } from './teams.utils';
 import { NgIf, NgFor, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
@@ -168,8 +169,8 @@ export class TeamsReportsComponent implements OnChanges {
       wages: this.num(oldReport.wages),
       otherExpenses: this.num(oldReport.otherExpenses),
       ...oldReport,
-      startDate: new Date(oldReport.startDate || startDate),
-      endDate: new Date(oldReport.endDate || endDate)
+      startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
+      endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
   }
 
