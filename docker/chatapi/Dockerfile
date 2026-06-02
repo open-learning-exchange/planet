@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=treehouses/node:20
+ARG BASE_IMAGE=treehouses/node:3.20
 
 FROM ${BASE_IMAGE} as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
@@ -15,8 +15,7 @@ RUN npm run build
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apk update \
-    && apk add --no-cache poppler-utils
+RUN apk add --no-cache poppler-utils
 COPY ./chatapi/package.json ./
 
 RUN npm install --production
