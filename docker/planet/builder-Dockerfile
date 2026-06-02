@@ -7,6 +7,6 @@ RUN ./compile_planet.sh
 
 ####
 
-FROM node:20-bookworm-slim
+FROM treehouses/node:20
 
 COPY --from=builder /ng-app/dist /ng-app/dist

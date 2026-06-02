@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=node:20-bookworm-slim
+ARG BASE_IMAGE=treehouses/node:20
 
 FROM ${BASE_IMAGE} as builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
@@ -15,9 +15,8 @@ RUN npm run build
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends poppler-utils \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk update \
+    && apk add --no-cache poppler-utils
 COPY ./chatapi/package.json ./
 
 RUN npm install --production
