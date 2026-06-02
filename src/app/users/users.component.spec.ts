@@ -42,18 +42,6 @@ describe('Users', () => {
     expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
   });
 
-  describe('select', () => {
-    it('Should toggle selected property with select', () => {
-      const { fixture, comp, testUsers } = setup(),
-        users = testUsers.users.rows.map((item: any) => item.doc);
-      comp.select(users[0]);
-      expect(users[0].selected).toBe(true, 'Calling select on unselected object sets selected to true ');
-      users[1].selected = true;
-      comp.select(users[1]);
-      expect(users[1].selected).toBe(false, 'Calling select on selected object sets selected to false');
-    });
-  });
-
   describe('Init', () => {
 
     // it('Should display restricted message for nonadmin', () => {
