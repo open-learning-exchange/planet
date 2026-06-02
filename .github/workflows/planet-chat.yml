@@ -41,11 +41,11 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            base_image: treehouses/node:3.20
+            base_image: treehouses/node:3.21
           - arch: arm
-            base_image: treehouses/node-tags:arm-3.20
+            base_image: treehouses/node-tags:arm-3.21
           - arch: arm64
-            base_image: treehouses/node-tags:arm64-3.20
+            base_image: treehouses/node-tags:arm64-3.21
 
     steps:
       - name: Checkout Code
