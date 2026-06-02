@@ -100,7 +100,9 @@ describe('CoursesComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
     couchService = fixture.debugElement.injector.get(CouchService);
-    coursedata1 = { _id: '1', _rev: 'd5857e866c', doc: { title: 'OLE Test 1', description: 'English Language Test', createdDate: 1, steps: [] } };
+    coursedata1 = {
+      _id: '1', _rev: 'd5857e866c', doc: { title: 'OLE Test 1', description: 'English Language Test', createdDate: 1, steps: [] }
+    };
     coursedata2 = { _id: '2', _rev: '66756fa21', doc: { title: 'Git Quiz', description: 'Git Operation Test', createdDate: 2, steps: [] } };
     coursearray = { rows: [ { doc: coursedata1.doc }, { doc: coursedata2.doc } ] };
   });
