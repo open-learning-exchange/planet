@@ -54,3 +54,27 @@
   line-height: 1.15;
   word-break: break-all;
 }
+
+.report-receipt-images {
+  margin: 16px 0;
+}
+
+.report-receipt-images-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.report-receipt-images-link {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  display: block;
+  overflow: hidden;
+}
+
+.report-receipt-images-image {
+  aspect-ratio: 4 / 3;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
