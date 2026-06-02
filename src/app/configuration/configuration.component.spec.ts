@@ -1,20 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MaterialModule } from '../shared/material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CouchService } from '../shared/couchdb.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+
+import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConfigurationComponent } from './configuration.component';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
-import { vi } from 'vitest';
 import { SyncService } from '../shared/sync.service';
 
 describe('ConfigurationComponent', () => {
@@ -37,7 +34,6 @@ describe('ConfigurationComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        FormsModule, BrowserAnimationsModule, ReactiveFormsModule, MaterialModule, RouterTestingModule,
         ConfigurationComponent, FormErrorMessagesComponent
       ],
       providers: [

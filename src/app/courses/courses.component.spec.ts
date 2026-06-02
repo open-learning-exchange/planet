@@ -1,14 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { CoursesComponent } from './courses.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { CouchService } from '../shared/couchdb.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-
-import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from '../shared/material.module';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { of, Subject } from 'rxjs';
+import { vi } from 'vitest';
+
+import { CoursesComponent } from './courses.component';
+import { CouchService } from '../shared/couchdb.service';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { CoursesService } from './courses.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -21,9 +20,6 @@ import { TagsService } from '../shared/forms/tags.service';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService } from '../shared/device-info.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { vi } from 'vitest';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 
 describe('CoursesComponent', () => {
@@ -63,8 +59,7 @@ describe('CoursesComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule, FormsModule, RouterTestingModule, MaterialModule,
-        BrowserAnimationsModule, CoursesComponent, FormErrorMessagesComponent
+        CoursesComponent, FormErrorMessagesComponent
       ],
       providers: [
         CouchService,

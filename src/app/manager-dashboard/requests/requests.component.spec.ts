@@ -1,4 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
+import { of, Subject } from 'rxjs';
+import { vi } from 'vitest';
+
 import { RequestsComponent } from './requests.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -9,10 +14,6 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { ReportsService } from '../reports/reports.service';
 import { ManagerService } from '../manager.service';
 import { DeviceInfoService } from '../../shared/device-info.service';
-import { ActivatedRoute } from '@angular/router';
-import { of, Subject } from 'rxjs';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { vi } from 'vitest';
 import { DialogsListService } from '../../shared/dialogs/dialogs-list.service';
 import { UserService } from '../../shared/user.service';
 

@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { of, Subject } from 'rxjs';
+import { vi } from 'vitest';
 
 import { ManagerDashboardComponent } from './manager-dashboard.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
@@ -13,13 +16,8 @@ import { ConfigurationService } from '../configuration/configuration.service';
 import { StateService } from '../shared/state.service';
 import { ManagerService } from './manager.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
-import { MatDialog } from '@angular/material/dialog';
-import { of, Subject } from 'rxjs';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { vi } from 'vitest';
 import { SyncService } from '../shared/sync.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
-import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ManagerDashboardComponent', () => {
   let component: ManagerDashboardComponent;
@@ -59,7 +57,7 @@ describe('ManagerDashboardComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ManagerDashboardComponent, NoopAnimationsModule, RouterTestingModule],
+      imports: [ManagerDashboardComponent],
       providers: [
         { provide: HttpClient, useValue: HttpTestingController},
         { provide: ActivatedRoute, useValue: {} },

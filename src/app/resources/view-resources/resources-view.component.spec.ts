@@ -2,19 +2,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { ResourcesViewComponent } from './resources-view.component';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { MaterialModule } from '../../shared/material.module';
-import { By } from '@angular/platform-browser';
-import { of, throwError } from 'rxjs';
 import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DeviceInfoService } from '../../shared/device-info.service';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { vi } from 'vitest';
 
 describe('ResourcesViewComponent', () => {
 
@@ -52,7 +50,7 @@ describe('ResourcesViewComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ResourcesViewComponent, NoopAnimationsModule ],
+      imports: [ ResourcesViewComponent ],
       providers: [
         { provide: HttpClient, useValue: HttpTestingController},
         { provide: DialogsFormService, useValue: dialogsFormServiceMock },
