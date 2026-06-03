@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=treehouses/node:3.18
+ARG BASE_IMAGE=balenalib/raspberry-pi-alpine:3.20
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
