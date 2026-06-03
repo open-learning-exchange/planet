@@ -1,4 +1,4 @@
-FROM treehouses/node:3.18
+FROM balenalib/raspberry-pi-alpine:3.20
 
 WORKDIR /ng-app
 
