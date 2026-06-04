@@ -12,9 +12,9 @@ import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
+import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgIf, NgSwitch, NgSwitchCase, NgFor, NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
@@ -93,7 +93,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private challengesService: ChallengesService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -275,12 +276,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-    if (challengeActive) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+    const challenge = this.challengesService.getChallengeForNotification(notification);
+    if (challenge) {
+      this.challengesService.openChallengeDialog(this.dialog, challenge);
     }
   }
 }
