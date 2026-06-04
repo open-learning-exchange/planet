@@ -70,6 +70,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   surveyCompletionReward = 1;
   maxDailyPosts = 5;
   goal = 500;
+  dailyPostDots = [ 0, 1, 2, 3, 4 ];
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -97,11 +98,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     if (this.endDate && this.challenge.endsAt?.length <= 10) {
       this.endDate.setHours(23, 59, 59, 999);
     }
-    this.voicePostReward = this.challenge.voicePostReward || 2;
-    this.joinCourseReward = this.challenge.joinCourseReward || 0;
-    this.surveyCompletionReward = this.challenge.surveyCompletionReward || 1;
-    this.maxDailyPosts = this.challenge.maxDailyPosts || 5;
-    this.goal = this.challenge.goal || 500;
+    this.voicePostReward = this.challenge.voicePostReward ?? 2;
+    this.joinCourseReward = this.challenge.joinCourseReward ?? 0;
+    this.surveyCompletionReward = this.challenge.surveyCompletionReward ?? 1;
+    this.maxDailyPosts = this.challenge.maxDailyPosts ?? 5;
+    this.goal = this.challenge.goal ?? 500;
+    this.dailyPostDots = Array.from({ length: Math.max(0, this.maxDailyPosts) }, (_, index) => index);
 
     if (!this.challenge.courseId) {
       this.isLoading = false;
@@ -309,6 +311,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getGoalPercentage(): number {
+    if (this.goal <= 0) {
+      return 0;
+    }
     const totalMoneyEarned = this.getGroupMoneyEarned();
     return (totalMoneyEarned / this.goal) * 100;
   }

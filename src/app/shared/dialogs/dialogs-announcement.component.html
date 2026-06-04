@@ -48,7 +48,7 @@
           <ng-template #dailyVoices>
             <div class="daily-voces-dots">
               <div
-                *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
+                *ngFor="let dot of dailyPostDots; let i = index"
                 class="dot"
                 [ngClass]="{ completed: i < getPosts() }"
               ></div>

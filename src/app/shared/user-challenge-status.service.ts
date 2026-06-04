@@ -37,10 +37,7 @@ export class UserChallengeStatusService {
   }
 
   getCompleteChallenge(): boolean {
-    const complete = Object.values(this.userStatus).every(
-      (value, index) => typeof value === 'object' && 'status' in value && value.status === true
-    );
-    return complete;
+    return this.userStatus.joinedCourse.status && this.userStatus.surveyComplete.status && this.userStatus.hasPost.status;
   }
 
   getPosts(): number {

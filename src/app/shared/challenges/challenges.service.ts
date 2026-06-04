@@ -53,7 +53,7 @@ export class ChallengesService {
   }
 
   isChallengeActive(challenge: PlanetChallenge, referenceDate = new Date()): boolean {
-    if (!challenge?.enabled) {
+    if (!challenge?.enabled || !this.hasRequiredChallengeFields(challenge)) {
       return false;
     }
     const startsAt = this.parseDateBoundary(challenge.startsAt, 'start');
@@ -83,7 +83,7 @@ export class ChallengesService {
 
   normalizeChallenge(challenge: Partial<PlanetChallenge>): PlanetChallenge {
     return {
-      id: challenge?.id || `challenge-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      id: this.getChallengeId(challenge),
       title: challenge?.title || '',
       enabled: challenge?.enabled !== false,
       courseId: challenge?.courseId || '',
@@ -99,6 +99,24 @@ export class ChallengesService {
       surveyCompletionReward: Number(challenge?.surveyCompletionReward ?? 1),
       maxDailyPosts: Number(challenge?.maxDailyPosts ?? 5)
     };
+  }
+
+  private hasRequiredChallengeFields(challenge: PlanetChallenge) {
+    return Boolean(challenge.courseId && challenge.surveyExamId);
+  }
+
+  private getChallengeId(challenge: Partial<PlanetChallenge>) {
+    if (challenge?.id) {
+      return challenge.id;
+    }
+    const stableKey = [
+      challenge?.courseId,
+      challenge?.surveyExamId,
+      challenge?.startsAt,
+      challenge?.endsAt,
+      challenge?.title
+    ].filter(Boolean).join('-');
+    return stableKey ? `challenge-${stableKey}` : 'challenge';
   }
 
   private parseDateBoundary(value: string | undefined, boundary: 'start' | 'end') {
