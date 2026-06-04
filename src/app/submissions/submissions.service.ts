@@ -684,8 +684,9 @@ export class SubmissionsService {
   }
 
   calculateAverageRating(question, submissions): number {
+    const scaleMax = question.scaleMax ?? 9;
     const validRatings = submissions.map(
-      sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= 9
+      sub => parseInt(sub.answers[question.index].value, 10)).filter(rating => !isNaN(rating) && rating >= 1 && rating <= scaleMax
     );
     const sum = validRatings.reduce((total, rating) => total + rating, 0);
     return parseFloat((sum / validRatings.length).toFixed(1));
@@ -696,9 +697,10 @@ export class SubmissionsService {
   ) {
     const totalUsers = submissions.length;
     const counts: Record<string, Set<string>> = {};
+    const scaleMax = question.scaleMax ?? 9;
 
     if (question.type === 'ratingScale') {
-      for (let i = 1; i <= 9; i++) {
+      for (let i = 1; i <= scaleMax; i++) {
         counts[i.toString()] = new Set();
       }
     } else {
@@ -737,7 +739,7 @@ export class SubmissionsService {
       }
     });
 
-    const labels = question.type === 'ratingScale' ? Array.from({length: 9}, (_, i) => (i + 1).toString()) : Object.keys(counts);
+    const labels = question.type === 'ratingScale' ? Array.from({length: scaleMax}, (_, i) => (i + 1).toString()) : Object.keys(counts);
     const userCounts = labels.map(l => counts[l].size);
     const totalSelections = userCounts.reduce((sum, count) => sum + count, 0);
     let data: number[];

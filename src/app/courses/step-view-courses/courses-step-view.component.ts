@@ -12,10 +12,8 @@ import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submis
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import {
-  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
-} from '../../shared/dialogs/dialogs-announcement.component';
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
+import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -76,6 +74,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
+    private challengesService: ChallengesService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -218,12 +217,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    // Challenge option only
-    if (includedCodes.includes(this.stateService.configuration.code) && challengePeriod && this.courseId === challengeCourseId) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
+    if (challenge) {
+      this.challengesService.openChallengeDialog(this.dialog, challenge);
     }
   }
 

@@ -16,6 +16,7 @@ import { NgIf, NgFor } from '@angular/common';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
@@ -27,7 +28,7 @@ import { MatIcon } from '@angular/material/icon';
   imports: [
     FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, NgIf,
     PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatButton, NgFor, MatCheckbox,
-    MatInput, MatIconButton, MatSuffix, MatIcon
+    MatInput, MatIconButton, MatSuffix, MatIcon, MatButtonToggle, MatButtonToggleGroup
   ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
@@ -38,6 +39,7 @@ export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, Aft
   @Output() questionRemove = new EventEmitter<any>();
   @ViewChildren('choiceInput') choiceInputs: QueryList<ElementRef>;
   correctCheckboxes: any = {};
+  scaleMaxOptions = [ 5, 6, 7, 8, 9 ];
   questionForm: QuestionFormGroup = this.examsService.newQuestionForm(this.examType === 'courses');
   initializing = true;
   choiceAdded = false;

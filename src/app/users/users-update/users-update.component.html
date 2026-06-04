@@ -133,15 +133,14 @@
         </div>
       </form>
     </div>
-    <div *ngIf="!submissionMode">
-      <div style="text-align: center;">
+    <div *ngIf="!submissionMode" class="profile-image-column">
+      <div class="profile-image-content">
         <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
+        <planet-file-upload #profileUpload accept="image/*" i18n-hint hint="JPG, PNG, GIF or WEBP" [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="openImageEditDialog($event)"></planet-file-upload>
         <div class="action-buttons">
-          <button mat-raised-button color="secondary" (click)="fileInput.click()"><span i18n>Choose Image</span></button>
-          <button *ngIf="imageChangedEvent || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
-          <button *ngIf="uploadImage && currentImgKey && !imageChangedEvent && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+          <button *ngIf="imageFile || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
+          <button *ngIf="uploadImage && currentImgKey && !imageFile && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
         </div>
-        <input #fileInput id="fileInput" type="file" accept="image/*" (change)="openImageEditDialog($event)" style="display: none;" />
       </div>
     </div>
   </div>
@@ -150,7 +149,7 @@
   <mat-dialog-content class="profile-image-section">
     <img class="profile-image-update" [src]="previewSrc"/>
     <div class="profile-image-upload">
-      <image-cropper [imageChangedEvent]="imageChangedEvent" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
+      <image-cropper [imageFile]="imageFile" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>

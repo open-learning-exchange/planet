@@ -135,7 +135,10 @@ export class TeamsService {
 
   requestToJoinTeam(team, user) {
     const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.post(this.dbName, this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')).pipe(
+    return this.couchService.updateDocument(this.dbName, {
+      createdDate: this.couchService.datePlaceholder,
+      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
+    }).pipe(
       switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
     );
   }
