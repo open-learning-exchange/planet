@@ -42,39 +42,39 @@ describe('Users', () => {
     expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
   });
 
-  describe('Init', () => {
+  // describe('Init', () => {
 
-    // it('Should display restricted message for nonadmin', () => {
-    //   const { fixture } = setup(),
-    //     messageElement = fixture.debugElement.query(By.css('.km-message')).nativeElement;
-    //   fixture.whenStable().then(() => {
-    //     fixture.detectChanges();
-    //     expect(messageElement.textContent).toBe('Access restricted to admins', 'Restricted message displays correctly');
-    //   });
-    // });
+  //   it('Should display restricted message for nonadmin', () => {
+  //     const { fixture } = setup(),
+  //       messageElement = fixture.debugElement.query(By.css('.km-message')).nativeElement;
+  //     fixture.whenStable().then(() => {
+  //       fixture.detectChanges();
+  //       expect(messageElement.textContent).toBe('Access restricted to admins', 'Restricted message displays correctly');
+  //     });
+  //   });
 
-    // it('Should display table for admin', () => {
-    //   const { fixture, comp, userService } = setup(),
-    //     userSpy = vi.spyOn(userService, 'get').mockReturnValue({ roles: [ '_admin' ] });
-    //   comp.ngOnInit();
-    //   fixture.whenStable().then(() => {
-    //     fixture.detectChanges();
-    //     const tableElement = fixture.debugElement.query(By.css('.km-user-table')).nativeElement;
-    //     expect(tableElement.style.display).not.toBe('none', 'Table is visible');
-    //   });
-    // });
+  //   it('Should display table for admin', () => {
+  //     const { fixture, comp, userService } = setup(),
+  //       userSpy = vi.spyOn(userService, 'get').mockReturnValue({ roles: [ '_admin' ] });
+  //     comp.ngOnInit();
+  //     fixture.whenStable().then(() => {
+  //       fixture.detectChanges();
+  //       const tableElement = fixture.debugElement.query(By.css('.km-user-table')).nativeElement;
+  //       expect(tableElement.style.display).not.toBe('none', 'Table is visible');
+  //     });
+  //   });
 
-    it('Should make two GET requests to CouchDB for admin', () => {
-      const { fixture, comp, userService, couchService } = setup(),
-        couchSpy = vi.spyOn(couchService, 'get').mockReturnValue(of({ rows: [] }));
-      comp.ngOnInit();
-      fixture.whenStable().then(() => {
-        fixture.detectChanges();
-        expect(couchSpy).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
-        expect(couchSpy).toHaveBeenCalledWith('_node/nonode@nohost/_config/admins');
-      });
-    });
-  });
+  //   it('Should make two GET requests to CouchDB for admin', () => {
+  //     const { fixture, comp, userService, couchService } = setup(),
+  //       couchSpy = vi.spyOn(couchService, 'get').mockReturnValue(of({ rows: [] }));
+  //     comp.ngOnInit();
+  //     fixture.whenStable().then(() => {
+  //       fixture.detectChanges();
+  //       expect(couchSpy).toHaveBeenCalledWith('_users/_all_docs?include_docs=true');
+  //       expect(couchSpy).toHaveBeenCalledWith('_node/nonode@nohost/_config/admins');
+  //     });
+  //   });
+  // });
 
   /*
   it('Should display create user message', () => {
