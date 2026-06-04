@@ -193,6 +193,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
     this.added = [ ...this.added, ...pending ];
     this.fileSelected.emit(pending[0].file);
     this.emitState();
+    this.resetInputValue();
   }
 
   private createPendingAttachment(file: File, pending: PendingAttachment[]): PendingAttachment {
@@ -209,7 +210,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy {
   private createSafeAttachmentName(name: string, pending: PendingAttachment[]): string {
     return safeAttachmentName(name, [
       ...this.retained.map(attachment => attachment.name),
-      ...this.added.map(attachment => attachment.safeName),
+      ...(this.multiple ? this.added.map(attachment => attachment.safeName) : []),
       ...pending.map(attachment => attachment.safeName)
     ]);
   }

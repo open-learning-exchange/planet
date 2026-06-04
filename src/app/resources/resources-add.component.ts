@@ -279,7 +279,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   createFileObs() {
     // If file doesn't exist, mediaType will be undefined or null
-    const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
+    const mediaType = this.file && this.resourcesService.simpleMediaType(normalizedContentType(this.file));
     if (!mediaType) {
       // Creates an observable that immediately returns an empty object
       return of({ resource: {} });
