@@ -13,6 +13,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
 import { PlanetStepListService, PlanetStepListComponent, PlanetStepListItemComponent } from '../../shared/forms/planet-step-list.component';
 import { showFormErrors } from '../../shared/table-helpers';
+import { normalizedContentType } from '../../shared/utils';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { FileUploadComponent } from '../../shared/forms/file-upload.component';
@@ -519,7 +520,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
         this.resumeFile ?
           this.couchService.putAttachment(
             this.dbName + '/' + achievementsRes.id + '/' + this.resumeAttachmentKey + '?rev=' + achievementsRes.rev,
-            this.resumeFile, { headers: { 'Content-Type': this.resumeFile.type } }
+            this.resumeFile, { headers: { 'Content-Type': normalizedContentType(this.resumeFile) } }
           ) :
           of({}),
         this.userService.updateUser(userInfo)
