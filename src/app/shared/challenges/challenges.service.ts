@@ -49,7 +49,9 @@ export class ChallengesService {
   getChallengeForNotification(notification: any, referenceDate = new Date(), configuration: any = this.stateService.configuration) {
     const challenges = this.getChallenges(configuration);
     const activeChallenges = challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate));
-    return activeChallenges.find(challenge => challenge.id === notification?.challengeId) || activeChallenges[0];
+    return notification?.challengeId ?
+      activeChallenges.find(challenge => challenge.id === notification.challengeId) :
+      activeChallenges[0];
   }
 
   isChallengeActive(challenge: PlanetChallenge, referenceDate = new Date()): boolean {
@@ -93,11 +95,11 @@ export class ChallengesService {
       bannerImageUrl: challenge?.bannerImageUrl || DEFAULT_BANNER,
       notificationMessage: challenge?.notificationMessage || '',
       successMessage: challenge?.successMessage || '¡Felicidades reto completado!',
-      goal: this.getNumber(challenge?.goal, 500),
-      joinCourseReward: this.getNumber(challenge?.joinCourseReward, 0),
-      voicePostReward: this.getNumber(challenge?.voicePostReward, 2),
-      surveyCompletionReward: this.getNumber(challenge?.surveyCompletionReward, 1),
-      maxDailyPosts: this.getNumber(challenge?.maxDailyPosts, 5)
+      goal: this.getNumber(challenge?.goal, 500, 0),
+      joinCourseReward: this.getNumber(challenge?.joinCourseReward, 0, 0),
+      voicePostReward: this.getNumber(challenge?.voicePostReward, 2, 0),
+      surveyCompletionReward: this.getNumber(challenge?.surveyCompletionReward, 1, 0),
+      maxDailyPosts: this.getInteger(challenge?.maxDailyPosts, 5, 0)
     };
   }
 
@@ -123,12 +125,19 @@ export class ChallengesService {
     return stableKey ? `challenge-${stableKey}` : 'challenge';
   }
 
-  private getNumber(value: any, fallback: number) {
+  private getNumber(value: any, fallback: number, min?: number) {
     if (value === undefined || value === null || value === '') {
       return fallback;
     }
     const numberValue = Number(value);
-    return Number.isFinite(numberValue) ? numberValue : fallback;
+    if (!Number.isFinite(numberValue)) {
+      return fallback;
+    }
+    return min === undefined ? numberValue : Math.max(min, numberValue);
+  }
+
+  private getInteger(value: any, fallback: number, min?: number) {
+    return Math.floor(this.getNumber(value, fallback, min));
   }
 
   private parseDateBoundary(value: string | undefined, boundary: 'start' | 'end') {

@@ -320,7 +320,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+      const challenge = this.challengesService.getActiveChallenge();
       if (
+        challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
@@ -328,11 +330,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.dialog.open(DialogsAnnouncementSuccessComponent, {
           width: '50vw',
           maxHeight: '100vh',
-          data: this.challengesService.getActiveChallenge()
+          data: challenge
         });
         this.userStatusService.updateStatus(
           'hasPost',
-          { status: true, amount: 1 }
+          { status: true, amount: challenge.voicePostReward ?? 2 }
         );
       }
     });

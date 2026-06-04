@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, forkJoin, of } from 'rxjs';
+import { EMPTY, Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
@@ -261,7 +261,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const configuredStepIndex = examId ?
           course.steps.findIndex(courseStep => courseStep[this.examType]?._id === examId) :
           -1;
+        if (configuredStepIndex > -1) {
+          this.stepNum = configuredStepIndex + 1;
+        }
         const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
+        if (!step?.[this.examType]?._id) {
+          this.planetMessageService.showAlert($localize`This test is not available`);
+          this.goBack();
+          return EMPTY;
+        }
         this.title = step.stepTitle;
         return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
       })

@@ -180,7 +180,9 @@ export class DialogsChatShareComponent implements OnInit {
     this.conversation.chat = true;
     this.interact();
     this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
+    const challenge = this.challengesService.getActiveChallenge();
     if (
+      challenge &&
       this.userStatusService.getStatus('joinedCourse') &&
       this.userStatusService.getStatus('surveyComplete') &&
       !this.userStatusService.getStatus('hasPost')
@@ -188,7 +190,11 @@ export class DialogsChatShareComponent implements OnInit {
       this.dialog.open(DialogsAnnouncementSuccessComponent, {
         width: '50vw',
         maxHeight: '100vh',
-        data: this.challengesService.getActiveChallenge()
+        data: challenge
+      });
+      this.userStatusService.updateStatus('hasPost', {
+        status: true,
+        amount: challenge.voicePostReward ?? 2
       });
     }
   }
