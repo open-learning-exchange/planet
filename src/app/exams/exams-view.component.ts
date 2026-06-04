@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, forkJoin, of } from 'rxjs';
+import { EMPTY, Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
@@ -12,11 +12,8 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import {
-  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
-} from '../shared/dialogs/dialogs-announcement.component';
-import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { ChallengesService } from '../shared/challenges/challenges.service';
 import { NgIf, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -93,9 +90,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
-    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
+    private challengesService: ChallengesService,
   ) {
     this.examForm = this.formBuilder.group({
       answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
@@ -180,17 +177,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        // Challenge option only
-        if (
-          isFinish &&
-          includedCodes.includes(this.stateService.configuration.code) &&
-          challengePeriod &&
-          this.courseId === challengeCourseId
-        ) {
-          this.dialog.open(DialogsAnnouncementComponent, {
-            width: '50vw',
-            maxHeight: '100vh'
-          });
+        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
+        if (challenge) {
+          this.challengesService.openChallengeDialog(this.dialog, challenge);
         }
       }
     });
@@ -268,7 +257,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
         // To be readable by non-technical people stepNum & questionNum param will start at 1
-        const step = course.steps[this.stepNum - 1];
+        const examId = this.route.snapshot.paramMap.get('examId');
+        const configuredStepIndex = examId ?
+          course.steps.findIndex(courseStep => courseStep[this.examType]?._id === examId) :
+          -1;
+        if (configuredStepIndex > -1) {
+          this.stepNum = configuredStepIndex + 1;
+        }
+        const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
+        if (!step?.[this.examType]?._id) {
+          this.planetMessageService.showAlert($localize`This test is not available`);
+          this.goBack();
+          return EMPTY;
+        }
         this.title = step.stepTitle;
         return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
       })

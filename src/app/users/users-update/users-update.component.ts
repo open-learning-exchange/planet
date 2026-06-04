@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { switchMap } from 'rxjs/operators';
 import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
@@ -58,7 +59,7 @@ interface UsersUpdateFormGroup {
     MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput,
     MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton,
     MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective,
-    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose
+    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose, FileUploadComponent
   ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
@@ -87,9 +88,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   attachmentDeleted = false;
   originalAttachments: Record<string, UserAttachment> | null = null;
   isFormInitialized = false;
-  imageChangedEvent: Event | null = null;
+  imageFile: File | null = null;
   showImagePreview = true;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
+  @ViewChild('profileUpload') profileUpload?: FileUploadComponent;
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -257,7 +259,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.uploadImage = false;
     this.avatarChanged = true;
     this.hasUnsavedChanges = true;
-    this.imageChangedEvent = null;
+    this.imageFile = null;
+    this.profileUpload?.clear();
   }
 
   deleteImageAttachment() {
@@ -285,13 +288,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.attachmentDeleted = false;
       this.previewSrc = this.currentProfileImg;
       this.file = null;
-      this.imageChangedEvent = null;
+      this.imageFile = null;
     } else {
       this.previewSrc = this.currentProfileImg;
       this.file = null;
       this.uploadImage = this.currentProfileImg !== 'assets/image.png';
-      this.imageChangedEvent = null;
+      this.imageFile = null;
     }
+    this.profileUpload?.clear();
     this.avatarChanged = false;
     this.hasUnsavedChanges = this.isFormPristine() ? false : true;
   }
@@ -334,9 +338,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     return this.showAdditionalFields ? $localize`Hide Additional Fields` : $localize`Show Additional Fields`;
   }
 
-  openImageEditDialog(event: Event): void {
+  openImageEditDialog(file: File): void {
     this.showImagePreview = false;
-    this.imageChangedEvent = event;
+    this.imageFile = file;
+    this.profileUpload?.clear();
     const dialogRef = this.dialog.open(this.imageEditDialog, {
       width: '1000px'
     });

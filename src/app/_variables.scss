@@ -10,11 +10,12 @@ $dark-hue: 700;
 $planet-primary: mat.$m2-blue-palette;
 $planet-accent: mat.$m2-amber-palette;
 $planet-warn: mat.$m2-red-palette;
-$planet-green: mat.m2-get-color-from-palette(mat.$m2-green-palette, $primary-hue);
+$planet-green-palette: mat.$m2-green-palette;
 
 $planet-app-primary: mat.m2-define-palette($planet-primary, $primary-hue);
 $planet-app-accent: mat.m2-define-palette($planet-accent, $accent-hue);
 $planet-app-warn: mat.m2-define-palette($planet-warn, $warn-hue);
+$planet-app-green: mat.m2-define-palette($planet-green-palette, $primary-hue);
 
 $planet-app-theme: mat.m2-define-light-theme((
   color: (
@@ -37,6 +38,10 @@ $primary-light: mat.m2-get-color-from-palette($planet-app-primary, 300);
 $accent-lighter: mat.m2-get-color-from-palette($planet-app-accent, 100);
 $warn-lighter: mat.m2-get-color-from-palette($planet-app-warn, 100);
 $primary-dark: mat.m2-get-color-from-palette($planet-app-primary, $dark-hue);
+$warn-dark: mat.m2-get-color-from-palette($planet-app-warn, $dark-hue);
+$planet-green: mat.m2-get-color-from-palette($planet-app-green, $primary-hue);
+$planet-green-lighter: mat.m2-get-color-from-palette($planet-app-green, 100);
+$planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);

@@ -8,15 +8,15 @@
       <input matInput [(ngModel)]="searchQuery">
     </mat-form-field>
   </div>
-  <mat-grid-list cols="3" rowHeight="1:1">
+  <mat-grid-list *ngIf="images.length !== 0" cols="3" rowHeight="1:1">
     <mat-grid-tile *ngFor="let image of filteredImages" (click)="selectImage(image)">
       <img [src]="urlPrefix + '/' + image._id + '/' + image.filename">
       <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
     </mat-grid-tile>
   </mat-grid-list>
+  <p class="upload-label mat-caption" i18n>Or upload a new image</p>
+  <planet-file-upload #imageUpload accept="image/*" i18n-hint hint="JPG, PNG, GIF or WEBP" [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="uploadImage($event)"></planet-file-upload>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>
-  <button type="button" mat-raised-button color="primary" (click)="fileInput.click()" i18n>Add New Image</button>
-  <input hidden (change)="uploadImage($event)" #fileInput type="file" accept="image/*">
 </mat-dialog-actions>

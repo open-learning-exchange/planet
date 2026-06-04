@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
@@ -18,26 +18,31 @@ import { NgClass, NgIf, NgFor } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatIcon } from '@angular/material/icon';
 import { MatAnchor } from '@angular/material/button';
-
-export const includedCodes = [ 'guatemala', 'san.pablo', 'xela', 'okuro', 'uriur', 'mutugi', 'vi' ];
-export const challengeCourseId = '4e6b78800b6ad18b4e8b0e1e38a98cac';
-export const examId = '4e6b78800b6ad18b4e8b0e1e38b382ab';
-export const challengePeriod = (new Date() > new Date(2024, 10, 31)) && (new Date() < new Date(2025, 0, 16));
+import { ChallengesService, PlanetChallenge } from '../challenges/challenges.service';
 
 @Component({
   template: `
     <div class="announcement-container">
       <img
-        src="assets/challenge/dec challenge.jpeg"
-        alt="Issues Challenge"
+        [src]="challenge.bannerImageUrl"
+        [alt]="challenge.title || 'Challenge banner'"
         class="announcement-banner"
       />
-      <p class="success-msg">¡Felicidades reto completado!</p>
+      <p class="success-msg">{{ challenge.successMessage }}</p>
     </div>
   `,
   styleUrls: ['./dialogs-announcement.component.scss']
 })
-export class DialogsAnnouncementSuccessComponent { }
+export class DialogsAnnouncementSuccessComponent {
+  challenge: PlanetChallenge;
+
+  constructor(
+    private challengesService: ChallengesService,
+    @Inject(MAT_DIALOG_DATA) public data: PlanetChallenge | null,
+  ) {
+    this.challenge = this.challengesService.normalizeChallenge(data || this.challengesService.getActiveChallenge() || {});
+  }
+}
 
 @Component({
   templateUrl: './dialogs-announcement.component.html',
@@ -50,18 +55,22 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
+  challenge: PlanetChallenge;
   completedSurveyUserNames = new Set<string>();
   groupSummary = [];
   members: any;
   enrolledMemberIds = new Set<string>();
-  courseId = challengeCourseId;
-  startDate = new Date(2024, 10, 31);
-  endDate = new Date(2024, 12, 1);
+  courseId = '';
+  surveyExamId = '';
+  startDate: Date | undefined;
+  endDate: Date | undefined;
   isLoading = true;
-  postStepValue = 2;
-  courseStepValue = 0;
-  surveyStepValue = 1;
+  voicePostReward = 2;
+  joinCourseReward = 0;
+  surveyCompletionReward = 1;
+  maxDailyPosts = 5;
   goal = 500;
+  dailyPostDots = [ 0, 1, 2, 3, 4 ];
 
   constructor(
     public dialogRef: MatDialogRef<DialogsAnnouncementComponent>,
@@ -72,16 +81,36 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-    private userStatusService: UserChallengeStatusService
+    private userStatusService: UserChallengeStatusService,
+    private challengesService: ChallengesService,
+    @Inject(MAT_DIALOG_DATA) public data: PlanetChallenge | null
   ) {}
 
   ngOnInit() {
-    if (includedCodes.includes(this.configuration.code)) {
-      this.configuration = this.stateService.configuration;
-      this.initializeData();
-    } else {
-      this.isLoading = false;
+    this.challenge = this.challengesService.normalizeChallenge(this.data || this.challengesService.getActiveChallenge() || {});
+    this.courseId = this.challenge.courseId;
+    this.surveyExamId = this.challenge.surveyExamId;
+    this.startDate = this.getDate(this.challenge.startsAt);
+    this.endDate = this.getDate(this.challenge.endsAt);
+    if (this.startDate && this.challenge.startsAt?.length <= 10) {
+      this.startDate.setHours(0, 0, 0, 0);
     }
+    if (this.endDate && this.challenge.endsAt?.length <= 10) {
+      this.endDate.setHours(23, 59, 59, 999);
+    }
+    this.voicePostReward = this.challenge.voicePostReward ?? 2;
+    this.joinCourseReward = this.challenge.joinCourseReward ?? 0;
+    this.surveyCompletionReward = this.challenge.surveyCompletionReward ?? 1;
+    this.maxDailyPosts = this.challenge.maxDailyPosts ?? 5;
+    this.goal = this.challenge.goal ?? 500;
+    this.dailyPostDots = Array.from({ length: Math.max(0, this.maxDailyPosts) }, (_, index) => index);
+
+    if (!this.challenge.courseId || !this.challenge.surveyExamId) {
+      this.isLoading = false;
+      return;
+    }
+    this.configuration = this.stateService.configuration;
+    this.initializeData();
   }
 
   ngOnDestroy() {
@@ -122,15 +151,32 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   doSurvey() {
-    this.router.navigate([ `/courses/view/${this.courseId}/step/5/exam`, {
+    const stepNum = this.getSurveyStepNum();
+    this.router.navigate([ `/courses/view/${this.courseId}/step/${stepNum}/exam`, {
       id: this.courseId,
-      stepNum: 5,
+      stepNum,
       questionNum: 1,
       type: 'survey',
       preview: 'false',
-      examId: examId
+      examId: this.surveyExamId
     } ]);
     this.dialogRef.close();
+  }
+
+  getSurveyStepNum() {
+    const course = this.coursesService.course?._id === this.courseId ?
+      this.coursesService.course :
+      this.coursesService.local.courses.find((localCourse: any) => localCourse._id === this.courseId);
+    const surveyStepIndex = course?.steps?.findIndex((step: any) => step.survey?._id === this.surveyExamId);
+    return surveyStepIndex > -1 ? surveyStepIndex + 1 : 5;
+  }
+
+  getDate(value: string | undefined) {
+    if (!value) {
+      return undefined;
+    }
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? undefined : date;
   }
 
   shareVoice() {
@@ -148,14 +194,14 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     news.forEach(post => {
       if (
         post.doc.user.name === userName &&
-        post.doc.time > this.startDate &&
-        post.doc.time < this.endDate &&
+        (!this.startDate || post.doc.time > this.startDate) &&
+        (!this.endDate || post.doc.time < this.endDate) &&
         !post.doc.replyTo
       ) {
         uniqueDays.add(new Date(post.doc.time).toDateString());
       }
     });
-    return Math.min(uniqueDays.size, 5);
+    return Math.min(uniqueDays.size, this.maxDailyPosts);
   }
 
   hasEnrolledCourse(member: any): boolean {
@@ -165,7 +211,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   fetchMembers(): Observable<any[]> {
     return this.couchService.findAll('login_activities', findDocuments({
       type: 'login',
-      loginTime: { $gte: this.startDate.getTime() }
+      ...(this.startDate ? { loginTime: { $gte: this.startDate.getTime() } } : {})
     }, [ 'user' ])).pipe(
       catchError(() => of([])),
       map((res: any[]) => Array.from(new Set(res.map(doc => doc.user)))),
@@ -200,8 +246,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
         this.groupSummary.push({
           ...member,
           userPosts,
-          courseAmount: hasJoinedCourse ? this.courseStepValue : 0,
-          surveyAmount: hasCompletedSurvey ? this.surveyStepValue : 0
+          courseAmount: hasJoinedCourse ? this.joinCourseReward : 0,
+          surveyAmount: hasCompletedSurvey ? this.surveyCompletionReward : 0
         });
       }
     });
@@ -210,18 +256,18 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   fetchIndividualSummary(news) {
     this.userStatusService.updateStatus('surveyComplete', {
       status: this.hasCompletedSurvey(this.currentUserName),
-      amount: this.surveyStepValue
+      amount: this.surveyCompletionReward
     });
     this.userStatusService.updateStatus('hasPost', {
       status: this.hasSubmittedVoice(news, this.currentUserName) > 0,
-      amount: this.postStepValue
+      amount: this.voicePostReward
     });
     this.userStatusService.updateStatus('userPosts', this.hasSubmittedVoice(news, this.currentUserName));
     this.members.some(member => {
       if (member.name === this.currentUserName) {
         this.userStatusService.updateStatus('joinedCourse', {
           status: this.hasEnrolledCourse(member),
-          amount: this.courseStepValue
+          amount: this.joinCourseReward
         });
       }
     });
@@ -257,7 +303,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   getIndividualMoneyEarned(): number {
     const userStatus = this.userStatusService.printStatus();
-    const postsEarnings = Number(userStatus.userPosts) * this.postStepValue;
+    const postsEarnings = Number(userStatus.userPosts) * this.voicePostReward;
     const courseAmount = userStatus.joinedCourse.status ? userStatus.joinedCourse.amount : 0;
     const surveyAmount = userStatus.surveyComplete.status ? userStatus.surveyComplete.amount : 0;
     return postsEarnings + courseAmount + surveyAmount;
@@ -265,7 +311,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
 
   getGroupMoneyEarned(): number {
     const totalEarned = this.groupSummary.reduce((total, member) => {
-      const postAmount = Number(member.userPosts * this.postStepValue);
+      const postAmount = Number(member.userPosts * this.voicePostReward);
       const stepAmounts = member.courseAmount + member.surveyAmount;
       return total + (isNaN(postAmount) ? 0 : postAmount) + (isNaN(stepAmounts) ? 0 : stepAmounts);
     }, 0);
@@ -273,6 +319,9 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   getGoalPercentage(): number {
+    if (this.goal <= 0) {
+      return 0;
+    }
     const totalMoneyEarned = this.getGroupMoneyEarned();
     return (totalMoneyEarned / this.goal) * 100;
   }
