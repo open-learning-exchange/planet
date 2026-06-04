@@ -1,4 +1,8 @@
 <div class="report-grid-container">
+  <div class="report-hero" *ngIf="showSummary" [ngClass]="net < 0 ? 'loss' : 'profit'">
+    <div class="report-hero-label" i18n>Net Profit / Loss</div>
+    <div class="report-hero-value">{{ net | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2' }}</div>
+  </div>
   <div class="report-grid">
     <b i18n>Beginning Balance</b><b>{{report.beginningBalance | currency:this.curCode?.code:this.curCode?.symbol:'1.0-2'}}</b>
     <mat-divider class="full-width"></mat-divider>
