@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import OpenAI from 'openai';
 
-import { configurationDB } from './nano.config';
+import { configurationDB } from '../../../config/couch.config';
 import { ModelsDocument } from '../models/chat.model';
 
 let keys: Record<string, any> = {};

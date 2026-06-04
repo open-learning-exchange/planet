@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule,
   ValidationErrors, ValidatorFn, Validators
@@ -43,7 +43,7 @@ type RegisterFormGroup = FormGroup<RegisterFormControls>;
   styleUrls: ['./login.scss'],
   imports: [ CommonModule, ReactiveFormsModule, MaterialModule, PlanetFormsModule, SharedComponentsModule ]
 })
-export class LoginFormComponent {
+export class LoginFormComponent implements OnInit {
   public userForm!: LoginFormGroup | RegisterFormGroup;
   showPassword = false;
   showRepeatPassword = false;
@@ -63,6 +63,9 @@ export class LoginFormComponent {
     private stateService: StateService,
     private loginTasksService: LoginTasksService
   ) {
+  }
+
+  ngOnInit() {
     if (!this.isDialog) {
       this.createMode = this.router.url.split('?')[0] === '/login/newmember';
     }

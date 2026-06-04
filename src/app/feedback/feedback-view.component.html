@@ -6,13 +6,9 @@
 <div class="space-container">
   <mat-toolbar>
     <mat-toolbar-row class="primary-color font-size-1">
-      <ng-container [ngSwitch]="feedback.type">
-        <mat-icon *ngSwitchCase="'Bug'">bug_report</mat-icon>
-        <mat-icon *ngSwitchCase="'Question'">help_outline</mat-icon>
-        <mat-icon *ngSwitchCase="'Suggestion'">speaker_notes</mat-icon>
-      </ng-container>
+      <mat-icon *ngIf="feedbackTypeIcon">{{feedbackTypeIcon}}</mat-icon>
       <ng-container *ngIf="!editTitleMode; else editTitleBlock">
-        <span class="margin-lr-3 ellipsis-title" matTooltip="{{feedback.title || feedback.type + ' regarding ' + feedback.url}}">{{feedback.title || feedback.type + ' regarding ' + feedback.url}}</span>
+        <span class="margin-lr-3 ellipsis-title" [matTooltip]="feedbackDisplayTitle">{{feedbackDisplayTitle}}</span>
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
@@ -70,8 +66,8 @@
       <button mat-raised-button color="accent" class="margin-lr-3" (click)="postMessage()" [disabled]="!newMessage.trim()">
         <mat-icon>reply</mat-icon><span i18n>Reply</span>
       </button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="feedback.status !== 'Closed'" i18n>Close</button>
-      <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="feedback.status === 'Closed'" i18n>Re-open</button>
+      <button mat-raised-button color="primary" class="margin-lr-3" (click)="closeFeedback(feedback)" *ngIf="!isClosed" i18n>Close</button>
+      <button mat-raised-button color="primary" class="margin-lr-3" (click)="openFeedback(feedback)" *ngIf="isClosed" i18n>Re-open</button>
     </div>
   </div>
 </div>
