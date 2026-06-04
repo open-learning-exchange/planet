@@ -90,8 +90,8 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.challenge = this.challengesService.normalizeChallenge(this.data || this.challengesService.getActiveChallenge() || {});
     this.courseId = this.challenge.courseId;
     this.surveyExamId = this.challenge.surveyExamId;
-    this.startDate = this.challenge.startsAt ? new Date(this.challenge.startsAt) : undefined;
-    this.endDate = this.challenge.endsAt ? new Date(this.challenge.endsAt) : undefined;
+    this.startDate = this.getDate(this.challenge.startsAt);
+    this.endDate = this.getDate(this.challenge.endsAt);
     if (this.startDate && this.challenge.startsAt?.length <= 10) {
       this.startDate.setHours(0, 0, 0, 0);
     }
@@ -105,7 +105,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     this.goal = this.challenge.goal ?? 500;
     this.dailyPostDots = Array.from({ length: Math.max(0, this.maxDailyPosts) }, (_, index) => index);
 
-    if (!this.challenge.courseId) {
+    if (!this.challenge.courseId || !this.challenge.surveyExamId) {
       this.isLoading = false;
       return;
     }
@@ -169,6 +169,14 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       this.coursesService.local.courses.find((localCourse: any) => localCourse._id === this.courseId);
     const surveyStepIndex = course?.steps?.findIndex((step: any) => step.survey?._id === this.surveyExamId);
     return surveyStepIndex > -1 ? surveyStepIndex + 1 : 5;
+  }
+
+  getDate(value: string | undefined) {
+    if (!value) {
+      return undefined;
+    }
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? undefined : date;
   }
 
   shareVoice() {

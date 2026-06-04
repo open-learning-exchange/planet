@@ -49,11 +49,11 @@ export class ChallengesService {
   getChallengeForNotification(notification: any, referenceDate = new Date(), configuration: any = this.stateService.configuration) {
     const challenges = this.getChallenges(configuration);
     const activeChallenges = challenges.filter(challenge => this.isChallengeActive(challenge, referenceDate));
-    return challenges.find(challenge => challenge.id === notification?.challengeId) || activeChallenges[0];
+    return activeChallenges.find(challenge => challenge.id === notification?.challengeId) || activeChallenges[0];
   }
 
   isChallengeActive(challenge: PlanetChallenge, referenceDate = new Date()): boolean {
-    if (!challenge?.enabled || !this.hasRequiredChallengeFields(challenge)) {
+    if (!challenge?.enabled || !this.hasRequiredChallengeFields(challenge) || !this.hasValidDateBoundaries(challenge)) {
       return false;
     }
     const startsAt = this.parseDateBoundary(challenge.startsAt, 'start');
@@ -64,7 +64,7 @@ export class ChallengesService {
   createChallengeNotification(userId: string, challenge: PlanetChallenge, time: any) {
     return {
       user: userId,
-      message: challenge.notificationMessage || challenge.title,
+      message: challenge.notificationMessage || challenge.title || $localize`Challenge update`,
       type: 'challenges',
       priority: 1,
       status: 'unread',
@@ -93,16 +93,20 @@ export class ChallengesService {
       bannerImageUrl: challenge?.bannerImageUrl || DEFAULT_BANNER,
       notificationMessage: challenge?.notificationMessage || '',
       successMessage: challenge?.successMessage || '¡Felicidades reto completado!',
-      goal: Number(challenge?.goal ?? 500),
-      joinCourseReward: Number(challenge?.joinCourseReward ?? 0),
-      voicePostReward: Number(challenge?.voicePostReward ?? 2),
-      surveyCompletionReward: Number(challenge?.surveyCompletionReward ?? 1),
-      maxDailyPosts: Number(challenge?.maxDailyPosts ?? 5)
+      goal: this.getNumber(challenge?.goal, 500),
+      joinCourseReward: this.getNumber(challenge?.joinCourseReward, 0),
+      voicePostReward: this.getNumber(challenge?.voicePostReward, 2),
+      surveyCompletionReward: this.getNumber(challenge?.surveyCompletionReward, 1),
+      maxDailyPosts: this.getNumber(challenge?.maxDailyPosts, 5)
     };
   }
 
   private hasRequiredChallengeFields(challenge: PlanetChallenge) {
     return Boolean(challenge.courseId && challenge.surveyExamId);
+  }
+
+  private hasValidDateBoundaries(challenge: PlanetChallenge) {
+    return [ challenge.startsAt, challenge.endsAt ].every(value => !value || !Number.isNaN(new Date(value).getTime()));
   }
 
   private getChallengeId(challenge: Partial<PlanetChallenge>) {
@@ -117,6 +121,14 @@ export class ChallengesService {
       challenge?.title
     ].filter(Boolean).join('-');
     return stableKey ? `challenge-${stableKey}` : 'challenge';
+  }
+
+  private getNumber(value: any, fallback: number) {
+    if (value === undefined || value === null || value === '') {
+      return fallback;
+    }
+    const numberValue = Number(value);
+    return Number.isFinite(numberValue) ? numberValue : fallback;
   }
 
   private parseDateBoundary(value: string | undefined, boundary: 'start' | 'end') {
