@@ -22,6 +22,11 @@
     background: rgba(v.$primary, 0.04);
   }
 
+  &:focus-visible {
+    outline: 2px solid v.$primary;
+    outline-offset: 2px;
+  }
+
   &.dragging {
     border-color: v.$primary;
     background: rgba(v.$primary, 0.08);
@@ -91,17 +96,26 @@
   border-radius: 6px;
   padding: 0.875rem 1rem;
   background: #fff;
+  margin-top: 0.5rem;
 }
 
-.fc-thumb {
+.fc-thumb,
+.fc-image-preview {
   width: 46px;
   height: 46px;
   border-radius: 6px;
   flex: none;
+}
+
+.fc-thumb {
   display: grid;
   place-items: center;
   background: v.$primary-lighter;
   color: v.$primary;
+}
+
+.fc-image-preview {
+  object-fit: cover;
 }
 
 .fc-main {

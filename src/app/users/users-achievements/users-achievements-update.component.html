@@ -99,7 +99,7 @@
         </div>
         <div>
           <p class="mat-hint mat-caption" i18n>Upload your CV/Resume below (PDF only)</p>
-          <planet-file-upload #resumeInput accept=".pdf,application/pdf" i18n-hint hint="PDF only — up to 512 MB" [typePills]="['PDF']" (fileSelected)="onResumeSelected($event)" (fileRemoved)="clearResumeSelection()"></planet-file-upload>
+          <planet-file-upload #resumeInput accept=".pdf,application/pdf" i18n-hint hint="PDF only — up to 512 MB" [typePills]="['PDF']" (fileSelected)="onResumeSelected($event)" (fileRemoved)="clearResumeSelection()" (fileRejected)="onResumeRejected()"></planet-file-upload>
           <div class="existing-file-container" *ngIf="currentResumeFileName">
             <p class="mat-caption existing-resume">
               <ng-container i18n>Current CV/Resume:</ng-container> {{ currentResumeFileName }}

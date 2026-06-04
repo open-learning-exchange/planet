@@ -1,6 +1,6 @@
-<input #fileInput hidden type="file" [accept]="accept" (change)="onInputChange($event)">
+<input #fileInput hidden type="file" [accept]="accept" [multiple]="multiple" (change)="onInputChange($event)">
 
-<button *ngIf="!file" type="button" class="dropzone" [class.dragging]="isDragging"
+<button *ngIf="canAddFiles" type="button" class="dropzone" [class.dragging]="isDragging"
   (click)="openPicker()"
   (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
   <span class="dz-icon"><mat-icon>{{ isDragging ? 'file_download' : 'cloud_upload' }}</mat-icon></span>
@@ -12,13 +12,36 @@
   </span>
 </button>
 
-<div *ngIf="file" class="filecard">
-  <div class="fc-thumb"><mat-icon>{{ fileMeta.icon }}</mat-icon></div>
+<p class="warn-text-color mat-caption" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<div *ngFor="let attachment of retained; let i = index" class="filecard">
+  <img *ngIf="imagePreview && attachment.contentType?.startsWith('image/') && attachment.url; else existingIcon"
+    class="fc-image-preview" [src]="attachment.url" [alt]="attachment.name">
+  <ng-template #existingIcon>
+    <div class="fc-thumb"><mat-icon>{{ getFileMeta(attachment.name).icon }}</mat-icon></div>
+  </ng-template>
   <div class="fc-main">
-    <div class="fc-name">{{ displayName }}</div>
-    <div class="fc-meta">{{ formattedSize }} · {{ fileMeta.label }}</div>
+    <div class="fc-name">{{ truncateAttachmentName(attachment.name) }}</div>
+    <div class="fc-meta">
+      <ng-container *ngIf="formattedSize(attachment.size)">{{ formattedSize(attachment.size) }} · </ng-container>
+      <ng-container i18n>Existing</ng-container>
+    </div>
   </div>
-  <button mat-icon-button type="button" (click)="remove()" i18n-aria-label aria-label="Remove file">
+  <button mat-icon-button type="button" (click)="removeExisting(i)" i18n-aria-label aria-label="Remove file">
+    <mat-icon color="warn">delete</mat-icon>
+  </button>
+</div>
+
+<div *ngFor="let attachment of added; let i = index" class="filecard">
+  <img *ngIf="attachment.previewUrl; else addedIcon" class="fc-image-preview" [src]="attachment.previewUrl" [alt]="attachment.safeName">
+  <ng-template #addedIcon>
+    <div class="fc-thumb"><mat-icon>{{ getFileMeta(attachment.safeName).icon }}</mat-icon></div>
+  </ng-template>
+  <div class="fc-main">
+    <div class="fc-name">{{ truncateAttachmentName(attachment.safeName) }}</div>
+    <div class="fc-meta">{{ formattedSize(attachment.file.size) }} · {{ getFileMeta(attachment.safeName).label }}</div>
+  </div>
+  <button mat-icon-button type="button" (click)="removeAdded(i)" i18n-aria-label aria-label="Remove file">
     <mat-icon color="warn">delete</mat-icon>
   </button>
 </div>

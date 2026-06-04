@@ -403,6 +403,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.updateUnsavedChangesFlag();
   }
 
+  onResumeRejected() {
+    this.resumeFile = null;
+    this.resumeUploadError = $localize`Please select a PDF file`;
+    this.updateUnsavedChangesFlag();
+  }
+
   clearResumeSelection() {
     this.resumeFile = null;
     this.resumeUploadError = '';

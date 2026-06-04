@@ -31,6 +31,23 @@ export const isAcceptableFile = (file: File, accept?: string): boolean => {
     });
 };
 
+export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  if (usedNames.indexOf(trimmed) === -1) {
+    return trimmed;
+  }
+  const lastDot = trimmed.lastIndexOf('.');
+  const baseName = lastDot > 0 ? trimmed.slice(0, lastDot) : trimmed;
+  const ext = lastDot > 0 ? trimmed.slice(lastDot) : '';
+  let index = 1;
+  let nextName = `${baseName}-${index}${ext}`;
+  while (usedNames.indexOf(nextName) > -1) {
+    index += 1;
+    nextName = `${baseName}-${index}${ext}`;
+  }
+  return nextName;
+};
+
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
 
