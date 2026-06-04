@@ -257,7 +257,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
         // To be readable by non-technical people stepNum & questionNum param will start at 1
-        const step = course.steps[this.stepNum - 1];
+        const examId = this.route.snapshot.paramMap.get('examId');
+        const configuredStepIndex = examId ?
+          course.steps.findIndex(courseStep => courseStep[this.examType]?._id === examId) :
+          -1;
+        const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
         this.title = step.stepTitle;
         return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
       })

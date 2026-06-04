@@ -151,15 +151,24 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   doSurvey() {
-    this.router.navigate([ `/courses/view/${this.courseId}/step/5/exam`, {
+    const stepNum = this.getSurveyStepNum();
+    this.router.navigate([ `/courses/view/${this.courseId}/step/${stepNum}/exam`, {
       id: this.courseId,
-      stepNum: 5,
+      stepNum,
       questionNum: 1,
       type: 'survey',
       preview: 'false',
       examId: this.surveyExamId
     } ]);
     this.dialogRef.close();
+  }
+
+  getSurveyStepNum() {
+    const course = this.coursesService.course?._id === this.courseId ?
+      this.coursesService.course :
+      this.coursesService.local.courses.find((localCourse: any) => localCourse._id === this.courseId);
+    const surveyStepIndex = course?.steps?.findIndex((step: any) => step.survey?._id === this.surveyExamId);
+    return surveyStepIndex > -1 ? surveyStepIndex + 1 : 5;
   }
 
   shareVoice() {
