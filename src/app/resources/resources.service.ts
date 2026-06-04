@@ -9,6 +9,7 @@ import { StateService } from '../shared/state.service';
 import { TagsService } from '../shared/forms/tags.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
+import { normalizedContentType } from '../shared/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -123,7 +124,7 @@ export class ResourcesService {
           file ?
             this.couchService.putAttachment(
               this.dbName + '/' + resourceRes.id + '/' + (sanitizedFileName ? sanitizedFileName : file.name) + '?rev=' + resourceRes.rev,
-              file, { headers: { 'Content-Type': file.type } }
+              file, { headers: { 'Content-Type': normalizedContentType(file) } }
             ) :
             of({}),
           this.couchService.bulkDocs('tags', this.tagsService.tagBulkDocs(resourceRes.id, this.dbName, newTags, existingTags))
