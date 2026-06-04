@@ -22,7 +22,7 @@ import { UsersService } from '../users/users.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { truncateText } from '../shared/utils';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgFor, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { NgIf, NgTemplateOutlet, NgFor, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -34,6 +34,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import {
+  FEEDBACK_STATUS_OPTIONS, FEEDBACK_TYPE_OPTIONS, getFeedbackDisplayTitle, getFeedbackPriorityLabel, getFeedbackStatusLabel,
+  getFeedbackTypeIcon, getFeedbackTypeLabel, normalizeFeedbackPriority, normalizeFeedbackStatus, normalizeFeedbackType,
+} from './feedback.utils';
 
 @Component({
   templateUrl: './feedback.component.html',
@@ -54,18 +58,27 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatFormField,
     MatLabel, MatSelect, MatOption, NgFor, MatInput, FormsModule, MatButton, MatTable, MatSort,
     MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatTooltip,
-    NgSwitch, NgSwitchCase, MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
+    MatChipSet, MatChip, MatMenuTrigger, MatMenu, MatMenuItem, RouterLink,
     MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
   ]
 })
 export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly dbName = 'feedback';
+  private readonly displaySortFieldMap = {
+    title: 'displayTitle',
+    type: 'displayType',
+    priority: 'displayPriority',
+    status: 'displayStatus'
+  } as const;
   message: string;
   deleteDialog: any;
   feedback = new MatTableDataSource();
   displayedColumns = [ 'title', 'type', 'priority', 'owner', 'status', 'openTime', 'closeTime', 'source', 'action' ];
-  typeOptions: any = [ $localize`Question`, $localize`Bug`, $localize`Suggestion` ];
-  statusOptions: any = [ { text: $localize`Open`, value: [ 'Open', 'Reopened' ] }, { text: $localize`Closed`, value: 'Closed' } ];
+  typeOptions = FEEDBACK_TYPE_OPTIONS.map(option => ({ text: option.label, value: option.value }));
+  statusOptions: any = [
+    { text: FEEDBACK_STATUS_OPTIONS[0].label, value: [ FEEDBACK_STATUS_OPTIONS[0].value, FEEDBACK_STATUS_OPTIONS[1].value ] },
+    { text: FEEDBACK_STATUS_OPTIONS[2].label, value: FEEDBACK_STATUS_OPTIONS[2].value }
+  ];
   filter = {
     'type': '',
     'status': ''
@@ -120,8 +133,15 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user = this.userService.get();
     this.usersService.requestUsers();
     this.feedbackService.setFeedback();
-    this.feedback.filterPredicate = composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'title' ]) ]);
-    this.feedback.sortingDataAccessor = sortNumberOrString;
+    this.feedback.filterPredicate =
+      composeFilterFunctions([ filterDropdowns(this.filter), filterSpecificFields([ 'owner', 'displayTitle' ]) ]);
+    this.feedback.sortingDataAccessor = (item: any, property: string) => {
+      const displayField = this.displaySortFieldMap[property as keyof typeof this.displaySortFieldMap];
+      if (displayField) {
+        return sortNumberOrString({ [displayField]: item[displayField] || '' }, displayField);
+      }
+      return sortNumberOrString(item, property);
+    };
   }
 
   ngAfterViewInit() {
@@ -142,9 +162,20 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     const selector = !this.user.isUserAdmin ? { 'owner': this.user.name } : { '_id': { '$gt': null } };
     this.couchService.findAll(this.dbName, findDocuments(selector, 0, [ { 'openTime': 'desc' } ])).subscribe((feedbackData: any[]) => {
       this.feedback.data = feedbackData.map(feedback => {
+        const normalizedType = normalizeFeedbackType(feedback.type);
+        const normalizedPriority = normalizeFeedbackPriority(feedback.priority);
+        const normalizedStatus = normalizeFeedbackStatus(feedback.status);
+        const displayTitle = truncateText(getFeedbackDisplayTitle(feedback), 100);
         return {
           ...feedback,
-          title: truncateText(feedback.title, 100),
+          normalizedType,
+          normalizedPriority,
+          normalizedStatus,
+          displayTitle,
+          displayType: getFeedbackTypeLabel(normalizedType),
+          displayPriority: getFeedbackPriorityLabel(normalizedPriority),
+          displayStatus: getFeedbackStatusLabel(normalizedStatus),
+          typeIcon: getFeedbackTypeIcon(normalizedType),
           user: this.users.find(u => u.doc.name === feedback.owner)
         };
       });
@@ -160,7 +191,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
         okClick: this.deleteFeedback(feedback),
         changeType: 'delete',
         type: 'feedback',
-        displayName: feedback.title
+        displayName: feedback.displayTitle || feedback.title
       }
     });
     // Reset the message when the dialog closes

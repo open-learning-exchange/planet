@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MatDialogTitle, MatDialogContent } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, of, Observable } from 'rxjs';
+import { Subject, of, Observable, forkJoin } from 'rxjs';
 import { takeUntil, catchError, map, switchMap } from 'rxjs/operators';
 
 import { findDocuments } from '../../shared/mangoQueries';
@@ -50,10 +50,10 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   currentUserName = this.userService.get().name;
   configuration = this.stateService.configuration;
   teamId = planetAndParentId(this.stateService.configuration);
-  submissions = [];
+  completedSurveyUserNames = new Set<string>();
   groupSummary = [];
   members: any;
-  enrolledMembers: any;
+  enrolledMemberIds = new Set<string>();
   courseId = challengeCourseId;
   startDate = new Date(2024, 10, 31);
   endDate = new Date(2024, 12, 1);
@@ -94,21 +94,23 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   initializeData() {
-    this.fetchMembers().subscribe(members => {
-      this.members = members;
-    });
     this.coursesService.requestCourses();
-    this.newsService.requestNews({
-      selectors: {
-        '$or': [
-          { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
-        ]
-      },
-      viewId: this.teamId
-    });
-    this.fetchCourseAndNews();
-    this.fetchEnrolledMembers();
+    forkJoin([ this.fetchMembers(), this.fetchEnrolledMembers() ]).pipe(
+      takeUntil(this.onDestroy$)
+    ).subscribe(([ members, enrolledMemberIds ]) => {
+      this.members = members;
+      this.enrolledMemberIds = enrolledMemberIds;
+      this.fetchCourseAndNews();
+      this.newsService.requestNews({
+        selectors: {
+          '$or': [
+            { messagePlanetCode: this.configuration.code, viewableBy: 'community' },
+            { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+          ]
+        },
+        viewId: this.teamId
+      });
+    }, () => this.isLoading = false);
   }
 
   joinCourse() {
@@ -137,7 +139,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasCompletedSurvey(userName: string): boolean {
-    return this.submissions.some(submission => submission.name === userName && submission.status === 'complete');
+    return this.completedSurveyUserNames.has(userName);
   }
 
   hasSubmittedVoice(news: any[], userName: string): number {
@@ -157,11 +159,7 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
   }
 
   hasEnrolledCourse(member: any): boolean {
-    return this.enrolledMembers.some(
-      (enrolledMember) =>
-        enrolledMember._id === member._id &&
-        enrolledMember.courseIds?.includes(this.courseId)
-    );
+    return this.enrolledMemberIds.has(member._id);
   }
 
   fetchMembers(): Observable<any[]> {
@@ -184,18 +182,12 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
     );
   }
 
-  fetchEnrolledMembers() {
-    this.couchService.findAll('shelf', {
+  fetchEnrolledMembers(): Observable<Set<string>> {
+    return this.couchService.findAll('shelf', {
       selector: { courseIds: { $elemMatch: { $eq: this.courseId } } },
-    }).subscribe((members) => {
-      this.enrolledMembers = members.map((member: any) => {
-        const [ , memberName ] = member?._id.split(':');
-        return {
-          ...member,
-          name: memberName,
-        };
-      });
-    });
+    }).pipe(
+      map((members: any[]) => new Set<string>(members.map((member: any) => member._id)))
+    );
   }
 
   fetchGroupSummary(news) {
@@ -251,12 +243,11 @@ export class DialogsAnnouncementComponent implements OnInit, OnDestroy {
       }));
       this.submissionsService.getSubmissions(findDocuments({ type: 'survey' }))
         .subscribe((submissions: any[]) => {
-          const filteredSubmissions = submissions.filter(submission => submission.parentId.includes(this.courseId));
-          this.submissions = filteredSubmissions.map(submission => ({
-            name: submission.user.name,
-            status: submission.status,
-            time: submission.lastUpdateTime
-          }));
+          this.completedSurveyUserNames = new Set(
+            submissions
+              .filter(s => s.parentId.includes(this.courseId) && s.status === 'complete')
+              .map(s => s.user.name)
+          );
           this.fetchGroupSummary(news);
           this.fetchIndividualSummary(news);
           this.isLoading = false;
