@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, FormsModule, ReactiveFormsModule
+  FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
-import { Subject, forkJoin, of } from 'rxjs';
+import { EMPTY, Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
@@ -13,32 +12,22 @@ import { SubmissionsService } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import {
-  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
-} from '../shared/dialogs/dialogs-announcement.component';
-import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
-import { NgIf, NgClass, NgSwitch, NgSwitchCase, NgFor, DatePipe } from '@angular/common';
+import { ChallengesService } from '../shared/challenges/challenges.service';
+import { NgIf, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
-import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-
-interface ExamAnswerOption {
-  id: string;
-  text: string;
-  isOther?: boolean;
-};
-
-type ExamOtherAnswerOption = ExamAnswerOption & { isOther: true };
-
-type ExamAnswerValue = string | ExamAnswerOption | ExamAnswerOption[] | null;
+import { ExamsQuestionFrameComponent } from './exams-question-frame.component';
+import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.component';
+import {
+  ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
+} from './exams-take/exam-answer.helpers';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -47,12 +36,11 @@ interface ExamViewForm {
 @Component({
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
-  styleUrls: ['./exams-view.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, MatIcon, NgClass, MatIconButton, MatMenuTrigger, MatMenu,
-    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput,
-    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup, NgFor,
-    MatRadioButton, MatCheckbox, MatButton, PlanetLoadingSpinnerComponent, DatePipe
+    NgIf, MatToolbar, MatIconAnchor, MatIcon, MatIconButton, MatMenuTrigger, MatMenu,
+    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel,
+    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup,
+    MatRadioButton, MatButton, DatePipe, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
@@ -76,7 +64,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   updatedOn = '';
   fromSubmission = false;
   examType = this.route.snapshot.data.mySurveys === true || this.route.snapshot.paramMap.has('surveyId') ? 'survey' : 'exam';
-  checkboxState: any = {};
   isNewQuestion = true;
   unansweredQuestions: number[];
   isComplete = false;
@@ -85,35 +72,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   courseId: string;
   teamId = this.route.snapshot.params.teamId || null;
-  currentOtherOption: ExamOtherAnswerOption = { id: 'other', text: '', isOther: true };
+  currentAnswer: ExamAnswerValue | null = null;
   slideDirection: 'right' | 'left' = 'right';
   slideAnimationVariant: 'a' | 'b' = 'a';
-  @ViewChild('singleOtherInput') singleOtherInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('multipleOtherInput') multipleOtherInput?: ElementRef<HTMLInputElement>;
-  progressPercent = 0;
-  ratingScaleNumbers: number[] = [];
-  private readonly answerValidator: ValidatorFn = (ac: AbstractControl<ExamAnswerValue>): ValidationErrors | null => {
-    const value = ac.value;
-    if (typeof value === 'string') {
-      return value.trim() ? null : { required: true };
-    }
-
-    if (Array.isArray(value)) {
-      if (value.length === 0) {
-        return { required: true };
-      }
-      const hasEmptyOther = value.some(option =>
-        this.isOtherOption(option) && (!option.text || !option.text.trim())
-      );
-      return hasEmptyOther ? { required: true } : null;
-    }
-
-    if (this.isOtherOption(value)) {
-      return value.text && value.text.trim() ? null : { required: true };
-    }
-
-    return value !== null && value !== undefined ? null : { required: true };
-  };
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -129,12 +90,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog,
-    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private formBuilder: FormBuilder,
+    private challengesService: ChallengesService,
   ) {
     this.examForm = this.formBuilder.group({
-      answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: this.answerValidator })
+      answer: this.formBuilder.control<ExamAnswerValue>(null, { validators: examAnswerValidator })
     });
   }
 
@@ -176,7 +137,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const mode = params.get('mode');
     this.mode = mode || this.mode;
     this.answer.setValue(null);
-    this.currentOtherOption = { id: 'other', text: '', isOther: true };
+    this.currentAnswer = null;
     if (courseId) {
       this.coursesService.requestCourse({ courseId });
       this.statusMessage = '';
@@ -192,7 +153,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
 
   setExamPreview() {
     this.answer.setValue(null);
-    this.checkboxState = {};
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;
@@ -214,20 +174,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
-        this.question.choices.forEach(choice => this.checkboxState[choice.id] = false);
+        this.currentAnswer = null;
       } else {
         this.routeToNext(nextQuestion, previousStatus);
-        // Challenge option only
-        if (
-          isFinish &&
-          includedCodes.includes(this.stateService.configuration.code) &&
-          challengePeriod &&
-          this.courseId === challengeCourseId
-        ) {
-          this.dialog.open(DialogsAnnouncementComponent, {
-            width: '50vw',
-            maxHeight: '100vh'
-          });
+        const challenge = isFinish ? this.challengesService.getActiveChallengeForCourse(this.courseId) : undefined;
+        if (challenge) {
+          this.challengesService.openChallengeDialog(this.dialog, challenge);
         }
       }
     });
@@ -259,10 +211,6 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
-    if (direction !== 0) {
-      this.checkboxState = {};
-      this.currentOtherOption = { id: 'other', text: '', isOther: true };
-    }
     this.isNewQuestion = true;
   }
 
@@ -301,11 +249,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   setQuestion(questions: any[]) {
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
-    this.progressPercent = this.maxQuestions ? Math.round((this.questionNum / this.maxQuestions) * 100) : 0;
-    const scaleMax = this.question?.scaleMax ?? 9;
-    this.ratingScaleNumbers = Array.from({ length: scaleMax }, (_, i) => i + 1);
     this.answer.markAsUntouched();
-    this.currentOtherOption = { id: 'other', text: '', isOther: true };
   }
 
   setCourseListener() {
@@ -313,7 +257,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$),
       switchMap(({ course, progress }: { course: any, progress: any }) => {
         // To be readable by non-technical people stepNum & questionNum param will start at 1
-        const step = course.steps[this.stepNum - 1];
+        const examId = this.route.snapshot.paramMap.get('examId');
+        const configuredStepIndex = examId ?
+          course.steps.findIndex(courseStep => courseStep[this.examType]?._id === examId) :
+          -1;
+        if (configuredStepIndex > -1) {
+          this.stepNum = configuredStepIndex + 1;
+        }
+        const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
+        if (!step?.[this.examType]?._id) {
+          this.planetMessageService.showAlert($localize`This test is not available`);
+          this.goBack();
+          return EMPTY;
+        }
         this.title = step.stepTitle;
         return forkJoin([ of(course), of(step), this.couchService.get(`exams/${step[this.examType]._id}`).pipe(catchError(() => of(0))) ]);
       })
@@ -354,7 +310,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         this.initialLoad = false;
       }
       if (this.mode === 'take' && this.isNewQuestion) {
-        this.setAnswerForRetake(ans);
+        this.currentAnswer = ans?.value !== undefined ? ans.value : null;
       } else if (this.mode !== 'take') {
         this.setViewAnswerText(ans);
       }
@@ -364,35 +320,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  setAnswer(event: Pick<MatCheckboxChange, 'checked'>, option: ExamAnswerOption) {
-    const value: ExamAnswerOption[] = Array.isArray(this.answer.value) ? [ ...this.answer.value ] : [];
-    if (event.checked) {
-      const existingIndex = value.findIndex(val => val.id === option.id);
-      if (existingIndex === -1) {
-        value.push(option);
-      } else if (option.id === 'other') {
-        value[existingIndex] = { ...value[existingIndex], text: option.text };
-      }
-    } else {
-      const index = value.findIndex(val => val.id === option.id);
-      if (index > -1) {
-        value.splice(index, 1);
-      }
-    }
-
-    this.answer.setValue(value.length > 0 ? value : null);
-    this.answer.updateValueAndValidity();
-    this.checkboxState[option.id] = event.checked;
-  }
-
-  setRatingScaleAnswer(number: number) {
-    this.answer.setValue(number.toString());
-    this.answer.updateValueAndValidity();
-  }
-
   calculateCorrect() {
     const value = this.answer.value;
-    const answers = Array.isArray(value) ? value : this.isAnswerOption(value) ? [ value ] : [];
+    const answers = Array.isArray(value) ? value : isExamAnswerOption(value) ? [ value ] : [];
     const answerIds = answers
       .map(ans => typeof ans === 'string' ? ans : ans?.id)
       .filter((id): id is string => !!id);
@@ -426,121 +356,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  setAnswerForRetake(answer: any) {
-    const setSelectMultipleAnswer = (answers: ExamAnswerOption[]) => {
-      answers.forEach(ans => {
-        this.setAnswer({ checked: true }, ans);
-      });
-    };
-    this.answer.setValue(null);
-    if (!answer.value) {
-      return;
-    }
-    switch (this.question.type) {
-      case 'selectMultiple':
-        if (Array.isArray(answer.value)) {
-          const rebuilt = answer.value.map(val => {
-            if (val.id === 'other') {
-              this.currentOtherOption.text = val.text || '';
-              return this.currentOtherOption;
-            }
-            return val;
-          });
-          setSelectMultipleAnswer(rebuilt);
-        }
-        break;
-      case 'select':
-        if (this.isOtherOption(answer.value)) {
-          this.currentOtherOption.text = answer.value.text;
-          this.answer.setValue(this.currentOtherOption);
-        } else if (this.isAnswerOption(answer.value)) {
-          const selectedChoice = this.question.choices.find((choice) => choice.text === answer.value.text) || null;
-          this.answer.setValue(selectedChoice);
-        } else {
-          this.answer.setValue(answer.value as ExamAnswerValue);
-        }
-        break;
-      default:
-        this.answer.setValue(answer.value as ExamAnswerValue);
-    }
-  }
-
   setViewAnswerText(answer: any) {
     const answerValue = answer.value as ExamAnswerValue | null;
     this.answer.setValue(Array.isArray(answerValue) ? answerValue.map((a: ExamAnswerOption) => a.text).join(', ').trim() : answerValue);
     this.grade = answer.grade;
     this.comment = answer.gradeComment;
-  }
-
-  isOtherSelected() {
-    return this.isOtherOption(this.answer.value);
-  }
-
-  isSelectOptionSelected(option: ExamAnswerOption): boolean {
-    const value = this.answer.value;
-    return this.isAnswerOption(value) && !this.isOtherOption(value) && value.id === option.id;
-  }
-
-  selectOption(option: ExamAnswerOption): void {
-    this.answer.setValue(option);
-    this.answer.updateValueAndValidity();
-  }
-
-  selectOtherRadio(): void {
-    if (this.isOtherSelected()) {
-      this.focusOtherInput('single');
-      return;
-    }
-    this.answer.setValue(this.currentOtherOption);
-    this.answer.updateValueAndValidity();
-    this.focusOtherInput('single');
-  }
-
-  toggleMultipleOption(option: ExamAnswerOption): void {
-    this.setAnswer({ checked: !this.checkboxState[option.id] }, option);
-  }
-
-  toggleOtherCheckbox(): void {
-    this.toggleOtherMultiple({ checked: !this.checkboxState['other'] });
-  }
-
-  ensureOtherCheckboxSelected(): void {
-    if (!this.checkboxState['other']) {
-      this.toggleOtherMultiple({ checked: true });
-    }
-  }
-
-  toggleOtherMultiple({ checked }: Pick<MatCheckboxChange, 'checked'>): void {
-    this.checkboxState['other'] = checked;
-    if (checked) {
-      if (this.currentOtherOption) {
-        this.setAnswer({ checked: true }, this.currentOtherOption);
-      }
-      this.focusOtherInput('multiple');
-    } else {
-      const remaining = Array.isArray(this.answer.value) ? this.answer.value.filter(o => o.id !== 'other') : [];
-      this.answer.setValue(remaining.length ? remaining : null);
-      this.answer.updateValueAndValidity();
-    }
-  }
-
-  updateOtherText(): void {
-    this.answer.updateValueAndValidity();
-  }
-
-  private isAnswerOption(value: ExamAnswerValue | null): value is ExamAnswerOption {
-    return !!value && !Array.isArray(value) && typeof value === 'object' && 'id' in value;
-  }
-
-  private isOtherOption(value: ExamAnswerValue | null): value is ExamOtherAnswerOption {
-    return this.isAnswerOption(value) && value.isOther === true;
-  }
-
-  private focusOtherInput(type: 'single' | 'multiple'): void {
-    setTimeout(() => {
-      const inputRef = type === 'single' ? this.singleOtherInput : this.multipleOtherInput;
-      inputRef?.nativeElement.focus();
-    });
   }
 
 }
