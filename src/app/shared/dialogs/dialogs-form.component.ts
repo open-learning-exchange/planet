@@ -22,6 +22,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
+import { AttachmentInputState, FileUploadComponent } from '../forms/file-upload.component';
 import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -46,7 +47,7 @@ import { SubmitDirective } from '../submit.directive';
     FormsModule, ReactiveFormsModule, MatDialogTitle, MatIcon, CdkScrollable, MatDialogContent, NgFor,
     NgClass, NgIf, MatCheckbox, MatTooltip, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
     MatIconButton, MatSuffix, MatSelect, MatOption, MatRadioGroup, MatRadioButton, PlanetRatingStarsComponent,
-    PlanetMarkdownTextboxComponent, AuthorizedRolesDirective, MatButton, MatDatepickerInput, MatDatepickerToggle,
+    PlanetMarkdownTextboxComponent, FileUploadComponent, AuthorizedRolesDirective, MatButton, MatDatepickerInput, MatDatepickerToggle,
     MatDatepicker, MatSlideToggle, MatDialogActions, SubmitDirective
   ]
 })
@@ -162,6 +163,10 @@ export class DialogsFormComponent {
 
   getRadioOptionValue(option: { name: string; value?: unknown } | string) {
     return typeof option === 'string' ? option : option.value;
+  }
+
+  updateFileUploadState(fieldName: string, state: AttachmentInputState) {
+    this.modalForm.controls[fieldName].setValue(state);
   }
 
   private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {
