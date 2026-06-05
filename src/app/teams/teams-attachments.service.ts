@@ -17,8 +17,9 @@ export class TeamsAttachmentsService {
 
   readonly maxReceiptImages = 2;
   readonly receiptImageAccept = 'image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp';
-  readonly receiptImageHint = $localize`JPG, PNG or WEBP receipt images`;
+  readonly receiptImageHint = $localize`JPG, PNG or WEBP attached images`;
   readonly receiptImagePills = [ 'JPG', 'PNG', 'WEBP' ];
+  private readonly receiptImageTypes = [ 'image/jpeg', 'image/png', 'image/webp' ];
 
   constructor(private couchService: CouchService) {}
 
@@ -101,7 +102,7 @@ export class TeamsAttachmentsService {
   }
 
   private isReceiptImage(attachment: any) {
-    return attachment?.content_type?.startsWith('image/');
+    return this.receiptImageTypes.includes((attachment?.content_type || '').toLowerCase());
   }
 
 }

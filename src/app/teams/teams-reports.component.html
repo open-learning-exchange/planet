@@ -65,8 +65,7 @@
 
         <div class="report-card-receipt-images" *ngIf="card.receiptImageCount > 0">
           <mat-icon>photo_library</mat-icon>
-          <span *ngIf="card.receiptImageCount === 1" i18n>1 receipt image</span>
-          <span *ngIf="card.receiptImageCount !== 1">{{ card.receiptImageCount }} <ng-container i18n>receipt images</ng-container></span>
+          <span i18n>{card.receiptImageCount, plural, =1 {1 attached image} other {# attached images}}</span>
         </div>
       </mat-card-content>
 

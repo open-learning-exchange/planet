@@ -123,7 +123,7 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           {
             name: 'receiptImages',
-            placeholder: $localize`Receipt Images`,
+            placeholder: $localize`Attached Images`,
             type: 'file-upload',
             fileUpload: {
               accept: this.teamsAttachmentsService.receiptImageAccept,
@@ -145,7 +145,7 @@ export class TeamsReportsComponent implements OnChanges {
               const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
               this.planetMessageService.showMessage($localize`Report ${action}`);
               if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Report saved, but some receipt images could not be uploaded.`);
+                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
               }
             },
             error: () => {

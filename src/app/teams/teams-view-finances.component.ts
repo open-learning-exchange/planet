@@ -143,7 +143,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
           { name: 'date', placeholder: $localize`Date`, type: 'date', required: true },
           {
             name: 'receiptImages',
-            placeholder: $localize`Receipt Images`,
+            placeholder: $localize`Attached Images`,
             type: 'file-upload',
             fileUpload: {
               accept: this.teamsAttachmentsService.receiptImageAccept,
@@ -168,7 +168,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
             next: (result: any) => {
               this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
               if (result?.failedAttachments?.length) {
-                this.planetMessageService.showAlert($localize`Transaction saved, but some receipt images could not be uploaded.`);
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
               }
               this.dialogsFormService.closeDialogsForm();
             },
@@ -185,11 +185,13 @@ export class TeamsViewFinancesComponent implements OnChanges {
   submitTransaction(newTransaction: TransactionForm, oldTransaction: any) {
     const { _id: teamId, teamType, teamPlanetCode } = this.team;
     const { receiptImages, ...transactionFields } = newTransaction;
+    const oldTransactionFields = this.transactionDocFields(oldTransaction);
+    const newTransactionFields = this.transactionDocFields(transactionFields);
     const amount = +(transactionFields.amount);
     const date = new Date(transactionFields.date).getTime();
     const transaction = {
-      ...oldTransaction,
-      ...transactionFields,
+      ...oldTransactionFields,
+      ...newTransactionFields,
       date,
       amount,
       docType: 'transaction',
@@ -234,6 +236,11 @@ export class TeamsViewFinancesComponent implements OnChanges {
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this transaction.`)
     };
+  }
+
+  private transactionDocFields(transaction: any = {}) {
+    const { receiptImages, credit, debit, balance, ...docFields } = transaction;
+    return docFields;
   }
 
   resetDateFilter() {
