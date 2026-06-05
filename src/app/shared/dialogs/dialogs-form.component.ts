@@ -27,6 +27,7 @@ import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
+import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -166,7 +167,13 @@ export class DialogsFormComponent {
   }
 
   updateFileUploadState(fieldName: string, state: AttachmentInputState) {
-    this.modalForm.controls[fieldName].setValue(state);
+    const control = this.modalForm.controls[fieldName];
+    const changed = !deepEqual(control.value, state);
+    control.setValue(state);
+    if (changed) {
+      control.markAsDirty();
+      this.modalForm.markAsDirty();
+    }
   }
 
   private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {
