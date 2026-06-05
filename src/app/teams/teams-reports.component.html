@@ -62,6 +62,12 @@
           <span i18n>Ending Balance</span>
           <span class="num">{{ card.endingBalance | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</span>
         </div>
+
+        <div class="report-card-receipt-images" *ngIf="card.receiptImageCount > 0">
+          <mat-icon>photo_library</mat-icon>
+          <span *ngIf="card.receiptImageCount === 1" i18n>1 receipt image</span>
+          <span *ngIf="card.receiptImageCount !== 1">{{ card.receiptImageCount }} <ng-container i18n>receipt images</ng-container></span>
+        </div>
       </mat-card-content>
 
       <mat-card-actions class="report-card-actions">
