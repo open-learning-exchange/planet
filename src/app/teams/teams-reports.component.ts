@@ -239,7 +239,8 @@ export class TeamsReportsComponent implements OnChanges {
       switchMap((response: any) => {
         const savedReport = response.res?.[newDocIndex];
         return savedReport ?
-          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages).pipe(map(uploadResult => ({ uploadResult }))) :
+          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages)
+            .pipe(map(uploadResult => ({ uploadResult }))) :
           of({ uploadResult: { failedAttachments: [] } });
       }),
       tap(() => {
