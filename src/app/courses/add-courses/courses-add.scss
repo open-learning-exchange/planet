@@ -2,15 +2,15 @@
 
 :host {
   .view-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 1rem;
     position: relative;
-    padding-bottom: 10px;
-    min-height: 70vh;
+  }
 
-    > * {
-      overflow-y: visible;
-    }
+  .course-content {
+    min-height: 0;
+    overflow-y: auto;
   }
 
   .course-details-panel {
@@ -40,9 +40,10 @@
   }
 
   .actions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     align-self: flex-start;
-    margin-top: auto;
-    padding-top: 1rem;
   }
 
   .collections-field {
