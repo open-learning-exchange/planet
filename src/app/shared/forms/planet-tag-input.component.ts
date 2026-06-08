@@ -2,7 +2,7 @@ import {
   Component, Input, Optional, Self, OnInit, OnChanges, OnDestroy, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { FocusMonitor } from '@angular/cdk/a11y';
@@ -11,9 +11,11 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
-import { NgIf, NgSwitch, NgClass, NgSwitchCase } from '@angular/common';
+import { NgFor, NgIf, NgSwitch, NgClass, NgSwitchCase } from '@angular/common';
 import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { MatButton } from '@angular/material/button';
+import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 type DialogStartingTag = string | SelectedDialogTag;
@@ -37,7 +39,10 @@ interface PlanetTagDialogData {
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ],
-  imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
+  imports: [
+    NgFor, NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase,
+    MatChip, MatChipRemove, MatChipSet, MatIcon
+  ]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
@@ -96,7 +101,6 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   onTouched: () => void = () => {};
   stateChanges = new Subject<void>();
   tags: TagWithId[] = [];
-  inputControl = new FormControl<string>('', { nonNullable: true });
   focused = false;
   dialogRef: MatDialogRef<PlanetTagInputDialogComponent>;
   tagUrlDelimiter = '_,_';
@@ -163,6 +167,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   removeTag(tagToRemove: string) {
     this.writeValue(this.value.filter(tag => tag !== tagToRemove));
+  }
+
+  tagName(tagId: string) {
+    return this.tagsService.findTag(tagId, this.tags).name;
   }
 
   writeValue(tags: string[] | null = []) {
