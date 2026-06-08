@@ -12,7 +12,7 @@
   </div>
   <mat-grid-list *ngIf="images.length !== 0" cols="3" rowHeight="1:1">
     <mat-grid-tile *ngFor="let image of filteredImages" (click)="selectImage(image)">
-      <img [src]="urlPrefix + '/' + image._id + '/' + image.filename" alt="{{ image.title || image.filename }}">
+      <img [src]="urlPrefix + '/' + image._id + '/' + image.filename" [alt]="image.title || image.filename">
       <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
     </mat-grid-tile>
   </mat-grid-list>
