@@ -43,7 +43,7 @@
           </div>
         </mat-expansion-panel>
 
-        <mat-expansion-panel class="section-panel"
+        <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && fileInvalid"
           [expanded]="sectionsExpanded.file" (opened)="sectionsExpanded.file = true" (closed)="sectionsExpanded.file = false">
           <mat-expansion-panel-header>
             <mat-panel-title class="section-title"><span class="num">2</span><mat-icon>cloud_upload</mat-icon><span i18n>File</span></mat-panel-title>
@@ -59,7 +59,7 @@
               <label class="markdown-label"><b i18n>Existing Resource/file:</b></label>
               <div class="existing-file-container">
                 <span class="filename">{{resourceFilename}}</span>
-                <button mat-icon-button type="button" [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove existing attachment">
+                <button mat-icon-button type="button" [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove existing attachment" i18n-aria-label aria-label="Remove existing attachment">
                   <mat-icon color="warn">delete</mat-icon>
                 </button>
               </div>
@@ -163,7 +163,7 @@
     </form>
     <div class="actions-container inner-gaps by-column" *ngIf="!isDialog">
       <button mat-raised-button type="button" [planetSubmit]="resourceForm.valid" color="primary" (click)="onSubmit()" i18n>Submit</button>
-      <button mat-raised-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      <button mat-stroked-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
     </div>
   </div>
 </div>

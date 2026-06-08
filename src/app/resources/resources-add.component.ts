@@ -115,6 +115,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
   }
 
+  get fileInvalid(): boolean {
+    return !!this.resourceForm.errors?.fileTooBig || this.resourceForm.controls.openWhichFile.invalid;
+  }
+
   get classificationInvalid(): boolean {
     return this.resourceForm.controls.subject.invalid || this.resourceForm.controls.level.invalid;
   }
@@ -270,6 +274,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       this.submitAttempted = true;
       if (this.detailsInvalid) {
         this.sectionsExpanded.details = true;
+      }
+      if (this.fileInvalid) {
+        this.sectionsExpanded.file = true;
       }
       if (this.classificationInvalid) {
         this.sectionsExpanded.classification = true;

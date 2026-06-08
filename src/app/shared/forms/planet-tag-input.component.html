@@ -3,9 +3,9 @@
 </ng-container>
 
 <mat-chip-set *ngIf="helperText && mode === 'add' && value.length > 0" aria-label="Selected collections" i18n-aria-label>
-  <mat-chip *ngFor="let tagId of value" [removable]="!disabled">
+  <mat-chip *ngFor="let tagId of value" [removable]="!disabled" (removed)="removeTag(tagId)">
     {{ tagName(tagId) }}
-    <button matChipRemove type="button" *ngIf="!disabled" (click)="removeTag(tagId)" i18n-aria-label aria-label="Remove collection">
+    <button matChipRemove type="button" *ngIf="!disabled" i18n-aria-label aria-label="Remove collection">
       <mat-icon>cancel</mat-icon>
     </button>
   </mat-chip>
