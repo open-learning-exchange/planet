@@ -1,5 +1,5 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
-  <planet-step-list-item *ngFor="let step of steps; index as i; first as isFirst; last as isLast">
+  <planet-step-list-item *ngFor="let step of steps; index as i">
     <span matListItemTitle i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
     <ng-container matListItemMeta>
       <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
@@ -36,10 +36,26 @@
       </mat-chip-set>
     </ng-container>
   </div>
-  <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()">{{ examButtonLabel }}</a>
-    <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
-    <a mat-raised-button color="primary" (click)="addExam('survey')">{{ surveyButtonLabel }}</a>
-    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
+  <div planetStepListActions class="course-attach">
+    <div class="attach-grid">
+      <button type="button" class="attach-card" (click)="addExam()">
+        <mat-icon>assignment</mat-icon>
+        <span class="ac-title">{{ examButtonLabel }}</span>
+        <span class="ac-sub" i18n>Quiz learners</span>
+        <span class="ac-count" *ngIf="activeStep?.exam?.questions?.length">{{ activeStep.exam.questions.length }}&nbsp;<span i18n>questions</span></span>
+      </button>
+      <button type="button" class="attach-card" (click)="addResources()">
+        <mat-icon>attach_file</mat-icon>
+        <span class="ac-title" i18n>Add Resource</span>
+        <span class="ac-sub" i18n>Attach from library</span>
+        <span class="ac-count" *ngIf="activeStep?.resources?.length">{{ activeStep.resources.length }}&nbsp;<span i18n>attached</span></span>
+      </button>
+      <button type="button" class="attach-card" (click)="addExam('survey')">
+        <mat-icon>description</mat-icon>
+        <span class="ac-title">{{ surveyButtonLabel }}</span>
+        <span class="ac-sub" i18n>Collect feedback</span>
+        <span class="ac-count" *ngIf="activeStep?.survey?.questions?.length">{{ activeStep.survey.questions.length }}&nbsp;<span i18n>questions</span></span>
+      </button>
+    </div>
   </div>
 </planet-step-list>
