@@ -91,6 +91,7 @@ export class PublicSurveyComponent implements OnInit {
   moveQuestion(direction: number) {
     this.persistCurrentAnswer();
     if (direction === 1 && this.questionNum === this.maxQuestions) {
+      this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
       this.showDemographics = true;
       return;
     }
