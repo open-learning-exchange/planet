@@ -39,10 +39,16 @@
   .column {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 
     > * {
       line-height: normal;
     }
+  }
+
+  .filtered-amount-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

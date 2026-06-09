@@ -6,7 +6,7 @@ import { LoginFormComponent } from './login-form.component';
 @Component({
   template: `
     <mat-dialog-content>
-      <planet-login-form [isDialog]="true" (loginEvent)="login($event)"></planet-login-form>
+      <planet-login-form [isDialog]="true" [createMode]="data?.createMode === true" (loginEvent)="login($event)"></planet-login-form>
       <div class="myplanet-link">
         <span i18n class="margin-lr-3">On Android?</span>
         <a mat-button target="_blank" rel="noopener noreferrer"

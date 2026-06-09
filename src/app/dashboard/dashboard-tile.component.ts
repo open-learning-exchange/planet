@@ -1,7 +1,8 @@
 import {
   Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
-  ChangeDetectorRef, HostBinding, HostListener, OnInit, forwardRef
+  ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -49,6 +50,7 @@ export class DashboardTileTitleComponent {
   ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
   private _cardType: string;
   @Input() set cardType(value: string) {
@@ -80,14 +82,6 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @HostBinding('class.accordion-expanded') get isExpandedClass() {
     return this.isExpanded;
   }
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
-      this.isExpanded = true;
-    }
-  }
-
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
@@ -96,7 +90,14 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+        if (this.cardType === 'myLife' && (deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE)) {
+          this.isExpanded = true;
+        }
+      });
   }
 
   ngOnInit() {

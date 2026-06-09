@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,10 +11,9 @@ import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
-import {
-  DialogsAnnouncementComponent, includedCodes, challengeCourseId, challengePeriod
-} from '../../shared/dialogs/dialogs-announcement.component';
+import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
+import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -61,7 +60,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   showChat = false;
   isOpenai = false;
   isLoading = true;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
+  deviceType: DeviceType;
+  @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   constructor(
     private chatService: ChatService,
@@ -73,7 +73,29 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private submissionsService: SubmissionsService,
     private userService: UserService,
-  ) {}
+    private deviceInfoService: DeviceInfoService,
+    private challengesService: ChallengesService,
+  ) {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  @HostListener('window:resize') onResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
+  }
+
+  get isMobile(): boolean {
+    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  get hasActionButtons(): boolean {
+    const hasExam = !!this.stepDetail?.exam?.questions.length;
+    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
+    return (this.isOpenai && !!this.stepDetail?.description) ||
+      this.attempts > 0 ||
+      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
+      (this.canManage && (hasExam || hasSurvey)) ||
+      (this.stepDetail?.resources?.length || 0) !== 0;
+  }
 
   ngOnInit() {
     combineLatest(
@@ -195,12 +217,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
-    // Challenge option only
-    if (includedCodes.includes(this.stateService.configuration.code) && challengePeriod && this.courseId === challengeCourseId) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+    const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);
+    if (challenge) {
+      this.challengesService.openChallengeDialog(this.dialog, challenge);
     }
   }
 

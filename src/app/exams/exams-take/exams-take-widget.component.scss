@@ -1,0 +1,152 @@
+@use '../../variables' as v;
+
+:host {
+  display: block;
+
+  .question-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .option-card {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    user-select: none;
+    margin: 0;
+    min-width: 0;
+
+    &:hover {
+      border-color: v.$primary-light;
+      background: v.$primary-lighter;
+    }
+
+    &.selected {
+      border-color: v.$primary;
+      background: v.$primary-lighter;
+    }
+
+    .multiple-choice-text {
+      font-size: 15px;
+      white-space: normal;
+    }
+
+    .option-check {
+      color: v.$primary;
+      font-size: 20px;
+      margin-left: auto;
+    }
+  }
+
+  .other-option-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .other-option-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #e0e0e0;
+    outline: none;
+    font: inherit;
+    padding: 4px 2px;
+    background: transparent;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-bottom-color: v.$primary;
+    }
+  }
+
+  .rating-scale-keypad {
+    margin: 8px 0 20px;
+
+    &--grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 240px;
+    }
+
+    &--row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 532px;
+    }
+  }
+
+  .rating-scale-button {
+    padding: 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: white;
+    color: #555;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease,
+      color 0.18s ease, box-shadow 0.18s ease;
+
+    &:hover:not(.selected):not([disabled]) {
+      border-color: v.$primary-light;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &.selected {
+      background: v.$primary;
+      color: white;
+      border-color: v.$primary;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    &--line {
+      width: 52px;
+      height: 52px;
+      min-width: 52px;
+      font-size: 18px;
+
+      &:hover:not(.selected):not([disabled]) {
+        background: v.$primary-lighter;
+      }
+    }
+
+    &--phone {
+      $rating-bg: (
+        1: #ffeaea,
+        2: #ffeeea,
+        3: #fff2ea,
+        4: #fff6ea,
+        5: #fffaea,
+        6: #f6faea,
+        7: #f2faea,
+        8: #eefaea,
+        9: #eafaea
+      );
+
+      height: 60px;
+      font-size: 28px;
+
+      @each $rating, $color in $rating-bg {
+        &[data-rating="#{$rating}"]:not(.selected) {
+          background-color: $color;
+        }
+      }
+    }
+  }
+}

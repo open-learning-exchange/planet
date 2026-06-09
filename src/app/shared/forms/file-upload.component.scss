@@ -1,0 +1,138 @@
+@use '../../variables' as v;
+
+:host {
+  display: block;
+}
+
+.dropzone {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  border: 2px dashed v.$primary-light;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.02);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.12s;
+
+  &:hover {
+    border-color: v.$primary;
+    background: rgba(v.$primary, 0.04);
+  }
+
+  &:focus-visible {
+    outline: 2px solid v.$primary;
+    outline-offset: 2px;
+  }
+
+  &.dragging {
+    border-color: v.$primary;
+    background: rgba(v.$primary, 0.08);
+    transform: scale(1.01);
+  }
+}
+
+.dz-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: v.$primary-lighter;
+  color: v.$primary;
+  margin: 0 auto 0.875rem;
+
+  mat-icon {
+    font-size: 34px;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.dz-title {
+  display: block;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.dz-browse {
+  color: v.$primary;
+  text-decoration: underline;
+}
+
+.dz-sub {
+  display: block;
+  color: v.$grey-text;
+  font-size: 0.8125rem;
+  margin-top: 0.375rem;
+}
+
+.dz-types {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.dz-type {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: v.$grey-text;
+  background: #fff;
+  border: 1px solid v.$grey;
+  border-radius: 5px;
+  padding: 0.1875rem 0.5rem;
+}
+
+.filecard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  border: 1px solid v.$grey;
+  border-radius: 6px;
+  padding: 0.875rem 1rem;
+  background: #fff;
+  margin-top: 0.5rem;
+}
+
+.fc-thumb,
+.fc-image-preview {
+  width: 46px;
+  height: 46px;
+  border-radius: 6px;
+  flex: none;
+}
+
+.fc-thumb {
+  display: grid;
+  place-items: center;
+  background: v.$primary-lighter;
+  color: v.$primary;
+}
+
+.fc-image-preview {
+  object-fit: cover;
+}
+
+.fc-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.fc-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fc-meta {
+  font-size: 0.75rem;
+  color: v.$grey-text;
+  margin-top: 0.125rem;
+}

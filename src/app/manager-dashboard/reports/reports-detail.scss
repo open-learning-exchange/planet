@@ -1,11 +1,5 @@
 @use '../../variables' as v;
 
-$screen-md: 1200px;
-
-:host {
-  @include v.screen-sizes($screen-md);
-}
-
 mat-toolbar mat-form-field {
   margin-top: 10px;
   &.mat-form-field-type-no-underline {
@@ -86,17 +80,15 @@ mat-toolbar mat-form-field {
       }
     }
   }
+
+  .desktop-toolbar-stacked {
+    height: auto;
+    flex-wrap: wrap;
+  }
 }
 
-@media(max-width: #{$screen-md}) {
-  .mat-mdc-form-field {
-    width: 100%;
-  }
-
-  mat-button-toggle-group {
-    width: 100%;
-    display: flex;
-
+@media(max-width: #{v.$screen-md}) {
+  mat-button-toggle-group.full-width {
     mat-button-toggle {
       flex: 1;
     }
