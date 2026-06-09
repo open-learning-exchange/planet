@@ -1,0 +1,13 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App > Should be an AppComponent 1`] = `
+<planet-app>
+  <div
+    dir="ltr"
+    ng-reflect-dir="ltr"
+  >
+    <router-outlet />
+    <!--container-->
+  </div>
+</planet-app>
+`;
