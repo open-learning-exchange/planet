@@ -19,6 +19,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+import { genderOptions } from '../../shared/gender.constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -66,6 +67,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
   initialFormValues: UsersUpdateFormValue | null = null;
   educationLevel = educationLevel;
+  genderOptions = genderOptions;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup<UsersUpdateFormGroup>;
   currentImgKey: string | null = null;
