@@ -4,7 +4,7 @@
 </div>
 
 <planet-exams-question-frame
-  *ngIf="survey && !isSubmitted"
+  *ngIf="survey && !isSubmitted && !showDemographics"
   [title]="survey.name"
   [questionNum]="questionNum"
   [maxQuestions]="maxQuestions"
@@ -32,17 +32,9 @@
         mat-stroked-button
         color="primary"
         (click)="moveQuestion(1)"
-        [disabled]="!answer.valid || questionNum === maxQuestions"
+        [disabled]="!answer.valid"
         i18n>
         Next
-      </button>
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="submitSurvey()"
-        [disabled]="!isComplete || isSubmitting"
-        i18n>
-        Finish Survey
       </button>
       <span *ngIf="errorMessage" class="v-align-center small warn-text-color">
         <mat-icon>error</mat-icon>
@@ -51,6 +43,30 @@
     </div>
   </div>
 </planet-exams-question-frame>
+
+<div *ngIf="survey && showDemographics && !isSubmitted" class="state-view">
+  <div [formGroup]="demographicsForm" class="demographics-form">
+    <mat-form-field>
+      <mat-label i18n>Birth Year</mat-label>
+      <input matInput type="number" formControlName="birthYear">
+      <mat-hint i18n>Enter year (e.g., 1995)</mat-hint>
+      <mat-error i18n>Enter a valid past year</mat-error>
+    </mat-form-field>
+    <mat-radio-group formControlName="gender">
+      <label i18n>Gender</label>
+      <mat-radio-button value="male" i18n>Male</mat-radio-button>
+      <mat-radio-button value="female" i18n>Female</mat-radio-button>
+    </mat-radio-group>
+    <div class="demographics-actions">
+      <button mat-stroked-button color="primary" (click)="showDemographics = false" i18n>Previous</button>
+      <button mat-raised-button color="accent" (click)="submitSurvey()" [disabled]="!canSubmit()" i18n>Finish Survey</button>
+    </div>
+    <span *ngIf="errorMessage" class="v-align-center small warn-text-color">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </span>
+  </div>
+</div>
 
 <div *ngIf="survey && isSubmitted" class="state-view primary-text-color">
   <mat-icon>check_circle</mat-icon>
