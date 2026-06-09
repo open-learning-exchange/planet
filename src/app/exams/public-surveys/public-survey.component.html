@@ -45,8 +45,6 @@
 </planet-exams-question-frame>
 
 <div *ngIf="survey && showDemographics && !isSubmitted" class="state-view">
-  <h2 i18n>Optional demographics information</h2>
-  <p class="state-message" i18n>You may provide this information before submitting the survey.</p>
   <div [formGroup]="demographicsForm" class="demographics-form">
     <mat-form-field>
       <mat-label i18n>Birth Year</mat-label>
