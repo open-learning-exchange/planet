@@ -8,12 +8,15 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { AttachmentInputState } from '../shared/forms/file-upload.component';
+import { TeamsAttachmentsService } from './teams-attachments.service';
 import { NgIf, NgFor, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
@@ -28,6 +31,7 @@ interface NewReportForm {
   endDate: Date,
   otherExpenses: number,
   otherIncome: number,
+  receiptImages?: AttachmentInputState,
   sales: number,
   startDate: Date,
   wages: string
@@ -62,6 +66,7 @@ export class TeamsReportsComponent implements OnChanges {
         const net = income - expenses;
         return {
           report,
+          receiptImageCount: this.teamsAttachmentsService.receiptAttachments(report).length,
           income,
           expenses,
           net,
@@ -92,6 +97,7 @@ export class TeamsReportsComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService,
     private csvService: CsvService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
@@ -114,15 +120,38 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'sales', placeholder: $localize`Sales`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'otherIncome', placeholder: $localize`Other Income`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'wages', placeholder: $localize`Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 }
+          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          {
+            name: 'receiptImages',
+            placeholder: $localize`Attached Images`,
+            type: 'file-upload',
+            fileUpload: {
+              accept: this.teamsAttachmentsService.receiptImageAccept,
+              existingAttachments: this.teamsAttachmentsService.receiptAttachments(oldReport),
+              hint: this.teamsAttachmentsService.receiptImageHint,
+              imagePreview: true,
+              maxFiles: this.teamsAttachmentsService.maxReceiptImages,
+              multiple: true,
+              typePills: this.teamsAttachmentsService.receiptImagePills
+            }
+          }
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
           disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
-            this.dialogsFormService.closeDialogsForm();
-            const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
-            this.planetMessageService.showMessage($localize`Report ${action}`);
+          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
+            next: (result: any) => {
+              this.dialogsFormService.closeDialogsForm();
+              const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
+              this.planetMessageService.showMessage($localize`Report ${action}`);
+              if (result?.failedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
+              }
+            },
+            error: () => {
+              this.dialogsLoadingService.stop();
+              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
+            }
           })
         }
       );
@@ -155,7 +184,9 @@ export class TeamsReportsComponent implements OnChanges {
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
     // Only these fields are shown in the dialog, so only these get validators.
-    const formFields = [ 'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses' ];
+    const formFields = [
+      'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses'
+    ];
     const initialValues = {
       description: '',
       beginningBalance: 0,
@@ -164,6 +195,7 @@ export class TeamsReportsComponent implements OnChanges {
       wages: 0,
       otherExpenses: 0,
       ...oldReport,
+      receiptImages: this.teamsAttachmentsService.attachmentStateForDoc(oldReport),
       startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
       endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
@@ -191,7 +223,8 @@ export class TeamsReportsComponent implements OnChanges {
       numberFields.indexOf(key) > -1 ?
         +value :
         value;
-    const { _id, _rev, ...newDoc } = Object.entries(newReport).reduce(
+    const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
+    const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
       (obj, [ key, value ]: [ string, string | Date | number ]) => {
         return {
           ...obj,
@@ -201,10 +234,21 @@ export class TeamsReportsComponent implements OnChanges {
       {}
     ) as any;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
-      this.reportsChanged.emit();
-      this.dialogsLoadingService.stop();
-    }));
+    const newDocIndex = docs.length - 1;
+    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
+      switchMap((response: any) => {
+        const savedReport = response.res?.[newDocIndex];
+        return savedReport ?
+          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages)
+            .pipe(map(uploadResult => ({ uploadResult }))) :
+          of({ uploadResult: { failedAttachments: [] } });
+      }),
+      tap(() => {
+        this.reportsChanged.emit();
+        this.dialogsLoadingService.stop();
+      }),
+      map(({ uploadResult }) => ({ failedAttachments: uploadResult.failedAttachments }))
+    );
   }
 
   openReportDialog(report) {

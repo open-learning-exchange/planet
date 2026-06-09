@@ -38,7 +38,21 @@
       </ng-container>
       <ng-container matColumnDef="description">
         <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.description }}</span>
+          <span class="transaction-receipts" *ngIf="element.receiptImages?.length">
+            <a
+              *ngFor="let image of element.receiptImages"
+              [href]="image.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              i18n-aria-label
+              aria-label="Open attached image: {{ image.name }}"
+              (click)="$event.stopPropagation()">
+              <mat-icon>image</mat-icon>
+            </a>
+          </span>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="credit">
         <mat-header-cell *matHeaderCellDef class="num" i18n>Credit</mat-header-cell>

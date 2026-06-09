@@ -4,7 +4,7 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -24,6 +24,18 @@ import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { AttachmentInputState } from '../shared/forms/file-upload.component';
+import { TeamsAttachmentsService } from './teams-attachments.service';
+import { of } from 'rxjs';
+
+interface TransactionForm {
+  amount: number | string;
+  date: Date | number;
+  description: string;
+  receiptImages?: AttachmentInputState;
+  type: 'credit' | 'debit';
+  [key: string]: any;
+}
 
 @Component({
   selector: 'planet-teams-view-finances',
@@ -77,7 +89,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private dialogsLoadingService: DialogsLoadingService,
     private planetMessageService: PlanetMessageService,
     private stateService: StateService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService
   ) {}
 
   ngOnChanges() {
@@ -93,7 +106,13 @@ export class TeamsViewFinancesComponent implements OnChanges {
   private setTransactionsTable(transactions: any[]): any[] {
     return transactions.filter(transaction => transaction.status !== 'archived')
       // Overwrite values for credit and debit from early document versions on database
-      .map(transaction => ({ ...transaction, credit: 0, debit: 0, [transaction.type]: transaction.amount }))
+      .map(transaction => ({
+        ...transaction,
+        credit: 0,
+        debit: 0,
+        receiptImages: this.teamsAttachmentsService.receiptAttachments(transaction),
+        [transaction.type]: transaction.amount
+      }))
       .sort((a, b) => a.date - b.date).reduce(this.combineTransactionData, []).reverse();
   }
 
@@ -121,31 +140,58 @@ export class TeamsViewFinancesComponent implements OnChanges {
           },
           { name: 'description', placeholder: $localize`Note`, type: 'textbox', required: true },
           { name: 'amount', placeholder: $localize`Amount`, type: 'textbox', inputType: 'number', required: true, step: '0.01' },
-          { name: 'date', placeholder: $localize`Date`, type: 'date', required: true }
+          { name: 'date', placeholder: $localize`Date`, type: 'date', required: true },
+          {
+            name: 'receiptImages',
+            placeholder: $localize`Attached Images`,
+            type: 'file-upload',
+            fileUpload: {
+              accept: this.teamsAttachmentsService.receiptImageAccept,
+              existingAttachments: this.teamsAttachmentsService.receiptAttachments(transaction),
+              hint: this.teamsAttachmentsService.receiptImageHint,
+              imagePreview: true,
+              maxFiles: this.teamsAttachmentsService.maxReceiptImages,
+              multiple: true,
+              typePills: this.teamsAttachmentsService.receiptImagePills
+            }
+          }
         ],
         {
           type: [ transaction.type || 'credit', CustomValidators.required ],
           description: [ transaction.description || '', CustomValidators.required ],
           amount: [ transaction.amount || '', [ CustomValidators.nonNegativeNumberValidator ] ],
-          date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ]
+          date: [ transaction.date ? new Date(new Date(transaction.date).setHours(0, 0, 0)) : new Date(time), CustomValidators.required ],
+          receiptImages: [ this.teamsAttachmentsService.attachmentStateForDoc(transaction) ]
         },
         {
-          onSubmit: (newTransaction) => this.submitTransaction(newTransaction, transaction).subscribe(() => {
-            this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
-            this.dialogsFormService.closeDialogsForm();
+          onSubmit: (newTransaction: TransactionForm) => this.submitTransaction(newTransaction, transaction).subscribe({
+            next: (result: any) => {
+              this.planetMessageService.showMessage(transaction._id ? $localize`Transaction Updated` : $localize`Transaction Added`);
+              if (result?.failedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Transaction saved, but some attached images could not be uploaded.`);
+              }
+              this.dialogsFormService.closeDialogsForm();
+            },
+            error: () => {
+              this.dialogsLoadingService.stop();
+              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the transaction.`);
+            }
           })
         }
       );
     });
   }
 
-  submitTransaction(newTransaction, oldTransaction) {
+  submitTransaction(newTransaction: TransactionForm, oldTransaction: any) {
     const { _id: teamId, teamType, teamPlanetCode } = this.team;
-    const amount = +(newTransaction.amount);
-    const date = new Date(newTransaction.date).getTime();
+    const { receiptImages, ...transactionFields } = newTransaction;
+    const oldTransactionFields = this.transactionDocFields(oldTransaction);
+    const newTransactionFields = this.transactionDocFields(transactionFields);
+    const amount = +(transactionFields.amount);
+    const date = new Date(transactionFields.date).getTime();
     const transaction = {
-      ...oldTransaction,
-      ...newTransaction,
+      ...oldTransactionFields,
+      ...newTransactionFields,
       date,
       amount,
       docType: 'transaction',
@@ -153,10 +199,20 @@ export class TeamsViewFinancesComponent implements OnChanges {
       teamType,
       teamPlanetCode
     };
-    return this.teamsService.updateTeam(transaction).pipe(map(() => {
-      this.financesChanged.emit();
-      this.dialogsLoadingService.stop();
-    }));
+    if (receiptImages) {
+      transaction._attachments = this.teamsAttachmentsService.retainSelectedAttachments(oldTransaction, receiptImages);
+    }
+    return this.teamsService.updateTeam(transaction).pipe(
+      switchMap(savedTransaction => receiptImages ?
+        this.teamsAttachmentsService.uploadReceiptImages(savedTransaction._id, savedTransaction._rev, receiptImages, false) :
+        of({ failedAttachments: [] })
+      ),
+      tap(() => {
+        this.financesChanged.emit();
+        this.dialogsLoadingService.stop();
+      }),
+      map(uploadResult => ({ failedAttachments: uploadResult.failedAttachments }))
+    );
   }
 
   openArchiveTransactionDialog(transaction) {
@@ -171,14 +227,20 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   archiveTransaction(transaction) {
+    const { receiptImages, ...transactionDoc } = transaction;
     return {
-      request: this.submitTransaction(transaction, { status: 'archived' }),
+      request: this.submitTransaction({ ...transactionDoc, status: 'archived' }, {}),
       onNext: () => {
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`You have deleted a transaction.`);
       },
       onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this transaction.`)
     };
+  }
+
+  private transactionDocFields(transaction: any = {}) {
+    const { receiptImages, credit, debit, balance, ...docFields } = transaction;
+    return docFields;
   }
 
   resetDateFilter() {

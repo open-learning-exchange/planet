@@ -190,6 +190,20 @@
   }
 }
 
+.report-card-receipt-images {
+  align-items: center;
+  color: v.$grey-text;
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 8px;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
 .reports-empty {
   text-align: center;
   color: v.$grey-text;

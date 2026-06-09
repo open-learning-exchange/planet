@@ -20,6 +20,14 @@
   <ng-container *ngIf="showSummary">
     <h4 i18n>Report Summary</h4>
     <planet-markdown [content]="report.description"></planet-markdown>
+    <div class="report-receipt-images" *ngIf="receiptImages.length > 0">
+      <h4 i18n>Attached Images</h4>
+      <div class="report-receipt-images-grid">
+        <a class="report-receipt-images-link" *ngFor="let image of receiptImages" [href]="image.url" target="_blank" rel="noopener noreferrer">
+          <img class="report-receipt-images-image" [src]="image.url" [alt]="image.name">
+        </a>
+      </div>
+    </div>
     <div><ng-container i18n>Report created on:</ng-container> {{report.createdDate | date }}<ng-container *ngIf="report.createdDate !== report.updatedDate"> | <ng-container i18n>Updated on:</ng-container> {{report.updatedDate | date}}</ng-container></div>
   </ng-container>
 </div>
