@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -23,7 +23,6 @@ import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdo
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
-import { MatAnchor, MatButton } from '@angular/material/button';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 interface CoursesStepForm {
@@ -40,16 +39,16 @@ interface CoursesStepForm {
   imports: [
     PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta,
     NgIf, CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
-    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
+    ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
     MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, MatAnchor, MatButton, TruncateTextPipe
+    PlanetStepListActionsDirective, TruncateTextPipe
   ]
 })
 export class CoursesStepComponent implements OnDestroy {
 
   @Input() steps: any[];
   @Output() stepsChange = new EventEmitter<any>();
-  @Output() addStepEvent = new EventEmitter<void>();
+  @Output() stepEditorOpenChange = new EventEmitter<boolean>();
 
   stepForm: FormGroup<CoursesStepForm>;
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
@@ -95,6 +94,7 @@ export class CoursesStepComponent implements OnDestroy {
       this.activeStep = this.steps[index];
       this.stepForm.patchValue(this.steps[index]);
     }
+    this.stepEditorOpenChange.emit(index > -1);
   }
 
   addResources() {
@@ -140,10 +140,6 @@ export class CoursesStepComponent implements OnDestroy {
   stepsMoved(steps) {
     this.steps = steps;
     this.stepsChange.emit(this.steps);
-  }
-
-  addStep() {
-    this.addStepEvent.emit();
   }
 
   toList() {
