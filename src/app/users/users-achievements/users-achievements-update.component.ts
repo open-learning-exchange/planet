@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, forkJoin, Subject, interval, of, race } from 'rxjs';
+import { combineLatest, forkJoin, Subject, interval, merge, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -181,14 +181,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   onFormChanges() {
-    this.editForm.valueChanges
-      .pipe(
-        debounce(() => race(interval(200), of(true))),
-        takeUntil(this.onDestroy$)
-      )
-      .subscribe(() => this.updateUnsavedChangesFlag());
-
-    this.profileForm.valueChanges
+    merge(this.editForm.valueChanges, this.profileForm.valueChanges)
       .pipe(
         debounce(() => race(interval(200), of(true))),
         takeUntil(this.onDestroy$)
