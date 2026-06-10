@@ -73,8 +73,6 @@
         @if (isLoggedIn) {
           <mat-tab i18n-label label="Services">
             <b i18n>{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description</b>
-            @if (!planetCode) {
-            }
             @if (teamLoading) {
               <planet-loading-spinner text="Loading description..." i18n-text></planet-loading-spinner>
             }
@@ -103,7 +101,7 @@
                 <planet-loading-spinner text="Loading links..." i18n-text></planet-loading-spinner>
               }
               @if (!communityDataLoading && links?.length === 0) {
-                <span i18n><p>No links available.</p></span>
+                <p i18n>No links available.</p>
               }
               @if (!communityDataLoading && links?.length > 0) {
                 <mat-nav-list>
@@ -142,9 +140,6 @@
                 </mat-nav-list>
               }
             </ng-container>
-            <ng-template #noLinks>
-              <p i18n>No links available.</p>
-            </ng-template>
             <div *planetAuthorizedRoles="''">
               <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
               <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>

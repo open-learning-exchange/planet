@@ -78,8 +78,7 @@
       @if (showAdvancedOptions) {
         <div class="full-width advanced-options-container">
           <span i18n>Advanced Options:</span>
-          @if (showAdvancedOptions) {
-            <mat-form-field>
+          <mat-form-field>
               <mat-label i18n>Local URL</mat-label>
               <input matInput formControlName="localDomain" (keyup)="localDomainChange($event)">
             </mat-form-field>
@@ -96,7 +95,6 @@
               </mat-select>
             </mat-form-field>
             <mat-slide-toggle formControlName="alwaysOnline" i18n>Always Online Planet</mat-slide-toggle>
-          }
         </div>
       }
     </form>

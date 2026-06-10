@@ -14,11 +14,9 @@
         <a (click)="changeEditTitleMode(true)" mat-icon-button>
           <mat-icon>edit</mat-icon>
         </a>
-        <ng-container *planetAuthorizedRoles>
-          @if (showParamsButton) {
-            <button mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
-          }
-        </ng-container>
+        @if (showParamsButton) {
+          <button *planetAuthorizedRoles="''" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
+        }
       } @else {
         <mat-form-field color="accent" class="margin-lr-4 title-edit mdc-toolbar-input">
           <mat-label i18n>Feedback title</mat-label>
@@ -48,7 +46,7 @@
       <mat-card class="margin-tb">
         <mat-card-content>
           <h4 i18n>Page Parameters</h4>
-          @for (prop of feedback.params | keyvalue; track prop) {
+          @for (prop of feedback.params | keyvalue; track prop.key) {
             <div class="margin-tb">{{prop.key}}: {{prop.value}}</div>
           }
         </mat-card-content>

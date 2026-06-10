@@ -13,7 +13,7 @@
     @if (configuration.keys) {
       <mat-card-content>
         <mat-list>
-          @for (apiKey of configuration.keys | keyvalue; track apiKey) {
+          @for (apiKey of configuration.keys | keyvalue; track apiKey.key) {
             <mat-list-item>
               <div matListItemTitle class="list-item-content">
                 <span>{{ apiKey.key | titlecase }}</span>
@@ -47,7 +47,7 @@
       @if (configuration.models) {
         <mat-card-content>
           <mat-list>
-            @for (model of configuration.models | keyvalue; track model) {
+            @for (model of configuration.models | keyvalue; track model.key) {
               <mat-list-item>
                 <div matListItemTitle class="list-item-content">
                   <span>{{ model.key | titlecase }}</span>
