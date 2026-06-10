@@ -2,7 +2,7 @@
   <div class="finances-container">
     @if (!emptyTable) {
       <div class="finance-stats">
-        @for (s of stats; track s) {
+        @for (s of stats; track s.tone) {
           <mat-card class="finance-stat" [ngClass]="'tone-' + s.tone">
             <mat-card-content>
               <div class="finance-stat-label"><mat-icon>{{ s.icon }}</mat-icon><span>{{ s.label }}</span></div>
