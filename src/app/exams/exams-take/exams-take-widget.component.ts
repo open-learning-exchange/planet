@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -20,8 +20,17 @@ import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdo
   templateUrl: './exams-take-widget.component.html',
   styleUrls: ['./exams-take-widget.component.scss'],
   imports: [
-    NgSwitch, NgSwitchCase, MatFormField, MatLabel, MatInput, ReactiveFormsModule, PlanetMarkdownTextboxComponent,
-    MatRadioGroup, NgFor, MatRadioButton, MatCheckbox, NgIf, FormsModule, MatButton, MatIcon
+    MatFormField,
+    MatLabel,
+    MatInput,
+    ReactiveFormsModule,
+    PlanetMarkdownTextboxComponent,
+    MatRadioGroup,
+    MatRadioButton,
+    MatCheckbox,
+    FormsModule,
+    MatButton,
+    MatIcon
   ]
 })
 export class ExamsTakeWidgetComponent implements OnChanges {

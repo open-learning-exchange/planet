@@ -12,7 +12,7 @@ import { trackByIdVal } from '../shared/table-helpers';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { NgIf, NgFor } from '@angular/common';
+
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -26,9 +26,23 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: 'exams-question.component.html',
   styleUrls: ['exams-question.scss'],
   imports: [
-    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatSelect, MatOption, NgIf,
-    PlanetMarkdownTextboxComponent, MatError, FormErrorMessagesComponent, MatButton, NgFor, MatCheckbox,
-    MatInput, MatIconButton, MatSuffix, MatIcon, MatButtonToggle, MatButtonToggleGroup
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    PlanetMarkdownTextboxComponent,
+    MatError,
+    FormErrorMessagesComponent,
+    MatButton,
+    MatCheckbox,
+    MatInput,
+    MatIconButton,
+    MatSuffix,
+    MatIcon,
+    MatButtonToggle,
+    MatButtonToggleGroup
   ]
 })
 export class ExamsQuestionComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {

@@ -23,7 +23,7 @@ import { MatInput } from '@angular/material/input';
 import { PlanetNumberValidatorDirective } from '../shared/forms/planet-number-validator.directive';
 import { PlanetRoundDirective } from '../shared/forms/planet-round.directive';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
-import { NgFor } from '@angular/common';
+
 import { MatCheckbox } from '@angular/material/checkbox';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 
@@ -53,9 +53,21 @@ type HealthEventFormFields = keyof HealthEventFormControls;
   templateUrl: './health-event.component.html',
   styleUrls: ['./health-update.scss'],
   imports: [
-    MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
-    MatInput, PlanetNumberValidatorDirective, PlanetRoundDirective, MatError, FormErrorMessagesComponent,
-    NgFor, MatCheckbox, PlanetMarkdownTextboxComponent, MatButton
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    PlanetNumberValidatorDirective,
+    PlanetRoundDirective,
+    MatError,
+    FormErrorMessagesComponent,
+    MatCheckbox,
+    PlanetMarkdownTextboxComponent,
+    MatButton
   ]
 })
 export class HealthEventComponent implements OnInit, CanComponentDeactivate {

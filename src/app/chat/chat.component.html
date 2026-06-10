@@ -4,13 +4,17 @@
   </button>
   <span class="titlebar" i18n>AI Chat</span>
   <span class="toolbar-fill"></span>
-  <mat-form-field *ngIf="displayToggle" class="mdc-toolbar-input">
-    <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
-      <mat-option *ngFor="let service of aiServices" [value]="service.model">
-        {{service.name}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  @if (displayToggle) {
+    <mat-form-field class="mdc-toolbar-input">
+      <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
+        @for (service of aiServices; track service) {
+          <mat-option [value]="service.model">
+            {{service.name}}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
   <ng-template #textDisplay>
     <span i18n>{{activeService}}</span>
   </ng-template>

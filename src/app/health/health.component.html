@@ -1,130 +1,145 @@
 <mat-toolbar>
   <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
-  <span i18n *ngIf="isOwnUser">myHealth</span>
-  <span i18n *ngIf="!isOwnUser">Health Care</span>
+  @if (isOwnUser) {
+    <span i18n>myHealth</span>
+  }
+  @if (!isOwnUser) {
+    <span i18n>Health Care</span>
+  }
 </mat-toolbar>
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 action-buttons">
     <span class="toolbar-fill"></span>
-    <a mat-raised-button color="accent" i18n [routerLink]="['update']" *ngIf="isOwnUser">Update Details</a>
+    @if (isOwnUser) {
+      <a mat-raised-button color="accent" i18n [routerLink]="['update']">Update Details</a>
+    }
     <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
-    <span *ngIf="userDetail.firstName === undefined"><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
+    @if (userDetail.firstName === undefined) {
+      <span><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
+    }
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <planet-loading-spinner *ngIf="isLoading; else healthContent" text="Loading health..." i18n-text></planet-loading-spinner>
-    <ng-template #healthContent>
+    @if (isLoading) {
+      <planet-loading-spinner text="Loading health..." i18n-text></planet-loading-spinner>
+    } @else {
       <div class="profile-container">
-      <div>
-        <ng-container *ngIf="userDetail._attachments; else noAttachment">
-          <img class="profile-image-large" [src]="imageSrc">
-        </ng-container>
-        <ng-template #noAttachment>
-          <img class="profile-image-large" src="assets/image.png">
-        </ng-template>
-      </div>
-      <div class="info-container">
         <div>
-          <div>
-            <h4 class="primary-text-color" i18n>Full Name</h4>
-            <p><b>{{userDetail.firstName ? ((userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40) : 'N/A'}}</b></p>
-          </div>
-          <mat-divider></mat-divider>
+          @if (userDetail._attachments) {
+            <img class="profile-image-large" [src]="imageSrc">
+          } @else {
+            <img class="profile-image-large" src="assets/image.png">
+          }
         </div>
-        <div>
+        <div class="info-container">
           <div>
-            <h4 class="primary-text-color" i18n>Email</h4>
-            <p class="ellipsis-text"><b>{{userDetail.email || 'N/A'}}</b></p>
+            <div>
+              <h4 class="primary-text-color" i18n>Full Name</h4>
+              <p><b>{{userDetail.firstName ? ((userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40) : 'N/A'}}</b></p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div>
           <div>
-            <h4 class="primary-text-color" i18n>Language</h4>
-            <p><b>{{userDetail.language || 'N/A'}}</b></p>
+            <div>
+              <h4 class="primary-text-color" i18n>Email</h4>
+              <p class="ellipsis-text"><b>{{userDetail.email || 'N/A'}}</b></p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div>
           <div>
-            <h4 class="primary-text-color" i18n>DOB</h4>
-            <p><b>{{(userDetail.birthDate | date: 'longDate') || 'N/A'}}</b></p>
+            <div>
+              <h4 class="primary-text-color" i18n>Language</h4>
+              <p><b>{{userDetail.language || 'N/A'}}</b></p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div>
           <div>
-            <h4 class="primary-text-color" i18n>Birthplace</h4>
-            <p><b>{{userDetail.birthplace || 'N/A'}}</b></p>
+            <div>
+              <h4 class="primary-text-color" i18n>DOB</h4>
+              <p><b>{{(userDetail.birthDate | date: 'longDate') || 'N/A'}}</b></p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div class="full-width">
           <div>
-            <h4 class="primary-text-color" i18n>Emergency Contact</h4>
-            <p><b i18n>Name: </b>{{(healthDetail?.emergencyContactName || 'N/A') | truncateText:40}}</p>
-            <p><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
-            <p><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+            <div>
+              <h4 class="primary-text-color" i18n>Birthplace</h4>
+              <p><b>{{userDetail.birthplace || 'N/A'}}</b></p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div class="full-width">
-          <div>
-            <h4 class="primary-text-color" i18n>Allergies</h4>
-            <td-markdown [content]="healthDetail?.allergies || 'N/A'"></td-markdown>
+          <div class="full-width">
+            <div>
+              <h4 class="primary-text-color" i18n>Emergency Contact</h4>
+              <p><b i18n>Name: </b>{{(healthDetail?.emergencyContactName || 'N/A') | truncateText:40}}</p>
+              <p><b i18n>Type: </b>{{healthDetail?.emergencyContactType || 'N/A'}}</p>
+              <p><b i18n>Contact: </b>{{healthDetail?.emergencyContact || 'N/A'}}</p>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div class="full-width">
-          <div>
-            <h4 class="primary-text-color" i18n>Immunization Dates</h4>
-            <td-markdown [content]="healthDetail?.immunizations || 'N/A'"></td-markdown>
+          <div class="full-width">
+            <div>
+              <h4 class="primary-text-color" i18n>Allergies</h4>
+              <td-markdown [content]="healthDetail?.allergies || 'N/A'"></td-markdown>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div class="full-width">
-          <div>
-            <h4 class="primary-text-color" i18n>Special Needs</h4>
-            <td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
+          <div class="full-width">
+            <div>
+              <h4 class="primary-text-color" i18n>Immunization Dates</h4>
+              <td-markdown [content]="healthDetail?.immunizations || 'N/A'"></td-markdown>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
-        </div>
-        <div class="full-width">
-          <div>
-            <h4 class="primary-text-color" i18n>Notes</h4>
-            <td-markdown [content]="healthDetail?.notes || 'N/A'"></td-markdown>
+          <div class="full-width">
+            <div>
+              <h4 class="primary-text-color" i18n>Special Needs</h4>
+              <td-markdown [content]="healthDetail?.specialNeeds || 'N/A'"></td-markdown>
+            </div>
+            <mat-divider></mat-divider>
           </div>
-          <mat-divider></mat-divider>
+          <div class="full-width">
+            <div>
+              <h4 class="primary-text-color" i18n>Notes</h4>
+              <td-markdown [content]="healthDetail?.notes || 'N/A'"></td-markdown>
+            </div>
+            <mat-divider></mat-divider>
+          </div>
         </div>
-      </div>
-      <ng-container *ngIf="events.length > 0">
-        <h3 class="full-width examinations-header" i18n>Examinations</h3>
-        <div class="full-width table-container" #examsTable>
-          <mat-table class="responsive-table" [dataSource]="eventTable" *ngIf="events.length > 0">
-            <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column" [sticky]="column === 'label'">
-              <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
-                <div class="header-items">
-                  <div class="header-date">
-                    {{ column === 'label' ? '' : (column | date) }}<mat-icon *ngIf="additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true" class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
-                  </div>
-                  <div *ngIf="additionalInfo[column]?.selfExamination===true" class="primary-text-color" i18n>Self Examination</div>
-                </div>
-              </mat-header-cell>
-              <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
-                <ng-container *ngIf="column === 'label'; else dataCell">
-                  <planet-label [label]="row[column]"></planet-label>
+        @if (events.length > 0) {
+          <h3 class="full-width examinations-header" i18n>Examinations</h3>
+          <div class="full-width table-container" #examsTable>
+            @if (events.length > 0) {
+              <mat-table class="responsive-table" [dataSource]="eventTable">
+                @for (column of displayedColumns; track column) {
+                  <ng-container [matColumnDef]="column" [sticky]="column === 'label'">
+                    <mat-header-cell *matHeaderCellDef class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
+                      <div class="header-items">
+                        <div class="header-date">
+                          {{ column === 'label' ? '' : (column | date) }}@if (additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true) {
+                          <mat-icon class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
+                        }
+                      </div>
+                      @if (additionalInfo[column]?.selfExamination===true) {
+                        <div class="primary-text-color" i18n>Self Examination</div>
+                      }
+                    </div>
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row" class="table-column" [ngClass]="{ 'cursor-pointer': column !== 'label' }" (click)="examClick(column)">
+                    @if (column === 'label') {
+                      <planet-label [label]="row[column]"></planet-label>
+                    } @else {
+                      {{ row[column] }}
+                    }
+                  </mat-cell>
                 </ng-container>
-                <ng-template #dataCell>
-                  {{ row[column] }}
-                </ng-template>
-              </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-          </mat-table>
+              }
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+          }
         </div>
-      </ng-container>
-      </div>
-    </ng-template>
-  </div>
+      }
+    </div>
+  }
+</div>
 </div>
