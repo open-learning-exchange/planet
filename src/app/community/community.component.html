@@ -111,13 +111,13 @@
                       <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
                         <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
-                        @if (deleteMode) {
-                          <span matListItemMeta>
+                        <span matListItemMeta>
+                          @if (deleteMode) {
                             <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.stopPropagation()">
                               <mat-icon>delete</mat-icon>
                             </button>
-                          </span>
-                        }
+                          }
+                        </span>
                       </mat-list-item>
                     }
                   }
@@ -127,13 +127,13 @@
                       <a mat-list-item [href]="link.route" target="_blank" rel="noopener">
                         <mat-icon matListItemIcon [svgIcon]="link.icon === 'website' ? '' : link.icon">{{ link.icon === 'website' ? 'public' : '' }}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
-                        @if (deleteMode) {
-                          <span matListItemMeta>
+                        <span matListItemMeta>
+                          @if (deleteMode) {
                             <button mat-icon-button color="warn" (click)="openDeleteLinkDialog(link); $event.preventDefault(); $event.stopPropagation()">
                               <mat-icon>delete</mat-icon>
                             </button>
-                          </span>
-                        }
+                          }
+                        </span>
                       </a>
                     }
                   }
