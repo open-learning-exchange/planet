@@ -29,9 +29,26 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   templateUrl: './feedback-view.component.html',
   styleUrls: ['./feedback-view.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, MatTooltip, MatIconAnchor,
-    AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput, FormsModule,
-    MatAnchor, MatCard, MatCardContent, NgClass, DatePipe, KeyValuePipe, TruncateTextPipe
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatToolbarRow,
+    MatTooltip,
+    MatIconAnchor,
+    AuthorizedRolesDirective,
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatAnchor,
+    MatCard,
+    MatCardContent,
+    NgClass,
+    DatePipe,
+    KeyValuePipe,
+    TruncateTextPipe
   ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
