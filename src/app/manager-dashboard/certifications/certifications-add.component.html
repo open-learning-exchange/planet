@@ -23,6 +23,8 @@
         <mat-error><planet-form-error-messages [control]="certificateForm.controls.name"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
-    <planet-courses *ngIf="courseIds.length > 0" [isForm]="true" [includeIds]="courseIds"></planet-courses>
+    @if (courseIds.length > 0) {
+      <planet-courses [isForm]="true" [includeIds]="courseIds"></planet-courses>
+    }
   </div>
 </div>

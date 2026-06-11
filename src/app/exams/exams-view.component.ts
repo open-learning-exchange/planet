@@ -14,7 +14,7 @@ import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
-import { NgIf, NgSwitch, NgSwitchCase, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -37,10 +37,25 @@ interface ExamViewForm {
   selector: 'planet-exams-view',
   templateUrl: './exams-view.component.html',
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, MatIcon, MatIconButton, MatMenuTrigger, MatMenu,
-    MatMenuItem, TdMarkdownComponent, NgSwitch, NgSwitchCase, MatFormField, MatLabel,
-    FormsModule, ReactiveFormsModule, PlanetMarkdownTextboxComponent, MatRadioGroup,
-    MatRadioButton, MatButton, DatePipe, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    TdMarkdownComponent,
+    MatFormField,
+    MatLabel,
+    FormsModule,
+    ReactiveFormsModule,
+    PlanetMarkdownTextboxComponent,
+    MatRadioGroup,
+    MatRadioButton,
+    MatButton,
+    DatePipe,
+    ExamsQuestionFrameComponent,
+    ExamsTakeWidgetComponent
   ]
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {

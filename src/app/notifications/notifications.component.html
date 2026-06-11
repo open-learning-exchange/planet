@@ -8,7 +8,9 @@
     <mat-form-field class="font-size-1 margin-lr-3 mdc-toolbar-input">
       <mat-label i18n>Notification Status</mat-label>
       <mat-select value="all" (selectionChange)="onFilterChange($event.value)">
-        <mat-option *ngFor="let option of notificationStatus" [value]="option.value">{{option.label}}</mat-option>
+        @for (option of notificationStatus; track option) {
+          <mat-option [value]="option.value">{{option.label}}</mat-option>
+        }
       </mat-select>
     </mat-form-field>
   </mat-toolbar>
@@ -17,24 +19,29 @@
       <ng-container matColumnDef="message">
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
-            <ng-container *ngIf="element.link; else noLink">
+            @if (element.link) {
               <a [routerLink]="element.link === '/' ? '/' : [ element.link, element.linkParams || {} ]">
                 <span [innerHTML]="element.message"></span>
-                <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+                @if (element.time > 0) {
+                  <span class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+                }
               </a>
-            </ng-container>
-            <ng-template #noLink>
+            } @else {
               <a (click)="element.type === 'challenges' && openAnnouncementDialog(element)">
                 <span [innerHTML]="element.message"></span>
-                <span *ngIf="element.time > 0" class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+                @if (element.time > 0) {
+                  <span class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
+                }
               </a>
-            </ng-template>
+            }
           </p>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="read">
         <mat-cell *matCellDef="let element" >
-          <button mat-stroked-button *ngIf="element.status==='unread'" (click)="readNotification(element)" i18n>Mark as Read</button>
+          @if (element.status==='unread') {
+            <button mat-stroked-button (click)="readNotification(element)" i18n>Mark as Read</button>
+          }
         </mat-cell>
       </ng-container>
       <mat-row *matRowDef="let row; columns: displayedColumns;" ></mat-row>

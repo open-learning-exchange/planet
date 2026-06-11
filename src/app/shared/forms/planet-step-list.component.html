@@ -1,16 +1,22 @@
-<mat-nav-list *ngIf="listMode" [disableRipple]="ignoreClick" [ngClass]="{ 'no-pointer': ignoreClick }">
-  <mat-list-item *ngFor="let stepListItem of stepListItems; index as i" (click)="stepClick(i)">
-    <ng-template [ngTemplateOutlet]="stepListItem.template"></ng-template>
-  </mat-list-item>
-</mat-nav-list>
-<div class="planet-step-list-form-container" *ngIf="!listMode">
-  <div class="action-buttons">
-    <button class="back-button" (click)="toList()" mat-stroked-button type="button" i18n><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
-    <button mat-stroked-button [disabled]="this.openIndex === 0" (click)="changeStep(-1)" type="button" i18n>Previous</button>
-    <button mat-stroked-button [disabled]="this.openIndex >= (this.stepListItems.length - 1)" (click)="changeStep(1)" type="button" i18n>Next</button>
-    <button mat-stroked-button (click)="removeStep()" type="button" i18n>Delete</button>
-    <ng-content select="[planetStepListNumber]"></ng-content>
+@if (listMode) {
+  <mat-nav-list [disableRipple]="ignoreClick" [ngClass]="{ 'no-pointer': ignoreClick }">
+    @for (stepListItem of stepListItems; track stepListItem; let i = $index) {
+      <mat-list-item (click)="stepClick(i)">
+        <ng-template [ngTemplateOutlet]="stepListItem.template"></ng-template>
+      </mat-list-item>
+    }
+  </mat-nav-list>
+}
+@if (!listMode) {
+  <div class="planet-step-list-form-container">
+    <div class="action-buttons">
+      <button class="back-button" (click)="toList()" mat-stroked-button type="button" i18n><mat-icon>keyboard_arrow_left</mat-icon>Return to List</button>
+      <button mat-stroked-button [disabled]="this.openIndex === 0" (click)="changeStep(-1)" type="button" i18n>Previous</button>
+      <button mat-stroked-button [disabled]="this.openIndex >= (this.stepListItems.length - 1)" (click)="changeStep(1)" type="button" i18n>Next</button>
+      <button mat-stroked-button (click)="removeStep()" type="button" i18n>Delete</button>
+      <ng-content select="[planetStepListNumber]"></ng-content>
+    </div>
+    <ng-content select="[planetStepListForm]"></ng-content>
+    <ng-content select="[planetStepListActions]"></ng-content>
   </div>
-  <ng-content select="[planetStepListForm]"></ng-content>
-  <ng-content select="[planetStepListActions]"></ng-content>
-</div>
+}

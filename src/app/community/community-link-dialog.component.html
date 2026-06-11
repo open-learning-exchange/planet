@@ -3,11 +3,13 @@
   <mat-form-field class="full-width">
     <mat-label i18n>Type of Link</mat-label>
     <mat-select [(ngModel)]="selectedLink">
-      <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
+      @for (link of links; track link) {
+        <mat-option [value]="link">{{link.title}}</mat-option>
+      }
     </mat-select>
   </mat-form-field>
 
-  <ng-container *ngIf="selectedLink?.db === 'teams'">
+  @if (selectedLink?.db === 'teams') {
     <form [formGroup]="linkForm">
       <mat-horizontal-stepper #linkStepper linear (selectionChange)="linkStepperChange($event)">
         <mat-step i18n-label completed="false" label="Select">
@@ -22,29 +24,41 @@
         </mat-step>
       </mat-horizontal-stepper>
     </form>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="selectedLink?.db === 'social'">
+  @if (selectedLink?.db === 'social') {
     <form [formGroup]="linkForm">
       <mat-form-field class="full-width">
         <mat-label i18n>Platform</mat-label>
         <mat-select formControlName="platform" (selectionChange)="onPlatformSelect($event.value)" required>
           <mat-select-trigger>
-            <ng-container [ngSwitch]="linkForm.value.platform">
-              <mat-icon *ngSwitchCase="'website'" class="platform-icon">public</mat-icon>
-              <mat-icon *ngSwitchDefault [svgIcon]="linkForm.value.platform" class="platform-icon"></mat-icon>
-            </ng-container>
+            @switch (linkForm.value.platform) {
+              @case ('website') {
+                <mat-icon class="platform-icon">public</mat-icon>
+              }
+              @default {
+                <mat-icon [svgIcon]="linkForm.value.platform" class="platform-icon"></mat-icon>
+              }
+            }
             {{getPlatformLabel(linkForm.value.platform)}}
           </mat-select-trigger>
-          <mat-option *ngFor="let p of socialPlatforms" [value]="p.value">
-            <ng-container [ngSwitch]="p.value">
-              <mat-icon *ngSwitchCase="'website'" class="platform-icon">public</mat-icon>
-              <mat-icon *ngSwitchDefault [svgIcon]="p.value" class="platform-icon"></mat-icon>
-            </ng-container>
-            {{ p.label }}
-          </mat-option>
+          @for (p of socialPlatforms; track p) {
+            <mat-option [value]="p.value">
+              @switch (p.value) {
+                @case ('website') {
+                  <mat-icon class="platform-icon">public</mat-icon>
+                }
+                @default {
+                  <mat-icon [svgIcon]="p.value" class="platform-icon"></mat-icon>
+                }
+              }
+              {{ p.label }}
+            </mat-option>
+          }
         </mat-select>
-        <mat-error *ngIf="linkForm.controls.platform.invalid && linkForm.controls.platform.touched" i18n>Platform is required.</mat-error>
+        @if (linkForm.controls.platform.invalid && linkForm.controls.platform.touched) {
+          <mat-error i18n>Platform is required.</mat-error>
+        }
       </mat-form-field>
       <mat-form-field class="full-width">
         <mat-label i18n>Title</mat-label>
@@ -57,7 +71,7 @@
         <mat-error><planet-form-error-messages [control]="linkForm.controls.route"></planet-form-error-messages></mat-error>
       </mat-form-field>
     </form>
-  </ng-container>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button type="button" mat-raised-button (click)="cancelForm()" i18n>Cancel</button>

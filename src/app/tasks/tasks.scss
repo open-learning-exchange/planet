@@ -19,7 +19,7 @@ planet-tasks {
       order: 3;
     }
 
-    .mat-mdc-list-item.mat-mdc-list-item-with-avatar span[matListItemLine] {
+    .mat-mdc-list-item.mdc-list-item--with-leading-avatar .mdc-list-item__content {
       margin-left: -16px;
     }
   }

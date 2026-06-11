@@ -1,107 +1,130 @@
 <form novalidate (ngSubmit)="onSubmit(modalForm, dialogRef)" [formGroup]="modalForm">
   <h1 mat-dialog-title><span><mat-icon>create</mat-icon>{{title}}</span></h1>
   <mat-dialog-content>
-    <div *ngFor="let field of fields" [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' || field.type === 'toggle' || field.type === 'markdown' }">
-      
-      <!--checkbox field-->
-      <mat-checkbox *ngIf="field.type === 'checkbox'" 
-        formControlName="{{field.name}}"
-        [disabled]="field.disabled"
-        [matTooltip]="field.tooltip || ''"
-        [matTooltipDisabled]="!field.tooltip">
-        {{field.placeholder}}
-      </mat-checkbox>
-      
-      <!-- input field -->
-      <mat-form-field *ngIf="field.type === 'textbox'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min">
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- password field -->
-      <mat-form-field *ngIf="field.type === 'password'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
-        <button type="button" mat-icon-button matIconSuffix (click)="togglePasswordVisibility(field.name)" tabindex="-1">
-          <mat-icon>{{passwordVisibility.get(field.name) ? 'visibility' : 'visibility_off'}}</mat-icon>
-        </button>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- selectbox -->
-      <mat-form-field *ngIf="field.type === 'selectbox'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <mat-select formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
-          <mat-option *ngIf="field.reset" i18n>None</mat-option>
-          <mat-option *ngFor="let option of field.options" [value]="option.value">{{option.name}}</mat-option>
-        </mat-select>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- radio button -->
-      <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}" *ngIf="field.type === 'radio'">
-        <mat-label>{{field.label}}</mat-label><br>
-        <mat-radio-button class="planet-radio-button" *ngFor="let option of field.options" [value]="getRadioOptionValue(option)">
-          {{getRadioOptionLabel(option)}}
-        </mat-radio-button>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-radio-group>
-
-      <!-- Star Rating -->
-      <mat-form-field class="rating" *ngIf="field.type === 'rating'">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <planet-rating-stars [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating-stars>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- Textarea -->
-      <mat-form-field *ngIf="field.type === 'textarea'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <textarea matInput formControlName="{{field.name}}" required="{{field.required}}"></textarea>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- Textarea -->
-      <mat-form-field *ngIf="field.type === 'markdown'" class="full-width mat-form-field-type-no-underline">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <planet-markdown-textbox matInput formControlName="{{field.name}}" [required]="field.required" [imageGroup]="field.imageGroup"></planet-markdown-textbox>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- Dialog Button -->
-      <ng-container *planetAuthorizedRoles="field.authorizedRoles === undefined ? 'learner' : field.authorizedRoles">
-        <button type="button" mat-stroked-button *ngIf="field.type === 'dialog'" (click)="openDialog(field)">{{field.text}}</button>
-      </ng-container>
-
-      <!-- Date Select -->
-      <mat-form-field *ngIf="field.type === 'date'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
-        <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp></mat-datepicker>
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- Time Select -->
-      <mat-form-field *ngIf="field.type === 'time'" class="full-width">
-        <mat-label>{{field.placeholder}}</mat-label>
-        <input matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
-        <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-
-      <!-- Slide Toggle -->
-      <mat-slide-toggle *ngIf="field.type === 'toggle'" class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
-
-    </div>
+    @for (field of fields; track field) {
+      <div [ngClass]="{ 'checkbox-wrapper': field.type === 'checkbox' || field.type === 'toggle' || field.type === 'markdown' }">
+        <!--checkbox field-->
+        @if (field.type === 'checkbox') {
+          <mat-checkbox
+            formControlName="{{field.name}}"
+            [disabled]="field.disabled"
+            [matTooltip]="field.tooltip || ''"
+            [matTooltipDisabled]="!field.tooltip">
+            {{field.placeholder}}
+          </mat-checkbox>
+        }
+        <!-- input field -->
+        @if (field.type === 'textbox') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min">
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- password field -->
+        @if (field.type === 'password') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <input matInput type="{{passwordVisibility.get(field.name) ? 'text' : 'password'}}" formControlName="{{field.name}}" required="{{field.required}}">
+            <button type="button" mat-icon-button matIconSuffix (click)="togglePasswordVisibility(field.name)" tabindex="-1">
+              <mat-icon>{{passwordVisibility.get(field.name) ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </button>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- selectbox -->
+        @if (field.type === 'selectbox') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <mat-select formControlName="{{field.name}}" required="{{field.required}}" [multiple]="field.multiple">
+              @if (field.reset) {
+                <mat-option i18n>None</mat-option>
+              }
+              @for (option of field.options; track option) {
+                <mat-option [value]="option.value">{{option.name}}</mat-option>
+              }
+            </mat-select>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- radio button -->
+        @if (field.type === 'radio') {
+          <mat-radio-group formControlName="{{field.name}}" required="{{field.required}}">
+            <mat-label>{{field.label}}</mat-label><br>
+            @for (option of field.options; track option) {
+              <mat-radio-button class="planet-radio-button" [value]="getRadioOptionValue(option)">
+                {{getRadioOptionLabel(option)}}
+              </mat-radio-button>
+            }
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-radio-group>
+        }
+        <!-- Star Rating -->
+        @if (field.type === 'rating') {
+          <mat-form-field class="rating">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <planet-rating-stars [formControl]="modalForm.controls[field.name]" required="{{field.required}}"></planet-rating-stars>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- Textarea -->
+        @if (field.type === 'textarea') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <textarea matInput formControlName="{{field.name}}" required="{{field.required}}"></textarea>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- Textarea -->
+        @if (field.type === 'markdown') {
+          <mat-form-field class="full-width mat-form-field-type-no-underline">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <planet-markdown-textbox matInput formControlName="{{field.name}}" [required]="field.required" [imageGroup]="field.imageGroup"></planet-markdown-textbox>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- Dialog Button -->
+        <ng-container *planetAuthorizedRoles="field.authorizedRoles === undefined ? 'learner' : field.authorizedRoles">
+          @if (field.type === 'dialog') {
+            <button type="button" mat-stroked-button (click)="openDialog(field)">{{field.text}}</button>
+          }
+        </ng-container>
+        <!-- Date Select -->
+        @if (field.type === 'date') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
+            <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp></mat-datepicker>
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- Time Select -->
+        @if (field.type === 'time') {
+          <mat-form-field class="full-width">
+            <mat-label>{{field.placeholder}}</mat-label>
+            <input matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+            <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
+        <!-- Slide Toggle -->
+        @if (field.type === 'toggle') {
+          <mat-slide-toggle class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
+        }
+      </div>
+    }
   </mat-dialog-content>
-  <mat-dialog-actions *ngIf="title !== 'Rating'">
-    <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
-    <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
-    <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
-  </mat-dialog-actions>
+  @if (title !== 'Rating') {
+    <mat-dialog-actions>
+      <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
+      <button type="button" mat-raised-button (click)="dialogRef.close()" i18n>Cancel</button>
+      <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
+    </mat-dialog-actions>
+  }
 
-  <mat-dialog-actions *ngIf="title === 'Rating'">
-    <button type="submit" [planetSubmit]="isSpinnerOk" color="primary" mat-raised-button i18n>OK</button>
-  </mat-dialog-actions>
+  @if (title === 'Rating') {
+    <mat-dialog-actions>
+      <button type="submit" [planetSubmit]="isSpinnerOk" color="primary" mat-raised-button i18n>OK</button>
+    </mat-dialog-actions>
+  }
 </form>

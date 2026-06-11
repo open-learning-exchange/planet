@@ -5,11 +5,11 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <h3 class="margin-lr-3 ellipsis-title">{{courseDetail.courseTitle}}</h3>
-    <ng-container *ngIf="deviceType === deviceTypes.DESKTOP">
+    @if (deviceType === deviceTypes.DESKTOP) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-    </ng-container>
-    <ng-container *ngIf=" deviceType === deviceTypes.TABLET">
+    }
+    @if ( deviceType === deviceTypes.TABLET) {
       <ng-container *ngTemplateOutlet="editDetails"></ng-container>
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
         <mat-icon>more_vert</mat-icon>
@@ -17,114 +17,157 @@
       <mat-menu #actionsMenu="matMenu" class="actions-menu">
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
       </mat-menu>
-    </ng-container>
-    <ng-container *ngIf="deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE">
+    }
+    @if (deviceType === deviceTypes.MOBILE || deviceType === deviceTypes.SMALL_MOBILE) {
       <span class="toolbar-fill"></span>
-        <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #actionsMenu="matMenu" class="actions-menu">
-          <ng-container *ngTemplateOutlet="editDetails"></ng-container>
-          <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-        </mat-menu>
-    </ng-container>
+      <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu" class="actions-menu">
+        <ng-container *ngTemplateOutlet="editDetails"></ng-container>
+        <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+      </mat-menu>
+    }
   </mat-toolbar>
 
-   <ng-template #editDetails>
+  <ng-template #editDetails>
     <button mat-stroked-button class="margin-lr-3" (click)="toggleFullView('details')" i18n>
       {fullView, select, on {Show details} off {Hide}}
     </button>
-    <button mat-stroked-button *ngIf="canManage" (click)="updateCourse()" class="planet-icon-button">
-      <mat-icon>edit</mat-icon>
-    </button>
+    @if (canManage) {
+      <button mat-stroked-button (click)="updateCourse()" class="planet-icon-button">
+        <mat-icon>edit</mat-icon>
+      </button>
+    }
     <span class="toolbar-fill"></span>
-   </ng-template>
+  </ng-template>
 
-   <ng-template #actionButtons>
-      <ng-container *ngIf="!parent">
-        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3" *ngIf="!isUserEnrolled && courseDetail.steps.length">
+  <ng-template #actionButtons>
+    @if (!parent) {
+      @if (!isUserEnrolled && courseDetail.steps.length) {
+        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3">
           Join
         </button>
-        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3" *ngIf="isUserEnrolled && courseDetail.steps.length">
+      }
+      @if (isUserEnrolled && courseDetail.steps.length) {
+        <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'resign')" i18n class="margin-lr-3">
           Leave
         </button>
-      </ng-container>
-      <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
-   </ng-template>
+      }
+    }
+    <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+  </ng-template>
 
   <div class="view-container view-full-height">
-    <div class="course-progress" *ngIf="isUserEnrolled && courseDetail.steps.length">
-      <span i18n>myProgress:</span>
-      <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
-    </div>
+    @if (isUserEnrolled && courseDetail.steps.length) {
+      <div class="course-progress">
+        <span i18n>myProgress:</span>
+        <planet-courses-progress-bar [course]="courseDetail" [courseProgress]="progress"></planet-courses-progress-bar>
+      </div>
+    }
     <div [ngClass]="{'full-view-container':fullView==='on'}" class="course-container" >
       <div class="course-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
-        <planet-courses-detail *ngIf="currentView==='details'" [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
+        @if (currentView==='details') {
+          <planet-courses-detail [courseDetail]="courseDetail" [parent]="parent"></planet-courses-detail>
+        }
       </div>
       <div class="course-view">
-        <ng-container *ngFor="let step of courseDetail.steps; let stepNum = index; trackBy: trackByFn">
+        @for (step of courseDetail.steps; track trackByFn($index); let stepNum = $index) {
           <mat-expansion-panel hideToggle="true" (opened)="setStepButtonStatus(step, stepNum)">
             <mat-expansion-panel-header>
               <mat-panel-title class="step-title" i18n>
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
-                <planet-course-icon *ngIf="step?.exam?.questions.length" [icon]="'assignment'"></planet-course-icon>
-                <planet-course-icon *ngIf="step?.resources?.length" [icon]="'attach_file'"></planet-course-icon>
-                <planet-course-icon *ngIf="step?.survey?.questions.length" [icon]="'description'"></planet-course-icon>
+                @if (step?.exam?.questions.length) {
+                  <planet-course-icon [icon]="'assignment'"></planet-course-icon>
+                }
+                @if (step?.resources?.length) {
+                  <planet-course-icon [icon]="'attach_file'"></planet-course-icon>
+                }
+                @if (step?.survey?.questions.length) {
+                  <planet-course-icon [icon]="'description'"></planet-course-icon>
+                }
               </mat-panel-description>
-              <planet-course-icon *ngIf="step.progress && step.progress.passed" [icon]="'done'"></planet-course-icon>
-              <planet-course-icon *ngIf="step.progress && !step.progress.passed" [icon]="'rotate_right'"></planet-course-icon>
+              @if (step.progress && step.progress.passed) {
+                <planet-course-icon [icon]="'done'"></planet-course-icon>
+              }
+              @if (step.progress && !step.progress.passed) {
+                <planet-course-icon [icon]="'rotate_right'"></planet-course-icon>
+              }
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
-            <div *ngIf="step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0; else contentMessage" i18n>
+            @if (step.description.length === 0 && (step.exam === undefined || step?.exam?.questions.length === 0) && step?.resources?.length === 0 && step?.survey?.questions.length === 0) {
+              <div i18n>
               There is no content for this step.
             </div>
-            <ng-template #contentMessage>
-              <span *ngIf="step.description.length === 0" i18n>There is no description for this step.</span>
+            } @else {
+              @if (step.description.length === 0) {
+                <span i18n>There is no description for this step.</span>
+              }
               {{' '}}
-              <span *ngIf= "step?.resources?.length > 0">
-                <span i18n>{step.resources.length, plural, =1 {There is} other {There are}}</span>
-                {{ ' ' + step?.resources?.length + ' '}}
-                <span i18n>{step.resources.length, plural, =1 {resource} other {resources}}.</span>
-                {{' '}}
-              </span>
-              <span *ngIf= "step?.exam?.questions.length > 0">
-                <span i18n>The test has</span>
-                {{ ' ' + step?.exam.questions?.length + ' '}}
-                <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
-                {{' '}}
-              </span>
-              <span *ngIf= "step?.survey?.questions.length > 0">
-                <span i18n>The survey has</span>
-                {{ ' ' + step?.survey?.questions.length + ' '}}
-                <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
-              </span>
-            </ng-template>
-            <mat-action-row *ngIf="!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))">
-              <planet-resources-menu *ngIf="step?.resources?.length > 0" [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
-              <button mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.exam?.questions.length && isUserEnrolled" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
-              <a mat-raised-button color="accent" class="margin-lr-10" *ngIf="step?.survey?.questions.length && isUserEnrolled" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
-              <button *ngIf="canManage && (step?.exam?.questions.length || step?.survey?.questions.length)" class="margin-lr-10" color="accent" mat-raised-button
-                [matMenuTriggerFor]="previewMenu"
-                (click)="previewButtonClick(step, stepNum)" i18n>
+              @if (step?.resources?.length > 0) {
+                <span>
+                  <span i18n>{step.resources.length, plural, =1 {There is} other {There are}}</span>
+                  {{ ' ' + step?.resources?.length + ' '}}
+                  <span i18n>{step.resources.length, plural, =1 {resource} other {resources}}.</span>
+                  {{' '}}
+                </span>
+              }
+              @if (step?.exam?.questions.length > 0) {
+                <span>
+                  <span i18n>The test has</span>
+                  {{ ' ' + step?.exam.questions?.length + ' '}}
+                  <span i18n>{step.exam.questions.length, plural, =1 {question} other {questions}}.</span>
+                  {{' '}}
+                </span>
+              }
+              @if (step?.survey?.questions.length > 0) {
+                <span>
+                  <span i18n>The survey has</span>
+                  {{ ' ' + step?.survey?.questions.length + ' '}}
+                  <span i18n>{step.survey.questions.length, plural, =1 {question} other {questions}}.</span>
+                </span>
+              }
+            }
+            @if (!parent && (step?.resources?.length > 0 || ((step?.exam?.questions.length || step?.survey?.questions.length) && (isUserEnrolled || canManage)))) {
+              <mat-action-row>
+                @if (step?.resources?.length > 0) {
+                  <planet-resources-menu [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
+                }
+                @if (step?.exam?.questions.length && isUserEnrolled) {
+                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
+                }
+                @if (step?.survey?.questions.length && isUserEnrolled) {
+                  <a mat-raised-button color="accent" class="margin-lr-10" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
+                }
+                @if (canManage && (step?.exam?.questions.length || step?.survey?.questions.length)) {
+                  <button class="margin-lr-10" color="accent" mat-raised-button
+                    [matMenuTriggerFor]="previewMenu"
+                    (click)="previewButtonClick(step, stepNum)" i18n>
                 Preview
               </button>
-              <mat-menu #previewMenu="matMenu">
-                <a mat-menu-item
-                  (click)="goToExam(step, stepNum, true)" i18n>
+                }
+                <mat-menu #previewMenu="matMenu">
+                  <a mat-menu-item
+                    (click)="goToExam(step, stepNum, true)" i18n>
                   Preview Test
                 </a>
-                <a mat-menu-item
-                  (click)="goToSurvey(stepNum, true)" i18n>
+                  <a mat-menu-item
+                    (click)="goToSurvey(stepNum, true)" i18n>
                   Preview Survey
                 </a>
-              </mat-menu>
-            </mat-action-row>
+                </mat-menu>
+              </mat-action-row>
+            }
           </mat-expansion-panel>
-        </ng-container>
-        <planet-loading-spinner *ngIf="isLoading" text="Loading course details..." i18n-text></planet-loading-spinner>
-        <span *ngIf="courseDetail.steps.length===0 && !isLoading" i18n>There is no content for this course</span>
+        }
+        @if (isLoading) {
+          <planet-loading-spinner text="Loading course details..." i18n-text></planet-loading-spinner>
+        }
+        @if (courseDetail.steps.length===0 && !isLoading) {
+          <span i18n>There is no content for this course</span>
+        }
       </div>
     </div>
   </div>
