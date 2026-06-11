@@ -172,8 +172,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private captureInitialState() {
-    const formValue = this.meetupForm.getRawValue();
-    this.initialFormValues = JSON.stringify({
+    this.initialFormValues = this.serializeFormValue(this.meetupForm.getRawValue());
+  }
+
+  private serializeFormValue(formValue: any): string {
+    return JSON.stringify({
       ...formValue,
       startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
       endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
@@ -187,13 +190,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(formValue => {
-        const currentState = JSON.stringify({
-          ...formValue,
-          startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
-          endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
-          day: formValue.day || []
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.hasUnsavedChanges = this.serializeFormValue(formValue) !== this.initialFormValues;
       });
   }
 
