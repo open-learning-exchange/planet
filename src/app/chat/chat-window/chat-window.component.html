@@ -1,28 +1,30 @@
 <div class="full-container">
   <div class="chat-container" #chat>
-    <div *ngFor="let conversation of conversations; trackBy: trackByFn">
-      <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-      <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
-    </div>
+    @for (conversation of conversations; track trackByFn($index, conversation)) {
+      <div>
+        <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
+        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+      </div>
+    }
   </div>
 
   <div class="form-container">
     <form [formGroup]="promptForm" class="form-space" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label i18n>Chat</mat-label>
-          <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
-          <button
-            mat-icon-button
-            matIconSuffix
-            [planetSubmit]="promptForm.valid && spinnerOn"
-            [disabled]="!promptForm.valid || providers.length === 0"
-            i18n-matTooltip
-            matTooltip="chat is disabled, contact community admin"
-            [matTooltipDisabled]="providers.length > 0"
-            color="primary"
+        <textarea #chatInput matInput [formControl]="promptForm.controls.prompt" rows="5" placeholder="Send a message" i18n-placeholder></textarea>
+        <button
+          mat-icon-button
+          matIconSuffix
+          [planetSubmit]="promptForm.valid && spinnerOn"
+          [disabled]="!promptForm.valid || providers.length === 0"
+          i18n-matTooltip
+          matTooltip="chat is disabled, contact community admin"
+          [matTooltipDisabled]="providers.length > 0"
+          color="primary"
           >
-            <mat-icon>send</mat-icon>
-          </button>
+          <mat-icon>send</mat-icon>
+        </button>
       </mat-form-field>
     </form>
   </div>

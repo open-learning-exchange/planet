@@ -1,22 +1,30 @@
 <mat-toolbar>
-  <button mat-icon-button (click)="goBack()" *ngIf="!submissionMode">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <ng-container [ngSwitch]="submissionMode">
-    <span *ngSwitchCase="true" i18n>Survey Profile</span>
-    <span *ngSwitchCase="false" i18n>Edit Member Profile</span>
-  </ng-container>
+  @if (!submissionMode) {
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  }
+  @switch (submissionMode) {
+    @case (true) {
+      <span i18n>Survey Profile</span>
+    }
+    @case (false) {
+      <span i18n>Edit Member Profile</span>
+    }
+  }
 </mat-toolbar>
 
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{user.name}}</span>
-    <span *ngIf="submissionMode" i18n>{{title}}</span>
+    @if (submissionMode) {
+      <span i18n>{{title}}</span>
+    }
   </mat-toolbar>
   <div class="view-container">
     <div class="form-container">
       <form [formGroup]="editForm" class="form-space" (ngSubmit)="onSubmit()">
-        <ng-container *ngIf="!submissionMode || (submissionMode && showAdditionalFields)">
+        @if (!submissionMode || (submissionMode && showAdditionalFields)) {
           <div class="profile-names">
             <mat-form-field>
               <mat-label i18n>First Name</mat-label>
@@ -70,9 +78,11 @@
             <mat-form-field>
               <mat-label i18n>Language</mat-label>
               <mat-select formControlName="language" [required]="!submissionMode">
-                <mat-option *ngFor="let language of languages" [value]="language.name">
-                  {{language.name}}
-                </mat-option>
+                @for (language of languages; track language) {
+                  <mat-option [value]="language.name">
+                    {{language.name}}
+                  </mat-option>
+                }
               </mat-select>
               <mat-error>
                 <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
@@ -81,69 +91,83 @@
             <mat-form-field>
               <mat-label i18n>level</mat-label>
               <mat-select formControlName="level" [required]="!submissionMode">
-                <mat-option *ngFor="let level of educationLevel" [value]="level.value">{{level.label}}</mat-option>
+                @for (level of educationLevel; track level) {
+                  <mat-option [value]="level.value">{{level.label}}</mat-option>
+                }
               </mat-select>
               <mat-error>
                 <planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages>
               </mat-error>
             </mat-form-field>
           </div>
-        </ng-container>
+        }
         <mat-radio-group class="radio-group" formControlName="gender" [required]="!submissionMode" class="full-width">
           <label i18n>Gender</label>
           <mat-radio-button class="planet-radio-button" value="male">
             <div class="radio-icon-label">
               <mat-icon svgIcon="male" class="male-icon primary-text-color margin-lr-3"></mat-icon><span
-                i18n>Male</span>
-            </div>
-          </mat-radio-button>
-          <mat-radio-button class="planet-radio-button" value="female">
-            <div class="radio-icon-label">
-              <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span
-                i18n>Female</span>
-            </div>
-          </mat-radio-button>
-          <mat-error i18n *ngIf="editForm.controls.gender.invalid && editForm.controls.gender.touched">
+            i18n>Male</span>
+          </div>
+        </mat-radio-button>
+        <mat-radio-button class="planet-radio-button" value="female">
+          <div class="radio-icon-label">
+            <mat-icon svgIcon="female" class="female-icon accent-text-color margin-lr-3"></mat-icon><span
+          i18n>Female</span>
+        </div>
+      </mat-radio-button>
+      @if (editForm.controls.gender.invalid && editForm.controls.gender.touched) {
+        <mat-error i18n>
             This field is required
           </mat-error>
-          <mat-slide-toggle *ngIf="!submissionMode && planetConfiguration.betaEnabled==='user'"
-            formControlName="betaEnabled" i18n i18n-matTooltip
-            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+      }
+      @if (!submissionMode && planetConfiguration.betaEnabled==='user') {
+        <mat-slide-toggle
+          formControlName="betaEnabled" i18n i18n-matTooltip
+          matTooltip="Beta features may not work as intended. It's recommended to leave this off">
             Enable Beta features
           </mat-slide-toggle>
-        </mat-radio-group>
-        <ng-container *ngIf="submissionMode">
-          <ng-container *ngIf="!showAdditionalFields">
-            <mat-form-field>
-              <mat-label i18n>Birth Year</mat-label>
-              <input matInput type="number" formControlName="birthYear" [required]="false">
-              <mat-hint i18n>Enter year (e.g., 1995)</mat-hint>
-              <mat-error>
-                <planet-form-error-messages [control]="editForm.controls.birthYear"></planet-form-error-messages>
-              </mat-error>
-            </mat-form-field>
-          </ng-container>
-          <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
-            <span>{{ additionalFieldsButtonText }}</span>
-          </button>
-        </ng-container>
-        <div class="action-buttons">
-          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-          <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-        </div>
-      </form>
+      }
+    </mat-radio-group>
+    @if (submissionMode) {
+      @if (!showAdditionalFields) {
+        <mat-form-field>
+          <mat-label i18n>Birth Year</mat-label>
+          <input matInput type="number" formControlName="birthYear" [required]="false">
+          <mat-hint i18n>Enter year (e.g., 1995)</mat-hint>
+          <mat-error>
+            <planet-form-error-messages [control]="editForm.controls.birthYear"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+      }
+      <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
+        <span>{{ additionalFieldsButtonText }}</span>
+      </button>
+    }
+    <div class="action-buttons">
+      <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+      <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
     </div>
-    <div *ngIf="!submissionMode" class="profile-image-column">
-      <div class="profile-image-content">
-        <img *ngIf="showImagePreview" class="profile-image-update" [src]="previewSrc"><br>
+  </form>
+</div>
+@if (!submissionMode) {
+  <div class="profile-image-column">
+    <div class="profile-image-content">
+      @if (showImagePreview) {
+        <img class="profile-image-update" [src]="previewSrc">
+        }<br>
         <planet-file-upload #profileUpload accept="image/*" i18n-hint hint="JPG, PNG, GIF or WEBP" [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="openImageEditDialog($event)"></planet-file-upload>
         <div class="action-buttons">
-          <button *ngIf="imageFile || attachmentDeleted" mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
-          <button *ngIf="uploadImage && currentImgKey && !imageFile && !attachmentDeleted" mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+          @if (imageFile || attachmentDeleted) {
+            <button mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
+          }
+          @if (uploadImage && currentImgKey && !imageFile && !attachmentDeleted) {
+            <button mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+          }
         </div>
       </div>
     </div>
-  </div>
+  }
+</div>
 </div>
 <ng-template #imageEditDialog>
   <mat-dialog-content class="profile-image-section">

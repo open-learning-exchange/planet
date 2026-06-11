@@ -1,107 +1,114 @@
-<mat-toolbar *ngIf="!isDialog">
-  <a mat-icon-button routerLink="/meetups">
-    <mat-icon>arrow_back</mat-icon>
-  </a>
-</mat-toolbar>
+@if (!isDialog) {
+  <mat-toolbar>
+    <a mat-icon-button routerLink="/meetups">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+  </mat-toolbar>
+}
 
 <ng-template #meetupContent>
   <div [ngClass]="{'space-container':!isDialog}">
     <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add new {Add new} Update {Update}} Meetup</mat-toolbar>
     <div class="view-container">
       <form class="form-spacing" [formGroup]="meetupForm" novalidate>
-      <mat-form-field>
-        <mat-label i18n>Title</mat-label>
-        <input matInput formControlName="title" required>
-        <mat-error>
-          <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Location</mat-label>
-        <input matInput formControlName="meetupLocation">
-        <mat-error>
-          <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Link</mat-label>
-        <input matInput formControlName="meetupLink">
-        <mat-error>
-          <planet-form-error-messages [control]="meetupForm.controls.meetupLink"></planet-form-error-messages>
-        </mat-error>
-      </mat-form-field>
-      <mat-form-field class="full-width mat-form-field-type-no-underline">
-        <mat-label i18n>Description</mat-label>
-        <planet-markdown-textbox class="full-width" required="true" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
-        <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Start Date</mat-label>
-        <input matInput [matDatepicker]="datepickerStart" required="true" formControlName="startDate">
-        <mat-datepicker-toggle matIconSuffix [for]="datepickerStart"></mat-datepicker-toggle>
-        <mat-datepicker #datepickerStart></mat-datepicker>
-        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>End Date</mat-label>
-        <input matInput [matDatepicker]="datepickerEnd" formControlName="endDate">
-        <mat-datepicker-toggle matIconSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
-        <mat-datepicker #datepickerEnd></mat-datepicker>
-        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>Start Time</mat-label>
-        <input matInput planetTimeMask formControlName="startTime">
-        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label i18n>End Time</mat-label>
-        <input matInput planetTimeMask formControlName="endTime">
-        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
-      </mat-form-field>
-      <div class="full-width">
-        <label i18n>Recurring Frequency</label>
-        <mat-radio-group formControlName="recurring">
-          <mat-radio-button class="margin-tblr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
-          <mat-radio-button class="margin-tblr" value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
-          <mat-radio-button class="margin-tblr" value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
-        </mat-radio-group>
-      </div>
-      <div *ngIf="meetupForm.controls.recurring.value === 'weekly'" class="full-width">
-          <mat-checkbox (change)="onDayChange(day, $event.checked)" *ngFor="let day of days"  class="margin-lr" [checked]="meetupForm.controls.day.value.includes(day)"> {{ day }}</mat-checkbox>
-          <mat-error *ngIf="meetupForm.controls.day.hasError('noDaysSelected')">
-            <span i18n>Please select at least one day.</span>
-          </mat-error>
-      </div>
-      <ng-container *ngIf="meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily'">
         <mat-form-field>
-          <mat-label i18n>Number of Recurrences</mat-label>
-          <input matInput type="number" min="2" formControlName="recurringNumber">
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurringNumber"></planet-form-error-messages></mat-error>
+          <mat-label i18n>Title</mat-label>
+          <input matInput formControlName="title" required>
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.title"></planet-form-error-messages>
+          </mat-error>
         </mat-form-field>
-      </ng-container>
+        <mat-form-field>
+          <mat-label i18n>Location</mat-label>
+          <input matInput formControlName="meetupLocation">
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.meetupLocation"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>Link</mat-label>
+          <input matInput formControlName="meetupLink">
+          <mat-error>
+            <planet-form-error-messages [control]="meetupForm.controls.meetupLink"></planet-form-error-messages>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="full-width mat-form-field-type-no-underline">
+          <mat-label i18n>Description</mat-label>
+          <planet-markdown-textbox class="full-width" required="true" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>Start Date</mat-label>
+          <input matInput [matDatepicker]="datepickerStart" required="true" formControlName="startDate">
+          <mat-datepicker-toggle matIconSuffix [for]="datepickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #datepickerStart></mat-datepicker>
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>End Date</mat-label>
+          <input matInput [matDatepicker]="datepickerEnd" formControlName="endDate">
+          <mat-datepicker-toggle matIconSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #datepickerEnd></mat-datepicker>
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>Start Time</mat-label>
+          <input matInput planetTimeMask formControlName="startTime">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label i18n>End Time</mat-label>
+          <input matInput planetTimeMask formControlName="endTime">
+          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
+        </mat-form-field>
+        <div class="full-width">
+          <label i18n>Recurring Frequency</label>
+          <mat-radio-group formControlName="recurring">
+            <mat-radio-button class="margin-tblr" value="daily" (change)="toggleDaily($event.value, false)" i18n>Daily</mat-radio-button>
+            <mat-radio-button class="margin-tblr" value="weekly" (change)="toggleDaily($event.value, true)" i18n>Weekly</mat-radio-button>
+            <mat-radio-button class="margin-tblr" value="none" (change)="toggleDaily($event.value, false)" i18n>None</mat-radio-button>
+            <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurring"></planet-form-error-messages></mat-error>
+          </mat-radio-group>
+        </div>
+        @if (meetupForm.controls.recurring.value === 'weekly') {
+          <div class="full-width">
+            @for (day of days; track day) {
+              <mat-checkbox (change)="onDayChange(day, $event.checked)"  class="margin-lr" [checked]="meetupForm.controls.day.value.includes(day)"> {{ day }}</mat-checkbox>
+            }
+            @if (meetupForm.controls.day.hasError('noDaysSelected')) {
+              <mat-error>
+                <span i18n>Please select at least one day.</span>
+              </mat-error>
+            }
+          </div>
+        }
+        @if (meetupForm.controls.recurring.value==='weekly' || meetupForm.controls.recurring.value==='daily') {
+          <mat-form-field>
+            <mat-label i18n>Number of Recurrences</mat-label>
+            <input matInput type="number" min="2" formControlName="recurringNumber">
+            <mat-error><planet-form-error-messages [control]="meetupForm.controls.recurringNumber"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+        }
       </form>
-      <ng-container *ngIf="!isDialog">
+      @if (!isDialog) {
         <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
-      </ng-container>
+      }
     </div>
   </div>
 </ng-template>
-<ng-container *ngIf="isDialog; else meetupPage">
+@if (isDialog) {
   <mat-dialog-content>
     <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
   </mat-dialog-content>
   <mat-dialog-actions>
     <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
   </mat-dialog-actions>
-</ng-container>
+} @else {
+  <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
+}
 <ng-template #actionButtons>
   <div [class.mat-mdc-dialog-actions]="!isDialog">
     <button class="margin-lr-2" mat-raised-button type="button" (click)="cancel()" i18n>Cancel</button>
     <button mat-raised-button type="button" color="primary" [planetSubmit]="meetupForm.valid" [disabled]="!meetupForm.dirty" (click)="onSubmit()" i18n>Save</button>
   </div>
-</ng-template>
-<ng-template #meetupPage>
-  <ng-container *ngTemplateOutlet="meetupContent"></ng-container>
 </ng-template>

@@ -10,14 +10,14 @@ import { UserService } from '../shared/user.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: './health-event-dialog.component.html',
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, NgIf, TdMarkdownComponent,
+    MatDialogTitle, CdkScrollable, MatDialogContent, TdMarkdownComponent,
     MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]
 })

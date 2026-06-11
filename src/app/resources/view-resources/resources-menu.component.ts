@@ -4,7 +4,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { environment } from '../../../environments/environment';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { MatButton } from '@angular/material/button';
-import { NgFor } from '@angular/common';
+
 
 @Component({
   selector: 'planet-resources-menu',
@@ -13,15 +13,16 @@ import { NgFor } from '@angular/common';
       <ng-content></ng-content>
     </button>
     <mat-menu #resourceList="matMenu">
-      <button mat-menu-item
-        *ngFor="let resource of resources"
-        [disabled]="!resource._attachments"
-        (click)="openResource(resource._id)">
-        {{resource.title}}
-      </button>
+      @for (resource of resources; track resource) {
+        <button mat-menu-item
+          [disabled]="!resource._attachments"
+          (click)="openResource(resource._id)">
+          {{resource.title}}
+        </button>
+      }
     </mat-menu>
-  `,
-  imports: [MatButton, MatMenuTrigger, MatMenu, NgFor, MatMenuItem]
+    `,
+  imports: [MatButton, MatMenuTrigger, MatMenu, MatMenuItem]
 })
 export class ResourcesMenuComponent {
 

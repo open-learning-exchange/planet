@@ -1,13 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'planet-avatar',
   template: `
-    <img *ngIf="imgSrc" [src]="imgSrc" [ngClass]="imgClass" (error)="imgLoadError()">
-  `,
-  imports: [NgIf, NgClass]
+    @if (imgSrc) {
+      <img [src]="imgSrc" [ngClass]="imgClass" (error)="imgLoadError()">
+    }
+    `,
+  imports: [NgClass]
 })
 export class AvatarComponent implements OnInit {
 

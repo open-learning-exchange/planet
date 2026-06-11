@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { RatingService } from './rating.service';
 import { StateService } from '../state.service';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
@@ -44,7 +44,7 @@ interface PopupFormModel {
     max-width: 225px;
   } `],
   selector: 'planet-rating',
-  imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
 

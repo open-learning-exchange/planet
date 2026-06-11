@@ -6,33 +6,46 @@
 </mat-toolbar>
 <div class="space-container">
   <div class="upgrade_buttons">
-      <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done">{{ message }}</button>
+    <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done">{{ message }}</button>
   </div>
-  <div style="height: 5px; padding: 5px;" *ngIf="!done">
-      <mat-progress-bar mode="indeterminate" *ngIf="working"></mat-progress-bar>
-  </div>
+  @if (!done) {
+    <div style="height: 5px; padding: 5px;">
+      @if (working) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+    </div>
+  }
 
   <pre class="upgrade_output" [innerHTML]="output"></pre>
 
-  <mat-card class="upgrade_mat-card" *ngIf="done && !error">
+  @if (done && !error) {
+    <mat-card class="upgrade_mat-card">
       <mat-card-header>
         <div mat-card-avatar class="upgrade_mat-card-icon"></div>
         <mat-card-title i18n>Success!</mat-card-title>
-        <mat-card-subtitle i18n *ngIf="mode==='planet'">Reboot is required</mat-card-subtitle>
+        @if (mode==='planet') {
+          <mat-card-subtitle i18n>Reboot is required</mat-card-subtitle>
+        }
       </mat-card-header>
       <mat-card-content>
         <p i18n>
           The upgrade of the system has been done successfully.
         </p>
-        <p i18n *ngIf="mode==='planet'">Please restart your system to apply changes</p>
+        @if (mode==='planet') {
+          <p i18n>Please restart your system to apply changes</p>
+        }
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" routerLink="/" i18n>OK</button>
-        <button mat-raised-button color="primary" (click)="upgrade()" *ngIf="enabled || done" i18n>Verify</button>
+        @if (enabled || done) {
+          <button mat-raised-button color="primary" (click)="upgrade()" i18n>Verify</button>
+        }
       </mat-card-actions>
-  </mat-card>
+    </mat-card>
+  }
 
-  <mat-card class="upgrade_mat-card" *ngIf="error && done">
+  @if (error && done) {
+    <mat-card class="upgrade_mat-card">
       <mat-card-header>
         <div mat-card-avatar class="upgrade_mat-card-icon"></div>
         <mat-card-title i18n>Error :(</mat-card-title>
@@ -46,6 +59,7 @@
       <mat-card-actions>
         <button mat-raised-button color="primary" planetFeedback [message]="cleanOutput" [type]="'Bug'" [priority]="'Yes'"><mat-icon>feedback</mat-icon> <ng-container i18n>Send feedback</ng-container></button>
       </mat-card-actions>
-  </mat-card>
+    </mat-card>
+  }
 
 </div>

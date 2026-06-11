@@ -25,7 +25,7 @@ import { UserChallengeStatusService } from '../shared/user-challenge-status.serv
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { NgIf, NgClass, NgFor } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -62,7 +62,6 @@ interface CommunityDescriptionForm {
   imports: [
     MatTabGroup,
     MatTab,
-    NgIf,
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatToolbar,
@@ -77,7 +76,6 @@ interface CommunityDescriptionForm {
     MatSelectTrigger,
     LabelComponent,
     MatOption,
-    NgFor,
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,

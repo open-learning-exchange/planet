@@ -1,16 +1,20 @@
 <mat-dialog-content>
-  <ng-container [ngSwitch]="view">
-    <planet-resources *ngSwitchCase="'resources'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-resources>
-    <planet-resources-add *ngSwitchCase="'resourcesAdd'" [isDialog]="true" [privateFor]="linkInfo" [existingResource]="existingResource" (afterSubmit)="addNewResource($event)"></planet-resources-add>
-  </ng-container>
+  @switch (view) {
+    @case ('resources') {
+      <planet-resources [isDialog]="true" [excludeIds]="data.excludeIds"></planet-resources>
+    }
+    @case ('resourcesAdd') {
+      <planet-resources-add [isDialog]="true" [privateFor]="linkInfo" [existingResource]="existingResource" (afterSubmit)="addNewResource($event)"></planet-resources-add>
+    }
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
-  <ng-container *ngIf="data.canAdd && !updateResource">
+  @if (data.canAdd && !updateResource) {
     <button color="accent" mat-raised-button (click)="toggleNewOrExisting()" i18n>
       {view, select, resources {Create New Resource} resourcesAdd {Select Existing Resource(s)}}
     </button>
     <span class="margin-lr-8" i18n>OR</span>
-  </ng-container>
+  }
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>
   <button color="primary" mat-raised-button [disabled]="okDisabled || isSubmitting" (click)="ok()" i18n>OK</button>
 </mat-dialog-actions>

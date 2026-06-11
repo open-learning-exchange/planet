@@ -12,13 +12,15 @@
     </button>
   </mat-toolbar>
   <div class="view-container view-full-height view-table">
-    <planet-loading-spinner *ngIf="isLoading" text="Loading items..." i18n-text></planet-loading-spinner>
+    @if (isLoading) {
+      <planet-loading-spinner text="Loading items..." i18n-text></planet-loading-spinner>
+    }
     <mat-table #table [dataSource]="pushedItems" matSort [class.hidden]="isLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
           </mat-checkbox>
         </mat-header-cell>
         <mat-cell *matCellDef="let row">
@@ -32,14 +34,14 @@
       <ng-container matColumnDef="item">
         <mat-header-cell *matHeaderCellDef mat-sort-header="title" i18n>Title</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.db === 'resources'">
+          @if (element.db === 'resources') {
             {{ element.item.doc.title }}
             <mat-icon class="margin-lr-5 fetch-icon">library_books</mat-icon>
-          </ng-container>
-          <ng-container *ngIf="element.db === 'courses'">
+          }
+          @if (element.db === 'courses') {
             {{ element.item.doc.courseTitle }}
             <mat-icon class="margin-lr-5 fetch-icon">school</mat-icon>
-          </ng-container>
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="date">
