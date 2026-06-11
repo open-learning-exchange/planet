@@ -49,8 +49,8 @@
     <div class="chat-list" #chatList>
       <div class="chat-list-item" *ngFor="let message of feedback.messages; trackBy: trackById">
         <div class="chat-list-user">
-          <p *ngIf="users[message.user]" [matTooltip]="users[message.user]">{{users[message.user] | truncateText:80}}</p>
-          <p class="mat-caption">{{message.time | date:'medium'}}</p>
+          <span *ngIf="users[message.user]" [matTooltip]="users[message.user]">{{users[message.user] | truncateText:80}}</span>
+          <span class="mat-caption">{{message.time | date:'medium'}}</span>
         </div>
         <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
           <mat-card-content>

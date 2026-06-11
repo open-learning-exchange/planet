@@ -20,13 +20,19 @@
   flex-direction: column;
   align-items: flex-start;
   .chat-list-user {
+    display: flex;
+    align-items: baseline;
+    align-self: stretch;
+    gap: 0.5rem;
     color: v.$primary;
     .mat-caption {
+      margin-left: auto;
+      flex-shrink: 0;
       color: v.$grey-text;
     }
   }
   &:not(:last-child) {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 
