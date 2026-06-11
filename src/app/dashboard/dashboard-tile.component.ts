@@ -1,24 +1,57 @@
-
 import {
-  Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked, ChangeDetectorRef, HostBinding, HostListener, OnInit
+  Component, Input, ElementRef, ViewChild, Output, EventEmitter, AfterViewChecked,
+  ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatCard } from '@angular/material/card';
+import { NgIf, NgClass, NgFor, NgStyle } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MatIcon } from '@angular/material/icon';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatBadge } from '@angular/material/badge';
+import { MatIconButton } from '@angular/material/button';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { environment } from '../../environments/environment';
 
+@Component({
+  selector: 'planet-dashboard-tile-title',
+  template: `
+    <mat-icon svgIcon={{cardType}}></mat-icon>
+    <span>{{cardTitle}}</span>
+  `,
+  styleUrls: ['./dashboard-tile-title.scss'],
+  imports: [MatIcon]
+})
+export class DashboardTileTitleComponent {
+
+  @Input() cardTitle;
+  @Input() cardType;
+
+}
+
+// Main page once logged in.  At this stage is more of a placeholder.
 @Component({
   selector: 'planet-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',
   styleUrls: ['./dashboard-tile.scss'],
-  standalone: false
+  imports: [
+    MatCard, NgIf, RouterLink, forwardRef(() => DashboardTileTitleComponent), MatIcon,
+    CdkDropList, NgClass, NgFor, AuthorizedRolesDirective, CdkDrag, MatTooltip, MatBadge,
+    NgStyle, MatIconButton, PlanetLoadingSpinnerComponent, TruncateTextPipe
+  ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
   private _cardType: string;
   @Input() set cardType(value: string) {
@@ -50,14 +83,6 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @HostBinding('class.accordion-expanded') get isExpandedClass() {
     return this.isExpanded;
   }
-  @HostListener('window:resize')
-  onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    if (this.cardType === 'myLife' && this.deviceType === DeviceType.MOBILE) {
-      this.isExpanded = true;
-    }
-  }
-
   constructor(
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
@@ -66,7 +91,14 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deviceType) => {
+        this.deviceType = deviceType;
+        if (this.cardType === 'myLife' && (deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE)) {
+          this.isExpanded = true;
+        }
+      });
   }
 
   ngOnInit() {
@@ -85,6 +117,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
+    // line-height: normal varies by browser, but should be between 1-1.2
     const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
     if (tileLines !== this.tileLines) {
       this.tileLines = tileLines;
@@ -177,18 +210,4 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   coverImageUrl(coverPath: string) {
     return `${environment.couchAddress}/${coverPath}`;
   }
-}
-
-@Component({
-  selector: 'planet-dashboard-tile-title',
-  template: `
-    <mat-icon svgIcon={{cardType}}></mat-icon>
-    <span>{{cardTitle}}</span>
-  `,
-  styleUrls: ['./dashboard-tile-title.scss'],
-  standalone: false
-})
-export class DashboardTileTitleComponent {
-  @Input() cardType;
-  @Input() cardTitle;
 }

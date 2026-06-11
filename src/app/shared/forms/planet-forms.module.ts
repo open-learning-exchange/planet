@@ -19,7 +19,6 @@ import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
 import { PlanetSelectorComponent } from './planet-selector.component';
 import { PlanetNumberValidatorDirective } from './planet-number-validator.directive';
 import { PlanetRoundDirective } from './planet-round.directive';
-import { FileInputComponent } from './file-input.component';
 
 @NgModule({
   imports: [
@@ -28,7 +27,25 @@ import { FileInputComponent } from './file-input.component';
     ReactiveFormsModule,
     MaterialModule,
     CovalentTextEditorModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    FormErrorMessagesComponent,
+    PlanetRatingComponent,
+    PlanetRatingStarsComponent,
+    PlanetStackedBarComponent,
+    PlanetTagInputComponent,
+    PlanetTagSelectedInputComponent,
+    PlanetTagInputDialogComponent,
+    PlanetTagInputToggleIconComponent,
+    PlanetSelectorComponent,
+    PlanetStepListComponent,
+    PlanetStepListFormDirective,
+    PlanetStepListActionsDirective,
+    PlanetStepListNumberDirective,
+    PlanetStepListItemComponent,
+    PlanetMarkdownTextboxComponent,
+    PlanetTimeMaskDirective,
+    PlanetNumberValidatorDirective,
+    PlanetRoundDirective
   ],
   exports: [
     FormErrorMessagesComponent,
@@ -41,28 +58,6 @@ import { FileInputComponent } from './file-input.component';
     CovalentMarkdownModule,
     PlanetSelectorComponent,
     PlanetStepListComponent,
-    FileInputComponent,
-    PlanetStepListFormDirective,
-    PlanetStepListActionsDirective,
-    PlanetStepListNumberDirective,
-    PlanetStepListItemComponent,
-    PlanetMarkdownTextboxComponent,
-    PlanetTimeMaskDirective,
-    PlanetNumberValidatorDirective,
-    PlanetRoundDirective
-  ],
-  declarations: [
-    FormErrorMessagesComponent,
-    PlanetRatingComponent,
-    PlanetRatingStarsComponent,
-    PlanetStackedBarComponent,
-    PlanetTagInputComponent,
-    PlanetTagSelectedInputComponent,
-    PlanetTagInputDialogComponent,
-    PlanetTagInputToggleIconComponent,
-    PlanetSelectorComponent,
-    PlanetStepListComponent,
-    FileInputComponent,
     PlanetStepListFormDirective,
     PlanetStepListActionsDirective,
     PlanetStepListNumberDirective,

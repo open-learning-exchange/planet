@@ -1,3 +1,5 @@
+@use '../variables' as v;
+
 $exam-table-col-width: 100px;
 
 .profile-container {
@@ -75,4 +77,24 @@ mat-table {
 
 mat-header-cell div .header-date {
   min-height: 1.7rem;
+}
+
+@media (max-width: v.$screen-md) {
+  .profile-container {
+    grid-template-columns: 1fr;
+    grid-row-gap: 1rem;
+  }
+
+  .profile-container > div:first-child {
+    text-align: center;
+  }
+
+  .profile-container .profile-image-large {
+    width: clamp(140px, 45vw, 220px);
+    max-height: none;
+  }
+
+  .profile-container .info-container {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }

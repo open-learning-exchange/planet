@@ -66,7 +66,7 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
-  putAttachment(db: string, file: FormData, opts?: any) {
+  putAttachment(db: string, file: File | FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
   }
 
@@ -179,7 +179,7 @@ export class CouchService {
     );
   }
 
-  private compareRev = (parent, local) => {
+  private compareRev(parent, local) {
     if (parent === local) {
       return 'match';
     }

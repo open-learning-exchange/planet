@@ -1,11 +1,12 @@
 import {
   Component, Input, ViewEncapsulation, OnChanges, Output, EventEmitter, OnInit, ViewChildren, QueryList, ViewChild
 } from '@angular/core';
-import { MatSelectionList } from '@angular/material/list';
+import { MatSelectionList, MatListOption, MatListItemTitle } from '@angular/material/list';
 import * as constants from '../resources-constants';
 import { languages } from '../../shared/languages';
 import { dedupeShelfReduce } from '../../shared/utils';
 import { trackByCategory } from '../../shared/table-helpers';
+import { NgFor } from '@angular/common';
 
 @Component({
   template: `
@@ -25,7 +26,7 @@ import { trackByCategory } from '../../shared/table-helpers';
   selector: 'planet-resources-search-list',
   styleUrls: ['./resources-search.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [MatSelectionList, NgFor, MatListOption, MatListItemTitle]
 })
 export class ResourcesSearchListComponent {
 
@@ -69,7 +70,7 @@ export class ResourcesSearchListComponent {
   styleUrls: ['./resources-search.scss'],
   selector: 'planet-resources-search',
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [NgFor, ResourcesSearchListComponent]
 })
 export class ResourcesSearchComponent implements OnInit, OnChanges {
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import { switchMap, takeUntil, finalize } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -12,11 +12,26 @@ import { StateService } from '../shared/state.service';
 import { urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
 import { trackById } from '../shared/table-helpers';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, NgClass, DatePipe, KeyValuePipe } from '@angular/common';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
 
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: ['./feedback-view.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgIf,
+    MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput,
+    FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe
+  ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
   readonly dbName = 'feedback';
@@ -43,6 +58,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   showParamsButton = false;
   users = {};
   trackById = trackById;
+  normalizedType = '';
+  normalizedStatus = '';
 
   constructor(
     private couchService: CouchService,
@@ -81,6 +98,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   setFeedback(result) {
     this.feedback = result.docs[0];
+    this.normalizedType = normalizeFeedbackType(this.feedback.type);
+    this.normalizedStatus = normalizeFeedbackStatus(this.feedback.status);
     this.feedback.messages = this.feedback.messages.sort((a, b) => a.time - b.time);
     this.scrollToBottom();
     this.feedback.params = urlToParamObject(this.feedback.url);
@@ -93,8 +112,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   postMessage() {
     let reopen = {};
-    if (this.feedback.status === 'Closed') {
-      reopen = { status: 'Reopened', closeTime: '' };
+    if (this.normalizedStatus === 'closed') {
+      reopen = { status: normalizeFeedbackStatus('reopened'), closeTime: '' };
     }
     const newFeedback = Object.assign({}, this.feedback, reopen);
     // Object.assign is a shallow copy, so also copy messages array so view only updates after success
@@ -198,6 +217,18 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
 
   get feedbackNavigationLabel(): string {
     return this.navigationLabels[this.feedback?.state] || '';
+  }
+
+  get feedbackDisplayTitle(): string {
+    return getFeedbackDisplayTitle(this.feedback);
+  }
+
+  get feedbackTypeIcon(): string {
+    return getFeedbackTypeIcon(this.normalizedType);
+  }
+
+  get isClosed(): boolean {
+    return this.normalizedStatus === 'closed';
   }
 
 }

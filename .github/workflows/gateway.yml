@@ -1,0 +1,115 @@
+name: Gateway Builder
+
+on:
+  push:
+    branches-ignore:
+      - l10n_i18n
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  DOCKER_ORG: treehouses
+  DOCKER_REPO_TAG: planet-tags
+  DOCKER_REPO: planet
+
+jobs:
+
+  build-prepare:
+    name: Preparing
+    runs-on: ubuntu-latest
+    outputs:
+      planet_version: ${{ steps.step1.outputs.version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Setting Env
+        id: step1
+        run: |
+          version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
+          echo "::set-output name=version::$version"
+
+  build:
+    name: Gateway build
+    needs: [ build-prepare ]
+    runs-on: ubuntu-latest
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+      BUILDX_NO_DEFAULT_ATTESTATIONS: 1
+
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            base_image: treehouses/node:3.18
+          - arch: arm
+            base_image: treehouses/node-tags:arm-3.18
+          - arch: arm64
+            base_image: treehouses/node-tags:arm64-3.18
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Build image
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-chatapi-$PLANET_VERSION-$SAFE_BRANCH"
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          docker build \
+            -f './docker/gateway/Dockerfile' \
+            --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
+            -t $repo .
+          docker images
+          docker tag $repo $branchrepo
+          docker push $repo
+          docker push $branchrepo
+
+  multiarch:
+    name: Manifest build
+    needs: [ build-prepare, build ]
+    env:
+      PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
+
+      - name: Multiarch Deploy
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          manifesttag="$DOCKER_ORG/$DOCKER_REPO_TAG:chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          docker manifest create $manifesttag $amd64tag $armtag $arm64tag
+          docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
+          docker manifest annotate $manifesttag $armtag --os linux --arch arm
+          docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
+          docker manifest push $manifesttag
+
+      - name: Multiarch Deploy Versioned
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
+          SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
+          amd64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:amd64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          armtag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-chatapi-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
+          for tag in "$DOCKER_ORG/$DOCKER_REPO:chatapi-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:chatapi"; do
+            docker manifest create $tag $amd64tag $armtag $arm64tag
+            docker manifest annotate $tag $amd64tag --os linux --arch amd64
+            docker manifest annotate $tag $armtag --os linux --arch arm
+            docker manifest annotate $tag $arm64tag --os linux --arch arm64
+            docker manifest push $tag
+          done

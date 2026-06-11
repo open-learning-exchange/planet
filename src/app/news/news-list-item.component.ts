@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,12 +13,27 @@ import { calculateMdAdjustedLimit } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { NgFor, NgIf, NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { MatIcon } from '@angular/material/icon';
+import { LabelComponent } from '../shared/label.component';
+import { MatTooltip } from '@angular/material/tooltip';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { ChatOutputDirective } from '../shared/chat-output.directive';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 @Component({
   selector: 'planet-news-list-item',
   templateUrl: 'news-list-item.component.html',
   styleUrls: ['./news-list-item.scss'],
-  standalone: false
+  imports: [
+    MatCard, MatCardHeader, MatCardSubtitle, MatChipSet, NgFor, MatChip, MatIcon, LabelComponent,
+    NgIf, MatChipRemove, MatTooltip, MatCardContent, PlanetMarkdownComponent, ChatOutputDirective, NgClass,
+    MatIconButton, MatCardActions, MatButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatMenuItem, SlicePipe, TimeAgoPipe
+  ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -59,8 +74,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private clipboard: Clipboard,
     private deviceInfoService: DeviceInfoService,
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.SMALL_MOBILE || deviceType === DeviceType.MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -85,11 +102,6 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.item.sharedSourceInfo = null;
     }
     this.handleItemExpansion();
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.SMALL_MOBILE || this.deviceType === DeviceType.MOBILE;
   }
 
   ngOnDestroy() {

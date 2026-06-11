@@ -1,9 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'time',
-  standalone: false
-})
+@Pipe({ name: 'time' })
 export class TimePipe implements PipeTransform {
   // converts time in ms to hh:mm:ss
   transform(time: number) {

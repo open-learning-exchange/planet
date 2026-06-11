@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin, Observable } from 'rxjs';
-import { switchMap, map, take, catchError } from 'rxjs/operators';
+import { of, empty, forkJoin } from 'rxjs';
+import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -135,7 +135,10 @@ export class TeamsService {
 
   requestToJoinTeam(team, user) {
     const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.post(this.dbName, this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')).pipe(
+    return this.couchService.updateDocument(this.dbName, {
+      createdDate: this.couchService.datePlaceholder,
+      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
+    }).pipe(
       switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
     );
   }

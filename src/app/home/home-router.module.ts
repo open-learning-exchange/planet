@@ -14,7 +14,7 @@ import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
-export function dashboardPath(route): string {
+function dashboardPath(route): string {
   return `${myDashboardRoute}/${route}`;
 }
 
@@ -83,6 +83,11 @@ const routes: Routes = [
     component: CommunityComponent,
     canActivate: [ AuthService.centerLandingGuard ],
     children: [ { path: 'voices/:id', component: NewsListComponent } ]
+  },
+  {
+    path: 'survey/:teamId/:surveyId',
+    loadComponent: () => import('../exams/public-surveys/public-survey.component').then(m => m.PublicSurveyComponent),
+    data: { requiresAuth: false }
   },
   {
     path: '',

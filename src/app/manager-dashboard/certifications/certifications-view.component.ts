@@ -1,11 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Subject, combineLatest } from 'rxjs';
 import { switchMap, takeUntil, auditTime } from 'rxjs/operators';
 import { CertificationsService } from './certifications.service';
-import { TableState } from '../../users/users-table.component';
+import { TableState, UsersTableComponent } from '../../users/users-table.component';
 import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { NgIf } from '@angular/common';
+import { CoursesComponent } from '../../courses/courses.component';
 
 @Component({
   templateUrl: './certifications-view.component.html',
@@ -15,7 +21,7 @@ import { UsersService } from '../../users/users.service';
       display: block;
     }
   `],
-  standalone: false
+  imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, NgIf, CoursesComponent, UsersTableComponent]
 })
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 

@@ -2,8 +2,8 @@
 <mat-dialog-content>
   <div class="announcement-container">
     <img
-      src="assets/challenge/dec challenge.jpeg"
-      alt="Issues Challenge"
+      [src]="challenge.bannerImageUrl"
+      [alt]="challenge.title || 'Challenge banner'"
       class="announcement-banner"
     />
 
@@ -31,7 +31,7 @@
           <mat-icon color="primary">
             {{ getStatus('joinedCourse') ? 'check_circle' : 'radio_button_unchecked' }}
           </mat-icon>
-          <span>Únete al curso Curso Planet & myPlanet. [${{courseStepValue}}]</span>
+          <span>Únete al curso del reto. [${{joinCourseReward}}]</span>
           <a *ngIf="!getStatus('joinedCourse')" mat-button mat-raised-button color="primary" type="button" (click)="joinCourse()">
             Unirse
           </a>
@@ -41,14 +41,14 @@
           <mat-icon color="primary">
             {{ getStatus('hasPost') ? 'check_circle' : 'radio_button_unchecked' }}
           </mat-icon>
-          <span>Comparte tu opinión en Nuestras Voces. [${{postStepValue}}/voz]<br><span>{{getPosts()}} de 5 Voces diarias</span> </span>
+          <span>Comparte tu opinión en Nuestras Voces. [${{voicePostReward}}/voz]<br><span>{{getPosts()}} de {{ maxDailyPosts }} voces diarias</span> </span>
           <a *ngIf="getStatus('joinedCourse') && !getStatus('hasPost'); else dailyVoices" mat-button mat-raised-button color="primary" type="button" (click)="shareVoice()">
             Chatea y comparte
           </a>
           <ng-template #dailyVoices>
             <div class="daily-voces-dots">
               <div
-                *ngFor="let dot of [0, 1, 2, 3, 4]; let i = index"
+                *ngFor="let dot of dailyPostDots; let i = index"
                 class="dot"
                 [ngClass]="{ completed: i < getPosts() }"
               ></div>
@@ -60,14 +60,14 @@
           <mat-icon color="primary">
             {{ getStatus('surveyComplete') ? 'check_circle' : 'radio_button_unchecked' }}
           </mat-icon>
-          <span>¡Encuesta finalizada! [${{surveyStepValue}}]</span>
+          <span>¡Encuesta finalizada! [${{surveyCompletionReward}}]</span>
           <a *ngIf="getStatus('joinedCourse') && getStatus('hasPost') && !getStatus('surveyComplete')" mat-button mat-raised-button color="primary" type="button" (click)="doSurvey()">
             Encuesta
           </a>
         </div>
 
         <div>
-          <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b> / $11</span>
+          <span>Mis ganancias: <b>${{getIndividualMoneyEarned()}}</b> / ${{ joinCourseReward + surveyCompletionReward + (voicePostReward * maxDailyPosts) }}</span>
         </div>
       </div>
     </ng-template>

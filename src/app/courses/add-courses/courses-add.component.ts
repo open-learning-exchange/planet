@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -20,6 +20,18 @@ import { CoursesStepComponent } from './courses-step.component';
 import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { NgIf, NgFor, NgClass } from '@angular/common';
+import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
+import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/material/autocomplete';
+import { MatSelect } from '@angular/material/select';
+import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
+import { SubmitDirective } from '../../shared/submit.directive';
 import { DialogsImagesComponent } from '../../shared/dialogs/dialogs-images.component';
 
 interface CourseFormModel {
@@ -41,7 +53,12 @@ type DateValue = number | string | CouchService['datePlaceholder'];
 @Component({
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, MatHint, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
+    NgClass, CoursesStepComponent, MatButton, SubmitDirective
+  ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
 
@@ -237,29 +254,28 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   selectCoverImage() {
     this.dialog.open(DialogsImagesComponent, {
       width: '500px',
-      data: {
-        imageGroup: 'community'
-      }
+      data: { imageGroup: 'community' }
     }).afterClosed().subscribe(image => {
-      if (image) {
-        const coverPath = `resources/${image._id}/${encodeURI(image.filename)}`;
-        const coverUrl = this.getCoverUrl(coverPath);
-        const loadedImage = new Image();
-        loadedImage.onload = () => {
-          if (loadedImage.width === 500 && loadedImage.height === 500) {
-            this.courseForm.controls.cover.setValue(coverPath);
-            this.coverPreviewUrl = coverUrl;
-          } else {
-            this.clearCoverSelection();
-            this.deleteInvalidCoverImage(image);
-          }
-        };
-        loadedImage.onerror = () => {
-          this.clearCoverSelection();
-          this.planetMessageService.showAlert($localize`:@@coverImageLoadFailed:Unable to load the cover image.`);
-        };
-        loadedImage.src = coverUrl;
+      if (!image) {
+        return;
       }
+      const coverPath = `resources/${image._id}/${encodeURI(image.filename)}`;
+      const coverUrl = this.getCoverUrl(coverPath);
+      const loadedImage = new Image();
+      loadedImage.onload = () => {
+        if (loadedImage.width === 500 && loadedImage.height === 500) {
+          this.courseForm.controls.cover.setValue(coverPath);
+          this.coverPreviewUrl = coverUrl;
+        } else {
+          this.clearCoverSelection();
+          this.deleteInvalidCoverImage(image);
+        }
+      };
+      loadedImage.onerror = () => {
+        this.clearCoverSelection();
+        this.planetMessageService.showAlert($localize`:@@coverImageLoadFailed:Unable to load the cover image.`);
+      };
+      loadedImage.src = coverUrl;
     });
   }
 
@@ -290,10 +306,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
-    const normalizedCourse = {
-      ...courseInfo,
-      cover: courseInfo.cover?.trim()
-    };
+    const normalizedCourse = { ...courseInfo, cover: courseInfo.cover?.trim() };
     const newCourse = {
       ...this.convertMarkdownImagesText({ ...normalizedCourse, images: this.images }, this.steps),
       ...this.documentInfo
@@ -315,8 +328,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
     }, (err) => {
-      // Connect to an error display component to show user that an error has occurred
-      console.log(err);
+      this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
   }
 
@@ -375,14 +387,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       });
     } else {
       this.setFormAndSteps({
-        form: {
-          courseTitle: '',
-          description: '',
-          languageOfInstruction: '',
-          gradeLevel: '',
-          subjectLevel: '',
-          cover: ''
-        },
+        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '', cover: '' },
         steps: [],
         tags: []
       });

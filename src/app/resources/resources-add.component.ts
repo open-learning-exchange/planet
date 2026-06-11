@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
 import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
-import { FileInputComponent } from '../shared/forms/file-input.component';
+import { FileUploadComponent } from '../shared/forms/file-upload.component';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -17,9 +17,23 @@ import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { showFormErrors } from '../shared/table-helpers';
-import { deepEqual } from '../shared/utils';
+import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
+import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
+import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
+import { MatSelect } from '@angular/material/select';
+import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { SubmitDirective } from '../shared/submit.directive';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -51,7 +65,12 @@ interface ResourceFormModel {
   selector: 'planet-resources-add',
   templateUrl: './resources-add.component.html',
   styleUrls: ['./resources-add.scss'],
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule,
+    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileUploadComponent,
+    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe
+  ]
 })
 
 export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
@@ -85,7 +104,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
   private initialState = '';
-  @ViewChild('fileInput') fileInput!: FileInputComponent;
+  @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
 
   constructor(
     private router: Router,
@@ -260,7 +279,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   createFileObs() {
     // If file doesn't exist, mediaType will be undefined or null
-    const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
+    const mediaType = this.file && this.resourcesService.simpleMediaType(normalizedContentType(this.file));
     if (!mediaType) {
       // Creates an observable that immediately returns an empty object
       return of({ resource: {} });
@@ -337,14 +356,8 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private getFileNames(data) {
-    // Add file names to array for mapping
-    const fileNames = [];
-    for (const path in data.files) {
-      if (!data.files[path].dir && path.indexOf('DS_Store') === -1) {
-        fileNames.push(path);
-      }
-    }
-    return fileNames;
+    const files = data.files;
+    return Object.keys(files).filter(path => !files[path].dir && path.indexOf('DS_Store') === -1);
   }
 
   zipObs(zipFile) {
@@ -378,31 +391,28 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ '/resources' ]);
   }
 
+  private disableOpenWhichFile() {
+    this.resourceForm.controls.openWhichFile.setValue('');
+    this.resourceForm.controls.openWhichFile.disable();
+    this.attachedZipFiles = [];
+  }
+
   removeNewFile() {
     this.file = null;
-    this.fileInput.clearFile();
+    this.fileUpload?.clear();
+    this.disableOpenWhichFile();
     this.showDownloadCheckbox = !!this.existingResource.doc?._attachments && !this.attachmentMarkedForDeletion;
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
   }
 
-  bindFile(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const disableOpenWhichFile = () => {
-      this.resourceForm.controls.openWhichFile.setValue('');
-      this.resourceForm.controls.openWhichFile.disable();
-      this.attachedZipFiles = [];
-    };
-    if (!input.files || input.files.length === 0) {
-      disableOpenWhichFile();
-      return;
-    }
-    this.file = input.files[0];
+  onFileSelected(file: File) {
+    this.file = file;
     this.showDownloadCheckbox = true;
     this.resourceForm.updateValueAndValidity();
 
-    if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
-      disableOpenWhichFile();
+    if (this.resourcesService.simpleMediaType(normalizedContentType(this.file)) !== 'zip') {
+      this.disableOpenWhichFile();
       return;
     }
 

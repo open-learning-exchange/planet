@@ -2,8 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'planet-label',
-  template: `<span>{{getTranslatedLabel()}}</span>`,
-  standalone: false
+  template: '<span>{{getTranslatedLabel()}}</span>'
 })
 export class LabelComponent {
 

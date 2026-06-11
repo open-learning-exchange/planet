@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, HostBinding } from '@angular/core';
+import { NgFor, NgClass, NgStyle, PercentPipe } from '@angular/common';
 
 @Component({
   selector: 'planet-stacked-bar',
@@ -27,7 +28,7 @@ import { Component, Input, OnChanges, HostBinding } from '@angular/core';
       margin: 0 0.2rem;
     }
   `],
-  standalone: false
+  imports: [NgFor, NgClass, NgStyle, PercentPipe]
 })
 export class PlanetStackedBarComponent implements OnChanges {
 

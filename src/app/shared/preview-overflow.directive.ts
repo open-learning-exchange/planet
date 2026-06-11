@@ -1,9 +1,6 @@
 import { AfterViewInit, Directive, ElementRef, EventEmitter, NgZone, OnDestroy, Output } from '@angular/core';
 
-@Directive({
-  selector: '[planetPreviewOverflow]',
-  standalone: false
-})
+@Directive({ selector: '[planetPreviewOverflow]' })
 export class PreviewOverflowDirective implements AfterViewInit, OnDestroy {
   @Output() planetPreviewOverflowChange = new EventEmitter<boolean>();
 

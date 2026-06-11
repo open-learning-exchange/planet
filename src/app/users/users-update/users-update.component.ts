@@ -1,9 +1,12 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { switchMap } from 'rxjs/operators';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { UserService } from '../../shared/user.service';
 import { environment } from '../../../environments/environment';
 import { languages } from '../../shared/languages';
@@ -16,6 +19,22 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel, MatError, MatSuffix, MatHint } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/autocomplete';
+import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
+import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
+import { SubmitDirective } from '../../shared/submit.directive';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 interface UsersUpdateFormGroup {
   firstName: FormControl<string>;
@@ -35,7 +54,13 @@ interface UsersUpdateFormGroup {
 @Component({
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, NgSwitch, NgSwitchCase, FormsModule, ReactiveFormsModule,
+    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput,
+    MatDatepickerToggle, MatSuffix, MatDatepicker, MatSelect, NgFor, MatOption, MatRadioGroup, MatRadioButton,
+    MatSlideToggle, MatTooltip, PlanetNumberValidatorDirective, MatHint, MatButton, SubmitDirective,
+    CdkScrollable, MatDialogContent, ImageCropperComponent, MatDialogActions, MatDialogClose, FileUploadComponent
+  ]
 })
 export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
@@ -63,9 +88,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   attachmentDeleted = false;
   originalAttachments: Record<string, UserAttachment> | null = null;
   isFormInitialized = false;
-  imageChangedEvent: Event | null = null;
+  imageFile: File | null = null;
   showImagePreview = true;
   @ViewChild('imageEditDialog') imageEditDialog: TemplateRef<any>;
+  @ViewChild('profileUpload') profileUpload?: FileUploadComponent;
 
   constructor(
     private fb: NonNullableFormBuilder,
@@ -233,7 +259,8 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     this.uploadImage = false;
     this.avatarChanged = true;
     this.hasUnsavedChanges = true;
-    this.imageChangedEvent = null;
+    this.imageFile = null;
+    this.profileUpload?.clear();
   }
 
   deleteImageAttachment() {
@@ -261,13 +288,14 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       this.attachmentDeleted = false;
       this.previewSrc = this.currentProfileImg;
       this.file = null;
-      this.imageChangedEvent = null;
+      this.imageFile = null;
     } else {
       this.previewSrc = this.currentProfileImg;
       this.file = null;
       this.uploadImage = this.currentProfileImg !== 'assets/image.png';
-      this.imageChangedEvent = null;
+      this.imageFile = null;
     }
+    this.profileUpload?.clear();
     this.avatarChanged = false;
     this.hasUnsavedChanges = this.isFormPristine() ? false : true;
   }
@@ -310,9 +338,10 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     return this.showAdditionalFields ? $localize`Hide Additional Fields` : $localize`Show Additional Fields`;
   }
 
-  openImageEditDialog(event: Event): void {
+  openImageEditDialog(file: File): void {
     this.showImagePreview = false;
-    this.imageChangedEvent = event;
+    this.imageFile = file;
+    this.profileUpload?.clear();
     const dialogRef = this.dialog.open(this.imageEditDialog, {
       width: '1000px'
     });

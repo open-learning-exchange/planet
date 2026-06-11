@@ -1,10 +1,13 @@
 import {
-  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges, HostListener
+  Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Input, Output, EventEmitter, OnChanges
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
@@ -19,6 +22,14 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
+import { NgClass, NgIf, NgFor, DatePipe } from '@angular/common';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { PlanetRoleComponent } from '../shared/planet-role.component';
+import { MatIcon } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -30,7 +41,12 @@ export class TableState {
   selector: 'planet-users-table',
   templateUrl: './users-table.component.html',
   styleUrls: ['./users-table.scss'],
-  standalone: false
+  imports: [
+    NgClass, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
+    MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatChipSet, MatChip, MatProgressBar,
+    NgFor, PlanetRoleComponent, MatIcon, MatChipRemove, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow, MatNoDataRow, MatPaginator, DatePipe
+  ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 
@@ -101,8 +117,10 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
   }
 
   ngOnInit() {
@@ -146,11 +164,6 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     this.usersTable.sort = this.sort;
     this.usersTable.paginator = this.paginator;
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE;
   }
 
   isAllSelected() {

@@ -1,17 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { LoginComponent } from './login.component';
-import { Router, RouterModule } from '@angular/router';
 import { CouchService } from '../shared/couchdb.service';
 import { MaterialModule } from '../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
 
 describe('Login', () => {
 
@@ -19,8 +14,7 @@ describe('Login', () => {
 
   const setup = () => {
     TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule],
+      imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, LoginComponent],
       providers: [CouchService, provideHttpClient(withInterceptorsFromDi())]
     });
     const fixture = TestBed.createComponent(LoginComponent),

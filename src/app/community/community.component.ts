@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostListener } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { NonNullableFormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { Subject, forkJoin, iif, of, throwError } from 'rxjs';
 import { takeUntil, finalize, switchMap, map, catchError, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -20,14 +20,34 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import {
-  DialogsAnnouncementComponent,
-  DialogsAnnouncementSuccessComponent,
-  includedCodes,
-  challengePeriod
-} from '../shared/dialogs/dialogs-announcement.component';
+import { DialogsAnnouncementSuccessComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
+import { ChallengesService } from '../shared/challenges/challenges.service';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { NgIf, NgClass, NgFor } from '@angular/common';
+import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
+import { NewsListComponent } from '../news/news-list.component';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import { MatInput } from '@angular/material/input';
+import { MatSelect, MatSelectTrigger } from '@angular/material/select';
+import { LabelComponent } from '../shared/label.component';
+import { MatOption } from '@angular/material/autocomplete';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { TeamsMemberComponent } from '../teams/teams-member.component';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import {
+  MatNavList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
+} from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { CommunityListComponent } from './community-list.component';
+import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
+import { TeamsReportsComponent } from '../teams/teams-reports.component';
+import { PlanetCalendarComponent } from '../shared/calendar.component';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -39,7 +59,44 @@ interface CommunityDescriptionForm {
   preserveWhitespaces: true,
   styleUrls: ['./community.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    MatTabGroup,
+    MatTab,
+    NgIf,
+    PlanetLoadingSpinnerComponent,
+    NewsListComponent,
+    MatToolbar,
+    NgClass,
+    MatFormField,
+    MatLabel,
+    MatIcon,
+    MatPrefix,
+    MatInput,
+    FormsModule,
+    MatSelect,
+    MatSelectTrigger,
+    LabelComponent,
+    MatOption,
+    NgFor,
+    AuthorizedRolesDirective,
+    MatButton,
+    MatIconButton,
+    MatCard,
+    TeamsMemberComponent,
+    PlanetMarkdownComponent,
+    MatNavList,
+    MatListSubheaderCssMatStyler,
+    MatListItem,
+    RouterLink,
+    MatTooltip,
+    MatListItemIcon,
+    MatListItemTitle,
+    MatListItemMeta,
+    CommunityListComponent,
+    TeamsViewFinancesComponent,
+    TeamsReportsComponent,
+    PlanetCalendarComponent
+  ]
 })
 export class CommunityComponent implements OnInit, OnDestroy {
 
@@ -105,9 +162,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
-    private configurationCheckService: ConfigurationCheckService
+    private configurationCheckService: ConfigurationCheckService,
+    private challengesService: ChallengesService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+    });
   }
 
   ngOnInit() {
@@ -150,12 +210,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
+      this.isCommunityLeader = this.user.isUserAdmin || this.user?.roles?.indexOf('leader') > -1;
       this.getCommunityData();
     });
-  }
-
-  @HostListener('window:resize') onResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   ngOnDestroy() {
@@ -164,30 +221,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-
-    if (challengeActive) {
-      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        if (!this.userStatusService.getCompleteChallenge()) {
-          this.sendChallengeNotification(this.user).subscribe();
-        }
-      });
+    const challenge = this.challengesService.getActiveChallenge();
+    if (!challenge) {
+      return;
     }
+    const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
+    dialogRef.afterClosed().subscribe(() => {
+      if (!this.userStatusService.getCompleteChallenge()) {
+        this.sendChallengeNotification(this.user, challenge).subscribe();
+      }
+    });
   }
 
-  sendChallengeNotification(user) {
-    const data = {
-      'user': user._id,
-      'message': `El reto está en`,
-      'type': 'challenges',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+  sendChallengeNotification(user, challenge) {
+    const data = this.challengesService.createChallengeNotification(user._id, challenge, this.couchService.datePlaceholder);
     return this.couchService.updateDocument('notifications', data);
   }
 
@@ -273,18 +320,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+      const challenge = this.challengesService.getActiveChallenge();
       if (
+        challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
       ) {
         this.dialog.open(DialogsAnnouncementSuccessComponent, {
           width: '50vw',
-          maxHeight: '100vh'
+          maxHeight: '100vh',
+          data: challenge
         });
         this.userStatusService.updateStatus(
           'hasPost',
-          { status: true, amount: 1 }
+          { status: true, amount: challenge.voicePostReward ?? 2 }
         );
       }
     });

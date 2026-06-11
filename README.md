@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v18
-* Angular CLI v18
+* Node.js v20
+* Angular CLI v19
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -60,7 +60,7 @@ Clone and configure the Planet project:
 git clone https://github.com/open-learning-exchange/planet.git
 cd planet
 chmod +x couchdb-setup.sh
-bash couchdb-setup.sh -p 2200 -i
+bash couchdb-setup.sh -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -72,13 +72,13 @@ ng serve
 Visit localhost:3000 to access the Planet app.
 If port 3000 is in use, try ```ng serve --port 3001```
 
-## Chatapi Notes
+## Gateway Notes
 
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
-For chatapi development instructions, refer to the [chatapi README](chatapi/README.md).
+For gateway development instructions, refer to the [gateway README](gateway/README.md).
 
 ## Project Guidelines
 
@@ -154,7 +154,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./v-couchdb-setup.sh -u <admin-username> -w <admin-password>
+./couchdb-setup.sh -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 

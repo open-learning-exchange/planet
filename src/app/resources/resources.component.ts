@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ViewEncapsulation, HostBinding, Input } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
@@ -13,7 +16,7 @@ import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
   filterSpecificFields, composeFilterFunctions, filterTags, filterAdvancedSearch, filterShelf,
-  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, selectedOutOfFilter, trackById
+  createDeleteArray, commonSortingDataAccessor, filterSpecificFieldsHybrid, trackById
 } from '../shared/table-helpers';
 import { ResourcesService } from './resources.service';
 import { environment } from '../../environments/environment';
@@ -22,23 +25,55 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages, itemsShown } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { ResourcesSearchComponent } from './search-resources/resources-search.component';
+import { levelList } from './resources-constants';
 import { SearchService } from '../shared/forms/search.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { NgIf, NgTemplateOutlet, NgClass, NgFor, DatePipe } from '@angular/common';
+import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInput } from '@angular/material/input';
+import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
+import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import { PreviewOverflowDirective } from '../shared/preview-overflow.directive';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
+import { PlanetLocalStatusComponent } from '../shared/planet-local-status.component';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { DialogsRatingsDirective } from '../shared/dialogs/dialogs-ratings.component';
+import { PlanetRatingComponent } from '../shared/forms/planet-rating.component';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-resources',
   templateUrl: './resources.component.html',
   styleUrls: ['./resources.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatToolbarRow, NgTemplateOutlet, MatIconButton, MatIcon, ResourcesSearchComponent,
+    MatFormField, PlanetTagInputComponent, FormsModule, ReactiveFormsModule, MatButton, MatLabel, MatInput,
+    MatMiniFabButton, RouterLink, FilteredAmountComponent, PlanetTagSelectedInputComponent, MatMenuTrigger, MatMenu,
+    AuthorizedRolesDirective, NgClass, MatMenuItem, MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatTooltip, MatChipSet, NgFor, MatChip, PreviewOverflowDirective,
+    PlanetMarkdownComponent, PlanetLocalStatusComponent, FeedbackDirective, DialogsRatingsDirective,
+    PlanetRatingComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe, TruncateTextPipe
+  ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = true;
   resources = new MatTableDataSource();
+  private renderedRows: any[] = [];
   pageEvent: PageEvent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -46,7 +81,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostBinding('class') readonly hostClass = 'resources-list';
   @Input() isDialog = false;
   @Input() excludeIds = [];
-  dialogRef: MatDialogRef<DialogsListComponent>;
+  dialogRef: MatDialogRef<DialogsListComponent> | null = null;
   readonly dbName = 'resources';
   message = '';
   deleteDialog: any;
@@ -92,6 +127,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   initialSort = '';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  isMobile: boolean;
   isTablet: boolean;
   showFiltersRow = false;
   expandedElement: any = null;
@@ -113,17 +149,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     private dialogsListService: DialogsListService,
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
+    public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
     private fuzzySearchService: FuzzySearchService
   ) {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isTablet = window.innerWidth <= 1040;
-  }
-
-  @HostListener('window:resize') OnResize() {
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isTablet = window.innerWidth <= 1040;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+      this.isTablet = deviceType !== DeviceType.DESKTOP;
+    });
   }
 
   ngOnInit() {
@@ -160,6 +195,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.removeFilteredFromSelection();
     });
     this.selection.changed.subscribe(({ source }) => this.onSelectionChange(source.selected));
+    this.resources.connect().pipe(takeUntil(this.onDestroy$)).subscribe(rows => this.renderedRows = rows);
     this.couchService.checkAuthorization('resources').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.initialSort = this.route.snapshot.paramMap.get('sort');
   }
@@ -176,7 +212,10 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   removeFilteredFromSelection() {
-    this.selection.deselect(...selectedOutOfFilter(this.resources.filteredData, this.selection, this.paginator));
+    queueMicrotask(() => {
+      const visible = new Set(this.renderedRows.map((row: any) => row._id));
+      this.selection.deselect(...this.selection.selected.filter(id => !visible.has(id)));
+    });
   }
 
 
@@ -200,7 +239,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
-    return this.selection.selected.length === itemsShown(this.paginator);
+    return this.renderedRows.length > 0 && this.renderedRows.every((row: any) => this.selection.isSelected(row._id));
   }
 
   applyResFilter(filterResValue: string) {
@@ -209,11 +248,11 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    const start = this.paginator.pageIndex * this.paginator.pageSize;
-    const end = start + this.paginator.pageSize;
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.resources.filteredData.slice(start, end).forEach((row: any) => this.selection.select(row._id));
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.renderedRows.forEach((row: any) => this.selection.select(row._id));
+    }
   }
 
   updateResource(resource) {
@@ -356,17 +395,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openSendResourceDialog() {
-    this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' })
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe((planet) => {
-        const data = { okClick: this.sendResource().bind(this),
-          filterPredicate: filterSpecificFields([ 'name' ]),
-          allowMulti: true,
-          ...planet };
-        this.dialogRef = this.dialog.open(DialogsListComponent, {
-          data, maxHeight: '500px', width: '600px', autoFocus: false
-        });
-      });
+    this.dialogGuard.open('send-resource', () =>
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+        map(planet => this.dialog.open(DialogsListComponent, {
+          data: {
+            okClick: this.sendResource().bind(this),
+            filterPredicate: filterSpecificFields([ 'name' ]),
+            allowMulti: true,
+            ...planet
+          },
+          maxHeight: '500px', width: '600px', autoFocus: false
+        }))
+      )
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(ref => this.dialogRef = ref);
   }
 
   sendResource() {
@@ -404,7 +445,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formatLevels(levels: string | string[] = []): string {
     const arr = Array.isArray(levels) ? levels : String(levels).split(',');
-    return arr.map(s => s.trim()).filter(Boolean).join(', ');
+    return arr.map(s => s.trim()).filter(Boolean)
+      .map(value => levelList.find(option => option.value === value)?.label || value)
+      .join(', ');
   }
 
   showPreviewExpand(element: any): boolean {

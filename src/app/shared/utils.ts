@@ -1,5 +1,52 @@
 import * as showdown from 'showdown';
+import mime from 'mime';
 export const converter = new showdown.Converter();
+
+// File.type can be empty for some browsers / file sources; fall back to the
+// filename extension via the mime package so callers don't reject valid files.
+export const normalizedContentType = (file: File): string =>
+  file.type || mime.getType(file.name) || '';
+
+// HTML accept attribute matcher. Supports extension tokens (".pdf"), MIME
+// types ("image/png") and MIME wildcards ("image/*"). Empty/missing accept allows anything.
+export const isAcceptableFile = (file: File, accept?: string): boolean => {
+  if (!accept || !accept.trim()) {
+    return true;
+  }
+  const filename = file.name.toLowerCase();
+  const ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
+  const contentType = normalizedContentType(file).toLowerCase();
+  return accept
+    .split(',')
+    .map(token => token.trim().toLowerCase())
+    .filter(Boolean)
+    .some(token => {
+      if (token.startsWith('.')) {
+        return ext === token;
+      }
+      if (token.endsWith('/*')) {
+        return contentType.startsWith(token.slice(0, -1));
+      }
+      return contentType === token;
+    });
+};
+
+export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  if (usedNames.indexOf(trimmed) === -1) {
+    return trimmed;
+  }
+  const lastDot = trimmed.lastIndexOf('.');
+  const baseName = lastDot > 0 ? trimmed.slice(0, lastDot) : trimmed;
+  const ext = lastDot > 0 ? trimmed.slice(lastDot) : '';
+  let index = 1;
+  let nextName = `${baseName}-${index}${ext}`;
+  while (usedNames.indexOf(nextName) > -1) {
+    index += 1;
+    nextName = `${baseName}-${index}${ext}`;
+  }
+  return nextName;
+};
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -46,8 +93,6 @@ export const styleVariables: any = {
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
-export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
-
 export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
@@ -62,7 +107,7 @@ export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   return keyToArray(iterable.next(), []);
 };
 
-export const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
+const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
 
 export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
 

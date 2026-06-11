@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'planet-role',
@@ -12,7 +13,7 @@ import { Component, Input, OnChanges } from '@angular/core';
       admin {Admin}
     }</span>
   `,
-  standalone: false
+  imports: [NgIf]
 })
 export class PlanetRoleComponent implements OnChanges {
 

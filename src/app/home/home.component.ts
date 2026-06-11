@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, HostListener, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
@@ -12,9 +12,23 @@ import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
+import { ChallengesService } from '../shared/challenges/challenges.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { NgIf, NgSwitch, NgSwitchCase, NgFor, NgClass, NgTemplateOutlet, DatePipe } from '@angular/common';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { PlanetBetaDirective } from '../shared/beta.directive';
+import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
+import { FeedbackDirective } from '../feedback/feedback.directive';
+import { SyncDirective } from '../manager-dashboard/sync.directive';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatBadge } from '@angular/material/badge';
+import { ChangePasswordDirective } from '../shared/dialogs/change-password.directive';
+import { MatDivider } from '@angular/material/list';
+import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
+import { PulsateIconDirective } from './pulsate-icon.directive';
 
 @Component({
   templateUrl: './home.component.html',
@@ -29,18 +43,14 @@ import { PlanetLanguageComponent } from '../shared/planet-language.component';
       })),
       transition('closed <=> open', animate('500ms ease'))
     ]),
-    trigger('slideInOut', [
-      state('open', style({
-        transform: 'translate3d(0,0,0)'
-      })),
-      state('closed', style({
-        transform: 'translate3d(-100%, 0, 0)'
-      })),
-      transition('open => closed', animate('400ms ease-in-out')),
-      transition('closed => open', animate('400ms ease-in-out'))
-    ]),
   ],
-  standalone: false
+  imports: [
+    MatToolbar, NgIf, MatIconButton, MatIcon, RouterLink, NgSwitch, NgSwitchCase, MatAnchor,
+    RouterLinkActive, PlanetBetaDirective, AuthorizedRolesDirective, FeedbackDirective, SyncDirective,
+    PlanetLanguageComponent, MatMenuTrigger, MatBadge, MatMenu, MatMenuItem, ChangePasswordDirective,
+    NgFor, NgClass, MatDivider, MatSidenavContainer, MatSidenav, NgTemplateOutlet, MatSidenavContent,
+    RouterOutlet, PulsateIconDirective, DatePipe
+  ]
 })
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
@@ -83,7 +93,8 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     private pouchAuthService: PouchAuthService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private notificationsService: NotificationsService
+    private notificationsService: NotificationsService,
+    private challengesService: ChallengesService
   ) {
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
@@ -92,8 +103,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       });
     this.couchService.get('_node/nonode@nohost/_config/planet').subscribe((res: any) => this.layout = res.layout || 'classic');
     this.onlineStatus = this.stateService.configuration.registrationRequest;
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+    this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
+      this.deviceType = deviceType;
+      this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+    });
     this.isAndroid = this.deviceInfoService.isAndroid();
   }
 
@@ -115,7 +128,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngDoCheck() {
-    this.onResize();
+    this.syncToolbarLayout();
   }
 
   ngAfterViewChecked() {
@@ -141,13 +154,11 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     this.onDestroy$.complete();
   }
 
-  @HostListener('window:resize') onResize() {
+  syncToolbarLayout() {
     const isScreenTooNarrow = window.innerWidth < this.classicToolbarWidth;
     if (this.forceModern !== isScreenTooNarrow) {
       this.forceModern = isScreenTooNarrow;
     }
-    this.deviceType = this.deviceInfoService.getDeviceType();
-    this.isMobile = this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
   }
 
   openLanguageSelector(): void {
@@ -265,12 +276,9 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
 
   openAnnouncementDialog(notification) {
     this.readNotification(notification);
-    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-    if (challengeActive) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+    const challenge = this.challengesService.getChallengeForNotification(notification);
+    if (challenge) {
+      this.challengesService.openChallengeDialog(this.dialog, challenge);
     }
   }
 }

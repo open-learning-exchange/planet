@@ -5,15 +5,18 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../courses.service';
-import { TableState } from '../../users/users-table.component';
+import { TableState, UsersTableComponent } from '../../users/users-table.component';
 import { StateService } from '../../shared/state.service';
 import { ManagerService } from '../../manager-dashboard/manager.service';
 import { attachNamesToPlanets } from '../../manager-dashboard/reports/reports.utils';
 import { CsvService } from '../../shared/csv.service';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   templateUrl: './courses-enroll.component.html',
-  standalone: false
+  imports: [MatToolbar, MatIconButton, MatIcon, MatButton, UsersTableComponent]
 })
 
 export class CoursesEnrollComponent {

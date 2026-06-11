@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 
 import { PageNotFoundComponent } from './page-not-found.component';
-import { of } from 'rxjs/observable/of';
 
 describe('PageNotFoundComponent', () => {
   let component: PageNotFoundComponent;
@@ -9,7 +9,10 @@ describe('PageNotFoundComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PageNotFoundComponent ]
+      imports: [PageNotFoundComponent],
+      providers: [
+        { provide: ActivatedRoute, useValue: {} }
+      ]
     }).compileComponents();
   }));
 

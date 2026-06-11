@@ -1,6 +1,10 @@
 import { Component, Inject, ViewChild, AfterContentChecked } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { UsersProfileComponent } from './users-profile.component';
+import { CdkScrollable } from '@angular/cdk/scrolling';
+import { MatButton } from '@angular/material/button';
+import { NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   template: `
@@ -18,7 +22,9 @@ import { UsersProfileComponent } from './users-profile.component';
       </button>
     </mat-dialog-actions>
   `,
-  standalone: false
+  imports: [
+    MatDialogTitle, CdkScrollable, MatDialogContent, UsersProfileComponent, MatDialogActions, MatButton, MatDialogClose, NgIf, RouterLink
+  ]
 })
 export class UserProfileDialogComponent implements AfterContentChecked {
 

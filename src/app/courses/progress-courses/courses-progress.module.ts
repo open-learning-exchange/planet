@@ -14,9 +14,7 @@ import { CoursesProgressLearnerComponent } from './courses-progress-learner.comp
     CommonModule,
     MaterialModule,
     PlanetFormsModule,
-    SharedComponentsModule
-  ],
-  declarations: [
+    SharedComponentsModule,
     CoursesProgressBarComponent,
     CoursesProgressChartComponent,
     CoursesProgressLeaderComponent,

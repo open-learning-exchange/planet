@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -14,6 +14,16 @@ import { CertificationsService } from '../../manager-dashboard/certifications/ce
 import { formatStringDate } from '../../shared/utils';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
+import { MatToolbar } from '@angular/material/toolbar';
+import { MatIconButton, MatAnchor } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
+import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
+import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetBetaDirective } from '../../shared/beta.directive';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 pdfMake.addVirtualFileSystem(pdfFonts);
 
@@ -21,9 +31,15 @@ pdfMake.addVirtualFileSystem(pdfFonts);
   templateUrl: './users-achievements.component.html',
   styleUrls: ['./users-achievements.scss'],
   encapsulation: ViewEncapsulation.None,
-  standalone: false
+  imports: [
+    NgIf, MatToolbar, MatIconButton, MatIcon, MatAnchor, RouterLink, MatTooltip, PlanetLoadingSpinnerComponent,
+    MatDivider, TdMarkdownComponent, PlanetBetaDirective, MatList, NgFor, MatListItem, MatListItemTitle, MatListItemMeta,
+    NgClass, MatListItemLine, DatePipe, TruncateTextPipe
+  ]
 })
 export class UsersAchievementsComponent implements OnInit {
+  readonly dbName = 'achievements';
+  readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
   achievements: any;
   achievementNotFound = false;
@@ -65,6 +81,9 @@ export class UsersAchievementsComponent implements OnInit {
       }
       this.initAchievements(id);
     });
+    if (this.publicView) {
+      return;
+    }
     combineLatest([
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
@@ -83,11 +102,17 @@ export class UsersAchievementsComponent implements OnInit {
       } else {
         this.achievements = achievements;
       }
+      if (this.publicView) {
+        this.isLoading = false;
+      }
     }, (error) => {
       if (error.status === 404) {
         this.achievementNotFound = true;
       } else {
         this.planetMessageService.showAlert($localize`There was an error getting achievements`);
+      }
+      if (this.publicView) {
+        this.isLoading = false;
       }
     });
   }
@@ -116,6 +141,14 @@ export class UsersAchievementsComponent implements OnInit {
       return;
     }
     this.openAchievementIndex = this.openAchievementIndex === index ? -1 : index;
+  }
+
+
+  get resumeUrl() {
+    if (!this.achievements?._attachments?.[this.resumeAttachmentKey] || !this.achievements?._id) {
+      return '';
+    }
+    return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
   get profileImg() {
