@@ -21,6 +21,9 @@
   align-items: flex-start;
   .chat-list-user {
     color: v.$primary;
+    .mat-caption {
+      color: v.$grey-text;
+    }
   }
   &:not(:last-child) {
     margin-bottom: 0.5rem;
