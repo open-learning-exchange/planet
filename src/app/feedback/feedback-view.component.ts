@@ -23,6 +23,7 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -46,7 +47,8 @@ import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, 
     MatCardContent,
     NgClass,
     DatePipe,
-    KeyValuePipe
+    KeyValuePipe,
+    TruncateTextPipe
   ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {

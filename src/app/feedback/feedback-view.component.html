@@ -56,9 +56,8 @@
       @for (message of feedback.messages; track trackById($index, message)) {
         <div class="chat-list-item">
           <div class="chat-list-user">
-            @if (users[message.user]) {
-              <span>{{users[message.user] + ', '}}</span>
-              }<span class="mat-caption">{{message.time | date:'medium'}}</span>
+            <span [matTooltip]="users[message.user] || message.user">{{(users[message.user] || message.user) | truncateText:80}}</span>
+            <span class="mat-caption">{{message.time | date:'medium'}}</span>
             </div>
             <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
               <mat-card-content>
