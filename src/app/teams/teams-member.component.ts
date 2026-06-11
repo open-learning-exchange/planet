@@ -5,7 +5,7 @@ import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
@@ -35,9 +35,21 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     }
   `],
   imports: [
-    MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, NgIf, MatIconButton, MatMenuTrigger,
-    MatIcon, MatMenu, MatMenuItem, MatCardContent, MatSelectionList, NgFor, MatListOption, MatListItemTitle,
-    DatePipe, TruncateTextPipe
+    MatCardHeader,
+    MatCardAvatar,
+    MatCardTitle,
+    MatCardSubtitle,
+    MatIconButton,
+    MatMenuTrigger,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatCardContent,
+    MatSelectionList,
+    MatListOption,
+    MatListItemTitle,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {

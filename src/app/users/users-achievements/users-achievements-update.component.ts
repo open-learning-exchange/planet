@@ -20,7 +20,7 @@ import { FileUploadComponent } from '../../shared/forms/file-upload.component';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgSwitch, NgSwitchCase, NgFor } from '@angular/common';
+
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -81,10 +81,30 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
   styleUrls: ['users-achievements-update.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    MatToolbar, MatIconButton, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
-    MatInput, MatError, FormErrorMessagesComponent, MatDatepickerInput, MatDatepickerToggle, MatSuffix, MatDatepicker,
-    PlanetMarkdownTextboxComponent, MatAnchor, NgSwitch, NgSwitchCase, PlanetStepListComponent, NgFor,
-    PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta, MatButton, MatCheckbox, SubmitDirective, FileUploadComponent
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    PlanetMarkdownTextboxComponent,
+    MatAnchor,
+    PlanetStepListComponent,
+    PlanetStepListItemComponent,
+    MatListItemTitle,
+    MatListItemMeta,
+    MatButton,
+    MatCheckbox,
+    SubmitDirective,
+    FileUploadComponent
   ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {

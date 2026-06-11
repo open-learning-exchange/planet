@@ -14,7 +14,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -32,10 +32,22 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     }
   `],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton,
-    MatMenuTrigger, MatMenu, PlanetSelectorComponent, MatFormField, MatLabel,
-    MatSelect, NgFor, MatOption, MatButton, CoursesProgressChartComponent,
-    PlanetLoadingSpinnerComponent, TruncateTextPipe
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    PlanetSelectorComponent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatButton,
+    CoursesProgressChartComponent,
+    PlanetLoadingSpinnerComponent,
+    TruncateTextPipe
   ]
 })
 export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
