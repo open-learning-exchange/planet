@@ -16674,7 +16674,7 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.html</context>
           <context context-type="linenumber">45</context>
         </context-group>
-        <target state="final">La imagen debe ser de 500x500 px.</target>
+        <target state="final">La imagen debe medir 500x500 px.</target>
       </trans-unit>
           <trans-unit id="coverPreviewAlt" datatype="html" approved="yes">
         <source>Cover preview</source>
@@ -16692,13 +16692,13 @@ encabezados (h1–h6), párrafos, oraciones, listas con viñetas, listas numerad
         </context-group>
         <target state="final">No se pudo cargar la imagen de portada.</target>
       </trans-unit>
-          <trans-unit id="coverImageRemoved" datatype="html" approved="yes">
-        <source>Cover image must be 500x500 px. The image was removed.</source>
+          <trans-unit id="invalidCoverImage" datatype="html" approved="yes">
+        <source>Cover image must be 500x500 px.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/courses/add-courses/courses-add.component.ts</context>
           <context context-type="linenumber">278</context>
         </context-group>
-        <target state="final">La imagen de portada debe ser de 500x500 px. La imagen se eliminó.</target>
+        <target state="final">La imagen de portada debe medir 500x500 px.</target>
       </trans-unit>
           <trans-unit id="coverImageRemoveFailed" datatype="html" approved="yes">
         <source>Cover image must be 500x500 px. Unable to remove the image.</source>

@@ -21,10 +21,10 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgIf, NgFor, NgClass } from '@angular/common';
-import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
@@ -33,6 +33,7 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { DialogsImagesComponent } from '../../shared/dialogs/dialogs-images.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -55,9 +56,9 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   styleUrls: ['./courses-add.scss'],
   imports: [
     MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
-    MatLabel, MatInput, MatError, MatHint, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatLabel, MatInput, MatError, MatHint, MatSuffix, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
     MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
-    NgClass, CoursesStepComponent, MatButton, SubmitDirective
+    NgClass, CoursesStepComponent, MatButton, MatIconButton, MatTooltip, SubmitDirective
   ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
@@ -263,12 +264,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const coverUrl = this.getCoverUrl(coverPath);
       const loadedImage = new Image();
       loadedImage.onload = () => {
-        if (loadedImage.width === 500 && loadedImage.height === 500) {
+        if (this.isValidCoverSize(loadedImage.naturalWidth, loadedImage.naturalHeight)) {
           this.courseForm.controls.cover.setValue(coverPath);
           this.coverPreviewUrl = coverUrl;
         } else {
           this.clearCoverSelection();
-          this.deleteInvalidCoverImage(image);
+          this.showInvalidCoverMessage();
         }
       };
       loadedImage.onerror = () => {
@@ -288,18 +289,14 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     return `${environment.couchAddress}/${coverPath}`;
   }
 
-  deleteInvalidCoverImage(image) {
-    this.couchService.get(`resources/${image._id}`).pipe(
-      switchMap((resource) => this.couchService.delete(`resources/${resource._id}?rev=${resource._rev}`))
-    ).subscribe(() => {
-      this.planetMessageService.showAlert(
-        $localize`:@@coverImageRemoved:Cover image must be 500x500 px. The image was removed.`
-      );
-    }, () => {
-      this.planetMessageService.showAlert(
-        $localize`:@@coverImageRemoveFailed:Cover image must be 500x500 px. Unable to remove the image.`
-      );
-    });
+  isValidCoverSize(width: number, height: number) {
+    return width === 500 && height === 500;
+  }
+
+  showInvalidCoverMessage() {
+    this.planetMessageService.showAlert(
+      $localize`:@@invalidCoverImage:Cover image must be 500x500 px.`
+    );
   }
 
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {

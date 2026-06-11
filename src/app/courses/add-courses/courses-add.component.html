@@ -48,7 +48,9 @@
         </mat-form-field>
         <mat-form-field class="cover-field">
           <input matInput i18n-placeholder placeholder="Cover" formControlName="cover" readonly>
-          <button mat-icon-button matSuffix type="button" (click)="selectCoverImage()" i18n-matTooltip="@@coverImageSelectTooltip" matTooltip="Select cover image">
+          <button mat-icon-button matSuffix type="button" (click)="selectCoverImage()"
+            i18n-aria-label="@@coverImageSelectTooltip" aria-label="Select cover image"
+            i18n-matTooltip="@@coverImageSelectTooltip" matTooltip="Select cover image">
             <mat-icon>image</mat-icon>
           </button>
           <mat-hint i18n="@@coverImageSizeHint">Image must be 500x500 px.</mat-hint>
