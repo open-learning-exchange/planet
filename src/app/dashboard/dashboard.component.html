@@ -1,9 +1,11 @@
-<div *ngIf="showBanner" class="alert">
-  <a [routerLink]="['/users/update', user.name]">
-    <span class="banner-text" i18n>Please complete your profile to enjoy full features!</span>
-  </a>
-  <span class="closebtn" (click)="closeBanner()">&times;</span>
-</div>
+@if (showBanner) {
+  <div class="alert">
+    <a [routerLink]="['/users/update', user.name]">
+      <span class="banner-text" i18n>Please complete your profile to enjoy full features!</span>
+    </a>
+    <span class="closebtn" (click)="closeBanner()">&times;</span>
+  </div>
+}
 <mat-card class="horizontal" style="display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start;">
   <div style="display: flex; align-items: flex-start;">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
@@ -11,33 +13,41 @@
     </a>
     <div class="dashboard-name" style="margin-left: 16px;">
       <a [routerLink]="['/users/profile', user.name]" class="profile-link">
-        <h1 class="mat-headline-6">{{displayName | truncateText:(isMobile ? 20 : 40)}} <span *ngIf="!isLoading"> ({{visits | number}})</span></h1>
+        <h1 class="mat-headline-6">{{displayName | truncateText:(isMobile ? 20 : 40)}} @if (!isLoading) {
+          <span> ({{visits | number}})</span>
+        }</h1>
       </a>
       <h1 class="mat-headline-6">
         <span class="mat-subtitle-1">
-          <ng-container *ngFor="let role of roles; last as last">
-            <planet-role [role]="role"></planet-role><span *ngIf="!last">, </span>
-          </ng-container>
-        </span>
-      </h1>
-    </div>
+          @for (role of roles; track role; let last = $last) {
+            <planet-role [role]="role"></planet-role>@if (!last) {
+            <span>, </span>
+          }
+        }
+      </span>
+    </h1>
   </div>
-  <div style="display: flex; flex-direction: column; align-items: flex-end;">
-    <div class="date" style="text-align: right;">
-      <p>{{dateNow | date:'longDate'}}</p>
-    </div>
-    <div class="badges" style="display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 100%; margin-top: 8px;">
-      <div *ngFor="let badgeGroup of badgeGroups" style="margin-right: 4px;">
-        <span *ngFor="let course of badgesCourses[badgeGroup]" class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
-          <mat-icon
-            [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
-            fontSet="fa"
-            [fontIcon]="badgeIcons[badgeGroup]">
-          </mat-icon>
-        </span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end;">
+  <div class="date" style="text-align: right;">
+    <p>{{dateNow | date:'longDate'}}</p>
+  </div>
+  <div class="badges" style="display: flex; flex-wrap: wrap; justify-content: flex-end; max-width: 100%; margin-top: 8px;">
+    @for (badgeGroup of badgeGroups; track badgeGroup) {
+      <div style="margin-right: 4px;">
+        @for (course of badgesCourses[badgeGroup]; track course) {
+          <span class="cursor-pointer" (click)="openCourseView(course)" [matTooltip]="course.doc.courseTitle">
+            <mat-icon
+              [ngClass]="{ 'primary-text-color': course.inCertification, 'grey-text-color': !course.inCertification }"
+              fontSet="fa"
+              [fontIcon]="badgeIcons[badgeGroup]">
+            </mat-icon>
+          </span>
+        }
       </div>
-    </div>
+    }
   </div>
+</div>
 </mat-card>
 <planet-dashboard-tile
   [cardTitle]="cardTitles.myLibrary"

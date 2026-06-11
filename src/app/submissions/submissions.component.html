@@ -1,36 +1,46 @@
-<mat-toolbar *ngIf="!isDialog">
-  <mat-toolbar-row>
-    <button mat-icon-button (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
-    <span class="toolbar-fill"></span>
-    <ng-container *ngIf="!isMobile && !surveyId">
-      <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
-      <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
-      <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
-    </ng-container>
-    <button mat-icon-button *ngIf="isMobile" (click)="showFiltersRow = !showFiltersRow">
-      <mat-icon>filter_list</mat-icon>
-    </button>
-  </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
-    <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
-    <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
-  </mat-toolbar-row>
-  <mat-toolbar-row *ngIf="showFiltersRow && isMobile && !surveyId">
-    <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
-  </mat-toolbar-row>
-</mat-toolbar>
+@if (!isDialog) {
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span i18n>{mode, select, survey {mySurveys} grade {Submissions}}</span>
+      <span class="toolbar-fill"></span>
+      @if (!isMobile && !surveyId) {
+        <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
+        <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
+        <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+      }
+      @if (isMobile) {
+        <button mat-icon-button (click)="showFiltersRow = !showFiltersRow">
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      }
+    </mat-toolbar-row>
+    @if (showFiltersRow && isMobile && !surveyId) {
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="filterDropdown"></ng-container>
+        <ng-container *ngTemplateOutlet="filterToggleGroup"></ng-container>
+      </mat-toolbar-row>
+    }
+    @if (showFiltersRow && isMobile && !surveyId) {
+      <mat-toolbar-row>
+        <ng-container *ngTemplateOutlet="filterSearch"></ng-container>
+      </mat-toolbar-row>
+    }
+  </mat-toolbar>
+}
 
 <ng-template #filterDropdown>
   <mat-form-field class="font-size-1 margin-lr-3 status-dropdown">
     <mat-label i18n>Status</mat-label>
     <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
       <mat-option i18n value="All">All</mat-option>
-      <ng-container *ngFor="let option of statusOptions">
-        <mat-option *ngIf="this.filter.type !== 'survey' || option.text !== 'Not Graded'" [value]="option.value">{{option.text}}</mat-option>
-      </ng-container>
+      @for (option of statusOptions; track option) {
+        @if (this.filter.type !== 'survey' || option.text !== 'Not Graded') {
+          <mat-option [value]="option.value">{{option.text}}</mat-option>
+        }
+      }
     </mat-select>
   </mat-form-field>
 </ng-template>
@@ -76,24 +86,39 @@
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef mat-sort-header="status" i18n>Status</mat-header-cell>
-        <mat-cell *matCellDef="let element" [ngSwitch]="element.status" style="cursor: pointer">
-          <mat-chip-set *ngSwitchCase="'pending'" aria-label="Submission status" i18n-aria-label><mat-chip i18n>pending</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchCase="'requires grading'" aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="accent" i18n>requires grading</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchCase="'complete'" aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="primary" i18n>complete</mat-chip></mat-chip-set>
-          <mat-chip-set *ngSwitchDefault aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="warn" i18n>incomplete</mat-chip></mat-chip-set>
+        <mat-cell *matCellDef="let element" style="cursor: pointer">
+          @switch (element.status) {
+            @case ('pending') {
+              <mat-chip-set aria-label="Submission status" i18n-aria-label><mat-chip i18n>pending</mat-chip></mat-chip-set>
+            }
+            @case ('requires grading') {
+              <mat-chip-set aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="accent" i18n>requires grading</mat-chip></mat-chip-set>
+            }
+            @case ('complete') {
+              <mat-chip-set aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="primary" i18n>complete</mat-chip></mat-chip-set>
+            }
+            @default {
+              <mat-chip-set aria-label="Submission status" i18n-aria-label><mat-chip highlighted color="warn" i18n>incomplete</mat-chip></mat-chip-set>
+            }
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="grade">
         <mat-header-cell *matHeaderCellDef i18n>Grade</mat-header-cell>
         <mat-cell *matCellDef="let element" style="cursor: pointer">
-          <ng-container *ngIf="element.status === 'complete'">{{element?.grade}}/{{element.answers.length}}</ng-container>
+          @if (element.status === 'complete') {
+            {{element?.grade}}/{{element.answers.length}}
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef mat-sort-header="user" i18n>Submitted by</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span class="cursor-pointer" *ngIf="element?.user?.name; else noLink" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
-          <ng-template #noLink><span i18n>{{element?.submittedBy || 'Unknown'}}</span></ng-template>
+          @if (element?.user?.name) {
+            <span class="cursor-pointer" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
+          } @else {
+            <span i18n>{{element?.submittedBy || 'Unknown'}}</span>
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="lastUpdateTime">

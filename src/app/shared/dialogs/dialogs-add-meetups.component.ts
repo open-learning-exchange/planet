@@ -4,24 +4,28 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 import { MeetupsAddComponent } from '../../meetups/add-meetups/meetups-add.component';
 import { CanComponentDeactivate } from '../unsaved-changes.guard';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
-import { NgSwitch, NgSwitchCase } from '@angular/common';
+
 import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.component';
 
 @Component({
   template: `
-    <ng-container [ngSwitch]="view">
-      <planet-meetups-add #meetupsAdd *ngSwitchCase="'add'" [isDialog]="true" [link]="link"
-        [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
-      </planet-meetups-add>
-      <planet-meetups-view *ngSwitchCase="'view'"
-        [isDialog]="true"
-        [meetupDetail]="meetup"
-        [editable]="editable"
-        (switchView)="switchView($event)">
-      </planet-meetups-view>
-    </ng-container>
-  `,
-  imports: [NgSwitch, NgSwitchCase, MeetupsAddComponent, MeetupsViewComponent]
+@switch (view) {
+  @case ('add') {
+    <planet-meetups-add #meetupsAdd [isDialog]="true" [link]="link"
+      [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
+    </planet-meetups-add>
+  }
+  @case ('view') {
+    <planet-meetups-view
+      [isDialog]="true"
+      [meetupDetail]="meetup"
+      [editable]="editable"
+      (switchView)="switchView($event)">
+    </planet-meetups-view>
+  }
+}
+`,
+  imports: [MeetupsAddComponent, MeetupsViewComponent]
 })
 export class DialogsAddMeetupsComponent implements CanComponentDeactivate {
   @ViewChild('meetupsAdd') meetupsAdd: MeetupsAddComponent;

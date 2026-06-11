@@ -1,5 +1,9 @@
-<h3 *ngIf="images.length !== 0" mat-dialog-title i18n>Select an Image</h3>
-<h3 *ngIf="images.length === 0" mat-dialog-title i18n>No Images to Select</h3>
+@if (images.length !== 0) {
+  <h3 mat-dialog-title i18n>Select an Image</h3>
+}
+@if (images.length === 0) {
+  <h3 mat-dialog-title i18n>No Images to Select</h3>
+}
 <mat-dialog-content>
   <p class="upload-label mat-caption" i18n>Upload a new image</p>
   <planet-file-upload #imageUpload accept="image/*" i18n-hint hint="JPG, PNG, GIF or WEBP" [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="uploadImage($event)"></planet-file-upload>
@@ -10,12 +14,16 @@
       <input matInput [(ngModel)]="searchQuery">
     </mat-form-field>
   </div>
-  <mat-grid-list *ngIf="images.length !== 0" cols="3" rowHeight="1:1">
-    <mat-grid-tile *ngFor="let image of filteredImages" (click)="selectImage(image)">
-      <img [src]="urlPrefix + '/' + image._id + '/' + image.filename" [alt]="image.title || image.filename">
-      <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
-    </mat-grid-tile>
-  </mat-grid-list>
+  @if (images.length !== 0) {
+    <mat-grid-list cols="3" rowHeight="1:1">
+      @for (image of filteredImages; track image) {
+        <mat-grid-tile (click)="selectImage(image)">
+          <img [src]="urlPrefix + '/' + image._id + '/' + image.filename" [alt]="image.title || image.filename">
+          <mat-grid-tile-footer>{{image.title}}</mat-grid-tile-footer>
+        </mat-grid-tile>
+      }
+    </mat-grid-list>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>

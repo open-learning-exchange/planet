@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -10,7 +10,7 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
   selector: 'planet-exams-question-frame',
   templateUrl: './exams-question-frame.component.html',
   styleUrls: ['./exams-question-frame.component.scss'],
-  imports: [NgClass, NgIf, MatToolbar, MatIconButton, MatIcon, PlanetLoadingSpinnerComponent]
+  imports: [NgClass, MatToolbar, MatIconButton, MatIcon, PlanetLoadingSpinnerComponent]
 })
 export class ExamsQuestionFrameComponent {
   @Input() title = '';
