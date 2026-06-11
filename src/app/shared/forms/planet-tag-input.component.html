@@ -1,11 +1,19 @@
-<ng-container *ngIf="helperText">
+@if (helperText) {
   <planet-tag-selected-input [selectedIds]="value" [allTags]="tags"></planet-tag-selected-input>
-</ng-container>
+}
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
-  <span [ngSwitch]="labelType" [ngClass]="{'mat-title': largeFont}">
-    <ng-container i18n *ngSwitchCase="'filter'" >Collections</ng-container>
-    <ng-container i18n *ngSwitchCase="'add'">Add Collections</ng-container>
-    <ng-container i18n *ngSwitchCase="'change'">Change Collections</ng-container>
+  <span [ngClass]="{'mat-title': largeFont}">
+    @switch (labelType) {
+      @case ('filter') {
+        <ng-container i18n >Collections</ng-container>
+      }
+      @case ('add') {
+        <ng-container i18n>Add Collections</ng-container>
+      }
+      @case ('change') {
+        <ng-container i18n>Change Collections</ng-container>
+      }
+    }
   </span>
 </button>

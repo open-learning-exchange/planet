@@ -1,22 +1,28 @@
-<ng-container *ngIf="tableData.data.length === 0">
+@if (tableData.data.length === 0) {
   <mat-dialog-content>
     <p i18n>There are no items to select</p>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button mat-dialog-close i18n>OK</button>
   </mat-dialog-actions>
-</ng-container>
-<ng-container *ngIf="tableData.data.length > 0">
+}
+@if (tableData.data.length > 0) {
   <mat-dialog-content>
     <div class="search-bar">
-      <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3" *ngIf="data.allowMulti && isAllSelected()!=='hidden'">
+      @if (data.allowMulti && isAllSelected()!=='hidden') {
+        <button mat-raised-button (click)="masterToggle()" i18n color="primary" class="margin-lr-3">
         {isAllSelected(), select, yes {Deselect} no {Select}} all
       </button>
-      <mat-form-field *ngIf="dropdownField && dropdownOptions.length > 1" appearance="outline" class="font-size-1 margin-lr-3">
-        <mat-select [placeholder]="dropdownField" [value]="data.dropdownSettings.startingValue.value" (selectionChange)="onFilterChange($event.value, dropdownField)">
-          <mat-option *ngFor="let option of dropdownOptions" value={{option.value}}>{{option.text}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+      }
+      @if (dropdownField && dropdownOptions.length > 1) {
+        <mat-form-field appearance="outline" class="font-size-1 margin-lr-3">
+          <mat-select [placeholder]="dropdownField" [value]="data.dropdownSettings.startingValue.value" (selectionChange)="onFilterChange($event.value, dropdownField)">
+            @for (option of dropdownOptions; track option) {
+              <mat-option value={{option.value}}>{{option.text}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
       <mat-icon>search</mat-icon>
       <mat-form-field appearance="outline" class="font-size-1">
         <mat-label i18n>Search</mat-label>
@@ -24,10 +30,12 @@
       </mat-form-field>
     </div>
     <mat-table #table class="responsive-table" [dataSource]="tableData">
-      <ng-container *ngFor="let column of tableColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>
-      </ng-container>
+      @for (column of tableColumns; track column) {
+        <ng-container [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef>{{column}}</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{element[column]}}</mat-cell>
+        </ng-container>
+      }
       <mat-header-row *matHeaderRowDef="tableColumns"></mat-header-row>
       <mat-row
         *matRowDef="let row; columns: tableColumns"
@@ -42,9 +50,10 @@
     </mat-paginator>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <span class="mat-caption margin-lr-3" [matTooltip]="tooltipText" *ngIf="data.allowMulti">
-      {{selection.selected.length + ' '}}
-      <span i18n>{data.itemDescription, select,
+    @if (data.allowMulti) {
+      <span class="mat-caption margin-lr-3" [matTooltip]="tooltipText">
+        {{selection.selected.length + ' '}}
+        <span i18n>{data.itemDescription, select,
           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}
           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}
           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}
@@ -52,8 +61,9 @@
           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}
         } selected
       </span>
-    </span>
+      </span>
+    }
     <button mat-button mat-dialog-close i18n>Cancel</button>
     <button color="primary" mat-button (click)="ok()" [disabled]="!allowSubmit()" i18n>OK</button>
   </mat-dialog-actions>
-</ng-container>
+}

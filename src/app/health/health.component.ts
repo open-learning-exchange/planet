@@ -17,7 +17,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatDivider } from '@angular/material/list';
 import { TdMarkdownComponent } from '@covalent/markdown';
@@ -29,10 +29,29 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   templateUrl: './health.component.html',
   styleUrls: ['./health.scss'],
   imports: [
-    MatToolbar, MatIconButton, MatIcon, NgIf, MatAnchor, RouterLink, PlanetLoadingSpinnerComponent,
-    MatDivider, TdMarkdownComponent, MatTable, NgFor, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
-    NgClass, MatTooltip, MatCellDef, MatCell, LabelComponent, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow, DatePipe, TruncateTextPipe
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatAnchor,
+    RouterLink,
+    PlanetLoadingSpinnerComponent,
+    MatDivider,
+    TdMarkdownComponent,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    NgClass,
+    MatTooltip,
+    MatCellDef,
+    MatCell,
+    LabelComponent,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {

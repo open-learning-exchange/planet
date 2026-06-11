@@ -19,7 +19,7 @@ import { StateService } from '../shared/state.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetBetaDirective } from '../shared/beta.directive';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
@@ -28,8 +28,19 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
   templateUrl: './manager-dashboard.component.html',
   styleUrls: ['./manager-dashboard.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, NgIf, AuthorizedRolesDirective, MatAnchor, MatButton, PlanetBetaDirective,
-    MatCard, MatCardHeader, MatCardTitle, MatCardContent, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    AuthorizedRolesDirective,
+    MatAnchor,
+    MatButton,
+    PlanetBetaDirective,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    DatePipe
   ]
 })
 

@@ -4,25 +4,28 @@ import { StateService } from './state.service';
 import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewText,
   markdownImageRegex, normalizeMarkdownWhitespace, truncateText
 } from './utils';
-import { NgIf, NgFor } from '@angular/common';
+
 import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   selector: 'planet-markdown',
   template: `
-    <ng-container *ngIf="previewMode; else noPreview">
+    @if (previewMode) {
       <td-markdown [content]="limitedContent"></td-markdown>
-      <div class="image-gallery" *ngIf="images?.length">
-        <img *ngFor="let image of images" [src]="image" class="minified-image" alt="Preview Image" />
-      </div>
-    </ng-container>
-    <ng-template #noPreview>
+      @if (images?.length) {
+        <div class="image-gallery">
+          @for (image of images; track image) {
+            <img [src]="image" class="minified-image" alt="Preview Image" />
+          }
+        </div>
+      }
+    } @else {
       <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
-    </ng-template>
-  `,
+    }
+    `,
   styleUrls: ['./planet-markdown.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [NgIf, TdMarkdownComponent, NgFor]
+  imports: [TdMarkdownComponent]
 })
 export class PlanetMarkdownComponent implements OnChanges {
 
