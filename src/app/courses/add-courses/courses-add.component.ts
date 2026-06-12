@@ -3,7 +3,9 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsM
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
+import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -19,10 +21,10 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { NgIf, NgClass } from '@angular/common';
+import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
@@ -30,6 +32,8 @@ import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/mat
 import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
+import { DialogsImagesComponent } from '../../shared/dialogs/dialogs-images.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -37,6 +41,7 @@ interface CourseFormModel {
   languageOfInstruction: FormControl<string>;
   gradeLevel: FormControl<string>;
   subjectLevel: FormControl<string>;
+  cover: FormControl<string>;
   createdDate: FormControl<DateValue>;
   creator: FormControl<string>;
   sourcePlanet: FormControl<string>;
@@ -50,26 +55,10 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar,
-    MatIconAnchor,
-    MatIcon,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    FormErrorMessagesComponent,
-    PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatSelect,
-    PlanetTagInputComponent,
-    NgClass,
-    CoursesStepComponent,
-    MatButton,
-    SubmitDirective
+    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, MatHint, MatSuffix, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
+    NgClass, CoursesStepComponent, MatButton, MatIconButton, MatTooltip, SubmitDirective
   ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
@@ -81,6 +70,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   private _steps = [];
+  coverPreviewUrl = '';
   savedCourse: any = null;
   draftExists: boolean;
   courseForm: FormGroup<CourseFormModel>;
@@ -121,7 +111,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.onFormChanges();
@@ -190,6 +181,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       languageOfInstruction: this.fb.control(''),
       gradeLevel: this.fb.control(''),
       subjectLevel: this.fb.control(''),
+      cover: this.fb.control(''),
       createdDate: this.fb.control<DateValue>(this.couchService.datePlaceholder),
       creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
       sourcePlanet: this.fb.control(configuration.code),
@@ -218,6 +210,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.images = course.form.images || [];
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
+    this.coverPreviewUrl = course.form?.cover ? this.getCoverUrl(course.form.cover) : '';
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -259,11 +252,65 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
+  selectCoverImage() {
+    this.dialog.open(DialogsImagesComponent, {
+      width: '500px',
+      data: { imageGroup: 'community' }
+    }).afterClosed().subscribe(image => {
+      if (!image) {
+        return;
+      }
+      const coverPath = `resources/${image._id}/${encodeURI(image.filename)}`;
+      const coverUrl = this.getCoverUrl(coverPath);
+      const loadedImage = new Image();
+      loadedImage.onload = () => {
+        if (this.isValidCoverSize(loadedImage.naturalWidth, loadedImage.naturalHeight)) {
+          this.courseForm.controls.cover.setValue(coverPath);
+          this.coverPreviewUrl = coverUrl;
+        } else {
+          this.clearCoverSelection();
+          this.showInvalidCoverMessage();
+        }
+      };
+      loadedImage.onerror = () => {
+        this.clearCoverSelection();
+        this.planetMessageService.showAlert($localize`:@@coverImageLoadFailed:Unable to load the cover image.`);
+      };
+      loadedImage.src = coverUrl;
+    });
+  }
+
+  clearCoverSelection() {
+    this.courseForm.controls.cover.setValue('');
+    this.coverPreviewUrl = '';
+  }
+
+  getCoverUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
+  }
+
+  isValidCoverSize(width: number, height: number) {
+    return width === 500 && height === 500;
+  }
+
+  showInvalidCoverMessage() {
+    this.planetMessageService.showAlert(
+      $localize`:@@invalidCoverImage:Cover image must be 500x500 px.`
+    );
+  }
+
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
-    const newCourse = { ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps), ...this.documentInfo };
+    const normalizedCourse = { ...courseInfo, cover: courseInfo.cover?.trim() };
+    const newCourse = {
+      ...this.convertMarkdownImagesText({ ...normalizedCourse, images: this.images }, this.steps),
+      ...this.documentInfo
+    };
+    if (!normalizedCourse.cover) {
+      delete newCourse.cover;
+    }
     this.couchService.updateDocument(
       this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
@@ -337,7 +384,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       });
     } else {
       this.setFormAndSteps({
-        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '' },
+        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '', cover: '' },
         steps: [],
         tags: []
       });

@@ -21,6 +21,7 @@ import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -215,5 +216,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
+  }
+
+  coverImageUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
   }
 }

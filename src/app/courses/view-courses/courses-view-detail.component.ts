@@ -13,6 +13,7 @@ import { DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'planet-courses-detail',
@@ -35,6 +36,10 @@ export class CoursesViewDetailComponent implements OnChanges {
 
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';
+  }
+
+  coverImageUrl(coverPath: string) {
+    return `${environment.couchAddress}/${coverPath}`;
   }
 }
 

@@ -34,6 +34,11 @@
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
               >
+              @if (cardType === 'myCourses' && item.cover) {
+                <div class="dashboard-course-cover">
+                  <img [src]="coverImageUrl(item.cover)" alt="Course cover" i18n-alt="@@courseCoverAlt">
+                </div>
+              }
               <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
                 {{item.firstLine}}
               </p>
