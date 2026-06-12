@@ -14,16 +14,20 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <ng-container *ngIf="hubId === null; else singleTable">
-      <mat-expansion-panel *ngFor="let hub of hubs; trackBy: trackById">
-        <mat-expansion-panel-header>
-          <mat-panel-title>{{hub.name}}</mat-panel-title>
-          <a mat-button *ngIf="hub.hubPlanetDoc" class="margin-lr-10" (click)="viewReport(hub.hubPlanetDoc, $event)" i18n>Report</a>
-        </mat-expansion-panel-header>
-        <div class="responsive-table">
-          <planet-reports-table [planets]="hub.children"></planet-reports-table>
-        </div>
-      </mat-expansion-panel>
+    @if (hubId === null) {
+      @for (hub of hubs; track trackById($index, hub)) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{hub.name}}</mat-panel-title>
+            @if (hub.hubPlanetDoc) {
+              <a mat-button class="margin-lr-10" (click)="viewReport(hub.hubPlanetDoc, $event)" i18n>Report</a>
+            }
+          </mat-expansion-panel-header>
+          <div class="responsive-table">
+            <planet-reports-table [planets]="hub.children"></planet-reports-table>
+          </div>
+        </mat-expansion-panel>
+      }
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title i18n>Sandbox</mat-panel-title>
@@ -32,11 +36,10 @@
           <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
         </div>
       </mat-expansion-panel>
-    </ng-container>
-    <ng-template #singleTable>
+    } @else {
       <div class="responsive-table">
         <planet-reports-table [planets]="sandboxPlanets"></planet-reports-table>
       </div>
-    </ng-template>
+    }
   </div>
 </div>

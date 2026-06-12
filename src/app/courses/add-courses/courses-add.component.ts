@@ -23,7 +23,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgIf, NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -57,7 +57,7 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   imports: [
     MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
     MatLabel, MatInput, MatError, MatHint, MatSuffix, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
+    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
     NgClass, CoursesStepComponent, MatButton, MatIconButton, MatTooltip, SubmitDirective
   ]
 })

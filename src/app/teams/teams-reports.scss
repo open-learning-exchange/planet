@@ -9,8 +9,10 @@
 
 .reports-toolbar {
   display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  background: v.$white;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 10px 16px;
