@@ -4,7 +4,6 @@ exports[`App > Should be an AppComponent 1`] = `
 <planet-app>
   <div
     dir="ltr"
-    ng-reflect-dir="ltr"
   >
     <router-outlet />
     <!--container-->
