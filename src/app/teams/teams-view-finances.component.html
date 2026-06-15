@@ -1,89 +1,108 @@
-<div class="finances-container" *ngIf="!isLoading; else loadingTpl">
-
-  <div class="finance-stats" *ngIf="!emptyTable">
-    <mat-card *ngFor="let s of stats" class="finance-stat" [ngClass]="'tone-' + s.tone">
-      <mat-card-content>
-        <div class="finance-stat-label"><mat-icon>{{ s.icon }}</mat-icon><span>{{ s.label }}</span></div>
-        <div class="finance-stat-value">{{ s.value | currency:curCode?.code:curCode?.symbol }}</div>
-        <div class="finance-stat-alert" *ngIf="s.alert"><mat-icon>warning</mat-icon><span i18n>Balance is negative</span></div>
-      </mat-card-content>
-    </mat-card>
+@if (!isLoading) {
+  <div class="finances-container">
+    @if (!emptyTable) {
+      <div class="finance-stats">
+        @for (s of stats; track s.tone) {
+          <mat-card class="finance-stat" [ngClass]="'tone-' + s.tone">
+            <mat-card-content>
+              <div class="finance-stat-label"><mat-icon>{{ s.icon }}</mat-icon><span>{{ s.label }}</span></div>
+              <div class="finance-stat-value">{{ s.value | currency:curCode?.code:curCode?.symbol }}</div>
+              @if (s.alert) {
+                <div class="finance-stat-alert"><mat-icon>warning</mat-icon><span i18n>Balance is negative</span></div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    }
+    <div class="finance-toolbar">
+      <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
+        <mat-label i18n>Start date</mat-label>
+        <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
+        <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
+        <mat-datepicker #dateFilterStart></mat-datepicker>
+        @if (startDate > endDate) {
+          <mat-error i18n>Start date must be before end date</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
+        <mat-label i18n>End date</mat-label>
+        <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" [min]="startDate">
+        <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
+        <mat-datepicker #dateFilterEnd></mat-datepicker>
+      </mat-form-field>
+      @if (startDate || endDate) {
+        <button class="finance-reset-btn" mat-button color="primary" (click)="resetDateFilter()" i18n>Reset</button>
+      }
+      <span class="spacer"></span>
+      @if (!emptyTable) {
+        <button mat-stroked-button (click)="exportTableData()"><mat-icon>file_download</mat-icon><span i18n>Export</span></button>
+      }
+      @if (editable) {
+        <button mat-raised-button color="primary" (click)="openEditTransactionDialog()"><mat-icon>add</mat-icon><span i18n>Add Transaction</span></button>
+      }
+    </div>
+    @if (!emptyTable) {
+      <mat-card class="finance-table-card">
+        <mat-table class="finance-table responsive-table" [dataSource]="table">
+          <ng-container matColumnDef="date">
+            <mat-header-cell *matHeaderCellDef i18n>Date</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element.date | date }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span>{{ element.description }}</span>
+              @if (element.receiptImages?.length) {
+                <span class="transaction-receipts">
+                  @for (image of element.receiptImages; track image.name) {
+                    <a
+                      [href]="image.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      i18n-aria-label
+                      aria-label="Open attached image: {{ image.name }}"
+                      (click)="$event.stopPropagation()">
+                      <mat-icon>image</mat-icon>
+                    </a>
+                  }
+                </span>
+              }
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="credit">
+            <mat-header-cell *matHeaderCellDef class="num" i18n>Credit</mat-header-cell>
+            <mat-cell *matCellDef="let element" class="num credit">{{ element.credit ? '+' + (element.credit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="debit">
+            <mat-header-cell *matHeaderCellDef class="num" i18n>Debit</mat-header-cell>
+            <mat-cell *matCellDef="let element" class="num debit">{{ element.debit ? '−' + (element.debit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="balance">
+            <mat-header-cell *matHeaderCellDef class="num" i18n>Balance</mat-header-cell>
+            <mat-cell *matCellDef="let element" class="num balance" [ngClass]="{ debit: element.balance < 0 }">
+              {{ element.balance | currency:curCode?.code:curCode?.symbol }}
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="action">
+            <mat-header-cell *matHeaderCellDef class="actions"></mat-header-cell>
+            <mat-cell *matCellDef="let element" class="actions">
+              <button mat-icon-button (click)="openEditTransactionDialog(element); $event.stopPropagation()" i18n-aria-label aria-label="Edit"><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button (click)="openArchiveTransactionDialog(element); $event.stopPropagation()" i18n-aria-label aria-label="Delete"><mat-icon>delete_outline</mat-icon></button>
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-card>
+    } @else {
+      @if (startDate || endDate) {
+        <p class="finance-empty" i18n>No transactions match this date range</p>
+      } @else {
+        <p class="finance-empty" i18n>There are no transactions</p>
+      }
+    }
   </div>
-
-  <div class="finance-toolbar">
-    <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
-      <mat-label i18n>Start date</mat-label>
-      <input matInput [matDatepicker]="dateFilterStart" [(ngModel)]="startDate" (dateInput)="transactionFilter()" [max]="endDate">
-      <mat-datepicker-toggle matIconSuffix [for]="dateFilterStart"></mat-datepicker-toggle>
-      <mat-datepicker #dateFilterStart></mat-datepicker>
-      <mat-error i18n *ngIf="startDate > endDate">Start date must be before end date</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="outline" subscriptSizing="fixed" class="finance-date-field">
-      <mat-label i18n>End date</mat-label>
-      <input matInput [matDatepicker]="dateFilterEnd" [(ngModel)]="endDate" (dateInput)="transactionFilter()" [min]="startDate">
-      <mat-datepicker-toggle matIconSuffix [for]="dateFilterEnd"></mat-datepicker-toggle>
-      <mat-datepicker #dateFilterEnd></mat-datepicker>
-    </mat-form-field>
-    <button *ngIf="startDate || endDate" class="finance-reset-btn" mat-button color="primary" (click)="resetDateFilter()" i18n>Reset</button>
-    <span class="spacer"></span>
-    <button mat-stroked-button (click)="exportTableData()" *ngIf="!emptyTable"><mat-icon>file_download</mat-icon><span i18n>Export</span></button>
-    <button mat-raised-button color="primary" (click)="openEditTransactionDialog()" *ngIf="editable"><mat-icon>add</mat-icon><span i18n>Add Transaction</span></button>
-  </div>
-
-  <mat-card *ngIf="!emptyTable; else emptyMessage" class="finance-table-card">
-    <mat-table class="finance-table responsive-table" [dataSource]="table">
-      <ng-container matColumnDef="date">
-        <mat-header-cell *matHeaderCellDef i18n>Date</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.date | date }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="description">
-        <mat-header-cell *matHeaderCellDef i18n>Note</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span>{{ element.description }}</span>
-          <span class="transaction-receipts" *ngIf="element.receiptImages?.length">
-            <a
-              *ngFor="let image of element.receiptImages"
-              [href]="image.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              i18n-aria-label
-              aria-label="Open attached image: {{ image.name }}"
-              (click)="$event.stopPropagation()">
-              <mat-icon>image</mat-icon>
-            </a>
-          </span>
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="credit">
-        <mat-header-cell *matHeaderCellDef class="num" i18n>Credit</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="num credit">{{ element.credit ? '+' + (element.credit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="debit">
-        <mat-header-cell *matHeaderCellDef class="num" i18n>Debit</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="num debit">{{ element.debit ? '−' + (element.debit | currency:curCode?.code:curCode?.symbol) : '' }}</mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="balance">
-        <mat-header-cell *matHeaderCellDef class="num" i18n>Balance</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="num balance" [ngClass]="{ debit: element.balance < 0 }">
-          {{ element.balance | currency:curCode?.code:curCode?.symbol }}
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="action">
-        <mat-header-cell *matHeaderCellDef class="actions"></mat-header-cell>
-        <mat-cell *matCellDef="let element" class="actions">
-          <button mat-icon-button (click)="openEditTransactionDialog(element); $event.stopPropagation()" i18n-aria-label aria-label="Edit"><mat-icon>edit</mat-icon></button>
-          <button mat-icon-button (click)="openArchiveTransactionDialog(element); $event.stopPropagation()" i18n-aria-label aria-label="Delete"><mat-icon>delete_outline</mat-icon></button>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-  </mat-card>
-
-</div>
-
-<ng-template #loadingTpl><planet-loading-spinner text="Loading transactions..." i18n-text></planet-loading-spinner></ng-template>
-<ng-template #emptyMessage>
-  <p class="finance-empty" *ngIf="startDate || endDate; else noTransactions" i18n>No transactions match this date range</p>
-  <ng-template #noTransactions><p class="finance-empty" i18n>There are no transactions</p></ng-template>
-</ng-template>
+} @else {
+  <planet-loading-spinner text="Loading transactions..." i18n-text></planet-loading-spinner>
+}

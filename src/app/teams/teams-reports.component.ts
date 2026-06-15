@@ -17,7 +17,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
-import { NgIf, NgFor, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
+import { NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -42,8 +42,16 @@ interface NewReportForm {
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
   imports: [
-    NgIf, NgFor, NgClass, MatButton, MatIconButton, MatIcon, PlanetLoadingSpinnerComponent,
-    MatCard, MatCardContent, MatCardActions, DatePipe, CurrencyPipe
+    NgClass,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    PlanetLoadingSpinnerComponent,
+    MatCard,
+    MatCardContent,
+    MatCardActions,
+    DatePipe,
+    CurrencyPipe
   ]
 })
 export class TeamsReportsComponent implements OnChanges {

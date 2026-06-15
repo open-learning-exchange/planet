@@ -1,32 +1,78 @@
 <h3 mat-dialog-title>{{event.date | date: 'medium'}}</h3>
 <mat-dialog-content cdkFocusInitial>
-  <p *ngIf="!event.selfExamination"><b i18n>Performed by: </b>{{performedBy}}</p>
-  <h4 class="primary-text-color" *ngIf="hasVital" i18n>Vitals</h4>
-  <p *ngIf="event.temperature"><b i18n>Temperature: </b>{{event.temperature}} °C</p>
-  <p *ngIf="event.pulse"><b i18n>Pulse: </b>{{event.pulse}} bpm</p>
-  <p *ngIf="event.bp"><b i18n>Blood Pressure: </b>{{event.bp}}</p>
-  <p *ngIf="event.height"><b i18n>Height: </b>{{event.height}} cm</p>
-  <p *ngIf="event.weight"><b i18n>Weight: </b>{{event.weight}} kg</p>
-  <p *ngIf="event.vision"><b i18n>Vision: </b>{{event.vision}}</p>
-  <p *ngIf="event.hearing"><b i18n>Hearing: </b>{{event.hearing}}</p>
-  <ng-container *ngIf="conditions">
+  @if (!event.selfExamination) {
+    <p><b i18n>Performed by: </b>{{performedBy}}</p>
+  }
+  @if (hasVital) {
+    <h4 class="primary-text-color" i18n>Vitals</h4>
+  }
+  @if (event.temperature) {
+    <p><b i18n>Temperature: </b>{{event.temperature}} °C</p>
+  }
+  @if (event.pulse) {
+    <p><b i18n>Pulse: </b>{{event.pulse}} bpm</p>
+  }
+  @if (event.bp) {
+    <p><b i18n>Blood Pressure: </b>{{event.bp}}</p>
+  }
+  @if (event.height) {
+    <p><b i18n>Height: </b>{{event.height}} cm</p>
+  }
+  @if (event.weight) {
+    <p><b i18n>Weight: </b>{{event.weight}} kg</p>
+  }
+  @if (event.vision) {
+    <p><b i18n>Vision: </b>{{event.vision}}</p>
+  }
+  @if (event.hearing) {
+    <p><b i18n>Hearing: </b>{{event.hearing}}</p>
+  }
+  @if (conditions) {
     <h4 class="primary-text-color" i18n>Conditions</h4>
     <p>{{conditions}}</p>
-  </ng-container>
-  <h4 class="primary-text-color" *ngIf="hasConditionAndTreatment" i18n>Other Notes</h4>
-  <p *ngIf="event.notes"><b i18n>Observations & Notes: </b><td-markdown [content]="event.notes"></td-markdown>
-  <p *ngIf="event.diagnosis"><b i18n>Diagnosis: </b><td-markdown [content]="event.diagnosis"></td-markdown>
-  <p *ngIf="event.treatments"><b i18n>Treatments: </b><td-markdown [content]="event.treatments"></td-markdown>
-  <p *ngIf="event.medications"><b i18n>Medications: </b><td-markdown [content]="event.medications"></td-markdown>
-  <p *ngIf="event.immunizations"><b i18n>Immunizations: </b><td-markdown [content]="event.immunizations"></td-markdown>
-  <p *ngIf="event.xrays"><b i18n>X-rays: </b><td-markdown [content]="event.xrays"></td-markdown>
-  <p *ngIf="event.tests"><b i18n>Lab Tests: </b><td-markdown [content]="event.tests"></td-markdown>
-  <p *ngIf="event.referrals"><b i18n>Referrals: </b><td-markdown [content]="event.referrals"></td-markdown>
+  }
+  @if (hasConditionAndTreatment) {
+    <h4 class="primary-text-color" i18n>Other Notes</h4>
+  }
+  @if (event.notes) {
+    <p><b i18n>Observations & Notes: </b></p>
+    <td-markdown [content]="event.notes"></td-markdown>
+  }
+  @if (event.diagnosis) {
+    <p><b i18n>Diagnosis: </b></p>
+    <td-markdown [content]="event.diagnosis"></td-markdown>
+  }
+  @if (event.treatments) {
+    <p><b i18n>Treatments: </b></p>
+    <td-markdown [content]="event.treatments"></td-markdown>
+  }
+  @if (event.medications) {
+    <p><b i18n>Medications: </b></p>
+    <td-markdown [content]="event.medications"></td-markdown>
+  }
+  @if (event.immunizations) {
+    <p><b i18n>Immunizations: </b></p>
+    <td-markdown [content]="event.immunizations"></td-markdown>
+  }
+  @if (event.xrays) {
+    <p><b i18n>X-rays: </b></p>
+    <td-markdown [content]="event.xrays"></td-markdown>
+  }
+  @if (event.tests) {
+    <p><b i18n>Lab Tests: </b></p>
+    <td-markdown [content]="event.tests"></td-markdown>
+  }
+  @if (event.referrals) {
+    <p><b i18n>Referrals: </b></p>
+    <td-markdown [content]="event.referrals"></td-markdown>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" *ngIf="canUpdate" mat-raised-button>
-    <span i18n>Edit <ng-container *ngIf="minutes">({{ minutes }}:{{ seconds }})</ng-container></span> 
-  </button>
+  @if (canUpdate) {
+    <button type="button" color="primary" mat-dialog-close (click)="editExam(event)" mat-raised-button>
+      <span i18n>Edit @if (minutes) {({{ minutes }}:{{ seconds }})}</span>
+    </button>
+  }
   <button type="button" color="accent" (click)="exportToPdf(event)" mat-raised-button>
     <span i18n>Export</span>
   </button>

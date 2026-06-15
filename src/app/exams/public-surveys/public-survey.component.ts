@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgIf } from '@angular/common';
+
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -33,7 +33,12 @@ import { LoginDialogComponent } from '../../login/login-dialog.component';
     }
   `],
   imports: [
-    NgIf, MatIcon, TdMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton, ReactiveFormsModule
+    MatIcon,
+    TdMarkdownComponent,
+    ExamsQuestionFrameComponent,
+    ExamsTakeWidgetComponent,
+    MatButton,
+    ReactiveFormsModule
   ]
 })
 export class PublicSurveyComponent implements OnInit {

@@ -1,20 +1,34 @@
-<div [ngClass]="{'dialog-view':isDialog}" [ngSwitch]="mediaType">
-  <img [src]="resourceSrc" class="image-fit" *ngSwitchCase="'image'">
-  <video controls *ngSwitchCase="'video'" [src]="resourceSrc" i18n>
+<div [ngClass]="{'dialog-view':isDialog}">
+  @switch (mediaType) {
+    @case ('image') {
+      <img [src]="resourceSrc" class="image-fit">
+    }
+    @case ('video') {
+      <video controls [src]="resourceSrc" i18n>
     Browser not supported
   </video>
-  <audio controls [src]="resourceSrc" *ngSwitchCase="'audio'" i18n>
+    }
+    @case ('audio') {
+      <audio controls [src]="resourceSrc" i18n>
     Browser not supported
   </audio>
-  <div *ngSwitchCase="'pdf'" style="position: relative;">
-    <div class="pdf-toolbar">
-      <button mat-icon-button style="color: white" (click)="openFullscreen()">
-        <mat-icon>fullscreen</mat-icon>
-      </button>
-    </div>
-    <iframe #pdfViewer [src]="pdfSrc" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
-      oallowfullscreen msallowfullscreen></iframe>
-  </div>
-  <div *ngSwitchCase="'other'"><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
-  <iframe *ngSwitchCase="'HTML'" [src]="pdfSrc"></iframe>
+    }
+    @case ('pdf') {
+      <div style="position: relative;">
+        <div class="pdf-toolbar">
+          <button mat-icon-button style="color: white" (click)="openFullscreen()">
+            <mat-icon>fullscreen</mat-icon>
+          </button>
+        </div>
+        <iframe #pdfViewer [src]="pdfSrc" width="100%" height="100%" allowfullscreen mozallowfullscreen webkitallowfullscreen
+        oallowfullscreen msallowfullscreen></iframe>
+      </div>
+    }
+    @case ('other') {
+      <div><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
+    }
+    @case ('HTML') {
+      <iframe [src]="pdfSrc"></iframe>
+    }
+  }
 </div>

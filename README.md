@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v18
-* Angular CLI v18
+* Node.js v20
+* Angular CLI v19
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 

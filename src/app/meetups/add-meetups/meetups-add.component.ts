@@ -13,7 +13,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -63,10 +63,34 @@ interface MeetupFormControls {
     }
   `],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule, MatFormField,
-    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent, MatDatepickerInput,
-    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetTimeMaskDirective, MatRadioGroup, MatRadioButton, NgFor, MatCheckbox,
-    PlanetNumberValidatorDirective, NgTemplateOutlet, CdkScrollable, MatDialogContent, MatDialogActions, MatButton, SubmitDirective
+    MatToolbar,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    NgClass,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    PlanetTimeMaskDirective,
+    MatRadioGroup,
+    MatRadioButton,
+    MatCheckbox,
+    PlanetNumberValidatorDirective,
+    NgTemplateOutlet,
+    CdkScrollable,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    SubmitDirective
   ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
@@ -148,8 +172,11 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   private captureInitialState() {
-    const formValue = this.meetupForm.getRawValue();
-    this.initialFormValues = JSON.stringify({
+    this.initialFormValues = this.serializeFormValue(this.meetupForm.getRawValue());
+  }
+
+  private serializeFormValue(formValue: any): string {
+    return JSON.stringify({
       ...formValue,
       startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
       endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
@@ -163,13 +190,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
         debounce(() => race(interval(200), of(true)))
       )
       .subscribe(formValue => {
-        const currentState = JSON.stringify({
-          ...formValue,
-          startDate: formValue.startDate ? this.parseDateValue(formValue.startDate) : null,
-          endDate: formValue.endDate ? this.parseDateValue(formValue.endDate) : null,
-          day: formValue.day || []
-        });
-        this.hasUnsavedChanges = currentState !== this.initialFormValues;
+        this.hasUnsavedChanges = this.serializeFormValue(formValue) !== this.initialFormValues;
       });
   }
 

@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { StateService } from '../shared/state.service';
 import { MatDivider } from '@angular/material/list';
-import { NgFor, NgIf, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 
@@ -9,7 +9,7 @@ import { TeamsAttachmentsService } from './teams-attachments.service';
   selector: 'planet-teams-reports-detail',
   templateUrl: './teams-reports-detail.component.html',
   styleUrls: ['./teams-reports-detail.scss'],
-  imports: [MatDivider, NgIf, NgFor, NgClass, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
+  imports: [MatDivider, NgClass, PlanetMarkdownComponent, CurrencyPipe, DatePipe]
 })
 export class TeamsReportsDetailComponent implements OnChanges {
 

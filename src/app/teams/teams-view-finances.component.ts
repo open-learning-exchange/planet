@@ -15,7 +15,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgFor, NgClass, CurrencyPipe, DatePipe } from '@angular/common';
+import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -42,10 +42,34 @@ interface TransactionForm {
   styleUrls: ['./teams-view-finances.scss'],
   templateUrl: './teams-view-finances.component.html',
   imports: [
-    NgIf, NgFor, MatButton, MatFormField, MatLabel, MatInput, MatDatepickerInput, FormsModule, MatDatepickerToggle,
-    MatSuffix, MatDatepicker, MatError, MatCard, MatCardContent, MatIcon, MatTable, MatColumnDef, MatHeaderCellDef,
-    MatHeaderCell, MatCellDef, MatCell, NgClass, MatIconButton, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
-    PlanetLoadingSpinnerComponent, CurrencyPipe, DatePipe
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatDatepickerInput,
+    FormsModule,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatError,
+    MatCard,
+    MatCardContent,
+    MatIcon,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    NgClass,
+    MatIconButton,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    PlanetLoadingSpinnerComponent,
+    CurrencyPipe,
+    DatePipe
   ]
 })
 export class TeamsViewFinancesComponent implements OnChanges {

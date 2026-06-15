@@ -1,49 +1,93 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { HttpTestingController } from '@angular/common/http/testing';
+import { of } from 'rxjs';
+import { vi } from 'vitest';
+
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
 import { ResourcesViewComponent } from './resources-view.component';
 import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
-import { MaterialModule } from '../../shared/material.module';
-import { FormsModule } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
-import { By } from '@angular/platform-browser';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/add/observable/throw';
+import { StateService } from '../../shared/state.service';
+import { ResourcesService } from '../resources.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DeviceInfoService } from '../../shared/device-info.service';
 
 describe('ResourcesViewComponent', () => {
-  /*
-    let component: ResourcesViewComponent;
-    let fixture: ComponentFixture<ResourcesViewComponent>;
-    // let getSpy: any;
-    let couchService;
-    let statusElement;
-    let testimage;
-    let de;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-          imports: [ FormsModule, RouterTestingModule, HttpClientModule, MaterialModule ],
-          declarations: [ ResourcesViewComponent ],
-          providers: [ CouchService, UserService, DialogsFormService, FormBuilder ]
-        });
-        fixture = TestBed.createComponent(ResourcesViewComponent);
-        component = fixture.componentInstance;
-        de = fixture.debugElement;
-        statusElement = de.nativeElement.querySelector('.km-resource-view img');
-        couchService = fixture.debugElement.injector.get(CouchService);
-        testimage = { filename: 'scenery.png', id: 'scenery.png', mediaType: 'img',
-                      attachments: { 'scenery.png': { content_type: 'application/image' } } };
-      });
+  let component: ResourcesViewComponent;
+  let fixture: ComponentFixture<ResourcesViewComponent>;
+  let statusElement;
+  let testimage;
+  let de;
 
-    it('should be created', () => {
-        expect(component).toBeTruthy();
-      });
+  const dialogsFormServiceMock = {
+    confirm: vi.fn().mockReturnValue(of({})),
+    openDialogsForm: vi.fn(),
+    closeDialogsForm: vi.fn(),
+    showErrorMessage: vi.fn()
+  };
 
-    // test getResource()
-    /*
+  const stateServiceMock = {
+    configuration: { parentDomain: 'parent.domain', code: 'planet_code' }
+  };
+
+  const userServiceMock = {
+    get: vi.fn().mockReturnValue({ isUserAdmin: true, name: 'user' }),
+    shelf: { resourceIds: [] }
+  };
+
+  const resourcesServiceMock = {
+    requestResourcesUpdate: vi.fn(),
+    resourcesListener: vi.fn().mockReturnValue(of([])),
+    isActiveResourceFetch: false
+  };
+
+  const couchServiceMock = {
+    get: vi.fn().mockReturnValue(of({}))
+  };
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ ResourcesViewComponent ],
+      providers: [
+        { provide: HttpClient, useValue: HttpTestingController},
+        { provide: DialogsFormService, useValue: dialogsFormServiceMock },
+        { provide: StateService, useValue: stateServiceMock },
+        { provide: UserService, useValue: userServiceMock },
+        { provide: ResourcesService, useValue: resourcesServiceMock },
+        PlanetMessageService,
+        DeviceInfoService,
+        { provide: CouchService, useValue: couchServiceMock },
+        { provide: Router, useValue: { navigate: vi.fn() } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              data: { parent: {} }
+            },
+            paramMap: of({ get: () => 'id' })
+          }
+        }
+      ]
+    });
+    fixture = TestBed.createComponent(ResourcesViewComponent);
+    component = fixture.componentInstance;
+    de = fixture.debugElement;
+    statusElement = de.nativeElement.querySelector('.km-resource-view img');
+    testimage = { filename: 'scenery.png', id: 'scenery.png', mediaType: 'img',
+      attachments: { 'scenery.png': { content_type: 'application/image' } } };
+  });
+
+  it('should be created', () => {
+    expect(component).toBeTruthy();
+  });
+
+
+  /* TODO: Update tests to use vitest spies
     it('should make a get request to couchService', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage.id));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(of(testimage.id));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -52,7 +96,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(of(testimage));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(of(testimage));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();
@@ -61,7 +105,7 @@ describe('ResourcesViewComponent', () => {
       });
 
     it('should There was a problem getResource', () => {
-        getSpy = spyOn(couchService, 'get').and.returnValue(Rx.Observable.throw({ Error }));
+        getSpy = vi.spyOn(couchServiceMock, 'get').and.returnValue(throwError({ Error }));
         component.getResource(testimage.id);
         fixture.whenStable().then(() => {
           fixture.detectChanges();

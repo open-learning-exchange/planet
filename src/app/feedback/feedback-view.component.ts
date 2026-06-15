@@ -15,7 +15,7 @@ import { trackById } from '../shared/table-helpers';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgClass, DatePipe, KeyValuePipe } from '@angular/common';
+import { NgClass, DatePipe, KeyValuePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -23,14 +23,32 @@ import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 @Component({
   templateUrl: './feedback-view.component.html',
   styleUrls: ['./feedback-view.scss'],
   imports: [
-    MatToolbar, MatIconButton, RouterLink, MatIcon, MatToolbarRow, NgIf,
-    MatTooltip, MatIconAnchor, AuthorizedRolesDirective, MatButton, MatFormField, MatLabel, MatInput,
-    FormsModule, MatAnchor, MatCard, MatCardContent, NgFor, NgClass, DatePipe, KeyValuePipe
+    MatToolbar,
+    MatIconButton,
+    RouterLink,
+    MatIcon,
+    MatToolbarRow,
+    MatTooltip,
+    MatIconAnchor,
+    AuthorizedRolesDirective,
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatAnchor,
+    MatCard,
+    MatCardContent,
+    NgClass,
+    DatePipe,
+    KeyValuePipe,
+    TruncateTextPipe
   ]
 })
 export class FeedbackViewComponent implements OnInit, OnDestroy {
