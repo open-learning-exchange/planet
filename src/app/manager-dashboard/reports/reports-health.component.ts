@@ -8,7 +8,7 @@ import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
-import { NgIf, NgFor } from '@angular/common';
+
 import { LabelComponent } from '../../shared/label.component';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
@@ -35,7 +35,7 @@ import { ReportsDetailActivitiesComponent } from './reports-detail-activities.co
       align-self: center;
     }
   `],
-  imports: [NgIf, NgFor, LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
+  imports: [LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
 })
 export class ReportsHealthComponent implements OnChanges {
 

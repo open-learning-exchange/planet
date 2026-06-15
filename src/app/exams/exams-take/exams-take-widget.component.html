@@ -1,90 +1,114 @@
-<ng-container [ngSwitch]="question?.type">
-  <mat-form-field class="full-width" *ngSwitchCase="'input'">
-    <mat-label i18n>Enter answer here</mat-label>
-    <input matInput [formControl]="answer">
-  </mat-form-field>
-  <mat-form-field *ngSwitchCase="'textarea'" class="full-width mat-form-field-type-no-underline">
-    <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
-  </mat-form-field>
-  <mat-radio-group *ngSwitchCase="'select'" class="question-list" [formControl]="answer">
-    <div class="option-card" *ngFor="let option of question?.choices" [class.selected]="isSelectOptionSelected(option)" (click)="selectOption(option)">
-      <mat-radio-button [value]="option">
-        <span class="multiple-choice-text">{{option.text}}</span>
-      </mat-radio-button>
-      <mat-icon class="option-check" *ngIf="isSelectOptionSelected(option)">check</mat-icon>
-    </div>
-    <ng-container *ngIf="question?.hasOtherOption">
-      <div class="option-card" [class.selected]="isOtherSelected()" (click)="selectOtherRadio()">
-        <mat-radio-button [value]="currentOtherOption">
-          <span class="multiple-choice-text" i18n>Other: </span>
-        </mat-radio-button>
-        <div class="other-option-flex">
-          <input
-            matInput
-            #singleOtherInput
-            class="other-option-input"
-            [(ngModel)]="currentOtherOption.text"
-            (ngModelChange)="updateOtherText()"
-            (focus)="selectOtherRadio()"
-            (click)="$event.stopPropagation()">
+
+@switch (question?.type) {
+  @case ('input') {
+    <mat-form-field class="full-width">
+      <mat-label i18n>Enter answer here</mat-label>
+      <input matInput [formControl]="answer">
+    </mat-form-field>
+  }
+  @case ('textarea') {
+    <mat-form-field class="full-width mat-form-field-type-no-underline">
+      <planet-markdown-textbox [formControl]="answer"></planet-markdown-textbox>
+    </mat-form-field>
+  }
+  @case ('select') {
+    <mat-radio-group class="question-list" [formControl]="answer">
+      @for (option of question?.choices; track option) {
+        <div class="option-card" [class.selected]="isSelectOptionSelected(option)" (click)="selectOption(option)">
+          <mat-radio-button [value]="option">
+            <span class="multiple-choice-text">{{option.text}}</span>
+          </mat-radio-button>
+          @if (isSelectOptionSelected(option)) {
+            <mat-icon class="option-check">check</mat-icon>
+          }
         </div>
-        <mat-icon class="option-check" *ngIf="isOtherSelected()">check</mat-icon>
-      </div>
-    </ng-container>
-  </mat-radio-group>
-  <div *ngSwitchCase="'selectMultiple'" class="question-list">
-    <span i18n>
+      }
+      @if (question?.hasOtherOption) {
+        <div class="option-card" [class.selected]="isOtherSelected()" (click)="selectOtherRadio()">
+          <mat-radio-button [value]="currentOtherOption">
+            <span class="multiple-choice-text" i18n>Other: </span>
+          </mat-radio-button>
+          <div class="other-option-flex">
+            <input
+              matInput
+              #singleOtherInput
+              class="other-option-input"
+              [(ngModel)]="currentOtherOption.text"
+              (ngModelChange)="updateOtherText()"
+              (focus)="selectOtherRadio()"
+              (click)="$event.stopPropagation()">
+          </div>
+          @if (isOtherSelected()) {
+            <mat-icon class="option-check">check</mat-icon>
+          }
+        </div>
+      }
+    </mat-radio-group>
+  }
+  @case ('selectMultiple') {
+    <div class="question-list">
+      <span i18n>
       {examType, select, survey {You can choose one or more answers.} exam {There are one or more correct answers. Please choose all correct answers.}}
     </span>
-    <div class="option-card" *ngFor="let option of question?.choices" [class.selected]="checkboxState[option.id]" (click)="toggleMultipleOption(option)">
-      <mat-checkbox [value]="option" (change)="setCheckboxAnswer($event, option)" [checked]="checkboxState[option.id]" (click)="$event.stopPropagation()">
-        <span class="multiple-choice-text">{{option.text}}</span>
-      </mat-checkbox>
-      <mat-icon class="option-check" *ngIf="checkboxState[option.id]">check</mat-icon>
-    </div>
-    <ng-container *ngIf="question?.hasOtherOption">
-      <div class="option-card" [class.selected]="checkboxState.other" (click)="toggleOtherCheckbox()">
-        <mat-checkbox [checked]="checkboxState.other" (change)="toggleOtherMultiple($event)" (click)="$event.stopPropagation()">
-          <span class="multiple-choice-text" i18n>Other: </span>
-        </mat-checkbox>
-        <div class="other-option-flex">
-          <input
-            matInput
-            #multipleOtherInput
-            class="other-option-input"
-            [(ngModel)]="currentOtherOption.text"
-            (ngModelChange)="updateOtherText()"
-            (focus)="ensureOtherCheckboxSelected()"
-            (click)="$event.stopPropagation()">
+      @for (option of question?.choices; track option) {
+        <div class="option-card" [class.selected]="checkboxState[option.id]" (click)="toggleMultipleOption(option)">
+          <mat-checkbox [value]="option" (change)="setCheckboxAnswer($event, option)" [checked]="checkboxState[option.id]" (click)="$event.stopPropagation()">
+            <span class="multiple-choice-text">{{option.text}}</span>
+          </mat-checkbox>
+          @if (checkboxState[option.id]) {
+            <mat-icon class="option-check">check</mat-icon>
+          }
         </div>
-        <mat-icon class="option-check" *ngIf="checkboxState.other">check</mat-icon>
-      </div>
-    </ng-container>
-  </div>
-  <ng-container *ngSwitchCase="'ratingScale'">
-    <div class="rating-scale-keypad rating-scale-keypad--grid" *ngIf="(question?.scaleMax ?? 9) === 9; else ratingScaleRow">
-      <button
-        type="button"
-        mat-raised-button
-        class="rating-scale-button rating-scale-button--phone"
-        *ngFor="let num of ratingScaleNumbers"
-        [class.selected]="answer.value === num.toString()"
-        [attr.data-rating]="num"
-        (click)="setRatingScaleAnswer(num)">
-        {{num}}
-      </button>
+      }
+      @if (question?.hasOtherOption) {
+        <div class="option-card" [class.selected]="checkboxState.other" (click)="toggleOtherCheckbox()">
+          <mat-checkbox [checked]="checkboxState.other" (change)="toggleOtherMultiple($event)" (click)="$event.stopPropagation()">
+            <span class="multiple-choice-text" i18n>Other: </span>
+          </mat-checkbox>
+          <div class="other-option-flex">
+            <input
+              matInput
+              #multipleOtherInput
+              class="other-option-input"
+              [(ngModel)]="currentOtherOption.text"
+              (ngModelChange)="updateOtherText()"
+              (focus)="ensureOtherCheckboxSelected()"
+              (click)="$event.stopPropagation()">
+          </div>
+          @if (checkboxState.other) {
+            <mat-icon class="option-check">check</mat-icon>
+          }
+        </div>
+      }
     </div>
-    <ng-template #ratingScaleRow>
-      <div class="rating-scale-keypad rating-scale-keypad--row">
-        <button
-          type="button"
-          class="rating-scale-button rating-scale-button--line"
-          *ngFor="let num of ratingScaleNumbers"
-          [class.selected]="answer.value === num.toString()"
-          (click)="setRatingScaleAnswer(num)">
-          {{num}}
-        </button>
+  }
+  @case ('ratingScale') {
+    @if ((question?.scaleMax ?? 9) === 9) {
+      <div class="rating-scale-keypad rating-scale-keypad--grid">
+        @for (num of ratingScaleNumbers; track num) {
+          <button
+            type="button"
+            mat-raised-button
+            class="rating-scale-button rating-scale-button--phone"
+            [class.selected]="answer.value === num.toString()"
+            [attr.data-rating]="num"
+            (click)="setRatingScaleAnswer(num)">
+            {{num}}
+          </button>
+        }
       </div>
-    </ng-template>
-  </ng-container>
-</ng-container>
+    } @else {
+      <div class="rating-scale-keypad rating-scale-keypad--row">
+        @for (num of ratingScaleNumbers; track num) {
+          <button
+            type="button"
+            class="rating-scale-button rating-scale-button--line"
+            [class.selected]="answer.value === num.toString()"
+            (click)="setRatingScaleAnswer(num)">
+            {{num}}
+          </button>
+        }
+      </div>
+    }
+  }
+}

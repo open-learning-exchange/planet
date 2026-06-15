@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
-import { NgIf, NgClass, NgFor, NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -46,13 +46,17 @@ export class PlanetStepListService {
     <ng-template>
       <ng-content></ng-content>
       <ng-container matListItemMeta>
-        <button mat-icon-button type="button" *ngIf="!isFirst" (click)="moveStep($event,-1)"><mat-icon>arrow_upward</mat-icon></button>
-        <button mat-icon-button type="button" *ngIf="!isLast" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
+        @if (!isFirst) {
+          <button mat-icon-button type="button" (click)="moveStep($event,-1)"><mat-icon>arrow_upward</mat-icon></button>
+        }
+        @if (!isLast) {
+          <button mat-icon-button type="button" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
+        }
         <button mat-icon-button type="button" (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
       </ng-container>
     </ng-template>
-  `,
-  imports: [MatListItemMeta, NgIf, MatIconButton, MatIcon]
+    `,
+  imports: [MatListItemMeta, MatIconButton, MatIcon]
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -75,7 +79,7 @@ export class PlanetStepListItemComponent {
   templateUrl: './planet-step-list.component.html',
   styleUrls: ['./planet-step-list.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [NgIf, MatNavList, NgClass, NgFor, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
+  imports: [MatNavList, NgClass, MatListItem, NgTemplateOutlet, MatButton, MatIcon]
 })
 export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
