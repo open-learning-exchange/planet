@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { isAcceptableFile, normalizedContentType, safeAttachmentName, truncateText } from '../utils';
@@ -34,7 +34,7 @@ export interface AttachmentInputState {
   selector: 'planet-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: [ './file-upload.component.scss' ],
-  imports: [ NgIf, NgFor, MatIcon, MatIconButton ]
+  imports: [MatIcon, MatIconButton]
 })
 export class FileUploadComponent implements OnChanges, OnDestroy {
 

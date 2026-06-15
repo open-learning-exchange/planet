@@ -4,14 +4,19 @@ import { ResourcesComponent } from '../../resources/resources.component';
 import { ResourcesAddComponent } from '../../resources/resources-add.component';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgSwitch, NgSwitchCase, NgIf } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: 'dialogs-add-resources.component.html',
   imports: [
-    CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, ResourcesComponent, ResourcesAddComponent, MatDialogActions,
-    NgIf, MatButton, MatDialogClose
+    CdkScrollable,
+    MatDialogContent,
+    ResourcesComponent,
+    ResourcesAddComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose
   ]
 })
 export class DialogsAddResourcesComponent implements AfterViewInit {

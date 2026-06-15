@@ -14,7 +14,7 @@ import {
   PlanetStepListFormDirective,
   PlanetStepListActionsDirective
 } from '../../shared/forms/planet-step-list.component';
-import { NgFor, NgIf } from '@angular/common';
+
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { CoursesIconComponent } from '../courses-icon.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
@@ -38,11 +38,30 @@ interface CoursesStepForm {
   styleUrls: ['courses-step.scss'],
   encapsulation: ViewEncapsulation.None,
   imports: [
-    PlanetStepListComponent, NgFor, PlanetStepListItemComponent, MatListItemTitle, MatListItemMeta,
-    NgIf, CoursesIconComponent, PlanetStepListNumberDirective, PlanetStepListFormDirective,
-    FormsModule, ReactiveFormsModule, MatFormField, MatLabel, MatInput, PlanetMarkdownTextboxComponent,
-    MatError, FormErrorMessagesComponent, MatChipSet, MatChip, RouterLink, MatChipRemove, MatIcon,
-    PlanetStepListActionsDirective, MatAnchor, MatButton, TruncateTextPipe
+    PlanetStepListComponent,
+    PlanetStepListItemComponent,
+    MatListItemTitle,
+    MatListItemMeta,
+    CoursesIconComponent,
+    PlanetStepListNumberDirective,
+    PlanetStepListFormDirective,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    PlanetMarkdownTextboxComponent,
+    MatError,
+    FormErrorMessagesComponent,
+    MatChipSet,
+    MatChip,
+    RouterLink,
+    MatChipRemove,
+    MatIcon,
+    PlanetStepListActionsDirective,
+    MatAnchor,
+    MatButton,
+    TruncateTextPipe
   ]
 })
 export class CoursesStepComponent implements OnDestroy {

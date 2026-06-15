@@ -10,7 +10,7 @@ import { UserService } from '../user.service';
 import { DialogField, DialogFormGroupInput, DialogsFormData } from './dialogs-form.service';
 import { MatIcon } from '@angular/material/icon';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgFor, NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
@@ -43,11 +43,36 @@ import { SubmitDirective } from '../submit.directive';
     }
   `],
   imports: [
-    FormsModule, ReactiveFormsModule, MatDialogTitle, MatIcon, CdkScrollable, MatDialogContent, NgFor,
-    NgClass, NgIf, MatCheckbox, MatTooltip, MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent,
-    MatIconButton, MatSuffix, MatSelect, MatOption, MatRadioGroup, MatRadioButton, PlanetRatingStarsComponent,
-    PlanetMarkdownTextboxComponent, AuthorizedRolesDirective, MatButton, MatDatepickerInput, MatDatepickerToggle,
-    MatDatepicker, MatSlideToggle, MatDialogActions, SubmitDirective
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogTitle,
+    MatIcon,
+    CdkScrollable,
+    MatDialogContent,
+    NgClass,
+    MatCheckbox,
+    MatTooltip,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatIconButton,
+    MatSuffix,
+    MatSelect,
+    MatOption,
+    MatRadioGroup,
+    MatRadioButton,
+    PlanetRatingStarsComponent,
+    PlanetMarkdownTextboxComponent,
+    AuthorizedRolesDirective,
+    MatButton,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatDatepicker,
+    MatSlideToggle,
+    MatDialogActions,
+    SubmitDirective
   ]
 })
 export class DialogsFormComponent {
