@@ -38,7 +38,7 @@ export class PublicSurveyComponent implements OnInit {
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
-      Validators.min(1900),
+      Validators.min(new Date().getFullYear() - 130),
       Validators.max(new Date().getFullYear() - 1),
       Validators.pattern(/^\d{4}$/)
     ]),
@@ -141,7 +141,7 @@ export class PublicSurveyComponent implements OnInit {
     return this.isComplete && this.demographicsForm.valid && !this.isSubmitting;
   }
 
-  private getDemographics(): PublicSurveyDemographics | undefined {
+  private getDemographics(): PublicSurveyDemographics {
     const { birthYear, gender } = this.demographicsForm.getRawValue();
     const user: PublicSurveyDemographics = {};
 
@@ -152,6 +152,6 @@ export class PublicSurveyComponent implements OnInit {
       user.gender = gender;
     }
 
-    return Object.keys(user).length > 0 ? user : undefined;
+    return user;
   }
 }
