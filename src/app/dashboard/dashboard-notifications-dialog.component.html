@@ -1,20 +1,23 @@
 <p mat-dialog-title><ng-container i18n>You have</ng-container> {{surveysCount}} <ng-container i18n>{ surveysCount, plural, =1 {survey} other {surveys} } to complete</ng-container></p>
 <mat-dialog-content>
   <mat-action-list>
-    <button mat-list-item
-      *ngFor="let survey of surveys; last as last"
-      [routerLink]="[ myDashboardRoute, 'mySurveys', 'exam', { submissionId: survey._id, questionNum: survey.nextQuestion, status: 'pending', mode: 'take' } ]"
-      mat-dialog-close>
-      <span matListItemTitle>{{ survey.parent.name }}</span>
-      <ng-container matListItemMeta>
-        <span class="toolbar-fill"></span>
-        <span class="completion-rate">
-          {{ survey.completedAnswers / survey.parent.questions.length | percent }}
-          <span class="completion-label"><ng-container i18n>Complete</ng-container></span>
-        </span>
-        <mat-divider *ngIf="!last"></mat-divider>
-      </ng-container>
-    </button>
+    @for (survey of surveys; track survey; let last = $last) {
+      <button mat-list-item
+        [routerLink]="[ myDashboardRoute, 'mySurveys', 'exam', { submissionId: survey._id, questionNum: survey.nextQuestion, status: 'pending', mode: 'take' } ]"
+        mat-dialog-close>
+        <span matListItemTitle>{{ survey.parent.name }}</span>
+        <ng-container matListItemMeta>
+          <span class="toolbar-fill"></span>
+          <span class="completion-rate">
+            {{ survey.completedAnswers / survey.parent.questions.length | percent }}
+            <span class="completion-label"><ng-container i18n>Complete</ng-container></span>
+          </span>
+          @if (!last) {
+            <mat-divider></mat-divider>
+          }
+        </ng-container>
+      </button>
+    }
   </mat-action-list>
 </mat-dialog-content>
 <mat-dialog-actions>

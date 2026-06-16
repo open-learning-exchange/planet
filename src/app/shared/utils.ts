@@ -93,8 +93,6 @@ export const styleVariables: any = {
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
-export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
-
 export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
@@ -109,7 +107,7 @@ export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   return keyToArray(iterable.next(), []);
 };
 
-export const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
+const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
 
 export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
 

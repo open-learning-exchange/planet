@@ -11,7 +11,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
-import { NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+
 import { MatOption } from '@angular/material/autocomplete';
 import { TeamsComponent } from '../teams/teams.component';
 import { MatInput } from '@angular/material/input';
@@ -56,9 +56,7 @@ interface TeamSelectionEvent {
     MatLabel,
     MatSelect,
     FormsModule,
-    NgFor,
     MatOption,
-    NgIf,
     ReactiveFormsModule,
     MatStepper,
     MatStep,
@@ -67,12 +65,9 @@ interface TeamSelectionEvent {
     MatError,
     FormErrorMessagesComponent,
     MatSelectTrigger,
-    NgSwitch,
-    NgSwitchCase,
     MatIcon,
-    NgSwitchDefault,
     MatDialogActions,
-    MatButton,
+    MatButton
   ],
 })
 export class CommunityLinkDialogComponent {

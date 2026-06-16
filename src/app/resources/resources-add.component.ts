@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
@@ -20,7 +20,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
-import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -69,11 +69,35 @@ interface ResourceFormModel {
   templateUrl: './resources-add.component.html',
   styleUrls: ['./resources-add.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, ReactiveFormsModule,
-    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileUploadComponent,
-    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe,
-    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription
+    MatToolbar,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    NgClass,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent,
+    MatSelect,
+    MatOption,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    FileUploadComponent,
+    MatIconButton,
+    MatTooltip,
+    MatCheckbox,
+    MatButton,
+    SubmitDirective,
+    AsyncPipe,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription
   ]
 })
 

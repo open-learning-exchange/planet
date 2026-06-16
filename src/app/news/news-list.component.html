@@ -1,9 +1,11 @@
 <div class="news-list-content">
   <ng-content></ng-content>
-  <ng-container *ngIf="replyViewing._id!=='root'">
+  @if (replyViewing._id!=='root') {
     <div class="action-buttons">
       <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
-      <button mat-stroked-button type="button" *ngIf="replyViewing.doc.replyTo && replyViewing.doc.replyTo !== 'root'" (click)="showPreviousReplies()" i18n>Show previous replies</button>
+      @if (replyViewing.doc.replyTo && replyViewing.doc.replyTo !== 'root') {
+        <button mat-stroked-button type="button" (click)="showPreviousReplies()" i18n>Show previous replies</button>
+      }
     </div>
     <planet-news-list-item class="main-message"
       [item]="replyViewing"
@@ -21,8 +23,8 @@
     </planet-news-list-item>
     <mat-divider></mat-divider>
     <p i18n>Replies ({{ totalReplies }}):</p>
-  </ng-container>
-  <ng-container *ngFor="let item of displayedItems; trackBy: trackById">
+  }
+  @for (item of displayedItems; track trackById($index, item)) {
     <div [attr.id]="'news-' + item._id">
       <planet-news-list-item
         [item]="item"
@@ -37,19 +39,23 @@
         (changeLabels)="changeLabels($event)">
       </planet-news-list-item>
     </div>
-  </ng-container>
-  <ng-container *ngIf="replyViewing._id !== 'root'">
+  }
+  @if (replyViewing._id !== 'root') {
     <div #anchor class="loading-anchor"></div>
     <div class="spinner-container" style="text-align: center;">
-      <mat-spinner *ngIf="isLoadingMore"></mat-spinner>
+      @if (isLoadingMore) {
+        <mat-spinner></mat-spinner>
+      }
     </div>
-  </ng-container>
+  }
 </div>
-<mat-paginator *ngIf="replyViewing._id === 'root' && totalItems > 0"
-  [length]="totalItems"
-  [pageSize]="pageSize"
-  [pageIndex]="pageIndex"
-  [pageSizeOptions]="pageSizeOptions"
-  (page)="onPageChange($event)"
-  showFirstLastButtons>
-</mat-paginator>
+@if (replyViewing._id === 'root' && totalItems > 0) {
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+}

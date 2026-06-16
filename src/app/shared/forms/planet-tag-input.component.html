@@ -1,20 +1,34 @@
-<ng-container *ngIf="helperText && (mode !== 'add' || value.length === 0)">
+@if (helperText && (mode !== 'add' || value.length === 0)) {
   <planet-tag-selected-input [selectedIds]="value" [allTags]="tags"></planet-tag-selected-input>
-</ng-container>
+}
 
-<mat-chip-set *ngIf="helperText && mode === 'add' && value.length > 0" aria-label="Selected collections" i18n-aria-label>
-  <mat-chip *ngFor="let tagId of value" [removable]="!disabled" (removed)="removeTag(tagId)">
-    {{ tagName(tagId) }}
-    <button matChipRemove type="button" *ngIf="!disabled" i18n-aria-label aria-label="Remove collection">
-      <mat-icon>cancel</mat-icon>
-    </button>
-  </mat-chip>
-</mat-chip-set>
+@if (helperText && mode === 'add' && value.length > 0) {
+  <mat-chip-set aria-label="Selected collections" i18n-aria-label>
+    @for (tagId of value; track tagId) {
+      <mat-chip [removable]="!disabled" (removed)="removeTag(tagId)">
+        {{ tagName(tagId) }}
+        @if (!disabled) {
+          <button matChipRemove type="button" i18n-aria-label aria-label="Remove collection">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+      </mat-chip>
+    }
+  </mat-chip-set>
+}
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">
-  <span [ngSwitch]="labelType" [ngClass]="{'mat-title': largeFont}">
-    <ng-container i18n *ngSwitchCase="'filter'" >Collections</ng-container>
-    <ng-container i18n *ngSwitchCase="'add'">Add Collections</ng-container>
-    <ng-container i18n *ngSwitchCase="'change'">Change Collections</ng-container>
+  <span [ngClass]="{'mat-title': largeFont}">
+    @switch (labelType) {
+      @case ('filter') {
+        <ng-container i18n >Collections</ng-container>
+      }
+      @case ('add') {
+        <ng-container i18n>Add Collections</ng-container>
+      }
+      @case ('change') {
+        <ng-container i18n>Change Collections</ng-container>
+      }
+    }
   </span>
 </button>

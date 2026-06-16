@@ -12,7 +12,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatCard } from '@angular/material/card';
-import { NgIf, NgClass, NgFor, NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
@@ -44,9 +44,20 @@ export class DashboardTileTitleComponent {
   templateUrl: './dashboard-tile.component.html',
   styleUrls: ['./dashboard-tile.scss'],
   imports: [
-    MatCard, NgIf, RouterLink, forwardRef(() => DashboardTileTitleComponent), MatIcon,
-    CdkDropList, NgClass, NgFor, AuthorizedRolesDirective, CdkDrag, MatTooltip, MatBadge,
-    NgStyle, MatIconButton, PlanetLoadingSpinnerComponent, TruncateTextPipe
+    MatCard,
+    RouterLink,
+    forwardRef(() => DashboardTileTitleComponent),
+    MatIcon,
+    CdkDropList,
+    NgClass,
+    AuthorizedRolesDirective,
+    CdkDrag,
+    MatTooltip,
+    MatBadge,
+    NgStyle,
+    MatIconButton,
+    PlanetLoadingSpinnerComponent,
+    TruncateTextPipe
   ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {

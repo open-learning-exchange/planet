@@ -4,13 +4,13 @@ import { languages } from '../shared/languages';
 import { Router } from '@angular/router';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor } from '@angular/common';
+
 
 @Component({
   selector: 'planet-language',
   templateUrl: './planet-language.component.html',
   styleUrls: ['./planet-language.scss'],
-  imports: [MatButton, MatMenuTrigger, MatIcon, NgIf, MatMenu, NgFor, MatMenuItem]
+  imports: [MatButton, MatMenuTrigger, MatIcon, MatMenu, MatMenuItem]
 })
 export class PlanetLanguageComponent implements OnInit {
 

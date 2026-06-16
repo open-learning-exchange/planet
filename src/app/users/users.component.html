@@ -1,31 +1,38 @@
 <mat-toolbar>
-  <ng-container *ngIf="deviceType === deviceTypes.DESKTOP; else mobileView">
-    <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
+  @if (deviceType === deviceTypes.DESKTOP) {
+    @if (!isDialog) {
+      <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+    }
     <span i18n>Members</span>
     <span class="toolbar-fill"></span>
     <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
     <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
-  </ng-container>
-
-  <ng-template #mobileView>
-    <mat-toolbar-row>
-      <button mat-icon-button (click)="back()" *ngIf="!isDialog"><mat-icon>arrow_back</mat-icon></button>
-      <span i18n>Members</span>
-      <span class="toolbar-fill"></span>
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
-    </mat-toolbar-row>
-    <ng-container *ngIf="this.showFiltersRow">
-      <mat-toolbar-row *ngIf="planetType !== 'community' && !hideChildren">
-        <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
-      </mat-toolbar-row>
+  } @else {
+    <ng-container>
       <mat-toolbar-row>
-        <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
+        @if (!isDialog) {
+          <button mat-icon-button (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+        }
+        <span i18n>Members</span>
+        <span class="toolbar-fill"></span>
+        <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
       </mat-toolbar-row>
+      @if (this.showFiltersRow) {
+        @if (planetType !== 'community' && !hideChildren) {
+          <mat-toolbar-row>
+            <ng-container *ngTemplateOutlet="tableAssociation"></ng-container>
+          </mat-toolbar-row>
+        }
+        <mat-toolbar-row>
+          <ng-container *ngTemplateOutlet="filterGroup"></ng-container>
+        </mat-toolbar-row>
+      }
     </ng-container>
-  </ng-template>
+  }
+
 
   <ng-template #tableAssociation>
-    <ng-container *ngIf="planetType !== 'community' && !hideChildren">
+    @if (planetType !== 'community' && !hideChildren) {
       <mat-button-toggle-group
         class="margin-lr-5 font-size-1"
         (change)="changePlanetFilter(filterGroup.value)"
@@ -40,12 +47,14 @@
       <mat-form-field class="font-size-1">
         <mat-label i18n>Children</mat-label>
         <mat-select [value]="tableState.selectedChild" (selectionChange)="changePlanetFilter('child', $event.value)">
-          <mat-option *ngFor="let child of children" [value]="child.doc">
-            {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
-          </mat-option>
+          @for (child of children; track child) {
+            <mat-option [value]="child.doc">
+              {{ child.nameDoc ? child.nameDoc.name : child.doc.name }}
+            </mat-option>
+          }
         </mat-select>
       </mat-form-field>
-    </ng-container>
+    }
   </ng-template>
 
   <ng-template #filterGroup>
@@ -53,7 +62,9 @@
       <mat-label i18n>Filter by role</mat-label>
       <mat-select [(value)]="filteredRole" (selectionChange)="onFilterChange($event.value)">
         <mat-option i18n value="All">All</mat-option>
-        <mat-option *ngFor="let role of allRolesList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
+        @for (role of allRolesList; track role) {
+          <mat-option [value]="role"><planet-role [role]="role"></planet-role></mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
@@ -67,24 +78,32 @@
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" *ngIf="!isDialog">
-    <span class="toolbar-fill"></span>
-    <div class="margin-lr-3" *ngIf="tableState.filterType==='local'">
-      <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form" *ngIf="isUserAdmin">
-        <mat-form-field style="width:256px" class="mdc-toolbar-input">
-          <mat-label i18n>Set roles of selected</mat-label>
-          <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
-            <mat-option disabled="disabled" class="hide-checkbox">
-              <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
-              <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
-            </mat-option>
-            <mat-option *ngFor="let role of roleList" [value]="role"><planet-role [role]="role"></planet-role></mat-option>
-          </mat-select>
-        </mat-form-field>
-        <button mat-button class="margin-lr-3" type="submit" [disabled]="!usersTable || !usersTable.selection.selected.length || selectedRoles.length === 0 || tableState.isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
-      </form>
-    </div>
-  </mat-toolbar>
+  @if (!isDialog) {
+    <mat-toolbar class="primary-color font-size-1">
+      <span class="toolbar-fill"></span>
+      @if (tableState.filterType==='local') {
+        <div class="margin-lr-3">
+          @if (isUserAdmin) {
+            <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form">
+              <mat-form-field style="width:256px" class="mdc-toolbar-input">
+                <mat-label i18n>Set roles of selected</mat-label>
+                <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
+                  <mat-option disabled="disabled" class="hide-checkbox">
+                    <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
+                    <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
+                  </mat-option>
+                  @for (role of roleList; track role) {
+                    <mat-option [value]="role"><planet-role [role]="role"></planet-role></mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button mat-button class="margin-lr-3" type="submit" [disabled]="!usersTable || !usersTable.selection.selected.length || selectedRoles.length === 0 || tableState.isOnlyManagerSelected"><mat-icon>library_add</mat-icon><span i18n>Set Roles</span></button>
+            </form>
+          }
+        </div>
+      }
+    </mat-toolbar>
+  }
 
   <planet-users-table #table [users]="users" [search]="searchValue" [filter]="filter" [(tableState)]="tableState" containerClass="view-container view-full-height view-table" [isDialog]="isDialog" [isLoading]="isLoading"></planet-users-table>
 </div>

@@ -15,13 +15,15 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="view-container view-full-height">
-    <mat-expansion-panel *ngFor="let planet of planets">
-      <mat-expansion-panel-header>
-        <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
-      </mat-expansion-panel-header>
-      <div class="responsive-table">
-        <planet-pending-table [data]="planet.children" (requestUpdate)="getCommunityList()"></planet-pending-table>
-      </div>
-    </mat-expansion-panel>
+    @for (planet of planets; track planet) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{planet.name}} ({{planet.children.length}})</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="responsive-table">
+          <planet-pending-table [data]="planet.children" (requestUpdate)="getCommunityList()"></planet-pending-table>
+        </div>
+      </mat-expansion-panel>
+    }
   </div>
 </div>

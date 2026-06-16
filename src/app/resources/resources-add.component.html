@@ -1,169 +1,206 @@
-<mat-toolbar *ngIf="!isDialog">
-  <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
-  <span *ngIf="pageType" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</span>
-</mat-toolbar>
+@if (!isDialog) {
+  <mat-toolbar>
+    <a mat-icon-button routerLink="/resources"><mat-icon>arrow_back</mat-icon></a>
+    @if (pageType) {
+      <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</span>
+    }
+  </mat-toolbar>
+}
 
 <div [ngClass]="{'space-container':!isDialog}">
-  <mat-toolbar *ngIf="!isDialog" class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</mat-toolbar>
+  @if (!isDialog) {
+    <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</mat-toolbar>
+  }
   <div class="view-container view-full-height">
     <form [formGroup]="resourceForm" novalidate>
-
-        <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && detailsInvalid"
-          [expanded]="sectionsExpanded.details" (opened)="sectionsExpanded.details = true" (closed)="sectionsExpanded.details = false">
-          <mat-expansion-panel-header>
-            <mat-panel-title class="section-title"><span class="num">1</span><span i18n>Details</span></mat-panel-title>
-            <mat-panel-description class="section-hint" i18n>Title is required</mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="section-body">
-            <mat-form-field class="full-width">
-              <mat-label i18n>Title</mat-label>
-              <input matInput formControlName="title" required>
-              <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
+      <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && detailsInvalid"
+        [expanded]="sectionsExpanded.details" (opened)="sectionsExpanded.details = true" (closed)="sectionsExpanded.details = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="section-title"><span class="num">1</span><span i18n>Details</span></mat-panel-title>
+          <mat-panel-description class="section-hint" i18n>Title is required</mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="section-body">
+          <mat-form-field class="full-width">
+            <mat-label i18n>Title</mat-label>
+            <input matInput formControlName="title" required>
+            <mat-error><planet-form-error-messages [control]="resourceForm.controls.title"></planet-form-error-messages></mat-error>
+          </mat-form-field>
+          <div class="field-grid">
+            <mat-form-field>
+              <mat-label i18n>Author</mat-label>
+              <input matInput formControlName="author">
             </mat-form-field>
-            <div class="field-grid">
-              <mat-form-field>
-                <mat-label i18n>Author</mat-label>
-                <input matInput formControlName="author">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Year</mat-label>
-                <input matInput formControlName="year">
-              </mat-form-field>
-            </div>
-            <div class="full-width markdown-field">
-              <label for="resource-description" class="markdown-label" i18n>Description</label>
-              <planet-markdown-textbox id="resource-description" class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
-              <p class="mat-caption warn-text-color markdown-error" *ngIf="resourceForm.controls.description.touched && resourceForm.controls.description.invalid">
+            <mat-form-field>
+              <mat-label i18n>Year</mat-label>
+              <input matInput formControlName="year">
+            </mat-form-field>
+          </div>
+          <div class="full-width markdown-field">
+            <label for="resource-description" class="markdown-label" i18n>Description</label>
+            <planet-markdown-textbox id="resource-description" class="full-width" required="true" [formControl]="resourceForm.controls.description"></planet-markdown-textbox>
+            @if (resourceForm.controls.description.touched && resourceForm.controls.description.invalid) {
+              <p class="mat-caption warn-text-color markdown-error">
                 <planet-form-error-messages [control]="resourceForm.controls.description"></planet-form-error-messages>
               </p>
-            </div>
-            <div class="collections-field">
-              <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
-            </div>
+            }
           </div>
-        </mat-expansion-panel>
+          <div class="collections-field">
+            <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
+          </div>
+        </div>
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && fileInvalid"
-          [expanded]="sectionsExpanded.file" (opened)="sectionsExpanded.file = true" (closed)="sectionsExpanded.file = false">
-          <mat-expansion-panel-header>
-            <mat-panel-title class="section-title"><span class="num">2</span><mat-icon>cloud_upload</mat-icon><span i18n>File</span></mat-panel-title>
-            <mat-panel-description class="section-hint" i18n>Drag &amp; drop supported</mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="section-body">
-            <planet-file-upload #fileUpload (fileSelected)="onFileSelected($event)" (fileRemoved)="removeNewFile()"></planet-file-upload>
-            <label i18n class="warn-text-color file-error" *ngIf="resourceForm?.errors?.fileTooBig">File size cannot exceed more than 512 MB</label>
-            <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion && file" class="warn-text-color replace-warning">
+      <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && fileInvalid"
+        [expanded]="sectionsExpanded.file" (opened)="sectionsExpanded.file = true" (closed)="sectionsExpanded.file = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="section-title"><span class="num">2</span><mat-icon>cloud_upload</mat-icon><span i18n>File</span></mat-panel-title>
+          <mat-panel-description class="section-hint" i18n>Drag &amp; drop supported</mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="section-body">
+          <planet-file-upload #fileUpload (fileSelected)="onFileSelected($event)" (fileRemoved)="removeNewFile()"></planet-file-upload>
+          @if (resourceForm?.errors?.fileTooBig) {
+            <label i18n class="warn-text-color file-error">File size cannot exceed more than 512 MB</label>
+          }
+          @if (existingResource.doc?._attachments && !attachmentMarkedForDeletion && file) {
+            <div class="warn-text-color replace-warning">
               <p i18n>Warning: Existing Resource/file will be replaced</p>
             </div>
-            <div *ngIf="existingResource.doc?._attachments && !attachmentMarkedForDeletion" class="existing-file">
-              <label class="markdown-label"><b i18n>Existing Resource/file:</b></label>
-              <div class="existing-file-container">
-                <span class="filename">{{resourceFilename}}</span>
-                <button mat-icon-button type="button" [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove existing attachment" i18n-aria-label aria-label="Remove existing attachment">
-                  <mat-icon color="warn">delete</mat-icon>
-                </button>
-              </div>
+          }
+          @if (existingResource.doc?._attachments && !attachmentMarkedForDeletion) {
+            <div class="existing-file">
+            <label class="markdown-label"><b i18n>Existing Resource/file:</b></label>
+            <div class="existing-file-container">
+              <span class="filename">{{resourceFilename}}</span>
+              <button mat-icon-button type="button" [disabled]="disableDelete" (click)="markAttachmentForDeletion()" i18n-matTooltip matTooltip="Remove existing attachment" i18n-aria-label aria-label="Remove existing attachment">
+                <mat-icon color="warn">delete</mat-icon>
+              </button>
             </div>
-            <div class="field-grid open-fields">
+            </div>
+          }
+          <div class="field-grid open-fields">
+            <mat-form-field>
+              <mat-label i18n>Open</mat-label>
+              <mat-select formControlName="openWith">
+                @for (open of constants.openWith; track open) {
+                  <mat-option [value]="open.value">{{ open.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            @if (resourceForm.controls.openWhichFile.enabled) {
               <mat-form-field>
-                <mat-label i18n>Open</mat-label>
-                <mat-select formControlName="openWith">
-                  <mat-option *ngFor="let open of constants.openWith" [value]="open.value">{{ open.label }}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field *ngIf="resourceForm.controls.openWhichFile.enabled">
                 <mat-label i18n>Open Which File</mat-label>
                 <input type="text" matInput formControlName="openWhichFile" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let file of filteredZipFiles | async" [value]="file">{{file}}</mat-option>
+                  @for (file of filteredZipFiles | async; track file) {
+                    <mat-option [value]="file">{{file}}</mat-option>
+                  }
                 </mat-autocomplete>
                 <mat-error><planet-form-error-messages [control]="resourceForm.controls.openWhichFile"></planet-form-error-messages></mat-error>
               </mat-form-field>
-            </div>
-            <div class="checkbox-row">
-              <mat-checkbox *ngIf="showDownloadCheckbox" [disabled]="resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
-              <mat-checkbox *ngIf="privateFor" formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
-            </div>
+            }
           </div>
-        </mat-expansion-panel>
-
-        <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && classificationInvalid"
-          [expanded]="sectionsExpanded.classification" (opened)="sectionsExpanded.classification = true" (closed)="sectionsExpanded.classification = false">
-          <mat-expansion-panel-header>
-            <mat-panel-title class="section-title"><span class="num">3</span><span i18n>Classification</span></mat-panel-title>
-            <mat-panel-description class="section-hint" i18n>Subject &amp; level required</mat-panel-description>
-          </mat-expansion-panel-header>
-          <div class="section-body">
-            <div class="field-grid">
-              <mat-form-field>
-                <mat-label i18n>Subject(s)</mat-label>
-                <mat-select formControlName="subject" multiple required>
-                  <mat-option *ngFor="let subject of constants.subjectList" [value]="subject.value">{{subject.label}}</mat-option>
-                </mat-select>
-                <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Level(s)</mat-label>
-                <mat-select formControlName="level" multiple required>
-                  <mat-option *ngFor="let level of constants.levelList" [value]="level.value">{{level.label}}</mat-option>
-                </mat-select>
-                <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Language</mat-label>
-                <mat-select formControlName="language">
-                  <mat-option *ngFor="let lang of languages" [value]="lang.name">{{lang.name}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Media</mat-label>
-                <mat-select formControlName="medium">
-                  <mat-option *ngFor="let medium of constants.media" [value]="medium.value">{{ medium.label }}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Resource Type</mat-label>
-                <mat-select formControlName="resourceType">
-                  <mat-option *ngFor="let type of constants.resourceType" [value]="type.value">{{ type.label}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Resource For</mat-label>
-                <mat-select formControlName="resourceFor" multiple>
-                  <mat-option *ngFor="let role of constants.resourceFor" [value]="role.value">{{role.label}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
+          <div class="checkbox-row">
+            @if (showDownloadCheckbox) {
+              <mat-checkbox [disabled]="resourceForm?.errors?.fileTooBig" formControlName="isDownloadable" i18n>File downloadable</mat-checkbox>
+            }
+            @if (privateFor) {
+              <mat-checkbox formControlName="private" i18n-matTooltip matTooltip="If checked, resource will only be viewable by this team" i18n>Private Resource</mat-checkbox>
+            }
           </div>
-        </mat-expansion-panel>
+        </div>
+      </mat-expansion-panel>
 
-        <mat-expansion-panel class="section-panel"
-          [expanded]="sectionsExpanded.attribution" (opened)="sectionsExpanded.attribution = true" (closed)="sectionsExpanded.attribution = false">
-          <mat-expansion-panel-header>
-            <mat-panel-title class="section-title"><span class="num">4</span><span i18n>Attribution &amp; License</span></mat-panel-title>
-          </mat-expansion-panel-header>
-          <div class="section-body">
-            <div class="field-grid">
-              <mat-form-field>
-                <mat-label i18n>Publisher/Attribution</mat-label>
-                <input matInput formControlName="publisher">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Link to License</mat-label>
-                <input matInput formControlName="linkToLicense">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label i18n>Added By</mat-label>
-                <input matInput formControlName="addedBy" readonly>
-              </mat-form-field>
-            </div>
+      <mat-expansion-panel class="section-panel" [class.section-invalid]="submitAttempted && classificationInvalid"
+        [expanded]="sectionsExpanded.classification" (opened)="sectionsExpanded.classification = true" (closed)="sectionsExpanded.classification = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="section-title"><span class="num">3</span><span i18n>Classification</span></mat-panel-title>
+          <mat-panel-description class="section-hint" i18n>Subject &amp; level required</mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="section-body">
+          <div class="field-grid">
+            <mat-form-field>
+              <mat-label i18n>Subject(s)</mat-label>
+              <mat-select formControlName="subject" multiple required>
+                @for (subject of constants.subjectList; track subject) {
+                  <mat-option [value]="subject.value">{{subject.label}}</mat-option>
+                }
+              </mat-select>
+              <mat-error><planet-form-error-messages [control]="resourceForm.controls.subject"></planet-form-error-messages></mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Level(s)</mat-label>
+              <mat-select formControlName="level" multiple required>
+                @for (level of constants.levelList; track level) {
+                  <mat-option [value]="level.value">{{level.label}}</mat-option>
+                }
+              </mat-select>
+              <mat-error><planet-form-error-messages [control]="resourceForm.controls.level"></planet-form-error-messages></mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Language</mat-label>
+              <mat-select formControlName="language">
+            @for (lang of languages; track lang) {
+              <mat-option [value]="lang.name">{{lang.name}}</mat-option>
+            }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Media</mat-label>
+              <mat-select formControlName="medium">
+                @for (medium of constants.media; track medium) {
+                  <mat-option [value]="medium.value">{{ medium.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Resource Type</mat-label>
+              <mat-select formControlName="resourceType">
+                @for (type of constants.resourceType; track type) {
+                  <mat-option [value]="type.value">{{ type.label}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Resource For</mat-label>
+              <mat-select formControlName="resourceFor" multiple>
+                @for (role of constants.resourceFor; track role) {
+                  <mat-option [value]="role.value">{{role.label}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
-        </mat-expansion-panel>
+        </div>
+      </mat-expansion-panel>
 
+      <mat-expansion-panel class="section-panel"
+        [expanded]="sectionsExpanded.attribution" (opened)="sectionsExpanded.attribution = true" (closed)="sectionsExpanded.attribution = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title class="section-title"><span class="num">4</span><span i18n>Attribution &amp; License</span></mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="section-body">
+          <div class="field-grid">
+            <mat-form-field>
+              <mat-label i18n>Publisher/Attribution</mat-label>
+              <input matInput formControlName="publisher">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Link to License</mat-label>
+              <input matInput formControlName="linkToLicense">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Added By</mat-label>
+              <input matInput formControlName="addedBy" readonly>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-expansion-panel>
     </form>
-    <div class="actions-container inner-gaps by-column" *ngIf="!isDialog">
-      <button mat-raised-button type="button" [planetSubmit]="resourceForm.valid" color="primary" (click)="onSubmit()" i18n>Submit</button>
-      <button mat-stroked-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
-    </div>
+
+    @if (!isDialog) {
+      <div class="actions-container inner-gaps by-column">
+        <button mat-raised-button type="button" [planetSubmit]="resourceForm.valid" color="primary" (click)="onSubmit()" i18n>Submit</button>
+        <button mat-stroked-button type="button" color="warn" (click)="cancel()" i18n>Cancel</button>
+      </div>
+    }
   </div>
 </div>
