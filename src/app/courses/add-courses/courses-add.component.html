@@ -1,6 +1,8 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
-  <span *ngIf="pageType" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
+  @if (pageType) {
+    <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
+  }
 </mat-toolbar>
 
 <div class="space-container">
@@ -34,21 +36,27 @@
                   <mat-label i18n>Language of Instruction</mat-label>
                   <input matInput formControlName="languageOfInstruction" [matAutocomplete]="auto">
                   <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let language of languageNames" [value]="language">
-                      {{ language }}
-                    </mat-option>
+                    @for (language of languageNames; track language) {
+                      <mat-option [value]="language">
+                        {{ language }}
+                      </mat-option>
+                    }
                   </mat-autocomplete>
                 </mat-form-field>
                 <mat-form-field>
                   <mat-label i18n>Grade Level</mat-label>
                   <mat-select formControlName="gradeLevel" required>
-                    <mat-option *ngFor="let grade of gradeLevels" [value]="grade.value">{{grade.label}}</mat-option>
+                    @for (grade of gradeLevels; track grade) {
+                      <mat-option [value]="grade.value">{{grade.label}}</mat-option>
+                    }
                   </mat-select>
                 </mat-form-field>
                 <mat-form-field>
                   <mat-label i18n>Subject Level</mat-label>
                   <mat-select formControlName="subjectLevel" required>
-                    <mat-option *ngFor="let sub of subjectLevels" [value]="sub.value">{{sub.label}}</mat-option>
+                    @for (sub of subjectLevels; track sub) {
+                      <mat-option [value]="sub.value">{{sub.label}}</mat-option>
+                    }
                   </mat-select>
                 </mat-form-field>
               </div>
@@ -66,7 +74,9 @@
         <mat-icon>add</mat-icon>
         <span i18n>Add Step</span>
       </button>
-      <button *ngIf="draftExists" type="button" mat-stroked-button (click)="deleteDraft()" i18n="@@discardDraftButton">Discard Draft</button>
+      @if (draftExists) {
+        <button type="button" mat-stroked-button (click)="deleteDraft()" i18n="@@discardDraftButton">Discard Draft</button>
+      }
       <button type="button" mat-stroked-button color="warn" (click)="cancel()" i18n>Cancel</button>
     </div>
   </div>

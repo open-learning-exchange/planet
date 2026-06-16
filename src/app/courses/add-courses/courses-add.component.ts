@@ -21,7 +21,6 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -52,9 +51,9 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, ReactiveFormsModule, MatFormField,
+    MatToolbar, MatIconAnchor, MatIcon, ReactiveFormsModule, MatFormField,
     MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger, MatAutocomplete, NgFor, MatOption, MatSelect, PlanetTagInputComponent,
+    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
     CoursesStepComponent, MatButton, SubmitDirective,
     MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, TruncateTextPipe
   ]

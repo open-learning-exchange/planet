@@ -8,7 +8,7 @@ import { UserService } from '../user.service';
 import { StateService } from '../state.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { deepEqual, normalizedContentType } from '../utils';
-import { NgIf, NgFor } from '@angular/common';
+
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -22,9 +22,22 @@ import { FileUploadComponent } from '../forms/file-upload.component';
   templateUrl: './dialogs-images.component.html',
   styleUrls: ['./dialogs-images.component.scss'],
   imports: [
-    NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, MatIcon, MatFormField, MatLabel,
-    MatInput, FormsModule, MatGridList, NgFor, MatGridTile, MatGridTileText, MatGridTileFooterCssMatStyler,
-    MatDialogActions, MatButton, MatDialogClose, FileUploadComponent
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    FormsModule,
+    MatGridList,
+    MatGridTile,
+    MatGridTileText,
+    MatGridTileFooterCssMatStyler,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    FileUploadComponent
   ]
 })
 export class DialogsImagesComponent implements OnInit {

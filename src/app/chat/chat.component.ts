@@ -6,7 +6,7 @@ import { AIProvider, ProviderName } from './chat.model';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,7 @@ import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
   selector: 'planet-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.scss'],
-  imports: [MatToolbar, MatIconButton, MatIcon, NgIf, MatFormField, MatSelect, FormsModule, NgFor, MatOption, ChatSidebarComponent]
+  imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatSelect, FormsModule, MatOption, ChatSidebarComponent]
 })
 export class ChatComponent implements OnInit {
   activeService?: ProviderName;
