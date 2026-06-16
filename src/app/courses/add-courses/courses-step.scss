@@ -1,5 +1,9 @@
 @use '../../variables' as v;
 
+planet-courses-step .planet-step-list-form-container .planet-step-list-form {
+  overflow: visible;
+}
+
 .course-attach {
   .attach-grid {
     display: grid;
