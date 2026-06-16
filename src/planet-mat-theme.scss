@@ -42,8 +42,8 @@ $accent-map: (
 
 // Custom themed material styles below
 .mat-button-toggle-appearance-standard {
-  --mat-standard-button-toggle-selected-state-background-color: #{mat.m2-get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
-  --mat-standard-button-toggle-selected-state-text-color: #{mat.m2-get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-button-toggle-selected-state-background-color: #{mat.m2-get-color-from-palette(v.$planet-app-primary, v.$light-hue)};
+  --mat-button-toggle-selected-state-text-color: #{mat.m2-get-contrast-color-from-palette(v.$planet-app-primary, v.$light-hue)};
 }
 
 .mat-mdc-raised-button[color="primary"] {
