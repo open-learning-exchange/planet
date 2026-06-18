@@ -32,7 +32,7 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
-import { couchAttachmentUrl, normalizeImage } from '../../shared/utils';
+import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -310,48 +310,83 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     };
     const addedCover = this.coverState?.added[0];
     const retainedCover = this.coverState?.retained[0];
-    (addedCover ? from(normalizeImage(addedCover.file)) : of(null)).pipe(
+    const existingAttachmentNames = Object.keys(this.savedCourse?._attachments || {});
+    (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
       switchMap(normalizedCover => {
         if (normalizedCover) {
-          newCourse.coverFileName = normalizedCover.fileName;
-        } else if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
-          // Preserve the existing attachment by sending back its stub on update.
-          newCourse.coverFileName = retainedCover.name;
-          newCourse._attachments = { [retainedCover.name]: this.savedCourse._attachments[retainedCover.name] };
-        } else {
-          delete newCourse.coverFileName;
+          return this.saveCourseWithNewCover(newCourse, normalizedCover);
         }
-        return this.couchService.updateDocument(
-          this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
-        ).pipe(switchMap((res: any) =>
-          forkJoin([
-            of(res),
-            normalizedCover ?
-              this.couchService.putAttachment(
-                `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
-                normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
-              ) :
-              of(null),
-            this.couchService.bulkDocs(
-              'tags',
-              this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
-            )
-          ])
-        )
-        );
+        if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
+          newCourse.coverFileName = retainedCover.name;
+          newCourse._attachments = { ...this.savedCourse._attachments };
+        } else {
+          const attachments = { ...(this.savedCourse?._attachments || {}) };
+          if (this.savedCourse?.coverFileName) {
+            delete attachments[this.savedCourse.coverFileName];
+          }
+          delete newCourse.coverFileName;
+          if (Object.keys(attachments).length) {
+            newCourse._attachments = attachments;
+          }
+        }
+        return this.saveCourseDocument(newCourse);
       })
-    ).subscribe(([ courseRes, attachmentRes ]) => {
-      // putAttachment bumps the revision, so carry its rev forward to avoid a stale _rev on the next save.
-      const savedRes = attachmentRes?.rev ?
-        { ...courseRes, rev: attachmentRes.rev, doc: { ...courseRes.doc, _rev: attachmentRes.rev } } :
-        courseRes;
+    ).subscribe(([ courseRes ]) => {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
-      this.courseChangeComplete(message, savedRes, shouldNavigate);
+      this.courseChangeComplete(message, courseRes, shouldNavigate);
       this.preserveCoverStateUntilSubmit = false;
     }, (err) => {
       this.preserveCoverStateUntilSubmit = false;
       this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
+  }
+
+  private saveCourseDocument(course: any) {
+    return this.couchService.updateDocument(
+      this.dbName, { ...course, updatedDate: this.couchService.datePlaceholder }
+    ).pipe(switchMap((res: any) =>
+      forkJoin([
+        of(res),
+        this.couchService.bulkDocs(
+          'tags',
+          this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+        )
+      ])
+    )
+    );
+  }
+
+  private saveCourseWithNewCover(course: any, normalizedCover: NormalizedImage) {
+    const existingCourseId = this.documentInfo._id;
+    const existingCourseRev = this.documentInfo._rev;
+    const courseWithoutCover = { ...course };
+    delete courseWithoutCover.coverFileName;
+    const upload$ = existingCourseId && existingCourseRev ?
+      this.couchService.putAttachment(
+        `${this.dbName}/${existingCourseId}/${normalizedCover.fileName}?rev=${existingCourseRev}`,
+        normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+      ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingCourseId}`))) :
+      this.couchService.updateDocument(
+        this.dbName, { ...courseWithoutCover, updatedDate: this.couchService.datePlaceholder }
+      ).pipe(
+        switchMap((res: any) => this.couchService.putAttachment(
+          `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
+          normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+        ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${res.id}`))))
+      );
+    return upload$.pipe(switchMap((uploadedDoc: any) => {
+      const attachments = { ...(uploadedDoc._attachments || {}) };
+      if (this.savedCourse?.coverFileName && this.savedCourse.coverFileName !== normalizedCover.fileName) {
+        delete attachments[this.savedCourse.coverFileName];
+      }
+      return this.saveCourseDocument({
+        ...course,
+        _id: uploadedDoc._id,
+        _rev: uploadedDoc._rev,
+        coverFileName: normalizedCover.fileName,
+        _attachments: attachments
+      });
+    }));
   }
 
   onSubmit(shouldNavigate = true) {

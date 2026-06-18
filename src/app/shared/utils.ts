@@ -57,6 +57,7 @@ export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: strin
 export interface NormalizeImageOptions {
   maxDimension?: number;
   quality?: number;
+  usedNames?: string[];
 }
 
 export interface NormalizedImage {
@@ -73,11 +74,11 @@ export const scaledDimensions = (width: number, height: number, maxDimension: nu
   };
 };
 
-const replaceExtension = (name: string, extension: string): string => {
+const replaceExtension = (name: string, extension: string, usedNames: string[] = []): string => {
   const safeName = safeAttachmentName(name);
   const lastDot = safeName.lastIndexOf('.');
   const baseName = lastDot > 0 ? safeName.slice(0, lastDot) : safeName;
-  return `${baseName}.${extension}`;
+  return safeAttachmentName(`${baseName}.${extension}`, usedNames);
 };
 
 const canvasToBlob = (canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob | null> =>
@@ -105,7 +106,7 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
   const fallback = (): NormalizedImage => ({
     file,
     contentType: normalizedContentType(file),
-    fileName: safeAttachmentName(file.name)
+    fileName: safeAttachmentName(file.name, opts.usedNames)
   });
   let objectUrl = '';
   try {
@@ -134,7 +135,7 @@ export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {
     if (!encoded) {
       return fallback();
     }
-    const fileName = replaceExtension(file.name, encoded.extension);
+    const fileName = replaceExtension(file.name, encoded.extension, opts.usedNames);
     return {
       file: new File([ encoded.blob ], fileName, { type: encoded.contentType, lastModified: file.lastModified }),
       contentType: encoded.contentType,

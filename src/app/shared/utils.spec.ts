@@ -50,6 +50,14 @@ describe('utils', () => {
       expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:cover');
     });
 
+    it('avoids existing attachment names when falling back to the original file', async () => {
+      const file = new File([ 'not really image' ], 'cover.png', { type: 'image/png' });
+
+      const result = await normalizeImage(file, { usedNames: [ 'cover.png' ] });
+
+      expect(result.fileName).toBe('cover-1.png');
+    });
+
   });
 
 });
