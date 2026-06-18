@@ -18,6 +18,14 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'planet-courses-detail',
   templateUrl: './courses-view-detail.component.html',
+  styles: [ `.course-cover {
+    display: block;
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }` ],
   imports: [PlanetRatingComponent, LanguageLabelComponent, PlanetMarkdownComponent, DatePipe]
 })
 export class CoursesViewDetailComponent implements OnChanges {
@@ -38,8 +46,11 @@ export class CoursesViewDetailComponent implements OnChanges {
     this.imageSource = this.parent === true ? 'parent' : 'local';
   }
 
-  coverImageUrl(coverPath: string) {
-    return `${environment.couchAddress}/${coverPath}`;
+  coverImageUrl() {
+    const base = this.imageSource === 'parent' ?
+      `${environment.parentProtocol}://${this.planetConfiguration.parentDomain}` :
+      environment.couchAddress;
+    return `${base}/courses/${this.courseDetail._id}/${encodeURIComponent(this.courseDetail.coverFileName)}`;
   }
 }
 

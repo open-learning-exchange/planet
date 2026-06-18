@@ -218,7 +218,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     return $localize`Remove from ${cardTitle}`;
   }
 
-  coverImageUrl(coverPath: string) {
-    return `${environment.couchAddress}/${coverPath}`;
+  coverImageUrl(item: any): string {
+    return `${environment.couchAddress}/courses/${item._id}/${encodeURIComponent(item.coverFileName)}`;
   }
 }

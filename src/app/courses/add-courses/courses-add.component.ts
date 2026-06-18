@@ -3,7 +3,6 @@ import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsM
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 
 import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/couchdb.service';
@@ -21,10 +20,10 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgClass } from '@angular/common';
-import { MatFormField, MatLabel, MatError, MatHint, MatSuffix } from '@angular/material/form-field';
+import { NgClass } from '@angular/common';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
@@ -32,8 +31,7 @@ import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/mat
 import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
-import { DialogsImagesComponent } from '../../shared/dialogs/dialogs-images.component';
-import { MatTooltip } from '@angular/material/tooltip';
+import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -41,7 +39,6 @@ interface CourseFormModel {
   languageOfInstruction: FormControl<string>;
   gradeLevel: FormControl<string>;
   subjectLevel: FormControl<string>;
-  cover: FormControl<string>;
   createdDate: FormControl<DateValue>;
   creator: FormControl<string>;
   sourcePlanet: FormControl<string>;
@@ -55,10 +52,27 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, FormsModule, ReactiveFormsModule, MatFormField,
-    MatLabel, MatInput, MatError, MatHint, MatSuffix, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
-    NgClass, CoursesStepComponent, MatButton, MatIconButton, MatTooltip, SubmitDirective
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    MatOption,
+    MatSelect,
+    PlanetTagInputComponent,
+    NgClass,
+    CoursesStepComponent,
+    MatButton,
+    FileUploadComponent,
+    SubmitDirective
   ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
@@ -70,7 +84,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   private _steps = [];
-  coverPreviewUrl = '';
+  existingCoverAttachments: ExistingAttachment[] = [];
+  private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
   draftExists: boolean;
   courseForm: FormGroup<CourseFormModel>;
@@ -111,8 +126,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService,
-    private dialog: MatDialog
+    private tagsService: TagsService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -128,6 +142,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.savedCourse = saved;
+        this.setExistingCover(saved);
         this.pageType = 'Edit';
       } else {
         this.pageType = 'Add';
@@ -181,7 +196,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       languageOfInstruction: this.fb.control(''),
       gradeLevel: this.fb.control(''),
       subjectLevel: this.fb.control(''),
-      cover: this.fb.control(''),
       createdDate: this.fb.control<DateValue>(this.couchService.datePlaceholder),
       creator: this.fb.control(this.userService.get().name + '@' + configuration.code),
       sourcePlanet: this.fb.control(configuration.code),
@@ -210,7 +224,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.images = course.form.images || [];
     this.steps = course.steps || [];
     this.tags.setValue(course.tags || (course.initialTags || []).map((tag: any) => tag._id));
-    this.coverPreviewUrl = course.form?.cover ? this.getCoverUrl(course.form.cover) : '';
   }
 
   setInitialTags(tags, documentInfo, draft?) {
@@ -252,78 +265,64 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
-  selectCoverImage() {
-    this.dialog.open(DialogsImagesComponent, {
-      width: '500px',
-      data: { imageGroup: 'community' }
-    }).afterClosed().subscribe(image => {
-      if (!image) {
-        return;
-      }
-      const coverPath = `resources/${image._id}/${encodeURI(image.filename)}`;
-      const coverUrl = this.getCoverUrl(coverPath);
-      const loadedImage = new Image();
-      loadedImage.onload = () => {
-        if (this.isValidCoverSize(loadedImage.naturalWidth, loadedImage.naturalHeight)) {
-          this.courseForm.controls.cover.setValue(coverPath);
-          this.coverPreviewUrl = coverUrl;
-        } else {
-          this.clearCoverSelection();
-          this.showInvalidCoverMessage();
-        }
-      };
-      loadedImage.onerror = () => {
-        this.clearCoverSelection();
-        this.planetMessageService.showAlert($localize`:@@coverImageLoadFailed:Unable to load the cover image.`);
-      };
-      loadedImage.src = coverUrl;
-    });
+  onCoverStateChange(state: AttachmentInputState) {
+    this.coverState = state;
   }
 
-  clearCoverSelection() {
-    this.courseForm.controls.cover.setValue('');
-    this.coverPreviewUrl = '';
-  }
-
-  getCoverUrl(coverPath: string) {
-    return `${environment.couchAddress}/${coverPath}`;
-  }
-
-  isValidCoverSize(width: number, height: number) {
-    return width === 500 && height === 500;
-  }
-
-  showInvalidCoverMessage() {
-    this.planetMessageService.showAlert(
-      $localize`:@@invalidCoverImage:Cover image must be 500x500 px.`
-    );
+  setExistingCover(course: any) {
+    const fileName = course.coverFileName;
+    const attachment = course._attachments?.[fileName];
+    this.existingCoverAttachments = fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: `${environment.couchAddress}/${this.dbName}/${course._id}/${encodeURIComponent(fileName)}`
+    } ] : [];
+    // Seed cover state directly so a save can't drop the cover if it fires before the upload child emits.
+    this.coverState = { retained: [ ...this.existingCoverAttachments ], removed: [], added: [] };
   }
 
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
-    const normalizedCourse = { ...courseInfo, cover: courseInfo.cover?.trim() };
-    const newCourse = {
-      ...this.convertMarkdownImagesText({ ...normalizedCourse, images: this.images }, this.steps),
+    const newCourse: any = {
+      ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps),
       ...this.documentInfo
     };
-    if (!normalizedCourse.cover) {
-      delete newCourse.cover;
+    const addedCover = this.coverState?.added[0];
+    const retainedCover = this.coverState?.retained[0];
+    if (addedCover) {
+      newCourse.coverFileName = addedCover.safeName;
+    } else if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
+      // Preserve the existing attachment by sending back its stub on update.
+      newCourse.coverFileName = retainedCover.name;
+      newCourse._attachments = { [retainedCover.name]: this.savedCourse._attachments[retainedCover.name] };
+    } else {
+      delete newCourse.coverFileName;
     }
     this.couchService.updateDocument(
       this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
       forkJoin([
         of(res),
+        addedCover ?
+          this.couchService.putAttachment(
+            `${this.dbName}/${res.id}/${addedCover.safeName}?rev=${res.rev}`,
+            addedCover.file, { headers: { 'Content-Type': addedCover.contentType } }
+          ) :
+          of(null),
         this.couchService.bulkDocs(
           'tags',
           this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
         )
       ])
-    )).subscribe(([ courseRes, tagsRes ]) => {
+    )).subscribe(([ courseRes, attachmentRes ]) => {
+      // putAttachment bumps the revision, so carry its rev forward to avoid a stale _rev on the next save.
+      const savedRes = attachmentRes?.rev ?
+        { ...courseRes, rev: attachmentRes.rev, doc: { ...courseRes.doc, _rev: attachmentRes.rev } } :
+        courseRes;
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
-      this.courseChangeComplete(message, courseRes, shouldNavigate);
+      this.courseChangeComplete(message, savedRes, shouldNavigate);
     }, (err) => {
       this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
@@ -382,12 +381,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         steps: this.savedCourse.steps || [],
         tags: this.savedCourse.tags || []
       });
+      this.setExistingCover(this.savedCourse);
     } else {
       this.setFormAndSteps({
-        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '', cover: '' },
+        form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '' },
         steps: [],
         tags: []
       });
+      this.existingCoverAttachments = [];
+      this.coverState = { retained: [], removed: [], added: [] };
     }
     this.coursesStepComponent.toList();
     this.setInitialState();
