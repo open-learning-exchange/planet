@@ -85,6 +85,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   private _steps = [];
+  private preserveCoverStateUntilSubmit = false;
   existingCoverAttachments: ExistingAttachment[] = [];
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
@@ -102,6 +103,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   languageNames = languages.map(list => list.name);
   mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
+  @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
   get steps() {
     return this._steps;
   }
@@ -152,15 +154,16 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.draftExists = draft !== undefined;
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
-      if (!continued) {
+      if (continued) {
+        this.preserveCoverStateUntilSubmit = !!this.coursesService.course.coverState?.added?.length;
+        this.setFormAndSteps(this.coursesService.course);
+        this.setCoverState(this.coursesService.course.coverState || this.coverState);
+        this.submitAddedExam();
+      } else {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
         this.setInitialState();
       }
     });
-    if (continued) {
-      this.setFormAndSteps(this.coursesService.course);
-      this.submitAddedExam();
-    }
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
     this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
@@ -267,7 +270,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onCoverStateChange(state: AttachmentInputState) {
+    if (this.preserveCoverStateUntilSubmit && this.coverState.added.length && state.added.length === 0) {
+      return;
+    }
+    this.setCoverState(state);
+  }
+
+  setCoverState(state: AttachmentInputState) {
     this.coverState = state;
+    this.coursesService.course = { coverState: state };
   }
 
   setExistingCover(course: any) {
@@ -279,7 +290,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       url: couchAttachmentUrl(environment.couchAddress, this.dbName, course._id, fileName)
     } ] : [];
     // Seed cover state directly so a save can't drop the cover if it fires before the upload child emits.
-    this.coverState = { retained: [ ...this.existingCoverAttachments ], removed: [], added: [] };
+    this.setCoverState({ retained: [ ...this.existingCoverAttachments ], removed: [], added: [] });
   }
 
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
@@ -329,7 +340,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         courseRes;
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, savedRes, shouldNavigate);
+      this.preserveCoverStateUntilSubmit = false;
     }, (err) => {
+      this.preserveCoverStateUntilSubmit = false;
       this.planetMessageService.showAlert($localize`There was an error saving this course`);
     });
   }
@@ -381,6 +394,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.draftExists) {
       return;
     }
+    this.coverUploadComponent?.clear();
     if (this.savedCourse) {
       this.setFormAndSteps({
         form: this.savedCourse,
@@ -395,7 +409,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         tags: []
       });
       this.existingCoverAttachments = [];
-      this.coverState = { retained: [], removed: [], added: [] };
+      this.setCoverState({ retained: [], removed: [], added: [] });
     }
     this.coursesStepComponent.toList();
     this.setInitialState();

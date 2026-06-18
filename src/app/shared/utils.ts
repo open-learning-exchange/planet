@@ -48,8 +48,11 @@ export const safeAttachmentName = (name: string, usedNames: string[] = []): stri
   return nextName;
 };
 
-export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: string, attachmentName: string): string =>
-  `${baseUrl}/${dbName}/${encodeURIComponent(docId)}/${encodeURIComponent(attachmentName)}`;
+export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: string, attachmentName: string): string => {
+  const trimmedBaseUrl = baseUrl.replace(/\/+$/, '');
+  const trimmedDbName = dbName.replace(/^\/+|\/+$/g, '');
+  return `${trimmedBaseUrl}/${trimmedDbName}/${encodeURIComponent(docId)}/${encodeURIComponent(attachmentName)}`;
+};
 
 export interface NormalizeImageOptions {
   maxDimension?: number;
@@ -97,7 +100,7 @@ const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise
 
 // Browser-side cover/image normalization: bounds replicated payloads while keeping upload UX permissive.
 export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage> => {
-  const maxDimension = opts.maxDimension || 600;
+  const maxDimension = opts.maxDimension ?? 600;
   const quality = opts.quality ?? 0.82;
   const fallback = (): NormalizedImage => ({
     file,
