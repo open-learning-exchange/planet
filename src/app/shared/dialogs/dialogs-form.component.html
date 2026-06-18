@@ -111,6 +111,24 @@
         @if (field.type === 'toggle') {
           <mat-slide-toggle class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
         }
+        <!-- File Upload -->
+        @if (field.type === 'file-upload') {
+          <div class="full-width">
+            @if (field.placeholder) {
+              <p class="mat-caption">{{ field.placeholder }}</p>
+            }
+            <planet-file-upload
+              [accept]="field.fileUpload?.accept || ''"
+              [existingAttachments]="field.fileUpload?.existingAttachments || []"
+              [hint]="field.fileUpload?.hint || ''"
+              [imagePreview]="!!field.fileUpload?.imagePreview"
+              [maxFiles]="field.fileUpload?.maxFiles || 1"
+              [multiple]="!!field.fileUpload?.multiple"
+              [typePills]="field.fileUpload?.typePills || []"
+              (stateChange)="updateFileUploadState(field.name, $event)">
+            </planet-file-upload>
+          </div>
+        }
       </div>
     }
   </mat-dialog-content>

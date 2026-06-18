@@ -22,6 +22,18 @@
   @if (showSummary) {
     <h4 i18n>Report Summary</h4>
     <planet-markdown [content]="report.description"></planet-markdown>
+    @if (receiptImages.length > 0) {
+      <div class="report-receipt-images">
+        <h4 i18n>Attached Images</h4>
+        <div class="report-receipt-images-grid">
+          @for (image of receiptImages; track image.name) {
+            <a class="report-receipt-images-link" [href]="image.url" target="_blank" rel="noopener noreferrer">
+              <img class="report-receipt-images-image" [src]="image.url" [alt]="image.name">
+            </a>
+          }
+        </div>
+      </div>
+    }
     <div><ng-container i18n>Report created on:</ng-container> {{report.createdDate | date }}@if (report.createdDate !== report.updatedDate) {
     | <ng-container i18n>Updated on:</ng-container> {{report.updatedDate | date}}
   }</div>
