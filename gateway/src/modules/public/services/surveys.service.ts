@@ -27,6 +27,10 @@ type ConfigurationDoc = {
 
 type PublicSubmissionPayload = {
   answers?: any[];
+  user?: {
+    age?: number;
+    gender?: string;
+  };
 };
 
 type StoredPublicAnswer = {
@@ -108,6 +112,46 @@ const normalizeAnswers = (answers: any[] = []): StoredPublicAnswer[] => answers.
   'passed': isValidAnswer(answer)
 }));
 
+const validatePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => {
+  if (user === undefined) {
+    return null;
+  }
+
+  if (!user || typeof user !== 'object' || Array.isArray(user)) {
+    return 'user must be an object';
+  }
+
+  if ('age' in user && (typeof user.age !== 'number' || !Number.isInteger(user.age) || user.age < 1 || user.age > 130)) {
+    return 'user.age must be an integer between 1 and 130';
+  }
+
+  if ('gender' in user && (typeof user.gender !== 'string' || ![ 'male', 'female' ].includes(user.gender.trim()))) {
+    return 'user.gender must be either male or female';
+  }
+
+  return null;
+};
+
+const sanitizePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => {
+  if (!user) {
+    return {};
+  }
+
+  const sanitizedUser: NonNullable<PublicSubmissionPayload['user']> = {};
+  const age = user.age;
+  const gender = typeof user.gender === 'string' ? user.gender.trim() : '';
+
+  if (typeof age === 'number') {
+    sanitizedUser.age = age;
+  }
+
+  if (gender) {
+    sanitizedUser.gender = gender;
+  }
+
+  return sanitizedUser;
+};
+
 const buildPublicSubmission = (
   survey: SurveyDoc,
   team: TeamDoc,
@@ -118,7 +162,7 @@ const buildPublicSubmission = (
   return {
     'parentId': survey._id,
     'parent': sanitizeSurveySnapshot(survey),
-    'user': {},
+    'user': sanitizePublicSubmissionUser(payload.user),
     'type': 'survey',
     'answers': normalizeAnswers(payload.answers),
     'grade': 0,
@@ -160,6 +204,14 @@ export const createPublicSurveySubmission = async (req: Request, res: Response) 
     return res.status(400).json({
       'error': 'Bad Request',
       'message': 'answers must be an array'
+    });
+  }
+
+  const userValidationError = validatePublicSubmissionUser(payload.user);
+  if (userValidationError) {
+    return res.status(400).json({
+      'error': 'Bad Request',
+      'message': userValidationError
     });
   }
 
