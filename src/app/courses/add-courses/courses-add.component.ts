@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
+import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -32,6 +32,7 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
+import { normalizeImage } from '../../shared/utils';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -291,32 +292,37 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     };
     const addedCover = this.coverState?.added[0];
     const retainedCover = this.coverState?.retained[0];
-    if (addedCover) {
-      newCourse.coverFileName = addedCover.safeName;
-    } else if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
-      // Preserve the existing attachment by sending back its stub on update.
-      newCourse.coverFileName = retainedCover.name;
-      newCourse._attachments = { [retainedCover.name]: this.savedCourse._attachments[retainedCover.name] };
-    } else {
-      delete newCourse.coverFileName;
-    }
-    this.couchService.updateDocument(
-      this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
-    ).pipe(switchMap((res: any) =>
-      forkJoin([
-        of(res),
-        addedCover ?
-          this.couchService.putAttachment(
-            `${this.dbName}/${res.id}/${addedCover.safeName}?rev=${res.rev}`,
-            addedCover.file, { headers: { 'Content-Type': addedCover.contentType } }
-          ) :
-          of(null),
-        this.couchService.bulkDocs(
-          'tags',
-          this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+    (addedCover ? from(normalizeImage(addedCover.file)) : of(null)).pipe(
+      switchMap(normalizedCover => {
+        if (normalizedCover) {
+          newCourse.coverFileName = normalizedCover.fileName;
+        } else if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
+          // Preserve the existing attachment by sending back its stub on update.
+          newCourse.coverFileName = retainedCover.name;
+          newCourse._attachments = { [retainedCover.name]: this.savedCourse._attachments[retainedCover.name] };
+        } else {
+          delete newCourse.coverFileName;
+        }
+        return this.couchService.updateDocument(
+          this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
+        ).pipe(switchMap((res: any) =>
+          forkJoin([
+            of(res),
+            normalizedCover ?
+              this.couchService.putAttachment(
+                `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
+                normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+              ) :
+              of(null),
+            this.couchService.bulkDocs(
+              'tags',
+              this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
+            )
+          ])
         )
-      ])
-    )).subscribe(([ courseRes, attachmentRes ]) => {
+        );
+      })
+    ).subscribe(([ courseRes, attachmentRes ]) => {
       // putAttachment bumps the revision, so carry its rev forward to avoid a stale _rev on the next save.
       const savedRes = attachmentRes?.rev ?
         { ...courseRes, rev: attachmentRes.rev, doc: { ...courseRes.doc, _rev: attachmentRes.rev } } :
