@@ -137,6 +137,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
+    const continuedCourse = continued ? { ...this.coursesService.course } : null;
+    const continuedCoverState = continuedCourse?.coverState;
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
       this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
@@ -145,7 +147,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.savedCourse = saved;
-        this.setExistingCover(saved);
+        if (!continuedCoverState) {
+          this.setExistingCover(saved);
+        }
         this.pageType = 'Edit';
       } else {
         this.pageType = 'Add';
@@ -155,9 +159,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
       if (continued) {
-        this.preserveCoverStateUntilSubmit = !!this.coursesService.course.coverState?.added?.length;
-        this.setFormAndSteps(this.coursesService.course);
-        this.setCoverState(this.coursesService.course.coverState || this.coverState);
+        this.preserveCoverStateUntilSubmit = !!continuedCoverState;
+        this.setFormAndSteps(continuedCourse);
+        this.setCoverState(continuedCoverState || this.coverState);
         this.submitAddedExam();
       } else {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
@@ -166,7 +170,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
-    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    if (!continued) {
+      this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    }
     this.coursesService.stepIndex = undefined;
   }
 
@@ -270,7 +276,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   onCoverStateChange(state: AttachmentInputState) {
-    if (this.preserveCoverStateUntilSubmit && this.coverState.added.length && state.added.length === 0) {
+    if (this.preserveCoverStateUntilSubmit) {
       return;
     }
     this.setCoverState(state);
