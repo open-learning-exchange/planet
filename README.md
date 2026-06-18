@@ -69,8 +69,23 @@ npm install
 ng serve
 ```
 
+By default, Planet expects CouchDB on port `2200` and the gateway on port `5000`. To use different local values, add a `.env` file in the project root:
+
+```
+CHAT_PORT=5000
+COUCH_PORT=2200
+PARENT_PROTOCOL=https
+```
+
+Add only the values you need to override, then run:
+```
+npm run dev
+```
+
+`npm run dev` runs `dev-env.sh` before starting Angular. The script generates `src/environments/environment.dev.ts` from `src/environments/environment.template` so local development can point to the configured CouchDB and gateway ports. Both `.env` and `src/environments/environment.dev.ts` are local development files and should not be committed.
+
 Visit localhost:3000 to access the Planet app.
-If port 3000 is in use, try ```ng serve --port 3001```
+If port 3000 is in use, try ```ng serve --port 3001``` or ```npm run dev -- --port 3001``` when using generated environment values.
 
 ## Gateway Notes
 
@@ -94,11 +109,11 @@ For gateway development instructions, refer to the [gateway README](gateway/READ
 
 To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
 ```
-  npm run dev -- --configuration spa 
-
-  or 
-
-  ng serve --configuration spa
+ng serve --configuration spa
+```
+If you are using generated environment values from `.env`, run:
+```
+npm run dev -- --configuration spa
 ```
 *You can use the short-hand `-c` in place of `--configuration`*
 
