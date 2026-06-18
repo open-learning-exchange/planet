@@ -48,6 +48,9 @@ export const safeAttachmentName = (name: string, usedNames: string[] = []): stri
   return nextName;
 };
 
+export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: string, attachmentName: string): string =>
+  `${baseUrl}/${dbName}/${encodeURIComponent(docId)}/${encodeURIComponent(attachmentName)}`;
+
 export interface NormalizeImageOptions {
   maxDimension?: number;
   quality?: number;

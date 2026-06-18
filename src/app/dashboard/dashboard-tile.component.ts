@@ -22,6 +22,7 @@ import { MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { environment } from '../../environments/environment';
+import { couchAttachmentUrl } from '../shared/utils';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -218,7 +219,14 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     return $localize`Remove from ${cardTitle}`;
   }
 
+  dashboardTextLines(item: any): number | 'none' {
+    if (this.isAccordionMode) {
+      return 'none';
+    }
+    return this.cardType === 'myCourses' && item.coverFileName ? 2 : this.tileLines;
+  }
+
   coverImageUrl(item: any): string {
-    return `${environment.couchAddress}/courses/${item._id}/${encodeURIComponent(item.coverFileName)}`;
+    return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
   }
 }

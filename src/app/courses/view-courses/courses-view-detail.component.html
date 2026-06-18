@@ -1,5 +1,5 @@
 @if (courseDetail?.coverFileName) {
-  <img class="course-cover" [src]="coverImageUrl()" alt="Course cover" i18n-alt="@@courseCoverAlt">
+  <img class="course-cover" [src]="coverImageUrl()" alt="Course cover" i18n-alt>
 }
 <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="false" [ratingType]="'course'"></planet-rating>
 <p><b i18n>Subject Level:</b> <planet-language-label [options]="subjectOptions" [label]="courseDetail?.subjectLevel"></planet-language-label></p>

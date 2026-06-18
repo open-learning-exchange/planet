@@ -14,6 +14,7 @@ import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component'
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
 import { environment } from '../../../environments/environment';
+import { couchAttachmentUrl } from '../../shared/utils';
 
 @Component({
   selector: 'planet-courses-detail',
@@ -50,7 +51,7 @@ export class CoursesViewDetailComponent implements OnChanges {
     const base = this.imageSource === 'parent' ?
       `${environment.parentProtocol}://${this.planetConfiguration.parentDomain}` :
       environment.couchAddress;
-    return `${base}/courses/${this.courseDetail._id}/${encodeURIComponent(this.courseDetail.coverFileName)}`;
+    return couchAttachmentUrl(base, 'courses', this.courseDetail._id, this.courseDetail.coverFileName);
   }
 }
 

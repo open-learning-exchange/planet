@@ -32,7 +32,7 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
-import { normalizeImage } from '../../shared/utils';
+import { couchAttachmentUrl, normalizeImage } from '../../shared/utils';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -276,7 +276,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.existingCoverAttachments = fileName && attachment ? [ {
       name: fileName,
       contentType: attachment.content_type,
-      url: `${environment.couchAddress}/${this.dbName}/${course._id}/${encodeURIComponent(fileName)}`
+      url: couchAttachmentUrl(environment.couchAddress, this.dbName, course._id, fileName)
     } ] : [];
     // Seed cover state directly so a save can't drop the cover if it fires before the upload child emits.
     this.coverState = { retained: [ ...this.existingCoverAttachments ], removed: [], added: [] };
