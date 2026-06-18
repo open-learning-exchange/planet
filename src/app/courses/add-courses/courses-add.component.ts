@@ -277,6 +277,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onCoverStateChange(state: AttachmentInputState) {
     if (this.preserveCoverStateUntilSubmit) {
+      this.preserveCoverStateUntilSubmit = false;
       return;
     }
     this.setCoverState(state);
@@ -355,6 +356,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   onSubmit(shouldNavigate = true) {
     if (!this.courseForm.valid) {
+      this.preserveCoverStateUntilSubmit = false;
       showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
