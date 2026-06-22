@@ -11,6 +11,7 @@
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "start": "ng serve",
     "dev": "bash dev-env.sh && ng serve --configuration dev",
+    "dev:spa": "bash dev-env.sh && ng serve --build-target planet-app:build:dev,spa",
     "build": "npm run ng-high-memory -- build --configuration production",
     "test": "ng test",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",

@@ -113,9 +113,9 @@ ng serve --configuration spa
 ```
 If you are using generated environment values from `.env`, run:
 ```
-npm run dev -- --configuration spa
+npm run dev:spa
 ```
-*You can use the short-hand `-c` in place of `--configuration`*
+*You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
 
 ## Tests
 
