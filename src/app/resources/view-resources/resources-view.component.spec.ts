@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -50,7 +51,7 @@ describe('ResourcesViewComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ ResourcesViewComponent ],
+      imports: [ ResourcesViewComponent, MatIconTestingModule ],
       providers: [
         { provide: HttpClient, useValue: HttpTestingController},
         { provide: DialogsFormService, useValue: dialogsFormServiceMock },
