@@ -20,9 +20,10 @@ class MeetupsAddStubComponent {
   @Output() goBackEvent = new EventEmitter<any>();
 
   hasUnsavedChanges = false;
+  canDeactivateValue = true;
 
   canDeactivate(): boolean {
-    return true;
+    return this.canDeactivateValue;
   }
 }
 
@@ -38,6 +39,7 @@ class MeetupsViewStubComponent {
 }
 
 describe('DialogsAddMeetupsComponent', () => {
+  let component: DialogsAddMeetupsComponent;
   let fixture: ComponentFixture<DialogsAddMeetupsComponent>;
   let data: any;
   let dialogRef: any;
@@ -72,7 +74,28 @@ describe('DialogsAddMeetupsComponent', () => {
       }
     });
     fixture = TestBed.createComponent(DialogsAddMeetupsComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+    expect(dialogRef.disableClose).toBe(true);
+  });
+
+  it('uses provided dialog data', () => {
+    expect(component.link).toEqual({});
+    expect(component.meetup).toEqual({});
+    expect(component.view).toBe('add');
+    expect(component.editable).toBe(true);
+  });
+
+  it('delegates canDeactivate to the add form', () => {
+    const meetupsAdd = fixture.debugElement.query(By.directive(MeetupsAddStubComponent)).componentInstance as MeetupsAddStubComponent;
+
+    meetupsAdd.canDeactivateValue = false;
+
+    expect(component.canDeactivate()).toBe(false);
   });
 
   it('closes and refreshes meetups when the add form emits goBackEvent', () => {
@@ -80,6 +103,22 @@ describe('DialogsAddMeetupsComponent', () => {
 
     meetupsAdd.goBackEvent.emit({ ok: true });
     fixture.detectChanges();
+
+    expect(data.onMeetupsChange).toHaveBeenCalled();
+    expect(dialogsLoadingService.stop).toHaveBeenCalled();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it('switches to the view component', () => {
+    component.switchView('view');
+    fixture.detectChanges();
+
+    expect(component.view).toBe('view');
+    expect(fixture.debugElement.query(By.directive(MeetupsViewStubComponent))).toBeTruthy();
+  });
+
+  it('closes and refreshes meetups when switching to close', () => {
+    component.switchView('close');
 
     expect(data.onMeetupsChange).toHaveBeenCalled();
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
