@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { EMPTY } from 'rxjs';
@@ -69,8 +69,7 @@ describe('DialogsAddMeetupsComponent', () => {
     });
     TestBed.overrideComponent(DialogsAddMeetupsComponent, {
       set: {
-        imports: [MeetupsAddStubComponent, MeetupsViewStubComponent],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        imports: [MeetupsAddStubComponent, MeetupsViewStubComponent]
       }
     });
     fixture = TestBed.createComponent(DialogsAddMeetupsComponent);
