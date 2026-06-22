@@ -113,8 +113,9 @@ ng serve --configuration spa
 ```
 If you are using generated environment values from `.env`, run:
 ```
-npm run dev:spa
+npm run dev:locale --locale=spa
 ```
+Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, or `ara`.
 *You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
 
 ## Tests
