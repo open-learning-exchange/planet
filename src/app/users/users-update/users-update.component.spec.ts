@@ -18,6 +18,9 @@ import { MatDialog } from '@angular/material/dialog';
 describe('UserUpdateProfileComponent', () => {
   let component: UsersUpdateComponent;
   let fixture: ComponentFixture<UsersUpdateComponent>;
+  const couchServiceMock = {
+    get: vi.fn().mockReturnValue(of({ name: 'testuser', roles: [] }))
+  };
   const userServiceMock = {
     minBirthDate: new Date(1900, 0, 1),
     get: vi.fn().mockReturnValue({ name: 'testuser' }),
@@ -34,15 +37,13 @@ describe('UserUpdateProfileComponent', () => {
       providers: [
         {
           provide: CouchService,
-          useValue: {
-            get: vi.fn().mockReturnValue(of({ name: 'testuser', roles: [] }))
-          }
+          useValue: couchServiceMock
         },
         {
           provide: ActivatedRoute,
           useValue: {
             snapshot: {
-              data: { submission: true },
+              data: {},
               queryParams: {},
               paramMap: { get: () => 'testuser' }
             }
@@ -64,5 +65,6 @@ describe('UserUpdateProfileComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(couchServiceMock.get).toHaveBeenCalledWith('_users/org.couchdb.user:testuser');
   });
 });
