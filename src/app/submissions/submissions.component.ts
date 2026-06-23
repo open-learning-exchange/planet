@@ -210,7 +210,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     }
     switch (this.mode) {
       case 'survey':
-        return { query: findDocuments({ 'user.name': this.userService.get().name, type: { '$in': [ 'exam', 'survey' ] } }) };
+        return { query: findDocuments({
+          'user.name': this.userService.get().name,
+          '$or': [
+            { type: 'survey' },
+            { type: 'exam', status: { '$ne': 'pending' } }
+          ]
+        }) };
       case 'review':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
