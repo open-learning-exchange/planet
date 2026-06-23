@@ -214,14 +214,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     }
     this.dialogsLoadingService.start();
     const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable();
-    obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
+    const previousStatus = this.submissionsService.submission.status;
+    obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(({ nextQuestion }) => {
       if (correctAnswer === false) {
         this.statusMessage = 'incorrect';
         this.answer.setValue(null);
         this.currentAnswer = null;
         return;
       }
-      this.moveQuestion(1);
+      if (this.mode === 'take' && nextQuestion === this.questionNum - 1 && this.questionNum < this.maxQuestions) {
+        this.moveQuestion(1);
+        return;
+      }
+      this.routeToNext(nextQuestion, previousStatus);
     });
   }
 
