@@ -222,3 +222,8 @@ export const extractMarkdownImageUrls = (content: string) => {
 
   return matches;
 };
+
+export const isExternalUrl = (url: string) => {
+  const trimmedUrl = (url || '').trim();
+  return /^(https?:\/\/|javascript:|\/\/)/i.test(trimmedUrl) || /^[a-z]+:\/\//i.test(trimmedUrl);
+};
