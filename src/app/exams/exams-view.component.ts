@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -60,6 +60,8 @@ interface ExamViewForm {
 })
 export class ExamsViewComponent implements OnInit, OnDestroy {
 
+  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
+
   @Input() isDialog = false;
   @Input() exam: Exam;
   @Input() submission: any;
@@ -94,6 +96,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
     return this.examForm.controls.answer;
+  }
+  get disableFrameNext(): boolean {
+    return this.isLoading ||
+      this.questionNum === this.maxQuestions ||
+      (!this.previewMode && this.mode !== 'view' && (!this.answer.valid || this.grade === undefined || this.grade === null));
   }
 
   constructor(
@@ -200,6 +207,24 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  nextFromFrame() {
+    if (this.previewMode || this.mode === 'view') {
+      this.moveQuestion(1);
+      return;
+    }
+    this.dialogsLoadingService.start();
+    const { correctAnswer, obs }: { correctAnswer?: boolean | undefined, obs: any } = this.createAnswerObservable();
+    obs.pipe(finalize(() => this.dialogsLoadingService.stop())).subscribe(() => {
+      if (correctAnswer === false) {
+        this.statusMessage = 'incorrect';
+        this.answer.setValue(null);
+        this.currentAnswer = null;
+        return;
+      }
+      this.moveQuestion(1);
+    });
+  }
+
   routeToNext(nextQuestion, previousStatus) {
     this.statusMessage = this.isComplete && this.mode === 'take' ? 'complete' : '';
     if (nextQuestion > -1 && nextQuestion < this.maxQuestions) {
@@ -219,6 +244,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     if (direction !== 0) {
       this.slideDirection = direction > 0 ? 'right' : 'left';
       this.slideAnimationVariant = this.slideAnimationVariant === 'a' ? 'b' : 'a';
+      this.questionFrame?.scrollToTop();
     }
     if (this.isDialog) {
       this.questionNum = this.questionNum + direction;
