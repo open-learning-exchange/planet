@@ -17,7 +17,7 @@
   [slideDirection]="slideDirection"
   [slideAnimationVariant]="slideAnimationVariant"
   (previous)="moveQuestion(-1)"
-  (next)="nextQuestion({ nextClicked: true })"
+  (next)="moveQuestion(1)"
   >
   @if (previewMode) {
     <span exam-frame-title-extra i18n>(Preview)</span>
