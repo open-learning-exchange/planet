@@ -247,7 +247,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       if (reRoute) {
         this.goBack();
       }
-      this.planetMessageService.showMessage(this.successMessage);
+      if (this.examType !== 'survey' || examInfo.questions.length > 0) {
+        this.planetMessageService.showMessage(this.successMessage);
+      }
     }, (err) => {
       // Connect to an error display component to show user that an error has occurred
       console.log(err);
