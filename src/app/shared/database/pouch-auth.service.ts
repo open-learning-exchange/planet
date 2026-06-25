@@ -54,7 +54,7 @@ export class PouchAuthService {
   }
 
   private handleError(err) {
-    console.error('An error occured while signing in the user', err);
+    console.error('An error occurred in the PouchDB authentication service', err);
     return throwError(err.message || err);
   }
 }

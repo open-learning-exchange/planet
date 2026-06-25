@@ -1,7 +1,7 @@
 import { FormControl, AbstractControl } from '../../../node_modules/@angular/forms';
 import { FuzzySearchService } from './fuzzy-search.service';
 
-// Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
+// Takes an object and string of dot separated property keys.  Returns the nested value of the succession of
 // keys or undefined.
 function getProperty(data: any, fields: string) {
   const propertyArray = fields.split('.');
