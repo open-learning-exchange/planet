@@ -1,4 +1,4 @@
-<mat-horizontal-stepper [linear]="true" #stepper>
+<mat-horizontal-stepper class="configuration-stepper" [linear]="true" #stepper>
   @if (configurationType === 'new') {
     <mat-step [stepControl]="loginForm" [optional]="configurationType === 'update'">
       <ng-template matStepLabel i18n>Create Admin</ng-template>
