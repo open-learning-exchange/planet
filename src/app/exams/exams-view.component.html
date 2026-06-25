@@ -13,11 +13,11 @@
   [isLoading]="isLoading"
   [isDialog]="isDialog"
   [disablePrevious]="isLoading || questionNum === 1"
-  [disableNext]="isLoading || questionNum === maxQuestions"
+  [disableNext]="disableFrameNext"
   [slideDirection]="slideDirection"
   [slideAnimationVariant]="slideAnimationVariant"
   (previous)="moveQuestion(-1)"
-  (next)="nextQuestion({ nextClicked: true })"
+  (next)="nextFromFrame()"
   >
   @if (previewMode) {
     <span exam-frame-title-extra i18n>(Preview)</span>
@@ -119,7 +119,7 @@
         {examType, select, survey {Finish Survey} exam {Finish Test}}
       </button>
         }
-        <span class="v-align-center small">
+        <span class="action-buttons-status small">
           @switch (statusMessage) {
             @case ('incorrect') {
               <div class="warn-text-color">

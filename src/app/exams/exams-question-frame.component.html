@@ -16,7 +16,7 @@
       <div class="progress-bar-fill" [style.width.%]="progressPercent"></div>
     </div>
   }
-  <div class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
+  <div #scrollContainer class="view-container" [ngClass]="{ 'view-full-height': !isDialog }">
     @if (!isLoading) {
       <div [ngClass]="slideClass">
         <ng-content></ng-content>
