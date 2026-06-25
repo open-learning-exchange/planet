@@ -38,7 +38,6 @@ describe('Users', () => {
 
   it('Should be a UsersComponent', () => {
     const { comp } = setup();
-    console.log(comp.allUsers);
     expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
   });
 
