@@ -449,7 +449,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'removed':
         return ({
           obs: this.teamsService.toggleTeamMembership(this.team, true, memberDoc),
-          message: $localize`Removed: {memberName}`
+          message: $localize`Removed: ${memberName}`
         });
       case 'added':
         return ({

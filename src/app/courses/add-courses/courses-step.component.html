@@ -1,7 +1,13 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
   @for (step of steps; track step; let i = $index; let isFirst = $first; let isLast = $last) {
     <planet-step-list-item>
-      <span matListItemTitle i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
+      <span matListItemTitle>
+        @if (step.stepTitle) {
+          {{ step.stepTitle | truncateText:50 }}
+        } @else {
+          <ng-container i18n>Step</ng-container> {{ i + 1 }}
+        }
+      </span>
       <ng-container matListItemMeta>
         @if (step?.exam?.questions.length) {
           <planet-course-icon [icon]="'assignment'"></planet-course-icon>

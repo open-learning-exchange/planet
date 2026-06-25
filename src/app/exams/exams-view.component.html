@@ -31,7 +31,11 @@
     <ng-container>
       <button mat-menu-item disabled>
         <mat-icon>person</mat-icon>
-        <span i18n>{{ submittedBy || 'Unknown' }}</span>
+        @if (submittedBy) {
+          <span>{{ submittedBy }}</span>
+        } @else {
+          <span i18n>Unknown</span>
+        }
       </button>
     </ng-container>
     @if (updatedOn) {

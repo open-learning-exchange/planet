@@ -108,7 +108,7 @@
                   @if (localLinks.length > 0) {
                     <h3 mat-subheader i18n>Local</h3>
                     @for (link of localLinks; track link) {
-                      <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" i18n-matTooltip [matTooltip]="(link.teamType === 'sync' || !planetCode) ? '' : link.title + ' is only available on ' + configuration.name" [disableRipple]="link.teamType === 'local' && planetCode">
+                      <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" [matTooltip]="localLinkTooltip(link)" [disableRipple]="link.teamType === 'local' && planetCode">
                         <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
                         <span matListItemMeta>

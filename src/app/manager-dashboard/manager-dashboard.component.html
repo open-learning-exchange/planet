@@ -66,7 +66,11 @@
     @if (planetType !== 'center') {
       <div class="view-container list-view">
         @if (showParentList) {
-          <h3 i18n>{{ planetType === 'community' ? 'Nation' : 'Center' }} List</h3>
+          @if (planetType === 'community') {
+            <h3 i18n>Nation List</h3>
+          } @else {
+            <h3 i18n>Center List</h3>
+          }
           }<br />
           <div class="card-container">
             <mat-card class="version-card">
