@@ -28,14 +28,14 @@
 }
 
 .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-  width: 150px;
+  width: 175px;
   text-align: center;
   padding: 8px 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+  
 /* Targeting tablet screens */
 @media (max-width: v.$screen-md) {
 
