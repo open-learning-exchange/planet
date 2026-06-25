@@ -11,6 +11,7 @@
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "start": "ng serve",
     "dev": "bash dev-env.sh && ng serve --configuration dev",
+    "dev:locale": "bash -c ': \"${npm_config_locale:?Set a locale with --locale=spa}\"; bash dev-env.sh && ng serve --build-target planet-app:build:dev,$npm_config_locale \"$@\"' --",
     "build": "npm run ng-high-memory -- build --configuration production",
     "test": "ng test",
     "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",

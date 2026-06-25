@@ -28,7 +28,8 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 
 const columnsByFilterAndMode = {
   exam: {
-    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ]
+    grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'grade', 'user', 'lastUpdateTime', 'gradeTime' ],
+    survey: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'grade', 'lastUpdateTime', 'gradeTime' ]
   },
   survey: {
     grade: [ 'name', 'courseTitle', 'docSource', 'stepNum', 'status', 'user', 'lastUpdateTime' ],
@@ -209,7 +210,13 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     }
     switch (this.mode) {
       case 'survey':
-        return { query: findDocuments({ 'user.name': this.userService.get().name, type: 'survey' }) };
+        return { query: findDocuments({
+          'user.name': this.userService.get().name,
+          '$or': [
+            { type: 'survey' },
+            { type: 'exam', status: { '$ne': 'pending' } }
+          ]
+        }) };
       case 'review':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
@@ -242,7 +249,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   onFilterChange(filterValue: string, field: string) {
     if (field === 'type') {
-      this.filter.status = filterValue === 'exam' ? 'requires grading' : '';
+      this.filter.status = filterValue === 'exam' && this.mode === 'grade' ? 'requires grading' : '';
     }
     this.filter[field] = filterValue === 'All' ? '' : filterValue;
     // Force filter to update by setting it to a space if empty
@@ -268,16 +275,16 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (submission.status !== 'pending' || this.mode === 'survey') {
       this.router.navigate([
         './exam',
-        { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.surveyMode(this.mode, submission.type) }
+        { submissionId: submission._id, questionNum: 1, status: submission.status, mode: this.surveyMode(this.mode, submission) }
       ], { relativeTo: this.route });
     }
   }
 
-  surveyMode(listMode, submissionType) {
+  surveyMode(listMode, submission) {
     if (listMode === 'survey') {
-      return 'take';
+      return submission.type === 'exam' && submission.status !== 'pending' ? 'view' : 'take';
     }
-    if (submissionType === 'survey') {
+    if (submission.type === 'survey') {
       return 'view';
     }
     return listMode;

@@ -1,47 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatError, MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
 import { ExamsQuestionFrameComponent } from '../exams-question-frame.component';
 import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.component';
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
-import { PublicSurvey, PublicSurveysService } from './public-surveys.service';
+import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
 
 @Component({
   selector: 'planet-public-survey',
   templateUrl: './public-survey.component.html',
-  styles: [`
-    .state-view {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding-top: 10vh;
-      text-align: center;
-    }
-
-    .state-message {
-      max-width: 480px;
-    }
-  `],
+  styleUrls: ['./public-survey.component.scss'],
   imports: [
-    MatIcon,
-    TdMarkdownComponent,
-    ExamsQuestionFrameComponent,
-    ExamsTakeWidgetComponent,
-    MatButton,
-    ReactiveFormsModule
+    MatIcon, TdMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
+    ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton
   ]
 })
 export class PublicSurveyComponent implements OnInit {
+  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
+
   survey: PublicSurvey | null = null;
   errorMessage = '';
   questionNum = 1;
@@ -50,7 +36,16 @@ export class PublicSurveyComponent implements OnInit {
   isLoading = true;
   isSubmitting = false;
   isSubmitted = false;
+  showDemographics = false;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
+  readonly demographicsForm = this.fb.group({
+    birthYear: this.fb.control<number | null>(null, [
+      Validators.min(new Date().getFullYear() - 130),
+      Validators.max(new Date().getFullYear() - 1),
+      Validators.pattern(/^\d{4}$/)
+    ]),
+    gender: this.fb.control('')
+  });
 
   get question() {
     return this.survey?.questions[this.questionNum - 1] || null;
@@ -67,6 +62,7 @@ export class PublicSurveyComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private publicSurveysService: PublicSurveysService,
+    private fb: NonNullableFormBuilder,
     private dialog: MatDialog
   ) {}
 
@@ -76,8 +72,14 @@ export class PublicSurveyComponent implements OnInit {
     ).subscribe({
       next: ({ survey }) => {
         this.survey = survey;
+        this.errorMessage = '';
+        this.questionNum = 1;
         this.answers = Array.from({ length: survey.questions.length }, () => ({ value: null, valid: false }));
         this.currentAnswer = this.answers[0]?.value ?? null;
+        this.answer.reset();
+        this.demographicsForm.reset();
+        this.showDemographics = false;
+        this.isSubmitted = false;
         this.isLoading = false;
       },
       error: (error) => {
@@ -89,20 +91,26 @@ export class PublicSurveyComponent implements OnInit {
 
   moveQuestion(direction: number) {
     this.persistCurrentAnswer();
+    this.questionFrame?.scrollToTop();
+    if (direction === 1 && this.questionNum === this.maxQuestions) {
+      this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
+      this.showDemographics = true;
+      return;
+    }
     this.questionNum = this.questionNum + direction;
     this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
   }
 
   submitSurvey() {
-    if (!this.survey || !this.isComplete || this.isSubmitting) {
+    if (!this.survey || !this.showDemographics || !this.canSubmit()) {
       return;
     }
-    this.persistCurrentAnswer();
     this.isSubmitting = true;
     const teamId = this.route.snapshot.paramMap.get('teamId') || '';
     const surveyId = this.route.snapshot.paramMap.get('surveyId') || '';
     const answers = this.snapshotAnswers().map(storedAnswer => storedAnswer.value || null);
-    this.publicSurveysService.submitSurvey(teamId, surveyId, answers).subscribe({
+    const user = this.getDemographics();
+    this.publicSurveysService.submitSurvey(teamId, surveyId, answers, user).subscribe({
       next: () => {
         this.isSubmitted = true;
         this.isSubmitting = false;
@@ -119,7 +127,7 @@ export class PublicSurveyComponent implements OnInit {
   }
 
   private snapshotAnswers() {
-    return Array.from({ length: this.maxQuestions }, (_, index) => (
+    return Array.from({ length: this.answers.length }, (_, index) => (
       index === this.questionNum - 1
         ? { value: this.answer.value, valid: this.answer.valid }
         : this.answers[index] || { value: null, valid: false }
@@ -130,5 +138,23 @@ export class PublicSurveyComponent implements OnInit {
     this.dialog.open(LoginDialogComponent, {
       'data': { 'createMode': true }
     });
+  }
+
+  canSubmit() {
+    return this.isComplete && this.demographicsForm.valid && !this.isSubmitting;
+  }
+
+  private getDemographics(): PublicSurveyDemographics {
+    const { birthYear, gender } = this.demographicsForm.getRawValue();
+    const user: PublicSurveyDemographics = {};
+
+    if (birthYear !== null) {
+      user.age = new Date().getFullYear() - birthYear;
+    }
+    if (gender) {
+      user.gender = gender;
+    }
+
+    return user;
   }
 }
