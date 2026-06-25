@@ -13,11 +13,11 @@
   [isLoading]="isLoading"
   [isDialog]="isDialog"
   [disablePrevious]="isLoading || questionNum === 1"
-  [disableNext]="isLoading || questionNum === maxQuestions"
+  [disableNext]="disableFrameNext"
   [slideDirection]="slideDirection"
   [slideAnimationVariant]="slideAnimationVariant"
   (previous)="moveQuestion(-1)"
-  (next)="nextQuestion({ nextClicked: true })"
+  (next)="nextFromFrame()"
   >
   @if (previewMode) {
     <span exam-frame-title-extra i18n>(Preview)</span>
