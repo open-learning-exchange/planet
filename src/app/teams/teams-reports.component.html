@@ -71,6 +71,12 @@
                 <span i18n>Ending Balance</span>
                 <span class="num">{{ card.endingBalance | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</span>
               </div>
+              @if (card.receiptImageCount > 0) {
+                <div class="report-card-receipt-images">
+                  <mat-icon>photo_library</mat-icon>
+                  <span i18n>{card.receiptImageCount, plural, =1 {1 attached image} other {# attached images}}</span>
+                </div>
+              }
             </mat-card-content>
             <mat-card-actions class="report-card-actions">
               @if (editable) {

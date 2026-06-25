@@ -4,13 +4,13 @@
       <span matListItemTitle i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
       <ng-container matListItemMeta>
         @if (step?.exam?.questions.length) {
-          <planet-course-icon [icon]="'assignment'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
         }
         @if (step?.resources?.length) {
-          <planet-course-icon [icon]="'attach_file'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
         }
         @if (step?.survey?.questions.length) {
-          <planet-course-icon [icon]="'description'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
         }
         <span class="toolbar-fill"></span>
       </ng-container>

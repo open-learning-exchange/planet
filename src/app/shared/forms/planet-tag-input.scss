@@ -2,10 +2,16 @@
 
   display: inline-flex;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   box-sizing: border-box;
   width: 100%;
 
-  button {
+  mat-chip-set {
+    max-width: 100%;
+  }
+
+  > button {
     width: 100%;
     max-width: 196px;
   }

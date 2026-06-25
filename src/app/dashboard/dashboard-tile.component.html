@@ -29,6 +29,7 @@
               class="dashboard-item"
               [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link && !recentlyDragged, 'accordion-item': isAccordionMode}"
               [routerLink]="recentlyDragged ? null : item.link"
+              [state]="item.returnState ? { returnState: item.returnState } : undefined"
               [matTooltip]="item.tooltip"
               cdkDrag
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"

@@ -15,7 +15,7 @@ import {
   PlanetStepListActionsDirective
 } from '../../shared/forms/planet-step-list.component';
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
-import { CoursesIconComponent } from '../courses-icon.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
@@ -53,6 +53,7 @@ export class CoursesStepComponent implements OnDestroy {
   dialogRef: MatDialogRef<DialogsAddResourcesComponent>;
   activeStep: any;
   activeStepIndex = -1;
+  courseIcons = courseIcons;
   private onDestroy$ = new Subject<void>();
   @ViewChild(PlanetStepListComponent) stepListComponent: PlanetStepListComponent;
 
