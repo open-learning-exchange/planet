@@ -12,7 +12,7 @@ import { MeetupsViewComponent } from '../../meetups/view-meetups/meetups-view.co
 @switch (view) {
   @case ('add') {
     <planet-meetups-add #meetupsAdd [isDialog]="true" [link]="link"
-      [sync]="sync" [meetup]="meetup" (onGoBack)="checkUnsavedChangesAndClose()">
+      [sync]="sync" [meetup]="meetup" (goBackEvent)="checkUnsavedChangesAndClose()">
     </planet-meetups-add>
   }
   @case ('view') {

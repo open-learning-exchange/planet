@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -26,6 +26,8 @@ import { LoginDialogComponent } from '../../login/login-dialog.component';
   ]
 })
 export class PublicSurveyComponent implements OnInit {
+  @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
+
   survey: PublicSurvey | null = null;
   errorMessage = '';
   questionNum = 1;
@@ -89,6 +91,7 @@ export class PublicSurveyComponent implements OnInit {
 
   moveQuestion(direction: number) {
     this.persistCurrentAnswer();
+    this.questionFrame?.scrollToTop();
     if (direction === 1 && this.questionNum === this.maxQuestions) {
       this.currentAnswer = this.answers[this.questionNum - 1]?.value ?? null;
       this.showDemographics = true;

@@ -80,6 +80,13 @@
       justify-content: flex-end;
       margin-left: auto;
     }
+
+    .action-buttons-status,
+    .action-buttons-status > div {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
   }
 
   @keyframes slideInRight {
