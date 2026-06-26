@@ -15,7 +15,8 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
+
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -64,6 +65,7 @@ interface MeetupFormControls {
   `],
   imports: [
     MatToolbar,
+    MatIconButton,
     MatIconAnchor,
     RouterLink,
     MatIcon,
