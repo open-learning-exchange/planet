@@ -104,7 +104,7 @@
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
             <input #timeInput matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
-            <button mat-icon-button matSuffix type="button" (click)="openTimePicker(timeInput)">
+            <button mat-icon-button matIconSuffix type="button" (click)="openTimePicker(timeInput)" aria-label="Open time picker" i18n-aria-label>
               <mat-icon>access_time</mat-icon>
             </button>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
