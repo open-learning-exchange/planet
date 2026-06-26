@@ -91,20 +91,8 @@ interface ContactForm {
       margin-bottom: 10px;
     }
 
-    :host ::ng-deep .configuration-stepper .mat-horizontal-stepper-header-container {
-      justify-content: flex-start;
-      width: fit-content;
-      max-width: 100%;
-    }
-
-    :host ::ng-deep .configuration-stepper .mat-horizontal-stepper-header {
-      flex: 0 0 auto;
-      padding: 0 16px;
-    }
-
-    :host ::ng-deep .configuration-stepper .mat-stepper-horizontal-line {
+    :host ::ng-deep .mat-stepper-horizontal-line {
       flex: 0 0 56px;
-      min-width: 56px;
     }
   `],
   imports: [
