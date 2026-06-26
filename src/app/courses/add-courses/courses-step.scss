@@ -1,9 +1,69 @@
-.step-form-container {
-  display: grid;
-  grid-template-rows: minmax(auto, min-content) auto;
-  height: calc(100% - 36px - 1rem);
+@use '../../variables' as v;
 
-  .vertical-form {
-    overflow-y: auto;
+planet-courses-step .planet-step-list-form-container .planet-step-list-form {
+  overflow: visible;
+}
+
+.course-attach {
+  .attach-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .attach-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.125rem;
+    padding: 1rem;
+    border: 1px dashed rgba(0, 0, 0, 0.18);
+    border-radius: 10px;
+    background: v.$white;
+    cursor: pointer;
+    font: inherit;
+    transition: border-color 0.15s, background 0.15s;
+
+    &:hover,
+    &:focus-visible {
+      border-color: v.$primary;
+      background: v.$primary-lighter;
+      outline: none;
+    }
+
+    mat-icon {
+      color: v.$primary;
+    }
+
+    .ac-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .ac-sub {
+      font-size: 0.6875rem;
+      color: v.$grey-text;
+    }
+
+    .ac-count {
+      display: inline-flex;
+      align-items: baseline;
+      margin-top: 0.375rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: v.$primary-text;
+      background: v.$primary;
+      border-radius: 10px;
+      padding: 0.0625rem 0.5rem;
+    }
+  }
+
+  @media (max-width: v.$screen-xs) {
+    .attach-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

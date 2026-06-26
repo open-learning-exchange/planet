@@ -53,6 +53,11 @@ export class ChatComponent implements OnInit {
   }
 
   goBack(): void {
+    const returnState = history.state?.returnState;
+    if (returnState) {
+      this.router.navigate([ `${returnState.route}` ]);
+      return;
+    }
     this.router.navigate([ '/' ], { relativeTo: this.route });
   }
 
