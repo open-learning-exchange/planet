@@ -28,27 +28,41 @@
 }
 
 .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-  width: 175px;
-  text-align: center;
-  padding: 8px 12px;
+  width: 175px;          
+  min-width: 175px; 
+  height: 36px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+  padding: 0 12px;
+
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
+
+.mat-column-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
 /* Targeting tablet screens */
 @media (max-width: v.$screen-md) {
 
   .mat-column-name {
-    max-width: 125px;
+    max-width: 175px;
+  }
+
+  .mat-column-action {
+    gap: 6px;
   }
 
   .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 100px;
-    text-align: center;
-    padding: 8px 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: 175px;
+    min-width: 175px;
   }
 }
 
@@ -59,9 +73,16 @@
     max-width: 80px;
   }
 
+  .mat-column-action {
+    gap: 6px;
+  }
+
   .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: auto;
-    min-width: 0;
-    padding: 0 8px;
+    width: 175px;
+    min-width: 175px;
+  }
+
+  .mat-mdc-cell label {
+    display: none;
   }
 }
