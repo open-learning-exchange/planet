@@ -53,7 +53,7 @@
         </mat-form-field>
       <mat-form-field>
         <mat-label i18n>Start Time</mat-label>
-        <input #startTimeInput matInput type="time" planetTimeMask formControlName="startTime" required>
+        <input #startTimeInput matInput type="time" planetTimeMask formControlName="startTime">
         <button mat-icon-button matIconSuffix type="button" (click)="openTimePicker(startTimeInput)" aria-label="Open time picker" i18n-aria-label>
           <mat-icon>access_time</mat-icon>
         </button>
