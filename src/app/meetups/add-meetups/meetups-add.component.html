@@ -51,16 +51,22 @@
           <mat-datepicker #datepickerEnd></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label i18n>Start Time</mat-label>
-          <input matInput planetTimeMask formControlName="startTime">
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label i18n>End Time</mat-label>
-          <input matInput planetTimeMask formControlName="endTime">
-          <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
-        </mat-form-field>
+      <mat-form-field>
+        <mat-label i18n>Start Time</mat-label>
+        <input #startTimeInput matInput type="time" planetTimeMask formControlName="startTime" required>
+        <button mat-icon-button matIconSuffix type="button" (click)="openTimePicker(startTimeInput)" aria-label="Open time picker" i18n-aria-label>
+          <mat-icon>access_time</mat-icon>
+        </button>
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label i18n>End Time</mat-label>
+        <input #endTimeInput matInput type="time" planetTimeMask formControlName="endTime">
+        <button mat-icon-button matIconSuffix type="button" (click)="openTimePicker(endTimeInput)" aria-label="Open time picker" i18n-aria-label>
+          <mat-icon>access_time</mat-icon>
+        </button>
+        <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
+      </mat-form-field>
         <div class="full-width">
           <label i18n>Recurring Frequency</label>
           <mat-radio-group formControlName="recurring">

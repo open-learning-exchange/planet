@@ -17,7 +17,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatSuffix} from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
@@ -366,6 +366,19 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     })) };
+  }
+
+  openTimePicker(input: HTMLInputElement): void {
+    const picker = input as HTMLInputElement & {
+      showPicker?: () => void;
+    };
+
+    if (picker.showPicker) {
+      picker.showPicker();
+    } else {
+      input.focus();
+      input.click();
+    }
   }
 
 }
