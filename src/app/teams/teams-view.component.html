@@ -5,9 +5,9 @@
 <div class="space-container teams-view">
   <mat-toolbar class="primary-color font-size-1">
     @if (team !== undefined) {
-      <h3 class="margin-lr-3 ellipsis-title">
+      <h3 class="margin-lr-3 ellipsis-title office-name">
         {{team.name}} @if (mode==='enterprise') {
-        <ng-container i18n>Office </ng-container>
+        <ng-container i18n>Office</ng-container>
       }
     </h3>
   }
@@ -41,7 +41,7 @@
 
 <ng-template #editDetails>
   @if (isUserLeader) {
-    <button mat-stroked-button (click)="updateTeam()">
+    <button mat-icon-button style="margin-left: 8px;" (click)="updateTeam()">
       <mat-icon>edit</mat-icon>
     </button>
   }
