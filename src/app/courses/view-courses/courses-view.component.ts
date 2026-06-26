@@ -22,7 +22,7 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
-import { CoursesIconComponent } from '../courses-icon.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
@@ -72,6 +72,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   examText: 'retake' | 'take' = 'take';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  courseIcons = courseIcons;
   trackByFn = trackByIndex;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 

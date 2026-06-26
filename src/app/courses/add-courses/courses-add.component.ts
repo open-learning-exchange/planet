@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
@@ -22,7 +22,6 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -33,6 +32,8 @@ import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.com
 import { SubmitDirective } from '../../shared/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
 import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -53,27 +54,11 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar,
-    MatIconAnchor,
-    MatIcon,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    FormErrorMessagesComponent,
-    PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatSelect,
-    PlanetTagInputComponent,
-    NgClass,
-    CoursesStepComponent,
-    MatButton,
-    FileUploadComponent,
-    SubmitDirective
+    MatToolbar, MatIconAnchor, MatIcon, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
+    CoursesStepComponent, MatButton, FileUploadComponent, SubmitDirective,
+    MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, TruncateTextPipe
   ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
@@ -94,6 +79,9 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
+  isFormExpanded = true;
+  submitAttempted = false;
+  newCourseLabel = $localize`New Course`;
   tags = this.fb.control<string[]>([]);
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -101,7 +89,6 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   images: any[] = [];
   // from the languages import
   languageNames = languages.map(list => list.name);
-  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
   get steps() {
@@ -151,9 +138,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
           this.setExistingCover(saved);
         }
         this.pageType = 'Edit';
+        this.isFormExpanded = !(saved.steps && saved.steps.length > 0);
       } else {
         this.pageType = 'Add';
         this.savedCourse = null;
+        this.isFormExpanded = true;
       }
       this.draftExists = draft !== undefined;
       const doc = draft === undefined ? saved : draft;
@@ -392,6 +381,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   onSubmit(shouldNavigate = true) {
     if (!this.courseForm.valid) {
       this.preserveCoverStateUntilSubmit = false;
+      this.submitAttempted = true;
+      this.isFormExpanded = true;
       showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
@@ -427,6 +418,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       images: []
     });
     this.planetStepListService.addStep(this.steps.length - 1);
+  }
+
+  openCourseDetails() {
+    this.isFormExpanded = true;
+    this.coursesStepComponent?.toList();
+  }
+
+  onStepEditorOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      this.isFormExpanded = false;
+    }
   }
 
   cancel() {

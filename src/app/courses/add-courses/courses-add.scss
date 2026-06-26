@@ -3,17 +3,70 @@
 :host {
   .view-container {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
-    grid-template-rows: auto 42px;
-    grid-column-gap: 0.25rem;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 1rem;
+    position: relative;
+  }
+
+  .course-content {
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .course-details-panel {
+    margin-bottom: 1rem;
+
+    &.course-details-invalid {
+      border: 1px solid v.$warn;
+    }
+
+    .course-title-header {
+      margin: 0;
+    }
+
+    ::ng-deep .mat-expansion-panel-header {
+      height: 64px;
+      padding: 0 24px;
+      overflow: hidden;
+    }
+
+    ::ng-deep .mat-expansion-panel-body {
+      padding: 0 24px 16px;
+    }
   }
 
   .steps-container {
-    grid-row: span 2;
+    margin: 1rem 0;
   }
 
   .actions-container {
-    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-self: flex-start;
+  }
+
+  .collections-field {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0.75rem 0 1rem;
+
+    planet-tag-input {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+    }
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0 1rem;
+
+    mat-form-field {
+      width: 100%;
+    }
   }
 
   .form-container {
@@ -22,55 +75,18 @@
 
   .form-spacing {
     width: auto;
-  }
-
-  .draft-btn {
-    background: v.$grey;
+    display: block;
   }
 
   .cover-field {
     display: block;
     width: 100%;
-    margin-bottom: 1rem;
+    margin-top: 0.5rem;
 
     .cover-label {
       display: block;
       margin-bottom: 0.5rem;
       color: v.$grey-text;
-    }
-  }
-
-  @media (max-width: v.$screen-md) {
-    .form-spacing {
-      justify-content: center;
-    }
-
-    .view-container {
-      grid-template-columns: 1fr;
-      grid-row-gap: 2rem;
-      grid-template-rows: 1fr;
-      grid-template-areas:
-      'form-area form-area'
-      'steps-area steps-area'
-      'actions-area actions-area';
-      > * {
-        overflow-y: visible;
-      }
-    }
-
-    .steps-container {
-      grid-area: steps-area;
-      border-top: 2px solid #000;
-      border-bottom: 2px solid #000;
-      padding: 2rem;
-    }
-
-    .form-container {
-      grid-area: form-area;
-    }
-
-    .actions-container{
-      grid-area: actions-area;
     }
   }
 }
