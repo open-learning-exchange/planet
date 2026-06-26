@@ -103,11 +103,14 @@
         @if (field.type === 'time') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+            <input #timeInput matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+            <button mat-icon-button matSuffix type="button" (click)="openTimePicker(timeInput)">
+              <mat-icon>access_time</mat-icon>
+            </button>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
-          </mat-form-field>
-        }
-        <!-- Slide Toggle -->
+            </mat-form-field>
+          }
+          <!-- Slide Toggle -->
         @if (field.type === 'toggle') {
           <mat-slide-toggle class="full-width" [formControl]="modalForm.controls[field.name]">{{field.label}}</mat-slide-toggle>
         }

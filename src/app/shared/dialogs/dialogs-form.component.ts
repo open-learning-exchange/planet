@@ -202,6 +202,19 @@ export class DialogsFormComponent {
     }
   }
 
+  openTimePicker(input: HTMLInputElement): void {
+    const picker = input as HTMLInputElement & {
+      showPicker?: () => void;
+    };
+
+    if (picker.showPicker) {
+      picker.showPicker();
+    } else {
+      input.focus();
+      input.click();
+    }
+  }
+
   private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {
     if (formGroup instanceof FormGroup) {
       return formGroup;
