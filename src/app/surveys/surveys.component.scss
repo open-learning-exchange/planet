@@ -27,28 +27,34 @@
   display: block;
 }
 
-.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-  width: 175px;          
-  min-width: 175px; 
-  height: 36px;
+.surveys-table {
+  min-width: 1120px;
+}
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-  padding: 0 12px;
-
-  white-space: nowrap;
+.survey-action-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 5px 0;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .mat-column-action {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 5px 0;
-    align-items: flex-start;
-  }
+  justify-content: flex-start;
+}
+
+.survey-action-cell button[mat-raised-button] {
+  width: 175px;
+  min-width: 175px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
 
 /* Targeting tablet screens */
 @media (max-width: v.$screen-md) {
@@ -57,13 +63,22 @@
     max-width: 175px;
   }
 
-  .mat-column-action {
+  .survey-action-cell {
     gap: 6px;
   }
 
-  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 175px;
-    min-width: 175px;
+  .survey-action-cell button[mat-raised-button] {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+  }
+
+  .survey-action-cell button[mat-raised-button] mat-icon {
+    margin: 0;
+  }
+
+  .survey-action-cell label {
+    display: none;
   }
 }
 
@@ -74,16 +89,12 @@
     max-width: 80px;
   }
 
-  .mat-column-action {
+  .survey-action-cell {
     gap: 6px;
   }
 
-  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 175px;
-    min-width: 175px;
-  }
-
-  .mat-mdc-cell label {
-    display: none;
+  .survey-action-cell button[mat-raised-button] {
+    width: 40px;
+    min-width: 40px;
   }
 }
