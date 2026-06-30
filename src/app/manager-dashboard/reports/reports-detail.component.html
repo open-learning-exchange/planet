@@ -1,15 +1,17 @@
-<mat-toolbar>
+<mat-toolbar class="reports-filter-toolbar">
   @if (deviceType === deviceTypes.DESKTOP) {
-    <mat-toolbar-row>
+    <mat-toolbar-row class="toolbar-divider reports-filter-row">
       <ng-container *ngTemplateOutlet="backBtn"></ng-container>
-      @if (showCustomDateFields) {
-        <ng-container *ngTemplateOutlet="startDateField"></ng-container>
-        <ng-container *ngTemplateOutlet="endDateField"></ng-container>
-      }
-      <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
-      <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
-      <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
-      <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
+      <div class="toolbar-settings">
+        @if (showCustomDateFields) {
+          <ng-container *ngTemplateOutlet="startDateField"></ng-container>
+          <ng-container *ngTemplateOutlet="endDateField"></ng-container>
+        }
+        <ng-container *ngTemplateOutlet="timeFilterSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="teamsFilterSelect"></ng-container>
+        <ng-container *ngTemplateOutlet="planetToggleGroup"></ng-container>
+        <ng-container *ngTemplateOutlet="clearBtn"></ng-container>
+      </div>
     </mat-toolbar-row>
   } @else {
     <ng-container>
