@@ -202,16 +202,18 @@ export class DialogsFormComponent {
     }
   }
 
-  openTimePicker(input: HTMLInputElement): void {
-    const picker = input as HTMLInputElement & {
-      showPicker?: () => void;
-    };
-
-    if (picker.showPicker) {
-      picker.showPicker();
-    } else {
+  openNativePicker(input: HTMLInputElement): void {
+    if (input.disabled || input.readOnly) {
+      return;
+    }
+    if (!input.showPicker) {
       input.focus();
-      input.click();
+      return;
+    }
+    try {
+      input.showPicker();
+    } catch {
+      input.focus();
     }
   }
 
