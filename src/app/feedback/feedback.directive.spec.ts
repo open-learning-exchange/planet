@@ -42,6 +42,17 @@ describe('FeedbackDirective', () => {
     expect(feedback.url).toBe('/users/profile/a;planet=mutugi');
   });
 
+  it('stores matrix parameters in intermediate path segments', () => {
+    router.url = '/users;planet=mutugi/profile/a';
+
+    directive.addFeedback(post);
+
+    const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
+    expect(feedback.url).toBe('/users;planet=mutugi/profile/a');
+    expect(feedback.state).toBe('users');
+    expect(feedback.routerLink).toEqual([ '/', 'users', 'profile', 'a' ]);
+  });
+
   it('keeps page parameters parseable from the stored URL', () => {
     router.url = '/users/profile/a;planet=mutugi';
 
