@@ -62,6 +62,18 @@ describe('FeedbackDirective', () => {
     expect(feedback.titleContext).toEqual({ kind: 'path', path: [ 'users', 'profile', 'a' ] });
   });
 
+  it('stores query parameters while keeping navigation metadata parameter-free', () => {
+    router.url = '/users?search=mutugi';
+
+    directive.addFeedback(post);
+
+    const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
+    expect(feedback.url).toBe('/users?search=mutugi');
+    expect(feedback.state).toBe('users');
+    expect(feedback.routerLink).toEqual([ '/', 'users' ]);
+    expect(feedback.titleContext).toEqual({ kind: 'section', state: 'users' });
+  });
+
   it('behaves the same for routes without matrix parameters', () => {
     router.url = '/users/profile/a';
 
