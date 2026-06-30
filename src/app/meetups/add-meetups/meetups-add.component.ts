@@ -23,7 +23,6 @@ import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { PlanetTimeMaskDirective } from '../../shared/forms/planet-time-mask.directive';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
@@ -65,7 +64,7 @@ interface MeetupFormControls {
   `],
   imports: [
     MatToolbar,
-    MatIconButton,
+    MatIconButton,
     MatIconAnchor,
     RouterLink,
     MatIcon,
@@ -82,7 +81,6 @@ interface MeetupFormControls {
     MatDatepickerToggle,
     MatSuffix,
     MatDatepicker,
-    PlanetTimeMaskDirective,
     MatRadioGroup,
     MatRadioButton,
     MatCheckbox,
@@ -370,16 +368,18 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
     })) };
   }
 
-  openTimePicker(input: HTMLInputElement): void {
-    const picker = input as HTMLInputElement & {
-      showPicker?: () => void;
-    };
-
-    if (picker.showPicker) {
-      picker.showPicker();
-    } else {
+  openNativePicker(input: HTMLInputElement): void {
+    if (input.disabled || input.readOnly) {
+      return;
+    }
+    if (!input.showPicker) {
       input.focus();
-      input.click();
+      return;
+    }
+    try {
+      input.showPicker();
+    } catch {
+      input.focus();
     }
   }
 
