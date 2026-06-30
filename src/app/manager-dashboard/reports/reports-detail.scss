@@ -160,7 +160,7 @@ mat-toolbar mat-form-field {
   }
 }
 
-@media (max-width: #{v.$screen-lg}) {
+@media (max-width: #{v.$screen-md}) {
   .reports-filter-row {
     .toolbar-settings {
       padding-top: 4px;
