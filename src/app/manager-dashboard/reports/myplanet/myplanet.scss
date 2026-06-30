@@ -8,3 +8,26 @@ button {
   align-items: center;
   flex-wrap: wrap;
 }
+
+.toolbar-divider {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.toolbar-fill {
+  flex: 0 0 auto;
+}
+
+.toolbar-settings {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+}
