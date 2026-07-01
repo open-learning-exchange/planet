@@ -59,9 +59,11 @@
       </button>
       }
     }
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
-      <mat-icon>file_download</mat-icon>
-    </a>
+    @if (resource?.doc?.isDownloadable) {
+      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
+        <mat-icon>file_download</mat-icon>
+      </a>
+    }
   </ng-template>
 
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
