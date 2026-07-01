@@ -33,6 +33,7 @@ describe('TeamsTablePdfExportService', () => {
       data: [ { description: 'Alice', amount: 12 } ],
       title: 'Test report',
       currencyCode: 'USD',
+      currencySymbol: '¤',
       flexibleColumns: [ 'description' ],
       moneyColumns: [ 'amount' ],
       summary: [ { label: 'Total', value: 12, format: 'currency' } ]
@@ -44,7 +45,7 @@ describe('TeamsTablePdfExportService', () => {
 
     expect(summaryBody[0]).toEqual([
       { text: 'Total', style: 'summaryLabel' },
-      { text: '$12.00', style: 'summaryValue' }
+      { text: '¤12.00', style: 'summaryValue' }
     ]);
 
     expect(tableBody[0]).toEqual([
@@ -53,7 +54,7 @@ describe('TeamsTablePdfExportService', () => {
     ]);
     expect(tableBody[1]).toEqual([
       { text: 'Alice', style: 'tableCell', alignment: 'left' },
-      { text: '$12.00', style: 'tableCell', alignment: 'right' }
+      { text: '¤12.00', style: 'tableCell', alignment: 'right' }
     ]);
     expect(documentDefinition.content[2].table.widths).toEqual([ '*', 'auto' ]);
     expect(pdfService.download).toHaveBeenCalledWith(documentDefinition, 'Test report.pdf');

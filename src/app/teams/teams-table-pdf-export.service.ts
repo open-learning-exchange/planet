@@ -22,6 +22,7 @@ export interface PdfImageSection {
 export interface PdfTableExportOptions {
   columnFormatters?: { [key: string]: (value: any, row: any) => string | number };
   currencyCode?: string;
+  currencySymbol?: string;
   data: any[];
   flexibleColumns?: string[];
   filename?: string;
@@ -45,6 +46,7 @@ export class TeamsTablePdfExportService {
   exportTable({
     columnFormatters = {},
     currencyCode,
+    currencySymbol,
     data,
     flexibleColumns = [],
     filename,
@@ -54,7 +56,7 @@ export class TeamsTablePdfExportService {
     summary = [],
     title
   }: PdfTableExportOptions) {
-    const formattedData = this.formatRows(data, columnFormatters, moneyColumns, currencyCode);
+    const formattedData = this.formatRows(data, columnFormatters, moneyColumns, currencyCode, currencySymbol);
     if (formattedData.length === 0) {
       this.planetMessageService.showAlert($localize`There was no data during that period to export`);
       return;
@@ -66,7 +68,7 @@ export class TeamsTablePdfExportService {
       content: [
         { text: title, style: 'title' },
         subtitle ? { text: subtitle, style: 'subtitle' } : '',
-        ...this.summaryContent(summary, currencyCode),
+        ...this.summaryContent(summary, currencyCode, currencySymbol),
         {
           table: {
             headerRows: 1,
@@ -124,7 +126,8 @@ export class TeamsTablePdfExportService {
     data: any[],
     columnFormatters: PdfTableExportOptions['columnFormatters'] = {},
     moneyColumns: string[] = [],
-    currencyCode?: string
+    currencyCode?: string,
+    currencySymbol?: string
   ) {
     return data.map(row => {
       return Object.entries(row).reduce(
@@ -132,7 +135,7 @@ export class TeamsTablePdfExportService {
           const formattedKey = markdownToPlainText(key);
           const formatter = columnFormatters[formattedKey];
           const formattedValue = moneyColumns.includes(formattedKey) ?
-            this.formatCurrency(value, currencyCode) :
+            this.formatCurrency(value, currencyCode, currencySymbol) :
             formatter ? formatter(value, row) : value;
           return { ...object, [formattedKey]: this.formatValue(formattedValue) };
         },
@@ -148,7 +151,7 @@ export class TeamsTablePdfExportService {
     return markdownToPlainText(value);
   }
 
-  private summaryContent(summary: PdfSummaryItem[], currencyCode?: string) {
+  private summaryContent(summary: PdfSummaryItem[], currencyCode?: string, currencySymbol?: string) {
     if (summary.length === 0) {
       return [];
     }
@@ -159,7 +162,9 @@ export class TeamsTablePdfExportService {
           body: summary.map(item => [
             { text: item.label, style: 'summaryLabel' },
             {
-              text: this.formatValue(item.format === 'currency' ? this.formatCurrency(item.value, currencyCode) : item.value),
+              text: this.formatValue(item.format === 'currency' ?
+                this.formatCurrency(item.value, currencyCode, currencySymbol) :
+                item.value),
               style: 'summaryValue'
             }
           ])
@@ -170,18 +175,27 @@ export class TeamsTablePdfExportService {
     ];
   }
 
-  private formatCurrency(value: any, currencyCode = 'USD') {
+  private formatCurrency(value: any, currencyCode = 'USD', currencySymbol?: string) {
     const amount = Number(value) || 0;
-    const format = (currency: string) => new Intl.NumberFormat(undefined, {
+    const formatter = (currency: string) => new Intl.NumberFormat(undefined, {
       style: 'currency',
       currency,
       currencyDisplay: 'symbol'
-    }).format(amount);
+    });
+    const format = (currency: string) => {
+      const numberFormatter = formatter(currency);
+      if (!currencySymbol) {
+        return numberFormatter.format(amount);
+      }
+      return numberFormatter.formatToParts(amount).map(part => part.type === 'currency' ? currencySymbol : part.value).join('');
+    };
     try {
       return format(currencyCode || 'USD');
     } catch (e) {
       try {
-        return format('USD');
+        return currencySymbol ?
+          `${currencySymbol}${new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}` :
+          format('USD');
       } catch (fallbackError) {
         return amount.toString();
       }

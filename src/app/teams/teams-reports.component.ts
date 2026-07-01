@@ -288,6 +288,7 @@ export class TeamsReportsComponent implements OnChanges {
         data,
         title,
         currencyCode: this.curCode?.code,
+        currencySymbol: this.curCode?.symbol,
         moneyColumns: [
           $localize`Beginning Balance`,
           $localize`Sales`,
