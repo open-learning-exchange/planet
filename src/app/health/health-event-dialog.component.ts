@@ -7,8 +7,7 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { PdfService } from '../shared/pdf.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
@@ -40,9 +39,9 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private pdfService: PdfService
   ) {
-    pdfMake.addVirtualFileSystem(pdfFonts);
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
       .filter(([ condition, active ]) => active).map(([ condition, active ]) => condition).sort().join(', ');
@@ -131,7 +130,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
       }
     };
-    pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`);
+    this.pdfService.download(documentDefinition, `health_event_${event.date}.pdf`);
   }
 
 }
