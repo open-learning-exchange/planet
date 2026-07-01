@@ -169,4 +169,16 @@ export class ResourcesService {
     };
   }
 
+  downloadResource(url: string, filename: string) {
+    this.couchService.getAttachment(url).subscribe((blob: Blob) => {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was an error downloading this resource.`);
+    });
+  }
+
 }

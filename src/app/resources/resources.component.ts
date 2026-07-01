@@ -514,4 +514,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
+  downloadClick(element: any) {
+    const url = this.urlPrefix + element._id + '/' + element.doc.filename;
+    this.resourcesService.downloadResource(url, element.doc.filename);
+  }
+
 }

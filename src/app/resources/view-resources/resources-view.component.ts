@@ -152,4 +152,9 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     }
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
+
+  downloadClick() {
+    const filename = this.resource.doc.filename || Object.keys(this.resource.doc._attachments)[0];
+    this.resourcesService.downloadResource(this.resourceSrc, filename);
+  }
 }

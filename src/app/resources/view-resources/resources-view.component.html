@@ -59,9 +59,9 @@
       </button>
       }
     }
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable && !isUserEnrolled && !canManage">
+    <button mat-icon-button [disabled]="!resource?.doc?.isDownloadable && !isUserEnrolled && !canManage" (click)="downloadClick()">
       <mat-icon>file_download</mat-icon>
-    </a>
+    </button>
   </ng-template>
 
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
