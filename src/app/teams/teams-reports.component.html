@@ -11,9 +11,13 @@
       </span>
       <span class="spacer"></span>
       @if (reportCards.length > 0) {
-        <button mat-stroked-button (click)="exportReports()">
-          <mat-icon>file_download</mat-icon><span i18n>Export as CSV</span>
+        <button mat-stroked-button [matMenuTriggerFor]="reportsExportMenu">
+          <mat-icon>file_download</mat-icon><span i18n>Export</span>
         </button>
+        <mat-menu #reportsExportMenu="matMenu">
+          <button mat-menu-item (click)="exportReports()" i18n>CSV</button>
+          <button mat-menu-item (click)="exportReportsPdf()" i18n>PDF</button>
+        </mat-menu>
       }
       @if (editable) {
         <button mat-raised-button color="primary" (click)="openAddReportDialog(false)">
