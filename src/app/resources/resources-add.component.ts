@@ -221,7 +221,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       openWhichFile: this.fb.control({ value: '', disabled: true }, {
         validators: (ac) => CustomValidators.fileMatch(ac, this.attachedZipFiles)
       }),
-      isDownloadable: this.fb.control(false),
+      isDownloadable: this.fb.control(true),
       sourcePlanet: this.fb.control(this.stateService.configuration.code),
       resideOn: this.fb.control(this.stateService.configuration.code),
       createdDate: this.fb.control<number | DatePlaceholderType>(this.couchService.datePlaceholder),
@@ -263,7 +263,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       resourceType: doc.resourceType ?? '',
       addedBy: doc.addedBy ?? this.currentUsername,
       openWhichFile: doc.openWhichFile ?? '',
-      isDownloadable: doc.isDownloadable ?? false,
+      isDownloadable: doc.isDownloadable ?? true,
       sourcePlanet: doc.sourcePlanet ?? this.stateService.configuration.code,
       resideOn: doc.resideOn ?? this.stateService.configuration.code,
       createdDate: doc.createdDate ?? this.couchService.datePlaceholder,
@@ -374,7 +374,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.resourceFilename = '';
     this.disableDelete = true;
     this.showDownloadCheckbox = false;
-    this.resourceForm.patchValue({ isDownloadable: false });
+    this.resourceForm.patchValue({ isDownloadable: true });
     this.hasUnsavedChanges = true;
   }
 

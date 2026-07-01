@@ -59,7 +59,7 @@
       </button>
       }
     }
-    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
+    <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable && !isUserEnrolled && !canManage">
       <mat-icon>file_download</mat-icon>
     </a>
   </ng-template>
