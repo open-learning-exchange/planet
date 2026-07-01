@@ -310,6 +310,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
         title,
         subtitle: this.exportSubtitle(),
         currencyCode: this.curCode?.code,
+        flexibleColumns: [ $localize`description` ],
         moneyColumns: [ $localize`credit`, $localize`debit`, $localize`balance` ],
         summary: [
           { label: $localize`Total Credits`, value: this.totals.credit, format: 'currency' },

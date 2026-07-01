@@ -23,6 +23,7 @@ export interface PdfTableExportOptions {
   columnFormatters?: { [key: string]: (value: any, row: any) => string | number };
   currencyCode?: string;
   data: any[];
+  flexibleColumns?: string[];
   filename?: string;
   imageSections?: PdfImageSection[];
   moneyColumns?: string[];
@@ -45,6 +46,7 @@ export class TeamsTablePdfExportService {
     columnFormatters = {},
     currencyCode,
     data,
+    flexibleColumns = [],
     filename,
     imageSections = [],
     moneyColumns = [],
@@ -68,13 +70,13 @@ export class TeamsTablePdfExportService {
         {
           table: {
             headerRows: 1,
-            widths: this.tableWidths(headers),
+            widths: this.tableWidths(headers, flexibleColumns),
             body: [
               headers.map(header => ({ text: this.headerLabel(header), style: 'tableHeader' })),
               ...formattedData.map(row => headers.map(header => ({
                 text: row[header],
                 style: 'tableCell',
-                alignment: this.cellAlignment(header)
+                alignment: this.cellAlignment(header, moneyColumns)
               })))
             ]
           },
@@ -99,27 +101,23 @@ export class TeamsTablePdfExportService {
     this.pdfService.download(documentDefinition, filename || `${title}.pdf`);
   }
 
-  private tableWidths(headers: string[]) {
+  private tableWidths(headers: string[], flexibleColumns: string[]) {
     if (headers.length > 5) {
       return headers.map(() => '*');
     }
-    return headers.map(header => this.isFlexibleColumn(header) ? '*' : 'auto');
-  }
-
-  private isFlexibleColumn(header: string) {
-    return [ 'description', 'note', 'summary' ].includes(header.toLowerCase());
+    return headers.map(header => flexibleColumns.includes(header) ? '*' : 'auto');
   }
 
   private headerLabel(header: string) {
     return header.replace(/\S+/g, word => word.charAt(0).toUpperCase() + word.slice(1));
   }
 
-  private cellAlignment(header: string) {
+  private cellAlignment(header: string, moneyColumns: string[]) {
     const numericHeaders = [
       'amount', 'balance', 'beginning balance', 'credit', 'debit', 'ending balance',
       'other expenses', 'other income', 'profit/loss', 'sales', 'wages'
     ];
-    return numericHeaders.includes(header.toLowerCase()) ? 'right' : 'left';
+    return moneyColumns.includes(header) || numericHeaders.includes(header.toLowerCase()) ? 'right' : 'left';
   }
 
   private formatRows(
@@ -194,7 +192,7 @@ export class TeamsTablePdfExportService {
     return sections
       .filter(section => section.images.length > 0)
       .flatMap(section => [
-        { text: section.title, style: 'imageSectionTitle' },
+        { text: markdownToPlainText(section.title), style: 'imageSectionTitle' },
         ...this.imageRows(section.images)
       ]);
   }

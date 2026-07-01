@@ -30,9 +30,10 @@ describe('TeamsTablePdfExportService', () => {
 
   it('builds PDF table headers and rows from data keys', () => {
     service.exportTable({
-      data: [ { name: 'Alice', amount: 12 } ],
+      data: [ { description: 'Alice', amount: 12 } ],
       title: 'Test report',
       currencyCode: 'USD',
+      flexibleColumns: [ 'description' ],
       moneyColumns: [ 'amount' ],
       summary: [ { label: 'Total', value: 12, format: 'currency' } ]
     });
@@ -47,14 +48,14 @@ describe('TeamsTablePdfExportService', () => {
     ]);
 
     expect(tableBody[0]).toEqual([
-      { text: 'Name', style: 'tableHeader' },
+      { text: 'Description', style: 'tableHeader' },
       { text: 'Amount', style: 'tableHeader' }
     ]);
     expect(tableBody[1]).toEqual([
       { text: 'Alice', style: 'tableCell', alignment: 'left' },
       { text: '$12.00', style: 'tableCell', alignment: 'right' }
     ]);
-    expect(documentDefinition.content[2].table.widths).toEqual([ 'auto', 'auto' ]);
+    expect(documentDefinition.content[2].table.widths).toEqual([ '*', 'auto' ]);
     expect(pdfService.download).toHaveBeenCalledWith(documentDefinition, 'Test report.pdf');
   });
 
@@ -62,7 +63,7 @@ describe('TeamsTablePdfExportService', () => {
     service.exportTable({
       data: [ { Name: 'Alice' } ],
       imageSections: [
-        { title: 'Receipts', images: [ { image: 'data:image/png;base64,test', name: 'receipt.png' } ] }
+        { title: '**Receipts**', images: [ { image: 'data:image/png;base64,test', name: 'receipt.png' } ] }
       ],
       title: 'Report with images'
     });

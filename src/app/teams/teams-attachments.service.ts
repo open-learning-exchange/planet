@@ -54,7 +54,7 @@ export class TeamsAttachmentsService {
         map(image => ({ image, name: attachment.name })),
         catchError(() => of(null))
       )
-    )).pipe(map(images => images.filter(Boolean)));
+    )).pipe(map(images => images.filter((image): image is { image: string; name: string } => !!image)));
   }
 
   retainSelectedAttachments(doc: any, state: AttachmentInputState) {
@@ -124,6 +124,11 @@ export class TeamsAttachmentsService {
       };
       reader.onerror = () => observer.error(reader.error);
       reader.readAsDataURL(blob);
+      return () => {
+        if (reader.readyState === FileReader.LOADING) {
+          reader.abort();
+        }
+      };
     });
   }
 
@@ -156,6 +161,10 @@ export class TeamsAttachmentsService {
         observer.error(new Error('Unable to load WebP receipt image'));
       };
       image.src = url;
+      return () => {
+        URL.revokeObjectURL(url);
+        image.src = '';
+      };
     });
   }
 
