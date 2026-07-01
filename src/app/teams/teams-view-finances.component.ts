@@ -4,7 +4,7 @@ import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
   MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow
 } from '@angular/material/table';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { TeamsService } from './teams.service';
 import { CouchService } from '../shared/couchdb.service';
 import { CustomValidators } from '../validators/custom-validators';
@@ -26,7 +26,9 @@ import { MatIcon } from '@angular/material/icon';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface TransactionForm {
   amount: number | string;
@@ -67,6 +69,9 @@ interface TransactionForm {
     MatHeaderRow,
     MatRowDef,
     MatRow,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     PlanetLoadingSpinnerComponent,
     CurrencyPipe,
     DatePipe
@@ -112,6 +117,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private planetMessageService: PlanetMessageService,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
     private stateService: StateService,
     private teamsService: TeamsService,
     private teamsAttachmentsService: TeamsAttachmentsService
@@ -290,7 +296,35 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   exportTableData() {
-    const updatedData = this.table.data.map(row => ({
+    const { data, title } = this.financeExportData();
+    this.csvService.exportCSV({ data, title });
+  }
+
+  exportTablePdf() {
+    const { data, title, titleName } = this.financeExportData();
+    this.dialogsLoadingService.start();
+    this.receiptImageSections(this.table.data)
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
+        data,
+        title,
+        subtitle: this.exportSubtitle(),
+        currencyCode: this.curCode?.code,
+        currencySymbol: this.curCode?.symbol,
+        flexibleColumns: [ $localize`description` ],
+        moneyColumns: [ $localize`credit`, $localize`debit`, $localize`balance` ],
+        summary: [
+          { label: $localize`Total Credits`, value: this.totals.credit, format: 'currency' },
+          { label: $localize`Total Debits`, value: this.totals.debit, format: 'currency' },
+          { label: $localize`Balance`, value: this.totals.balance, format: 'currency' }
+        ],
+        imageSections,
+        filename: $localize`Financial Transactions for ${titleName}.pdf`
+      }));
+  }
+
+  private financeExportData() {
+    const data = this.table.data.map(row => ({
       [$localize`date`]: fullLabel(row.date),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
@@ -298,12 +332,35 @@ export class TeamsViewFinancesComponent implements OnChanges {
       [$localize`balance`]: row.balance
     }));
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
-    const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
+    const entityLabel = this.stateService.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    this.csvService.exportCSV({
-      data: updatedData,
-      title: $localize`Financial Transactions for ${titleName}`
-    });
+    return {
+      data,
+      title: $localize`Financial Transactions for ${titleName}`,
+      titleName
+    };
+  }
+
+  private exportSubtitle() {
+    if (!this.startDate && !this.endDate) {
+      return '';
+    }
+    const start = this.startDate ? fullLabel(this.startDate.getTime()) : $localize`Beginning`;
+    const end = this.endDate ? fullLabel(this.endDate.getTime()) : $localize`Today`;
+    return $localize`Date range: ${start} - ${end}`;
+  }
+
+  private receiptImageSections(transactions: any[]) {
+    const docsWithReceipts = transactions.filter(transaction => this.teamsAttachmentsService.receiptAttachments(transaction).length > 0);
+    if (docsWithReceipts.length === 0) {
+      return of([]);
+    }
+    return forkJoin(docsWithReceipts.map(transaction => this.teamsAttachmentsService.receiptAttachmentImages(transaction).pipe(
+      map(images => ({
+        title: $localize`Receipt images for ${fullLabel(transaction.date)} - ${transaction.description}`,
+        images
+      }))
+    ))).pipe(map((sections: PdfImageSection[]) => sections.filter(section => section.images.length > 0)));
   }
 
 }

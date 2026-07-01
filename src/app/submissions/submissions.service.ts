@@ -18,10 +18,7 @@ import { TeamsService } from '../teams/teams.service';
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-pdfMake.addVirtualFileSystem(pdfFonts);
+import { PdfService } from '../shared/pdf.service';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +45,8 @@ export class SubmissionsService {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private teamsService: TeamsService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private pdfService: PdfService
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
@@ -516,7 +514,7 @@ export class SubmissionsService {
         if (exportOptions.includeAnalysis) {
           await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
         }
-        pdfMake.createPdf({
+        this.pdfService.download({
           content: docContent,
           styles: {
             title: {
@@ -534,7 +532,7 @@ export class SubmissionsService {
               alignment: 'center'
             }
           }
-        }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+        }, `${toProperCase(type)} - ${exam.name}.pdf`);
         this.dialogsLoadingService.stop();
       });
   }
