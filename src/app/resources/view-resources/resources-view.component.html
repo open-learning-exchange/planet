@@ -60,7 +60,7 @@
       }
     }
     @if (resource?.doc?.isDownloadable) {
-      <a href={{resourceSrc}} mat-icon-button download [disabled]="!resource?.doc?.isDownloadable">
+      <a mat-icon-button [href]="resourceSrc" download>
         <mat-icon>file_download</mat-icon>
       </a>
     }
