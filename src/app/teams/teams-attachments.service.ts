@@ -50,7 +50,7 @@ export class TeamsAttachmentsService {
     }
     return forkJoin(attachments.map(attachment =>
       this.couchService.getAttachment(attachment.url).pipe(
-        switchMap(blob => this.blobToDataUrl(blob)),
+        switchMap(blob => this.receiptBlobToPdfDataUrl(blob, attachment.contentType)),
         map(image => ({ image, name: attachment.name })),
         catchError(() => of(null))
       )
@@ -124,6 +124,38 @@ export class TeamsAttachmentsService {
       };
       reader.onerror = () => observer.error(reader.error);
       reader.readAsDataURL(blob);
+    });
+  }
+
+  private receiptBlobToPdfDataUrl(blob: Blob, contentType?: string): Observable<string> {
+    return (contentType || blob.type).toLowerCase() === 'image/webp' ?
+      this.webpBlobToPngDataUrl(blob) :
+      this.blobToDataUrl(blob);
+  }
+
+  private webpBlobToPngDataUrl(blob: Blob): Observable<string> {
+    return new Observable(observer => {
+      const url = URL.createObjectURL(blob);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const context = canvas.getContext('2d');
+        URL.revokeObjectURL(url);
+        if (!context) {
+          observer.error(new Error('Unable to convert WebP receipt image'));
+          return;
+        }
+        context.drawImage(image, 0, 0);
+        observer.next(canvas.toDataURL('image/png'));
+        observer.complete();
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        observer.error(new Error('Unable to load WebP receipt image'));
+      };
+      image.src = url;
     });
   }
 
