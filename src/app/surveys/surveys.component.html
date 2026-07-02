@@ -42,7 +42,7 @@
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
-    <mat-table #table class="responsive-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
+    <mat-table #table class="responsive-table surveys-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -80,32 +80,32 @@
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" class="survey-action-cell">
           @if (element.parent !== true && currentFilter.viewMode !== 'adopt') {
-            <div [matTooltip]="getActionTooltip(element, 'edit')">
-              @if (!teamId) {
+            @if (!teamId) {
+              <div [matTooltip]="getActionTooltip(element, 'edit')">
                 <button mat-raised-button color="primary" (click)="routeToEditSurvey('update', element._id)" [disabled]="element.isArchived">
                   <mat-icon>edit</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Edit</label>
                   }
                 </button>
-              }
-            </div>
-            <div [matTooltip]="getActionTooltip(element, 'send')">
-              @if (!teamId && !routeTeamId) {
+              </div>
+            }
+            @if (!teamId && !routeTeamId) {
+              <div [matTooltip]="getActionTooltip(element, 'send')">
                 <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                   <mat-icon>send</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Send</label>
                   }
                 </button>
-              }
-            </div>
-            <mat-menu #sendMenu="matMenu">
-              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
-              <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
-            </mat-menu>
+              </div>
+              <mat-menu #sendMenu="matMenu">
+                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
+                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
+              </mat-menu>
+            }
             <div [matTooltip]="getActionTooltip(element, 'record')">
               <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
                 <mat-icon>fiber_manual_record</mat-icon>
@@ -127,6 +127,7 @@
             @if (element.publicAccess === true && element.teamId && (teamId || routeTeamId)) {
               <div [matTooltip]="getActionTooltip(element, 'revoke')">
                 <button mat-raised-button color="accent" type="button" (click)="revokeSurveyPublicAccess(element)" [disabled]="element.isArchived">
+                  <mat-icon>close</mat-icon>
                   @if (!isMobile) {
                     <label i18n>Revoke Public Link</label>
                   }
@@ -146,16 +147,16 @@
                 </button>
               </div>
             }
-            <div [matTooltip]="getActionTooltip(element, 'submissions')">
-              @if (!teamId && !routeTeamId) {
+            @if (!teamId && !routeTeamId) {
+              <div [matTooltip]="getActionTooltip(element, 'submissions')">
                 <button mat-raised-button color="primary" (click)="viewSurveySubmissions(element)" [disabled]="!element.questions?.length || !element.taken">
                   <mat-icon>insert_drive_file</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Submissions</label>
                   }
                 </button>
-              }
-            </div>
+              </div>
+            }
           }
           @if (routeTeamId && currentFilter.viewMode === 'adopt') {
             <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
