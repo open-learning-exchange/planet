@@ -78,4 +78,15 @@
     display: block;
   }
 
+  .cover-field {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+
+    .cover-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: v.$grey-text;
+    }
+  }
 }
