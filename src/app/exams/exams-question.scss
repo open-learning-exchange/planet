@@ -4,19 +4,18 @@
 
   form {
     display: grid;
-    grid-template-rows: 56px auto 56px;
+    grid-template-rows: auto auto auto;
     grid-row-gap: 1rem;
   }
 
   .question-choices {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     flex-wrap: wrap;
   }
 
   .question-choices > div {
-    margin-right: 0.5rem;
-    max-height: 56px;
+    margin: 0 .5rem .75rem 0;
   }
 
   .type-title-container {
