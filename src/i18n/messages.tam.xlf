@@ -2,9 +2,9 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en-US" datatype="plaintext" original="ng2.template" target-language="ta">
     <body>
-      <trans-unit id="2547756348530497105" datatype="html">
+      <trans-unit id="2547756348530497105" datatype="html" approved="yes">
         <source>ltr</source>
-        <target state="needs-translation">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="2417314978621991581" datatype="html">
         <source>Start New Chat</source>
@@ -182,8 +182,8 @@
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html">
         <source>
-                        <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}"/> Description
-                      </source>
+                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+              </source>
       </trans-unit>
       <trans-unit id="8320928950959687197" datatype="html">
         <source>{VAR_SELECT, select, Edit {Edit} Add {Add}}</source>
@@ -518,6 +518,10 @@
       <trans-unit id="4317796680020352235" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}"/> Course</source>
       </trans-unit>
+      <trans-unit id="5879298616290228468" datatype="html">
+        <source> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </source>
+        <target state="needs-translation"> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </target>
+      </trans-unit>
       <trans-unit id="9075667564121384338" datatype="html">
         <source>Course Title</source>
         <target state="needs-translation">Course Title</target>
@@ -541,13 +545,13 @@
       <trans-unit id="discardDraftButton" datatype="html">
         <source>Discard Draft</source>
       </trans-unit>
+      <trans-unit id="3635530771235487587" datatype="html">
+        <source>New Course</source>
+        <target state="needs-translation">New Course</target>
+      </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html">
         <source>Add Step</source>
         <target state="needs-translation">Add Step</target>
-      </trans-unit>
-      <trans-unit id="4368235916055792182" datatype="html">
-        <source>Add title</source>
-        <target state="needs-translation">Add title</target>
       </trans-unit>
       <trans-unit id="8290521921380829055" datatype="html">
         <source>Edited course: </source>
@@ -587,9 +591,29 @@
       <trans-unit id="8608266972589229818" datatype="html">
         <source>Remove resource</source>
       </trans-unit>
+      <trans-unit id="4236474513175220666" datatype="html">
+        <source>Quiz learners</source>
+        <target state="needs-translation">Quiz learners</target>
+      </trans-unit>
+      <trans-unit id="2650269401046048840" datatype="html">
+        <source>questions</source>
+        <target state="needs-translation">questions</target>
+      </trans-unit>
       <trans-unit id="3210795519710879765" datatype="html">
         <source>Add Resource</source>
         <target state="needs-translation">Add Resource</target>
+      </trans-unit>
+      <trans-unit id="8071232289681062759" datatype="html">
+        <source>Attach from library</source>
+        <target state="needs-translation">Attach from library</target>
+      </trans-unit>
+      <trans-unit id="1223468132111440462" datatype="html">
+        <source>attached</source>
+        <target state="needs-translation">attached</target>
+      </trans-unit>
+      <trans-unit id="7559011103061252651" datatype="html">
+        <source>Collect feedback</source>
+        <target state="needs-translation">Collect feedback</target>
       </trans-unit>
       <trans-unit id="303773937652374487" datatype="html">
         <source>Update Test</source>
@@ -3711,6 +3735,10 @@
       <trans-unit id="1151108013016521270" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}"/> Resource</source>
       </trans-unit>
+      <trans-unit id="5642836248241530789" datatype="html">
+        <source>Title is required</source>
+        <target state="needs-translation">Title is required</target>
+      </trans-unit>
       <trans-unit id="7071470734400948493" datatype="html">
         <source>Author</source>
         <target state="translated">நுாலாசிரியர்</target>
@@ -3718,6 +3746,14 @@
       <trans-unit id="1464072562214937907" datatype="html">
         <source>Year</source>
         <target state="translated">ஆண்டு</target>
+      </trans-unit>
+      <trans-unit id="8455204924704616723" datatype="html">
+        <source>File</source>
+        <target state="needs-translation">File</target>
+      </trans-unit>
+      <trans-unit id="2197686984434589542" datatype="html">
+        <source>Drag &amp; drop supported</source>
+        <target state="needs-translation">Drag &amp; drop supported</target>
       </trans-unit>
       <trans-unit id="6552941649034744368" datatype="html">
         <source>Publisher/Attribution</source>
@@ -3739,6 +3775,10 @@
         <source>Resource For</source>
         <target state="needs-translation">Resource For</target>
       </trans-unit>
+      <trans-unit id="2064936693393551817" datatype="html">
+        <source>Attribution &amp; License</source>
+        <target state="needs-translation">Attribution &amp; License</target>
+      </trans-unit>
       <trans-unit id="3250391385569692601" datatype="html">
         <source>Media</source>
         <target state="needs-translation">Media</target>
@@ -3754,10 +3794,6 @@
       <trans-unit id="1768191214371478322" datatype="html">
         <source>Open Which File</source>
         <target state="needs-translation">Open Which File</target>
-      </trans-unit>
-      <trans-unit id="2127544016118336723" datatype="html">
-        <source>File Upload:</source>
-        <target state="needs-translation">File Upload:</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -3784,6 +3820,14 @@
       <trans-unit id="8180430309488610092" datatype="html">
         <source>Private Resource</source>
         <target state="needs-translation">Private Resource</target>
+      </trans-unit>
+      <trans-unit id="8846151385804023521" datatype="html">
+        <source>Classification</source>
+        <target state="needs-translation">Classification</target>
+      </trans-unit>
+      <trans-unit id="6420383165966969057" datatype="html">
+        <source>Subject &amp; level required</source>
+        <target state="needs-translation">Subject &amp; level required</target>
       </trans-unit>
       <trans-unit id="6292485709041686353" datatype="html">
         <source>Edited resource: </source>
@@ -4728,6 +4772,14 @@
       </trans-unit>
       <trans-unit id="4695102721296853836" datatype="html">
         <source>There was a problem deleting this collection.</source>
+      </trans-unit>
+      <trans-unit id="8687959069292422908" datatype="html">
+        <source>Selected collections</source>
+        <target state="needs-translation">Selected collections</target>
+      </trans-unit>
+      <trans-unit id="1055926904852124007" datatype="html">
+        <source>Remove collection</source>
+        <target state="needs-translation">Remove collection</target>
       </trans-unit>
       <trans-unit id="7878231993274463960" datatype="html">
         <source>Add Collections</source>

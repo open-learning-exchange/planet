@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="en">
     <body>
-      <trans-unit id="2547756348530497105" datatype="html">
+      <trans-unit id="2547756348530497105" datatype="html" approved="yes">
         <source>ltr</source>
-        <target state="needs-translation">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="2417314978621991581" datatype="html">
         <source>Start New Chat</source>
@@ -213,7 +213,8 @@
         <target state="needs-translation">No description available.</target>
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html">
-        <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+        <source>
+                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="needs-translation">
                 <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
@@ -952,7 +953,7 @@
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html">
-        <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
+        <source><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html">
@@ -1199,15 +1200,15 @@ No description provided.
       </trans-unit>
       <trans-unit id="7399172966634539253" datatype="html" approved="yes">
         <source>{VAR_PLURAL, plural, =1 {There is} other {There are}}</source>
-        <target state="final">{VAR_PLURAL, plural, one {} =1 {There is} other {There are}}</target>
+        <target state="final">{VAR_PLURAL, plural, =1 {There is} other {There are}}</target>
       </trans-unit>
       <trans-unit id="3389112199654656544" datatype="html" approved="yes">
         <source>{VAR_PLURAL, plural, =1 {resource} other {resources}}</source>
-        <target state="final">{VAR_PLURAL, plural, one {} =1 {resource} other {resources}}</target>
+        <target state="final">{VAR_PLURAL, plural, =1 {resource} other {resources}}</target>
       </trans-unit>
       <trans-unit id="8871274990030594152" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</source>
-        <target state="final"><x id="ICU" equiv-text="{step.resources.length, plural, one {} =1 {resource} other {resources}}"/>.</target>
+        <target state="final"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}"/>.</target>
       </trans-unit>
       <trans-unit id="4297508107919101415" datatype="html">
         <source>The test has</source>
@@ -4947,11 +4948,11 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5351867428123862444" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members}}} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses}}} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups}}} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items}}}}</source>
-        <target state="final">{VAR_SELECT, select, members {{VAR_PLURAL, plural, one {} =0 {members} =1 {member} other {members}}} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses}}} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups}}} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items}}}}</target>
+        <target state="final">{VAR_SELECT, select, members {{VAR_PLURAL, plural, =0 {members} =1 {member} other {members}}} resources {{VAR_PLURAL_1, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_2, plural, =0 {courses} =1 {course} other {courses}}} meetups {{VAR_PLURAL_3, plural, =0 {meetups} =1 {meetup} other {meetups}}} other {{VAR_PLURAL_4, plural, =0 {items} =1 {item} other {items}}}}</target>
       </trans-unit>
       <trans-unit id="8859686160814263783" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> selected </source>
-        <target state="final"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, one {} =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         } "/> selected </target>
+        <target state="final"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         } "/> selected </target>
       </trans-unit>
       <trans-unit id="7619560701830330401" datatype="html">
         <source>Loading</source>

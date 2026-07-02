@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es">
     <body>
       <trans-unit id="2547756348530497105" datatype="html" approved="yes">
         <source>ltr</source>
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="6100801425076620054" datatype="html">
         <source>Web &amp; Social</source>
-        <target state="translated">Web &amp; Social</target>
+        <target state="translated">Web y Redes Sociales</target>
       </trans-unit>
       <trans-unit id="2061907804391865750" datatype="html" approved="yes">
         <source>Added link: <x id="PH" equiv-text="linkTitle"/></source>
@@ -213,7 +213,8 @@
         <target state="final">No hay descripción disponible.</target>
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html" approved="yes">
-        <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+        <source>
+                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="final">
                       <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Editar} Add {Añadir}} "/> descripción de la
@@ -246,7 +247,7 @@
       </trans-unit>
       <trans-unit id="8725249970991838557" datatype="html">
         <source>Social &amp; Web</source>
-        <target state="translated">Social &amp; Web</target>
+        <target state="translated">Redes Sociales y Web</target>
       </trans-unit>
       <trans-unit id="710918981527246687" datatype="html" approved="yes">
         <source>Remove Links</source>
@@ -953,7 +954,7 @@
         <target state="final">Se han añadido <x id="PH" equiv-text="courses.length"/> cursos a</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html" approved="yes">
-        <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
+        <source><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
         <target state="final"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> en cola para <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html" approved="yes">

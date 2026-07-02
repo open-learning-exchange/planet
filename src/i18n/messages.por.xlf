@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="pt-PT">
     <body>
-      <trans-unit id="2547756348530497105" datatype="html">
+      <trans-unit id="2547756348530497105" datatype="html" approved="yes">
         <source>ltr</source>
-        <target state="needs-translation">ltr</target>
+        <target state="final">ltr</target>
       </trans-unit>
       <trans-unit id="2417314978621991581" datatype="html">
         <source>Start New Chat</source>
@@ -124,7 +124,7 @@
       </trans-unit>
       <trans-unit id="6100801425076620054" datatype="html">
         <source>Web &amp; Social</source>
-        <target state="translated">Web &amp; Social</target>
+        <target state="needs-translation">Web &amp; Social</target>
       </trans-unit>
       <trans-unit id="2061907804391865750" datatype="html">
         <source>Added link: <x id="PH" equiv-text="linkTitle"/></source>
@@ -213,7 +213,8 @@
         <target state="needs-translation">No description available.</target>
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html">
-        <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+        <source>
+                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="translated">
                 <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> Descrição de <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/>
@@ -245,7 +246,7 @@
       </trans-unit>
       <trans-unit id="8725249970991838557" datatype="html">
         <source>Social &amp; Web</source>
-        <target state="translated">Social &amp; Web</target>
+        <target state="needs-translation">Social &amp; Web</target>
       </trans-unit>
       <trans-unit id="710918981527246687" datatype="html">
         <source>Remove Links</source>
@@ -952,7 +953,7 @@
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html">
-        <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
+        <source><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html">
@@ -4683,8 +4684,47 @@ Outras observações</target>
 
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
   headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</source>
-        <target state="translated">As informações a seguir são de uma etapa de curso do curso "<x id="PH" equiv-text="stepTitle"/>" com a descrição "<x id="PH_1" equiv-text="stepDescription"/>".
-  Certifique-se de ajudar o aprendiz da melhor forma possível.</target>
+        <target state="needs-translation">The following is a <x id="PH" equiv-text="examType"/> named “<x id="PH_1" equiv-text="examName"/>” with description “<x id="PH_2" equiv-text="examDescription"/>”.
+  <x id="PH_3" equiv-text="payloadString"/>
+
+  Please generate a detailed AI Analysis for PDF export, organized into 4 sections:
+
+  1. INDIVIDUAL QUESTION ANALYSIS
+    If the question is a **Closed-ended questions(type - select or selectMultiple or rating scale [1-9 choices]):**
+        - List the top three answer choices with absolute counts and percentages.
+        - In addition to the top three,
+         highlight any answer choice with fewer than 10% of responses and suggest why it might be under-selected
+        - Create a hypothesis for the selections
+    If the question is an **Open-ended question(s) (type - input or textarea):**
+        - Require direct quotes with respondent demographics if available.
+        - Perform sentiment and keyword analysis
+        - Highlight any singular but high-impact outlier suggestions.
+        - Highlight the actionability of the suggestions.
+        - Force thematic categorization with absolute counts and percentage breakdowns i.e for each theme, provide:
+          1. Number and percentage of respondents mentioning it.
+          2. One anonymized verbatim quote illustrating the theme.
+
+  2. CORRELATIONS BETWEEN QUESTIONS
+    - Compute pairwise co-occurrence rates for all multi-choice questions.
+    - Identify the four strongest correlations by conditional probability and count.
+    - Present each as:
+      “X% of respondents who chose ‘A’ in Qn also chose ‘B’ in Qm (Y/Z).”
+
+  3. DEMOGRAPHIC BREAKDOWN
+    - Define cohorts based on demographic factors such as:
+      - **Age groups:** Compare each closed‐ended choice across age, gender, and location segments,
+        calling out where a choice is at least 15 percentage‐points higher or lower than the overall average.
+      - **Gender** (if available)
+    - For each cohort, list their top two choices per closed-ended question (counts + percentages).
+    - Report only differences from the overall sample exceeding 20 percentage points.
+
+  4. RECOMMENDATIONS AND INSIGHTS
+    - Provide actionable recommendations based on the analysis:
+      provide concrete recommendations for how a community initiative could address that top challenge—grounded in the data
+    - Highlight any surprising insights or trends.
+
+  Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
+  headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</target>
       </trans-unit>
       <trans-unit id="3515009611935359950" datatype="html">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
@@ -4934,7 +4974,7 @@ Outras observações</target>
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</source>
-        <target state="translated">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
+        <target state="needs-translation">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</target>
       </trans-unit>
