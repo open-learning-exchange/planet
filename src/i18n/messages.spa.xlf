@@ -572,6 +572,10 @@
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Course</source>
         <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/> Curso</target>
       </trans-unit>
+      <trans-unit id="5879298616290228468" datatype="html">
+        <source> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </source>
+        <target state="translated"> Detalles del curso: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </target>
+      </trans-unit>
       <trans-unit id="9075667564121384338" datatype="html" approved="yes">
         <source>Course Title</source>
         <target state="final">Título del Curso</target>
@@ -588,21 +592,17 @@
         <source>Subject Level</source>
         <target state="final">Nivel de asignatura</target>
       </trans-unit>
-      <trans-unit id="546766753072101168" datatype="html" approved="yes">
-        <source>Labels</source>
-        <target state="final">Etiquetas</target>
+      <trans-unit id="6554131886828216596" datatype="html" approved="yes">
+        <source>Add Step</source>
+        <target state="final">Añadir Paso</target>
       </trans-unit>
       <trans-unit id="discardDraftButton" datatype="html" approved="yes">
         <source>Discard Draft</source>
         <target state="final">Descartar borrador</target>
       </trans-unit>
-      <trans-unit id="6554131886828216596" datatype="html" approved="yes">
-        <source>Add Step</source>
-        <target state="final">Añadir Paso</target>
-      </trans-unit>
-      <trans-unit id="4368235916055792182" datatype="html" approved="yes">
-        <source>Add title</source>
-        <target state="final">Añadir título</target>
+      <trans-unit id="3635530771235487587" datatype="html">
+        <source>New Course</source>
+        <target state="translated">Nuevo curso</target>
       </trans-unit>
       <trans-unit id="8290521921380829055" datatype="html" approved="yes">
         <source>Edited course: </source>
@@ -648,9 +648,29 @@
         <source>Remove resource</source>
         <target state="translated">Eliminar recurso</target>
       </trans-unit>
+      <trans-unit id="4236474513175220666" datatype="html">
+        <source>Quiz learners</source>
+        <target state="translated">Evaluar a los estudiantes</target>
+      </trans-unit>
+      <trans-unit id="2650269401046048840" datatype="html">
+        <source>questions</source>
+        <target state="translated">preguntas</target>
+      </trans-unit>
       <trans-unit id="3210795519710879765" datatype="html" approved="yes">
         <source>Add Resource</source>
         <target state="final">Añadir recurso</target>
+      </trans-unit>
+      <trans-unit id="8071232289681062759" datatype="html">
+        <source>Attach from library</source>
+        <target state="translated">Adjuntar desde la biblioteca</target>
+      </trans-unit>
+      <trans-unit id="1223468132111440462" datatype="html">
+        <source>attached</source>
+        <target state="translated">adjunto</target>
+      </trans-unit>
+      <trans-unit id="7559011103061252651" datatype="html">
+        <source>Collect feedback</source>
+        <target state="translated">Recopilar comentarios</target>
       </trans-unit>
       <trans-unit id="303773937652374487" datatype="html" approved="yes">
         <source>Update Test</source>
@@ -2457,7 +2477,7 @@ Otras notas</target>
         <target state="final">Echa un vistazo a nuestra aplicación Android</target>
       </trans-unit>
       <trans-unit id="3947932744068086415" datatype="html">
-        <source>myPlanet on Google Play</source>
+        <source>myPlanet on playstore</source>
         <target state="translated">myPlanet en Google Play</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html" approved="yes">
@@ -3934,6 +3954,10 @@ Otras notas</target>
         <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; te gustaría unirte al encuentro &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt;
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; en &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
       </trans-unit>
+      <trans-unit id="546766753072101168" datatype="html" approved="yes">
+        <source>Labels</source>
+        <target state="final">Etiquetas</target>
+      </trans-unit>
       <trans-unit id="8587453636009362658" datatype="html">
         <source>Remove label</source>
         <target state="translated">Eliminar etiqueta</target>
@@ -4082,6 +4106,10 @@ Otras notas</target>
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Resource</source>
         <target state="final"><x id="ICU" equiv-text="{this.pageType, select, Add {Añadir} Edit {Editar}} "/> Recurso</target>
       </trans-unit>
+      <trans-unit id="5642836248241530789" datatype="html">
+        <source>Title is required</source>
+        <target state="translated">El título es obligatorio</target>
+      </trans-unit>
       <trans-unit id="7071470734400948493" datatype="html" approved="yes">
         <source>Author</source>
         <target state="final">Autor</target>
@@ -4090,45 +4118,13 @@ Otras notas</target>
         <source>Year</source>
         <target state="final">Año</target>
       </trans-unit>
-      <trans-unit id="6552941649034744368" datatype="html" approved="yes">
-        <source>Publisher/Attribution</source>
-        <target state="final">Editor/Fuente</target>
+      <trans-unit id="8455204924704616723" datatype="html">
+        <source>File</source>
+        <target state="translated">Archivo</target>
       </trans-unit>
-      <trans-unit id="3214806821536931304" datatype="html" approved="yes">
-        <source>Link to License</source>
-        <target state="final">Enlace a la Licencia</target>
-      </trans-unit>
-      <trans-unit id="7071183763232384332" datatype="html" approved="yes">
-        <source>Subject(s)</source>
-        <target state="final">Asignatura(s)</target>
-      </trans-unit>
-      <trans-unit id="2786558755838228231" datatype="html" approved="yes">
-        <source>Level(s)</source>
-        <target state="final">Nivel(es)</target>
-      </trans-unit>
-      <trans-unit id="497741311653035804" datatype="html" approved="yes">
-        <source>Resource For</source>
-        <target state="final">Recurso para</target>
-      </trans-unit>
-      <trans-unit id="3250391385569692601" datatype="html" approved="yes">
-        <source>Media</source>
-        <target state="final">Medio</target>
-      </trans-unit>
-      <trans-unit id="773041829051514672" datatype="html" approved="yes">
-        <source>Resource Type</source>
-        <target state="final">Tipo de Recurso</target>
-      </trans-unit>
-      <trans-unit id="8385709837689420472" datatype="html" approved="yes">
-        <source>Added By</source>
-        <target state="final">Añadido por</target>
-      </trans-unit>
-      <trans-unit id="1768191214371478322" datatype="html" approved="yes">
-        <source>Open Which File</source>
-        <target state="final">Abrir que Archivo</target>
-      </trans-unit>
-      <trans-unit id="2127544016118336723" datatype="html" approved="yes">
-        <source>File Upload:</source>
-        <target state="final">Subir archivo:</target>
+      <trans-unit id="2197686984434589542" datatype="html">
+        <source>Drag &amp; drop supported</source>
+        <target state="translated">Compatible con arrastrar y soltar</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html" approved="yes">
         <source>File size cannot exceed more than 512 MB</source>
@@ -4146,6 +4142,10 @@ Otras notas</target>
         <source>Remove existing attachment</source>
         <target state="final">Eliminar archivo adjunto existente</target>
       </trans-unit>
+      <trans-unit id="1768191214371478322" datatype="html" approved="yes">
+        <source>Open Which File</source>
+        <target state="final">Abrir que Archivo</target>
+      </trans-unit>
       <trans-unit id="4022284993805729764" datatype="html" approved="yes">
         <source>File downloadable</source>
         <target state="final">Archivo descargable</target>
@@ -4157,6 +4157,50 @@ Otras notas</target>
       <trans-unit id="8180430309488610092" datatype="html" approved="yes">
         <source>Private Resource</source>
         <target state="final">Recurso Privado</target>
+      </trans-unit>
+      <trans-unit id="8846151385804023521" datatype="html">
+        <source>Classification</source>
+        <target state="translated">Clasificación</target>
+      </trans-unit>
+      <trans-unit id="6420383165966969057" datatype="html">
+        <source>Subject &amp; level required</source>
+        <target state="translated">Se requiere tema y nivel</target>
+      </trans-unit>
+      <trans-unit id="7071183763232384332" datatype="html" approved="yes">
+        <source>Subject(s)</source>
+        <target state="final">Asignatura(s)</target>
+      </trans-unit>
+      <trans-unit id="2786558755838228231" datatype="html" approved="yes">
+        <source>Level(s)</source>
+        <target state="final">Nivel(es)</target>
+      </trans-unit>
+      <trans-unit id="3250391385569692601" datatype="html" approved="yes">
+        <source>Media</source>
+        <target state="final">Medio</target>
+      </trans-unit>
+      <trans-unit id="773041829051514672" datatype="html" approved="yes">
+        <source>Resource Type</source>
+        <target state="final">Tipo de Recurso</target>
+      </trans-unit>
+      <trans-unit id="497741311653035804" datatype="html" approved="yes">
+        <source>Resource For</source>
+        <target state="final">Recurso para</target>
+      </trans-unit>
+      <trans-unit id="2064936693393551817" datatype="html">
+        <source>Attribution &amp; License</source>
+        <target state="translated">Atribución y licencia</target>
+      </trans-unit>
+      <trans-unit id="6552941649034744368" datatype="html" approved="yes">
+        <source>Publisher/Attribution</source>
+        <target state="final">Editor/Fuente</target>
+      </trans-unit>
+      <trans-unit id="3214806821536931304" datatype="html" approved="yes">
+        <source>Link to License</source>
+        <target state="final">Enlace a la Licencia</target>
+      </trans-unit>
+      <trans-unit id="8385709837689420472" datatype="html" approved="yes">
+        <source>Added By</source>
+        <target state="final">Añadido por</target>
       </trans-unit>
       <trans-unit id="6292485709041686353" datatype="html" approved="yes">
         <source>Edited resource: </source>
@@ -5224,6 +5268,14 @@ Otras notas</target>
         <source>There was a problem deleting this collection.</source>
         <target state="final">Hubo un problema al eliminar esta colección.</target>
       </trans-unit>
+      <trans-unit id="8687959069292422908" datatype="html">
+        <source>Selected collections</source>
+        <target state="translated">Colecciones seleccionadas</target>
+      </trans-unit>
+      <trans-unit id="1055926904852124007" datatype="html">
+        <source>Remove collection</source>
+        <target state="translated">Eliminar colección</target>
+      </trans-unit>
       <trans-unit id="7878231993274463960" datatype="html" approved="yes">
         <source>Add Collections</source>
         <target state="final">Añadir colección</target>
@@ -5442,9 +5494,7 @@ Otras notas</target>
         <source>
           <x id="PH" equiv-text="type"/>
         </source>
-        <target state="translated">
-          <x id="PH" equiv-text="type"/>
-        </target>
+        <target state="translated"><x id="PH" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="4938712138982229270" datatype="html" approved="yes">
         <source>Age (years)</source>
