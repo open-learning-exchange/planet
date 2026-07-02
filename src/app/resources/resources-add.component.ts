@@ -34,6 +34,9 @@ import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/mat
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../shared/submit.directive';
+import {
+  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription
+} from '@angular/material/expansion';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -90,7 +93,11 @@ interface ResourceFormModel {
     MatCheckbox,
     MatButton,
     SubmitDirective,
-    AsyncPipe
+    AsyncPipe,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription
   ]
 })
 
@@ -99,7 +106,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   file: any;
   attachedZipFiles: string[] = [];
   filteredZipFiles: Observable<string[]>;
-  deleteAttachment = false;
   resourceForm!: FormGroup<ResourceFormModel>;
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
@@ -124,8 +130,22 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @Output() afterSubmit = new EventEmitter<any>();
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
+  submitAttempted = false;
+  sectionsExpanded = { details: true, file: false, classification: false, attribution: false };
   private initialState = '';
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
+
+  get detailsInvalid(): boolean {
+    return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
+  }
+
+  get fileInvalid(): boolean {
+    return !!this.resourceForm.errors?.fileTooBig || this.resourceForm.controls.openWhichFile.invalid;
+  }
+
+  get classificationInvalid(): boolean {
+    return this.resourceForm.controls.subject.invalid || this.resourceForm.controls.level.invalid;
+  }
 
   constructor(
     private router: Router,
@@ -275,6 +295,16 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
+      this.submitAttempted = true;
+      if (this.detailsInvalid) {
+        this.sectionsExpanded.details = true;
+      }
+      if (this.fileInvalid) {
+        this.sectionsExpanded.file = true;
+      }
+      if (this.classificationInvalid) {
+        this.sectionsExpanded.classification = true;
+      }
       showFormErrors(this.resourceForm.controls);
       return;
     }
@@ -337,13 +367,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       this.router.navigate([ '/resources' ]);
     }
     this.planetMessageService.showMessage(message);
-  }
-
-  deleteAttachmentToggle(event) {
-    this.deleteAttachment = event.checked;
-    // Also disable downloadable toggle if user is removing file
-    this.showDownloadCheckbox = !event.checked;
-    this.resourceForm.patchValue({ isDownloadable: false });
   }
 
   markAttachmentForDeletion() {

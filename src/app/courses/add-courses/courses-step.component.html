@@ -1,16 +1,16 @@
 <planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
-  @for (step of steps; track step; let i = $index; let isFirst = $first; let isLast = $last) {
+  @for (step of steps; track step; let i = $index) {
     <planet-step-list-item>
       <span matListItemTitle i18n>{{(step.stepTitle || 'Step ' + (i+1)) | truncateText:50}}</span>
       <ng-container matListItemMeta>
         @if (step?.exam?.questions.length) {
-          <planet-course-icon [icon]="'assignment'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
         }
         @if (step?.resources?.length) {
-          <planet-course-icon [icon]="'attach_file'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
         }
         @if (step?.survey?.questions.length) {
-          <planet-course-icon [icon]="'description'"></planet-course-icon>
+          <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
         }
         <span class="toolbar-fill"></span>
       </ng-container>
@@ -46,10 +46,32 @@
       </mat-chip-set>
     }
   </div>
-  <div planetStepListActions>
-    <a mat-raised-button color="primary" (click)="addExam()">{{ examButtonLabel }}</a>
-    <button mat-raised-button color="primary" (click)="addResources()" i18n>Add Resource</button>
-    <a mat-raised-button color="primary" (click)="addExam('survey')">{{ surveyButtonLabel }}</a>
-    <button mat-raised-button color="accent" (click)="addStep()" i18n>Add Step</button>
+  <div planetStepListActions class="course-attach">
+    <div class="attach-grid">
+      <button type="button" class="attach-card" (click)="addExam()">
+        <mat-icon>assignment</mat-icon>
+        <span class="ac-title">{{ examButtonLabel }}</span>
+        <span class="ac-sub" i18n>Quiz learners</span>
+        @if (activeStep?.exam?.questions?.length) {
+          <span class="ac-count">{{ activeStep.exam.questions.length }}&nbsp;<span i18n>questions</span></span>
+        }
+      </button>
+      <button type="button" class="attach-card" (click)="addResources()">
+        <mat-icon>attach_file</mat-icon>
+        <span class="ac-title" i18n>Add Resource</span>
+        <span class="ac-sub" i18n>Attach from library</span>
+        @if (activeStep?.resources?.length) {
+          <span class="ac-count">{{ activeStep.resources.length }}&nbsp;<span i18n>attached</span></span>
+        }
+      </button>
+      <button type="button" class="attach-card" (click)="addExam('survey')">
+        <mat-icon>description</mat-icon>
+        <span class="ac-title">{{ surveyButtonLabel }}</span>
+        <span class="ac-sub" i18n>Collect feedback</span>
+        @if (activeStep?.survey?.questions?.length) {
+          <span class="ac-count">{{ activeStep.survey.questions.length }}&nbsp;<span i18n>questions</span></span>
+        }
+      </button>
+    </div>
   </div>
 </planet-step-list>

@@ -1,5 +1,20 @@
-@if (helperText) {
+@if (helperText && (mode !== 'add' || value.length === 0)) {
   <planet-tag-selected-input [selectedIds]="value" [allTags]="tags"></planet-tag-selected-input>
+}
+
+@if (helperText && mode === 'add' && value.length > 0) {
+  <mat-chip-set aria-label="Selected collections" i18n-aria-label>
+    @for (tagId of value; track tagId) {
+      <mat-chip [removable]="!disabled" (removed)="removeTag(tagId)">
+        {{ tagName(tagId) }}
+        @if (!disabled) {
+          <button matChipRemove type="button" i18n-aria-label aria-label="Remove collection">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+      </mat-chip>
+    }
+  </mat-chip-set>
 }
 
 <button type="button" mat-stroked-button (click)="openPresetDialog()" [disabled]="disabled">

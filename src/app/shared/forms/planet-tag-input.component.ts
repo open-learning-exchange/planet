@@ -14,6 +14,8 @@ import { dedupeShelfReduce } from '../utils';
 import { NgClass } from '@angular/common';
 import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { MatButton } from '@angular/material/button';
+import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 type DialogStartingTag = string | SelectedDialogTag;
@@ -37,7 +39,9 @@ interface PlanetTagDialogData {
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ],
-  imports: [PlanetTagSelectedInputComponent, MatButton, NgClass]
+  imports: [
+    PlanetTagSelectedInputComponent, MatButton, NgClass, MatChip, MatChipRemove, MatChipSet, MatIcon
+  ]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
@@ -163,6 +167,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
 
   removeTag(tagToRemove: string) {
     this.writeValue(this.value.filter(tag => tag !== tagToRemove));
+  }
+
+  tagName(tagId: string) {
+    return this.tagsService.findTag(tagId, this.tags).name;
   }
 
   writeValue(tags: string[] | null = []) {
