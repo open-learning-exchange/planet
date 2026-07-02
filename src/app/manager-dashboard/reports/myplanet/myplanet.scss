@@ -8,3 +8,19 @@ button {
   align-items: center;
   flex-wrap: wrap;
 }
+
+.toolbar-fill {
+  flex: 1 1 auto;
+}
+
+.toolbar-settings {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 12px;
+  justify-content: flex-end;
+}
+
+mat-toolbar-row {
+  align-items: baseline; 
+}

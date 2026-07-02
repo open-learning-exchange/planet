@@ -11,6 +11,72 @@ mat-toolbar mat-form-field {
   font-weight: bold;
 }
 
+.toolbar-divider {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.toolbar-settings {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.reports-filter-row {
+  align-items: baseline;
+
+  .toolbar-fill {
+    flex: 1 1 auto;
+  }
+
+  .toolbar-settings {
+    margin-top: 20px;
+    min-width: 0;
+    flex-wrap: nowrap;
+    align-items: baseline;
+    justify-content: flex-end;
+  }
+
+  .toolbar-settings mat-form-field {
+    flex: 1 1 130px;
+    min-width: 110px;
+    max-width: 165px;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
+
+  .toolbar-settings mat-button-toggle-group,
+  .toolbar-settings button[mat-raised-button] {
+    flex: 0 0 auto;
+  }
+
+  .toolbar-settings mat-button-toggle-group {
+    white-space: nowrap;
+  }
+}
+
+.reports-filter-toolbar {
+  height: auto;
+  overflow: visible;
+
+  .mat-toolbar-row {
+    height: auto;
+    min-height: 64px;
+    padding-left: 8px;
+    padding-right: 8px;
+    overflow: visible;
+    white-space: normal;
+  }
+}
+
 .manager-reports-detail {
   mat-grid-tile.label figure {
     justify-content: start;
@@ -96,5 +162,19 @@ mat-toolbar mat-form-field {
 
   .reports-table-container {
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+}
+
+@media (max-width: #{v.$screen-md}) {
+  .reports-filter-row {
+    .toolbar-settings {
+      padding-top: 4px;
+      gap: 4px;
+    }
+
+    .toolbar-settings mat-form-field {
+      flex-basis: 120px;
+      max-width: 150px;
+    }
   }
 }
