@@ -118,6 +118,32 @@ npm run dev:locale --locale=spa
 Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, or `ara`.
 *You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
 
+To update the source translation catalog, run:
+```
+npm run i18n:extract
+```
+
+This runs Angular extraction and then removes source file and line number metadata from all `src/i18n/messages*.xlf` catalogs, reducing noisy diffs after ordinary source edits.
+
+To normalize existing translation catalogs without extracting new source messages, run:
+```
+npm run i18n:normalize
+```
+
+To validate extraction without changing the committed catalog, run:
+```
+npm run i18n:check
+```
+
+### Translation workflow
+
+The source and translation catalogs use Angular's current decimal message IDs. Location metadata is stripped from committed catalogs to reduce review noise.
+
+* Mark UI text with `i18n` / `$localize` per the Style Guide.
+* Run `npm run i18n:extract` and commit the normalized `src/i18n/messages.xlf`.
+* Crowdin ingests `src/i18n/messages.xlf`; translated catalogs return through the Crowdin PR workflow.
+* Run `npm run i18n:check` any time to verify extraction succeeds without touching committed files.
+
 ## Tests
 
 You can run tests directly from the host or within the development container.

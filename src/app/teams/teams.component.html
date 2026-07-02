@@ -62,8 +62,11 @@
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
             {{element.doc.name | truncateText:150}}
-            @if (element.userStatus === 'member') {
-              <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true">check</mat-icon>
+            @if (element.userStatus === 'member' && mode === 'enterprise') {
+              <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
+            }
+            @if (element.userStatus === 'member' && mode !== 'enterprise') {
+              <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true">check</mat-icon>
             }
             @if (myTeamsFilter==='on') {
               <span class="team-type-label">

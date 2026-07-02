@@ -15,7 +15,13 @@
           <mat-icon>edit</mat-icon>
         </a>
         @if (showParamsButton) {
-          <button *planetAuthorizedRoles="''" mat-stroked-button i18n (click)="toggleParams()">{{showParams==='on' ? 'Hide Details' : 'Show Details'}}</button>
+          <button *planetAuthorizedRoles="''" mat-stroked-button (click)="toggleParams()">
+            @if (showParams === 'on') {
+              <ng-container i18n>Hide Details</ng-container>
+            } @else {
+              <ng-container i18n>Show Details</ng-container>
+            }
+          </button>
         }
       } @else {
         <mat-form-field color="accent" class="margin-lr-4 title-edit mdc-toolbar-input">
