@@ -118,6 +118,10 @@ npm run dev:locale --locale=spa
 Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, or `ara`.
 *You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
 
+## Environment Files
+
+Angular uses `fileReplacements` in `angular.json` for the `dev`, `production`, and `test` build configurations. `src/environments/environment.dev.ts` is generated from `src/environments/environment.template` by running `./dev-env.sh`. If you change environment files, keep the corresponding `fileReplacements` entries in sync.
+
 ## Tests
 
 You can run tests directly from the host or within the development container.
