@@ -74,7 +74,7 @@
         <p><b i18n>Location:</b> {{meetupDetail?.meetupLocation}}</p>
       }
       @if (meetupDetail?.meetupLink) {
-        <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener" class="cursor-pointer">{{meetupDetail?.meetupLink}}</a></p>
+        <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer" class="cursor-pointer link-text">{{meetupDetail?.meetupLink}}</a></p>
       }
       @if (meetupDetail?.assignee) {
         <p><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
