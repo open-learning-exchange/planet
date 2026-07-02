@@ -1,6 +1,6 @@
 <mat-toolbar>
   @if (deviceType === deviceTypes.DESKTOP) {
-    <mat-toolbar-row class="toolbar-divider">
+    <mat-toolbar-row>
       <ng-container *ngTemplateOutlet="backAction"></ng-container>
       <div class="toolbar-settings">
         <ng-container *ngTemplateOutlet="typeVersionFilters"></ng-container>
