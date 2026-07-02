@@ -571,6 +571,10 @@
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Course</source>
         <target state="needs-translation"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Course</target>
       </trans-unit>
+      <trans-unit id="5879298616290228468" datatype="html">
+        <source> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </source>
+        <target state="needs-translation"> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </target>
+      </trans-unit>
       <trans-unit id="9075667564121384338" datatype="html">
         <source>Course Title</source>
         <target state="needs-translation">Course Title</target>
@@ -587,21 +591,17 @@
         <source>Subject Level</source>
         <target state="needs-translation">Subject Level</target>
       </trans-unit>
-      <trans-unit id="546766753072101168" datatype="html">
-        <source>Labels</source>
-        <target state="needs-translation">Labels</target>
+      <trans-unit id="6554131886828216596" datatype="html">
+        <source>Add Step</source>
+        <target state="needs-translation">Add Step</target>
       </trans-unit>
       <trans-unit id="discardDraftButton" datatype="html">
         <source>Discard Draft</source>
         <target state="needs-translation">Discard Draft</target>
       </trans-unit>
-      <trans-unit id="6554131886828216596" datatype="html">
-        <source>Add Step</source>
-        <target state="needs-translation">Add Step</target>
-      </trans-unit>
-      <trans-unit id="4368235916055792182" datatype="html">
-        <source>Add title</source>
-        <target state="needs-translation">Add title</target>
+      <trans-unit id="3635530771235487587" datatype="html">
+        <source>New Course</source>
+        <target state="needs-translation">New Course</target>
       </trans-unit>
       <trans-unit id="8290521921380829055" datatype="html">
         <source>Edited course: </source>
@@ -647,9 +647,29 @@
         <source>Remove resource</source>
         <target state="needs-translation">Remove resource</target>
       </trans-unit>
+      <trans-unit id="4236474513175220666" datatype="html">
+        <source>Quiz learners</source>
+        <target state="needs-translation">Quiz learners</target>
+      </trans-unit>
+      <trans-unit id="2650269401046048840" datatype="html">
+        <source>questions</source>
+        <target state="needs-translation">questions</target>
+      </trans-unit>
       <trans-unit id="3210795519710879765" datatype="html">
         <source>Add Resource</source>
         <target state="needs-translation">Add Resource</target>
+      </trans-unit>
+      <trans-unit id="8071232289681062759" datatype="html">
+        <source>Attach from library</source>
+        <target state="needs-translation">Attach from library</target>
+      </trans-unit>
+      <trans-unit id="1223468132111440462" datatype="html">
+        <source>attached</source>
+        <target state="needs-translation">attached</target>
+      </trans-unit>
+      <trans-unit id="7559011103061252651" datatype="html">
+        <source>Collect feedback</source>
+        <target state="needs-translation">Collect feedback</target>
       </trans-unit>
       <trans-unit id="303773937652374487" datatype="html">
         <source>Update Test</source>
@@ -2456,8 +2476,8 @@ Other Notes</target>
         <target state="needs-translation">Check out our Android app</target>
       </trans-unit>
       <trans-unit id="3947932744068086415" datatype="html">
-        <source>myPlanet on Google Play</source>
-        <target state="needs-translation">myPlanet on Google Play</target>
+        <source>myPlanet on playstore</source>
+        <target state="needs-translation">myPlanet on playstore</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -3933,6 +3953,10 @@ Other Notes</target>
         <target state="needs-translation">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; would like you to join &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
       </trans-unit>
+      <trans-unit id="546766753072101168" datatype="html">
+        <source>Labels</source>
+        <target state="needs-translation">Labels</target>
+      </trans-unit>
       <trans-unit id="8587453636009362658" datatype="html">
         <source>Remove label</source>
         <target state="needs-translation">Remove label</target>
@@ -4081,6 +4105,10 @@ Other Notes</target>
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Resource</source>
         <target state="needs-translation"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Resource</target>
       </trans-unit>
+      <trans-unit id="5642836248241530789" datatype="html">
+        <source>Title is required</source>
+        <target state="needs-translation">Title is required</target>
+      </trans-unit>
       <trans-unit id="7071470734400948493" datatype="html">
         <source>Author</source>
         <target state="needs-translation">Author</target>
@@ -4089,45 +4117,13 @@ Other Notes</target>
         <source>Year</source>
         <target state="needs-translation">Year</target>
       </trans-unit>
-      <trans-unit id="6552941649034744368" datatype="html">
-        <source>Publisher/Attribution</source>
-        <target state="needs-translation">Publisher/Attribution</target>
+      <trans-unit id="8455204924704616723" datatype="html">
+        <source>File</source>
+        <target state="needs-translation">File</target>
       </trans-unit>
-      <trans-unit id="3214806821536931304" datatype="html">
-        <source>Link to License</source>
-        <target state="needs-translation">Link to License</target>
-      </trans-unit>
-      <trans-unit id="7071183763232384332" datatype="html">
-        <source>Subject(s)</source>
-        <target state="needs-translation">Subject(s)</target>
-      </trans-unit>
-      <trans-unit id="2786558755838228231" datatype="html">
-        <source>Level(s)</source>
-        <target state="needs-translation">Level(s)</target>
-      </trans-unit>
-      <trans-unit id="497741311653035804" datatype="html">
-        <source>Resource For</source>
-        <target state="needs-translation">Resource For</target>
-      </trans-unit>
-      <trans-unit id="3250391385569692601" datatype="html">
-        <source>Media</source>
-        <target state="needs-translation">Media</target>
-      </trans-unit>
-      <trans-unit id="773041829051514672" datatype="html">
-        <source>Resource Type</source>
-        <target state="needs-translation">Resource Type</target>
-      </trans-unit>
-      <trans-unit id="8385709837689420472" datatype="html">
-        <source>Added By</source>
-        <target state="needs-translation">Added By</target>
-      </trans-unit>
-      <trans-unit id="1768191214371478322" datatype="html">
-        <source>Open Which File</source>
-        <target state="needs-translation">Open Which File</target>
-      </trans-unit>
-      <trans-unit id="2127544016118336723" datatype="html">
-        <source>File Upload:</source>
-        <target state="needs-translation">File Upload:</target>
+      <trans-unit id="2197686984434589542" datatype="html">
+        <source>Drag &amp; drop supported</source>
+        <target state="needs-translation">Drag &amp; drop supported</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -4145,6 +4141,10 @@ Other Notes</target>
         <source>Remove existing attachment</source>
         <target state="needs-translation">Remove existing attachment</target>
       </trans-unit>
+      <trans-unit id="1768191214371478322" datatype="html">
+        <source>Open Which File</source>
+        <target state="needs-translation">Open Which File</target>
+      </trans-unit>
       <trans-unit id="4022284993805729764" datatype="html">
         <source>File downloadable</source>
         <target state="needs-translation">File downloadable</target>
@@ -4156,6 +4156,50 @@ Other Notes</target>
       <trans-unit id="8180430309488610092" datatype="html">
         <source>Private Resource</source>
         <target state="needs-translation">Private Resource</target>
+      </trans-unit>
+      <trans-unit id="8846151385804023521" datatype="html">
+        <source>Classification</source>
+        <target state="needs-translation">Classification</target>
+      </trans-unit>
+      <trans-unit id="6420383165966969057" datatype="html">
+        <source>Subject &amp; level required</source>
+        <target state="needs-translation">Subject &amp; level required</target>
+      </trans-unit>
+      <trans-unit id="7071183763232384332" datatype="html">
+        <source>Subject(s)</source>
+        <target state="needs-translation">Subject(s)</target>
+      </trans-unit>
+      <trans-unit id="2786558755838228231" datatype="html">
+        <source>Level(s)</source>
+        <target state="needs-translation">Level(s)</target>
+      </trans-unit>
+      <trans-unit id="3250391385569692601" datatype="html">
+        <source>Media</source>
+        <target state="needs-translation">Media</target>
+      </trans-unit>
+      <trans-unit id="773041829051514672" datatype="html">
+        <source>Resource Type</source>
+        <target state="needs-translation">Resource Type</target>
+      </trans-unit>
+      <trans-unit id="497741311653035804" datatype="html">
+        <source>Resource For</source>
+        <target state="needs-translation">Resource For</target>
+      </trans-unit>
+      <trans-unit id="2064936693393551817" datatype="html">
+        <source>Attribution &amp; License</source>
+        <target state="needs-translation">Attribution &amp; License</target>
+      </trans-unit>
+      <trans-unit id="6552941649034744368" datatype="html">
+        <source>Publisher/Attribution</source>
+        <target state="needs-translation">Publisher/Attribution</target>
+      </trans-unit>
+      <trans-unit id="3214806821536931304" datatype="html">
+        <source>Link to License</source>
+        <target state="needs-translation">Link to License</target>
+      </trans-unit>
+      <trans-unit id="8385709837689420472" datatype="html">
+        <source>Added By</source>
+        <target state="needs-translation">Added By</target>
       </trans-unit>
       <trans-unit id="6292485709041686353" datatype="html">
         <source>Edited resource: </source>
@@ -5225,6 +5269,14 @@ Other Notes</target>
         <source>There was a problem deleting this collection.</source>
         <target state="needs-translation">There was a problem deleting this collection.</target>
       </trans-unit>
+      <trans-unit id="8687959069292422908" datatype="html">
+        <source>Selected collections</source>
+        <target state="needs-translation">Selected collections</target>
+      </trans-unit>
+      <trans-unit id="1055926904852124007" datatype="html">
+        <source>Remove collection</source>
+        <target state="needs-translation">Remove collection</target>
+      </trans-unit>
       <trans-unit id="7878231993274463960" datatype="html">
         <source>Add Collections</source>
         <target state="needs-translation">Add Collections</target>
@@ -5443,9 +5495,7 @@ Other Notes</target>
         <source>
           <x id="PH" equiv-text="type"/>
         </source>
-        <target state="needs-translation">
-          <x id="PH" equiv-text="type"/>
-        </target>
+        <target state="needs-translation"><x id="PH" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="4938712138982229270" datatype="html">
         <source>Age (years)</source>
