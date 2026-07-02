@@ -91,7 +91,7 @@
         </ng-container>
         <!-- Date Select -->
         @if (field.type === 'date') {
-          <mat-form-field class="full-width">
+          <mat-form-field class="full-width" (click)="dp.open()">
             <mat-label>{{field.placeholder}}</mat-label>
             <input matInput [matDatepicker]="dp" [formControl]="modalForm.controls[field.name]" required="{{field.required}}" [min]="field.min" [max]="field.max">
             <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
@@ -101,9 +101,12 @@
         }
         <!-- Time Select -->
         @if (field.type === 'time') {
-          <mat-form-field class="full-width">
+          <mat-form-field class="full-width" (click)="openNativePicker(timeInput)">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+            <input #timeInput matInput type="time" [formControl]="modalForm.controls[field.name]" [required]="field.required">
+            <button mat-icon-button matIconSuffix type="button" (click)="openNativePicker(timeInput); $event.stopPropagation()" aria-label="Open time picker" i18n-aria-label>
+              <mat-icon>access_time</mat-icon>
+            </button>
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
         }
