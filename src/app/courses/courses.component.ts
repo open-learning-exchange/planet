@@ -349,6 +349,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
         this.selection.deselect(course._id);
         // It's safer to remove the item from the array based on its id than to splice based on the index
         this.courses.data = this.courses.data.filter((c: any) => data.id !== c._id);
+        this.getCourses();
         this.deleteDialog.close();
         this.planetMessageService.showMessage($localize`Course deleted: ${course.courseTitle}`);
       },
