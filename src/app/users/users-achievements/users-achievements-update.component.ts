@@ -52,11 +52,20 @@ interface LinkFormControls {
   url: FormControl<string>;
 }
 
+interface CertificationFormControls {
+  title: FormControl<string>;
+  description: FormControl<string>;
+  link: FormControl<string>;
+  date: FormControl<DateValue>;
+}
+
 interface EditFormControls {
   purpose: FormControl<string>;
   goals: FormControl<string>;
   achievementsHeader: FormControl<string>;
   achievements: FormArray<AchievementFormGroup>;
+  certificationsHeader: FormControl<string>;
+  certifications: FormArray<CertificationFormGroup>;
   references: FormArray<ReferenceFormGroup>;
   links: FormArray<LinkFormGroup>;
   otherInfo: FormArray<FormControl<any>>;
@@ -75,6 +84,7 @@ interface ProfileFormControls {
 type AchievementFormGroup = FormGroup<AchievementFormControls>;
 type ReferenceFormGroup = FormGroup<ReferenceFormControls>;
 type LinkFormGroup = FormGroup<LinkFormControls>;
+type CertificationFormGroup = FormGroup<CertificationFormControls>;
 
 @Component({
   templateUrl: './users-achievements-update.component.html',
@@ -131,6 +141,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   get achievements(): FormArray<AchievementFormGroup> {
     return this.editForm.controls.achievements;
   }
+  get certifications(): FormArray<CertificationFormGroup> {
+    return this.editForm.controls.certifications;
+  }
   get references(): FormArray<ReferenceFormGroup> {
     return this.editForm.controls.references;
   }
@@ -167,10 +180,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
           purpose: achievements.purpose,
           goals: achievements.goals,
           achievementsHeader: achievements.achievementsHeader,
+          certificationsHeader: achievements.certificationsHeader,
           sendToNation: achievements.sendToNation,
           dateSortOrder: achievements.dateSortOrder || 'none'
         });
         this.editForm.setControl('achievements', this.buildAchievementsFormArray(achievements.achievements));
+        this.editForm.setControl('certifications', this.buildCertificationsFormArray(achievements.certifications));
         this.editForm.setControl('references', this.buildReferencesFormArray(achievements.references));
         this.editForm.setControl('links', this.buildLinksFormArray(achievements.links));
         // Keeping older otherInfo property so we don't lose this info on database
@@ -221,6 +236,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       goals: this.fb.control(''),
       achievementsHeader: this.fb.control(''),
       achievements: this.fb.array<AchievementFormGroup>([]),
+      certificationsHeader: this.fb.control(''),
+      certifications: this.fb.array<CertificationFormGroup>([]),
       references: this.fb.array<ReferenceFormGroup>([]),
       links: this.fb.array<LinkFormGroup>([]),
       // Keeping older otherInfo property so we don't lose this info on database
@@ -247,6 +264,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     return this.fb.array(achievements.map((achievement) => this.createAchievementGroup(achievement)));
   }
 
+  private buildCertificationsFormArray(certifications: any[] = []) {
+    return this.fb.array(certifications.map((certification) => this.createCertificationGroup(certification)));
+  }
+
   private buildReferencesFormArray(references: any[] = []) {
     return this.fb.array(references.map((reference) => this.createReferenceGroup(reference)));
   }
@@ -268,6 +289,15 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
       description: this.fb.control(achievement.description || ''),
       link: this.fb.control(achievement.link || '', { asyncValidators: CustomValidators.validLink }),
       date: this.fb.control(achievement.date || '', { asyncValidators: ac => this.validatorService.notDateInFuture$(ac) })
+    });
+  }
+
+  private createCertificationGroup(certification: any = { title: '', description: '', link: '', date: '' }): CertificationFormGroup {
+    return this.fb.group<CertificationFormControls>({
+      title: this.fb.control(certification.title || '', { validators: CustomValidators.required }),
+      description: this.fb.control(certification.description || ''),
+      link: this.fb.control(certification.link || '', { asyncValidators: CustomValidators.validLink }),
+      date: this.fb.control(certification.date || '', { asyncValidators: ac => this.validatorService.notDateInFuture$(ac) })
     });
   }
 
@@ -328,6 +358,25 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     );
   }
 
+  addCertification(index = -1, certification = { title: '', description: '', link: '', date: '' }) {
+    this.dialogsFormService.openDialogsForm(
+      certification.title !== '' ? $localize`Edit Certification` : $localize`Add Certification`,
+      [
+        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
+        { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
+        { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
+        { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
+      ],
+      this.createCertificationGroup(certification),
+      { onSubmit: (formValue, formGroup) => {
+        const certifiedAt = formGroup.controls.date.value instanceof Date ? formGroup.controls.date.value.toISOString() :
+          formGroup.controls.date.value;
+        formGroup.controls.date.setValue(certifiedAt);
+        this.onDialogSubmit(this.certifications, index)(formValue, formGroup);
+      }, closeOnSubmit: true }
+    );
+  }
+
   addReference(index = -1, reference: any = { name: '' }) {
     this.dialogsFormService.openDialogsForm(
       reference.name !== '' ? $localize`Edit Reference` : $localize`Add Reference`,
@@ -378,6 +427,12 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     const sort = this.editForm.controls.dateSortOrder.value === 'asc' ? 'desc' : 'asc';
     this.editForm.controls.dateSortOrder.setValue(sort);
     this.achievements.setValue(this.sortDate(this.achievements.value, sort));
+  }
+
+  sortCertifications() {
+    const sort = this.editForm.controls.dateSortOrder.value === 'asc' ? 'desc' : 'asc';
+    this.editForm.controls.dateSortOrder.setValue(sort);
+    this.certifications.setValue(this.sortDate(this.certifications.value, sort));
   }
 
   sortDate(achievements: any[], sortOrder: DateSortOrder = 'none') {
@@ -483,7 +538,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     }
   }
 
-  sectionError(section: 'achievements' | 'references' | 'links'): string {
+  sectionError(section: 'achievements' | 'certifications' | 'references' | 'links'): string {
     const index = this.firstInvalidIndex(this.editForm.controls[section]);
     if (index < 0 || !this.submitAttempted) {
       return '';
@@ -492,6 +547,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     switch (section) {
       case 'achievements':
         return $localize`Achievement #${itemNumber} has invalid fields`;
+      case 'certifications':
+        return $localize`Certification #${itemNumber} has invalid fields`;
       case 'references':
         return $localize`Reference #${itemNumber} has invalid fields`;
       case 'links':
