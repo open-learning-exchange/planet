@@ -94,9 +94,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
-  displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
-    [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
-  );
+  get displayedColumns() {
+    const surveyColumns = this.teamSurveyMode ?
+      [ 'name', 'taken', 'createdDate', 'action' ] :
+      [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+    return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
+  }
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -114,6 +117,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   availableAIProviders: any[] = [];
   deviceType: DeviceType;
   isMobile: boolean;
+
+  get teamSurveyMode() {
+    return !!(this.teamId || this.routeTeamId);
+  }
 
   constructor(
     private couchService: CouchService,

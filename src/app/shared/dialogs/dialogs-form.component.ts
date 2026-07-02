@@ -202,6 +202,21 @@ export class DialogsFormComponent {
     }
   }
 
+  openNativePicker(input: HTMLInputElement): void {
+    if (input.disabled || input.readOnly) {
+      return;
+    }
+    if (!input.showPicker) {
+      input.focus();
+      return;
+    }
+    try {
+      input.showPicker();
+    } catch {
+      input.focus();
+    }
+  }
+
   private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {
     if (formGroup instanceof FormGroup) {
       return formGroup;

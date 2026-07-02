@@ -90,6 +90,10 @@ interface ContactForm {
     .advanced-options-container > * {
       margin-bottom: 10px;
     }
+
+    :host ::ng-deep .mat-stepper-horizontal-line {
+      flex: 0 0 56px;
+    }
   `],
   imports: [
     MatStepper,

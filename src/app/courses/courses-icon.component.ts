@@ -3,26 +3,36 @@ import { Component, Input } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 
+export const courseIcons = {
+  assignment: 'assignment',
+  attachFile: 'attach_file',
+  description: 'description',
+  done: 'done',
+  rotateRight: 'rotate_right'
+} as const;
+
+export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
+
 @Component({
   selector: 'planet-course-icon',
   template: `
     <div>
       @switch (icon) {
-        @case ('assignment') {
+        @case (courseIcons.assignment) {
           <span i18n-matTooltip matTooltip="Test"><mat-icon>assignment</mat-icon></span>
         }
-        @case ('attach_file') {
+        @case (courseIcons.attachFile) {
           <span i18n-matTooltip matTooltip="Resource(s)"><mat-icon>attach_file</mat-icon></span>
         }
-        @case ('description') {
+        @case (courseIcons.description) {
           <span i18n-matTooltip matTooltip="Survey">
             <mat-icon >description</mat-icon>
           </span>
         }
-        @case ('done') {
+        @case (courseIcons.done) {
           <span i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
         }
-        @case ('rotate_right') {
+        @case (courseIcons.rotateRight) {
           <span i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
         }
       }
@@ -32,6 +42,7 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class CoursesIconComponent {
 
-  @Input() icon: 'assignment' | 'attach_file' | 'description' | 'done' | 'rotate_right' | '' = '';
+  courseIcons = courseIcons;
+  @Input() icon: CourseIcon = '';
 
 }
