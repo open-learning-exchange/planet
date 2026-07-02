@@ -157,7 +157,6 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
           this.originalAttachments = { ...data._attachments };
         }
         this.previewSrc = this.currentProfileImg;
-        console.log('data: ', data);
         this.isFormInitialized = true;
         this.setupFormValueChanges();
       }, (error) => {

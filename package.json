@@ -1,9 +1,9 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.23.13",
+  "version": "0.23.24",
   "myplanet": {
-    "latest": "v0.57.93",
+    "latest": "v0.58.93",
     "min": "v0.54.94"
   },
   "scripts": {
@@ -11,6 +11,7 @@
     "ng-high-memory": "node --max_old_space_size=4096 ./node_modules/@angular/cli/bin/ng",
     "start": "ng serve",
     "dev": "bash scripts/dev-env.sh && ng serve --configuration dev",
+    "dev:locale": "bash -c ': \"${npm_config_locale:?Set a locale with --locale=spa}\"; bash scripts/dev-env.sh && ng serve --build-target planet-app:build:dev,$npm_config_locale \"$@\"' --",
     "build": "npm run ng-high-memory -- build --configuration production",
     "i18n:extract": "ng extract-i18n --output-path src/i18n && npm run i18n:normalize",
     "i18n:normalize": "node scripts/i18n-normalize.mjs src/i18n/messages*.xlf",

@@ -5,11 +5,12 @@ import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messag
 import { ValidatorService } from '../../validators/validator.service';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
-
+import { vi } from 'vitest';
 
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
@@ -24,7 +25,29 @@ describe('CoursesAddComponent', () => {
       imports: [ReactiveFormsModule, FormsModule, RouterTestingModule.withRoutes([
         { path: 'courses', component: CoursesAddComponent }
       ]), MaterialModule, BrowserAnimationsModule, CoursesAddComponent, FormErrorMessagesComponent],
-      providers: [CouchService, ValidatorService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [
+        CouchService,
+        ValidatorService,
+        provideHttpClient(withInterceptorsFromDi()),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: { get: () => undefined },
+              params: {}
+            }
+          }
+        },
+        {
+          provide: Router,
+          useValue: {
+            url: '/courses/add',
+            createUrlTree: vi.fn().mockReturnValue({}),
+            serializeUrl: vi.fn().mockReturnValue('/courses/add;continue=true'),
+            navigate: vi.fn()
+          }
+        }
+      ]
     });
     fixture = TestBed.createComponent(CoursesAddComponent);
     component = fixture.componentInstance;
@@ -47,11 +70,7 @@ describe('CoursesAddComponent', () => {
   // test onSubmit()
   it('should onSubmit', () => {
     component.onSubmit();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      const errorMessage = de.nativeElement.querySelector('.km-coursetitle-errormessage span');
-      expect(errorMessage.textContent).toBe('This field is required');
-    });
+    expect(component.courseForm.controls.courseTitle.hasError('required')).toBe(true);
   });
 
   // test addCourse()

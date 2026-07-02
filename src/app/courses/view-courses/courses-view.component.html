@@ -80,20 +80,20 @@
               </mat-panel-title>
               <mat-panel-description>
                 @if (step?.exam?.questions.length) {
-                  <planet-course-icon [icon]="'assignment'"></planet-course-icon>
+                  <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
                 }
                 @if (step?.resources?.length) {
-                  <planet-course-icon [icon]="'attach_file'"></planet-course-icon>
+                  <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
                 }
                 @if (step?.survey?.questions.length) {
-                  <planet-course-icon [icon]="'description'"></planet-course-icon>
+                  <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
                 }
               </mat-panel-description>
               @if (step.progress && step.progress.passed) {
-                <planet-course-icon [icon]="'done'"></planet-course-icon>
+                <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
               }
               @if (step.progress && !step.progress.passed) {
-                <planet-course-icon [icon]="'rotate_right'"></planet-course-icon>
+                <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
               }
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>
