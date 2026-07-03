@@ -16,9 +16,9 @@
     flex-wrap: wrap;
     gap: 14px;
     padding: 14px 16px;
-    border: 2px solid #e8e8e8;
+    border: 2px solid v.$light-grey;
     border-radius: 10px;
-    background: white;
+    background: v.$white;
     cursor: pointer;
     transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
     user-select: none;
@@ -110,7 +110,7 @@
 
     &.selected {
       background: v.$primary;
-      color: white;
+      color: v.$white;
       border-color: v.$primary;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
     }

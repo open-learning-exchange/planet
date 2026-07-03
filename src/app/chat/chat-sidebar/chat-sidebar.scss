@@ -12,7 +12,7 @@
 .header-container {
   position: sticky;
   top: 0;
-  background-color: white;
+  background-color: v.$white;
   z-index: 100;
   padding: 0.25rem;
 }
@@ -29,7 +29,7 @@ li {
 }
 
 li:hover {
-  background-color: #ddd;
+  background-color: v.$light-grey;
 }
 
 .expand-button {
@@ -46,7 +46,7 @@ li:hover {
 }
 
 .sidebar-drawer {
-  background: #eee;
+  background: v.$light-grey;
   height: 100%;
 }
 
