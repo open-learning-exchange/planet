@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es">
+  <file source-language="en" datatype="plaintext" original="ng2.template" target-language="es-ES">
     <body>
       <trans-unit id="2547756348530497105" datatype="html" approved="yes">
         <source>ltr</source>
@@ -213,8 +213,7 @@
         <target state="final">No hay descripción disponible.</target>
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html" approved="yes">
-        <source>
-                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+        <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="final">
                       <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Editar} Add {Añadir}} "/> descripción de la
@@ -593,6 +592,14 @@
         <source>Subject Level</source>
         <target state="final">Nivel de asignatura</target>
       </trans-unit>
+      <trans-unit id="8493154674675875451" datatype="html">
+        <source>Cover image</source>
+        <target state="translated">Imagen de portada</target>
+      </trans-unit>
+      <trans-unit id="7865912722609907516" datatype="html">
+        <source>Recommended: a square image. Covers are cropped to fit.</source>
+        <target state="translated">Recomendado: una imagen cuadrada. Las portadas se recortan para ajustarse.</target>
+      </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html" approved="yes">
         <source>Add Step</source>
         <target state="final">Añadir Paso</target>
@@ -954,7 +961,7 @@
         <target state="final">Se han añadido <x id="PH" equiv-text="courses.length"/> cursos a</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html" approved="yes">
-        <source><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
+        <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
         <target state="final"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> en cola para <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html" approved="yes">
@@ -1154,6 +1161,10 @@ No se proporcionó descripción.
       <trans-unit id="6676104704503837687" datatype="html" approved="yes">
         <source>Loading content...</source>
         <target state="final">Cargando contenido...</target>
+      </trans-unit>
+      <trans-unit id="4915685810479963961" datatype="html">
+        <source>Course cover</source>
+        <target state="translated">Portada del curso</target>
       </trans-unit>
       <trans-unit id="5563416537359084416" datatype="html" approved="yes">
         <source>Language of Instruction:</source>
@@ -3765,6 +3776,10 @@ Otras notas</target>
         <source>Start Time</source>
         <target state="final">Hora de inicio</target>
       </trans-unit>
+      <trans-unit id="3030205936393273049" datatype="html">
+        <source>Open time picker</source>
+        <target state="translated">Abrir selector de hora</target>
+      </trans-unit>
       <trans-unit id="3845185958891849368" datatype="html" approved="yes">
         <source>End Time</source>
         <target state="final">Hora de fin</target>
@@ -6232,6 +6247,10 @@ Otras notas</target>
       <trans-unit id="3726652384665988323" datatype="html" approved="yes">
         <source>Services Directory</source>
         <target state="final">Directorio de servicios</target>
+      </trans-unit>
+      <trans-unit id="2758141335411811281" datatype="html">
+        <source>Edit details</source>
+        <target state="translated">Editar detalles</target>
       </trans-unit>
       <trans-unit id="1610023597544138043" datatype="html" approved="yes">
         <source>Manage Surveys</source>
