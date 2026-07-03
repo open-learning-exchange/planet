@@ -1219,7 +1219,7 @@ Aucune description fournie.
       </trans-unit>
       <trans-unit id="8871274990030594152" datatype="html">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {<b>resource&lt;/b&gt;} other {&lt;b&gt;resources&lt;/b&gt;}}" xid="3389112199654656544"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {&lt;b&gt;resource&lt;/b&gt;} other {&lt;b&gt;resources&lt;/b&gt;}}" xid="3389112199654656544"/>.</target>
       </trans-unit>
       <trans-unit id="4297508107919101415" datatype="html">
         <source>The test has</source>
@@ -1471,7 +1471,7 @@ Aucune description fournie.
       </trans-unit>
       <trans-unit id="1440998718214890842" datatype="html">
         <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> </source>
-        <target state="translated"> Vous devez sélectionner la bonne <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {<b>choice&lt;/b&gt;} selectMultiple {&lt;b&gt;choices&lt;/b&gt;}}" xid="1960532828514609940"/> </target>
+        <target state="translated"> Vous devez sélectionner la bonne <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {&lt;b&gt;choice&lt;/b&gt;} selectMultiple {&lt;b&gt;choices&lt;/b&gt;}}" xid="1960532828514609940"/> </target>
       </trans-unit>
       <trans-unit id="1960532828514609940" datatype="html">
         <source>{VAR_SELECT, select, select {choice} selectMultiple {choices}}</source>
@@ -4967,7 +4967,7 @@ Autres notes</target>
       </trans-unit>
       <trans-unit id="8859686160814263783" datatype="html">
         <source><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> selected </source>
-        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {<b>members&lt;/b&gt;} =1 {&lt;b&gt;member&lt;/b&gt;} other {&lt;b&gt;members&lt;/b&gt;}}}           resources {{selection.selected.length, plural, =0 {&lt;b&gt;resources&lt;/b&gt;} =1 {&lt;b&gt;resource&lt;/b&gt;} other {&lt;b&gt;resources&lt;/b&gt;}}}           courses {{selection.selected.length, plural, =0 {&lt;b&gt;courses&lt;/b&gt;} =1 {&lt;b&gt;course&lt;/b&gt;} other {&lt;b&gt;courses&lt;/b&gt;}}}           meetups {{selection.selected.length, plural, =0 {&lt;b&gt;meetups&lt;/b&gt;} =1 {&lt;b&gt;meetup&lt;/b&gt;} other {&lt;b&gt;meetups&lt;/b&gt;}}}           other {{selection.selected.length, plural, =0 {&lt;b&gt;items&lt;/b&gt;} =1 {&lt;b&gt;item&lt;/b&gt;} other {&lt;b&gt;items&lt;/b&gt;}}}         }" xid="5351867428123862444"/> selected </target>
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {&lt;b&gt;members&lt;/b&gt;} =1 {&lt;b&gt;member&lt;/b&gt;} other {&lt;b&gt;members&lt;/b&gt;}}}           resources {{selection.selected.length, plural, =0 {&lt;b&gt;resources&lt;/b&gt;} =1 {&lt;b&gt;resource&lt;/b&gt;} other {&lt;b&gt;resources&lt;/b&gt;}}}           courses {{selection.selected.length, plural, =0 {&lt;b&gt;courses&lt;/b&gt;} =1 {&lt;b&gt;course&lt;/b&gt;} other {&lt;b&gt;courses&lt;/b&gt;}}}           meetups {{selection.selected.length, plural, =0 {&lt;b&gt;meetups&lt;/b&gt;} =1 {&lt;b&gt;meetup&lt;/b&gt;} other {&lt;b&gt;meetups&lt;/b&gt;}}}           other {{selection.selected.length, plural, =0 {&lt;b&gt;items&lt;/b&gt;} =1 {&lt;b&gt;item&lt;/b&gt;} other {&lt;b&gt;items&lt;/b&gt;}}}         }" xid="5351867428123862444"/> selected </target>
       </trans-unit>
       <trans-unit id="7619560701830330401" datatype="html" approved="yes">
         <source>Loading</source>

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { UserService } from '../shared/user.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 
@@ -40,7 +40,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     pdfMake.addVirtualFileSystem(pdfFonts);
     this.event = this.data.event || {};
@@ -89,9 +90,11 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   }
 
   exportToPdf(event) {
+    const eventDate = formatDate(event.date, 'mediumDate', this.localeId);
+    const fileDate = formatDate(event.date, 'yyyy-MM-dd', this.localeId);
     const documentDefinition = {
       content: [
-        { text: $localize`Health examination on ${new Date(event.date).toLocaleDateString()}:examDate:`, style: 'header' },
+        { text: $localize`Health examination on ${eventDate}:examDate:`, style: 'header' },
         { canvas: [ { type: 'line', x1: 0, y1: 5, x2: 595, y2: 5, lineWidth: 1 } ] },
         { text: $localize`Performed by`, style: 'sectionHeader' },
         { text: event.selfExamination ? $localize`Self` : this.performedBy, style: 'subheader' },
@@ -131,7 +134,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
       }
     };
-    pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`);
+    pdfMake.createPdf(documentDefinition).download(`${$localize`health event`}_${fileDate}.pdf`);
   }
 
 }

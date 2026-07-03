@@ -1437,7 +1437,7 @@ No description provided.
         <source>Edit <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
       </trans-unit>
       <trans-unit id="1103310779560908752" datatype="html">
-        <source>Health examination on <x id="examDate" equiv-text="new Date(event.date).toLocaleDateString()"/></source>
+        <source>Health examination on <x id="examDate" equiv-text="eventDate"/></source>
       </trans-unit>
       <trans-unit id="1442376281594176896" datatype="html">
         <source>Performed by</source>
@@ -1476,6 +1476,9 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="601445890754822634" datatype="html">
         <source>Referrals:</source>
+      </trans-unit>
+      <trans-unit id="100323118072618349" datatype="html">
+        <source>health event</source>
       </trans-unit>
       <trans-unit id="6057186423590581450" datatype="html">
         <source>myHealth</source>
@@ -3359,6 +3362,10 @@ Other Notes</source>
       <trans-unit id="8025380752189745299" datatype="html">
         <source>No Resource Found</source>
       </trans-unit>
+      <trans-unit id="5022177806913011709" datatype="html">
+        <source>source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></source>
+        <note priority="1" from="description">sourcePlanet</note>
+      </trans-unit>
       <trans-unit id="3929692497484294202" datatype="html">
         <source>You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></source>
       </trans-unit>
@@ -3564,7 +3571,7 @@ Other Notes</source>
         <source>Error fetching document: <x id="PH" equiv-text="err.message"/></source>
       </trans-unit>
       <trans-unit id="999413599775442225" datatype="html">
-        <source>Report of <x id="PH" equiv-text="title"/> on <x id="PH_1" equiv-text="new Date().toDateString()"/></source>
+        <source>Report of <x id="PH" equiv-text="title"/> on <x id="PH_1" equiv-text="reportDate"/></source>
       </trans-unit>
       <trans-unit id="5357621132682802899" datatype="html">
         <source>There was no data during that period to export</source>
@@ -4131,8 +4138,14 @@ Other Notes</source>
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
       </trans-unit>
-      <trans-unit id="1737753151350322492" datatype="html">
-        <source><x id="PH" equiv-text="type"/></source>
+      <trans-unit id="2009689739817524652" datatype="html">
+        <source>Exam</source>
+      </trans-unit>
+      <trans-unit id="6811901802533648897" datatype="html">
+        <source>N/A</source>
+      </trans-unit>
+      <trans-unit id="8041427397457443304" datatype="html">
+        <source>Enterprise</source>
       </trans-unit>
       <trans-unit id="4938712138982229270" datatype="html">
         <source>Age (years)</source>
@@ -5199,8 +5212,8 @@ Other Notes</source>
       <trans-unit id="7216178614747796846" datatype="html">
         <source>Birthplace: <x id="PH" equiv-text="this.user.birthplace"/></source>
       </trans-unit>
-      <trans-unit id="6914009700103907353" datatype="html">
-        <source><x id="PH" equiv-text="this.user.name"/> achievements.pdf</source>
+      <trans-unit id="1569462115651641805" datatype="html">
+        <source><x id="PH" equiv-text="this.user.name"/> achievements</source>
       </trans-unit>
       <trans-unit id="9082581968602742137" datatype="html">
         <source>Request for User Data Deletion</source>

@@ -3966,7 +3966,7 @@ Qoraallo Kale</target>
       <trans-unit id="887946048712515044" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; would like you to join &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; wuxuu doonayaa inaad ku biirto kulanka &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; 
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; wuxuu doonayaa inaad ku biirto kulanka &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt;
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
       </trans-unit>
       <trans-unit id="546766753072101168" datatype="html">

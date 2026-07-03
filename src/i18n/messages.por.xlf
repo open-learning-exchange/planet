@@ -5504,7 +5504,7 @@ Outras observações</target>
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; 
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt;
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> a pesquisa &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
       </trans-unit>
       <trans-unit id="1737753151350322492" datatype="html">
