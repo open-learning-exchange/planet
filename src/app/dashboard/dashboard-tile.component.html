@@ -27,7 +27,12 @@
           <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
             <div
               class="dashboard-item"
-              [ngClass]="{'bg-grey': even, 'cursor-pointer': item.link && !recentlyDragged, 'accordion-item': isAccordionMode}"
+              [ngClass]="{
+                'bg-grey': even,
+                'cursor-pointer': item.link && !recentlyDragged,
+                'accordion-item': isAccordionMode,
+                'has-course-cover': cardType === 'myCourses' && item.coverFileName
+              }"
               [routerLink]="recentlyDragged ? null : item.link"
               [state]="item.returnState ? { returnState: item.returnState } : undefined"
               [matTooltip]="item.tooltip"
@@ -35,10 +40,15 @@
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
               >
+              @if (cardType === 'myCourses' && item.coverFileName) {
+                <div class="dashboard-course-cover">
+                  <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
+                </div>
+              }
               <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
                 {{item.firstLine}}
               </p>
-              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': isAccordionMode ? 'none' : tileLines,'word-wrap': 'break-word' }">
+              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': dashboardTextLines(item),'word-wrap': 'break-word' }">
                 {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
               </p>
               @if (cardType!=='myLife' && !item?.canRemove) {
