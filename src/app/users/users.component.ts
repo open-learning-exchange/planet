@@ -26,7 +26,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styleUrl: './users.component.scss',
+  styleUrls: ['./users.component.scss'],
   imports: [
     MatToolbar,
     MatIconButton,
