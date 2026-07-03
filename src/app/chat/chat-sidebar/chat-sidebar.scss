@@ -69,7 +69,7 @@ li:hover {
   width: 100px;
   border: solid 1px #ccc;
   border-radius: 5px;
-  background: #fff;
+  background: v.$white;
   text-align: center;
   padding: 10px;
   margin: 0;
@@ -99,6 +99,11 @@ li:hover {
   align-items: center;
   min-width: 0;
 }
+
+.edit-title-field {
+  width: 50%;
+}
+
 @media only screen and (max-width: v.$screen-md) {
   .expand-button {
     top: 10px;
