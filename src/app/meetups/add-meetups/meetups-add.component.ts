@@ -53,15 +53,7 @@ interface MeetupFormControls {
 @Component({
   selector: 'planet-meetups-add',
   templateUrl: './meetups-add.component.html',
-  styles: [`
-    form.form-spacing {
-      width: inherit;
-    }
-    .view-container form {
-      min-width: 385px;
-      max-width: 750px;
-    }
-  `],
+  styleUrls: ['./meetups-add.scss'],
   imports: [
     MatToolbar,
     MatIconButton,

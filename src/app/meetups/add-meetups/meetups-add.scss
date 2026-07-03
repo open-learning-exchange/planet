@@ -1,0 +1,14 @@
+@use '../../variables' as v;
+
+mat-dialog-content {
+  max-height: 60vh;
+}
+
+form.form-spacing {
+      width: inherit;
+}
+
+.view-container form {
+    min-width: 385px;
+    max-width: 750px;
+}
