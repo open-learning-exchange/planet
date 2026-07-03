@@ -105,7 +105,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   width: 90%;
   padding: 20px;
   background-color: v.$accent-lighter;
-  color: black;
+  color: v.$accent-text;
   text-align: center;
   border-radius: 8px;
   box-shadow: 0 4px 8px v.$shadow;
@@ -130,7 +130,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
 }
 
 .closebtn:hover {
-  color: black;
+  color: v.$accent-text;
 }
 
 @media (max-width: v.$screen-sm) {
