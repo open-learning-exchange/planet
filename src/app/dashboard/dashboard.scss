@@ -104,11 +104,11 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   transform: translateX(-50%);
   width: 90%;
   padding: 20px;
-  background-color: #fdee7f;
-  color: rgb(0, 0, 0);
+  background-color: v.$accent-lighter;
+  color: black;
   text-align: center;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px v.$shadow;
   z-index: 1000;
 }
 
@@ -122,7 +122,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   right: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgb(126, 126, 126);
+  color: v.$grey;
   font-weight: bold;
   font-size: 22px;
   cursor: pointer;
@@ -130,7 +130,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
 }
 
 .closebtn:hover {
-  color: rgb(0, 0, 0);
+  color: black;
 }
 
 @media (max-width: v.$screen-sm) {

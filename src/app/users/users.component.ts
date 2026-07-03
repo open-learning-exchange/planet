@@ -26,16 +26,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styles: [`
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-
-    .mat-column-profile {
-      max-width: 100px;
-    }
-  `],
+  styleUrl: './users.component.scss',
   imports: [
     MatToolbar,
     MatIconButton,

@@ -60,7 +60,7 @@
     min-width: 0;
     width: 100%;
     border: none;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid v.$light-grey;
     outline: none;
     font: inherit;
     padding: 4px 2px;
@@ -93,9 +93,9 @@
 
   .rating-scale-button {
     padding: 0;
-    border: 2px solid #e0e0e0;
+    border: 2px solid v.$light-grey;
     border-radius: 10px;
-    background: white;
+    background: v.$white;
     color: #555;
     font-weight: 500;
     font-family: inherit;
