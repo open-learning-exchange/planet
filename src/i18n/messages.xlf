@@ -443,6 +443,12 @@
       <trans-unit id="1843674729387349309" datatype="html">
         <source>Subject Level</source>
       </trans-unit>
+      <trans-unit id="8493154674675875451" datatype="html">
+        <source>Cover image</source>
+      </trans-unit>
+      <trans-unit id="7865912722609907516" datatype="html">
+        <source>Recommended: a square image. Covers are cropped to fit.</source>
+      </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html">
         <source>Add Step</source>
       </trans-unit>
@@ -862,6 +868,9 @@ No description provided.
       </trans-unit>
       <trans-unit id="6676104704503837687" datatype="html">
         <source>Loading content...</source>
+      </trans-unit>
+      <trans-unit id="4915685810479963961" datatype="html">
+        <source>Course cover</source>
       </trans-unit>
       <trans-unit id="5563416537359084416" datatype="html">
         <source>Language of Instruction:</source>
@@ -2822,6 +2831,9 @@ Other Notes</source>
       <trans-unit id="4204880191779081093" datatype="html">
         <source>Start Time</source>
       </trans-unit>
+      <trans-unit id="3030205936393273049" datatype="html">
+        <source>Open time picker</source>
+      </trans-unit>
       <trans-unit id="3845185958891849368" datatype="html">
         <source>End Time</source>
       </trans-unit>
@@ -4673,6 +4685,9 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3726652384665988323" datatype="html">
         <source>Services Directory</source>
+      </trans-unit>
+      <trans-unit id="2758141335411811281" datatype="html">
+        <source>Edit details</source>
       </trans-unit>
       <trans-unit id="1610023597544138043" datatype="html">
         <source>Manage Surveys</source>
