@@ -2,9 +2,9 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template" target-language="sw">
     <body>
-      <trans-unit id="2547756348530497105" datatype="html" approved="yes">
+      <trans-unit id="2547756348530497105" datatype="html">
         <source>ltr</source>
-        <target state="final">ltr</target>
+        <target state="needs-translation">ltr</target>
       </trans-unit>
       <trans-unit id="2417314978621991581" datatype="html">
         <source>Start New Chat</source>
@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="6902066591850406795" datatype="html">
         <source>chat is disabled, contact community admin</source>
-        <target state="translated">gumzo limezimwa, wasiliana na msimamizi wa jumuiya</target>
+        <target state="translated">soga imezimwa, wasiliana na msimamizi wa jumuiya</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>
@@ -213,8 +213,7 @@
         <target state="needs-translation">No description available.</target>
       </trans-unit>
       <trans-unit id="1423760621077707800" datatype="html">
-        <source>
-                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
+        <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="translated">
                 <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> Maelezo ya <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/>
@@ -442,7 +441,7 @@
       </trans-unit>
       <trans-unit id="4148174263265171714" datatype="html">
         <source>Beta features may not work as intended. It&apos;s recommended to leave this off</source>
-        <target state="translated">Vipengele vya beta huenda visifanye kazi kama inavyokusudiwa. Inapendekezwa uache hili limezimwa</target>
+        <target state="translated">Vipengele vya beta huenda visifanye kazi kama ilivyokusudiwa. Inapendekezwa kuiacha ikiwa imezimwa.</target>
       </trans-unit>
       <trans-unit id="6406903720166584964" datatype="html">
         <source>Always off</source>
@@ -550,7 +549,7 @@
       </trans-unit>
       <trans-unit id="3229191482716707421" datatype="html">
         <source>Configuration is valid. Click &quot;Next&quot; to clone Planet.</source>
-        <target state="translated">Mipangilio ni sahihi. Bofya &quot;Ifuatayo&quot; ili kunakili Sayari.</target>
+        <target state="translated">Mipangilio ni sahihi. Bofya &quot;Ifuatayo&quot; ili kuiga sayari.</target>
       </trans-unit>
       <trans-unit id="9153883349718321986" datatype="html">
         <source>Configuration is not valid. Please check again.</source>
@@ -562,7 +561,7 @@
       </trans-unit>
       <trans-unit id="8919885040084099320" datatype="html">
         <source>Cloning &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; complete.</source>
-        <target state="translated">Kunakili &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; kumekamilika.</target>
+        <target state="translated">Kuklonisha &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; kumekamilika.</target>
       </trans-unit>
       <trans-unit id="4259908510846969672" datatype="html">
         <source>{VAR_SELECT, select, Add {Add} Edit {Edit}}</source>
@@ -591,6 +590,14 @@
       <trans-unit id="1843674729387349309" datatype="html">
         <source>Subject Level</source>
         <target state="needs-translation">Subject Level</target>
+      </trans-unit>
+      <trans-unit id="8493154674675875451" datatype="html">
+        <source>Cover image</source>
+        <target state="translated">Picha ya jalada</target>
+      </trans-unit>
+      <trans-unit id="7865912722609907516" datatype="html">
+        <source>Recommended: a square image. Covers are cropped to fit.</source>
+        <target state="translated">Inapendekezwa: picha ya mraba. Majalada hukatwa ili kutoshea.</target>
       </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html">
         <source>Add Step</source>
@@ -642,7 +649,7 @@
       </trans-unit>
       <trans-unit id="3563812897887853138" datatype="html">
         <source>Attached resources</source>
-        <target state="translated">Rasilimali zilizoambatishwa</target>
+        <target state="translated">Rasilimali zilizoambatanishwa</target>
       </trans-unit>
       <trans-unit id="8608266972589229818" datatype="html">
         <source>Remove resource</source>
@@ -662,7 +669,7 @@
       </trans-unit>
       <trans-unit id="8071232289681062759" datatype="html">
         <source>Attach from library</source>
-        <target state="translated">Ambatisha kutoka kwenye maktaba</target>
+        <target state="translated">Ambatanisha kutoka kwenye maktaba</target>
       </trans-unit>
       <trans-unit id="1223468132111440462" datatype="html">
         <source>attached</source>
@@ -953,7 +960,7 @@
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html">
-        <source><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
+        <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
         <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html">
@@ -1006,7 +1013,7 @@
       </trans-unit>
       <trans-unit id="4852372553785950294" datatype="html">
         <source>Course Enrollment Data - <x id="PH" equiv-text="this.course"/></source>
-        <target state="translated">Data ya Usajili wa Kozi - <x id="PH" equiv-text="this.course"/></target>
+        <target state="translated">Data ya uandikishaji wa kozi - <x id="PH" equiv-text="this.course"/></target>
       </trans-unit>
       <trans-unit id="9200283083431196600" datatype="html">
         <source>Step <x id="stepNumber" equiv-text="index + 1"/></source>
@@ -1066,11 +1073,11 @@
       </trans-unit>
       <trans-unit id="3250353177187615908" datatype="html">
         <source>Success Percentage</source>
-        <target state="translated">Asilimia ya Mafanikio</target>
+        <target state="translated">Asilimia ya mafanikio</target>
       </trans-unit>
       <trans-unit id="2809439026832761932" datatype="html">
         <source><x id="PH" equiv-text="courseTitle"/> Course Progress for <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></source>
-        <target state="translated">Maendeleo ya Kozi ya <x id="PH" equiv-text="courseTitle"/> kwa <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></target>
+        <target state="translated">Maendeleo ya kozi ya <x id="PH" equiv-text="courseTitle"/> kwa <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></target>
       </trans-unit>
       <trans-unit id="4637837927968957708" datatype="html">
         <source>myProgress</source>
@@ -1084,7 +1091,7 @@
         <source>
           <x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/>
         </source>
-        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {Lugha ya Mafunzo}       gradeLevel {Kiwango cha Darasa}       subjectLevel {Kiwango cha Somo}     }" xid="245746442991291793"/> </target>
+        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {Lugha ya Mafunzo}       gradeLevel {Daraja}       subjectLevel {Kiwango cha Somo}     }" xid="245746442991291793"/> </target>
       </trans-unit>
       <trans-unit id="245746442991291793" datatype="html">
         <source>{VAR_SELECT, select, languageOfInstruction {Language} gradeLevel {Grade Level} subjectLevel {Subject Level}}</source>
@@ -1116,7 +1123,7 @@
         <source>
           <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/>
         </source>
-        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Anza Mtihani} continue {Endelea na Mtihani} retake {Fanya Mtihani Tena}}" xid="4928667157742574611"/> </target>
+        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Fanya Jaribio} continue {Endelea na Jaribio} retake {Fanya Tena Jaribio}}" xid="4928667157742574611"/> </target>
       </trans-unit>
       <trans-unit id="4928667157742574611" datatype="html">
         <source>{VAR_SELECT, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</source>
@@ -1153,6 +1160,10 @@ Hakuna maelezo yaliyotolewa.
       <trans-unit id="6676104704503837687" datatype="html">
         <source>Loading content...</source>
         <target state="needs-translation">Loading content...</target>
+      </trans-unit>
+      <trans-unit id="4915685810479963961" datatype="html">
+        <source>Course cover</source>
+        <target state="translated">Jalada la kozi</target>
       </trans-unit>
       <trans-unit id="5563416537359084416" datatype="html">
         <source>Language of Instruction:</source>
@@ -1252,7 +1263,7 @@ Hakuna maelezo yaliyotolewa.
       </trans-unit>
       <trans-unit id="4422952805076571472" datatype="html">
         <source><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> to complete</source>
-        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> kukamilisha</target>
+        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {uchunguzi} other {uchunguzi} }" xid="8604700910246876832"/> za kukamilisha</target>
       </trans-unit>
       <trans-unit id="8384225360105280028" datatype="html">
         <source>Complete</source>
@@ -1580,11 +1591,11 @@ Hakuna maelezo yaliyotolewa.
       </trans-unit>
       <trans-unit id="8881117240537538459" datatype="html">
         <source>Enter year (e.g., 1995)</source>
-        <target state="translated">Weka mwaka (kwa mfano, 1995)</target>
+        <target state="translated">Ingiza mwaka (kwa mfano, 1995)</target>
       </trans-unit>
       <trans-unit id="4546577159665195725" datatype="html">
         <source>Enter a valid past year</source>
-        <target state="translated">Weka mwaka uliopita sahihi</target>
+        <target state="translated">Ingiza mwaka uliopita sahihi</target>
       </trans-unit>
       <trans-unit id="4452427314943113135" datatype="html">
         <source>Previous</source>
@@ -1604,11 +1615,11 @@ Hakuna maelezo yaliyotolewa.
       </trans-unit>
       <trans-unit id="8184896906909267515" datatype="html">
         <source>Survey not found or not available.</source>
-        <target state="translated">Utafiti haujapatikana au haupatikani.</target>
+        <target state="translated">Utafiti haukupatikana au haupatikani.</target>
       </trans-unit>
       <trans-unit id="6824758497103773714" datatype="html">
         <source>There was a problem submitting this survey.</source>
-        <target state="translated">Kulikuwa na tatizo la kuwasilisha utafiti huu.</target>
+        <target state="translated">Kulikuwa na tatizo wakati wa kuwasilisha utafiti huu.</target>
       </trans-unit>
       <trans-unit id="6957891556134371559" datatype="html">
         <source>Hide Details</source>
@@ -1664,7 +1675,7 @@ Hakuna maelezo yaliyotolewa.
       </trans-unit>
       <trans-unit id="9157193205054419674" datatype="html">
         <source>Go to Upgrade</source>
-        <target state="translated">Nenda kwa Uboreshaji</target>
+        <target state="translated">Nenda kwenye Kuboresha</target>
       </trans-unit>
       <trans-unit id="178520337056147266" datatype="html">
         <source>Go to Dashboard</source>
@@ -1960,7 +1971,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="601445890754822634" datatype="html">
         <source>Referrals:</source>
-        <target state="translated">Rufaa:</target>
+        <target state="translated">Marejeleo:</target>
       </trans-unit>
       <trans-unit id="6057186423590581450" datatype="html">
         <source>myHealth</source>
@@ -1976,7 +1987,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="683623673508274169" datatype="html">
         <source>Blood Pressur</source>
-        <target state="translated">Shinikizo la Damu</target>
+        <target state="translated">Shinikizo la Dham</target>
       </trans-unit>
       <trans-unit id="1772637165584418803" datatype="html">
         <source>Height in cm</source>
@@ -2037,8 +2048,8 @@ Maelezo Mengine</target>
       <trans-unit id="5364866770993682368" datatype="html">
         <source>The value(s) of the following are not in the normal range.
          Click &lt;b&gt;Cancel&lt;/b&gt; to fix or click &lt;b&gt;OK&lt;/b&gt; to submit.</source>
-        <target state="translated">Thamani(s) za zifuatazo haziko katika kiwango cha kawaida.
-         Bofya &lt;b&gt;Ghairi&lt;/b&gt; ili kusahihisha au bofya &lt;b&gt;Sawa&lt;/b&gt; kuwasilisha.</target>
+        <target state="translated">Thamani za zifuatazo ziko nje ya masafa ya kawaida.
+         Bofya &lt;b&gt;Ghairi&lt;/b&gt; ili kurekebisha au bofya &lt;b&gt;Sawa&lt;/b&gt; ili kuwasilisha.</target>
       </trans-unit>
       <trans-unit id="1091770325854289707" datatype="html">
         <source>Health Care</source>
@@ -2570,7 +2581,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="662833268489097320" datatype="html">
         <source><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> Certification</source>
-        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> Cheti</target>
+        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> Uthibitishaji</target>
       </trans-unit>
       <trans-unit id="1615626722362823974" datatype="html">
         <source>Add Courses</source>
@@ -2634,7 +2645,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8838092804345159680" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Futa </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>futa_kabisa<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Futa </target>
       </trans-unit>
       <trans-unit id="5564437541975356934" datatype="html">
         <source>No Certifications Found</source>
@@ -2702,7 +2713,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="currency.configuration.title" datatype="html">
         <source>Currency Configuration</source>
-        <target state="translated">Mipangilio ya Fedha za Sarafu</target>
+        <target state="translated">Mipangilio ya Sarafu</target>
       </trans-unit>
       <trans-unit id="currency.card.title" datatype="html">
         <source>Currency</source>
@@ -2718,7 +2729,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8307564561551056768" datatype="html">
         <source>e.g. USD</source>
-        <target state="translated">kwa mfano USD</target>
+        <target state="translated">mfano USD</target>
       </trans-unit>
       <trans-unit id="currency.symbol.label" datatype="html">
         <source>Symbol</source>
@@ -2730,11 +2741,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="4866959439516771314" datatype="html">
         <source>e.g. $</source>
-        <target state="translated">kwa mfano $</target>
+        <target state="translated">mfano $</target>
       </trans-unit>
       <trans-unit id="currency.hint" datatype="html">
         <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
-        <target state="translated">Weka msimbo wa ISO (kwa mfano, USD, EUR) na alama inayotumika kwenye ripoti za kifedha.</target>
+        <target state="translated">Weka msimbo wa ISO (kwa mfano, USD, EUR) na alama inayotumiwa kwenye ripoti za fedha.</target>
       </trans-unit>
       <trans-unit id="currency.save" datatype="html">
         <source>Save Currency</source>
@@ -2742,7 +2753,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2347325578130929879" datatype="html">
         <source>Currency Updated Successfully</source>
-        <target state="translated">Sarafu Imesasishwa Kwa Mafanikio</target>
+        <target state="translated">Sarafu Imefasiliwa Kwa Mafanikio</target>
       </trans-unit>
       <trans-unit id="7501949394020929077" datatype="html">
         <source>Planet Configuration</source>
@@ -2850,7 +2861,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="3247005707553968518" datatype="html">
         <source> List all from the <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></source>
-        <target state="translated"> Orodhesha vyote kutoka kwa <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
+        <target state="translated"> Orodhesha yote kutoka kwenye <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
       </trans-unit>
       <trans-unit id="4035724296307887167" datatype="html">
         <source>List Resources</source>
@@ -2922,11 +2933,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="7197483184481985118" datatype="html">
         <source>PIN reset successfully</source>
-        <target state="translated">PIN imewekwa upya kwa mafanikio</target>
+        <target state="translated">Uwekaji upya wa PIN umefanikiwa</target>
       </trans-unit>
       <trans-unit id="6115022275193479708" datatype="html">
         <source>There was an error resetting the PIN</source>
-        <target state="translated">Kulikuwa na hitilafu ya kuweka upya PIN</target>
+        <target state="translated">Kulikuwa na hitilafu wakati wa kuweka upya PIN</target>
       </trans-unit>
       <trans-unit id="8003951915532467" datatype="html">
         <source>Courses/Resources Sent</source>
@@ -3154,7 +3165,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6251586038459969294" datatype="html">
         <source>Both</source>
-        <target state="translated">Vyote viwili</target>
+        <target state="translated">Zote mbili</target>
       </trans-unit>
       <trans-unit id="2947841900277203452" datatype="html">
         <source>Download as image</source>
@@ -3270,7 +3281,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="3278391847061671497" datatype="html">
         <source>Comparison Trend</source>
-        <target state="translated">Mwenendo wa Ulinganisho</target>
+        <target state="translated">Mwenendo wa Kulinganisha</target>
       </trans-unit>
       <trans-unit id="7924868316552213402" datatype="html">
         <source>Week 1 End Date</source>
@@ -3290,7 +3301,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="3554511241808542151" datatype="html">
         <source>Loading comparison data...</source>
-        <target state="translated">Inapakia data ya ulinganisho...</target>
+        <target state="translated">Inapakia data ya kulinganisha...</target>
       </trans-unit>
       <trans-unit id="9079143231473125231" datatype="html">
         <source>Metric</source>
@@ -3302,7 +3313,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="4410529131290936199" datatype="html">
         <source> Select dates and click Compare to view comparison data </source>
-        <target state="translated"> Chagua tarehe na ubofye Linganisha ili kuona data ya ulinganisho </target>
+        <target state="translated"> Chagua tarehe na ubofye Linganisha ili kuona data ya kulinganisha </target>
       </trans-unit>
       <trans-unit id="5426418005604037142" datatype="html">
         <source> No data found </source>
@@ -3362,7 +3373,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6781815540337494856" datatype="html">
         <source>Completions</source>
-        <target state="translated">Ukamilishaji</target>
+        <target state="translated">Mikamilisho</target>
       </trans-unit>
       <trans-unit id="4449188000554843914" datatype="html">
         <source>Courses Overview</source>
@@ -3410,7 +3421,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8778525357359342901" datatype="html">
         <source>Unique Member Visits</source>
-        <target state="translated">Ziara za Wanachama wa Kipekee</target>
+        <target state="translated">Ziara za Wanachama za Kipekee</target>
       </trans-unit>
       <trans-unit id="2725999660502319042" datatype="html">
         <source>Total Member Visits</source>
@@ -3438,11 +3449,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6023427095903292213" datatype="html">
         <source>No comparison data available</source>
-        <target state="translated">Hakuna data ya ulinganisho inayopatikana</target>
+        <target state="translated">Hakuna data ya kulinganisha inayopatikana</target>
       </trans-unit>
       <trans-unit id="3909592323906913534" datatype="html">
         <source>Comparison table downloaded as CSV</source>
-        <target state="translated">Jedwali la ulinganisho limedownloadiwa kama CSV</target>
+        <target state="translated">Jedwali la kulinganisha limepakuliwa kama CSV</target>
       </trans-unit>
       <trans-unit id="4235960290603625197" datatype="html">
         <source>Total Examinations:</source>
@@ -3764,6 +3775,10 @@ Maelezo Mengine</target>
         <source>Start Time</source>
         <target state="needs-translation">Start Time</target>
       </trans-unit>
+      <trans-unit id="3030205936393273049" datatype="html">
+        <source>Open time picker</source>
+        <target state="translated">Fungua kiteua muda</target>
+      </trans-unit>
       <trans-unit id="3845185958891849368" datatype="html">
         <source>End Time</source>
         <target state="needs-translation">End Time</target>
@@ -3802,7 +3817,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
-        <target state="translated">&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; limesasishwa.</target>
+        <target state="translated">&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; limefasiliwa.</target>
       </trans-unit>
       <trans-unit id="2292516665564677830" datatype="html">
         <source>Meetups</source>
@@ -4124,7 +4139,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2197686984434589542" datatype="html">
         <source>Drag &amp; drop supported</source>
-        <target state="translated">Buruta na kudondosha kunasaidiwa</target>
+        <target state="translated">Buruta &amp; dondosha kumeungwa mkono</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -4607,39 +4622,39 @@ Maelezo Mengine</target>
   Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
   </source>
         <target state="translated">
-  Wewe ni msaidizi wa mawazo na mwongozo wa jumuiya kwa Open Learning Exchange (OLE): https://ole.org/.
-  Una ujuzi wa kitaalamu kuhusu Planet (programu ya wavuti) na MyPlanet (programu ya Android inayofanya kazi hata bila mtandao) katika
-  majukwaa ya kujifunza/usimamizi wa jumuiya ya lugha nyingi yaliyotengenezwa na OLE, ikiwemo vipengele vyake.
+  Wewe ni msaidizi wa uchangamshaji wa mawazo na mwongozo wa jumuiya kwa Open Learning Exchange (OLE): https://ole.org/.
+  Una ujuzi wa kitaalamu kuhusu majukwaa ya lugha nyingi ya Planet (programu ya wavuti) na MyPlanet (programu ya Android inayofanya kazi nje ya mtandao kwanza) ya Usimamizi wa Kujifunza/Jumuiya
+  yaliyotengenezwa na OLE, ikijumuisha vipengele vyake.
 
   Unaelewa kwamba:
-  • Planet ni jukwaa kuu la wavuti la usimamizi wa ujifunzaji linalotumiwa na viongozi wa jumuiya, makocha, na wanafunzi kusimamia
-    rasilimali, wanachama, kozi, tafiti, mitihani, timu, biashara, vyeti na mafanikio.
-  • MyPlanet ni programu ya Android inayofanya kazi hata bila mtandao inayowaruhusu wanafunzi kutumia vipengele vya Planet bila mtandao
-    huku ikisawazishwa na Planet.
-  • Kwa pamoja, vinaunda mfumo wa ujifunzaji uliosambazwa unaosaidia ujifunzaji wa kijamii unaotegemea jumuiya.
+  • Planet ni jukwaa kuu la wavuti la usimamizi wa kujifunza linalotumiwa na viongozi wa jumuiya, makocha, na wanafunzi kudhibiti
+    rasilimali, wanachama, kozi, tafiti, mitihani, timu, mashirika, vyeti na mafanikio.
+  • MyPlanet ni programu ya Android inayolenga kazi nje ya mtandao kwanza, inayowaruhusu wanafunzi kutumia vipengele vya Planet kwa msingi wa nje ya mtandao
+    ikisawazishwa na Planet.
+  • Pamoja, vinaunda mfumo wa kusambazwa wa kujifunza unaosaidia kujifunza kunakotegemea jumuiya.
 
   Kusudi lako ni:
-  • Kujibu maswali ya mtumiaji na kusaidia kubuni mawazo, kutatua matatizo, na kuchunguza mbinu bunifu za ujifunzaji.
-  • Kukuza mawazo yanayoboreshabujifunzaji, ushauri, na uongozi katika mitandao ya jumuiya ya OLE.
-  • Kuhimiza ubunifu unaolingana na dhamira kuu ya OLE ya kuwawezesha jumuiya kupitia ujifunzaji,
+  • Kujibu maswali ya mtumiaji na kusaidia kubuni mawazo, kutatua matatizo, na kuchunguza mbinu za ubunifu za kujifunza.
+  • Kukuza mawazo yanayoboreshа kujifunza, ushauri, na uongozi katika mitandao ya jumuiya ya OLE.
+  • Kuhamasisha ubunifu unaoendana na dhamira kuu ya OLE ya kuwawezesha jumuiya kupitia kujifunza,
     umiliki wa ndani, na maendeleo endelevu.
 
-  Sisitiza kila mara maneno kama:
-  &apos;ujifunzaji&apos;, &apos;mwanafunzi&apos;, &apos;kocha&apos;, &apos;kiongozi&apos;, &apos;jumuiya&apos;, &apos;uwezo&apos;, &apos;timu&apos;, na &apos;biashara&apos;, na onyesha ushirikiano na uwezeshaji.
+  Daima sisitiza istilahi kama:
+  &apos;ujifunzaji&apos;, &apos;mwanafunzi&apos;, &apos;kocha&apos;, &apos;kiongozi&apos;, &apos;jumuiya&apos;, &apos;nguvu&apos;, &apos;timu&apos;, na &apos;mashirika&apos;, na uonyeshe ushirikiano na uwezeshaji.
   Unapojadili vipengele, unaweza kurejelea:
-  • Ukurasa wa jumuiya wenye sauti (machapisho ya habari) &amp; kalenda ya jumuiya, fedha, ripoti na viungo
-  • myDashboard ya mwanafunzi inayotoa muhtasari wa shughuli zake za ujifunzaji &amp; matumizi
-  • Kozi zenye hatua, mitihani/maswali, maelezo, ufuatiliaji wa maendeleo, na vyeti
+  • Ukurasa wa Jumuiya wenye sauti (machapisho ya habari) &amp; kalenda ya jumuiya, fedha, ripoti na viungo
+  • myDashboard ya mwanafunzi inayotoa muhtasari wa shughuli zao za kujifunza &amp; matumizi
+  • Kozi zilizo na hatua, mitihani/vitihani, madokezo, ufuatiliaji wa maendeleo, na vyeti
   • Rasilimali/Maktaba yenye usaidizi wa kupakia faili (pdf), sauti, picha/video &amp; maandishi
-  • Timu na Biashara zinazokuza ushirikiano na shughuli zilizopangwa zenye
+  • Timu na Mashirika yanayokuza ushirikiano na shughuli zilizopangwa pamoja na
     sauti, tafiti, kalenda, kazi, kozi, rasilimali, hati, fedha, na ripoti
   • Tafiti, Mafanikio na Vyeti
   • Usimamizi wa watumiaji wenye majukumu (mwanafunzi, kocha, kiongozi, msimamizi), wasifu, na ruhusa
-  • Dashibodi za wasimamizi zenye chati na ripoti kwa maarifa kuhusu ujifunzaji na ushirikiano wa jumuiya
+  • Dashibodi za wasimamizi zenye chati na ripoti kwa maarifa kuhusu ujifunzaji na ushiriki wa jumuiya
 
-  Dumisha mtindo wa kitaalamu lakini wa kirafiki, ukihamasisha na kuendeleza ari ya jumuiya.
-  Epuka istilahi za kiufundi zisizo za lazima isipokuwa zikisaidia ufafanuzi.
-  Daima omba ufafanuzi kabla ya kudhani nia ya mtumiaji na elekeza majibu kuelekea uwezeshaji, ujifunzaji, na kazi ya pamoja.
+  Dumisha sauti ya kitaalamu lakini yenye joto, ikikuza motisha na roho ya jumuiya.
+  Epuka istilahi nyingi za kiufundi zisizo za lazima isipokuwa zisaidie uwazi.
+  Daima omba ufafanuzi kabla ya kudhani nia ya mtumiaji na uelekeze majibu kwenye uwezeshaji, kujifunza, na kazi ya timu.
   </target>
       </trans-unit>
       <trans-unit id="1836515023834744069" datatype="html">
@@ -4684,53 +4699,53 @@ Maelezo Mengine</target>
 
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
   headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</source>
-        <target state="translated">Taarifa ifuatayo ni <x id="PH" equiv-text="examType"/> inayoitwa “<x id="PH_1" equiv-text="examName"/>” yenye maelezo “<x id="PH_2" equiv-text="examDescription"/>”.
+        <target state="translated">Ifuatayo ni <x id="PH" equiv-text="examType"/> iitwayo “<x id="PH_1" equiv-text="examName"/>” yenye maelezo “<x id="PH_2" equiv-text="examDescription"/>”.
   <x id="PH_3" equiv-text="payloadString"/>
 
-  Tafadhali toa Uchanganuzi wa kina wa AI kwa ajili ya uhamishaji wa PDF, uliopangwa katika sehemu 4:
+  Tafadhali toa Uchanganuzi wa kina wa AI kwa ajili ya uwasilishaji wa PDF, uliopangwa katika sehemu 4:
 
-  1. UCHAMBUZI WA SWALI BINAfsi
-    Ikiwa swali ni **la majibu funge (aina - select au selectMultiple au rating scale [chaguo 1-9]):**
-        - Orodhesha chaguo tatu bora za majibu pamoja na idadi kamili na asilimia.
-        - Mbali na hizo tatu bora,
-         angazia chaguo lolote la jibu lenye chini ya 10% ya majibu na pendekeza kwa nini huenda likachaguliwa kidogo
-        - Unda nadharia kwa ajili ya chaguo zilizofanywa
-    Ikiwa swali ni **la majibu wazi (aina - input au textarea):**
-        - Hitaji nukuu za moja kwa moja pamoja na demografia ya mrespondenti ikiwa inapatikana.
+  1. UCHANGANUZI WA SWALI LA KIBINAFSI
+    Ikiwa swali ni la **majibu funge (aina - select au selectMultiple au rating scale [chaguo 1-9]):**
+        - Orodhesha chaguo tatu bora za majibu zikiwa na idadi halisi na asilimia.
+        - Mbali na tatu bora,
+         onyesha chaguo lolote la jibu lenye chini ya 10% ya majibu na pendekeza kwa nini huenda halikuchaguliwa sana
+        - Tengeneza nadharia kwa ajili ya uchaguzi huo
+    Ikiwa swali ni la **majibu wazi (aina - input au textarea):**
+        - Hitaji manukuu ya moja kwa moja pamoja na demografia ya mrespondent ikiwa inapatikana.
         - Fanya uchambuzi wa hisia na maneno muhimu
-        - Angazia pendekezo lolote la kipekee lakini lenye athari kubwa.
-        - Angazia uwezekano wa kutekelezeka kwa mapendekezo.
-        - Lazimisha uainishaji wa mada kwa kutumia idadi kamili na mgawanyo wa asilimia, yaani kwa kila mada, toa:
-          1. Idadi na asilimia ya wahojiwa walioitaja.
+        - Onyesha mapendekezo ya kipekee lakini yenye athari kubwa.
+        - Onyesha utekelezekaji wa mapendekezo.
+        - Lazimisha uainishaji wa mada kwa hesabu halisi na mgawanyo wa asilimia; yaani kwa kila mada, toa:
+          1. Idadi na asilimia ya washiriki wanaoitaja.
           2. Nukuu moja isiyomtambulisha mtu inayoonyesha mada hiyo.
 
   2. UHUSIANO KATI YA MASWALI
-    - Kokotoa viwango vya kutokea pamoja kwa jozi kwa maswali yote ya chaguo nyingi.
+    - Kokotoa viwango vya pamoja vya kutokea kwa jozi kwa maswali yote ya chaguo nyingi.
     - Tambua uhusiano minne imara zaidi kwa uwezekano wa masharti na idadi.
     - Wasilisha kila moja kama:
-      “%X ya wahojiwa waliochagua ‘A’ katika Qn pia walichagua ‘B’ katika Qm (Y/Z).”
+      “Asilimia X ya washiriki waliochagua ‘A’ katika Qn pia walichagua ‘B’ katika Qm (Y/Z).”
 
-  3. MGANUO WA DEMOGRAFIA
+  3. MGAWANYO WA DEMOGRAFIA
     - Bainisha makundi kulingana na vipengele vya demografia kama vile:
-      - **Vikundi vya umri:** Linganisha kila chaguo la majibu funge katika sehemu za umri, jinsia na eneo,
-        ukionyesha pale ambapo chaguo ni angalau pointi 15 za asilimia juu au chini ya wastani wa jumla.
+      - **Makundi ya umri:** Linganisha kila chaguo funge katika vipande vya umri, jinsia, na eneo,
+        ukibainisha pale ambapo chaguo liko angalau pointi 15 za asilimia juu au chini ya wastani wa jumla.
       - **Jinsia** (ikiwa inapatikana)
-    - Kwa kila kundi, orodhesha chaguo zao mbili bora kwa kila swali la majibu funge (idadi + asilimia).
-    - Toa ripoti tu ya tofauti kutoka kwa sampuli ya jumla zinazozidi pointi 20 za asilimia.
+    - Kwa kila kundi, orodhesha chaguo lao mbili bora kwa kila swali la chaguo funge (idadi + asilimia).
+    - Ripoti tu tofauti kutoka kwenye sampuli ya jumla zinazozidi pointi 20 za asilimia.
 
-  4. MAPENDEKEZO NA MAONI
-    - Toa mapendekezo yanayotekelezeka kulingana na uchambuzi:
-      toa mapendekezo madhubuti ya jinsi mpango wa jumuiya unavyoweza kushughulikia changamoto kuu hiyo—yakiwa yamejengwa kwenye data
-    - Angazia maarifa au mwenendo wowote wa kushangaza.
+  4. MAPENDEKEZO NA UFAHAMU
+    - Toa mapendekezo yanayoweza kutekelezeka kulingana na uchambuzi:
+      toa mapendekezo mahususi ya namna mpango wa jumuiya unavyoweza kushughulikia changamoto hiyo kuu—ukiwa umejikita kwenye data
+    - Onyesha maarifa au mienendo yoyote ya kushangaza.
 
-  Hakikisha kila maarifa ya nambari yanaonyesha idadi na asilimia zote mbili. Tumia mitindo ya markdown iliyo wazi kama vile
-  vichwa(h1-h6), aya, sentensi, orodha zisizopangwa, orodha zilizopangwa na nafasi ya kutosha inapofaa kwa mpangilio safi wa PDF.</target>
+  Hakikisha kila maarifa ya nambari yanaonyesha idadi na asilimia. Tumia mitindo wazi ya markdown kama
+  vichwa(h1-h6), aya, sentensi, orodha zisizo na namba, orodha zenye namba na nafasi za kutosha inapohitajika kwa mpangilio safi wa PDF.</target>
       </trans-unit>
       <trans-unit id="3515009611935359950" datatype="html">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
   Be sure to assist the learner in the best way you can. </source>
         <target state="translated">Taarifa ifuatayo ni hatua ya kozi kutoka kwenye kozi ya &quot;<x id="PH" equiv-text="stepTitle"/>&quot; yenye maelezo &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
-  Hakikisha unamsaidia mwanafunzi kwa njia bora uwezavyo. </target>
+  Tafadhali hakikisha unamsaidia mwanafunzi kwa njia bora uwezavyo. </target>
       </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
         <source>Today</source>
@@ -4782,7 +4797,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2793224927989139973" datatype="html">
         <source>Error fetching document: <x id="PH" equiv-text="err.message"/></source>
-        <target state="translated">Hitilafu ya kuleta hati: <x id="PH" equiv-text="err.message"/></target>
+        <target state="translated">Hitilafu wakati wa kuchota hati: <x id="PH" equiv-text="err.message"/></target>
       </trans-unit>
       <trans-unit id="999413599775442225" datatype="html">
         <source>Report of <x id="PH" equiv-text="title"/> on <x id="PH_1" equiv-text="new Date().toDateString()"/></source>
@@ -4892,11 +4907,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
         <source>Share with Team/Enterprise</source>
-        <target state="translated">Shiriki na Timu/Biashara</target>
+        <target state="translated">Shiriki na Timu/Mradi</target>
       </trans-unit>
       <trans-unit id="4066773011276373363" datatype="html">
         <source>Team or Enterprise</source>
-        <target state="translated">Timu au Biashara</target>
+        <target state="translated">Timu au Mradi</target>
       </trans-unit>
       <trans-unit id="3919964185310091527" datatype="html">
         <source>Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></source>
@@ -4968,14 +4983,14 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="3080384219063791942" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}</source>
-        <target state="translated">{VAR_SELECT, select, accept {kubali} archive {hifadhi kwenye kumbukumbu} reject {kataa} delete {futa} leave {ondoka} remove {ondoa} leader {kabidhi uongozi kwa} exit {ondoka} reset {weka upya}}</target>
+        <target state="translated">{VAR_SELECT, select, accept {kubali} archive {hifadhi} reject {kataa} delete {futa} leave {ondoka} remove {ondoa} leader {toa uongozi kwa} exit {ondoka} reset {weka upya}}</target>
       </trans-unit>
       <trans-unit id="6490858809109190004" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</source>
-        <target state="translated">{VAR_SELECT_2, select, single {kufuatia {VAR_SELECT, select, community {jumuiya} nation {taifa} course {kozi} resource {rasilimali} document {hati} meetup {mkutano} user {mwanachama} change {mabadiliko} team {timu} enterprise {biashara} task {kazi} certification {uthibitisho} event {hafla} transaction {muamala} link {kiungo} news {ujumbe} report {ripoti} changes {fomu} pin {pin} survey {tafiti}}?
-      } many {imechaguliwa <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {jumuiya} nation {mataifa} course {kozi} resource {rasilimali} meetup {mikutano} event {hafla} survey {tafiti}}?
+        <target state="translated">{VAR_SELECT_2, select, single {kufuatia {VAR_SELECT, select, community {jumuiya} nation {taifa} course {kozi} resource {rasilimali} document {hati} meetup {mkutano} user {mwanachama} change {mabadiliko} team {timu} enterprise {shirika} task {kazi} certification {uthibitisho} event {tukio} transaction {muamala} link {kiungo} news {ujumbe} report {ripoti} changes {fomu} pin {pin} survey {uchunguzi}}?
+      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {jumuiya} nation {mataifa} course {kozi} resource {rasilimali} meetup {mikutano} event {matukio} survey {uchunguzi}}?
       }}</target>
       </trans-unit>
       <trans-unit id="7706831103748816044" datatype="html">
@@ -5136,7 +5151,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="266505507282188406" datatype="html">
         <source>Italic</source>
-        <target state="translated">Italiki</target>
+        <target state="translated">Mwelekeo</target>
       </trans-unit>
       <trans-unit id="6317126528752584322" datatype="html">
         <source>Heading</source>
@@ -5160,7 +5175,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6193671119554408029" datatype="html">
         <source>Side by Side</source>
-        <target state="translated">Kando kwa Kando</target>
+        <target state="translated">Upande kwa Upande</target>
       </trans-unit>
       <trans-unit id="489844404897890427" datatype="html">
         <source>Fullscreen</source>
@@ -5480,7 +5495,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2215122549215067863" datatype="html">
         <source>enterprise</source>
-        <target state="translated">biashara</target>
+        <target state="translated">mradi</target>
       </trans-unit>
       <trans-unit id="6743174526740667520" datatype="html">
         <source>team</source>
@@ -5490,7 +5505,7 @@ Maelezo Mengine</target>
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
         <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; ame
-        <x id="PH_1" equiv-text="isUpdated ? &apos;imesasishwa&apos; : isRecorded ? &apos;imeandikwa&apos; : &apos;imekamilika&apos;"/> dodoso &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
+        <x id="PH_1" equiv-text="isUpdated ? &apos;asasisha&apos; : isRecorded ? &apos;ameandika&apos; : &apos;amemaliza&apos;"/> uchunguzi &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
       </trans-unit>
       <trans-unit id="1737753151350322492" datatype="html">
         <source>
@@ -5536,7 +5551,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6452609165384043272" datatype="html">
         <source>Selections count</source>
-        <target state="translated">Idadi ya chaguo</target>
+        <target state="translated">Idadi ya chaguo zilizochaguliwa</target>
       </trans-unit>
       <trans-unit id="3151274180091052511" datatype="html">
         <source>% of All Selections</source>
@@ -5544,7 +5559,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="5163837751438016016" datatype="html">
         <source>Selection Breakdown</source>
-        <target state="translated">Mgawanyo wa Uteuzi</target>
+        <target state="translated">Uchanganuzi wa Chaguo</target>
       </trans-unit>
       <trans-unit id="8366029003604972950" datatype="html">
         <source>Total respondents: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
@@ -5556,7 +5571,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8898648218118868158" datatype="html">
         <source>*Percentage of users who selected the choice. Users may select multiple options</source>
-        <target state="translated">*Asilimia ya watumiaji waliochagua chaguo. Watumiaji wanaweza kuchagua chaguo zaidi ya moja</target>
+        <target state="translated">*Asilimia ya watumiaji waliochagua chaguo. Watumiaji wanaweza kuchagua chaguo nyingi</target>
       </trans-unit>
       <trans-unit id="3728862431459445553" datatype="html">
         <source>The Score: <x id="PH" equiv-text="averageRating"/></source>
@@ -5568,11 +5583,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="7641590258550661146" datatype="html">
         <source>Number of Submissions: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
-        <target state="translated">Idadi ya Uwasilishaji: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">Idadi ya Mawasilisho: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="7556405911761495752" datatype="html">
         <source>Error exporting PDF: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">Hitilafu ya kuhamisha PDF: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">Hitilafu wakati wa kusafirisha PDF: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="2910140776552023546" datatype="html">
         <source>There is no survey response</source>
@@ -5620,7 +5635,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1975814388540827143" datatype="html">
         <source>Error analyzing responses: <x id="PH" equiv-text="error.message || error"/></source>
-        <target state="translated">Hitilafu ya kuchambua majibu: <x id="PH" equiv-text="error.message || error"/></target>
+        <target state="translated">Hitilafu wakati wa kuchanganua majibu: <x id="PH" equiv-text="error.message || error"/></target>
       </trans-unit>
       <trans-unit id="2860676163395333414" datatype="html">
         <source>Team Surveys</source>
@@ -5676,7 +5691,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1375828267046153429" datatype="html">
         <source> Archive</source>
-        <target state="translated"> Hifadhi kwenye kumbukumbu</target>
+        <target state="translated"> Hifadhi</target>
       </trans-unit>
       <trans-unit id="7667753160625320954" datatype="html">
         <source> Submissions</source>
@@ -5732,11 +5747,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="4305327362141896516" datatype="html">
         <source>Error adopting survey.</source>
-        <target state="translated">Hitilafu ya kupokea utafiti.</target>
+        <target state="translated">Hitilafu wakati wa kukubali utafiti.</target>
       </trans-unit>
       <trans-unit id="5148714587411683072" datatype="html">
         <source>Error adopting survey: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">Hitilafu ya kupokea utafiti: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">Hitilafu wakati wa kukubali utafiti: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="717884325364222210" datatype="html">
         <source>Survey requests sent</source>
@@ -5756,7 +5771,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="7818659923595108905" datatype="html">
         <source>There was a problem updating public survey access.</source>
-        <target state="translated">Kulikuwa na tatizo la kusasisha ufikiaji wa umma wa utafiti.</target>
+        <target state="translated">Kulikuwa na tatizo wakati wa kusasisha ufikiaji wa umma wa utafiti.</target>
       </trans-unit>
       <trans-unit id="745200351261498648" datatype="html">
         <source>Generate a public link for this survey first.</source>
@@ -5808,7 +5823,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6173970083872550712" datatype="html">
         <source>Survey is archived and cannot accept new actions</source>
-        <target state="translated">Utafiti umehifadhiwa kwenye kumbukumbu na hauwezi kupokea hatua mpya</target>
+        <target state="translated">Utafiti umehifadhiwa kwenye kumbukumbu na hauwezi kukubali vitendo vipya</target>
       </trans-unit>
       <trans-unit id="7153260170424586045" datatype="html">
         <source>There is no data to export</source>
@@ -5816,7 +5831,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1470801138774792470" datatype="html">
         <source>There are no submissions to view</source>
-        <target state="translated">Hakuna mawasilisho ya kuangalia</target>
+        <target state="translated">Hakuna mawasilisho ya kutazama</target>
       </trans-unit>
       <trans-unit id="1723945927449058686" datatype="html">
         <source>This survey was created on the parent planet and cannot be managed here</source>
@@ -5892,7 +5907,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1603197821585633928" datatype="html">
         <source>Reassign Task</source>
-        <target state="translated">Pangia Kazi Tena</target>
+        <target state="translated">Pangua Kazi Upya</target>
       </trans-unit>
       <trans-unit id="4336027280028501448" datatype="html">
         <source>Assign Task</source>
@@ -5912,7 +5927,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="6218954567289085889" datatype="html">
         <source>JPG, PNG or WEBP attached images</source>
-        <target state="translated">Picha zilizoambatishwa za JPG, PNG au WEBP</target>
+        <target state="translated">Picha zilizoambatanishwa za JPG, PNG au WEBP</target>
       </trans-unit>
       <trans-unit id="6341772921473084017" datatype="html">
         <source>(You)</source>
@@ -5988,7 +6003,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2455690028458298000" datatype="html">
         <source>Attached Images</source>
-        <target state="translated">Picha Zilizoambatishwa</target>
+        <target state="translated">Picha Zilizoambatanishwa</target>
       </trans-unit>
       <trans-unit id="7979933378756493449" datatype="html">
         <source>Report created on:</source>
@@ -6040,7 +6055,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8733605622288277148" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {1 attached image} other {# attached images}}</source>
-        <target state="translated">{VAR_PLURAL, plural, =1 {Picha 1 iliyoambatishwa} other {Picha # zilizoambatishwa}}</target>
+        <target state="translated">{VAR_PLURAL, plural, =1 {picha 1 iliyoambatishwa} other {picha # zilizoambatishwa}}</target>
       </trans-unit>
       <trans-unit id="5014540154130052908" datatype="html">
         <source>View Report</source>
@@ -6076,7 +6091,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="5666281898008893391" datatype="html">
         <source>There was a problem saving the report.</source>
-        <target state="translated">Kulikuwa na tatizo la kuhifadhi ripoti.</target>
+        <target state="translated">Kulikuwa na tatizo wakati wa kuhifadhi ripoti.</target>
       </trans-unit>
       <trans-unit id="3338069611336463991" datatype="html">
         <source>Report from</source>
@@ -6096,7 +6111,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="8047377907322802891" datatype="html">
         <source>Updated Date</source>
-        <target state="translated">Tarehe ya Kusasishwa</target>
+        <target state="translated">Tarehe ya Sasisho</target>
       </trans-unit>
       <trans-unit id="8279659101806790636" datatype="html">
         <source>Wages</source>
@@ -6140,7 +6155,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="967622916338237066" datatype="html">
         <source>No transactions match this date range</source>
-        <target state="translated">Hakuna miamala inayolingana na kipindi hiki cha tarehe</target>
+        <target state="translated">Hakuna miamala inayoendana na masafa haya ya tarehe</target>
       </trans-unit>
       <trans-unit id="6326803299903087278" datatype="html">
         <source>There are no transactions</source>
@@ -6184,7 +6199,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="2827095881733901664" datatype="html">
         <source>There was a problem saving the transaction.</source>
-        <target state="translated">Kulikuwa na tatizo la kuhifadhi muamala.</target>
+        <target state="translated">Kulikuwa na tatizo wakati wa kuhifadhi muamala.</target>
       </trans-unit>
       <trans-unit id="5926961113186162892" datatype="html">
         <source>You have deleted a transaction.</source>
@@ -6233,6 +6248,10 @@ Maelezo Mengine</target>
       <trans-unit id="3726652384665988323" datatype="html">
         <source>Services Directory</source>
         <target state="needs-translation">Services Directory</target>
+      </trans-unit>
+      <trans-unit id="2758141335411811281" datatype="html">
+        <source>Edit details</source>
+        <target state="translated">Hariri maelezo</target>
       </trans-unit>
       <trans-unit id="1610023597544138043" datatype="html">
         <source>Manage Surveys</source>
@@ -6336,7 +6355,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1782340738699397677" datatype="html">
         <source>No member has joined this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">Hakuna mwanachama aliyejiunga na <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> hii.</target>
+        <target state="translated">Hakuna mwanachama ambaye amejiunga na <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> hii.</target>
       </trans-unit>
       <trans-unit id="2504433810618665069" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise}}</source>
@@ -6348,7 +6367,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="1319001951842306108" datatype="html">
         <source>There are currently no tasks assigned to this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">Hivi sasa hakuna kazi zilizopewa <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> hii.</target>
+        <target state="translated">Kwa sasa hakuna kazi zilizopewa <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> hii.</target>
       </trans-unit>
       <trans-unit id="9094381763389549203" datatype="html">
         <source>{VAR_SELECT, select, team {Resources} enterprise {Documents} services {Documents}}</source>
@@ -6408,7 +6427,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="4778119955912493620" datatype="html">
         <source>You have <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
-        <target state="translated">Una <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
+        <target state="translated">Ume <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
@@ -6476,7 +6495,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="3190371367567784499" datatype="html">
         <source>Joined Enterprise</source>
-        <target state="translated">Amejiunga na Biashara</target>
+        <target state="translated">Amejiunga na Mradi</target>
       </trans-unit>
       <trans-unit id="4323130826771572620" datatype="html">
         <source>Joined Team</source>
@@ -6524,7 +6543,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-updated-success" datatype="html">
         <source>Enterprise updated successfully</source>
-        <target state="translated">Biashara imesasishwa kwa mafanikio</target>
+        <target state="translated">Mradi umesasishwa kwa mafanikio</target>
       </trans-unit>
       <trans-unit id="team-updated-success" datatype="html">
         <source>Team updated successfully</source>
@@ -6532,7 +6551,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-created-success" datatype="html">
         <source>Enterprise created successfully</source>
-        <target state="translated">Biashara imeundwa kwa mafanikio</target>
+        <target state="translated">Mradi umeundwa kwa mafanikio</target>
       </trans-unit>
       <trans-unit id="team-created-success" datatype="html">
         <source>Team created successfully</source>
@@ -6540,7 +6559,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-left" datatype="html">
         <source>You have left enterprise</source>
-        <target state="translated">Umeondoka kwenye biashara</target>
+        <target state="translated">Umeondoka kwenye mradi</target>
       </trans-unit>
       <trans-unit id="team-left" datatype="html">
         <source>You have left team</source>
@@ -6548,7 +6567,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-deleted" datatype="html">
         <source>You have deleted enterprise</source>
-        <target state="translated">Umefuta biashara</target>
+        <target state="translated">Umefuta mradi</target>
       </trans-unit>
       <trans-unit id="team-deleted" datatype="html">
         <source>You have deleted team</source>
@@ -6556,7 +6575,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-delete-error" datatype="html">
         <source>There was a problem deleting this enterprise.</source>
-        <target state="translated">Kulikuwa na tatizo la kufuta biashara hii.</target>
+        <target state="translated">Kulikuwa na tatizo wakati wa kufuta mradi huu.</target>
       </trans-unit>
       <trans-unit id="team-delete-error" datatype="html">
         <source>There was a problem deleting this team.</source>
@@ -6564,7 +6583,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="enterprise-join-request" datatype="html">
         <source>Sent request to join enterprise</source>
-        <target state="translated">Ombi la kujiunga na biashara limetumwa</target>
+        <target state="translated">Ombi la kujiunga na mradi limetumwa</target>
       </trans-unit>
       <trans-unit id="team-join-request" datatype="html">
         <source>Sent request to join team</source>
@@ -6584,11 +6603,11 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="create-enterprise" datatype="html">
         <source>Create Enterprise</source>
-        <target state="translated">Unda Biashara</target>
+        <target state="translated">Unda Mradi</target>
       </trans-unit>
       <trans-unit id="update-enterprise" datatype="html">
         <source>Update Enterprise</source>
-        <target state="translated">Sasisha Biashara</target>
+        <target state="translated">Sasisha Mradi</target>
       </trans-unit>
       <trans-unit id="3888232331381898998" datatype="html">
         <source>Team Type</source>
@@ -6800,7 +6819,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="4803957677266686067" datatype="html">
         <source>Please select a PDF file smaller than <x id="PH" equiv-text="this.maxResumeSizeMb"/> MB</source>
-        <target state="translated">Tafadhali chagua faili la PDF dogo kuliko <x id="PH" equiv-text="this.maxResumeSizeMb"/> MB</target>
+        <target state="translated">Tafadhali chagua faili la PDF lenye ukubwa chini ya <x id="PH" equiv-text="this.maxResumeSizeMb"/> MB</target>
       </trans-unit>
       <trans-unit id="8066527122146867613" datatype="html">
         <source>Please upload your CV/Resume as a PDF file</source>
@@ -6808,15 +6827,15 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="188498249696731690" datatype="html">
         <source>Achievement #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Mafanikio #<x id="PH" equiv-text="itemNumber"/> yana maeneo batili</target>
+        <target state="translated">Fanikio #<x id="PH" equiv-text="itemNumber"/> lina nyanja batili</target>
       </trans-unit>
       <trans-unit id="5720311531539704100" datatype="html">
         <source>Reference #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Rejeleo #<x id="PH" equiv-text="itemNumber"/> lina maeneo batili</target>
+        <target state="translated">Rejeleo #<x id="PH" equiv-text="itemNumber"/> lina nyanja batili</target>
       </trans-unit>
       <trans-unit id="7905884076880343581" datatype="html">
         <source>Link #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Kiungo #<x id="PH" equiv-text="itemNumber"/> kina maeneo batili</target>
+        <target state="translated">Kiungo #<x id="PH" equiv-text="itemNumber"/> kina nyanja batili</target>
       </trans-unit>
       <trans-unit id="6761704605632724264" datatype="html">
         <source>Achievements successfully updated</source>
@@ -7056,7 +7075,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="7006977447062890057" datatype="html">
         <source>There was an error removing the member&apos;s role</source>
-        <target state="translated">Kulikuwa na hitilafu ya kuondoa jukumu la mwanachama</target>
+        <target state="translated">Kulikuwa na hitilafu wakati wa kuondoa jukumu la mwanachama</target>
       </trans-unit>
       <trans-unit id="6068329395413518097" datatype="html">
         <source>
@@ -7100,7 +7119,7 @@ Maelezo Mengine</target>
       </trans-unit>
       <trans-unit id="9160143324993549255" datatype="html">
         <source>Reset Selection</source>
-        <target state="translated">Weka Uteuzi Upya</target>
+        <target state="translated">Weka Upya Chaguo</target>
       </trans-unit>
       <trans-unit id="9178182467454450952" datatype="html">
         <source>Confirm</source>
