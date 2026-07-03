@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
@@ -46,7 +46,8 @@ export class SubmissionsService {
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    @Inject(LOCALE_ID) private localeId: string
   ) { }
 
   updateSubmissions({ query, opts = {}, onlyBest, surveyId, type }: {
@@ -355,7 +356,7 @@ export class SubmissionsService {
               submission.user.age || this.notAvailable(),
             [$localize`Planet`]: submission.source,
             [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
-            [$localize`Date`]: fullLabel(submission.lastUpdateTime),
+            [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
             [$localize`Group`]: submission.teamInfo?.name || this.notAvailable(),
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
             ...questionTexts.reduce((answerObj, text, index) => ({
@@ -579,7 +580,7 @@ export class SubmissionsService {
 
   surveyHeader(responseHeader: boolean, exam, index: number, submission): string {
     if (responseHeader) {
-      const shortDate = fullLabel(submission.lastUpdateTime);
+      const shortDate = fullLabel(submission.lastUpdateTime, this.localeId);
       const userAge = submission.user.birthDate ?
         ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
         submission.user.age;
@@ -632,7 +633,7 @@ export class SubmissionsService {
     const hasData = Array.isArray(data.data) && data.data.some((value: number) => Number(value) > 0);
 
     if (!hasData) {
-      return renderNoDataPlaceholder(ctx, canvas, 'No data available');
+      return renderNoDataPlaceholder(ctx, canvas, $localize`No data available`);
     }
 
     const maxCount = Math.max(...data.data);

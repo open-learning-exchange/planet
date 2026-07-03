@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -17,7 +17,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
-import { NgClass, DatePipe, CurrencyPipe } from '@angular/common';
+import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -109,6 +109,7 @@ export class TeamsReportsComponent implements OnChanges {
     private csvService: CsvService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
@@ -171,8 +172,8 @@ export class TeamsReportsComponent implements OnChanges {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
-          ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
+        displayName: `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
+          ${$localize`to`} ${formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
@@ -268,10 +269,10 @@ export class TeamsReportsComponent implements OnChanges {
 
   exportReports() {
     const exportData = this.reportCards.map(({ report }) => ({
-      [$localize`Start Date`]: fullLabel(report.startDate),
-      [$localize`End Date`]: fullLabel(report.endDate),
-      [$localize`Created Date`]: fullLabel(report.createdDate),
-      [$localize`Updated Date`]: fullLabel(report.updatedDate),
+      [$localize`Start Date`]: fullLabel(report.startDate, this.localeId),
+      [$localize`End Date`]: fullLabel(report.endDate, this.localeId),
+      [$localize`Created Date`]: fullLabel(report.createdDate, this.localeId),
+      [$localize`Updated Date`]: fullLabel(report.updatedDate, this.localeId),
       [$localize`Beginning Balance`]: report.beginningBalance,
       [$localize`Sales`]: report.sales,
       [$localize`Other Income`]: report.otherIncome,
@@ -280,8 +281,8 @@ export class TeamsReportsComponent implements OnChanges {
       [$localize`Profit/Loss`]: report.sales + report.otherIncome - report.wages - report.otherExpenses,
       [$localize`Ending Balance`]: report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
     }));
-    const planetName = this.stateService.configuration.name || 'Unnamed';
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const planetName = this.stateService.configuration.name || $localize`Unnamed`;
+    const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
     this.csvService.exportCSV({
       data: exportData,

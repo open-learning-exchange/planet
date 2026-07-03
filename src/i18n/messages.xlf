@@ -755,6 +755,9 @@
       <trans-unit id="4269495761666988308" datatype="html">
         <source>Date Started</source>
       </trans-unit>
+      <trans-unit id="6811901802533648897" datatype="html">
+        <source>N/A</source>
+      </trans-unit>
       <trans-unit id="7471185603546121318" datatype="html">
         <source>Most Recent Activity</source>
       </trans-unit>
@@ -2561,11 +2564,11 @@ Other Notes</source>
       <trans-unit id="5092703122145292158" datatype="html">
         <source>Courses Progress</source>
       </trans-unit>
-      <trans-unit id="5694549662546854335" datatype="html">
-        <source>Week 1 (<x id="PH" equiv-text="weekDataLabels(w1Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w1Range.endDate)"/>)</source>
+      <trans-unit id="2097037868741038089" datatype="html">
+        <source>Week 1 (<x id="PH" equiv-text="formatWeekRange(w1Range)"/>)</source>
       </trans-unit>
-      <trans-unit id="4376553154348641580" datatype="html">
-        <source>Week 2 (<x id="PH" equiv-text="weekDataLabels(w2Range.startDate)"/> - <x id="PH_1" equiv-text="weekDataLabels(w2Range.endDate)"/>)</source>
+      <trans-unit id="5500551512948402457" datatype="html">
+        <source>Week 2 (<x id="PH" equiv-text="formatWeekRange(w2Range)"/>)</source>
       </trans-unit>
       <trans-unit id="8778525357359342901" datatype="html">
         <source>Unique Member Visits</source>
@@ -2666,8 +2669,29 @@ Other Notes</source>
       <trans-unit id="7590013429208346303" datatype="html">
         <source>Custom</source>
       </trans-unit>
-      <trans-unit id="3041841225755615388" datatype="html">
-        <source><x id="PH" equiv-text="this.planetTypeText(planet.planetType)"/> Details</source>
+      <trans-unit id="6452584314169142967" datatype="html">
+        <source>Nation Details</source>
+      </trans-unit>
+      <trans-unit id="8072425130757009393" datatype="html">
+        <source>Community Details</source>
+      </trans-unit>
+      <trans-unit id="6432667455665433426" datatype="html">
+        <source>Edit Nation Name</source>
+      </trans-unit>
+      <trans-unit id="4040314800064170229" datatype="html">
+        <source>Edit Community Name</source>
+      </trans-unit>
+      <trans-unit id="1055526813439323803" datatype="html">
+        <source>Nation name updated.</source>
+      </trans-unit>
+      <trans-unit id="676276214732222082" datatype="html">
+        <source>Community name updated.</source>
+      </trans-unit>
+      <trans-unit id="4144578878870348241" datatype="html">
+        <source>There was an error updating Nation name</source>
+      </trans-unit>
+      <trans-unit id="749419296571064818" datatype="html">
+        <source>There was an error updating Community name</source>
       </trans-unit>
       <trans-unit id="8096046298834456348" datatype="html">
         <source>Resource Views by Month</source>
@@ -2776,15 +2800,6 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2972014593505653665" datatype="html">
         <source>There was a problem deleting this community</source>
-      </trans-unit>
-      <trans-unit id="3096098546617387266" datatype="html">
-        <source>Edit <x id="PH" equiv-text="this.reportsService.planetTypeText(planet.doc.planetType)"/> Name</source>
-      </trans-unit>
-      <trans-unit id="2012917231300508078" datatype="html">
-        <source><x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name updated.</source>
-      </trans-unit>
-      <trans-unit id="4685838598500716603" datatype="html">
-        <source>There was an error updating <x id="PH" equiv-text="this.reportsService.planetTypeText(doc.planetType)"/> name</source>
       </trans-unit>
       <trans-unit id="3458528087553681046" datatype="html">
         <source> Pending </source>
@@ -4141,9 +4156,6 @@ Other Notes</source>
       <trans-unit id="2009689739817524652" datatype="html">
         <source>Exam</source>
       </trans-unit>
-      <trans-unit id="6811901802533648897" datatype="html">
-        <source>N/A</source>
-      </trans-unit>
       <trans-unit id="8041427397457443304" datatype="html">
         <source>Enterprise</source>
       </trans-unit>
@@ -4218,6 +4230,9 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6552449600024516046" datatype="html">
         <source>Response</source>
+      </trans-unit>
+      <trans-unit id="4893616715766810081" datatype="html">
+        <source>No data available</source>
       </trans-unit>
       <trans-unit id="1388001557122691550" datatype="html">
         <source>Choice</source>
@@ -4603,6 +4618,9 @@ Other Notes</source>
       <trans-unit id="1426475745601890846" datatype="html">
         <source>Other Expenses</source>
       </trans-unit>
+      <trans-unit id="188408324951035066" datatype="html">
+        <source>Unnamed</source>
+      </trans-unit>
       <trans-unit id="6630681340946694789" datatype="html">
         <source>Financial Summary for <x id="PH" equiv-text="titleName"/></source>
       </trans-unit>
@@ -4683,9 +4701,6 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5452881409775077105" datatype="html">
         <source>balance</source>
-      </trans-unit>
-      <trans-unit id="188408324951035066" datatype="html">
-        <source>Unnamed</source>
       </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>

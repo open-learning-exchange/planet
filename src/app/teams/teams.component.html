@@ -79,7 +79,11 @@
       <ng-container matColumnDef="visitLog.lastVisit">
         <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.lastVisit" i18n>Most recent visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{(element.visitLog.lastVisit | date: 'medium') || 'N/A'}}
+          @if (element.visitLog.lastVisit) {
+            {{element.visitLog.lastVisit | date: 'medium'}}
+          } @else {
+            <ng-container i18n>N/A</ng-container>
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.visitCount">

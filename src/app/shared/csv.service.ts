@@ -93,7 +93,7 @@ export class CsvService {
       section.data.forEach(item => allMonths.add(item.date));
     });
     const sortedMonths = Array.from(allMonths).sort();
-    const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    const monthLabels = sortedMonths.map(month => monthDataLabels(month, this.localeId));
     const formattedData = [];
 
     sections.forEach(section => {

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -50,7 +51,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   hubId: string | null = null;
   hub = { spokes: [] };
   get childType() {
-    return this.planetType === 'center' ? 'Community' : 'Nation';
+    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
 
   constructor(
@@ -64,6 +65,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private timePipe: TimePipe,
     fb: NonNullableFormBuilder,
     activityService: ReportsService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     super(fb, activityService, 'all');
   }
@@ -186,10 +188,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
       [$localize`Last Synced`]: data.time && data.time !== 0 ?
-        new Date(data.time).toDateString() :
+        formatDate(data.time, 'mediumDate', this.localeId) :
         data.last_synced && data.last_synced !== 0 ?
-          new Date(data.last_synced).toDateString() :
-          'N/A',
+          formatDate(data.last_synced, 'mediumDate', this.localeId) :
+          $localize`N/A`,
       [$localize`Version`]: data.versionName,
       [$localize`No of Visits`]: data.count,
       [$localize`Used Time`]: this.timePipe.transform(data.totalUsedTime),

@@ -78,7 +78,7 @@
                 <mat-card-title i18n>Planet Version</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p><b i18n>{planetType, select, community {Nation} nation {Center}}:</b> {{versionParent || 'N/A'}}</p>
+                <p><b i18n>{planetType, select, community {Nation} nation {Center}}:</b> {{versionParent || notAvailable}}</p>
                 <p><b i18n>Local:</b> {{versionLocal}}</p>
               </mat-card-content>
             </mat-card>
@@ -87,8 +87,8 @@
                 <mat-card-title i18n>myPlanet Version</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p><b i18n>Latest:</b> {{versionLatestApk || 'N/A'}}</p>
-                <p><b i18n>Local:</b> {{versionLocalApk || 'N/A'}}</p>
+                <p><b i18n>Latest:</b> {{versionLatestApk || notAvailable}}</p>
+                <p><b i18n>Local:</b> {{versionLocalApk || notAvailable}}</p>
               </mat-card-content>
             </mat-card>
           </div>
