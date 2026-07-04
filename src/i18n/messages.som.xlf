@@ -48,15 +48,15 @@
       </trans-unit>
       <trans-unit id="1133994986091402323" datatype="html">
         <source>Edit title</source>
-        <target state="translated">Wax ka beddel ciwaanka</target>
+        <target state="translated">Wax ka beddel cinwaanka</target>
       </trans-unit>
       <trans-unit id="6799543547567974894" datatype="html">
         <source>Share conversation</source>
-        <target state="translated">La wadaag wada hadalka</target>
+        <target state="translated">La wadaag wada sheekeysiga</target>
       </trans-unit>
       <trans-unit id="1824181186656837762" datatype="html">
         <source>Loading conversations...</source>
-        <target state="translated">Wada hadallada waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa wada sheekeysiyada...</target>
       </trans-unit>
       <trans-unit id="3202478169223266493" datatype="html">
         <source>No previous conversations.</source>
@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="6902066591850406795" datatype="html">
         <source>chat is disabled, contact community admin</source>
-        <target state="translated">sheekadu waa dansan tahay, la xiriir maamulaha bulshada</target>
+        <target state="translated">sheekeysiga waa la naafoobay, la xiriir maamulaha bulshada</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>
@@ -100,11 +100,11 @@
       </trans-unit>
       <trans-unit id="2050702586682977589" datatype="html">
         <source>Platform is required.</source>
-        <target state="translated">Madal waa waajib.</target>
+        <target state="translated">Madal waa loo baahan yahay.</target>
       </trans-unit>
       <trans-unit id="8667563605166888223" datatype="html">
         <source>Link URL</source>
-        <target state="translated">URL-ka xiriirka</target>
+        <target state="translated">URL-ka isku xirka</target>
       </trans-unit>
       <trans-unit id="2159130950882492111" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -128,7 +128,7 @@
       </trans-unit>
       <trans-unit id="2061907804391865750" datatype="html">
         <source>Added link: <x id="PH" equiv-text="linkTitle"/></source>
-        <target state="translated">Link la soo daray: <x id="PH" equiv-text="linkTitle"/></target>
+        <target state="translated">Isku xir lagu daray: <x id="PH" equiv-text="linkTitle"/></target>
       </trans-unit>
       <trans-unit id="4850730370456948223" datatype="html">
         <source>Error adding link</source>
@@ -142,11 +142,11 @@
       </trans-unit>
       <trans-unit id="7687622398945022213" datatype="html">
         <source>Loading communities...</source>
-        <target state="translated">Bulshooyinka waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa bulshooyinka...</target>
       </trans-unit>
       <trans-unit id="4400138104797437629" datatype="html">
         <source>No communities available.</source>
-        <target state="translated">Bulshooyin la heli karo ma jiraan.</target>
+        <target state="translated">Ma jiro bulshooyin la heli karo.</target>
       </trans-unit>
       <trans-unit id="6284742455021544868" datatype="html">
         <source>View Exchange</source>
@@ -190,7 +190,7 @@
       </trans-unit>
       <trans-unit id="949821949751980627" datatype="html">
         <source>No leaders available.</source>
-        <target state="translated">Hoggaamiyeyaal la heli karo ma jiraan.</target>
+        <target state="translated">Ma jiraan hoggaamiyeyaal la heli karo.</target>
       </trans-unit>
       <trans-unit id="7143579180750436311" datatype="html">
         <source>Services</source>
@@ -202,11 +202,11 @@
       </trans-unit>
       <trans-unit id="471889174186744289" datatype="html">
         <source><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description</source>
-        <target state="translated">Sharaxaadda <x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/></target>
+        <target state="translated"><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Sharaxaad</target>
       </trans-unit>
       <trans-unit id="9153289171004614094" datatype="html">
         <source>Loading description...</source>
-        <target state="translated">Sharaxaadda waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa sharaxaadda...</target>
       </trans-unit>
       <trans-unit id="5273516896947770386" datatype="html">
         <source>No description available.</source>
@@ -233,7 +233,7 @@
       </trans-unit>
       <trans-unit id="7904942383480102366" datatype="html">
         <source>Loading links...</source>
-        <target state="translated">Xiriirrada waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa xiriirrada...</target>
       </trans-unit>
       <trans-unit id="2789509048153630062" datatype="html">
         <source>No links available.</source>
@@ -245,7 +245,7 @@
       </trans-unit>
       <trans-unit id="8725249970991838557" datatype="html">
         <source>Social &amp; Web</source>
-        <target state="translated">Bulsho &amp; Web</target>
+        <target state="translated">Bulsho &amp; Shabakad</target>
       </trans-unit>
       <trans-unit id="710918981527246687" datatype="html">
         <source>Remove Links</source>
@@ -285,7 +285,7 @@
       </trans-unit>
       <trans-unit id="425327932267030011" datatype="html">
         <source><x id="linkTitle" equiv-text="link.title"/> is only available on <x id="planetName" equiv-text="this.configuration.name"/></source>
-        <target state="translated"><x id="linkTitle" equiv-text="link.title"/> waxa kaliya laga heli karaa <x id="planetName" equiv-text="this.configuration.name"/></target>
+        <target state="translated"><x id="linkTitle" equiv-text="link.title"/> waxaa kaliya laga heli karaa <x id="planetName" equiv-text="this.configuration.name"/></target>
       </trans-unit>
       <trans-unit id="5535944716452087530" datatype="html">
         <source>Add Voice</source>
@@ -301,11 +301,11 @@
       </trans-unit>
       <trans-unit id="1023644693014791390" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="currentUser.split(&apos;:&apos;)[1]"/>&lt;/b&gt; posted a &lt;b&gt;new story&lt;/b&gt;.</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(&apos;:&apos;)[1]"/>&lt;/b&gt; ayaa soo qoray &lt;b&gt;sheeko cusub&lt;/b&gt;.</target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="currentUser.split(&apos;:&apos;)[1]"/>&lt;/b&gt; ayaa soo dhigay &lt;b&gt;sheeko cusub&lt;/b&gt;.</target>
       </trans-unit>
       <trans-unit id="7138510619760635996" datatype="html">
         <source> Deleted link: <x id="PH" equiv-text="link.title"/></source>
-        <target state="translated"> Linkiga la tirtiray: <x id="PH" equiv-text="link.title"/></target>
+        <target state="translated"> Isku xir la tirtiray: <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
       <trans-unit id="7863633113133426383" datatype="html">
         <source>There was an error deleting <x id="PH" equiv-text="link.title"/></source>
@@ -441,7 +441,7 @@
       </trans-unit>
       <trans-unit id="4148174263265171714" datatype="html">
         <source>Beta features may not work as intended. It&apos;s recommended to leave this off</source>
-        <target state="translated">Sifooyinka Beta waxaa laga yaabaa inaysan u shaqayn sidii loogu talagalay. Waxaa lagula talinayaa inaad tan demiso</target>
+        <target state="translated">Astaamaha beta waxaa laga yaabaa inaysan u shaqayn sidii la rabay. Waxaa lagu talinayaa in tan la demiyo</target>
       </trans-unit>
       <trans-unit id="6406903720166584964" datatype="html">
         <source>Always off</source>
@@ -529,7 +529,7 @@
       </trans-unit>
       <trans-unit id="8210376864172058428" datatype="html">
         <source>New <x id="PH" equiv-text="configuration.planetType"/> &lt;b&gt;&quot;<x id="PH_1" equiv-text="configuration.name"/>&quot;&lt;/b&gt; has requested to connect.</source>
-        <target state="translated">Cusub <x id="PH" equiv-text="configuration.planetType"/> &lt;b&gt;&quot;<x id="PH_1" equiv-text="configuration.name"/>&quot;&lt;/b&gt; ayaa codsaday inuu ku xirmo.</target>
+        <target state="translated"><x id="PH" equiv-text="configuration.planetType"/> cusub &lt;b&gt;&quot;<x id="PH_1" equiv-text="configuration.name"/>&quot;&lt;/b&gt; ayaa codsaday inuu ku xirmo.</target>
       </trans-unit>
       <trans-unit id="5526766708844733569" datatype="html">
         <source>Planet Details</source>
@@ -549,7 +549,7 @@
       </trans-unit>
       <trans-unit id="3229191482716707421" datatype="html">
         <source>Configuration is valid. Click &quot;Next&quot; to clone Planet.</source>
-        <target state="translated">Qaabayntu waa sax. Guji &quot;Ku xiga&quot; si aad u nuquliso Planet-ka.</target>
+        <target state="translated">Qaabayntu waa sax tahay. Guji &quot;Xiga&quot; si aad u nuquleyso Planet.</target>
       </trans-unit>
       <trans-unit id="9153883349718321986" datatype="html">
         <source>Configuration is not valid. Please check again.</source>
@@ -557,11 +557,11 @@
       </trans-unit>
       <trans-unit id="6204442918076972782" datatype="html">
         <source>Planet is being synced with domain &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. Please hold on.</source>
-        <target state="translated">Planet-ka waxaa lala jaanqaadayaa domain-ka &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. Fadlan sug.</target>
+        <target state="translated">Planet waxaa lala jaanqaadayaa domain-ka &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. Fadlan sug.</target>
       </trans-unit>
       <trans-unit id="8919885040084099320" datatype="html">
         <source>Cloning &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; complete.</source>
-        <target state="translated">Nuqulinta &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; waa dhammaatay.</target>
+        <target state="translated">Nuqulka &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; waa dhammaystiran yahay.</target>
       </trans-unit>
       <trans-unit id="4259908510846969672" datatype="html">
         <source>{VAR_SELECT, select, Add {Add} Edit {Edit}}</source>
@@ -597,7 +597,7 @@
       </trans-unit>
       <trans-unit id="7865912722609907516" datatype="html">
         <source>Recommended: a square image. Covers are cropped to fit.</source>
-        <target state="translated">Lagula taliyay: sawir afar gees ah. Daboollada waxaa loo jaraa si ay u qabsadaan.</target>
+        <target state="translated">Waxaa lagu talinayaa: sawir laba-geesle ah. Daboollada waa la jaraa si ay ugu habboonaadaan.</target>
       </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html" approved="yes">
         <source>Add Step</source>
@@ -649,7 +649,7 @@
       </trans-unit>
       <trans-unit id="3563812897887853138" datatype="html">
         <source>Attached resources</source>
-        <target state="translated">Khayraad la lifaaqay</target>
+        <target state="translated">Khayraadyo ku lifaaqan</target>
       </trans-unit>
       <trans-unit id="8608266972589229818" datatype="html">
         <source>Remove resource</source>
@@ -657,7 +657,7 @@
       </trans-unit>
       <trans-unit id="4236474513175220666" datatype="html">
         <source>Quiz learners</source>
-        <target state="translated">Ardayda keddiska</target>
+        <target state="translated">Bartayaasha quiz-ka</target>
       </trans-unit>
       <trans-unit id="2650269401046048840" datatype="html">
         <source>questions</source>
@@ -669,7 +669,7 @@
       </trans-unit>
       <trans-unit id="8071232289681062759" datatype="html">
         <source>Attach from library</source>
-        <target state="translated">Ka soo lifaaq maktabadda</target>
+        <target state="translated">Ka lifaaq maktabadda</target>
       </trans-unit>
       <trans-unit id="1223468132111440462" datatype="html">
         <source>attached</source>
@@ -677,7 +677,7 @@
       </trans-unit>
       <trans-unit id="7559011103061252651" datatype="html">
         <source>Collect feedback</source>
-        <target state="translated">Ka ururi jawaab-celin</target>
+        <target state="translated">Ururi jawaab-celin</target>
       </trans-unit>
       <trans-unit id="303773937652374487" datatype="html">
         <source>Update Test</source>
@@ -833,7 +833,7 @@
       </trans-unit>
       <trans-unit id="3241108154401100878" datatype="html">
         <source>Push To <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></source>
-        <target state="translated">U gudbi <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></target>
+        <target state="translated">U dir <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></target>
       </trans-unit>
       <trans-unit id="2003356112120499705" datatype="html">
         <source>{VAR_SELECT, select, center {Nation} other {Community}}</source>
@@ -1017,7 +1017,7 @@
       </trans-unit>
       <trans-unit id="4852372553785950294" datatype="html">
         <source>Course Enrollment Data - <x id="PH" equiv-text="this.course"/></source>
-        <target state="translated">Xogta Diiwaangelinta Koorsada - <x id="PH" equiv-text="this.course"/></target>
+        <target state="translated">Xogta isdiiwaangelinta koorsada - <x id="PH" equiv-text="this.course"/></target>
       </trans-unit>
       <trans-unit id="9200283083431196600" datatype="html">
         <source>Step <x id="stepNumber" equiv-text="index + 1"/></source>
@@ -1057,7 +1057,7 @@
       </trans-unit>
       <trans-unit id="416467122352618193" datatype="html">
         <source>Loading progress...</source>
-        <target state="translated">Horumarka waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa horumarka...</target>
       </trans-unit>
       <trans-unit id="7963086358427192442" datatype="html">
         <source> No Progress record available </source>
@@ -1077,11 +1077,11 @@
       </trans-unit>
       <trans-unit id="3250353177187615908" datatype="html">
         <source>Success Percentage</source>
-        <target state="translated">Boqolleyda Guusha</target>
+        <target state="translated">Boqolleyda guusha</target>
       </trans-unit>
       <trans-unit id="2809439026832761932" datatype="html">
         <source><x id="PH" equiv-text="courseTitle"/> Course Progress for <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></source>
-        <target state="translated">Horumarka Koorsada <x id="PH" equiv-text="courseTitle"/> ee <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></target>
+        <target state="translated">Horumarka koorsada <x id="PH" equiv-text="courseTitle"/> ee <x id="PH_1" equiv-text="entityLabel"/> <x id="PH_2" equiv-text="planetName"/></target>
       </trans-unit>
       <trans-unit id="4637837927968957708" datatype="html">
         <source>myProgress</source>
@@ -1095,7 +1095,7 @@
         <source>
           <x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/>
         </source>
-        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/> </target>
+        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {Luqadda Waxbaridda}       gradeLevel {Heerka Fasalka}       subjectLevel {Heerka Maaddada}     }" xid="245746442991291793"/> </target>
       </trans-unit>
       <trans-unit id="245746442991291793" datatype="html">
         <source>{VAR_SELECT, select, languageOfInstruction {Language} gradeLevel {Grade Level} subjectLevel {Subject Level}}</source>
@@ -1117,7 +1117,7 @@
         <source>
           <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;Hide Course Chat&apos; : &apos;Show Course Chat&apos; }}"/>
         </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;Hide Course Chat&apos; : &apos;Show Course Chat&apos; }}"/> </target>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;Qari Wadahadalka Koorsada&apos; : &apos;Muuji Wadahadalka Koorsada&apos; }}"/> </target>
       </trans-unit>
       <trans-unit id="4682155840173031755" datatype="html">
         <source> Review Attempts </source>
@@ -1127,7 +1127,7 @@
         <source>
           <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/>
         </source>
-        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/> </target>
+        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Qaado Imtixaanka} continue {Sii Wad Imtixaanka} retake {Dib U Qaado Imtixaanka}}" xid="4928667157742574611"/> </target>
       </trans-unit>
       <trans-unit id="4928667157742574611" datatype="html">
         <source>{VAR_SELECT, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</source>
@@ -1158,7 +1158,7 @@
 No description provided.
 <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
         <target state="translated"><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/><x id="START_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;planet-loading-spinner text=&quot;Loading content...&quot; i18n-text&gt;"/><x id="CLOSE_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;/planet-loading-spinner&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/>
-Sharaxaad lama bixin.
+Ma jiro sharaxaad la bixiyay.
 <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
       </trans-unit>
       <trans-unit id="6676104704503837687" datatype="html">
@@ -1223,7 +1223,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="8871274990030594152" datatype="html">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, one {kheyraad} other {kheyraadyo}}" xid="3389112199654656544"/>.</target>
       </trans-unit>
       <trans-unit id="4297508107919101415" datatype="html">
         <source>The test has</source>
@@ -1267,7 +1267,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="4422952805076571472" datatype="html">
         <source><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> to complete</source>
-        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> oo la dhammaystiro</target>
+        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> in la dhammeeyo</target>
       </trans-unit>
       <trans-unit id="8384225360105280028" datatype="html">
         <source>Complete</source>
@@ -1283,15 +1283,15 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="5516871186038324585" datatype="html">
         <source>There was an error removing <x id="PH" equiv-text="item.title"/></source>
-        <target state="translated">Waxaa dhacay qalad markii la saarayay <x id="PH" equiv-text="item.title"/></target>
+        <target state="translated">Waxaa jiray qalad ka saarista <x id="PH" equiv-text="item.title"/></target>
       </trans-unit>
       <trans-unit id="999475894203864545" datatype="html">
         <source>Removed from <x id="cardTitle" equiv-text="this.cardTitle"/>: <x id="itemTitle" equiv-text="item.title"/></source>
-        <target state="translated">Waxaa laga saaray <x id="cardTitle" equiv-text="this.cardTitle"/>: <x id="itemTitle" equiv-text="item.title"/></target>
+        <target state="translated">Laga saaray <x id="cardTitle" equiv-text="this.cardTitle"/>: <x id="itemTitle" equiv-text="item.title"/></target>
       </trans-unit>
       <trans-unit id="6420930851320881686" datatype="html">
         <source>There was an error reordering <x id="PH" equiv-text="this.cardTitle"/></source>
-        <target state="translated">Waxaa dhacay qalad dib-u-habaynta <x id="PH" equiv-text="this.cardTitle"/></target>
+        <target state="translated">Waxaa jiray qalad dib-u-habeynta <x id="PH" equiv-text="this.cardTitle"/></target>
       </trans-unit>
       <trans-unit id="6939437711014493943" datatype="html">
         <source>Remove from <x id="PH" equiv-text="cardTitle"/></source>
@@ -1347,7 +1347,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="5609694725534490897" datatype="html">
         <source>New Course:</source>
-        <target state="translated">Koorso Cusub:</target>
+        <target state="translated">Koorso cusub:</target>
       </trans-unit>
       <trans-unit id="7637348942513344354" datatype="html">
         <source>{VAR_SELECT, select, Add {Add} Update {Update} Copy {Copy}}</source>
@@ -1383,7 +1383,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="2887699436140395309" datatype="html">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></source>
-        <target state="translated">Waa inaad ku dartaa su'aal si aad u eegto horudhaca <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></target>
+        <target state="translated">Waa inaad ku dartaa su'aal si aad u horu eegto <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></target>
       </trans-unit>
       <trans-unit id="8822352339394504890" datatype="html">
         <source>{VAR_SELECT, select, exam {test} survey {survey}}</source>
@@ -1407,7 +1407,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="1843830109328710379" datatype="html">
         <source>Rating Scale</source>
-        <target state="translated">Cabirka Qiimeynta</target>
+        <target state="translated">Qiyaasta qiimeynta</target>
       </trans-unit>
       <trans-unit id="3644327006971495515" datatype="html">
         <source> Survey Info </source>
@@ -1455,7 +1455,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="1371553127733924023" datatype="html">
         <source>Scale</source>
-        <target state="translated">Cabir</target>
+        <target state="translated">Qiyaas</target>
       </trans-unit>
       <trans-unit id="8650499415827640724" datatype="html">
         <source>Type</source>
@@ -1575,7 +1575,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="3971100408152984961" datatype="html">
         <source> Next </source>
-        <target state="translated"> Ku xiga </target>
+        <target state="translated"> Xiga </target>
       </trans-unit>
       <trans-unit id="3948439187870398089" datatype="html" approved="yes">
         <source>Gender</source>
@@ -1591,15 +1591,15 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="6316788818340190905" datatype="html">
         <source>Birth Year</source>
-        <target state="translated">Sannadka Dhalashada</target>
+        <target state="translated">Sannadka dhalashada</target>
       </trans-unit>
       <trans-unit id="8881117240537538459" datatype="html">
         <source>Enter year (e.g., 1995)</source>
-        <target state="translated">Geli sannad (tusaale, 1995)</target>
+        <target state="translated">Geli sanad (tusaale, 1995)</target>
       </trans-unit>
       <trans-unit id="4546577159665195725" datatype="html">
         <source>Enter a valid past year</source>
-        <target state="translated">Geli sannad hore oo sax ah</target>
+        <target state="translated">Geli sanad sax ah oo hore</target>
       </trans-unit>
       <trans-unit id="4452427314943113135" datatype="html">
         <source>Previous</source>
@@ -1607,7 +1607,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="1782988636175919119" datatype="html">
         <source>Finish Survey</source>
-        <target state="translated">Dhammee Ra'yi-ururinta</target>
+        <target state="translated">Dhamee ra'yi-ururinta</target>
       </trans-unit>
       <trans-unit id="3228856378705280639" datatype="html">
         <source>Survey is complete. Your response has been submitted.</source>
@@ -1623,15 +1623,15 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="6824758497103773714" datatype="html">
         <source>There was a problem submitting this survey.</source>
-        <target state="translated">Waxaa jiray dhibaato ku timid gudbinta ra'yi-ururintan.</target>
+        <target state="translated">Waxa jiray dhibaato gudbinta ra'yi-ururintan.</target>
       </trans-unit>
       <trans-unit id="6957891556134371559" datatype="html">
         <source>Hide Details</source>
-        <target state="translated">Qari Faahfaahinta</target>
+        <target state="translated">Qari faahfaahinta</target>
       </trans-unit>
       <trans-unit id="2109348818976292721" datatype="html">
         <source>Show Details</source>
-        <target state="translated">Tus Faahfaahinta</target>
+        <target state="translated">Muuji faahfaahinta</target>
       </trans-unit>
       <trans-unit id="8889776252543339541" datatype="html" approved="yes">
         <source>Feedback title</source>
@@ -1663,7 +1663,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="6573104995602382150" datatype="html">
         <source>Go to Meetups</source>
-        <target state="translated">Tag Kulannada</target>
+        <target state="translated">Tag Kulanada</target>
       </trans-unit>
       <trans-unit id="2169743475390513701" datatype="html">
         <source>Go to Teams</source>
@@ -1679,7 +1679,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="9157193205054419674" datatype="html">
         <source>Go to Upgrade</source>
-        <target state="translated">Tag Cusboonaysiinta</target>
+        <target state="translated">Tag Kor-u-qaadista</target>
       </trans-unit>
       <trans-unit id="178520337056147266" datatype="html">
         <source>Go to Dashboard</source>
@@ -1687,11 +1687,11 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="266584947949444186" datatype="html">
         <source>Go to Chat</source>
-        <target state="translated">Tag Sheekada</target>
+        <target state="translated">Tag Sheekeysiga</target>
       </trans-unit>
       <trans-unit id="4024052613951908569" datatype="html">
         <source>Go to Manager</source>
-        <target state="translated">Tag Maareeyaha</target>
+        <target state="translated">Tag Maamulaha</target>
       </trans-unit>
       <trans-unit id="865399858281657162" datatype="html">
         <source>There was an error adding your message</source>
@@ -1823,7 +1823,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="7041963874559190359" datatype="html">
         <source>Reopened</source>
-        <target state="translated">Dib ayaa loo furay</target>
+        <target state="translated">Loo furay mar kale</target>
       </trans-unit>
       <trans-unit id="7860418101283165917" datatype="html">
         <source>Closed</source>
@@ -1831,7 +1831,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="3238992602126016082" datatype="html">
         <source>Feedback regarding <x id="PH" equiv-text="feedback.url"/></source>
-        <target state="translated">Jawaab celin ku saabsan <x id="PH" equiv-text="feedback.url"/></target>
+        <target state="translated">Jawaab-celin ku saabsan <x id="PH" equiv-text="feedback.url"/></target>
       </trans-unit>
       <trans-unit id="2224358766178911410" datatype="html">
         <source>Feedback regarding home</source>
@@ -1839,7 +1839,7 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="1017305312923727733" datatype="html">
         <source>Feedback regarding <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></source>
-        <target state="translated">Jawaab celin ku saabsan <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></target>
+        <target state="translated">Jawaab-celin ku saabsan <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></target>
       </trans-unit>
       <trans-unit id="8286193369293498152" datatype="html">
         <source>Performed by: </source>
@@ -1927,17 +1927,17 @@ Sharaxaad lama bixin.
       </trans-unit>
       <trans-unit id="1442376281594176896" datatype="html">
         <source>Performed by</source>
-        <target state="translated">Waxaa sameeyay</target>
+        <target state="translated">Waxaa fuliyay</target>
       </trans-unit>
       <trans-unit id="4282269331448011107" datatype="html">
         <source>Self</source>
-        <target state="translated">Isaga/iyada</target>
+        <target state="translated">Nafta</target>
       </trans-unit>
       <trans-unit id="1256572208376025417" datatype="html">
         <source>
 Conditions</source>
         <target state="translated">
-Xaalado</target>
+Shuruudaha</target>
       </trans-unit>
       <trans-unit id="5559661818189638908" datatype="html">
         <source>
@@ -1947,15 +1947,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6470818533271398943" datatype="html">
         <source>Observations &amp; Notes:</source>
-        <target state="translated">Kormeerro &amp; Qoraallo:</target>
+        <target state="translated">U fiirsashooyin &amp; Qoraallo:</target>
       </trans-unit>
       <trans-unit id="1235059787113921553" datatype="html">
         <source>Diagnosis:</source>
-        <target state="translated">Cilad-sheegis:</target>
+        <target state="translated">Cilad-bixin:</target>
       </trans-unit>
       <trans-unit id="7513184937328551114" datatype="html">
         <source>Treatments:</source>
-        <target state="translated">Daawaynno:</target>
+        <target state="translated">Daaweynno:</target>
       </trans-unit>
       <trans-unit id="878700645982800675" datatype="html">
         <source>Medications:</source>
@@ -1963,7 +1963,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1124584683294735780" datatype="html">
         <source>Immunizations:</source>
-        <target state="translated">Tallaallada:</target>
+        <target state="translated">Tallaalo:</target>
       </trans-unit>
       <trans-unit id="1931466901352352138" datatype="html">
         <source>X-rays:</source>
@@ -1979,7 +1979,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="100323118072618349" datatype="html">
         <source>health event</source>
-        <target state="translated">dhacdo caafimaad</target>
+        <target state="translated">dhacdada caafimaadka</target>
       </trans-unit>
       <trans-unit id="6057186423590581450" datatype="html">
         <source>myHealth</source>
@@ -1995,7 +1995,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="683623673508274169" datatype="html">
         <source>Blood Pressur</source>
-        <target state="translated">Cadaadiska Dhiiga</target>
+        <target state="translated">Cadaadiska Dhiigga</target>
       </trans-unit>
       <trans-unit id="1772637165584418803" datatype="html">
         <source>Height in cm</source>
@@ -2056,7 +2056,7 @@ Qoraallo Kale</target>
       <trans-unit id="5364866770993682368" datatype="html">
         <source>The value(s) of the following are not in the normal range.
          Click &lt;b&gt;Cancel&lt;/b&gt; to fix or click &lt;b&gt;OK&lt;/b&gt; to submit.</source>
-        <target state="translated">Qiimaha(s) soo socda kuma jiraan xadka caadiga ah.
+        <target state="translated">Qiimaha(s) kuwa soo socda kuma jiraan inta caadiga ah.
          Guji &lt;b&gt;Jooji&lt;/b&gt; si aad u saxdo ama guji &lt;b&gt;OK&lt;/b&gt; si aad u gudbiso.</target>
       </trans-unit>
       <trans-unit id="1091770325854289707" datatype="html">
@@ -2117,7 +2117,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8365977440374654567" datatype="html">
         <source>Loading health...</source>
-        <target state="translated">Caafimaadka waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa caafimaadka...</target>
       </trans-unit>
       <trans-unit id="6959497441009812685" datatype="html" approved="yes">
         <source>Full Name</source>
@@ -2149,7 +2149,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2545332312956591338" datatype="html">
         <source>Click for more information</source>
-        <target state="translated">Riix si aad u hesho macluumaad dheeraad ah</target>
+        <target state="translated">Guji si aad u hesho macluumaad dheeraad ah</target>
       </trans-unit>
       <trans-unit id="937214445047403949" datatype="html">
         <source>Self Examination</source>
@@ -2497,7 +2497,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3947932744068086415" datatype="html">
         <source>myPlanet on playstore</source>
-        <target state="translated">myPlanet-ka playstore-ka</target>
+        <target state="translated">myPlanet ee playstore</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -2541,7 +2541,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1924990356407624087" datatype="html">
         <source>Member <x id="PH" equiv-text="name"/> is not registered.</source>
-        <target state="translated">Xubin <x id="PH" equiv-text="name"/> lama diiwaangelin.</target>
+        <target state="translated">Xubinta <x id="PH" equiv-text="name"/> lama diiwaangelin.</target>
       </trans-unit>
       <trans-unit id="6009797407441733248" datatype="html">
         <source>There was an error connecting to Planet</source>
@@ -2553,7 +2553,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6317176817464442000" datatype="html">
         <source>Member <x id="PH" equiv-text="userName"/> is not registered</source>
-        <target state="translated">Xubin <x id="PH" equiv-text="userName"/> lama diiwaangelin</target>
+        <target state="translated">Xubinta <x id="PH" equiv-text="userName"/> lama diiwaangelin</target>
       </trans-unit>
       <trans-unit id="7244453056385583471" datatype="html">
         <source>Can not login to <x id="PH" equiv-text="msg"/> planet.</source>
@@ -2561,11 +2561,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="604420619295131029" datatype="html">
         <source>Error connecting to <x id="PH" equiv-text="msg"/>.</source>
-        <target state="translated">Waxaa dhacay qalad ku xirmidda <x id="PH" equiv-text="msg"/>.</target>
+        <target state="translated">Qalad ku xirmista <x id="PH" equiv-text="msg"/>.</target>
       </trans-unit>
       <trans-unit id="3358894379816462923" datatype="html">
         <source>New member &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; has joined.</source>
-        <target state="translated">Xubin cusub &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; ayaa ku soo biiray.</target>
+        <target state="translated">Xubin cusub &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; ayaa ku soo biirtay.</target>
       </trans-unit>
       <trans-unit id="1062010184324346369" datatype="html" approved="yes">
         <source>Planet Learning</source>
@@ -2653,7 +2653,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8838092804345159680" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>tirtir_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Tirtir </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>tirtir_xogta_dhammaystiran<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Tirtir </target>
       </trans-unit>
       <trans-unit id="5564437541975356934" datatype="html">
         <source>No Certifications Found</source>
@@ -2721,7 +2721,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="currency.configuration.title" datatype="html">
         <source>Currency Configuration</source>
-        <target state="translated">Qaabeynta Lacagta</target>
+        <target state="translated">Qaabeynta lacagta</target>
       </trans-unit>
       <trans-unit id="currency.card.title" datatype="html">
         <source>Currency</source>
@@ -2733,27 +2733,27 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2470198202006119741" datatype="html">
         <source>Currency Code</source>
-        <target state="translated">Koodhka Lacagta</target>
+        <target state="translated">Koodhka lacagta</target>
       </trans-unit>
       <trans-unit id="8307564561551056768" datatype="html">
         <source>e.g. USD</source>
-        <target state="translated">tusaale. USD</target>
+        <target state="translated">tusaale, USD</target>
       </trans-unit>
       <trans-unit id="currency.symbol.label" datatype="html">
         <source>Symbol</source>
-        <target state="translated">Astaanta</target>
+        <target state="translated">Calaamad</target>
       </trans-unit>
       <trans-unit id="5199716930403500431" datatype="html">
         <source>Currency Symbol</source>
-        <target state="translated">Astaanta Lacagta</target>
+        <target state="translated">Calaamadda lacagta</target>
       </trans-unit>
       <trans-unit id="4866959439516771314" datatype="html">
         <source>e.g. $</source>
-        <target state="translated">tusaale. $</target>
+        <target state="translated">tusaale, $</target>
       </trans-unit>
       <trans-unit id="currency.hint" datatype="html">
         <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
-        <target state="translated">Geli koodhka ISO (tusaale, USD, EUR) iyo astaanta loo adeegsado warbixinada maaliyadeed.</target>
+        <target state="translated">Geli koodhka ISO (tusaale, USD, EUR) iyo calaamadda lagu isticmaalo warbixinaha maaliyadeed.</target>
       </trans-unit>
       <trans-unit id="currency.save" datatype="html">
         <source>Save Currency</source>
@@ -2761,7 +2761,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2347325578130929879" datatype="html">
         <source>Currency Updated Successfully</source>
-        <target state="translated">Lacagta si guul leh ayaa loo cusboonaysiiyay</target>
+        <target state="translated">Lacagta si guul leh ayaa loo cusbooneysiiyay</target>
       </trans-unit>
       <trans-unit id="7501949394020929077" datatype="html">
         <source>Planet Configuration</source>
@@ -2813,7 +2813,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7581076646894979862" datatype="html">
         <source>There <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {are} =1 {is} other {are}}" xid="7534460723873146629"/></source>
-        <target state="translated">Waxaa <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {are} =1 {is} other {are}}" xid="7534460723873146629"/></target>
+        <target state="translated">Waxaa jira <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {are} =1 {is} other {are}}" xid="7534460723873146629"/></target>
       </trans-unit>
       <trans-unit id="7534460723873146629" datatype="html">
         <source>{VAR_PLURAL, plural, =0 {are} =1 {is} other {are}}</source>
@@ -2825,7 +2825,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1571478181217186234" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> with pending courses and/or resources for download.</source>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> oo leh koorsooyin iyo/ama khayraad sugaya soo dejin.</target>
+        <target state="translated"><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> oo leh koorsooyin iyo/ama khayraad sugaya soo degsasho.</target>
       </trans-unit>
       <trans-unit id="932840045131624829" datatype="html">
         <source>Send On Accept</source>
@@ -2837,7 +2837,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6718456226245512630" datatype="html">
         <source>Nation List</source>
-        <target state="translated">Liiska Qaranka</target>
+        <target state="translated">Liiska Quruumaha</target>
       </trans-unit>
       <trans-unit id="7324543679569025567" datatype="html">
         <source>Center List</source>
@@ -2853,7 +2853,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="9159586432133749281" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/>:</source>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/>:</target>
+        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {Qaran} nation {Xarun}}" xid="7719571683848776487"/>:</target>
       </trans-unit>
       <trans-unit id="7016533713297705274" datatype="html">
         <source>Local:</source>
@@ -2869,7 +2869,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3247005707553968518" datatype="html">
         <source> List all from the <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></source>
-        <target state="translated"> Liis garee dhammaan <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
+        <target state="translated"> Liis garee dhammaan ka <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
       </trans-unit>
       <trans-unit id="4035724296307887167" datatype="html" approved="yes">
         <source>List Resources</source>
@@ -2885,7 +2885,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8759630366549790025" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Your request has been rejected by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/>. You can retry or contact <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> planet.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Codsigaaga waxaa diiday <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/>. Waxaad dib u isku dayi kartaa ama la xiriiri kartaa meeraha <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/>.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Codsigaaga waxaa diiday <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/>. Waxaad isku dayi kartaa mar kale ama la xiriiri <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> planet.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="8588305050900886824" datatype="html">
         <source>{VAR_SELECT, select, community {nation} nation {center}}</source>
@@ -2893,7 +2893,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5593504079946406479" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Your request has not yet been accepted by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Codsigaaga wali ma oggolaan <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Codsigaaga weli lama aqbalin <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="3633300711806178527" datatype="html">
         <source>myPlanet Server pin:</source>
@@ -2913,19 +2913,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6798419889913466462" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Last Upgrade<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Cusboonaysiintii u dambeysay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Kor-u-qaadistii ugu dambeysay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="3856480216331408609" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Last Sync<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Isku-dubaridkii u dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Isku-dubaridkii ugu dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="323122777831016957" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Resource Views Last 30 Days<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Muuqaalada khayraadka 30-ka maalmood ee u dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Aragtiyada khayraadka 30-ka maalmood ee ugu dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="1212433079391326735" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Total Ratings Last 30 Days<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Qiimeynaha guud 30-ka maalmood ee u dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Qiimeynta guud 30-ka maalmood ee ugu dambeeyay<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="1158342469803061053" datatype="html">
         <source>An error occurred please try again.</source>
@@ -2941,7 +2941,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7197483184481985118" datatype="html">
         <source>PIN reset successfully</source>
-        <target state="translated">PIN-ka si guul leh ayaa loo dajiyay</target>
+        <target state="translated">PIN-ka si guul leh ayaa dib loo dejiyay</target>
       </trans-unit>
       <trans-unit id="6115022275193479708" datatype="html">
         <source>There was an error resetting the PIN</source>
@@ -2957,7 +2957,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5584630553559565955" datatype="html">
         <source>Loading items...</source>
-        <target state="translated">Walxaha waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa shayada...</target>
       </trans-unit>
       <trans-unit id="8649802104733631940" datatype="html">
         <source>Date Sent</source>
@@ -2977,7 +2977,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4256940054076823185" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot; class=&quot;svg-icon&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</source>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot; class=&quot;svg-icon&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Orod Isku Xirid</target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot; class=&quot;svg-icon&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Orod Isku-dubarid</target>
       </trans-unit>
       <trans-unit id="2121344910820993995" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
@@ -3009,7 +3009,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8260626548958031709" datatype="html">
         <source>Loading logs...</source>
-        <target state="translated">Diiwaannada waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa diiwaannada...</target>
       </trans-unit>
       <trans-unit id="5720272486259071637" datatype="html">
         <source>No record was found</source>
@@ -3081,7 +3081,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="550179982987662180" datatype="html">
         <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }" xid="4746831788356104312"/></source>
-        <target state="translated">myPlanet oo ku yaal <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }" xid="4746831788356104312"/></target>
+        <target state="translated">myPlanet ee <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }" xid="4746831788356104312"/></target>
       </trans-unit>
       <trans-unit id="4746831788356104312" datatype="html">
         <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
@@ -3177,11 +3177,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2947841900277203452" datatype="html">
         <source>Download as image</source>
-        <target state="translated">U soo dejiso sida sawir</target>
+        <target state="translated">Soo degso sida sawir</target>
       </trans-unit>
       <trans-unit id="8738732372986673558" datatype="html">
         <source>Copy to clipboard</source>
-        <target state="translated">Koobi ugu samee sabuuradda</target>
+        <target state="translated">Nuqul u samee sabuuradda xusuusta</target>
       </trans-unit>
       <trans-unit id="526734304549317437" datatype="html">
         <source>Login Report</source>
@@ -3293,11 +3293,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7924868316552213402" datatype="html">
         <source>Week 1 End Date</source>
-        <target state="translated">Taariikhda dhammaadka toddobaadka 1</target>
+        <target state="translated">Taariikhda dhammaadka usbuuca 1</target>
       </trans-unit>
       <trans-unit id="6200939044344907169" datatype="html">
         <source>Week 2 End Date</source>
-        <target state="translated">Taariikhda dhammaadka toddobaadka 2</target>
+        <target state="translated">Taariikhda dhammaadka usbuuca 2</target>
       </trans-unit>
       <trans-unit id="2572999724448976084" datatype="html">
         <source>Compare</source>
@@ -3305,23 +3305,23 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1028879399806058493" datatype="html">
         <source>Download as CSV</source>
-        <target state="translated">U soo dejiso CSV</target>
+        <target state="translated">Soo degso sida CSV</target>
       </trans-unit>
       <trans-unit id="3554511241808542151" datatype="html">
         <source>Loading comparison data...</source>
-        <target state="translated">Xogta isbarbardhigga waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa xogta isbarbardhigga...</target>
       </trans-unit>
       <trans-unit id="9079143231473125231" datatype="html">
         <source>Metric</source>
-        <target state="translated">Cabir</target>
+        <target state="translated">Halbeeg</target>
       </trans-unit>
       <trans-unit id="7418494340767735121" datatype="html">
         <source>Net Change</source>
-        <target state="translated">Isbeddelka Net-ka</target>
+        <target state="translated">Isbeddelka saafiga ah</target>
       </trans-unit>
       <trans-unit id="4410529131290936199" datatype="html">
         <source> Select dates and click Compare to view comparison data </source>
-        <target state="translated"> Xulo taariikhaha oo guji Isbarbar dhig si aad u aragto xogta isbarbardhigga </target>
+        <target state="translated"> Dooro taariikhaha oo guji Isbarbar dhig si aad u aragto xogta isbarbardhigga </target>
       </trans-unit>
       <trans-unit id="5426418005604037142" datatype="html">
         <source> No data found </source>
@@ -3329,11 +3329,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6212801010405088447" datatype="html">
         <source>Week 1</source>
-        <target state="translated">Toddobaadka 1</target>
+        <target state="translated">Usbuuca 1</target>
       </trans-unit>
       <trans-unit id="7270430498511171250" datatype="html">
         <source>Week 2</source>
-        <target state="translated">Toddobaadka 2</target>
+        <target state="translated">Usbuuca 2</target>
       </trans-unit>
       <trans-unit id="3448462145758383019" datatype="html">
         <source>Total</source>
@@ -3373,7 +3373,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3620668876378879803" datatype="html">
         <source>Exams</source>
-        <target state="translated">Imtixaannada</target>
+        <target state="translated">Imtixaanno</target>
       </trans-unit>
       <trans-unit id="1924937354164431567" datatype="html">
         <source>Enrollments</source>
@@ -3397,7 +3397,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2063234114557938514" datatype="html">
         <source>Has Attachments</source>
-        <target state="translated">Leh Lifaaqyo</target>
+        <target state="translated">Waxay leedahay lifaaqyo</target>
       </trans-unit>
       <trans-unit id="7990167846685918034" datatype="html">
         <source>Chat Usage</source>
@@ -3429,11 +3429,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8778525357359342901" datatype="html">
         <source>Unique Member Visits</source>
-        <target state="translated">Booqashooyinka Xubnaha Gaarka ah</target>
+        <target state="translated">Booqashooyinka Xubinta ee Gaarka ah</target>
       </trans-unit>
       <trans-unit id="2725999660502319042" datatype="html">
         <source>Total Member Visits</source>
-        <target state="translated">Wadarta Booqashooyinka Xubnaha</target>
+        <target state="translated">Booqashooyinka Wadarta ee Xubinta</target>
       </trans-unit>
       <trans-unit id="2102187567920963737" datatype="html">
         <source>Course Views</source>
@@ -3445,23 +3445,23 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4055156853294476179" datatype="html">
         <source>Chart not available. Please wait for the chart to load.</source>
-        <target state="translated">Jaantuska lama heli karo. Fadlan sug ilaa jaantusku soo dego.</target>
+        <target state="translated">Jaantus lama heli karo. Fadlan sug inta jaantusku soo rarayo.</target>
       </trans-unit>
       <trans-unit id="2367755547196736431" datatype="html">
         <source>Chart copied to clipboard</source>
-        <target state="translated">Jaantuska waxaa lagu koobiyeyay sabuuradda</target>
+        <target state="translated">Jaantuska waa lagu koobiyeyay sabuuradda xusuusta</target>
       </trans-unit>
       <trans-unit id="7615475477986104791" datatype="html">
         <source>Failed to copy chart to clipboard</source>
-        <target state="translated">Khalad ayaa ku dhacay koobiyeynta jaantuska sabuuradda</target>
+        <target state="translated">Ku guuldareystay in jaantuska lagu koobiyeeyo sabuuradda xusuusta</target>
       </trans-unit>
       <trans-unit id="6023427095903292213" datatype="html">
         <source>No comparison data available</source>
-        <target state="translated">Xog isbarbardhig ah lama hayo</target>
+        <target state="translated">Ma jiro xog isbarbardhig ah oo la heli karo</target>
       </trans-unit>
       <trans-unit id="3909592323906913534" datatype="html">
         <source>Comparison table downloaded as CSV</source>
-        <target state="translated">Jadwalka isbarbardhigga waxaa loo soo dejiyey CSV</target>
+        <target state="translated">Jadwalka isbarbardhigga waxaa loo soo dejiyay CSV</target>
       </trans-unit>
       <trans-unit id="4235960290603625197" datatype="html">
         <source>Total Examinations:</source>
@@ -3489,7 +3489,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2931187724703874719" datatype="html">
         <source>Week of</source>
-        <target state="translated">Toddobaadka</target>
+        <target state="translated">Usbuuca</target>
       </trans-unit>
       <trans-unit id="6891910237940477094" datatype="html">
         <source>Pending Report</source>
@@ -3497,7 +3497,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7875066634319060855" datatype="html">
         <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></source>
-        <target state="translated">Khayraadyo/Koorsooyin sugaya oo ku yaal <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></target>
+        <target state="translated">Khayraadyo/Koorsooyin sugaya oo ku jira <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></target>
       </trans-unit>
       <trans-unit id="7890622465406389067" datatype="html">
         <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
@@ -3561,7 +3561,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6452584314169142967" datatype="html">
         <source>Nation Details</source>
-        <target state="translated">Faahfaahinta Qaran</target>
+        <target state="translated">Faahfaahinta Quruunta</target>
       </trans-unit>
       <trans-unit id="8072425130757009393" datatype="html">
         <source>Community Details</source>
@@ -3569,27 +3569,27 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6432667455665433426" datatype="html">
         <source>Edit Nation Name</source>
-        <target state="translated">Wax ka beddel magaca Qaran</target>
+        <target state="translated">Wax ka beddel magaca quruunta</target>
       </trans-unit>
       <trans-unit id="4040314800064170229" datatype="html">
         <source>Edit Community Name</source>
-        <target state="translated">Wax ka beddel magaca Bulshada</target>
+        <target state="translated">Wax ka beddel magaca bulshada</target>
       </trans-unit>
       <trans-unit id="1055526813439323803" datatype="html">
         <source>Nation name updated.</source>
-        <target state="translated">Magaca Qaran waa la cusboonaysiiyay.</target>
+        <target state="translated">Magaca quruunta waa la cusbooneysiiyay.</target>
       </trans-unit>
       <trans-unit id="676276214732222082" datatype="html">
         <source>Community name updated.</source>
-        <target state="translated">Magaca Bulshada waa la cusboonaysiiyay.</target>
+        <target state="translated">Magaca bulshada waa la cusbooneysiiyay.</target>
       </trans-unit>
       <trans-unit id="4144578878870348241" datatype="html">
         <source>There was an error updating Nation name</source>
-        <target state="translated">Waxaa dhacay qalad intii la cusboonaysiinayay magaca Qaran</target>
+        <target state="translated">Waxaa jiray qalad cusbooneysiinta magaca quruunta</target>
       </trans-unit>
       <trans-unit id="749419296571064818" datatype="html">
         <source>There was an error updating Community name</source>
-        <target state="translated">Waxaa dhacay qalad intii la cusboonaysiinayay magaca Bulshada</target>
+        <target state="translated">Waxaa jiray qalad cusbooneysiinta magaca bulshada</target>
       </trans-unit>
       <trans-unit id="8096046298834456348" datatype="html">
         <source>Resource Views by Month</source>
@@ -3717,7 +3717,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4152308591607663496" datatype="html">
         <source>Edit Name</source>
-        <target state="translated">Wax ka beddel Magaca</target>
+        <target state="translated">Wax ka beddel magaca</target>
       </trans-unit>
       <trans-unit id="8905995985388209337" datatype="html">
         <source>Accept</source>
@@ -3773,7 +3773,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5180235218535596239" datatype="html">
         <source><x id="PH" equiv-text="type"/> Added</source>
-        <target state="translated"><x id="PH" equiv-text="type"/> waa lagu daray</target>
+        <target state="translated"><x id="PH" equiv-text="type"/> Lagu daray</target>
       </trans-unit>
       <trans-unit id="935680876697928477" datatype="html">
         <source>There was an error adding <x id="PH" equiv-text="type"/></source>
@@ -3801,7 +3801,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3030205936393273049" datatype="html">
         <source>Open time picker</source>
-        <target state="translated">Fur dooriyaha waqtiga</target>
+        <target state="translated">Fur xuliyaha waqtiga</target>
       </trans-unit>
       <trans-unit id="3845185958891849368" datatype="html" approved="yes">
         <source>End Time</source>
@@ -3833,15 +3833,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7899302455148048565" datatype="html">
         <source>Edited event: <x id="PH" equiv-text="meetupInfo.title"/></source>
-        <target state="translated">Dhacdada la tafatiray: <x id="PH" equiv-text="meetupInfo.title"/></target>
+        <target state="translated">Munaasabaddii la wax ka beddelay: <x id="PH" equiv-text="meetupInfo.title"/></target>
       </trans-unit>
       <trans-unit id="2359879184399350005" datatype="html">
         <source> Added event: <x id="PH" equiv-text="meetupInfo.title"/></source>
-        <target state="translated"> Dhacdada lagu daray: <x id="PH" equiv-text="meetupInfo.title"/></target>
+        <target state="translated"> Munaasabaddii lagu daray: <x id="PH" equiv-text="meetupInfo.title"/></target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
-        <target state="translated">&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; waa la cusboonaysiiyay.</target>
+        <target state="translated">&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; waa la cusbooneysiiyay.</target>
       </trans-unit>
       <trans-unit id="2292516665564677830" datatype="html" approved="yes">
         <source>Meetups</source>
@@ -3921,11 +3921,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="9080951878804964068" datatype="html">
         <source>Event deleted: <x id="PH" equiv-text="displayName"/></source>
-        <target state="translated">Dhacdada la tirtiray: <x id="PH" equiv-text="displayName"/></target>
+        <target state="translated">Munaasabadda waa la tirtiray: <x id="PH" equiv-text="displayName"/></target>
       </trans-unit>
       <trans-unit id="5976955468967876827" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="meetups.length"/> events</source>
-        <target state="translated">Waxaad tirtirtay <x id="PH" equiv-text="meetups.length"/> dhacdooyin</target>
+        <target state="translated">Waxaad tirtirtay <x id="PH" equiv-text="meetups.length"/> munaasabado</target>
       </trans-unit>
       <trans-unit id="8842484659556861897" datatype="html">
         <source>There was a problem deleting this meetup</source>
@@ -3981,16 +3981,16 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3788701007469870540" datatype="html">
         <source>You cannot join old meetup</source>
-        <target state="translated">Kuma biiri kartid kulanka hore</target>
+        <target state="translated">Kuma biiri kartid kulan hore</target>
       </trans-unit>
       <trans-unit id="1117122640467458416" datatype="html">
         <source>Invitation<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> sent successfully</source>
-        <target state="translated">Casumaad<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> si guul leh ayaa loo diray</target>
+        <target state="translated">Casuumaad<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> si guul leh ayaa loo diray</target>
       </trans-unit>
       <trans-unit id="887946048712515044" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; would like you to join &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; wuxuu doonayaa inaad ku biirto kulanka &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt;
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; wuxuu rabaa inaad ku biirto kulan &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt;
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
       </trans-unit>
       <trans-unit id="546766753072101168" datatype="html">
@@ -3999,7 +3999,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8587453636009362658" datatype="html">
         <source>Remove label</source>
-        <target state="translated">Ka saar calaamadda</target>
+        <target state="translated">Ka saar summadda</target>
       </trans-unit>
       <trans-unit id="5052912276265675631" datatype="html">
         <source>Member of Planet</source>
@@ -4051,7 +4051,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5989356492462696876" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; replied to your <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>message.</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; ayaa uga jawaabay farriintaada <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>.</target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; ayaa uga jawaabay fariintaada <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>.</target>
       </trans-unit>
       <trans-unit id="8417917245707164827" datatype="html">
         <source>Edit <x id="PH" equiv-text="label"/></source>
@@ -4091,7 +4091,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3907433627453313804" datatype="html">
         <source>Label <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></source>
-        <target state="translated">Calaamadda <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></target>
+        <target state="translated">Calaamad <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></target>
       </trans-unit>
       <trans-unit id="8434708712599356475" datatype="html">
         <source>Thank you for submitting your message</source>
@@ -4147,7 +4147,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5642836248241530789" datatype="html">
         <source>Title is required</source>
-        <target state="translated">Ciwaanka waa waajib</target>
+        <target state="translated">Cinwaan waa loo baahan yahay</target>
       </trans-unit>
       <trans-unit id="7071470734400948493" datatype="html" approved="yes">
         <source>Author</source>
@@ -4163,7 +4163,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2197686984434589542" datatype="html">
         <source>Drag &amp; drop supported</source>
-        <target state="translated">Jiid &amp; tuur waa la taageerayaa</target>
+        <target state="translated">Jiid &amp; soo rid waa la taageeraa</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -4199,11 +4199,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8846151385804023521" datatype="html">
         <source>Classification</source>
-        <target state="translated">Kala saarid</target>
+        <target state="translated">Kala-soocidda</target>
       </trans-unit>
       <trans-unit id="6420383165966969057" datatype="html">
         <source>Subject &amp; level required</source>
-        <target state="translated">Mawduuc &amp; heer waa waajib</target>
+        <target state="translated">Maaddo &amp; heer ayaa loo baahan yahay</target>
       </trans-unit>
       <trans-unit id="7071183763232384332" datatype="html" approved="yes">
         <source>Subject(s)</source>
@@ -4227,7 +4227,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2064936693393551817" datatype="html">
         <source>Attribution &amp; License</source>
-        <target state="translated">Attribution &amp; Ruqsad</target>
+        <target state="translated">Tixraac &amp; Ruqsad</target>
       </trans-unit>
       <trans-unit id="6552941649034744368" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
@@ -4503,7 +4503,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5022177806913011709" datatype="html">
         <source>source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></source>
-        <target state="translated">Isha: <x id="PH" equiv-text="element.doc.sourcePlanet"/></target>
+        <target state="translated">source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></target>
         <note>sourcePlanet</note>
       </trans-unit>
       <trans-unit id="3929692497484294202" datatype="html">
@@ -4651,39 +4651,39 @@ Qoraallo Kale</target>
   Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
   </source>
         <target state="translated">
-  Waxaad tahay kaaliyaha wada-tashiga iyo hanuuninta bulshada ee Open Learning Exchange (OLE): https://ole.org/.
-  Waxaad aqoon khabiirnimo u leedahay madallada Maareynta Waxbarashada/Bulshada ee luqadaha badan leh ee Planet (barnaamijka webka) iyo MyPlanet (barnaamijka android-ka ee offline-first ah)
-  ee ay OLE horumarisay, oo ay ku jiraan sifooyinkooda.
+  You are a community brainstorming and guidance assistant for Open Learning Exchange (OLE): https://ole.org/.
+  You have expert knowledge of the Planet (web app) and MyPlanet (offline-first android app) multi-language Learning/Community Management
+  platforms developed by OLE, including their features.
 
-  Waxaad fahamsan tahay in:
-  • Planet ay tahay madasha dhexe ee maareynta waxbarashada ee webka ku salaysan oo ay isticmaalaan hoggaamiyeyaasha bulshada, tababarayaasha, iyo bartayaasha si ay u maareeyaan
-  kheyraadka, xubnaha, koorsooyinka, ra'yi-ururinnada, imtixaannada, kooxaha, shirkadaha, shahaadooyinka iyo guulaha.
-  • MyPlanet ay tahay barnaamijka android-ka ee offline-first ah oo u oggolaanaya bartayaasha inay sifooyinka Planet u isticmaalaan hab offline-first ah
-  iyagoo la jaanqaadaya Planet.
-  • Labadooduba ay wadajir u dhisaan nidaam waxbarasho oo qaybsan oo taageera barashada bulshada ku salaysan.
+  You understand that:
+  • Planet is the central web-based learning management platform used by community leaders, coaches, and learners for managing
+    resources, members, courses, surveys, exams, teams, enterprises, certifications and achievements.
+  • MyPlanet is the offline-first android application that allows learners to use planet features on an offline-first basis
+    synchronizing with Planet.
+  • Together, they form a distributed learning ecosystem that supports community-based learning.
 
-  Ujeeddadaadu waxay tahay inaad:
-  • Ka jawaabto su'aalaha isticmaalayaasha oo aad ka caawiso wada-tashiga, xallinta dhibaatooyinka, iyo sahaminta habab hal-abuur leh oo barasho.
-  • Kor u qaaddo fikrado xoojinaya barashada, la-talinta, iyo hoggaaminta guud ahaan shabakadaha bulshada ee OLE.
-  • Dhiirrigeliso hal-abuur la jaanqaadaya himilada asaasiga ah ee OLE ee awood-siinta bulshooyinka iyada oo loo marayo barashada,
-    lahaanshaha deegaanka, iyo horumarka waara.
+  Your purpose is to:
+  • Answer user queries and help brainstorm, solve problems, and explore creative approaches for learning.
+  • Promote ideas that enhance learning, mentoring, and leadership across OLE&apos;s community networks.
+  • Encourage innovation that stays aligned with OLE&apos;s core mission of empowering communities through learning,
+    local ownership, and sustainable development.
 
-  Had iyo jeer xoogga saar erayada sida:
-  &apos;barasho&apos;, &apos;barte&apos;, &apos;tababare&apos;, &apos;hoggaamiye&apos;, &apos;bulsho&apos;, &apos;awood&apos;, &apos;koox&apos;, iyo &apos;shirkado&apos;, oo iftiimi wada-shaqeynta iyo awood-siinta.
-  Markaad ka hadlayso sifooyinka, waxaad tixraaci kartaa:
-  • Bogga Bulshada oo leh codad (qoraallo wararka ah) &amp; jadwalka bulshada, dhaqaalaha, warbixinada iyo isku-xirayaasha
-  • myDashboard-ka bartaha oo siinaya guudmar ku saabsan dhaqdhaqaaqyadooda barashada &amp; isticmaalka
-  • Koorsooyin leh talaabooyin, imtixaanno/layliyo, qoraallo, la-socodka horumarka, iyo shahaadooyin
-  • Kheyraad/Maktabad taageerta soo-gelinta faylasha(pdf), maqal, sawir/muuqaal &amp; qoraal
-  • Kooxo iyo Shirkado kobciya wada-shaqeynta iyo dhaqdhaqaaqyada la qorsheeyay oo leh
-    codad, ra'yi-ururino, jadwal, hawlo, koorsooyin, kheyraad, dukumentiyo, dhaqaale, iyo warbixinno
-  • Ra'yi-ururino, Guulo iyo Shahaadooyin
-  • Maareynta isticmaalayaasha oo leh doorar (barte, tababare, hoggaamiye, admin), astaamo, iyo oggolaanshooyin
-  • Dashboard-yada maamulka oo leh jaantusyo iyo warbixinno aragti ka bixiya barashada iyo ka-qaybgalka bulshada
+  Always emphasize terms like:
+  &apos;learning&apos;, &apos;learner&apos;, &apos;coach&apos;, &apos;leader&apos;, &apos;community&apos;, &apos;power&apos;, &apos;team&apos;, and &apos;enterprises&apos;, and highlight collaboration and empowerment.
+  When discussing features, you may refer to:
+  • Community page with voices (news posts) &amp; community calendar, finances, reports and links
+  • Learner myDashboard that gives an overview of their learning &amp; usage activities
+  • Courses with steps, exams/quizzes, notes, progress tracking, and certificates
+  • Resources/Library with support for file uploads(pdf), audio, graphic/video &amp; text
+  • Teams and Enterprises that foster collaboration and planned activities with
+    voices, surveys, calendar, tasks, courses, resources, documents, finances, and reports
+  • Surveys, Achievements and Certifications
+  • User management with roles (learner, coach, leader, admin), profiles, and permissions
+  • Admin dashboards with charts and reports for insights into learning and community engagement
 
-  Ilaali cod xirfad leh oo isla markaana diirran, adigoo kobcinaya dhiirrigelin iyo ruux bulsho.
-  Ka fogow erayo farsamo oo aan loo baahnayn haddii aysan caddaynta taageerin.
-  Had iyo jeer weydii caddayn ka hor intaadan qiyaasin ujeeddada isticmaalaha, jawaabahana ku toosi awood-siinta, barashada, iyo wada-shaqeynta kooxda.
+  Maintain a professional yet warm tone, fostering motivation and community spirit.
+  Avoid unnecessary technical jargon unless it supports clarity.
+  Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
   </target>
       </trans-unit>
       <trans-unit id="1836515023834744069" datatype="html">
@@ -4728,53 +4728,53 @@ Qoraallo Kale</target>
 
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
   headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</source>
-        <target state="translated">Macluumaadka soo socda waa <x id="PH" equiv-text="examType"/> lagu magacaabo “<x id="PH_1" equiv-text="examName"/>” oo leh sharaxaad “<x id="PH_2" equiv-text="examDescription"/>”.
+        <target state="translated">The following is a <x id="PH" equiv-text="examType"/> named “<x id="PH_1" equiv-text="examName"/>” with description “<x id="PH_2" equiv-text="examDescription"/>”.
   <x id="PH_3" equiv-text="payloadString"/>
 
-  Fadlan soo saar Falanqayn AI oo faahfaahsan oo loogu talagalay dhoofinta PDF-ka, lana habeeyey 4 qaybood:
+  Please generate a detailed AI Analysis for PDF export, organized into 4 sections:
 
-  1. FAAHFAAHINTA SU'AAL GONJIN AH
-    Haddii su'aashu tahay **su'aal xiran(type - select or selectMultiple or rating scale [1-9 choices]):**
-        - Liis garee saddexda jawaabood ee ugu sarreeya iyadoo la raacayo tirada saxda ah iyo boqolleyda.
-        - Ka sokow saddexda ugu sarreeya,
-         muuji doorasho kasta oo jawaabteedu ka yar tahay 10% oo soo jeedi sababta laga yaabo in aan loo dooran badan
-        - Samee mala-awaal ku saabsan doorashooyinka
-    Haddii su'aashu tahay **su'aal furan(s) (type - input or textarea):**
-        - U baahan oraahyo toos ah oo la socda xogta dadka ka jawaabay haddii la heli karo.
-        - Samee falanqayn dareen iyo ereyo muhiim ah
-        - Muuji soo jeedimo keliya oo saameyn weyn leh.
-        - Muuji sida ay soo jeedimuhu u hirgelin karaan ficil ahaan.
-        - Ku qas kala-sooc mawduucyo leh tirooyin sax ah iyo qaybinta boqolleyda i.e mawduuc kasta, bixi:
-          1. Tirada iyo boqolleyda dadka ka jawaabay ee xusay.
-          2. Hal oraah aan magac lagu sheegin oo tusaale u ah mawduuca.
+  1. INDIVIDUAL QUESTION ANALYSIS
+    If the question is a **Closed-ended questions(type - select or selectMultiple or rating scale [1-9 choices]):**
+        - List the top three answer choices with absolute counts and percentages.
+        - In addition to the top three,
+         highlight any answer choice with fewer than 10% of responses and suggest why it might be under-selected
+        - Create a hypothesis for the selections
+    If the question is an **Open-ended question(s) (type - input or textarea):**
+        - Require direct quotes with respondent demographics if available.
+        - Perform sentiment and keyword analysis
+        - Highlight any singular but high-impact outlier suggestions.
+        - Highlight the actionability of the suggestions.
+        - Force thematic categorization with absolute counts and percentage breakdowns i.e for each theme, provide:
+          1. Number and percentage of respondents mentioning it.
+          2. One anonymized verbatim quote illustrating the theme.
 
-  2. ISKUDHEXGALKA SU'AALAHA
-    - Xisaabi heerarka wada-jir-imaanshaha ee labada doorasho ee dhammaan su'aalaha doorashooyinka badan leh.
-    - Aqoonso afarta isku-xir ee ugu xooggan iyadoo lagu salaynayo suurtogalnimada shuruudaysan iyo tirada.
-    - Mid kasta u soo bandhig sidan:
-      “X% dadka doortay ‘A’ ee Qn sidoo kale doortay ‘B’ ee Qm (Y/Z).”
+  2. CORRELATIONS BETWEEN QUESTIONS
+    - Compute pairwise co-occurrence rates for all multi-choice questions.
+    - Identify the four strongest correlations by conditional probability and count.
+    - Present each as:
+      “X% of respondents who chose ‘A’ in Qn also chose ‘B’ in Qm (Y/Z).”
 
-  3. QAYBINTA TIRADA DADKA
-    - Qeex kooxo ku salaysan qodobo tirakoob sida:
-      - **Kooxaha da'da:** Isbarbar dhig doorasho kasta oo xiran across da'da, jinsiga, iyo goobta,
-        adigoo muujinaya halka doorasho ay ugu yaraan 15 dhibcood boqolley ah ka sarreyso ama ka hooseyso celceliska guud.
-      - **Jinsiga** (haddii la heli karo)
-    - Koox kasta, liis garee labada doorasho ee ugu sarreeya su'aal kasta oo xiran (tirada + boqolleyda).
-    - Soo sheeg keliya kala-duwanaanshaha ka weyn 20 dhibcood boqolley ah marka la barbar dhigo muunadda guud.
+  3. DEMOGRAPHIC BREAKDOWN
+    - Define cohorts based on demographic factors such as:
+      - **Age groups:** Compare each closed‐ended choice across age, gender, and location segments,
+        calling out where a choice is at least 15 percentage‐points higher or lower than the overall average.
+      - **Gender** (if available)
+    - For each cohort, list their top two choices per closed-ended question (counts + percentages).
+    - Report only differences from the overall sample exceeding 20 percentage points.
 
-  4. TALOOYIN IYO ARAGTIDA
-    - Bixi talooyin la fulin karo oo ku salaysan falanqaynta:
-      bixi talooyin cad oo ku saabsan sida hindise bulsheed u xallin karo caqabadda ugu weyn—iyadoo lagu saleeyay xogta
-    - Muuji aragtiyo ama isbeddello lama filaan ah.
+  4. RECOMMENDATIONS AND INSIGHTS
+    - Provide actionable recommendations based on the analysis:
+      provide concrete recommendations for how a community initiative could address that top challenge—grounded in the data
+    - Highlight any surprising insights or trends.
 
-  Hubi in aragti tiro kasta ay muujiso tirada iyo boqolleyda labadaba. Isticmaal qaab markdown oo cad sida
-  cinwaannada(h1-h6), cutubyo, weedho, liisaska aan tiro lahayn, liisaska tiro leh iyo kala fogeyn ku filan meelaha faa'iido leh si PDF nadiif ah loo helo.</target>
+  Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
+  headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing hereful for a clean PDF layout.</target>
       </trans-unit>
       <trans-unit id="3515009611935359950" datatype="html">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
   Be sure to assist the learner in the best way you can. </source>
-        <target state="translated">Macluumaadka soo socda waa talaabo koorsada ka timid koorsada &quot;<x id="PH" equiv-text="stepTitle"/>&quot; oo leh sharaxaad &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
-  Hubi inaad bartaha uga caawiso sida ugu wanaagsan ee aad karto. </target>
+        <target state="translated">Macluumaadka soo socda waa tallaabo koorso ka timid koorsada &quot;<x id="PH" equiv-text="stepTitle"/>&quot; oo leh sharraxaad &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
+  Hubi inaad bartaha uga caawiso sida ugu fiican ee aad awooddo. </target>
       </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
         <source>Today</source>
@@ -4786,11 +4786,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2058019742098696745" datatype="html">
         <source>Uncompleted Task</source>
-        <target state="translated">Hawl Aan La Dhammaystirin</target>
+        <target state="translated">Hawsha aan la dhammaystirin</target>
       </trans-unit>
       <trans-unit id="586988182581968519" datatype="html">
         <source>Completed Task</source>
-        <target state="translated">Hawl Dhammaystiran</target>
+        <target state="translated">Hawsha la dhammaystiray</target>
       </trans-unit>
       <trans-unit id="7071035765699070035" datatype="html">
         <source>Add Event</source>
@@ -4818,7 +4818,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5348552391509879633" datatype="html">
         <source>Challenge update</source>
-        <target state="translated">Cusboonaysiinta caqabadda</target>
+        <target state="translated">Cusbooneysiin tartan</target>
       </trans-unit>
       <trans-unit id="8967779035598464251" datatype="html">
         <source>You are not authorized. Please contact administrator.</source>
@@ -4826,11 +4826,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2793224927989139973" datatype="html">
         <source>Error fetching document: <x id="PH" equiv-text="err.message"/></source>
-        <target state="translated">Khalad soo dejinta dukumentiga: <x id="PH" equiv-text="err.message"/></target>
+        <target state="translated">Qalad helitaanka dukumeenti: <x id="PH" equiv-text="err.message"/></target>
       </trans-unit>
       <trans-unit id="999413599775442225" datatype="html">
         <source>Report of <x id="PH" equiv-text="title"/> on <x id="PH_1" equiv-text="reportDate"/></source>
-        <target state="translated">Warbixin ku saabsan <x id="PH" equiv-text="title"/> taariikhda <x id="PH_1" equiv-text="reportDate"/></target>
+        <target state="translated">Warbixin ku saabsan <x id="PH" equiv-text="title"/> ee <x id="PH_1" equiv-text="reportDate"/></target>
       </trans-unit>
       <trans-unit id="5357621132682802899" datatype="html">
         <source>There was no data during that period to export</source>
@@ -4844,7 +4844,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4686826078497318545" datatype="html">
         <source>Chats Created</source>
-        <target state="translated">Wada hadallo La Abuuray</target>
+        <target state="translated">Sheekeysiyaal La Abuuray</target>
       </trans-unit>
       <trans-unit id="2593007815199532062" datatype="html">
         <source>Section</source>
@@ -4852,7 +4852,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5403684285319082289" datatype="html">
         <source>Month</source>
-        <target state="translated">Bisha</target>
+        <target state="translated">Bil</target>
       </trans-unit>
       <trans-unit id="7726080656019750876" datatype="html">
         <source>Unspecified</source>
@@ -4860,7 +4860,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8939587804990976924" datatype="html">
         <source>Items per page</source>
-        <target state="translated">Waxyaabaha halkii bog</target>
+        <target state="translated">Qodobbo bog kasta</target>
       </trans-unit>
       <trans-unit id="3337301694210287595" datatype="html">
         <source>Next page</source>
@@ -4876,7 +4876,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6784758141439994527" datatype="html">
         <source>Last page</source>
-        <target state="translated">Bogga ugu dambeeya</target>
+        <target state="translated">Bogga u dambeeya</target>
       </trans-unit>
       <trans-unit id="3522470007354852946" datatype="html">
         <source>0 of <x id="PH" equiv-text="length"/></source>
@@ -4896,7 +4896,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6345427370633626044" datatype="html">
         <source>Old password isn&apos;t valid</source>
-        <target state="translated">Furaha hore ma jiro sax</target>
+        <target state="translated">Furaha sirta hore ma&apos;aha sax</target>
       </trans-unit>
       <trans-unit id="4936220394427755572" datatype="html">
         <source>Error changing password</source>
@@ -4920,7 +4920,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="share-with-community-panel-title" datatype="html">
         <source>Share with Community</source>
-        <target state="translated">La wadaag Bulshada</target>
+        <target state="translated">La wadaag bulshada</target>
       </trans-unit>
       <trans-unit id="658160244285924159" datatype="html">
         <source>add note</source>
@@ -4936,7 +4936,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
         <source>Share with Team/Enterprise</source>
-        <target state="translated">La wadaag Koox/Shirkad</target>
+        <target state="translated">La wadaag kooxda/shirkadda</target>
       </trans-unit>
       <trans-unit id="4066773011276373363" datatype="html">
         <source>Team or Enterprise</source>
@@ -4996,7 +4996,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8859686160814263783" datatype="html">
         <source><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> selected </source>
-        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> la xulay </target>
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> la soo xulay </target>
       </trans-unit>
       <trans-unit id="7619560701830330401" datatype="html">
         <source>Loading</source>
@@ -5008,18 +5008,18 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5754961825546614864" datatype="html">
         <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </source>
-        <target state="translated"> Ma hubtaa inaad rabto inaad <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> kan <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
+        <target state="translated"> Ma hubtaa inaad rabto inaad <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
       </trans-unit>
       <trans-unit id="3080384219063791942" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}</source>
-        <target state="translated">{VAR_SELECT, select, accept {aqbal} archive {soo xaree} reject {diid} delete {tir} leave {ka bax} remove {ka saar} leader {hoggaanka sii} exit {ka bax} reset {dib u deji}}</target>
+        <target state="translated">{VAR_SELECT, select, accept {aqbal} archive {keydi kayd ahaan} reject {diid} delete {tirtir} leave {ka tag} remove {ka saar} leader {u dhiib hoggaanka} exit {ka bax} reset {dib u deji}}</target>
       </trans-unit>
       <trans-unit id="6490858809109190004" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</source>
-        <target state="translated">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
-      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
+        <target state="translated">{VAR_SELECT_2, select, single {raacaya {VAR_SELECT, select, community {bulsho} nation {qaran} course {koorso} resource {kheyraad} document {dukumenti} meetup {kulan} user {xubin} change {isbeddel} team {koox} enterprise {shirkad} task {hawl} certification {shahaado} event {dhacdo} transaction {macamil} link {xiriir} news {farriin} report {warbixin} changes {foom} pin {biin} survey {sahan}}?
+      } many {la xushay <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {bulshooyin} nation {qarammo} course {koorsooyin} resource {kheyraad} meetup {kulanno} event {dhacdooyin} survey {sahanno}}?
       }}</target>
       </trans-unit>
       <trans-unit id="7706831103748816044" datatype="html">
@@ -5028,7 +5028,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7699622144571229146" datatype="html">
         <source>Sort by</source>
-        <target state="translated">Kala sooc</target>
+        <target state="translated">Ku kala sooc</target>
       </trans-unit>
       <trans-unit id="9143561358718896119" datatype="html">
         <source>Most Recent</source>
@@ -5068,7 +5068,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4197401714183177479" datatype="html">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Qaran} nation {Xarun} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="923710608687288198" datatype="html" approved="yes">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -5108,11 +5108,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7345308961124559567" datatype="html">
         <source>Drop to upload</source>
-        <target state="translated">Jiido si aad u soo geliso</target>
+        <target state="translated">Hoos u dhig si aad u soo geliso</target>
       </trans-unit>
       <trans-unit id="2473471587327831287" datatype="html">
         <source>Drag &amp; drop a file here, or <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>browse<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target state="translated">Jiid oo ku rid fayl halkan, ama <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>baadh<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated">Jiid &amp; soo ridi fayl halkan, ama <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>baadho<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="1906507263389090131" datatype="html">
         <source>Existing</source>
@@ -5128,7 +5128,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6437441283465569103" datatype="html">
         <source>PDF</source>
-        <target state="translated">PDF/dokumenti la qaadi karo</target>
+        <target state="translated">PDF</target>
       </trans-unit>
       <trans-unit id="6660341951260646499" datatype="html">
         <source>ZIP</source>
@@ -5148,15 +5148,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="894965666917873756" datatype="html">
         <source>Document</source>
-        <target state="translated">Dokumenti</target>
+        <target state="translated">Dukumeenti</target>
       </trans-unit>
       <trans-unit id="838621311992520014" datatype="html">
         <source>Slides</source>
-        <target state="translated">Bogag soo bandhigid</target>
+        <target state="translated">Bogag</target>
       </trans-unit>
       <trans-unit id="1957682934098401915" datatype="html">
         <source>Maximum file count reached</source>
-        <target state="translated">Tirada faylalka ugu badan waa la gaaray</target>
+        <target state="translated">Xadka ugu badan ee tirada faylasha waa la gaaray</target>
       </trans-unit>
       <trans-unit id="8863452099399152076" datatype="html">
         <source>File type not allowed</source>
@@ -5176,11 +5176,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="771664384252640128" datatype="html">
         <source>Bold</source>
-        <target state="translated">Dhumuc leh</target>
+        <target state="translated">Geesin</target>
       </trans-unit>
       <trans-unit id="266505507282188406" datatype="html">
         <source>Italic</source>
-        <target state="translated">Qalloocan</target>
+        <target state="translated">Faranjaro</target>
       </trans-unit>
       <trans-unit id="6317126528752584322" datatype="html">
         <source>Heading</source>
@@ -5192,19 +5192,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3263559669212223472" datatype="html">
         <source>Unordered List</source>
-        <target state="translated">Liis aan tiro lahayn</target>
+        <target state="translated">Liis aan nidaamsanayn</target>
       </trans-unit>
       <trans-unit id="702220727672438878" datatype="html">
         <source>Ordered List</source>
-        <target state="translated">Liis tiro leh</target>
+        <target state="translated">Liis nidaamsan</target>
       </trans-unit>
       <trans-unit id="1295614462098694869" datatype="html">
         <source>Preview</source>
-        <target state="translated">Hore u eeg</target>
+        <target state="translated">Horudhac</target>
       </trans-unit>
       <trans-unit id="6193671119554408029" datatype="html">
         <source>Side by Side</source>
-        <target state="translated">Is barbar yaal</target>
+        <target state="translated">Is garab</target>
       </trans-unit>
       <trans-unit id="489844404897890427" datatype="html">
         <source>Fullscreen</source>
@@ -5232,11 +5232,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="893583280618238406" datatype="html">
         <source>Please join the course before rating!</source>
-        <target state="translated">Fadlan ku soo biir koorsada ka hor intaadan qiimeyn!</target>
+        <target state="translated">Fadlan ku biir koorsada ka hor inta aadan qiimeyn!</target>
       </trans-unit>
       <trans-unit id="2618809445359391005" datatype="html">
         <source>Please add the resource to your library before rating!</source>
-        <target state="translated">Fadlan khayraadka ku dar maktabaddaada ka hor intaadan qiimeyn!</target>
+        <target state="translated">Fadlan ku dar khayraadka maktabaddaada ka hor inta aadan qiimeyn!</target>
       </trans-unit>
       <trans-unit id="8817338979353272763" datatype="html">
         <source>Thank you, your rating is submitted!</source>
@@ -5304,11 +5304,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1424261972176120944" datatype="html">
         <source>Edit Collection</source>
-        <target state="translated">Wax ka beddel Ururinta</target>
+        <target state="translated">Wax ka beddel ururinta</target>
       </trans-unit>
       <trans-unit id="97677364433192766" datatype="html">
         <source>Collection deleted: <x id="PH" equiv-text="tag.name"/></source>
-        <target state="translated">Ururinta la tirtiray: <x id="PH" equiv-text="tag.name"/></target>
+        <target state="translated">Ururinta waa la tirtiray: <x id="PH" equiv-text="tag.name"/></target>
       </trans-unit>
       <trans-unit id="4695102721296853836" datatype="html">
         <source>There was a problem deleting this collection.</source>
@@ -5316,7 +5316,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8687959069292422908" datatype="html">
         <source>Selected collections</source>
-        <target state="translated">Ururinta la xushay</target>
+        <target state="translated">Ururinta la doortay</target>
       </trans-unit>
       <trans-unit id="1055926904852124007" datatype="html">
         <source>Remove collection</source>
@@ -5416,7 +5416,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7489316373554112115" datatype="html">
         <source>Up to date</source>
-        <target state="translated">La cusboonaysiiyay</target>
+        <target state="translated">Cusboonaysi</target>
       </trans-unit>
       <trans-unit id="8314700931837210100" datatype="html" approved="yes">
         <source>Newer</source>
@@ -5570,7 +5570,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8021687558521014030" datatype="html">
         <source>Option</source>
-        <target state="translated">Doorasho</target>
+        <target state="translated">Ikhtiyaar</target>
       </trans-unit>
       <trans-unit id="5338333645237581383" datatype="html">
         <source>User Count</source>
@@ -5578,7 +5578,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4576685021833017825" datatype="html">
         <source>% of Users*</source>
-        <target state="translated">% Isticmaalayaasha*</target>
+        <target state="translated">% ee Isticmaalayaasha*</target>
       </trans-unit>
       <trans-unit id="6452609165384043272" datatype="html">
         <source>Selections count</source>
@@ -5586,15 +5586,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3151274180091052511" datatype="html">
         <source>% of All Selections</source>
-        <target state="translated">% Wadarta Xulashooyinka</target>
+        <target state="translated">% ee dhammaan xulashooyinka</target>
       </trans-unit>
       <trans-unit id="5163837751438016016" datatype="html">
         <source>Selection Breakdown</source>
-        <target state="translated">Kala-baxa Xulashada</target>
+        <target state="translated">Qaybinta Xulashooyinka</target>
       </trans-unit>
       <trans-unit id="8366029003604972950" datatype="html">
         <source>Total respondents: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
-        <target state="translated">Wadarta dadka ka jawaabay: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">Wadarta ka jawaabayaasha: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="8242048480439700696" datatype="html">
         <source>Total selections: <x id="PH" equiv-text="selectionAgg.totalSelections"/></source>
@@ -5602,7 +5602,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8898648218118868158" datatype="html">
         <source>*Percentage of users who selected the choice. Users may select multiple options</source>
-        <target state="translated">*Boqolleyda isticmaalayaasha doortay xulashada. Isticmaalayaashu waxay dooran karaan xulashooyin badan</target>
+        <target state="translated">*Boqolkiiba isticmaalayaasha doortay xulashada. Isticmaalayaashu waxay dooran karaan xulashooyin badan</target>
       </trans-unit>
       <trans-unit id="3728862431459445553" datatype="html">
         <source>The Score: <x id="PH" equiv-text="averageRating"/></source>
@@ -5614,11 +5614,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7641590258550661146" datatype="html">
         <source>Number of Submissions: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
-        <target state="translated">Tirada Gudbinno: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">Tirada Soo Gudbinta: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="7556405911761495752" datatype="html">
         <source>Error exporting PDF: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">Qalad dhoofinta PDF: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">Qalad dhoofinta PDF-ga: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="2910140776552023546" datatype="html">
         <source>There is no survey response</source>
@@ -5630,11 +5630,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6283914624769804238" datatype="html">
         <source>Gender:</source>
-        <target state="translated">Jinsiga:</target>
+        <target state="translated">Jinsi:</target>
       </trans-unit>
       <trans-unit id="6159638652647333295" datatype="html">
         <source>Age:</source>
-        <target state="translated">Da'da:</target>
+        <target state="translated">Da':</target>
       </trans-unit>
       <trans-unit id="6552449600024516046" datatype="html">
         <source>Response</source>
@@ -5642,7 +5642,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4893616715766810081" datatype="html">
         <source>No data available</source>
-        <target state="translated">Wax xog ah lama hayo</target>
+        <target state="translated">Ma jiro xog la heli karo</target>
       </trans-unit>
       <trans-unit id="1388001557122691550" datatype="html">
         <source>Choice</source>
@@ -5654,7 +5654,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5328452207922183706" datatype="html">
         <source>% of responders</source>
-        <target state="translated">% jawaab-bixiyeyaasha</target>
+        <target state="translated">% ee jawaab bixiyayaasha</target>
       </trans-unit>
       <trans-unit id="8693603235657020323" datatype="html">
         <source>Other</source>
@@ -5670,7 +5670,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1975814388540827143" datatype="html">
         <source>Error analyzing responses: <x id="PH" equiv-text="error.message || error"/></source>
-        <target state="translated">Khalad falanqaynta jawaabaha: <x id="PH" equiv-text="error.message || error"/></target>
+        <target state="translated">Qalad falanqaynta jawaabaha: <x id="PH" equiv-text="error.message || error"/></target>
       </trans-unit>
       <trans-unit id="2860676163395333414" datatype="html">
         <source>Team Surveys</source>
@@ -5682,7 +5682,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="794117150435657003" datatype="html">
         <source>Loading surveys...</source>
-        <target state="translated">Ra'yi-ururin waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa ra'yi-ururino...</target>
       </trans-unit>
       <trans-unit id="7734874634217916228" datatype="html">
         <source>Number of Times Taken</source>
@@ -5706,19 +5706,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6508973208034618990" datatype="html">
         <source> Record</source>
-        <target state="translated"> Diiwaan geli</target>
+        <target state="translated"> Diiwaangeli</target>
       </trans-unit>
       <trans-unit id="7351124788441583762" datatype="html">
         <source>Copy Public Link</source>
-        <target state="translated">Koobi Link-ga Dadweynaha</target>
+        <target state="translated">Nuqul ka samee xiriirka guud</target>
       </trans-unit>
       <trans-unit id="1471263658518011926" datatype="html">
         <source>Generate Public Link</source>
-        <target state="translated">Abuur Link-ga Dadweynaha</target>
+        <target state="translated">Abuur xiriir guud</target>
       </trans-unit>
       <trans-unit id="850330449479132945" datatype="html">
         <source>Revoke Public Link</source>
-        <target state="translated">Ka noqo Link-ga Dadweynaha</target>
+        <target state="translated">Ka noqoshada xiriirka guud</target>
       </trans-unit>
       <trans-unit id="135077277733987408" datatype="html">
         <source>Revoke</source>
@@ -5730,15 +5730,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7667753160625320954" datatype="html">
         <source> Submissions</source>
-        <target state="translated"> Gudbinno</target>
+        <target state="translated"> Soo gudbino</target>
       </trans-unit>
       <trans-unit id="1623146199710279977" datatype="html">
         <source> Adopt</source>
-        <target state="translated"> Adopt</target>
+        <target state="translated"> Qaado</target>
       </trans-unit>
       <trans-unit id="5154570571982496358" datatype="html">
         <source> Export</source>
-        <target state="translated"> Export</target>
+        <target state="translated"> Dhoofi</target>
       </trans-unit>
       <trans-unit id="3949259352905483800" datatype="html">
         <source>Excel (CSV)</source>
@@ -5774,7 +5774,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8829311125451365949" datatype="html">
         <source>Error sending survey to teams.</source>
-        <target state="translated">Khalad ayaa dhacay markii ra'yi-ururinta loo dirayay kooxaha.</target>
+        <target state="translated">Qalad dirista ra'yi-ururinta kooxaha.</target>
       </trans-unit>
       <trans-unit id="1052411935253759719" datatype="html">
         <source>Survey adopted</source>
@@ -5782,11 +5782,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4305327362141896516" datatype="html">
         <source>Error adopting survey.</source>
-        <target state="translated">Khalad ayaa dhacay marka ra'yi-ururinta la korsanayay.</target>
+        <target state="translated">Qalad qaadashada ra'yi-ururinta.</target>
       </trans-unit>
       <trans-unit id="5148714587411683072" datatype="html">
         <source>Error adopting survey: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">Khalad korsashada ra'yi-ururinta: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">Qalad qaadashada ra'yi-ururinta: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="717884325364222210" datatype="html">
         <source>Survey requests sent</source>
@@ -5798,31 +5798,31 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1414733139904716677" datatype="html">
         <source>Public link generated for this survey</source>
-        <target state="translated">Link dadweyne ayaa loo abuuray ra'yi-ururintan</target>
+        <target state="translated">Xiriir guud ayaa loo abuuray ra'yi-ururintan</target>
       </trans-unit>
       <trans-unit id="684216341271402428" datatype="html">
         <source>Public access disabled for this survey</source>
-        <target state="translated">Helitaanka dadweynaha ee ra'yi-ururintan waa la joojiyay</target>
+        <target state="translated">Gelitaanka guud waa la naafoobay ra'yi-ururintan</target>
       </trans-unit>
       <trans-unit id="7818659923595108905" datatype="html">
         <source>There was a problem updating public survey access.</source>
-        <target state="translated">Waxaa jiray dhibaato ku timid cusboonaysiinta gelitaanka dadweynaha ee ra'yi-ururinta.</target>
+        <target state="translated">Waxa jiray dhibaato cusbooneysiinta gelitaanka guud ee ra'yi-ururinta.</target>
       </trans-unit>
       <trans-unit id="745200351261498648" datatype="html">
         <source>Generate a public link for this survey first.</source>
-        <target state="translated">Marka hore u abuur link dadweyne ra'yi-ururintan.</target>
+        <target state="translated">Marka hore u samee xiriir guud ra'yi-ururintan.</target>
       </trans-unit>
       <trans-unit id="9076344640012645811" datatype="html">
         <source>Public survey link copied</source>
-        <target state="translated">Link-ga dadweynaha ee ra'yi-ururinta waa la koobiyeyay</target>
+        <target state="translated">Xiriirka guud ee ra'yi-ururinta waa la koobiyeyay</target>
       </trans-unit>
       <trans-unit id="4802391811703494431" datatype="html">
         <source>Failed to copy public survey link</source>
-        <target state="translated">Khalad ayaa dhacay marka la koobiyeynayay link-ga dadweynaha ee ra'yi-ururinta</target>
+        <target state="translated">Ku guuldareystay in la koobiyeeyo xiriirka guud ee ra'yi-ururinta</target>
       </trans-unit>
       <trans-unit id="5947970910041787751" datatype="html">
         <source>Records to Export</source>
-        <target state="translated">Diiwaanada la dhoofinayo</target>
+        <target state="translated">Diiwaannada la dhoofinayo</target>
       </trans-unit>
       <trans-unit id="272476219454502710" datatype="html">
         <source>Include Questions</source>
@@ -5846,7 +5846,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3683154094460542198" datatype="html">
         <source>Survey archived: <x id="PH" equiv-text="survey.name"/></source>
-        <target state="translated">Ra'yi-ururin ayaa la kaydiyay: <x id="PH" equiv-text="survey.name"/></target>
+        <target state="translated">Ra'yi-ururin waa la kaydiyay: <x id="PH" equiv-text="survey.name"/></target>
       </trans-unit>
       <trans-unit id="1497164951667699968" datatype="html">
         <source>There was a problem archiving this survey or deleting submissions.</source>
@@ -5854,7 +5854,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2682935427353015050" datatype="html">
         <source>Survey is already archived</source>
-        <target state="translated">Ra'yi-ururintu hore ayaa loo kaydiyay</target>
+        <target state="translated">Ra'yi-ururintan mar hore ayaa la kaydiyay</target>
       </trans-unit>
       <trans-unit id="6173970083872550712" datatype="html">
         <source>Survey is archived and cannot accept new actions</source>
@@ -5866,11 +5866,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1470801138774792470" datatype="html">
         <source>There are no submissions to view</source>
-        <target state="translated">Ma jiraan gudbinno la arko</target>
+        <target state="translated">Ma jiraan soo gudbinno la arko</target>
       </trans-unit>
       <trans-unit id="1723945927449058686" datatype="html">
         <source>This survey was created on the parent planet and cannot be managed here</source>
-        <target state="translated">Ra'yi-ururintan waxaa lagu sameeyay meeraha waalidka lamana maamuli karo halkan</target>
+        <target state="translated">Ra'yi-ururintan waxaa lagu abuuray meeraha waalidka mana lagu maamuli karo halkan</target>
       </trans-unit>
       <trans-unit id="7541790190401441000" datatype="html">
         <source>This is a community survey</source>
@@ -5878,27 +5878,27 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="383841114763363168" datatype="html">
         <source>Survey has no questions</source>
-        <target state="translated">Ra'yi-ururintu su'aalo ma laha</target>
+        <target state="translated">Ra'yi-ururintu ma laha su'aalo</target>
       </trans-unit>
       <trans-unit id="7733906815413075449" datatype="html">
         <source>Record survey information from a person who is not a member of <x id="PH" equiv-text="this.configuration.name"/></source>
-        <target state="translated">Diwaangeli macluumaadka ra'yi-ururinta qof aan xubin ka ahayn <x id="PH" equiv-text="this.configuration.name"/></target>
+        <target state="translated">Diiwaangeli macluumaadka ra'yi-ururinta qof aan xubin ka ahayn <x id="PH" equiv-text="this.configuration.name"/></target>
       </trans-unit>
       <trans-unit id="2068924253876022636" datatype="html">
         <source>Record Survey</source>
-        <target state="translated">Diiwaan geli Ra'yi-ururin</target>
+        <target state="translated">Diiwaangeli Ra'yi-ururin</target>
       </trans-unit>
       <trans-unit id="2191705100755243115" datatype="html">
         <source>Copy the public survey link</source>
-        <target state="translated">Koobi link-ga dadweynaha ee ra'yi-ururinta</target>
+        <target state="translated">Nuqul ka samee xiriirka guud ee ra'yi-ururinta</target>
       </trans-unit>
       <trans-unit id="4513200930765275190" datatype="html">
         <source>Generate a public survey link</source>
-        <target state="translated">Abuur link dadweyne oo ra'yi-ururin ah</target>
+        <target state="translated">Abuur xiriir guud oo ra'yi-ururin ah</target>
       </trans-unit>
       <trans-unit id="5156960600279596789" datatype="html">
         <source>Revoke public access for this survey</source>
-        <target state="translated">Ka noqo gelitaanka dadweynaha ee ra'yi-ururintan</target>
+        <target state="translated">Ka noqo gelitaanka guud ee ra'yi-ururintan</target>
       </trans-unit>
       <trans-unit id="4313313407335502580" datatype="html">
         <source>Add a task</source>
@@ -5942,11 +5942,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1603197821585633928" datatype="html">
         <source>Reassign Task</source>
-        <target state="translated">Dib u qoondee Hawl</target>
+        <target state="translated">Dib u qoondee Hawsha</target>
       </trans-unit>
       <trans-unit id="4336027280028501448" datatype="html">
         <source>Assign Task</source>
-        <target state="translated">Qoondee Hawl</target>
+        <target state="translated">Qoondee Hawsha</target>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html">
         <source>Task</source>
@@ -5962,7 +5962,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6218954567289085889" datatype="html">
         <source>JPG, PNG or WEBP attached images</source>
-        <target state="translated">Sawirro ku lifaaqan JPG, PNG ama WEBP</target>
+        <target state="translated">Sawirro JPG, PNG ama WEBP oo ku lifaaqan</target>
       </trans-unit>
       <trans-unit id="6341772921473084017" datatype="html" approved="yes">
         <source>(You)</source>
@@ -5998,7 +5998,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3676366858777724087" datatype="html">
         <source>Net Profit / Loss</source>
-        <target state="translated">Saafiga Khasaaro / Faa'iido</target>
+        <target state="translated">Faa'iido / Khasaaro saafi ah</target>
       </trans-unit>
       <trans-unit id="7366432090842206186" datatype="html">
         <source>Beginning Balance</source>
@@ -6038,7 +6038,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2455690028458298000" datatype="html">
         <source>Attached Images</source>
-        <target state="translated">Sawirrada Ku Lifaaqan</target>
+        <target state="translated">Sawirrada ku lifaaqan</target>
       </trans-unit>
       <trans-unit id="7979933378756493449" datatype="html">
         <source>Report created on:</source>
@@ -6078,7 +6078,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3373415866078287494" datatype="html">
         <source>Net (Profit / Loss)</source>
-        <target state="translated">Saafiga (Faa'iido / Khasaaro)</target>
+        <target state="translated">Safi (Faa'iido / Khasaaro)</target>
       </trans-unit>
       <trans-unit id="272934122656341350" datatype="html">
         <source>Credit</source>
@@ -6098,7 +6098,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="edit-report-dialog-title" datatype="html">
         <source>Edit Report</source>
-        <target state="translated">Wax ka beddel Warbixin</target>
+        <target state="translated">Wax ka beddel warbixinta</target>
       </trans-unit>
       <trans-unit id="add-report-dialog-title" datatype="html">
         <source>Add Report</source>
@@ -6118,15 +6118,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1909009883731319373" datatype="html">
         <source>Report <x id="PH" equiv-text="action"/></source>
-        <target state="translated">Warbixin <x id="PH" equiv-text="action"/></target>
+        <target state="translated">Warbixi <x id="PH" equiv-text="action"/></target>
       </trans-unit>
       <trans-unit id="6402039166454044236" datatype="html">
         <source>Report saved, but some attached images could not be uploaded.</source>
-        <target state="translated">Warbixinta waa la kaydiyay, balse qaar ka mid ah sawirrada ku lifaaqan lama soo rari karin.</target>
+        <target state="translated">Warbixinta waa la kaydiyay, laakiin qaar ka mid ah sawirrada ku lifaaqan lama soo gelin.</target>
       </trans-unit>
       <trans-unit id="5666281898008893391" datatype="html">
         <source>There was a problem saving the report.</source>
-        <target state="translated">Waxaa jiray dhibaato ku timid kaydinta warbixinta.</target>
+        <target state="translated">Waxa jiray dhibaato kaydinta warbixinta.</target>
       </trans-unit>
       <trans-unit id="3338069611336463991" datatype="html">
         <source>Report from</source>
@@ -6146,7 +6146,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8047377907322802891" datatype="html">
         <source>Updated Date</source>
-        <target state="translated">Taariikhda la cusboonaysiiyay</target>
+        <target state="translated">Taariikhda la cusbooneysiiyay</target>
       </trans-unit>
       <trans-unit id="8279659101806790636" datatype="html">
         <source>Wages</source>
@@ -6154,7 +6154,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1426475745601890846" datatype="html">
         <source>Other Expenses</source>
-        <target state="translated">Kharashaad Kale</target>
+        <target state="translated">Kharashaadka Kale</target>
       </trans-unit>
       <trans-unit id="188408324951035066" datatype="html">
         <source>Unnamed</source>
@@ -6162,15 +6162,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6630681340946694789" datatype="html">
         <source>Financial Summary for <x id="PH" equiv-text="titleName"/></source>
-        <target state="translated">Soo koobidda Maaliyadeed ee <x id="PH" equiv-text="titleName"/></target>
+        <target state="translated">Soo koobidda maaliyadeed ee <x id="PH" equiv-text="titleName"/></target>
       </trans-unit>
       <trans-unit id="7115407436370620649" datatype="html">
         <source>Balance is negative</source>
-        <target state="translated">Hadhaaggu waa taban yahay</target>
+        <target state="translated">Baaqigu waa taban yahay</target>
       </trans-unit>
       <trans-unit id="888341446683346521" datatype="html">
         <source>Start date</source>
-        <target state="translated">Taariikhda bilowga</target>
+        <target state="translated">Taariikhda billowga</target>
       </trans-unit>
       <trans-unit id="126074860850048964" datatype="html">
         <source>End date</source>
@@ -6194,7 +6194,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="967622916338237066" datatype="html">
         <source>No transactions match this date range</source>
-        <target state="translated">Wax macaamil ah kuma habboona xadka taariikhdan</target>
+        <target state="translated">Ma jiraan macaamilo la jaanqaadaya kala-duwanaanshahan taariikhda</target>
       </trans-unit>
       <trans-unit id="6326803299903087278" datatype="html">
         <source>There are no transactions</source>
@@ -6202,19 +6202,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="566848994654109141" datatype="html">
         <source>Loading transactions...</source>
-        <target state="translated">Macaamilrada waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa macaamilada...</target>
       </trans-unit>
       <trans-unit id="8341708522142238743" datatype="html">
         <source>Total Credits</source>
-        <target state="translated">Wadarta Deymaha Soo Gala</target>
+        <target state="translated">Wadarta Deymaha Soo gala</target>
       </trans-unit>
       <trans-unit id="4153855878077782246" datatype="html">
         <source>Total Debits</source>
-        <target state="translated">Wadarta Deymaha Ka Baxa</target>
+        <target state="translated">Wadarta Deymaha Baxa</target>
       </trans-unit>
       <trans-unit id="6735560439394532506" datatype="html">
         <source>Balance (Net change)</source>
-        <target state="translated">Hadhaaga (Isbeddelka saafiga ah)</target>
+        <target state="translated">Baaqi (Isbeddelka saafiga ah)</target>
       </trans-unit>
       <trans-unit id="7790829556583926754" datatype="html">
         <source>Edit Transaction</source>
@@ -6234,11 +6234,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4979562951362174794" datatype="html">
         <source>Transaction saved, but some attached images could not be uploaded.</source>
-        <target state="translated">Macaamilka waa la kaydiyay, balse qaar ka mid ah sawirrada ku lifaaqan lama soo rari karin.</target>
+        <target state="translated">Macaamilka waa la kaydiyay, laakiin qaar ka mid ah sawirrada ku lifaaqan lama soo gelin.</target>
       </trans-unit>
       <trans-unit id="2827095881733901664" datatype="html">
         <source>There was a problem saving the transaction.</source>
-        <target state="translated">Waxaa jiray dhibaato ku timid kaydinta macaamilka.</target>
+        <target state="translated">Waxa jiray dhibaato kaydinta macaamilka.</target>
       </trans-unit>
       <trans-unit id="5926961113186162892" datatype="html">
         <source>You have deleted a transaction.</source>
@@ -6258,19 +6258,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1660800252915157371" datatype="html">
         <source>credit</source>
-        <target state="translated">dheeraad</target>
+        <target state="translated">credit</target>
       </trans-unit>
       <trans-unit id="1408084053192649257" datatype="html">
         <source>debit</source>
-        <target state="translated">deyn</target>
+        <target state="translated">debit</target>
       </trans-unit>
       <trans-unit id="5452881409775077105" datatype="html">
         <source>balance</source>
-        <target state="translated">hadhaag</target>
+        <target state="translated">baaqi</target>
       </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
-        <target state="translated">Macaamillada Maaliyadeed ee <x id="PH" equiv-text="titleName"/></target>
+        <target state="translated">Macaamilada maaliyadeed ee <x id="PH" equiv-text="titleName"/></target>
       </trans-unit>
       <trans-unit id="8759370273386874620" datatype="html">
         <source>{VAR_SELECT, select, team {Teams} enterprise {Enterprises}}</source>
@@ -6318,7 +6318,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3062666839097397576" datatype="html">
         <source>Loading messages...</source>
-        <target state="translated">Fariimaha waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa farriimaha...</target>
       </trans-unit>
       <trans-unit id="7833439309018904726" datatype="html">
         <source>New message</source>
@@ -6326,7 +6326,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3501182175883923340" datatype="html">
         <source>No messages available.</source>
-        <target state="translated">Fariimo la heli karo ma jiraan.</target>
+        <target state="translated">Ma jiraan farriimo la heli karo.</target>
       </trans-unit>
       <trans-unit id="6378579533861082253" datatype="html">
         <source>{VAR_SELECT, select, team {Plan} enterprise {Mission &amp; Services} services {Services}}</source>
@@ -6334,7 +6334,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1898335971618881059" datatype="html">
         <source>What is your enterprise&apos;s Mission?</source>
-        <target state="translated">Waa maxay himilada shirkaddaada&apos;?</target>
+        <target state="translated">Waa maxay Himilada shirkaddaada?</target>
       </trans-unit>
       <trans-unit id="6427786681980602269" datatype="html">
         <source>What are the Services your enterprise provides?</source>
@@ -6346,7 +6346,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1705582254206023287" datatype="html">
         <source>The <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} services {services directory} }" xid="74790541249522894"/> has no <x id="ICU_1" equiv-text="{ mode, select, team {plan} enterprise {mission &amp; services} services {services} }" xid="3993491162549899290"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {kooxda} enterprise {shirkadda} services {hagaha adeegyada} }" xid="74790541249522894"/> ma laha <x id="ICU_1" equiv-text="{ mode, select, team {qorshe} enterprise {himilo &amp; adeegyo} services {adeegyada} }" xid="3993491162549899290"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {kooxda} enterprise {shirkadda} services {hagaha adeegyada} }" xid="74790541249522894"/> ma laha <x id="ICU_1" equiv-text="{ mode, select, team {qorshe} enterprise {himilo &amp; adeegyo} services {adeegyo} }" xid="3993491162549899290"/>.</target>
       </trans-unit>
       <trans-unit id="74790541249522894" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise} services {services directory}}</source>
@@ -6378,7 +6378,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="452114524190218508" datatype="html">
         <source><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</source>
-        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
+        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {Codsiyada Ku-biirista} enterprise {Codsadayaal} services {Codsiyada Ku-biirista} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="7378878529334768232" datatype="html">
         <source>Reject</source>
@@ -6386,11 +6386,11 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3538234991784167603" datatype="html">
         <source>Loading members...</source>
-        <target state="translated">Xubnaha waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa xubnaha...</target>
       </trans-unit>
       <trans-unit id="1782340738699397677" datatype="html">
         <source>No member has joined this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">Xubin ma ku biirin <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>-kan.</target>
+        <target state="translated">Ma jiro xubin ku biiray <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> kan.</target>
       </trans-unit>
       <trans-unit id="2504433810618665069" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise}}</source>
@@ -6402,7 +6402,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1319001951842306108" datatype="html">
         <source>There are currently no tasks assigned to this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">Hadda ma jiraan hawlo loo xilsaaray <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>-kan.</target>
+        <target state="translated">Hadda ma jiraan hawlo loo xil saaray <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> kan.</target>
       </trans-unit>
       <trans-unit id="9094381763389549203" datatype="html">
         <source>{VAR_SELECT, select, team {Resources} enterprise {Documents} services {Documents}}</source>
@@ -6410,7 +6410,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="2781466644398944405" datatype="html">
         <source>There are no <x id="ICU" equiv-text="{ mode, select, team {resources} enterprise {documents} }" xid="8877383080614301208"/> associated with this <x id="ICU_1" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">Ma jiraan <x id="ICU" equiv-text="{ mode, select, team {resources} enterprise {documents} }" xid="8877383080614301208"/> la xiriira <x id="ICU_1" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>-kan.</target>
+        <target state="translated">Ma jiraan <x id="ICU" equiv-text="{ mode, select, team {resources} enterprise {documents} }" xid="8877383080614301208"/> la xiriira <x id="ICU_1" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> kan.</target>
       </trans-unit>
       <trans-unit id="8877383080614301208" datatype="html">
         <source>{VAR_SELECT, select, team {resources} enterprise {documents}}</source>
@@ -6422,7 +6422,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3686284950598311784" datatype="html">
         <source>Private</source>
-        <target state="translated">Gaar</target>
+        <target state="translated">Gaar ah</target>
       </trans-unit>
       <trans-unit id="8928816882866356838" datatype="html">
         <source>Public</source>
@@ -6462,7 +6462,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4778119955912493620" datatype="html">
         <source>You have <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
-        <target state="translated">Waxaad haysaa <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
+        <target state="translated">Waxaad haysataa <x id="PH" equiv-text="config.successMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
@@ -6490,7 +6490,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8170454831650777941" datatype="html">
         <source>Removed: <x id="PH" equiv-text="memberName"/></source>
-        <target state="translated">La saaray: <x id="PH" equiv-text="memberName"/></target>
+        <target state="translated">Laga saaray: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
       <trans-unit id="5669610080181345209" datatype="html">
         <source>Accepted: <x id="PH" equiv-text="memberName"/></source>
@@ -6510,7 +6510,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="9185744325804862384" datatype="html">
         <source>Member<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> added successfully</source>
-        <target state="translated">Xubin<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> si guul leh ayaa lagu daray</target>
+        <target state="translated">Xubin<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> si guul leh ayaa loo daray</target>
       </trans-unit>
       <trans-unit id="7719425815062505233" datatype="html">
         <source>Add message</source>
@@ -6530,7 +6530,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3190371367567784499" datatype="html">
         <source>Joined Enterprise</source>
-        <target state="translated">Ku Biiray Shirkad</target>
+        <target state="translated">Ku biiray Shirkadda</target>
       </trans-unit>
       <trans-unit id="4323130826771572620" datatype="html">
         <source>Joined Team</source>
@@ -6574,15 +6574,15 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8284090973555872585" datatype="html">
         <source>No <x id="ICU" equiv-text="{ mode, select, team {Teams} enterprise {Enterprises} }" xid="8759370273386874620"/> Found</source>
-        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {Teams} enterprise {Enterprises} }" xid="8759370273386874620"/> lama helin</target>
+        <target state="translated">Ma jiraan <x id="ICU" equiv-text="{ mode, select, team {Teams} enterprise {Enterprises} }" xid="8759370273386874620"/> la helay</target>
       </trans-unit>
       <trans-unit id="enterprise-updated-success" datatype="html">
         <source>Enterprise updated successfully</source>
-        <target state="translated">Shirkadda si guul leh ayaa loo cusboonaysiiyay</target>
+        <target state="translated">Shirkadda si guul leh ayaa loo cusbooneysiiyay</target>
       </trans-unit>
       <trans-unit id="team-updated-success" datatype="html">
         <source>Team updated successfully</source>
-        <target state="translated">Kooxda si guul leh ayaa loo cusboonaysiiyay</target>
+        <target state="translated">Kooxda si guul leh ayaa loo cusbooneysiiyay</target>
       </trans-unit>
       <trans-unit id="enterprise-created-success" datatype="html">
         <source>Enterprise created successfully</source>
@@ -6610,7 +6610,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="enterprise-delete-error" datatype="html">
         <source>There was a problem deleting this enterprise.</source>
-        <target state="translated">Waxaa jiray dhibaato ku timid tirtiridda shirkaddan.</target>
+        <target state="translated">Waxa jiray dhibaato tirtirka shirkaddan.</target>
       </trans-unit>
       <trans-unit id="team-delete-error" datatype="html">
         <source>There was a problem deleting this team.</source>
@@ -6626,7 +6626,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8286646344321467283" datatype="html">
         <source>What is your team&apos;s plan?</source>
-        <target state="translated">Waa maxay qorshaha kooxdaada&apos;?</target>
+        <target state="translated">Waa maxay qorshaha kooxdaada?</target>
       </trans-unit>
       <trans-unit id="create-team" datatype="html">
         <source>Create Team</source>
@@ -6634,7 +6634,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="update-team" datatype="html">
         <source>Update Team</source>
-        <target state="translated">Cusboonaysii Kooxda</target>
+        <target state="translated">Cusbooneysii Kooxda</target>
       </trans-unit>
       <trans-unit id="create-enterprise" datatype="html">
         <source>Create Enterprise</source>
@@ -6642,7 +6642,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="update-enterprise" datatype="html">
         <source>Update Enterprise</source>
-        <target state="translated">Cusboonaysii Shirkadda</target>
+        <target state="translated">Cusbooneysii Shirkadda</target>
       </trans-unit>
       <trans-unit id="3888232331381898998" datatype="html">
         <source>Team Type</source>
@@ -6650,7 +6650,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7784696015165530316" datatype="html">
         <source>Connect with nation</source>
-        <target state="translated">La xiriir qaranka</target>
+        <target state="translated">La xiriir quruun</target>
       </trans-unit>
       <trans-unit id="6755123663246719541" datatype="html">
         <source>Connect with earth</source>
@@ -6662,7 +6662,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8087439227464292608" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has posted a message on <x id="PH_1" equiv-text="teamMessage"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; ayaa fariin ku soo qoray <x id="PH_1" equiv-text="teamMessage"/></target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; ayaa fariin ku soo dhigay <x id="PH_1" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="8274468202054901134" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has requested to join <x id="PH_1" equiv-text="teamMessage"/></source>
@@ -6806,7 +6806,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7093385792872454724" datatype="html">
         <source>Upload your CV/Resume below (PDF only)</source>
-        <target state="translated">Soo geli CV-ga/Resume-kaaga hoose (PDF kaliya)</target>
+        <target state="translated">Hoosta geli CV-gaaga/Resume-gaaga (PDF kaliya)</target>
       </trans-unit>
       <trans-unit id="3199420902145943966" datatype="html">
         <source>PDF only — up to 512 MB</source>
@@ -6814,7 +6814,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="3242300418298999052" datatype="html">
         <source>Current CV/Resume:</source>
-        <target state="translated">CV-ga/Resume-ga Hadda:</target>
+        <target state="translated">CV/Resume-ga hadda jira:</target>
       </trans-unit>
       <trans-unit id="2450234904339875761" datatype="html">
         <source> Allow your achievements to be shared with the nation </source>
@@ -6858,19 +6858,19 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="8066527122146867613" datatype="html">
         <source>Please upload your CV/Resume as a PDF file</source>
-        <target state="translated">Fadlan CV-ga/Resume-kaaga u soo geli sidii fayl PDF ah</target>
+        <target state="translated">Fadlan CV-gaaga/Resume-gaaga u soo geli sidii fayl PDF ah</target>
       </trans-unit>
       <trans-unit id="188498249696731690" datatype="html">
         <source>Achievement #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Guusha #<x id="PH" equiv-text="itemNumber"/> waxay leedahay meelaha aan saxda ahayn</target>
+        <target state="translated">Guul #<x id="PH" equiv-text="itemNumber"/> waxay leedahay meelaha aan saxda ahayn</target>
       </trans-unit>
       <trans-unit id="5720311531539704100" datatype="html">
         <source>Reference #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Tixraaca #<x id="PH" equiv-text="itemNumber"/> wuxuu leeyahay meelaha aan saxda ahayn</target>
+        <target state="translated">Tixraac #<x id="PH" equiv-text="itemNumber"/> waxay leedahay meelaha aan saxda ahayn</target>
       </trans-unit>
       <trans-unit id="7905884076880343581" datatype="html">
         <source>Link #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">Xiriirka #<x id="PH" equiv-text="itemNumber"/> wuxuu leeyahay meelaha aan saxda ahayn</target>
+        <target state="translated">Isku xir #<x id="PH" equiv-text="itemNumber"/> waxay leedahay meelaha aan saxda ahayn</target>
       </trans-unit>
       <trans-unit id="6761704605632724264" datatype="html">
         <source>Achievements successfully updated</source>
@@ -6894,7 +6894,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6320312280972192100" datatype="html">
         <source>Loading achievements...</source>
-        <target state="translated">Guulaha waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa guulaha...</target>
       </trans-unit>
       <trans-unit id="7453345342702812971" datatype="html">
         <source>Birthdate: <x id="INTERPOLATION" equiv-text="{{&apos; &apos; + (user.birthDate | date: medium) + &apos; &apos;}}"/></source>
@@ -6958,7 +6958,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5650818321690252427" datatype="html">
         <source><x id="PH" equiv-text="this.user.firstName"/>&apos;s achievements</source>
-        <target state="translated">guulaha <x id="PH" equiv-text="this.user.firstName"/>&apos;s</target>
+        <target state="translated"><x id="PH" equiv-text="this.user.firstName"/>&apos;s achievements</target>
       </trans-unit>
       <trans-unit id="4414798384138362687" datatype="html">
         <source>Birthdate: <x id="PH" equiv-text="formattedBirthDate"/></source>
@@ -6970,7 +6970,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="1569462115651641805" datatype="html">
         <source><x id="PH" equiv-text="this.user.name"/> achievements</source>
-        <target state="translated">Guulaha <x id="PH" equiv-text="this.user.name"/></target>
+        <target state="translated">guulaha <x id="PH" equiv-text="this.user.name"/></target>
       </trans-unit>
       <trans-unit id="9082581968602742137" datatype="html">
         <source>Request for User Data Deletion</source>
@@ -6998,7 +6998,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="9123388487940260831" datatype="html">
         <source> View full profile </source>
-        <target state="translated"> Eeg profile-ka oo dhan </target>
+        <target state="translated"> Eeg bogga dhammaystiran </target>
       </trans-unit>
       <trans-unit id="2423360150799774909" datatype="html">
         <source>View Achievements</source>
@@ -7038,7 +7038,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="6609183020437347874" datatype="html">
         <source>Loading users...</source>
-        <target state="translated">Isticmaalayaasha waa la soo rarayaa...</target>
+        <target state="translated">Waxaa la soo rarayaa isticmaalayaasha...</target>
       </trans-unit>
       <trans-unit id="4357457444132463679" datatype="html" approved="yes">
         <source>Profile Image</source>
@@ -7078,7 +7078,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="4759723562137600498" datatype="html">
         <source>Activate</source>
-        <target state="translated">Dhaqangelin</target>
+        <target state="translated">Dhaqan-geli</target>
       </trans-unit>
       <trans-unit id="5322473252816589112" datatype="html">
         <source>Deactivate</source>
@@ -7086,7 +7086,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="5601648881531055873" datatype="html">
         <source> Promote </source>
-        <target state="translated"> Sarre u qaad </target>
+        <target state="translated"> Kor u qaad </target>
       </trans-unit>
       <trans-unit id="3652050946797964239" datatype="html">
         <source> Demote </source>
@@ -7110,7 +7110,7 @@ Qoraallo Kale</target>
       </trans-unit>
       <trans-unit id="7006977447062890057" datatype="html">
         <source>There was an error removing the member&apos;s role</source>
-        <target state="translated">Waxaa dhacay qalad marka la saarayo doorka xubinta&apos;</target>
+        <target state="translated">Waxaa jiray qalad ka saarista doorka xubinta</target>
       </trans-unit>
       <trans-unit id="6068329395413518097" datatype="html">
         <source>
@@ -7118,11 +7118,11 @@ Qoraallo Kale</target>
           <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/>
           <x id="PH_2" equiv-text="type"/>
         </source>
-        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/> <x id="PH_2" equiv-text="type"/></target>
+        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;hoos loo dhigay&apos; : &apos;kor loo dallacsiiyay&apos;"/> <x id="PH_2" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="2831387298196857431" datatype="html">
         <source>There was an error <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> user</source>
-        <target state="translated">Waxaa dhacay qalad marka la <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> isticmaalaha</target>
+        <target state="translated">Waxaa jiray qalad <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> isticmaalaha</target>
       </trans-unit>
       <trans-unit id="4235445316920403625" datatype="html">
         <source><x id="PH" equiv-text="user.name"/> roles modified</source>
