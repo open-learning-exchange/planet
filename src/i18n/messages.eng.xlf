@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="6902066591850406795" datatype="html">
         <source>chat is disabled, contact community admin</source>
-        <target state="translated">chat is disabled, contact community admin</target>
+        <target state="translated">Chat is disabled, contact community admin</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>
@@ -305,11 +305,11 @@
       </trans-unit>
       <trans-unit id="7138510619760635996" datatype="html">
         <source> Deleted link: <x id="PH" equiv-text="link.title"/></source>
-        <target state="translated"> Deleted link: <x id="PH" equiv-text="link.title"/></target>
+        <target state="translated">Deleted link: <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
       <trans-unit id="7863633113133426383" datatype="html">
         <source>There was an error deleting <x id="PH" equiv-text="link.title"/></source>
-        <target state="needs-translation">There was an error deleting <x id="PH" equiv-text="link.title"/></target>
+        <target state="translated">There was an error deleting <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
       <trans-unit id="9206475530285796950" datatype="html">
         <source>Description deleted successfully.</source>
@@ -521,7 +521,7 @@
       </trans-unit>
       <trans-unit id="3963267478836060678" datatype="html">
         <source>Admin created: <x id="PH" equiv-text="credentials.name"/></source>
-        <target state="needs-translation">Admin created: <x id="PH" equiv-text="credentials.name"/></target>
+        <target state="translated">Admin created: <x id="PH" equiv-text="credentials.name"/></target>
       </trans-unit>
       <trans-unit id="72370510149563199" datatype="html">
         <source>There was an error creating planet</source>
@@ -573,7 +573,7 @@
       </trans-unit>
       <trans-unit id="5879298616290228468" datatype="html">
         <source> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </source>
-        <target state="translated"> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </target>
+        <target state="translated">Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/></target>
       </trans-unit>
       <trans-unit id="9075667564121384338" datatype="html">
         <source>Course Title</source>
@@ -929,11 +929,11 @@
       </trans-unit>
       <trans-unit id="8168099347392025054" datatype="html">
         <source>No Course Found</source>
-        <target state="needs-translation">No Course Found</target>
+        <target state="translated">No Course Found</target>
       </trans-unit>
       <trans-unit id="2270713094750834385" datatype="html">
         <source>Course deleted: <x id="PH" equiv-text="course.courseTitle"/></source>
-        <target state="needs-translation">Course deleted: <x id="PH" equiv-text="course.courseTitle"/></target>
+        <target state="translated">Course deleted: <x id="PH" equiv-text="course.courseTitle"/></target>
       </trans-unit>
       <trans-unit id="8134237662360929413" datatype="html">
         <source>There was a problem deleting this course.</source>
@@ -941,7 +941,7 @@
       </trans-unit>
       <trans-unit id="5117936556401260696" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> courses</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> courses</target>
+        <target state="translated">You have deleted <x id="PH" equiv-text="deleteArray.length"/> courses</target>
       </trans-unit>
       <trans-unit id="6756280808854130478" datatype="html">
         <source>There was a problem deleting courses.</source>
@@ -949,23 +949,23 @@
       </trans-unit>
       <trans-unit id="2456240037331490217" datatype="html">
         <source><x id="PH" equiv-text="message"/> myCourses</source>
-        <target state="needs-translation"><x id="PH" equiv-text="message"/> myCourses</target>
+        <target state="translated"><x id="PH" equiv-text="message"/> myCourses</target>
       </trans-unit>
       <trans-unit id="6655912043737335584" datatype="html">
         <source><x id="PH" equiv-text="courses[0].courseTitle"/> have been added to</source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses[0].courseTitle"/> have been added to</target>
+        <target state="translated"><x id="PH" equiv-text="courses[0].courseTitle"/> have been added to</target>
       </trans-unit>
       <trans-unit id="6360691424158375215" datatype="html">
         <source><x id="PH" equiv-text="courses.length"/> courses have been added to</source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
+        <target state="translated"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html">
         <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
+        <target state="translated"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html">
         <source>Courses queued to push to <x id="PH" equiv-text="childType"/>.</source>
-        <target state="needs-translation">Courses queued to push to <x id="PH" equiv-text="childType"/>.</target>
+        <target state="translated">Courses queued to push to <x id="PH" equiv-text="childType"/>.</target>
       </trans-unit>
       <trans-unit id="2490262653741019261" datatype="html">
         <source>There was an error sending these courses</source>
@@ -985,7 +985,7 @@
       </trans-unit>
       <trans-unit id="4478983912693286511" datatype="html">
         <source><x id="PH" equiv-text="countChanged"/> courses</source>
-        <target state="needs-translation"><x id="PH" equiv-text="countChanged"/> courses</target>
+        <target state="translated"><x id="PH" equiv-text="countChanged"/> courses</target>
       </trans-unit>
       <trans-unit id="7396057985911029288" datatype="html">
         <source>Added to myCourses: <x id="PH" equiv-text="prefix"/> </source>
@@ -1107,7 +1107,7 @@
       </trans-unit>
       <trans-unit id="1579286990121198731" datatype="html">
         <source>Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></source>
-        <target state="needs-translation">Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
+        <target state="translated">Past attempts: <x id="INTERPOLATION" equiv-text="{{attempts}}"/></target>
       </trans-unit>
       <trans-unit id="65984904390749158" datatype="html">
         <source>Finish</source>
@@ -1275,7 +1275,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4131402625607964045" datatype="html">
         <source> Add item to <x id="INTERPOLATION" equiv-text="{{cardTitle}}"/> </source>
-        <target state="translated"> Add item to <x id="INTERPOLATION" equiv-text="{{cardTitle}}"/> </target>
+        <target state="translated">Add item to <x id="INTERPOLATION" equiv-text="{{cardTitle}}"/> </target>
       </trans-unit>
       <trans-unit id="3894950702316166331" datatype="html">
         <source>Loading...</source>
@@ -1507,7 +1507,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4467323362722952678" datatype="html">
         <source>Unknown</source>
-        <target state="needs-translation">Unknown</target>
+        <target state="translated">Unknown</target>
       </trans-unit>
       <trans-unit id="3195754844725863881" datatype="html">
         <source>Submitted answer:</source>
@@ -2637,7 +2637,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5750631765708661943" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3100487570384970949" datatype="html">
         <source>Certification Name</source>
@@ -2649,7 +2649,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="3183051418497978498" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </target>
       </trans-unit>
       <trans-unit id="8838092804345159680" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
@@ -2661,7 +2661,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4357211375133493569" datatype="html">
         <source>You have deleted the <x id="PH" equiv-text="displayName"/> certification</source>
-        <target state="needs-translation">You have deleted the <x id="PH" equiv-text="displayName"/> certification</target>
+        <target state="translated">You have deleted the <x id="PH" equiv-text="displayName"/> certification</target>
       </trans-unit>
       <trans-unit id="1653431927831678093" datatype="html">
         <source>There was a problem deleting this certification</source>
@@ -2981,7 +2981,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="2121344910820993995" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</target>
       </trans-unit>
       <trans-unit id="1519954996184640001" datatype="html">
         <source>Error</source>
@@ -3321,7 +3321,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4410529131290936199" datatype="html">
         <source> Select dates and click Compare to view comparison data </source>
-        <target state="translated"> Select dates and click Compare to view comparison data </target>
+        <target state="translated">Select dates and click Compare to view comparison data</target>
       </trans-unit>
       <trans-unit id="5426418005604037142" datatype="html">
         <source> No data found </source>
@@ -3505,7 +3505,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5712931470313882827" datatype="html">
         <source>There was a problem getting <x id="PH" equiv-text="this.childType"/></source>
-        <target state="needs-translation">There was a problem getting <x id="PH" equiv-text="this.childType"/></target>
+        <target state="translated">There was a problem getting <x id="PH" equiv-text="this.childType"/></target>
       </trans-unit>
       <trans-unit id="6718184529889415054" datatype="html">
         <source>Last Upgrade</source>
@@ -3753,7 +3753,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="8518836356271371093" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </target>
       </trans-unit>
       <trans-unit id="1415060111017347427" datatype="html">
         <source>Network</source>
@@ -3765,7 +3765,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5258595085525200029" datatype="html">
         <source>Add <x id="PH" equiv-text="type"/></source>
-        <target state="needs-translation">Add <x id="PH" equiv-text="type"/></target>
+        <target state="translated">Add <x id="PH" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="3047897875233101157" datatype="html">
         <source>Select Planet</source>
@@ -3777,7 +3777,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="935680876697928477" datatype="html">
         <source>There was an error adding <x id="PH" equiv-text="type"/></source>
-        <target state="needs-translation">There was an error adding <x id="PH" equiv-text="type"/></target>
+        <target state="translated">There was an error adding <x id="PH" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -3837,7 +3837,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="2359879184399350005" datatype="html">
         <source> Added event: <x id="PH" equiv-text="meetupInfo.title"/></source>
-        <target state="translated"> Added event: <x id="PH" equiv-text="meetupInfo.title"/></target>
+        <target state="translated">Added event: <x id="PH" equiv-text="meetupInfo.title"/></target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
@@ -3905,7 +3905,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4088408578325917001" datatype="html">
         <source>You have <x id="PH" equiv-text="msg"/> meetup.</source>
-        <target state="needs-translation">You have <x id="PH" equiv-text="msg"/> meetup.</target>
+        <target state="translated">You have <x id="PH" equiv-text="msg"/> meetup.</target>
       </trans-unit>
       <trans-unit id="3919928928256100890" datatype="html">
         <source>You cannot join an old meetup.</source>
@@ -3913,11 +3913,11 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4491293533591377812" datatype="html">
         <source>You have left <x id="PH" equiv-text="countChanged"/> meetups</source>
-        <target state="needs-translation">You have left <x id="PH" equiv-text="countChanged"/> meetups</target>
+        <target state="translated">You have left <x id="PH" equiv-text="countChanged"/> meetups</target>
       </trans-unit>
       <trans-unit id="1110805787603506098" datatype="html">
         <source>You have joined <x id="PH" equiv-text="countChanged"/> meetups</source>
-        <target state="needs-translation">You have joined <x id="PH" equiv-text="countChanged"/> meetups</target>
+        <target state="translated">You have joined <x id="PH" equiv-text="countChanged"/> meetups</target>
       </trans-unit>
       <trans-unit id="9080951878804964068" datatype="html">
         <source>Event deleted: <x id="PH" equiv-text="displayName"/></source>
@@ -3969,7 +3969,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="7348625224526979018" datatype="html">
         <source>Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</source>
-        <target state="needs-translation">Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
+        <target state="translated">Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="8751974929581180036" datatype="html">
         <source>No members have joined this meetup</source>
@@ -3977,7 +3977,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5192755484233399625" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{mem}}"/> (You)</source>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{mem}}"/> (You)</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{mem}}"/> (You)</target>
       </trans-unit>
       <trans-unit id="3788701007469870540" datatype="html">
         <source>You cannot join old meetup</source>
@@ -4043,11 +4043,11 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4152624241324738548" datatype="html">
         <source>Reply to <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Reply to <x id="PH" equiv-text="label"/></target>
+        <target state="translated">Reply to <x id="PH" equiv-text="label"/></target>
       </trans-unit>
       <trans-unit id="400434969342192894" datatype="html">
         <source>Your <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Your <x id="PH" equiv-text="label"/></target>
+        <target state="translated">Your <x id="PH" equiv-text="label"/></target>
       </trans-unit>
       <trans-unit id="5989356492462696876" datatype="html" approved="yes">
         <source>&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; replied to your <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>message.</source>
@@ -4055,7 +4055,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="8417917245707164827" datatype="html">
         <source>Edit <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Edit <x id="PH" equiv-text="label"/></target>
+        <target state="translated">Edit <x id="PH" equiv-text="label"/></target>
       </trans-unit>
       <trans-unit id="8066608938393600549" datatype="html">
         <source>Message</source>
@@ -4499,7 +4499,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="8025380752189745299" datatype="html">
         <source>No Resource Found</source>
-        <target state="needs-translation">No Resource Found</target>
+        <target state="translated">No Resource Found</target>
       </trans-unit>
       <trans-unit id="5022177806913011709" datatype="html">
         <source>source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></source>
@@ -4508,7 +4508,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="3929692497484294202" datatype="html">
         <source>You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></source>
-        <target state="needs-translation">You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></target>
+        <target state="translated">You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></target>
       </trans-unit>
       <trans-unit id="5126792698020223275" datatype="html">
         <source>There was a problem deleting this resource.</source>
@@ -4516,11 +4516,11 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="885358008449173667" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> resources</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> resources</target>
+        <target state="translated">You have deleted <x id="PH" equiv-text="deleteArray.length"/> resources</target>
       </trans-unit>
       <trans-unit id="330998501279832459" datatype="html">
         <source>Resources queued to push to <x id="PH" equiv-text="childType"/>.</source>
-        <target state="needs-translation">Resources queued to push to <x id="PH" equiv-text="childType"/>.</target>
+        <target state="translated">Resources queued to push to <x id="PH" equiv-text="childType"/>.</target>
       </trans-unit>
       <trans-unit id="8935371899913532939" datatype="html">
         <source>There was an error sending these resources</source>
@@ -4944,7 +4944,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="3919964185310091527" datatype="html">
         <source>Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></source>
-        <target state="needs-translation">Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></target>
+        <target state="translated">Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></target>
       </trans-unit>
       <trans-unit id="7559166185410431321" datatype="html">
         <source>Chat has been successfully shared to community</source>
@@ -5008,7 +5008,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5754961825546614864" datatype="html">
         <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </source>
-        <target state="translated"> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
+        <target state="translated">Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
       </trans-unit>
       <trans-unit id="3080384219063791942" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}</source>
@@ -5056,15 +5056,15 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="1866297320757883531" datatype="html">
         <source>Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </source>
-        <target state="needs-translation">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
+        <target state="translated">Name: <x id="INTERPOLATION" equiv-text="{{data.allData.name}}"/> </target>
       </trans-unit>
       <trans-unit id="213236943707088772" datatype="html">
         <source>Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></source>
-        <target state="needs-translation">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
+        <target state="translated">Code: <x id="INTERPOLATION" equiv-text="{{data.allData.code}}"/></target>
       </trans-unit>
       <trans-unit id="3782790914520531772" datatype="html">
         <source>Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></source>
-        <target state="needs-translation">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
+        <target state="translated">Local URL: <x id="INTERPOLATION" equiv-text="{{data.allData.localDomain}}"/></target>
       </trans-unit>
       <trans-unit id="4197401714183177479" datatype="html" approved="yes">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
@@ -5072,7 +5072,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="923710608687288198" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
-        <target state="needs-translation">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
+        <target state="translated">Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </target>
       </trans-unit>
       <trans-unit id="7884574167236060718" datatype="html" approved="yes">
         <source>Created Date: <x id="INTERPOLATION" equiv-text="{{data.allData.createdDate | date: &apos;fullDate&apos;}}"/></source>
@@ -5080,31 +5080,31 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="1023894478419315290" datatype="html">
         <source>Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></source>
-        <target state="needs-translation">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
+        <target state="translated">Language: <x id="INTERPOLATION" equiv-text="{{data.allData.preferredLang}}"/></target>
       </trans-unit>
       <trans-unit id="2896314940323402865" datatype="html">
         <source>Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></source>
-        <target state="needs-translation">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
+        <target state="translated">Status: <x id="INTERPOLATION" equiv-text="{{data.allData.registrationRequest}}"/></target>
       </trans-unit>
       <trans-unit id="5100796254471958859" datatype="html">
         <source>Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></source>
-        <target state="needs-translation">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
+        <target state="translated">Email: <x id="INTERPOLATION" equiv-text="{{data.allData.email}}"/></target>
       </trans-unit>
       <trans-unit id="7561246571745196684" datatype="html">
         <source>Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></source>
-        <target state="needs-translation">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
+        <target state="translated">Phone Number: <x id="INTERPOLATION" equiv-text="{{data.allData.phoneNumber}}"/></target>
       </trans-unit>
       <trans-unit id="9015896454134824142" datatype="html">
         <source>Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></source>
-        <target state="needs-translation">Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
+        <target state="translated">Version: <x id="INTERPOLATION" equiv-text="{{data.allData.version}}"/></target>
       </trans-unit>
       <trans-unit id="4372370406772590537" datatype="html">
         <source>Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></source>
-        <target state="needs-translation">Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
+        <target state="translated">Time: <x id="INTERPOLATION" equiv-text="{{data.allData.time}}"/></target>
       </trans-unit>
       <trans-unit id="5641945527911431559" datatype="html">
         <source>Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></source>
-        <target state="needs-translation">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
+        <target state="translated">Error: <x id="INTERPOLATION" equiv-text="{{data.allData.error}}"/></target>
       </trans-unit>
       <trans-unit id="7345308961124559567" datatype="html">
         <source>Drop to upload</source>
@@ -5252,7 +5252,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="2902308078339369859" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</target>
       </trans-unit>
       <trans-unit id="5968366500418000730" datatype="html">
         <source>Collections</source>
@@ -5408,7 +5408,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="2109025028954046454" datatype="html">
         <source>Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> </source>
-        <target state="needs-translation">Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> </target>
+        <target state="translated">Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> </target>
       </trans-unit>
       <trans-unit id="2891137940671038181" datatype="html">
         <source>{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses}}}}</source>
@@ -5698,15 +5698,15 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="8507512534782649196" datatype="html">
         <source> Edit</source>
-        <target state="translated"> Edit</target>
+        <target state="translated">Edit</target>
       </trans-unit>
       <trans-unit id="6935415214408993112" datatype="html">
         <source> Send</source>
-        <target state="translated"> Send</target>
+        <target state="translated">Send</target>
       </trans-unit>
       <trans-unit id="6508973208034618990" datatype="html">
         <source> Record</source>
-        <target state="translated"> Record</target>
+        <target state="translated">Record</target>
       </trans-unit>
       <trans-unit id="7351124788441583762" datatype="html">
         <source>Copy Public Link</source>
@@ -5726,19 +5726,19 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="1375828267046153429" datatype="html">
         <source> Archive</source>
-        <target state="translated"> Archive</target>
+        <target state="translated">Archive</target>
       </trans-unit>
       <trans-unit id="7667753160625320954" datatype="html">
         <source> Submissions</source>
-        <target state="translated"> Submissions</target>
+        <target state="translated">Submissions</target>
       </trans-unit>
       <trans-unit id="1623146199710279977" datatype="html">
         <source> Adopt</source>
-        <target state="translated"> Adopt</target>
+        <target state="translated">Adopt</target>
       </trans-unit>
       <trans-unit id="5154570571982496358" datatype="html">
         <source> Export</source>
-        <target state="translated"> Export</target>
+        <target state="translated">Export</target>
       </trans-unit>
       <trans-unit id="3949259352905483800" datatype="html">
         <source>Excel (CSV)</source>
@@ -5750,11 +5750,11 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5609685069662041812" datatype="html">
         <source>No Survey Found</source>
-        <target state="needs-translation">No Survey Found</target>
+        <target state="translated">No Survey Found</target>
       </trans-unit>
       <trans-unit id="4059126126596316619" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</target>
+        <target state="translated">You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</target>
       </trans-unit>
       <trans-unit id="302849038487684889" datatype="html">
         <source>There was a problem deleting survey.</source>
@@ -5762,7 +5762,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="6391136956444171776" datatype="html">
         <source>Survey deleted: <x id="PH" equiv-text="survey.name"/></source>
-        <target state="needs-translation">Survey deleted: <x id="PH" equiv-text="survey.name"/></target>
+        <target state="translated">Survey deleted: <x id="PH" equiv-text="survey.name"/></target>
       </trans-unit>
       <trans-unit id="4314140811591483032" datatype="html">
         <source>There was a problem deleting this survey.</source>
@@ -6058,7 +6058,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="6825329815737519497" datatype="html">
         <source>Export as CSV</source>
-        <target state="needs-translation">Export as CSV</target>
+        <target state="translated">Export as CSV</target>
       </trans-unit>
       <trans-unit id="6864016537810263548" datatype="html">
         <source>Add Report</source>
@@ -6466,7 +6466,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
-        <target state="needs-translation">There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
+        <target state="translated">There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
       </trans-unit>
       <trans-unit id="2288371087239753666" datatype="html">
         <source>Role has been updated.</source>
@@ -6502,7 +6502,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="1415339856352294696" datatype="html">
         <source><x id="PH" equiv-text="this.configuration.name"/> Services Directory</source>
-        <target state="needs-translation"><x id="PH" equiv-text="this.configuration.name"/> Services Directory</target>
+        <target state="translated"><x id="PH" equiv-text="this.configuration.name"/> Services Directory</target>
       </trans-unit>
       <trans-unit id="5486212155925071037" datatype="html">
         <source> updated successfully</source>
@@ -6534,7 +6534,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4323130826771572620" datatype="html">
         <source>Joined Team</source>
-        <target state="needs-translation">Joined Team</target>
+        <target state="translated">Joined Team</target>
       </trans-unit>
       <trans-unit id="2834985596106127763" datatype="html">
         <source>Most recent visit</source>
@@ -6670,19 +6670,19 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5859925700973676403" datatype="html">
         <source>You have been added to <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have been added to <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">You have been added to <x id="PH" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="8332877715727171894" datatype="html">
         <source>You have not been accepted to <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have not been accepted to <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">You have not been accepted to <x id="PH" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="2593714830120779298" datatype="html">
         <source>You have been removed from <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have been removed from <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">You have been removed from <x id="PH" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="1597965293531498649" datatype="html">
         <source><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></source>
-        <target state="needs-translation"><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></target>
+        <target state="translated"><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="4836615552094365703" datatype="html">
         <source>Success!</source>
@@ -6882,7 +6882,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="3993478180337071644" datatype="html">
         <source> View CV/Resume </source>
-        <target state="translated"> View CV/Resume </target>
+        <target state="translated">View CV/Resume</target>
       </trans-unit>
       <trans-unit id="7144638218089077672" datatype="html">
         <source>Print Achievements</source>
@@ -6998,7 +6998,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="9123388487940260831" datatype="html">
         <source> View full profile </source>
-        <target state="translated"> View full profile </target>
+        <target state="translated">View full profile</target>
       </trans-unit>
       <trans-unit id="2423360150799774909" datatype="html">
         <source>View Achievements</source>
@@ -7086,19 +7086,19 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="5601648881531055873" datatype="html">
         <source> Promote </source>
-        <target state="translated"> Promote </target>
+        <target state="translated">Promote</target>
       </trans-unit>
       <trans-unit id="3652050946797964239" datatype="html">
         <source> Demote </source>
-        <target state="translated"> Demote </target>
+        <target state="translated">Demote</target>
       </trans-unit>
       <trans-unit id="6853640386523738286" datatype="html">
         <source>No User Found</source>
-        <target state="needs-translation">No User Found</target>
+        <target state="translated">No User Found</target>
       </trans-unit>
       <trans-unit id="5681014148684280536" datatype="html">
         <source>User deleted: <x id="PH" equiv-text="user.name"/></source>
-        <target state="needs-translation">User deleted: <x id="PH" equiv-text="user.name"/></target>
+        <target state="translated">User deleted: <x id="PH" equiv-text="user.name"/></target>
       </trans-unit>
       <trans-unit id="2763810170336668605" datatype="html">
         <source>There was a problem deleting this user.</source>
@@ -7126,7 +7126,7 @@ Other Notes</target>
       </trans-unit>
       <trans-unit id="4235445316920403625" datatype="html">
         <source><x id="PH" equiv-text="user.name"/> roles modified</source>
-        <target state="needs-translation"><x id="PH" equiv-text="user.name"/> roles modified</target>
+        <target state="translated"><x id="PH" equiv-text="user.name"/> roles modified</target>
       </trans-unit>
       <trans-unit id="7709844655689235488" datatype="html">
         <source>Survey Profile</source>
