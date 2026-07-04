@@ -115,7 +115,7 @@ If you are using generated environment values from `.env`, run:
 ```
 npm run dev:locale --locale=spa
 ```
-Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, or `ara`.
+Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, `ara`, `por`, `hin`, or `swa`.
 *You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
 
 To update the source translation catalog, run:
