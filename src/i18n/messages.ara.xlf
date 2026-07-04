@@ -48,7 +48,7 @@
       </trans-unit>
       <trans-unit id="1133994986091402323" datatype="html">
         <source>Edit title</source>
-        <target state="translated">تعديل العنوان</target>
+        <target state="translated">تحرير العنوان</target>
       </trans-unit>
       <trans-unit id="6799543547567974894" datatype="html">
         <source>Share conversation</source>
@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="6902066591850406795" datatype="html">
         <source>chat is disabled, contact community admin</source>
-        <target state="translated">المحادثة معطلة، يرجى التواصل مع مسؤول المجتمع</target>
+        <target state="translated">المحادثة معطلة، تواصل مع مسؤول المجتمع</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>
@@ -174,7 +174,7 @@
       </trans-unit>
       <trans-unit id="4077520913910941990" datatype="html">
         <source>Label</source>
-        <target state="translated">الملصق</target>
+        <target state="translated">التسمية</target>
       </trans-unit>
       <trans-unit id="1616102757855967475" datatype="html">
         <source>All</source>
@@ -216,7 +216,7 @@
         <source><x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/><x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Description
               </source>
         <target state="translated">
-                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> وصف <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/>
+                <x id="ICU" equiv-text="{ servicesDescriptionLabel, select, Edit {Edit} Add {Add}}" xid="8320928950959687197"/> <x id="ICU_1" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> الوصف
               </target>
       </trans-unit>
       <trans-unit id="8320928950959687197" datatype="html">
@@ -229,7 +229,7 @@
       </trans-unit>
       <trans-unit id="1525452279575236950" datatype="html">
         <source><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Links</source>
-        <target state="translated"><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> الروابط</target>
+        <target state="translated">روابط <x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/></target>
       </trans-unit>
       <trans-unit id="7904942383480102366" datatype="html">
         <source>Loading links...</source>
@@ -245,7 +245,7 @@
       </trans-unit>
       <trans-unit id="8725249970991838557" datatype="html">
         <source>Social &amp; Web</source>
-        <target state="translated">اجتماعي &amp; ويب</target>
+        <target state="translated">Social &amp; Web</target>
       </trans-unit>
       <trans-unit id="710918981527246687" datatype="html">
         <source>Remove Links</source>
@@ -441,7 +441,7 @@
       </trans-unit>
       <trans-unit id="4148174263265171714" datatype="html">
         <source>Beta features may not work as intended. It&apos;s recommended to leave this off</source>
-        <target state="translated">قد لا تعمل ميزات Beta كما هو مقصود. يُوصى بترك هذا الخيار غير مفعّل</target>
+        <target state="translated">قد لا تعمل ميزات الإصدار التجريبي كما هو متوقع. يُنصح بترك هذا الخيار معطلاً</target>
       </trans-unit>
       <trans-unit id="6406903720166584964" datatype="html">
         <source>Always off</source>
@@ -529,7 +529,7 @@
       </trans-unit>
       <trans-unit id="8210376864172058428" datatype="html">
         <source>New <x id="PH" equiv-text="configuration.planetType"/> &lt;b&gt;&quot;<x id="PH_1" equiv-text="configuration.name"/>&quot;&lt;/b&gt; has requested to connect.</source>
-        <target state="translated">طلب <x id="PH" equiv-text="configuration.planetType"/> جديد &lt;b&gt;"<x id="PH_1" equiv-text="configuration.name"/>"&lt;/b&gt; طلب الاتصال.</target>
+        <target state="translated">New <x id="PH" equiv-text="configuration.planetType"/> &lt;b&gt;&quot;<x id="PH_1" equiv-text="configuration.name"/>&quot;&lt;/b&gt; has requested to connect.</target>
       </trans-unit>
       <trans-unit id="5526766708844733569" datatype="html">
         <source>Planet Details</source>
@@ -549,7 +549,7 @@
       </trans-unit>
       <trans-unit id="3229191482716707421" datatype="html">
         <source>Configuration is valid. Click &quot;Next&quot; to clone Planet.</source>
-        <target state="translated">الإعدادات صحيحة. انقر على &quot;التالي&quot; لاستنساخ الكوكب.</target>
+        <target state="translated">الإعداد صالح. انقر على &quot;التالي&quot; لاستنساخ الكوكب.</target>
       </trans-unit>
       <trans-unit id="9153883349718321986" datatype="html">
         <source>Configuration is not valid. Please check again.</source>
@@ -557,7 +557,7 @@
       </trans-unit>
       <trans-unit id="6204442918076972782" datatype="html">
         <source>Planet is being synced with domain &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. Please hold on.</source>
-        <target state="translated">يتم الآن مزامنة الكوكب مع النطاق &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. يرجى الانتظار.</target>
+        <target state="translated">جارٍ مزامنة الكوكب مع النطاق &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. يرجى الانتظار.</target>
       </trans-unit>
       <trans-unit id="8919885040084099320" datatype="html">
         <source>Cloning &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; complete.</source>
@@ -569,7 +569,7 @@
       </trans-unit>
       <trans-unit id="4317796680020352235" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Course</source>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> الدورة التدريبية</target>
+        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> دورة</target>
       </trans-unit>
       <trans-unit id="5879298616290228468" datatype="html">
         <source> Course Details: <x id="INTERPOLATION" equiv-text="{{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}"/> </source>
@@ -597,7 +597,7 @@
       </trans-unit>
       <trans-unit id="7865912722609907516" datatype="html">
         <source>Recommended: a square image. Covers are cropped to fit.</source>
-        <target state="translated">موصى به: صورة مربعة. يتم قص الأغلفة لتناسب المساحة.</target>
+        <target state="translated">مُوصى به: صورة مربعة. سيتم قص أغطية العناصر لتلائم.</target>
       </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html">
         <source>Add Step</source>
@@ -609,7 +609,7 @@
       </trans-unit>
       <trans-unit id="3635530771235487587" datatype="html">
         <source>New Course</source>
-        <target state="translated">دورة تدريبية جديدة</target>
+        <target state="translated">دورة جديدة</target>
       </trans-unit>
       <trans-unit id="8290521921380829055" datatype="html">
         <source>Edited course: </source>
@@ -621,7 +621,7 @@
       </trans-unit>
       <trans-unit id="282365396741761342" datatype="html">
         <source>There was an error saving this course</source>
-        <target state="translated">حدث خطأ أثناء حفظ هذه الدورة التدريبية</target>
+        <target state="translated">حدث خطأ أثناء حفظ هذه الدورة</target>
       </trans-unit>
       <trans-unit id="draftDiscardedMessage" datatype="html">
         <source>Draft discarded</source>
@@ -657,7 +657,7 @@
       </trans-unit>
       <trans-unit id="4236474513175220666" datatype="html">
         <source>Quiz learners</source>
-        <target state="translated">اختبر المتعلمين</target>
+        <target state="translated">متعلمو الاختبار</target>
       </trans-unit>
       <trans-unit id="2650269401046048840" datatype="html">
         <source>questions</source>
@@ -833,7 +833,7 @@
       </trans-unit>
       <trans-unit id="3241108154401100878" datatype="html">
         <source>Push To <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></source>
-        <target state="translated">الدفع إلى <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></target>
+        <target state="translated">إرسال إلى <x id="ICU" equiv-text="{planetType, select, center {Nation} other {Community}}" xid="2003356112120499705"/></target>
       </trans-unit>
       <trans-unit id="2003356112120499705" datatype="html">
         <source>{VAR_SELECT, select, center {Nation} other {Community}}</source>
@@ -861,7 +861,7 @@
       </trans-unit>
       <trans-unit id="5864407738515461280" datatype="html">
         <source>Course tags</source>
-        <target state="translated">وسوم الدورة التدريبية</target>
+        <target state="translated">وسوم الدورة</target>
       </trans-unit>
       <trans-unit id="8307140841776883735" datatype="html">
         <source>Join</source>
@@ -981,7 +981,7 @@
       </trans-unit>
       <trans-unit id="8899796362370380514" datatype="html">
         <source>Course added to your dashboard: <x id="PH" equiv-text="title"/></source>
-        <target state="translated">تمت إضافة الدورة التدريبية إلى لوحة معلوماتك: <x id="PH" equiv-text="title"/></target>
+        <target state="translated">تمت إضافة الدورة إلى لوحة التحكم الخاصة بك: <x id="PH" equiv-text="title"/></target>
       </trans-unit>
       <trans-unit id="4478983912693286511" datatype="html">
         <source><x id="PH" equiv-text="countChanged"/> courses</source>
@@ -1017,7 +1017,7 @@
       </trans-unit>
       <trans-unit id="4852372553785950294" datatype="html">
         <source>Course Enrollment Data - <x id="PH" equiv-text="this.course"/></source>
-        <target state="translated">بيانات التحاق الدورة التدريبية - <x id="PH" equiv-text="this.course"/></target>
+        <target state="translated">بيانات تسجيل الدورة - <x id="PH" equiv-text="this.course"/></target>
       </trans-unit>
       <trans-unit id="9200283083431196600" datatype="html">
         <source>Step <x id="stepNumber" equiv-text="index + 1"/></source>
@@ -1095,7 +1095,7 @@
         <source>
           <x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/>
         </source>
-        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {اللغة}       gradeLevel {الصف الدراسي}       subjectLevel {المستوى الدراسي}     }" xid="245746442991291793"/> </target>
+        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {اللغة التدريسية}       gradeLevel {المستوى الدراسي}       subjectLevel {مستوى المادة}     }" xid="245746442991291793"/> </target>
       </trans-unit>
       <trans-unit id="245746442991291793" datatype="html">
         <source>{VAR_SELECT, select, languageOfInstruction {Language} gradeLevel {Grade Level} subjectLevel {Subject Level}}</source>
@@ -1117,7 +1117,7 @@
         <source>
           <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;Hide Course Chat&apos; : &apos;Show Course Chat&apos; }}"/>
         </source>
-        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;Hide Course Chat&apos; : &apos;Show Course Chat&apos; }}"/> </target>
+        <target state="translated"> <x id="INTERPOLATION" equiv-text="{{ showChat ? &apos;إخفاء دردشة الدورة&apos; : &apos;إظهار دردشة الدورة&apos; }}"/> </target>
       </trans-unit>
       <trans-unit id="4682155840173031755" datatype="html">
         <source> Review Attempts </source>
@@ -1127,7 +1127,7 @@
         <source>
           <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/>
         </source>
-        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/> </target>
+        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {إجراء الاختبار} continue {متابعة الاختبار} retake {إعادة الاختبار}}" xid="4928667157742574611"/> </target>
       </trans-unit>
       <trans-unit id="4928667157742574611" datatype="html">
         <source>{VAR_SELECT, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</source>
@@ -1167,7 +1167,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4915685810479963961" datatype="html">
         <source>Course cover</source>
-        <target state="translated">غلاف الدورة التدريبية</target>
+        <target state="translated">غلاف الدورة</target>
       </trans-unit>
       <trans-unit id="5563416537359084416" datatype="html">
         <source>Language of Instruction:</source>
@@ -1223,7 +1223,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="8871274990030594152" datatype="html">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {مورد} other {موارد}}" xid="3389112199654656544"/>.</target>
       </trans-unit>
       <trans-unit id="4297508107919101415" datatype="html">
         <source>The test has</source>
@@ -1267,7 +1267,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4422952805076571472" datatype="html">
         <source><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> to complete</source>
-        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> لإكماله</target>
+        <target state="translated"><x id="ICU" equiv-text="{ surveysCount, plural, =1 {survey} other {surveys} }" xid="8604700910246876832"/> للإكمال</target>
       </trans-unit>
       <trans-unit id="8384225360105280028" datatype="html">
         <source>Complete</source>
@@ -1347,7 +1347,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="5609694725534490897" datatype="html">
         <source>New Course:</source>
-        <target state="translated">دورة تدريبية جديدة:</target>
+        <target state="translated">دورة جديدة:</target>
       </trans-unit>
       <trans-unit id="7637348942513344354" datatype="html">
         <source>{VAR_SELECT, select, Add {Add} Update {Update} Copy {Copy}}</source>
@@ -1383,7 +1383,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="2887699436140395309" datatype="html">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></source>
-        <target state="translated">يجب أن تضيف سؤالاً لمعاينة <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></target>
+        <target state="translated">يجب إضافة سؤال لمعاينة <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></target>
       </trans-unit>
       <trans-unit id="8822352339394504890" datatype="html">
         <source>{VAR_SELECT, select, exam {test} survey {survey}}</source>
@@ -1475,7 +1475,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1440998718214890842" datatype="html">
         <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> </source>
-        <target state="translated"> يجب أن تحدد <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> الصحيح </target>
+        <target state="translated"> يجب عليك اختيار <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> الصحيح </target>
       </trans-unit>
       <trans-unit id="1960532828514609940" datatype="html">
         <source>{VAR_SELECT, select, select {choice} selectMultiple {choices}}</source>
@@ -1595,11 +1595,11 @@ No description provided.
       </trans-unit>
       <trans-unit id="8881117240537538459" datatype="html">
         <source>Enter year (e.g., 1995)</source>
-        <target state="translated">أدخل السنة (مثال: 1995)</target>
+        <target state="translated">أدخل السنة (مثلاً، 1995)</target>
       </trans-unit>
       <trans-unit id="4546577159665195725" datatype="html">
         <source>Enter a valid past year</source>
-        <target state="translated">أدخل سنة ماضية صحيحة</target>
+        <target state="translated">أدخل سنة سابقة صالحة</target>
       </trans-unit>
       <trans-unit id="4452427314943113135" datatype="html">
         <source>Previous</source>
@@ -1611,7 +1611,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="3228856378705280639" datatype="html">
         <source>Survey is complete. Your response has been submitted.</source>
-        <target state="translated">اكتمل الاستبيان. تم إرسال ردك.</target>
+        <target state="translated">اكتمل الاستبيان. تم إرسال إجابتك.</target>
       </trans-unit>
       <trans-unit id="1195722743517416014" datatype="html">
         <source>Become a member</source>
@@ -1655,43 +1655,43 @@ No description provided.
       </trans-unit>
       <trans-unit id="2277254634663203759" datatype="html">
         <source>Go to Resources</source>
-        <target state="translated">اذهب إلى الموارد</target>
+        <target state="translated">الانتقال إلى الموارد</target>
       </trans-unit>
       <trans-unit id="6488130782806051964" datatype="html">
         <source>Go to Courses</source>
-        <target state="translated">اذهب إلى الدورات التدريبية</target>
+        <target state="translated">الانتقال إلى الدورات</target>
       </trans-unit>
       <trans-unit id="6573104995602382150" datatype="html">
         <source>Go to Meetups</source>
-        <target state="translated">اذهب إلى الاجتماعات</target>
+        <target state="translated">الانتقال إلى الاجتماعات</target>
       </trans-unit>
       <trans-unit id="2169743475390513701" datatype="html">
         <source>Go to Teams</source>
-        <target state="translated">اذهب إلى الفرق</target>
+        <target state="translated">الانتقال إلى الفرق</target>
       </trans-unit>
       <trans-unit id="996532727552951333" datatype="html">
         <source>Go to Enterprises</source>
-        <target state="translated">اذهب إلى المؤسسات</target>
+        <target state="translated">الانتقال إلى المؤسسات</target>
       </trans-unit>
       <trans-unit id="2117590223216089367" datatype="html">
         <source>Go to Users</source>
-        <target state="translated">اذهب إلى المستخدمين</target>
+        <target state="translated">الانتقال إلى المستخدمين</target>
       </trans-unit>
       <trans-unit id="9157193205054419674" datatype="html">
         <source>Go to Upgrade</source>
-        <target state="translated">اذهب إلى الترقية</target>
+        <target state="translated">الانتقال إلى الترقية</target>
       </trans-unit>
       <trans-unit id="178520337056147266" datatype="html">
         <source>Go to Dashboard</source>
-        <target state="translated">اذهب إلى لوحة التحكم</target>
+        <target state="translated">الانتقال إلى لوحة التحكم</target>
       </trans-unit>
       <trans-unit id="266584947949444186" datatype="html">
         <source>Go to Chat</source>
-        <target state="translated">اذهب إلى الدردشة</target>
+        <target state="translated">الانتقال إلى الدردشة</target>
       </trans-unit>
       <trans-unit id="4024052613951908569" datatype="html">
         <source>Go to Manager</source>
-        <target state="translated">اذهب إلى المدير</target>
+        <target state="translated">الانتقال إلى المدير</target>
       </trans-unit>
       <trans-unit id="865399858281657162" datatype="html">
         <source>There was an error adding your message</source>
@@ -1823,7 +1823,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="7041963874559190359" datatype="html">
         <source>Reopened</source>
-        <target state="translated">أُعيد فتحه</target>
+        <target state="translated">أعيد فتحه</target>
       </trans-unit>
       <trans-unit id="7860418101283165917" datatype="html">
         <source>Closed</source>
@@ -1831,7 +1831,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="3238992602126016082" datatype="html">
         <source>Feedback regarding <x id="PH" equiv-text="feedback.url"/></source>
-        <target state="translated">ملاحظات بشأن <x id="PH" equiv-text="feedback.url"/></target>
+        <target state="translated">ملاحظات بخصوص <x id="PH" equiv-text="feedback.url"/></target>
       </trans-unit>
       <trans-unit id="2224358766178911410" datatype="html">
         <source>Feedback regarding home</source>
@@ -1839,7 +1839,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1017305312923727733" datatype="html">
         <source>Feedback regarding <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></source>
-        <target state="translated">ملاحظات بشأن <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></target>
+        <target state="translated">ملاحظات بخصوص <x id="PH" equiv-text="titleContext.state || &apos;&apos;"/>/<x id="PH_1" equiv-text="titleContext.name || &apos;&apos;"/></target>
       </trans-unit>
       <trans-unit id="8286193369293498152" datatype="html">
         <source>Performed by: </source>
@@ -1919,11 +1919,11 @@ No description provided.
       </trans-unit>
       <trans-unit id="1791482463504278446" datatype="html">
         <source>Edit <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
-        <target state="translated">تعديل <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
+        <target state="translated">تحرير <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
       </trans-unit>
       <trans-unit id="1103310779560908752" datatype="html">
         <source>Health examination on <x id="examDate" equiv-text="eventDate"/></source>
-        <target state="translated">الفحص الصحي في <x id="examDate" equiv-text="eventDate"/></target>
+        <target state="translated">فحص صحي في <x id="examDate" equiv-text="eventDate"/></target>
       </trans-unit>
       <trans-unit id="1442376281594176896" datatype="html">
         <source>Performed by</source>
@@ -1931,7 +1931,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4282269331448011107" datatype="html">
         <source>Self</source>
-        <target state="translated">الذات</target>
+        <target state="translated">النفس</target>
       </trans-unit>
       <trans-unit id="1256572208376025417" datatype="html">
         <source>
@@ -1971,7 +1971,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7651012085164720253" datatype="html">
         <source>Lab Tests:</source>
-        <target state="translated">التحاليل المخبرية:</target>
+        <target state="translated">الفحوصات المختبرية:</target>
       </trans-unit>
       <trans-unit id="601445890754822634" datatype="html">
         <source>Referrals:</source>
@@ -1979,7 +1979,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="100323118072618349" datatype="html">
         <source>health event</source>
-        <target state="translated">فعالية صحية</target>
+        <target state="translated">حدث صحي</target>
       </trans-unit>
       <trans-unit id="6057186423590581450" datatype="html">
         <source>myHealth</source>
@@ -2057,7 +2057,7 @@ Other Notes</source>
         <source>The value(s) of the following are not in the normal range.
          Click &lt;b&gt;Cancel&lt;/b&gt; to fix or click &lt;b&gt;OK&lt;/b&gt; to submit.</source>
         <target state="translated">القيمة/القيم التالية ليست ضمن النطاق الطبيعي.
-         انقر على &lt;b&gt;إلغاء&lt;/b&gt; للإصلاح أو انقر على &lt;b&gt;موافق&lt;/b&gt; للإرسال.</target>
+         انقر &lt;b&gt;إلغاء&lt;/b&gt; للإصلاح أو انقر &lt;b&gt;موافق&lt;/b&gt; للإرسال.</target>
       </trans-unit>
       <trans-unit id="1091770325854289707" datatype="html">
         <source>Health Care</source>
@@ -2117,7 +2117,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8365977440374654567" datatype="html">
         <source>Loading health...</source>
-        <target state="translated">جارٍ تحميل السجل الصحي...</target>
+        <target state="translated">جارٍ تحميل الصحة...</target>
       </trans-unit>
       <trans-unit id="6959497441009812685" datatype="html">
         <source>Full Name</source>
@@ -2149,7 +2149,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2545332312956591338" datatype="html">
         <source>Click for more information</source>
-        <target state="translated">انقر لمزيد من المعلومات</target>
+        <target state="translated">انقر للحصول على مزيد من المعلومات</target>
       </trans-unit>
       <trans-unit id="937214445047403949" datatype="html">
         <source>Self Examination</source>
@@ -2497,7 +2497,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3947932744068086415" datatype="html">
         <source>myPlanet on playstore</source>
-        <target state="translated">myPlanet على Play Store</target>
+        <target state="translated">myPlanet على متجر Play</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -2529,7 +2529,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8517892359070439603" datatype="html">
         <source>Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</source>
-        <target state="translated">مرحبًا &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; في Planet Learning</target>
+        <target state="translated">مرحبًا &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; إلى Planet Learning</target>
       </trans-unit>
       <trans-unit id="1260359891793768927" datatype="html">
         <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
@@ -2557,7 +2557,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7244453056385583471" datatype="html">
         <source>Can not login to <x id="PH" equiv-text="msg"/> planet.</source>
-        <target state="translated">تعذر تسجيل الدخول إلى كوكب <x id="PH" equiv-text="msg"/>.</target>
+        <target state="translated">لا يمكن تسجيل الدخول إلى كوكب <x id="PH" equiv-text="msg"/>.</target>
       </trans-unit>
       <trans-unit id="604420619295131029" datatype="html">
         <source>Error connecting to <x id="PH" equiv-text="msg"/>.</source>
@@ -2565,7 +2565,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3358894379816462923" datatype="html">
         <source>New member &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; has joined.</source>
-        <target state="translated">انضم العضو الجديد &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt;.</target>
+        <target state="translated">انضم عضو جديد &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt;.</target>
       </trans-unit>
       <trans-unit id="1062010184324346369" datatype="html">
         <source>Planet Learning</source>
@@ -2589,7 +2589,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="662833268489097320" datatype="html">
         <source><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> Certification</source>
-        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> الشهادة</target>
+        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> شهادة</target>
       </trans-unit>
       <trans-unit id="1615626722362823974" datatype="html">
         <source>Add Courses</source>
@@ -2621,7 +2621,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="259538598847068823" datatype="html">
         <source>No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> to add courses.</source>
-        <target state="translated">لم تتم إضافة أي دورات تدريبية. انقر على <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>تعديل<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> لإضافة دورات تدريبية.</target>
+        <target state="translated">لم تتم إضافة أي دورات. انقر على <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>تعديل<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> لإضافة دورات.</target>
       </trans-unit>
       <trans-unit id="8279662232794412511" datatype="html">
         <source>Certified Members</source>
@@ -2653,7 +2653,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8838092804345159680" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> حذف </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>حذف </target>
       </trans-unit>
       <trans-unit id="5564437541975356934" datatype="html">
         <source>No Certifications Found</source>
@@ -2737,7 +2737,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8307564561551056768" datatype="html">
         <source>e.g. USD</source>
-        <target state="translated">مثال: USD</target>
+        <target state="translated">مثلاً USD</target>
       </trans-unit>
       <trans-unit id="currency.symbol.label" datatype="html">
         <source>Symbol</source>
@@ -2749,11 +2749,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4866959439516771314" datatype="html">
         <source>e.g. $</source>
-        <target state="translated">مثال: $</target>
+        <target state="translated">مثلاً $</target>
       </trans-unit>
       <trans-unit id="currency.hint" datatype="html">
         <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
-        <target state="translated">أدخل رمز ISO (مثال: USD، EUR) والرمز المستخدم في التقارير المالية.</target>
+        <target state="translated">أدخل رمز ISO (مثلاً USD، EUR) والرمز المستخدم في التقارير المالية.</target>
       </trans-unit>
       <trans-unit id="currency.save" datatype="html">
         <source>Save Currency</source>
@@ -2825,7 +2825,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1571478181217186234" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> with pending courses and/or resources for download.</source>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> مع دورات تدريبية و/أو موارد معلقة للتنزيل.</target>
+        <target state="translated"><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> مع دورات و/أو موارد معلّقة للتنزيل.</target>
       </trans-unit>
       <trans-unit id="932840045131624829" datatype="html">
         <source>Send On Accept</source>
@@ -2837,11 +2837,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6718456226245512630" datatype="html">
         <source>Nation List</source>
-        <target state="translated">قائمة الأمة</target>
+        <target state="translated">قائمة الأمم</target>
       </trans-unit>
       <trans-unit id="7324543679569025567" datatype="html">
         <source>Center List</source>
-        <target state="translated">قائمة المركز</target>
+        <target state="translated">قائمة المراكز</target>
       </trans-unit>
       <trans-unit id="6964763742761690783" datatype="html">
         <source>Planet Version</source>
@@ -2869,7 +2869,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3247005707553968518" datatype="html">
         <source> List all from the <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></source>
-        <target state="translated"> عرض الكل من <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
+        <target state="translated"> سرد الكل من <x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/></target>
       </trans-unit>
       <trans-unit id="4035724296307887167" datatype="html">
         <source>List Resources</source>
@@ -2941,11 +2941,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7197483184481985118" datatype="html">
         <source>PIN reset successfully</source>
-        <target state="translated">تمت إعادة تعيين الرقم السري بنجاح</target>
+        <target state="translated">تمت إعادة تعيين رقم التعريف الشخصي بنجاح</target>
       </trans-unit>
       <trans-unit id="6115022275193479708" datatype="html">
         <source>There was an error resetting the PIN</source>
-        <target state="translated">حدث خطأ أثناء إعادة تعيين الرقم السري</target>
+        <target state="translated">حدث خطأ أثناء إعادة تعيين رقم التعريف الشخصي</target>
       </trans-unit>
       <trans-unit id="8003951915532467" datatype="html">
         <source>Courses/Resources Sent</source>
@@ -3037,7 +3037,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4402395569979982001" datatype="html">
         <source>myPlanet Logs for <x id="PH" equiv-text="planet.name"/></source>
-        <target state="translated">سجلات myPlanet الخاصة بـ <x id="PH" equiv-text="planet.name"/></target>
+        <target state="translated">سجلات myPlanet لـ <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="339223107539510693" datatype="html">
         <source>Last Synced</source>
@@ -3089,7 +3089,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6980242770932623268" datatype="html">
         <source>myPlanet Reports for <x id="PH" equiv-text="planet.name"/></source>
-        <target state="translated">تقارير myPlanet الخاصة بـ <x id="PH" equiv-text="planet.name"/></target>
+        <target state="translated">تقارير myPlanet لـ <x id="PH" equiv-text="planet.name"/></target>
       </trans-unit>
       <trans-unit id="9216117865911519658" datatype="html">
         <source>Action</source>
@@ -3293,11 +3293,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7924868316552213402" datatype="html">
         <source>Week 1 End Date</source>
-        <target state="translated">تاريخ نهاية الأسبوع الأول</target>
+        <target state="translated">تاريخ نهاية الأسبوع 1</target>
       </trans-unit>
       <trans-unit id="6200939044344907169" datatype="html">
         <source>Week 2 End Date</source>
-        <target state="translated">تاريخ نهاية الأسبوع الثاني</target>
+        <target state="translated">تاريخ نهاية الأسبوع 2</target>
       </trans-unit>
       <trans-unit id="2572999724448976084" datatype="html">
         <source>Compare</source>
@@ -3313,15 +3313,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9079143231473125231" datatype="html">
         <source>Metric</source>
-        <target state="translated">المؤشر</target>
+        <target state="translated">المقياس</target>
       </trans-unit>
       <trans-unit id="7418494340767735121" datatype="html">
         <source>Net Change</source>
-        <target state="translated">صافي التغيير</target>
+        <target state="translated">صافي التغير</target>
       </trans-unit>
       <trans-unit id="4410529131290936199" datatype="html">
         <source> Select dates and click Compare to view comparison data </source>
-        <target state="translated"> اختر التواريخ وانقر على مقارنة لعرض بيانات المقارنة </target>
+        <target state="translated"> حدّد التواريخ وانقر على مقارنة لعرض بيانات المقارنة </target>
       </trans-unit>
       <trans-unit id="5426418005604037142" datatype="html">
         <source> No data found </source>
@@ -3377,11 +3377,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1924937354164431567" datatype="html">
         <source>Enrollments</source>
-        <target state="translated">الاشتراكات</target>
+        <target state="translated">التسجيلات</target>
       </trans-unit>
       <trans-unit id="6781815540337494856" datatype="html">
         <source>Completions</source>
-        <target state="translated">عمليات الإكمال</target>
+        <target state="translated">الإكمالات</target>
       </trans-unit>
       <trans-unit id="4449188000554843914" datatype="html">
         <source>Courses Overview</source>
@@ -3397,7 +3397,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2063234114557938514" datatype="html">
         <source>Has Attachments</source>
-        <target state="translated">له مرفقات</target>
+        <target state="translated">يحتوي على مرفقات</target>
       </trans-unit>
       <trans-unit id="7990167846685918034" datatype="html">
         <source>Chat Usage</source>
@@ -3441,11 +3441,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4256634874656434098" datatype="html">
         <source>Voices Created</source>
-        <target state="translated">القصص المنشورة</target>
+        <target state="translated">تم إنشاء الأصوات</target>
       </trans-unit>
       <trans-unit id="4055156853294476179" datatype="html">
         <source>Chart not available. Please wait for the chart to load.</source>
-        <target state="translated">المخطط غير متاح. يُرجى الانتظار حتى يتم تحميله.</target>
+        <target state="translated">المخطط غير متاح. يرجى الانتظار حتى يتم تحميله.</target>
       </trans-unit>
       <trans-unit id="2367755547196736431" datatype="html">
         <source>Chart copied to clipboard</source>
@@ -3497,7 +3497,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7875066634319060855" datatype="html">
         <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></source>
-        <target state="translated">الموارد/الدورات التدريبية المعلقة على <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></target>
+        <target state="translated">الموارد/الدورات المعلقة على <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></target>
       </trans-unit>
       <trans-unit id="7890622465406389067" datatype="html">
         <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
@@ -3709,7 +3709,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8706935135272290900" datatype="html">
         <source>{ hub, select, sandbox {Add to { planetType, select, nation {Network} center {Region} }} other {Move { planetType, select, nation {Networks} center {Regions} }} }</source>
-        <target state="translated">{ hub, select, sandbox {أضف إلى { planetType, select, nation {شبكة} center {منطقة} }} other {انقل { planetType, select, nation {شبكات} center {مناطق} }} }</target>
+        <target state="translated">{ hub, select, sandbox {إضافة إلى { planetType, select, nation {Network} center {Region} }} other {نقل إلى { planetType, select, nation {Networks} center {Regions} }} }</target>
       </trans-unit>
       <trans-unit id="6794494509121806332" datatype="html">
         <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
@@ -3789,7 +3789,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1572317542588758568" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}" xid="5238731865000700958"/> Meetup</source>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}" xid="5238731865000700958"/> الاجتماع</target>
+        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}" xid="5238731865000700958"/> اجتماع</target>
       </trans-unit>
       <trans-unit id="471816275243265264" datatype="html">
         <source>Location</source>
@@ -3841,7 +3841,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
-        <target state="translated">&lt;b&gt;"<x id="PH" equiv-text="meetupInfo.title"/>"&lt;/b&gt; تم تحديثه.</target>
+        <target state="translated">&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; تم تحديثه.</target>
       </trans-unit>
       <trans-unit id="2292516665564677830" datatype="html">
         <source>Meetups</source>
@@ -3925,7 +3925,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5976955468967876827" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="meetups.length"/> events</source>
-        <target state="translated">لقد حذفت <x id="PH" equiv-text="meetups.length"/> أحداثًا</target>
+        <target state="translated">لقد حذفت <x id="PH" equiv-text="meetups.length"/> من الأحداث</target>
       </trans-unit>
       <trans-unit id="8842484659556861897" datatype="html">
         <source>There was a problem deleting this meetup</source>
@@ -3985,12 +3985,12 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1117122640467458416" datatype="html">
         <source>Invitation<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> sent successfully</source>
-        <target state="translated">تم إرسال الدعوة<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> بنجاح</target>
+        <target state="translated">دعوة<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> تم إرسالها بنجاح</target>
       </trans-unit>
       <trans-unit id="887946048712515044" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; would like you to join &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; يرغب في أن تنضم إلى &lt;b&gt;"<x id="PH_1" equiv-text="meetupDetail.title"/>"&lt;/b&gt; meetup
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; يرغب بأن تنضم إلى &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
       </trans-unit>
       <trans-unit id="546766753072101168" datatype="html">
@@ -3999,7 +3999,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8587453636009362658" datatype="html">
         <source>Remove label</source>
-        <target state="translated">إزالة الملصق</target>
+        <target state="translated">إزالة التسمية</target>
       </trans-unit>
       <trans-unit id="5052912276265675631" datatype="html">
         <source>Member of Planet</source>
@@ -4039,7 +4039,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5295604017139895763" datatype="html">
         <source>Share with <x id="ICU" equiv-text="{       shareTarget, select, community {Community} nation {Nation} center {Earth}     }" xid="2896041137917827185"/></source>
-        <target state="translated">المشاركة مع <x id="ICU" equiv-text="{       shareTarget, select, community {Community} nation {Nation} center {Earth}     }" xid="2896041137917827185"/></target>
+        <target state="translated">مشاركة مع <x id="ICU" equiv-text="{       shareTarget, select, community {Community} nation {Nation} center {Earth}     }" xid="2896041137917827185"/></target>
       </trans-unit>
       <trans-unit id="4152624241324738548" datatype="html">
         <source>Reply to <x id="PH" equiv-text="label"/></source>
@@ -4051,7 +4051,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5989356492462696876" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; replied to your <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>message.</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; ردّ على رسالتك <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>.</target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; رد على رسالتك <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>message.</target>
       </trans-unit>
       <trans-unit id="8417917245707164827" datatype="html">
         <source>Edit <x id="PH" equiv-text="label"/></source>
@@ -4091,7 +4091,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3907433627453313804" datatype="html">
         <source>Label <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></source>
-        <target state="translated">الملصق <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></target>
+        <target state="translated">التسمية <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></target>
       </trans-unit>
       <trans-unit id="8434708712599356475" datatype="html">
         <source>Thank you for submitting your message</source>
@@ -4143,7 +4143,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1151108013016521270" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Resource</source>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> المورد</target>
+        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> مورد</target>
       </trans-unit>
       <trans-unit id="5642836248241530789" datatype="html">
         <source>Title is required</source>
@@ -4163,7 +4163,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2197686984434589542" datatype="html">
         <source>Drag &amp; drop supported</source>
-        <target state="translated">يدعم السحب &amp; الإفلات</target>
+        <target state="translated">السحب &amp; الإفلات مدعومان</target>
       </trans-unit>
       <trans-unit id="6188066055982796998" datatype="html">
         <source>File size cannot exceed more than 512 MB</source>
@@ -4203,7 +4203,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6420383165966969057" datatype="html">
         <source>Subject &amp; level required</source>
-        <target state="translated">المادة &amp; المستوى مطلوبان</target>
+        <target state="translated">الموضوع &amp; المستوى مطلوبان</target>
       </trans-unit>
       <trans-unit id="7071183763232384332" datatype="html">
         <source>Subject(s)</source>
@@ -4227,7 +4227,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2064936693393551817" datatype="html">
         <source>Attribution &amp; License</source>
-        <target state="translated">النسبة &amp; الترخيص</target>
+        <target state="translated">الإسناد &amp; الترخيص</target>
       </trans-unit>
       <trans-unit id="6552941649034744368" datatype="html">
         <source>Publisher/Attribution</source>
@@ -4651,39 +4651,39 @@ Other Notes</source>
   Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
   </source>
         <target state="translated">
-  أنت مساعد لتبادل الأفكار والإرشاد المجتمعي لـ Open Learning Exchange (OLE): https://ole.org/.
-  لديك معرفة خبيرة بمنصتي Planet (تطبيق الويب) وMyPlanet (تطبيق أندرويد يعمل دون اتصال أولاً) متعدّدتي اللغات للتعلّم/إدارة المجتمع
-  اللتين طوّرتهما OLE، بما في ذلك ميزاتهما.
+  أنت مساعد عصف ذهني وإرشاد مجتمعي لمنظمة Open Learning Exchange (OLE): https://ole.org/.
+  لديك معرفة متخصصة بمنصتي Planet (تطبيق الويب) وMyPlanet (تطبيق أندرويد يعمل دون اتصال أولاً) متعددتي اللغات لإدارة التعلم/المجتمع
+  اللتين تطورهما OLE، بما في ذلك ميزاتهما.
 
   أنت تفهم أن:
   • Planet هي منصة التعلم المركزية القائمة على الويب التي يستخدمها قادة المجتمع والمدربون والمتعلمون لإدارة
-    الموارد والأعضاء والدورات التدريبية والاستبيانات والاختبارات والفرق والمؤسسات والشهادات والإنجازات.
-  • MyPlanet هو تطبيق الأندرويد الذي يعمل دون اتصال أولاً، ويتيح للمتعلمين استخدام ميزات Planet على أساس العمل دون اتصال
-    مع المزامنة مع Planet.
-  • معًا، يشكلان منظومة تعليمية موزعة تدعم التعلم القائم على المجتمع.
+  الموارد والأعضاء والدورات والاستبيانات والاختبارات والفرق والمؤسسات والشهادات والإنجازات.
+  • MyPlanet هو تطبيق أندرويد يعمل دون اتصال أولاً يتيح للمتعلمين استخدام ميزات Planet على أساس دون اتصال أولاً
+  مع المزامنة مع Planet.
+  • معًا، يشكلان نظامًا تعليميًا موزعًا يدعم التعلم القائم على المجتمع.
 
   هدفك هو:
-  • الإجابة عن استفسارات المستخدم ومساعدته في تبادل الأفكار وحل المشكلات واستكشاف الأساليب الإبداعية للتعلم.
-  • دعم الأفكار التي تعزز التعلم والإرشاد والقيادة عبر شبكات مجتمع OLE.
-  • تشجيع الابتكار المتوافق مع رسالة OLE الأساسية المتمثلة في تمكين المجتمعات من خلال التعلم،
+  • الإجابة عن استفسارات المستخدم ومساعدته على العصف الذهني وحل المشكلات واستكشاف أساليب إبداعية للتعلم.
+  • تعزيز الأفكار التي تحسّن التعلم والإرشاد والقيادة عبر شبكات مجتمع OLE.
+  • تشجيع الابتكار الذي يظل متوافقًا مع رسالة OLE الأساسية المتمثلة في تمكين المجتمعات من خلال التعلم،
     والملكية المحلية، والتنمية المستدامة.
 
   أكّد دائمًا على مصطلحات مثل:
-  &apos;learning&apos; و&apos;learner&apos; و&apos;coach&apos; و&apos;leader&apos; و&apos;community&apos; و&apos;power&apos; و&apos;team&apos; و&apos;enterprises&apos;، وأبرز التعاون والتمكين.
+  &apos;التعلم&apos; و&apos;المتعلم&apos; و&apos;المدرب&apos; و&apos;القائد&apos; و&apos;المجتمع&apos; و&apos;التمكين&apos; و&apos;الفريق&apos; و&apos;المؤسسات&apos;، وأبرز التعاون والتمكين.
   عند مناقشة الميزات، يمكنك الإشارة إلى:
-  • صفحة المجتمع التي تتضمن القصص (المنشورات الإخبارية) &amp; تقويم المجتمع والمالية والتقارير والروابط
-  • لوحة تحكم المتعلم myDashboard التي تمنحه نظرة عامة على أنشطة التعلم &amp; الاستخدام الخاصة به
-  • الدورات التدريبية مع الخطوات والاختبارات/الأسئلة والملاحظات وتتبع التقدم والشهادات
-  • الموارد/المكتبة مع دعم تحميل الملفات (pdf) والصوت والرسوم/الفيديو والنص
-  • الفرق والمؤسسات التي تعزز التعاون والأنشطة المخطط لها مع
-    القصص والاستبيانات والتقويم والمهام والدورات التدريبية والموارد والمستندات والمالية والتقارير
+  • صفحة المجتمع مع الأصوات (المنشورات الإخبارية) &amp; التقويم المجتمعي والمالية والتقارير والروابط
+  • لوحة تحكم المتعلم myDashboard التي تعطي نظرة عامة على أنشطة التعلم والاستخدام الخاصة به
+  • الدورات مع الخطوات والاختبارات/التحقق والملحوظات وتتبع التقدم والشهادات
+  • الموارد/المكتبة مع دعم رفع الملفات (pdf)، الصوت، الرسوم/الفيديو والنص
+  • الفرق والمؤسسات التي تعزز التعاون والأنشطة المخططة مع
+    الأصوات والاستبيانات والتقويم والمهام والدورات والموارد والمستندات والمالية والتقارير
   • الاستبيانات والإنجازات والشهادات
-  • إدارة المستخدمين مع الأدوار (متعلم، مدرب، قائد، مسؤول)، والملفات الشخصية، والأذونات
-  • لوحات تحكم المسؤول مع المخططات والتقارير للحصول على رؤى حول التعلم والمشاركة المجتمعية
+  • إدارة المستخدمين مع الأدوار (متعلم، مدرب، قائد، مسؤول)، والملفات الشخصية، والصلاحيات
+  • لوحات تحكم المسؤولين مع المخططات والتقارير للحصول على رؤى حول التعلم ومشاركة المجتمع
 
-  حافظ على نبرة مهنية ودافئة في الوقت نفسه، مع تعزيز الحافز وروح المجتمع.
-  تجنب المصطلحات التقنية غير الضرورية ما لم تخدم الوضوح.
-  اطلب التوضيح دائمًا قبل افتراض قصد المستخدم وصغ الردود بما يعزز التمكين والتعلم والعمل الجماعي.
+  حافظ على نبرة احترافية ودافئة، تعزز الحافز وروح المجتمع.
+  تجنب المصطلحات التقنية غير الضرورية ما لم تكن تدعم الوضوح.
+  اطلب التوضيح دائمًا قبل افتراض نية المستخدم وصِغ الردود بما يعزز التمكين والتعلم والعمل الجماعي.
   </target>
       </trans-unit>
       <trans-unit id="1836515023834744069" datatype="html">
@@ -4728,53 +4728,53 @@ Other Notes</source>
 
   Ensure every numeric insight shows both count and percentage. Use clear markdown styles like
   headers(h1-h6), paragraphs, sentences, unordered lists, numbered lists and adequeate spacing where helpful for a clean PDF layout.</source>
-        <target state="translated">المعلومات التالية هي <x id="PH" equiv-text="examType"/> باسم “<x id="PH_1" equiv-text="examName"/>” مع وصف “<x id="PH_2" equiv-text="examDescription"/>”.
+        <target state="translated">تاليًا <x id="PH" equiv-text="examType"/> بعنوان “<x id="PH_1" equiv-text="examName"/>” مع وصف “<x id="PH_2" equiv-text="examDescription"/>”.
   <x id="PH_3" equiv-text="payloadString"/>
 
-  يرجى إنشاء تحليل تفصيلي بالذكاء الاصطناعي للتصدير بصيغة PDF، منظمًا في 4 أقسام:
+  يرجى إنشاء تحليل ذكاء اصطناعي مفصل لتصدير PDF، منظّمًا في 4 أقسام:
 
   1. تحليل كل سؤال على حدة
-    إذا كان السؤال **مغلق النهاية (نوعه - select أو selectMultiple أو rating scale [1-9 choices]):**
-        - أدرج أفضل ثلاثة خيارات إجابة مع الأعداد المطلقة والنِسَب المئوية.
-        - بالإضافة إلى أفضل ثلاثة،
-         أبرز أي خيار إجابة تقل نسبته عن 10% من الردود واشرح لماذا قد يكون أقل اختيارًا
-        - أنشئ فرضية للاختيارات
-    إذا كان السؤال **مفتوح النهاية (نوعه - input أو textarea):**
-        - يتطلب اقتباسات مباشرة مع بيانات ديموغرافية للمستجيب إن وُجدت.
-        - أجرِ تحليلًا للمشاعر والكلمات المفتاحية
-        - أبرز أي اقتراح منفرد لكنه عالي الأثر وخارج عن المألوف.
+    إذا كان السؤال **سؤالًا مغلقًا (النوع - select أو selectMultiple أو مقياس تقييم [1-9 خيارات]):**
+        - أدرج أفضل ثلاثة خيارات للإجابة مع الأعداد المطلقة والنسب المئوية.
+        - بالإضافة إلى الثلاثة الأوائل،
+         أبرز أي خيار إجابة تقل نسبته عن 10% من الردود واقترح سببًا لاحتمال انخفاض اختياره.
+        - أنشئ فرضية للتفضيلات المختارة.
+    إذا كان السؤال **سؤالًا مفتوحًا (النوع - input أو textarea):**
+        - اشترط اقتباسات مباشرة مع الخصائص الديموغرافية للمستجيب إن توفرت.
+        - أجرِ تحليلًا للمشاعر والكلمات المفتاحية.
+        - أبرز أي اقتراحات منفردة لكنها عالية الأثر.
         - أبرز قابلية الاقتراحات للتنفيذ.
-        - أجبِر على التصنيف الموضوعي مع الأعداد المطلقة والتوزيع النسبي المئوي، أي لكل موضوع، قدّم:
-          1. عدد ونسبة المستجيبين الذين ذكرونه.
-          2. اقتباسًا حرفيًا مجهول الهوية يوضح الموضوع.
+        - ألزم التصنيف الموضوعي مع الأعداد المطلقة والنِّسب المئوية، أي لكل موضوع قدّم:
+          1. عدد ونسبة المجيبين الذين ذكرونه.
+          2. اقتباسًا حرفيًا مجهول الهوية يوضّح الموضوع.
 
   2. الارتباطات بين الأسئلة
-    - احسب معدلات التلازم الثنائية لجميع أسئلة الاختيار المتعدد.
-    - حدّد أقوى أربع ارتباطات وفق الاحتمال الشرطي والعدد.
-    - اعرض كلًّا منها بالشكل:
-      “X% من المستجيبين الذين اختاروا ‘A’ في السؤال Qn اختاروا أيضًا ‘B’ في السؤال Qm (Y/Z).”
+    - احسب معدلات التشارك الثنائي لكل أسئلة الاختيار المتعدد.
+    - حدّد أقوى أربع ارتباطات بحسب الاحتمال الشرطي والعدد.
+    - اعرض كلًا منها على النحو التالي:
+      “%X من المجيبين الذين اختاروا ‘A’ في Qn اختاروا أيضًا ‘B’ في Qm (Y/Z).”
 
   3. التوزيع الديموغرافي
-    - عرّف الشرائح بناءً على العوامل الديموغرافية مثل:
-      - **الفئات العمرية:** قارن كل خيار مغلق النهاية عبر العمر والجنس والموقع،
-        مع الإشارة إلى الحالات التي يكون فيها خيار ما أعلى أو أقل من المتوسط العام بما لا يقل عن 15 نقطة مئوية.
-      - **الجنس** (إن وُجد)
-    - لكل شريحة، أدرج أفضل خيارين لكل سؤال مغلق النهاية (الأعداد + النِسَب المئوية).
-    - أبلغ فقط عن الفروق عن العينة الكلية التي تتجاوز 20 نقطة مئوية.
+    - عرّف الفئات بناءً على العوامل الديموغرافية مثل:
+      - **الفئات العمرية:** قارن كل خيار مغلق عبر شرائح العمر والجنس والموقع،
+        مع الإشارة إلى الحالات التي يكون فيها الخيار أعلى أو أدنى من المتوسط العام بما لا يقل عن 15 نقطة مئوية.
+      - **الجنس** (إن توفر)
+    - لكل فئة، اذكر أفضل خيارين لكل سؤال مغلق (الأعداد + النسب المئوية).
+    - اعرض فقط الفروق عن العينة الإجمالية التي تتجاوز 20 نقطة مئوية.
 
   4. التوصيات والرؤى
-    - قدّم توصيات قابلة للتنفيذ بناءً على التحليل:
-      قدّم توصيات ملموسة حول كيفية معالجة مبادرة مجتمعية للتحدي الأكبر — بالاعتماد على البيانات
+    - قدّم توصيات قابلة للتنفيذ استنادًا إلى التحليل:
+      قدّم توصيات ملموسة لكيفية أن تعالج مبادرة مجتمعية ذلك التحدي الرئيسي—بناءً على البيانات
     - أبرز أي رؤى أو اتجاهات مفاجئة.
 
-  احرص على أن تعرض كل رؤية رقمية العدد والنسبة المئوية معًا. استخدم أنماط markdown واضحة مثل
-  العناوين (h1-h6)، والفقرات، والجمل، والقوائم غير المرتبة، والقوائم المرقمة، والمسافات المناسبة حيث يكون ذلك مفيدًا لتنسيق PDF نظيف.</target>
+  تأكد من أن كل رؤية رقمية تعرض العدد والنسبة المئوية معًا. استخدم أنماط Markdown واضحة مثل
+  العناوين (h1-h6)، الفقرات، الجمل، القوائم غير المرتبة، القوائم المرقمة، ومسافات مناسبة حيث يفيد ذلك لتنسيق PDF نظيف.</target>
       </trans-unit>
       <trans-unit id="3515009611935359950" datatype="html">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
   Be sure to assist the learner in the best way you can. </source>
-        <target state="translated">المعلومات التالية هي خطوة من دورة تدريبية في "<x id="PH" equiv-text="stepTitle"/>" مع وصف "<x id="PH_1" equiv-text="stepDescription"/>".
-  تأكد من مساعدة المتعلم بأفضل طريقة ممكنة </target>
+        <target state="translated">المعلومات التالية هي خطوة من دورة من الدورة &quot;<x id="PH" equiv-text="stepTitle"/>&quot; مع وصف &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
+  تأكد من مساعدة المتعلم بأفضل طريقة ممكنة. </target>
       </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
         <source>Today</source>
@@ -4782,7 +4782,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3304972143698843178" datatype="html">
         <source>Event</source>
-        <target state="translated">الحدث</target>
+        <target state="translated">حدث</target>
       </trans-unit>
       <trans-unit id="2058019742098696745" datatype="html">
         <source>Uncompleted Task</source>
@@ -4844,7 +4844,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4686826078497318545" datatype="html">
         <source>Chats Created</source>
-        <target state="translated">المحادثات المنشأة</target>
+        <target state="translated">الدردشات التي تم إنشاؤها</target>
       </trans-unit>
       <trans-unit id="2593007815199532062" datatype="html">
         <source>Section</source>
@@ -4860,7 +4860,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8939587804990976924" datatype="html">
         <source>Items per page</source>
-        <target state="translated">العناصر لكل صفحة</target>
+        <target state="translated">العناصر في كل صفحة</target>
       </trans-unit>
       <trans-unit id="3337301694210287595" datatype="html">
         <source>Next page</source>
@@ -4896,7 +4896,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6345427370633626044" datatype="html">
         <source>Old password isn&apos;t valid</source>
-        <target state="translated">كلمة المرور القديمة ليست صالحة</target>
+        <target state="translated">كلمة المرور القديمة isn&apos;t صالحة</target>
       </trans-unit>
       <trans-unit id="4936220394427755572" datatype="html">
         <source>Error changing password</source>
@@ -4984,7 +4984,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3373672752728475878" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}}" xid="5153927020961011618"/> all </source>
-        <target state="translated"> <x id="ICU" equiv-text="{isAllSelected(), select, yes {إلغاء تحديد الكل} no {تحديد الكل}}" xid="5153927020961011618"/> all </target>
+        <target state="translated"> <x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}}" xid="5153927020961011618"/> الكل </target>
       </trans-unit>
       <trans-unit id="5153927020961011618" datatype="html">
         <source>{VAR_SELECT, select, yes {Deselect} no {Select}}</source>
@@ -5008,18 +5008,18 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5754961825546614864" datatype="html">
         <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </source>
-        <target state="translated"> هل أنت متأكد أنك تريد <x id="ICU" equiv-text="{data.changeType, select, accept {قبول} archive {أرشفة} reject {رفض} delete {حذف} leave {مغادرة} remove {إزالة} leader {منح القيادة إلى} exit {مغادرة} reset {إعادة تعيين}}" xid="3080384219063791942"/> الـ <x id="ICU_1" equiv-text="{data.amount, select, single {following {data.type, select, community {مجتمع} nation {أمة} course {دورة تدريبية} resource {مورد} document {مستند} meetup {اجتماع} user {عضو} change {تغيير} team {فريق} enterprise {مؤسسة} task {مهمة} certification {شهادة} event {حدث} transaction {معاملة} link {رابط} news {رسالة} report {تقرير} changes {نموذج} pin {رمز PIN} survey {استبيان}}?} many {selected {{data.count}} {data.type, select, community {مجتمعات} nation {أمم} course {دورات تدريبية} resource {موارد} meetup {اجتماعات} event {أحداث} survey {استبيانات}}?}}" xid="8234993793051473602"/> </target>
+        <target state="translated"> هل أنت متأكد أنك تريد <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> الـ <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
       </trans-unit>
       <trans-unit id="3080384219063791942" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}</source>
-        <target state="translated">{VAR_SELECT, select, accept {قبول} archive {أرشفة} reject {رفض} delete {حذف} leave {مغادرة} remove {إزالة} leader {منح القيادة إلى} exit {مغادرة} reset {إعادة تعيين}}</target>
+        <target state="translated">{VAR_SELECT, select, accept {قبول} archive {أرشفة} reject {رفض} delete {حذف} leave {مغادرة} remove {إزالة} leader {منح القيادة لـ} exit {مغادرة} reset {إعادة تعيين}}</target>
       </trans-unit>
       <trans-unit id="6490858809109190004" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</source>
-        <target state="translated">{VAR_SELECT_2, select, single {المتابعة مع {VAR_SELECT, select, community {المجتمع} nation {الأمة} course {الدورة} resource {المورد} document {المستند} meetup {اللقاء} user {العضو} change {التغيير} team {الفريق} enterprise {المؤسسة} task {المهمة} certification {الشهادة} event {الحدث} transaction {المعاملة} link {الرابط} news {الرسالة} report {التقرير} changes {النموذج} pin {الدبوس} survey {الاستبيان}}?
-      } many {تم اختيار <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {مجتمعات} nation {أمم} course {دورات} resource {موارد} meetup {لقاءات} event {أحداث} survey {استبيانات}}?
+        <target state="translated">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
+      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</target>
       </trans-unit>
       <trans-unit id="7706831103748816044" datatype="html">
@@ -5028,7 +5028,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7699622144571229146" datatype="html">
         <source>Sort by</source>
-        <target state="translated">فرز حسب</target>
+        <target state="translated">ترتيب حسب</target>
       </trans-unit>
       <trans-unit id="9143561358718896119" datatype="html">
         <source>Most Recent</source>
@@ -5068,7 +5068,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4197401714183177479" datatype="html">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> الرابط: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="923710608687288198" datatype="html">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -5108,11 +5108,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7345308961124559567" datatype="html">
         <source>Drop to upload</source>
-        <target state="translated">أفلت للتحميل</target>
+        <target state="translated">اسحب للإرفاق</target>
       </trans-unit>
       <trans-unit id="2473471587327831287" datatype="html">
         <source>Drag &amp; drop a file here, or <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>browse<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target state="translated">اسحب &amp; أفلت ملفًا هنا، أو <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>تصفح<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated">اسحب &amp; أفلت ملفًا هنا، أو <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>تصفّح<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="1906507263389090131" datatype="html">
         <source>Existing</source>
@@ -5124,7 +5124,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="908180438443713966" datatype="html">
         <source>PDF, EPUB, ZIP, audio, video or image — up to 512 MB</source>
-        <target state="translated">PDF، EPUB، ZIP، صوت، فيديو أو صورة — حتى 512 ميغابايت</target>
+        <target state="translated">PDF وEPUB وZIP والصوت والفيديو أو الصورة — حتى 512 ميغابايت</target>
       </trans-unit>
       <trans-unit id="6437441283465569103" datatype="html">
         <source>PDF</source>
@@ -5144,15 +5144,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3012906865384504293" datatype="html">
         <source>Image</source>
-        <target state="translated">صورة</target>
+        <target state="translated">الصورة</target>
       </trans-unit>
       <trans-unit id="894965666917873756" datatype="html">
         <source>Document</source>
-        <target state="translated">مستند</target>
+        <target state="translated">المستند</target>
       </trans-unit>
       <trans-unit id="838621311992520014" datatype="html">
         <source>Slides</source>
-        <target state="translated">شرائح</target>
+        <target state="translated">الشرائح</target>
       </trans-unit>
       <trans-unit id="1957682934098401915" datatype="html">
         <source>Maximum file count reached</source>
@@ -5184,7 +5184,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6317126528752584322" datatype="html">
         <source>Heading</source>
-        <target state="translated">عنوان رئيسي</target>
+        <target state="translated">عنوان</target>
       </trans-unit>
       <trans-unit id="1103299628984958400" datatype="html">
         <source>Quote</source>
@@ -5204,7 +5204,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6193671119554408029" datatype="html">
         <source>Side by Side</source>
-        <target state="translated">بجانب بعض</target>
+        <target state="translated">جنبًا إلى جنب</target>
       </trans-unit>
       <trans-unit id="489844404897890427" datatype="html">
         <source>Fullscreen</source>
@@ -5232,11 +5232,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="893583280618238406" datatype="html">
         <source>Please join the course before rating!</source>
-        <target state="translated">يُرجى الانضمام إلى الدورة التدريبية قبل التقييم!</target>
+        <target state="translated">يرجى الانضمام إلى الدورة قبل التقييم!</target>
       </trans-unit>
       <trans-unit id="2618809445359391005" datatype="html">
         <source>Please add the resource to your library before rating!</source>
-        <target state="translated">يُرجى إضافة المورد إلى مكتبتك قبل التقييم!</target>
+        <target state="translated">يرجى إضافة المورد إلى مكتبتك قبل التقييم!</target>
       </trans-unit>
       <trans-unit id="8817338979353272763" datatype="html">
         <source>Thank you, your rating is submitted!</source>
@@ -5304,7 +5304,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1424261972176120944" datatype="html">
         <source>Edit Collection</source>
-        <target state="translated">تعديل المجموعة</target>
+        <target state="translated">تحرير المجموعة</target>
       </trans-unit>
       <trans-unit id="97677364433192766" datatype="html">
         <source>Collection deleted: <x id="PH" equiv-text="tag.name"/></source>
@@ -5416,7 +5416,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7489316373554112115" datatype="html">
         <source>Up to date</source>
-        <target state="translated">محدث</target>
+        <target state="translated">محدَّث</target>
       </trans-unit>
       <trans-unit id="8314700931837210100" datatype="html">
         <source>Newer</source>
@@ -5533,8 +5533,8 @@ Other Notes</source>
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
-        <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; قد
+        <x id="PH_1" equiv-text="isUpdated ? &apos;تم التحديث&apos; : isRecorded ? &apos;تم التسجيل&apos; : &apos;تم الإنجاز&apos;"/> الاستبيان &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
       </trans-unit>
       <trans-unit id="2009689739817524652" datatype="html">
         <source>Exam</source>
@@ -5562,11 +5562,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4960524097614109439" datatype="html">
         <source>Charts</source>
-        <target state="translated">المخططات البيانية</target>
+        <target state="translated">المخططات</target>
       </trans-unit>
       <trans-unit id="4969477180050925875" datatype="html">
         <source>Question </source>
-        <target state="translated">سؤال </target>
+        <target state="translated">السؤال </target>
       </trans-unit>
       <trans-unit id="8021687558521014030" datatype="html">
         <source>Option</source>
@@ -5594,7 +5594,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8366029003604972950" datatype="html">
         <source>Total respondents: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
-        <target state="translated">إجمالي المشاركين: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">إجمالي المستجيبين: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="8242048480439700696" datatype="html">
         <source>Total selections: <x id="PH" equiv-text="selectionAgg.totalSelections"/></source>
@@ -5602,11 +5602,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8898648218118868158" datatype="html">
         <source>*Percentage of users who selected the choice. Users may select multiple options</source>
-        <target state="translated">*نسبة المستخدمين الذين اختاروا الخيار. قد يختار المستخدمون عدة خيارات</target>
+        <target state="translated">*نسبة المستخدمين الذين اختاروا هذا الخيار. قد يختار المستخدمون عدة خيارات</target>
       </trans-unit>
       <trans-unit id="3728862431459445553" datatype="html">
         <source>The Score: <x id="PH" equiv-text="averageRating"/></source>
-        <target state="translated">الدرجة: <x id="PH" equiv-text="averageRating"/></target>
+        <target state="translated">النتيجة: <x id="PH" equiv-text="averageRating"/></target>
       </trans-unit>
       <trans-unit id="5907067804507215484" datatype="html">
         <source>AI Analysis</source>
@@ -5618,7 +5618,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7556405911761495752" datatype="html">
         <source>Error exporting PDF: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">حدث خطأ أثناء تصدير PDF: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">خطأ في تصدير PDF: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="2910140776552023546" datatype="html">
         <source>There is no survey response</source>
@@ -5626,7 +5626,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="875621229969091247" datatype="html">
         <source>Submission</source>
-        <target state="translated">إرسال</target>
+        <target state="translated">الإرسال</target>
       </trans-unit>
       <trans-unit id="6283914624769804238" datatype="html">
         <source>Gender:</source>
@@ -5642,11 +5642,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4893616715766810081" datatype="html">
         <source>No data available</source>
-        <target state="translated">لا توجد بيانات متاحة</target>
+        <target state="translated">البيانات غير متاحة</target>
       </trans-unit>
       <trans-unit id="1388001557122691550" datatype="html">
         <source>Choice</source>
-        <target state="translated">الخيار</target>
+        <target state="translated">الاختيار</target>
       </trans-unit>
       <trans-unit id="403733922627700276" datatype="html">
         <source>Number of responses</source>
@@ -5654,7 +5654,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5328452207922183706" datatype="html">
         <source>% of responders</source>
-        <target state="translated">% من المجيبين</target>
+        <target state="translated">% من المستجيبين</target>
       </trans-unit>
       <trans-unit id="8693603235657020323" datatype="html">
         <source>Other</source>
@@ -5670,7 +5670,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1975814388540827143" datatype="html">
         <source>Error analyzing responses: <x id="PH" equiv-text="error.message || error"/></source>
-        <target state="translated">حدث خطأ أثناء تحليل الردود: <x id="PH" equiv-text="error.message || error"/></target>
+        <target state="translated">خطأ في تحليل الردود: <x id="PH" equiv-text="error.message || error"/></target>
       </trans-unit>
       <trans-unit id="2860676163395333414" datatype="html">
         <source>Team Surveys</source>
@@ -5806,11 +5806,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7818659923595108905" datatype="html">
         <source>There was a problem updating public survey access.</source>
-        <target state="translated">حدثت مشكلة أثناء تحديث وصول الاستبيان العام.</target>
+        <target state="translated">حدثت مشكلة أثناء تحديث الوصول العام إلى الاستبيان.</target>
       </trans-unit>
       <trans-unit id="745200351261498648" datatype="html">
         <source>Generate a public link for this survey first.</source>
-        <target state="translated">أنشئ رابطًا عامًا لهذا الاستبيان أولاً.</target>
+        <target state="translated">أنشئ رابطًا عامًا لهذا الاستبيان أولًا.</target>
       </trans-unit>
       <trans-unit id="9076344640012645811" datatype="html">
         <source>Public survey link copied</source>
@@ -5822,7 +5822,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5947970910041787751" datatype="html">
         <source>Records to Export</source>
-        <target state="translated">السجلات المراد تصديرها</target>
+        <target state="translated">السجلات المطلوب تصديرها</target>
       </trans-unit>
       <trans-unit id="272476219454502710" datatype="html">
         <source>Include Questions</source>
@@ -5858,7 +5858,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6173970083872550712" datatype="html">
         <source>Survey is archived and cannot accept new actions</source>
-        <target state="translated">الاستبيان مؤرشف ولا يقبل إجراءات جديدة</target>
+        <target state="translated">الاستبيان مؤرشف ولا يمكنه قبول إجراءات جديدة</target>
       </trans-unit>
       <trans-unit id="7153260170424586045" datatype="html">
         <source>There is no data to export</source>
@@ -5870,7 +5870,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1723945927449058686" datatype="html">
         <source>This survey was created on the parent planet and cannot be managed here</source>
-        <target state="translated">تم إنشاء هذا الاستبيان في الكوكب الأصلي ولا يمكن إدارته هنا</target>
+        <target state="translated">تم إنشاء هذا الاستبيان على الكوكب الرئيسي ولا يمكن إدارته هنا</target>
       </trans-unit>
       <trans-unit id="7541790190401441000" datatype="html">
         <source>This is a community survey</source>
@@ -5878,7 +5878,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="383841114763363168" datatype="html">
         <source>Survey has no questions</source>
-        <target state="translated">الاستبيان لا يحتوي على أسئلة</target>
+        <target state="translated">لا يحتوي الاستبيان على أسئلة</target>
       </trans-unit>
       <trans-unit id="7733906815413075449" datatype="html">
         <source>Record survey information from a person who is not a member of <x id="PH" equiv-text="this.configuration.name"/></source>
@@ -5886,15 +5886,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2068924253876022636" datatype="html">
         <source>Record Survey</source>
-        <target state="translated">تسجيل استبيان</target>
+        <target state="translated">تسجيل الاستبيان</target>
       </trans-unit>
       <trans-unit id="2191705100755243115" datatype="html">
         <source>Copy the public survey link</source>
-        <target state="translated">انسخ رابط الاستبيان العام</target>
+        <target state="translated">نسخ رابط الاستبيان العام</target>
       </trans-unit>
       <trans-unit id="4513200930765275190" datatype="html">
         <source>Generate a public survey link</source>
-        <target state="translated">أنشئ رابط استبيان عام</target>
+        <target state="translated">إنشاء رابط استبيان عام</target>
       </trans-unit>
       <trans-unit id="5156960600279596789" datatype="html">
         <source>Revoke public access for this survey</source>
@@ -5946,7 +5946,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4336027280028501448" datatype="html">
         <source>Assign Task</source>
-        <target state="translated">تعيين مهمة</target>
+        <target state="translated">تعيين المهمة</target>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html">
         <source>Task</source>
@@ -6070,15 +6070,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7078271376845640958" datatype="html">
         <source>Loss</source>
-        <target state="translated">خسارة</target>
+        <target state="translated">الخسارة</target>
       </trans-unit>
       <trans-unit id="5552946715208529758" datatype="html">
         <source>Profit</source>
-        <target state="translated">ربح</target>
+        <target state="translated">الربح</target>
       </trans-unit>
       <trans-unit id="3373415866078287494" datatype="html">
         <source>Net (Profit / Loss)</source>
-        <target state="translated">الصافي (الربح / الخسارة)</target>
+        <target state="translated">الصافي (ربح / خسارة)</target>
       </trans-unit>
       <trans-unit id="272934122656341350" datatype="html">
         <source>Credit</source>
@@ -6118,11 +6118,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1909009883731319373" datatype="html">
         <source>Report <x id="PH" equiv-text="action"/></source>
-        <target state="translated">تقرير <x id="PH" equiv-text="action"/></target>
+        <target state="translated">التقرير <x id="PH" equiv-text="action"/></target>
       </trans-unit>
       <trans-unit id="6402039166454044236" datatype="html">
         <source>Report saved, but some attached images could not be uploaded.</source>
-        <target state="translated">تم حفظ التقرير، لكن تعذّر رفع بعض الصور المرفقة.</target>
+        <target state="translated">تم حفظ التقرير، لكن لم يمكن رفع بعض الصور المرفقة.</target>
       </trans-unit>
       <trans-unit id="5666281898008893391" datatype="html">
         <source>There was a problem saving the report.</source>
@@ -6162,7 +6162,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6630681340946694789" datatype="html">
         <source>Financial Summary for <x id="PH" equiv-text="titleName"/></source>
-        <target state="translated">الملخص المالي لـ <x id="PH" equiv-text="titleName"/></target>
+        <target state="translated">ملخص مالي لـ <x id="PH" equiv-text="titleName"/></target>
       </trans-unit>
       <trans-unit id="7115407436370620649" datatype="html">
         <source>Balance is negative</source>
@@ -6194,7 +6194,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="967622916338237066" datatype="html">
         <source>No transactions match this date range</source>
-        <target state="translated">لا توجد معاملات تطابق هذا النطاق الزمني</target>
+        <target state="translated">لا توجد معاملات تطابق نطاق التاريخ هذا</target>
       </trans-unit>
       <trans-unit id="6326803299903087278" datatype="html">
         <source>There are no transactions</source>
@@ -6206,15 +6206,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8341708522142238743" datatype="html">
         <source>Total Credits</source>
-        <target state="translated">إجمالي المدخلات</target>
+        <target state="translated">إجمالي الإيداعات</target>
       </trans-unit>
       <trans-unit id="4153855878077782246" datatype="html">
         <source>Total Debits</source>
-        <target state="translated">إجمالي المدفوعات</target>
+        <target state="translated">إجمالي السحوبات</target>
       </trans-unit>
       <trans-unit id="6735560439394532506" datatype="html">
         <source>Balance (Net change)</source>
-        <target state="translated">الرصيد (صافي التغيير)</target>
+        <target state="translated">الرصيد (صافي التغير)</target>
       </trans-unit>
       <trans-unit id="7790829556583926754" datatype="html">
         <source>Edit Transaction</source>
@@ -6234,7 +6234,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4979562951362174794" datatype="html">
         <source>Transaction saved, but some attached images could not be uploaded.</source>
-        <target state="translated">تم حفظ المعاملة، لكن تعذّر رفع بعض الصور المرفقة.</target>
+        <target state="translated">تم حفظ المعاملة، لكن لم يمكن رفع بعض الصور المرفقة.</target>
       </trans-unit>
       <trans-unit id="2827095881733901664" datatype="html">
         <source>There was a problem saving the transaction.</source>
@@ -6258,11 +6258,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1660800252915157371" datatype="html">
         <source>credit</source>
-        <target state="translated">دائن</target>
+        <target state="translated">إيداع</target>
       </trans-unit>
       <trans-unit id="1408084053192649257" datatype="html">
         <source>debit</source>
-        <target state="translated">مدين</target>
+        <target state="translated">سحب</target>
       </trans-unit>
       <trans-unit id="5452881409775077105" datatype="html">
         <source>balance</source>
@@ -6286,7 +6286,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2758141335411811281" datatype="html">
         <source>Edit details</source>
-        <target state="translated">تعديل التفاصيل</target>
+        <target state="translated">تحرير التفاصيل</target>
       </trans-unit>
       <trans-unit id="1610023597544138043" datatype="html">
         <source>Manage Surveys</source>
@@ -6334,7 +6334,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1898335971618881059" datatype="html">
         <source>What is your enterprise&apos;s Mission?</source>
-        <target state="translated">ما هي مهمة مؤسستك؟</target>
+        <target state="translated">ما هي رسالة مؤسستكم&apos;s Mission?</target>
       </trans-unit>
       <trans-unit id="6427786681980602269" datatype="html">
         <source>What are the Services your enterprise provides?</source>
@@ -6390,7 +6390,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1782340738699397677" datatype="html">
         <source>No member has joined this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">لم ينضم أي عضو إلى هذا <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</target>
+        <target state="translated">لم ينضم أي عضو إلى <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> هذا.</target>
       </trans-unit>
       <trans-unit id="2504433810618665069" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise}}</source>
@@ -6402,7 +6402,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1319001951842306108" datatype="html">
         <source>There are currently no tasks assigned to this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">لا توجد مهام مخصصة حاليًا لهذا <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</target>
+        <target state="translated">لا توجد حاليًا مهام مُعيَّنة إلى <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> هذا.</target>
       </trans-unit>
       <trans-unit id="9094381763389549203" datatype="html">
         <source>{VAR_SELECT, select, team {Resources} enterprise {Documents} services {Documents}}</source>
@@ -6494,11 +6494,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5669610080181345209" datatype="html">
         <source>Accepted: <x id="PH" equiv-text="memberName"/></source>
-        <target state="translated">تمت الموافقة: <x id="PH" equiv-text="memberName"/></target>
+        <target state="translated">تم قبوله: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
       <trans-unit id="3610633971641961148" datatype="html">
         <source>Rejected: <x id="PH" equiv-text="memberName"/></source>
-        <target state="translated">تم الرفض: <x id="PH" equiv-text="memberName"/></target>
+        <target state="translated">تم رفضه: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
       <trans-unit id="1415339856352294696" datatype="html">
         <source><x id="PH" equiv-text="this.configuration.name"/> Services Directory</source>
@@ -6510,7 +6510,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9185744325804862384" datatype="html">
         <source>Member<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> added successfully</source>
-        <target state="translated">تمت إضافة <x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> من الأعضاء بنجاح</target>
+        <target state="translated">تمت إضافة<x id="PH" equiv-text="selected.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> عضو بنجاح</target>
       </trans-unit>
       <trans-unit id="7719425815062505233" datatype="html">
         <source>Add message</source>
@@ -6618,15 +6618,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="enterprise-join-request" datatype="html">
         <source>Sent request to join enterprise</source>
-        <target state="translated">تم إرسال طلب للانضمام إلى المؤسسة</target>
+        <target state="translated">تم إرسال طلب الانضمام إلى المؤسسة</target>
       </trans-unit>
       <trans-unit id="team-join-request" datatype="html">
         <source>Sent request to join team</source>
-        <target state="translated">تم إرسال طلب للانضمام إلى الفريق</target>
+        <target state="translated">تم إرسال طلب الانضمام إلى الفريق</target>
       </trans-unit>
       <trans-unit id="8286646344321467283" datatype="html">
         <source>What is your team&apos;s plan?</source>
-        <target state="translated">ما هي خطة فريقك&apos;؟</target>
+        <target state="translated">ما هي خطة فريقك&apos;s?</target>
       </trans-unit>
       <trans-unit id="create-team" datatype="html">
         <source>Create Team</source>
@@ -6654,7 +6654,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6755123663246719541" datatype="html">
         <source>Connect with earth</source>
-        <target state="translated">الاتصال بـ earth</target>
+        <target state="translated">الاتصال مع الأرض</target>
       </trans-unit>
       <trans-unit id="3339419883396525689" datatype="html">
         <source>Local team</source>
@@ -6662,11 +6662,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8087439227464292608" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has posted a message on <x id="PH_1" equiv-text="teamMessage"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has posted a message on <x id="PH_1" equiv-text="teamMessage"/></target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; قد نشر رسالة على <x id="PH_1" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="8274468202054901134" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has requested to join <x id="PH_1" equiv-text="teamMessage"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; has requested to join <x id="PH_1" equiv-text="teamMessage"/></target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="truncatedFullName"/>&lt;/b&gt; طلب الانضمام إلى <x id="PH_1" equiv-text="teamMessage"/></target>
       </trans-unit>
       <trans-unit id="5859925700973676403" datatype="html">
         <source>You have been added to <x id="PH" equiv-text="teamMessage"/></source>
@@ -6806,11 +6806,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7093385792872454724" datatype="html">
         <source>Upload your CV/Resume below (PDF only)</source>
-        <target state="translated">حمّل سيرتك الذاتية/ملفك المهني أدناه (PDF فقط)</target>
+        <target state="translated">ارفع سيرتك الذاتية/ملفك المهني أدناه (PDF فقط)</target>
       </trans-unit>
       <trans-unit id="3199420902145943966" datatype="html">
         <source>PDF only — up to 512 MB</source>
-        <target state="translated">PDF فقط — حتى 512 ميجابايت</target>
+        <target state="translated">PDF فقط — حتى 512 ميغابايت</target>
       </trans-unit>
       <trans-unit id="3242300418298999052" datatype="html">
         <source>Current CV/Resume:</source>
@@ -6850,15 +6850,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7254689538615949767" datatype="html">
         <source>Please select a PDF file</source>
-        <target state="translated">يُرجى اختيار ملف PDF</target>
+        <target state="translated">يرجى اختيار ملف PDF</target>
       </trans-unit>
       <trans-unit id="4803957677266686067" datatype="html">
         <source>Please select a PDF file smaller than <x id="PH" equiv-text="this.maxResumeSizeMb"/> MB</source>
-        <target state="translated">يُرجى اختيار ملف PDF أصغر من <x id="PH" equiv-text="this.maxResumeSizeMb"/> ميجابايت</target>
+        <target state="translated">يرجى اختيار ملف PDF أصغر من <x id="PH" equiv-text="this.maxResumeSizeMb"/> ميغابايت</target>
       </trans-unit>
       <trans-unit id="8066527122146867613" datatype="html">
         <source>Please upload your CV/Resume as a PDF file</source>
-        <target state="translated">يرجى رفع سيرتك الذاتية/ملفك المهني بصيغة PDF</target>
+        <target state="translated">يرجى رفع سيرتك الذاتية/ملفك المهني كملف PDF</target>
       </trans-unit>
       <trans-unit id="188498249696731690" datatype="html">
         <source>Achievement #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
@@ -6958,7 +6958,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5650818321690252427" datatype="html">
         <source><x id="PH" equiv-text="this.user.firstName"/>&apos;s achievements</source>
-        <target state="translated">إنجازات <x id="PH" equiv-text="this.user.firstName"/>&apos;s</target>
+        <target state="translated"><x id="PH" equiv-text="this.user.firstName"/>&apos;s الإنجازات</target>
       </trans-unit>
       <trans-unit id="4414798384138362687" datatype="html">
         <source>Birthdate: <x id="PH" equiv-text="formattedBirthDate"/></source>
@@ -7090,7 +7090,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3652050946797964239" datatype="html">
         <source> Demote </source>
-        <target state="translated"> تخفيض </target>
+        <target state="translated"> تنزيل </target>
       </trans-unit>
       <trans-unit id="6853640386523738286" datatype="html">
         <source>No User Found</source>
@@ -7110,7 +7110,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7006977447062890057" datatype="html">
         <source>There was an error removing the member&apos;s role</source>
-        <target state="translated">حدث خطأ أثناء إزالة دور العضو&apos;</target>
+        <target state="translated">حدث خطأ أثناء إزالة دور العضو&apos;s</target>
       </trans-unit>
       <trans-unit id="6068329395413518097" datatype="html">
         <source>
@@ -7118,11 +7118,11 @@ Other Notes</source>
           <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/>
           <x id="PH_2" equiv-text="type"/>
         </source>
-        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/> <x id="PH_2" equiv-text="type"/></target>
+        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;منقول من&apos; : &apos;مُرقّى إلى&apos;"/> <x id="PH_2" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="2831387298196857431" datatype="html">
         <source>There was an error <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> user</source>
-        <target state="translated">حدث خطأ أثناء <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> المستخدم</target>
+        <target state="translated">حدث خطأ أثناء <x id="PH" equiv-text="isDemotion ? &apos;إنزال&apos; : &apos;ترقية&apos;"/> المستخدم</target>
       </trans-unit>
       <trans-unit id="4235445316920403625" datatype="html">
         <source><x id="PH" equiv-text="user.name"/> roles modified</source>
@@ -7154,7 +7154,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9160143324993549255" datatype="html">
         <source>Reset Selection</source>
-        <target state="translated">إعادة ضبط التحديد</target>
+        <target state="translated">إعادة تعيين التحديد</target>
       </trans-unit>
       <trans-unit id="9178182467454450952" datatype="html">
         <source>Confirm</source>
