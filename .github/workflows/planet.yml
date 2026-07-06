@@ -57,7 +57,7 @@ jobs:
         run: npm run lint
 
       - name: Run unit Tests
-        run: npm run test:ci
+        run: npm run test
 
   pre-build:
     name: Pre-Planet build
