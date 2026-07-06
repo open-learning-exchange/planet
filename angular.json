@@ -18,7 +18,7 @@
             "translation": "src/i18n/messages.fra.xlf",
             "baseHref": "/fra/"
           },
-          "ne-NP": {
+          "ne": {
             "translation": "src/i18n/messages.nep.xlf",
             "baseHref": "/nep/"
           },
@@ -26,7 +26,7 @@
             "translation": "src/i18n/messages.ara.xlf",
             "baseHref": "/ara/"
           },
-          "es-ES": {
+          "es": {
             "translation": "src/i18n/messages.spa.xlf",
             "baseHref": "/spa/"
           },
@@ -170,7 +170,7 @@
                 "base": "dist/nep"
               },
               "localize": [
-                "ne-NP"
+                "ne"
               ],
               "budgets": [
                 {
@@ -198,7 +198,7 @@
                 "base": "dist/spa"
               },
               "localize": [
-                "es-ES"
+                "es"
               ],
               "budgets": [
                 {
