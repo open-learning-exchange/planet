@@ -56,7 +56,7 @@
       </trans-unit>
       <trans-unit id="1824181186656837762" datatype="html">
         <source>Loading conversations...</source>
-        <target state="translated">संवादहरू लोड हुँदैछन्...</target>
+        <target state="translated">संवादहरू लोड हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="3202478169223266493" datatype="html">
         <source>No previous conversations.</source>
@@ -72,7 +72,7 @@
       </trans-unit>
       <trans-unit id="6902066591850406795" datatype="html">
         <source>chat is disabled, contact community admin</source>
-        <target state="translated">च्याट असक्षम गरिएको छ, समुदाय प्रशासकलाई सम्पर्क गर्नुहोस्</target>
+        <target state="translated">च्याट अक्षम गरिएको छ, समुदाय प्रशासकलाई सम्पर्क गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html">
         <source>AI Chat</source>
@@ -96,15 +96,15 @@
       </trans-unit>
       <trans-unit id="962765493084218985" datatype="html">
         <source>Platform</source>
-        <target state="translated">प्ल्याटफर्म</target>
+        <target state="translated">प्लेटफर्म</target>
       </trans-unit>
       <trans-unit id="2050702586682977589" datatype="html">
         <source>Platform is required.</source>
-        <target state="translated">प्ल्याटफर्म आवश्यक छ।</target>
+        <target state="translated">प्लेटफर्म आवश्यक छ।</target>
       </trans-unit>
       <trans-unit id="8667563605166888223" datatype="html">
         <source>Link URL</source>
-        <target state="translated">लिंक URL</target>
+        <target state="translated">लिङ्क URL</target>
       </trans-unit>
       <trans-unit id="2159130950882492111" datatype="html" approved="yes">
         <source>Cancel</source>
@@ -128,7 +128,7 @@
       </trans-unit>
       <trans-unit id="2061907804391865750" datatype="html">
         <source>Added link: <x id="PH" equiv-text="linkTitle"/></source>
-        <target state="translated">लिंक थपियो: <x id="PH" equiv-text="linkTitle"/></target>
+        <target state="translated">लिङ्क थपियो: <x id="PH" equiv-text="linkTitle"/></target>
       </trans-unit>
       <trans-unit id="4850730370456948223" datatype="html">
         <source>Error adding link</source>
@@ -142,7 +142,7 @@
       </trans-unit>
       <trans-unit id="7687622398945022213" datatype="html">
         <source>Loading communities...</source>
-        <target state="translated">समुदायहरू लोड हुँदैछन्...</target>
+        <target state="translated">समुदायहरू लोड हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="4400138104797437629" datatype="html">
         <source>No communities available.</source>
@@ -190,7 +190,7 @@
       </trans-unit>
       <trans-unit id="949821949751980627" datatype="html">
         <source>No leaders available.</source>
-        <target state="translated">कुनै नेता उपलब्ध छैनन्।</target>
+        <target state="translated">कुनै नेता उपलब्ध छैन।</target>
       </trans-unit>
       <trans-unit id="7143579180750436311" datatype="html" approved="yes">
         <source>Services</source>
@@ -229,11 +229,11 @@
       </trans-unit>
       <trans-unit id="1525452279575236950" datatype="html">
         <source><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> Links</source>
-        <target state="translated"><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> लिंकहरू</target>
+        <target state="translated"><x id="ICU" equiv-text="{ configuration.planetType, select, community {Community} nation {Nation} center {Earth}}" xid="2896041137917827185"/> लिङ्कहरू</target>
       </trans-unit>
       <trans-unit id="7904942383480102366" datatype="html">
         <source>Loading links...</source>
-        <target state="translated">लिङ्कहरू लोड हुँदैछन्...</target>
+        <target state="translated">लिङ्कहरू लोड हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="2789509048153630062" datatype="html">
         <source>No links available.</source>
@@ -305,11 +305,11 @@
       </trans-unit>
       <trans-unit id="7138510619760635996" datatype="html">
         <source> Deleted link: <x id="PH" equiv-text="link.title"/></source>
-        <target state="translated"> मेटाइएको लिंक: <x id="PH" equiv-text="link.title"/></target>
+        <target state="translated"> मेटाइएको लिङ्क: <x id="PH" equiv-text="link.title"/></target>
       </trans-unit>
       <trans-unit id="7863633113133426383" datatype="html">
         <source>There was an error deleting <x id="PH" equiv-text="link.title"/></source>
-        <target state="needs-translation">There was an error deleting <x id="PH" equiv-text="link.title"/></target>
+        <target state="translated"><x id="PH" equiv-text="link.title"/> मेटाउनमा त्रुटि भयो</target>
       </trans-unit>
       <trans-unit id="9206475530285796950" datatype="html">
         <source>Description deleted successfully.</source>
@@ -441,7 +441,7 @@
       </trans-unit>
       <trans-unit id="4148174263265171714" datatype="html">
         <source>Beta features may not work as intended. It&apos;s recommended to leave this off</source>
-        <target state="translated">बेटा सुविधाहरू अपेक्षित रूपमा काम नगर्न सक्छन्। यसलाई बन्द राख्न सिफारिस गरिन्छ</target>
+        <target state="translated">बीटा सुविधाहरूले अपेक्षाअनुसार काम नगर्न सक्छन्। यसलाई बन्द राख्न सिफारिस गरिन्छ</target>
       </trans-unit>
       <trans-unit id="6406903720166584964" datatype="html">
         <source>Always off</source>
@@ -521,7 +521,7 @@
       </trans-unit>
       <trans-unit id="3963267478836060678" datatype="html">
         <source>Admin created: <x id="PH" equiv-text="credentials.name"/></source>
-        <target state="needs-translation">Admin created: <x id="PH" equiv-text="credentials.name"/></target>
+        <target state="translated">प्रशासकद्वारा सिर्जना गरिएको: <x id="PH" equiv-text="credentials.name"/></target>
       </trans-unit>
       <trans-unit id="72370510149563199" datatype="html">
         <source>There was an error creating planet</source>
@@ -557,7 +557,7 @@
       </trans-unit>
       <trans-unit id="6204442918076972782" datatype="html">
         <source>Planet is being synced with domain &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot;. Please hold on.</source>
-        <target state="translated">प्लानेटलाई डोमेन &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; सँग समन्वय गरिँदैछ। कृपया प्रतीक्षा गर्नुहोस्।</target>
+        <target state="translated">प्लानेटलाई डोमेन &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; सँग सिङ्क गरिँदैछ। कृपया प्रतीक्षा गर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="8919885040084099320" datatype="html">
         <source>Cloning &quot;<x id="PH" equiv-text="this.cloneDomain"/>&quot; complete.</source>
@@ -597,7 +597,7 @@
       </trans-unit>
       <trans-unit id="7865912722609907516" datatype="html">
         <source>Recommended: a square image. Covers are cropped to fit.</source>
-        <target state="translated">सिफारिस: वर्गाकार छवि। कभरहरू फिट हुन काटिन्छन्।</target>
+        <target state="translated">सुझाव: वर्गाकार छवि। कभरहरू फिट हुन काटिन्छन्।</target>
       </trans-unit>
       <trans-unit id="6554131886828216596" datatype="html" approved="yes">
         <source>Add Step</source>
@@ -673,7 +673,7 @@
       </trans-unit>
       <trans-unit id="1223468132111440462" datatype="html">
         <source>attached</source>
-        <target state="translated">संलग्न गरियो</target>
+        <target state="translated">संलग्न गरिएको</target>
       </trans-unit>
       <trans-unit id="7559011103061252651" datatype="html">
         <source>Collect feedback</source>
@@ -929,11 +929,11 @@
       </trans-unit>
       <trans-unit id="8168099347392025054" datatype="html">
         <source>No Course Found</source>
-        <target state="needs-translation">No Course Found</target>
+        <target state="translated">कुनै पाठ्यक्रम फेला परेन</target>
       </trans-unit>
       <trans-unit id="2270713094750834385" datatype="html">
         <source>Course deleted: <x id="PH" equiv-text="course.courseTitle"/></source>
-        <target state="needs-translation">Course deleted: <x id="PH" equiv-text="course.courseTitle"/></target>
+        <target state="translated">पाठ्यक्रम मेटाइयो: <x id="PH" equiv-text="course.courseTitle"/></target>
       </trans-unit>
       <trans-unit id="8134237662360929413" datatype="html">
         <source>There was a problem deleting this course.</source>
@@ -941,7 +941,7 @@
       </trans-unit>
       <trans-unit id="5117936556401260696" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> courses</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> courses</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="deleteArray.length"/> वटा पाठ्यक्रमहरू मेटाउनुभएको छ</target>
       </trans-unit>
       <trans-unit id="6756280808854130478" datatype="html">
         <source>There was a problem deleting courses.</source>
@@ -949,23 +949,23 @@
       </trans-unit>
       <trans-unit id="2456240037331490217" datatype="html">
         <source><x id="PH" equiv-text="message"/> myCourses</source>
-        <target state="needs-translation"><x id="PH" equiv-text="message"/> myCourses</target>
+        <target state="translated"><x id="PH" equiv-text="message"/> मेरा पाठ्यक्रमहरू</target>
       </trans-unit>
       <trans-unit id="6655912043737335584" datatype="html">
         <source><x id="PH" equiv-text="courses[0].courseTitle"/> have been added to</source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses[0].courseTitle"/> have been added to</target>
+        <target state="translated"><x id="PH" equiv-text="courses[0].courseTitle"/> लाई मा थपिएको छ</target>
       </trans-unit>
       <trans-unit id="6360691424158375215" datatype="html">
         <source><x id="PH" equiv-text="courses.length"/> courses have been added to</source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> courses have been added to</target>
+        <target state="translated"><x id="PH" equiv-text="courses.length"/> पाठ्यक्रमहरू मा थपिएका छन्</target>
       </trans-unit>
       <trans-unit id="3354817944656183021" datatype="html">
         <source><x id="PH" equiv-text="courses.length"/><x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></source>
-        <target state="needs-translation"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> queued to <x id="PH_2" equiv-text="msg"/></target>
+        <target state="translated"><x id="PH" equiv-text="courses.length"/> <x id="PH_1" equiv-text="this.dbName"/> लाई <x id="PH_2" equiv-text="msg"/> मा कतारबद्ध गरिएको छ</target>
       </trans-unit>
       <trans-unit id="865937100888005872" datatype="html">
         <source>Courses queued to push to <x id="PH" equiv-text="childType"/>.</source>
-        <target state="needs-translation">Courses queued to push to <x id="PH" equiv-text="childType"/>.</target>
+        <target state="translated">पाठ्यक्रमहरूलाई <x id="PH" equiv-text="childType"/> मा पुश गर्न कतारबद्ध गरिएको छ।</target>
       </trans-unit>
       <trans-unit id="2490262653741019261" datatype="html">
         <source>There was an error sending these courses</source>
@@ -977,7 +977,7 @@
       </trans-unit>
       <trans-unit id="8991249943328834497" datatype="html">
         <source>Removed from myCourses: <x id="PH" equiv-text="title"/></source>
-        <target state="translated">Removed from myCourses: <x id="PH" equiv-text="title"/></target>
+        <target state="translated">मेरा पाठ्यक्रमहरूबाट हटाइयो: <x id="PH" equiv-text="title"/></target>
       </trans-unit>
       <trans-unit id="8899796362370380514" datatype="html">
         <source>Course added to your dashboard: <x id="PH" equiv-text="title"/></source>
@@ -989,7 +989,7 @@
       </trans-unit>
       <trans-unit id="7396057985911029288" datatype="html">
         <source>Added to myCourses: <x id="PH" equiv-text="prefix"/> </source>
-        <target state="translated">Added to myCourses: <x id="PH" equiv-text="prefix"/> </target>
+        <target state="translated">मेरा पाठ्यक्रमहरूमा थपियो: <x id="PH" equiv-text="prefix"/> </target>
       </trans-unit>
       <trans-unit id="4691887509600985309" datatype="html" approved="yes">
         <source>Members</source>
@@ -1001,7 +1001,7 @@
       </trans-unit>
       <trans-unit id="193324215946023286" datatype="html">
         <source>username</source>
-        <target state="translated">प्रयोगकर्ता नाम</target>
+        <target state="translated">प्रयोगकर्ताको नाम</target>
       </trans-unit>
       <trans-unit id="4269495761666988308" datatype="html">
         <source>Date Started</source>
@@ -1009,7 +1009,7 @@
       </trans-unit>
       <trans-unit id="6811901802533648897" datatype="html">
         <source>N/A</source>
-        <target state="translated">लागू हुँदैन</target>
+        <target state="translated">लागु हुँदैन</target>
       </trans-unit>
       <trans-unit id="7471185603546121318" datatype="html">
         <source>Most Recent Activity</source>
@@ -1017,7 +1017,7 @@
       </trans-unit>
       <trans-unit id="4852372553785950294" datatype="html">
         <source>Course Enrollment Data - <x id="PH" equiv-text="this.course"/></source>
-        <target state="translated">पाठ्यक्रम नामांकन डेटा - <x id="PH" equiv-text="this.course"/></target>
+        <target state="translated">पाठ्यक्रम नामाङ्कन डेटा - <x id="PH" equiv-text="this.course"/></target>
       </trans-unit>
       <trans-unit id="9200283083431196600" datatype="html">
         <source>Step <x id="stepNumber" equiv-text="index + 1"/></source>
@@ -1057,7 +1057,7 @@
       </trans-unit>
       <trans-unit id="416467122352618193" datatype="html">
         <source>Loading progress...</source>
-        <target state="translated">प्रगति लोड हुँदैछ...</target>
+        <target state="translated">लोड प्रगति हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="7963086358427192442" datatype="html">
         <source> No Progress record available </source>
@@ -1095,7 +1095,7 @@
         <source>
           <x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/>
         </source>
-        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {Language}       gradeLevel {Grade Level}       subjectLevel {Subject Level}     }" xid="245746442991291793"/> </target>
+        <target state="translated"><x id="ICU" equiv-text="{category, select,       languageOfInstruction {भाषा}       gradeLevel {ग्रेड स्तर}       subjectLevel {विषय स्तर}     }" xid="245746442991291793"/> </target>
       </trans-unit>
       <trans-unit id="245746442991291793" datatype="html">
         <source>{VAR_SELECT, select, languageOfInstruction {Language} gradeLevel {Grade Level} subjectLevel {Subject Level}}</source>
@@ -1127,7 +1127,7 @@
         <source>
           <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/>
         </source>
-        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}" xid="4928667157742574611"/> </target>
+        <target state="translated"> <x id="ICU" equiv-text="{examText, select, take {परीक्षा दिनुहोस्} continue {परीक्षा जारी राख्नुहोस्} retake {परीक्षा पुनः दिनुहोस्}}" xid="4928667157742574611"/> </target>
       </trans-unit>
       <trans-unit id="4928667157742574611" datatype="html">
         <source>{VAR_SELECT, select, take {Take Test} continue {Continue Test} retake {Retake Test}}</source>
@@ -1157,7 +1157,7 @@
         <source><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/><x id="START_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;planet-loading-spinner text=&quot;Loading content...&quot; i18n-text&gt;"/><x id="CLOSE_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;/planet-loading-spinner&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/>
 No description provided.
 <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
-        <target state="translated"><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/><x id="START_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;planet-loading-spinner text=&quot;Loading content...&quot; i18n-text&gt;"/><x id="CLOSE_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;/planet-loading-spinner&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/>
+        <target state="translated"><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/><x id="START_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;planet-loading-spinner text=&quot;सामग्री लोड हुँदैछ...&quot; i18n-text&gt;"/><x id="CLOSE_TAG_PLANET_LOADING_SPINNER" ctype="x-planet_loading_spinner" equiv-text="&lt;/planet-loading-spinner&gt;"/><x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/>
 विवरण उपलब्ध छैन।
 <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
       </trans-unit>
@@ -1223,7 +1223,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="8871274990030594152" datatype="html">
         <source><x id="ICU" equiv-text="{step.resources.length, plural, =1 {resource} other {resources}}" xid="3389112199654656544"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, =1 {स्रोत} other {स्रोतहरू}}" xid="3389112199654656544"/>.</target>
+        <target state="translated"><x id="ICU" equiv-text="{step.resources.length, plural, one {संसाधन} other {संसाधनहरू}}" xid="3389112199654656544"/>.</target>
       </trans-unit>
       <trans-unit id="4297508107919101415" datatype="html">
         <source>The test has</source>
@@ -1283,7 +1283,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="5516871186038324585" datatype="html">
         <source>There was an error removing <x id="PH" equiv-text="item.title"/></source>
-        <target state="translated"><x id="PH" equiv-text="item.title"/> हटाउने क्रममा त्रुटि भयो</target>
+        <target state="translated"><x id="PH" equiv-text="item.title"/> हटाउनमा त्रुटि भयो</target>
       </trans-unit>
       <trans-unit id="999475894203864545" datatype="html">
         <source>Removed from <x id="cardTitle" equiv-text="this.cardTitle"/>: <x id="itemTitle" equiv-text="item.title"/></source>
@@ -1371,7 +1371,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="9046522016176399482" datatype="html">
         <source>Preview <x id="ICU" equiv-text="{examType, select, exam {Test} survey {Survey}}" xid="7591130749342657088"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{examType, select, exam {Test} survey {Survey}}" xid="7591130749342657088"/> को पूर्वावलोकन</target>
+        <target state="translated">पूर्वावलोकन <x id="ICU" equiv-text="{examType, select, exam {परीक्षा} survey {सर्वेक्षण}}" xid="7591130749342657088"/></target>
       </trans-unit>
       <trans-unit id="2551513627992941587" datatype="html">
         <source>Allow team view</source>
@@ -1383,7 +1383,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="2887699436140395309" datatype="html">
         <source>You must add a question to preview the <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></source>
-        <target state="translated">पूर्वावलोकन गर्न तपाईंले प्रश्न थप्नुपर्छ <x id="ICU" equiv-text="{examType, select, exam {test} survey {survey}}" xid="8822352339394504890"/></target>
+        <target state="translated">पूर्वावलोकन गर्न तपाईंले एउटा प्रश्न थप्नैपर्छ <x id="ICU" equiv-text="{examType, select, exam {परीक्षा} survey {सर्वेक्षण}}" xid="8822352339394504890"/></target>
       </trans-unit>
       <trans-unit id="8822352339394504890" datatype="html">
         <source>{VAR_SELECT, select, exam {test} survey {survey}}</source>
@@ -1407,7 +1407,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1843830109328710379" datatype="html">
         <source>Rating Scale</source>
-        <target state="translated">मूल्याङ्कन स्केल</target>
+        <target state="translated">मूल्याङ्कन मापदण्ड</target>
       </trans-unit>
       <trans-unit id="3644327006971495515" datatype="html">
         <source> Survey Info </source>
@@ -1455,7 +1455,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1371553127733924023" datatype="html">
         <source>Scale</source>
-        <target state="translated">मापनी</target>
+        <target state="translated">मापन</target>
       </trans-unit>
       <trans-unit id="8650499415827640724" datatype="html">
         <source>Type</source>
@@ -1475,7 +1475,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1440998718214890842" datatype="html">
         <source> You must select the correct <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> </source>
-        <target state="translated"> तपाईंले सही <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {choice} selectMultiple {choices}}" xid="1960532828514609940"/> चयन गर्नुपर्छ </target>
+        <target state="translated"> तपाईंले सही <x id="ICU" equiv-text="{questionForm.controls.type.value, select, select {विकल्प} selectMultiple {विकल्पहरू}}" xid="1960532828514609940"/> चयन गर्नैपर्छ </target>
       </trans-unit>
       <trans-unit id="1960532828514609940" datatype="html">
         <source>{VAR_SELECT, select, select {choice} selectMultiple {choices}}</source>
@@ -1539,7 +1539,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="6575164270960732036" datatype="html">
         <source> Previous </source>
-        <target state="translated"> अघिल्लो </target>
+        <target state="translated"> पछिल्लो </target>
       </trans-unit>
       <trans-unit id="1687380712152672297" datatype="html">
         <source>Submit Answer</source>
@@ -1599,7 +1599,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4546577159665195725" datatype="html">
         <source>Enter a valid past year</source>
-        <target state="translated">मान्य अघिल्लो वर्ष प्रविष्ट गर्नुहोस्</target>
+        <target state="translated">मान्य विगतको वर्ष प्रविष्ट गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4452427314943113135" datatype="html" approved="yes">
         <source>Previous</source>
@@ -1611,7 +1611,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="3228856378705280639" datatype="html">
         <source>Survey is complete. Your response has been submitted.</source>
-        <target state="translated">सर्वेक्षण पूरा भयो। तपाईंको प्रतिक्रिया पेश गरियो।</target>
+        <target state="translated">सर्वेक्षण पूरा भयो। तपाईंको प्रतिक्रिया बुझाइयो।</target>
       </trans-unit>
       <trans-unit id="1195722743517416014" datatype="html">
         <source>Become a member</source>
@@ -1623,7 +1623,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="6824758497103773714" datatype="html">
         <source>There was a problem submitting this survey.</source>
-        <target state="translated">यो सर्वेक्षण पेश गर्दा समस्या भयो।</target>
+        <target state="translated">यो सर्वेक्षण बुझाउँदा समस्या भयो।</target>
       </trans-unit>
       <trans-unit id="6957891556134371559" datatype="html">
         <source>Hide Details</source>
@@ -1663,11 +1663,11 @@ No description provided.
       </trans-unit>
       <trans-unit id="6573104995602382150" datatype="html">
         <source>Go to Meetups</source>
-        <target state="translated">भेटघाटहरूमा जानुहोस्</target>
+        <target state="translated">भेलाहरूमा जानुहोस्</target>
       </trans-unit>
       <trans-unit id="2169743475390513701" datatype="html">
         <source>Go to Teams</source>
-        <target state="translated">टिमहरूमा जानुहोस्</target>
+        <target state="translated">टीमहरूमा जानुहोस्</target>
       </trans-unit>
       <trans-unit id="996532727552951333" datatype="html">
         <source>Go to Enterprises</source>
@@ -1691,7 +1691,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="4024052613951908569" datatype="html">
         <source>Go to Manager</source>
-        <target state="translated">व्यवस्थापकमा जानुहोस्</target>
+        <target state="translated">प्रबन्धकमा जानुहोस्</target>
       </trans-unit>
       <trans-unit id="865399858281657162" datatype="html">
         <source>There was an error adding your message</source>
@@ -1824,7 +1824,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="7041963874559190359" datatype="html">
         <source>Reopened</source>
-        <target state="translated">पुनः खोलियो</target>
+        <target state="translated">पुनः खोलिएको</target>
       </trans-unit>
       <trans-unit id="7860418101283165917" datatype="html">
         <source>Closed</source>
@@ -1920,7 +1920,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1791482463504278446" datatype="html">
         <source>Edit <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></source>
-        <target state="translated">सम्पादन <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
+        <target state="translated">सम्पादन गर्नुहोस् <x id="START_BLOCK_IF" equiv-text="@if (minutes) {"/>(<x id="INTERPOLATION" equiv-text="{{ minutes }}"/>:<x id="INTERPOLATION_1" equiv-text="{{ seconds }}"/>)<x id="CLOSE_BLOCK_IF" equiv-text="}"/></target>
       </trans-unit>
       <trans-unit id="1103310779560908752" datatype="html">
         <source>Health examination on <x id="examDate" equiv-text="eventDate"/></source>
@@ -1928,7 +1928,7 @@ No description provided.
       </trans-unit>
       <trans-unit id="1442376281594176896" datatype="html">
         <source>Performed by</source>
-        <target state="translated">द्वारा सम्पन्न गरिएको</target>
+        <target state="translated">द्वारा गरिएको</target>
       </trans-unit>
       <trans-unit id="4282269331448011107" datatype="html">
         <source>Self</source>
@@ -1948,7 +1948,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6470818533271398943" datatype="html">
         <source>Observations &amp; Notes:</source>
-        <target state="translated">अवलोकन &amp; नोटहरू:</target>
+        <target state="translated">पर्यवेक्षण र नोटहरू:</target>
       </trans-unit>
       <trans-unit id="1235059787113921553" datatype="html">
         <source>Diagnosis:</source>
@@ -1976,7 +1976,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="601445890754822634" datatype="html">
         <source>Referrals:</source>
-        <target state="translated">सिफारिसहरू:</target>
+        <target state="translated">रेफरलहरू:</target>
       </trans-unit>
       <trans-unit id="100323118072618349" datatype="html">
         <source>health event</source>
@@ -2057,8 +2057,8 @@ Other Notes</source>
       <trans-unit id="5364866770993682368" datatype="html">
         <source>The value(s) of the following are not in the normal range.
          Click &lt;b&gt;Cancel&lt;/b&gt; to fix or click &lt;b&gt;OK&lt;/b&gt; to submit.</source>
-        <target state="translated">निम्न मान(हरू) सामान्य सीमामा छैनन्।
-         ठीक गर्न &lt;b&gt;रद्द गर्नुहोस्&lt;/b&gt; क्लिक गर्नुहोस् वा पेश गर्न &lt;b&gt;OK&lt;/b&gt; क्लिक गर्नुहोस्।</target>
+        <target state="translated">तलका मूल्य(हरू) सामान्य दायराभन्दा बाहिर छन्.
+         सच्याउन &lt;b&gt;रद्द गर्नुहोस्&lt;/b&gt; मा क्लिक गर्नुहोस् वा बुझाउन &lt;b&gt;ठीक छ&lt;/b&gt; मा क्लिक गर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="1091770325854289707" datatype="html">
         <source>Health Care</source>
@@ -2118,7 +2118,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8365977440374654567" datatype="html">
         <source>Loading health...</source>
-        <target state="translated">स्वास्थ्य जानकारी लोड हुँदैछ...</target>
+        <target state="translated">स्वास्थ्य लोड हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="6959497441009812685" datatype="html" approved="yes">
         <source>Full Name</source>
@@ -2498,7 +2498,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3947932744068086415" datatype="html">
         <source>myPlanet on playstore</source>
-        <target state="translated">myPlanet on playstore</target>
+        <target state="translated">playstore मा myPlanet</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -2530,11 +2530,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8517892359070439603" datatype="html">
         <source>Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</source>
-        <target state="translated">Welcome &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; to the Planet Learning</target>
+        <target state="translated">Planet Learning मा &lt;b&gt;<x id="PH" equiv-text="userId.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>&lt;/b&gt; लाई स्वागत छ</target>
       </trans-unit>
       <trans-unit id="1260359891793768927" datatype="html">
         <source>Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</source>
-        <target state="translated">Welcome to Planet Learning, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</target>
+        <target state="translated">Planet Learning मा स्वागत छ, <x id="PH" equiv-text="res.id.replace(&apos;org.couchdb.user:&apos;, &apos;&apos;)"/>!</target>
       </trans-unit>
       <trans-unit id="1496185008827271823" datatype="html">
         <source>An error occurred please try again</source>
@@ -2558,7 +2558,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7244453056385583471" datatype="html">
         <source>Can not login to <x id="PH" equiv-text="msg"/> planet.</source>
-        <target state="translated"><x id="PH" equiv-text="msg"/> प्लानेटमा लगइन गर्न सकिएन।</target>
+        <target state="translated"><x id="PH" equiv-text="msg"/> ग्रहमा लगइन गर्न सकिँदैन।</target>
       </trans-unit>
       <trans-unit id="604420619295131029" datatype="html">
         <source>Error connecting to <x id="PH" equiv-text="msg"/>.</source>
@@ -2566,7 +2566,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3358894379816462923" datatype="html">
         <source>New member &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; has joined.</source>
-        <target state="translated">नयाँ सदस्य &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; सामेल भएका छन्।</target>
+        <target state="translated">नयाँ सदस्य &lt;b&gt;<x id="PH" equiv-text="addedMember"/>&lt;/b&gt; सामेल भएको छ।</target>
       </trans-unit>
       <trans-unit id="1062010184324346369" datatype="html" approved="yes">
         <source>Planet Learning</source>
@@ -2590,7 +2590,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="662833268489097320" datatype="html">
         <source><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> Certification</source>
-        <target state="translated"><x id="ICU" equiv-text="{pageType, select, Add {Add} Update {Update}}" xid="6083096198450111059"/> प्रमाणपत्र</target>
+        <target state="translated">प्रमाणीकरण <x id="ICU" equiv-text="{pageType, select, Add {थप्नुहोस्} Update {अद्यावधिक गर्नुहोस्}}" xid="6083096198450111059"/></target>
       </trans-unit>
       <trans-unit id="1615626722362823974" datatype="html">
         <source>Add Courses</source>
@@ -2622,7 +2622,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="259538598847068823" datatype="html">
         <source>No courses have been added. Click on <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> to add courses.</source>
-        <target state="translated">कुनै पाठ्यक्रम थपिएका छैनन्। पाठ्यक्रम थप्न <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Edit<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> मा क्लिक गर्नुहोस्।</target>
+        <target state="translated">कुनै पाठ्यक्रम थपिएका छैनन्। पाठ्यक्रम थप्न <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>सम्पादन गर्नुहोस्<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/> मा क्लिक गर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="8279662232794412511" datatype="html">
         <source>Certified Members</source>
@@ -2638,7 +2638,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5750631765708661943" datatype="html">
         <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target state="needs-translation"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Clear<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated"><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>खाली गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="3100487570384970949" datatype="html">
         <source>Certification Name</source>
@@ -2650,11 +2650,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3183051418497978498" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Edit </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>edit<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>सम्पादन </target>
       </trans-unit>
       <trans-unit id="8838092804345159680" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </source>
-        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_forever<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>मेटाउनुहोस् </target>
       </trans-unit>
       <trans-unit id="5564437541975356934" datatype="html">
         <source>No Certifications Found</source>
@@ -2662,7 +2662,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4357211375133493569" datatype="html">
         <source>You have deleted the <x id="PH" equiv-text="displayName"/> certification</source>
-        <target state="needs-translation">You have deleted the <x id="PH" equiv-text="displayName"/> certification</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="displayName"/> प्रमाणीकरण मेटाउनुभएको छ</target>
       </trans-unit>
       <trans-unit id="1653431927831678093" datatype="html">
         <source>There was a problem deleting this certification</source>
@@ -2742,11 +2742,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="currency.symbol.label" datatype="html">
         <source>Symbol</source>
-        <target state="translated">चिन्ह</target>
+        <target state="translated">प्रतीक</target>
       </trans-unit>
       <trans-unit id="5199716930403500431" datatype="html">
         <source>Currency Symbol</source>
-        <target state="translated">मुद्रा चिन्ह</target>
+        <target state="translated">मुद्रा प्रतीक</target>
       </trans-unit>
       <trans-unit id="4866959439516771314" datatype="html">
         <source>e.g. $</source>
@@ -2754,11 +2754,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="currency.hint" datatype="html">
         <source>Enter the ISO code (e.g., USD, EUR) and symbol used in financial reports.</source>
-        <target state="translated">वित्तीय प्रतिवेदनहरूमा प्रयोग हुने ISO कोड (जस्तै, USD, EUR) र चिन्ह प्रविष्ट गर्नुहोस्।</target>
+        <target state="translated">वित्तीय प्रतिवेदनहरूमा प्रयोग हुने ISO कोड (जस्तै, USD, EUR) र प्रतीक प्रविष्ट गर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="currency.save" datatype="html">
         <source>Save Currency</source>
-        <target state="translated">मुद्रा सुरक्षित गर्नुहोस्</target>
+        <target state="translated">मुद्रा बचत गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="2347325578130929879" datatype="html">
         <source>Currency Updated Successfully</source>
@@ -2814,7 +2814,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7581076646894979862" datatype="html">
         <source>There <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {are} =1 {is} other {are}}" xid="7534460723873146629"/></source>
-        <target state="translated">यहाँ <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {are} =1 {is} other {are}}" xid="7534460723873146629"/></target>
+        <target state="translated">त्यहाँ <x id="ICU" equiv-text="{pendingPushCount, plural, =0 {छन्} =1 {छ} other {छन्}}" xid="7534460723873146629"/></target>
       </trans-unit>
       <trans-unit id="7534460723873146629" datatype="html">
         <source>{VAR_PLURAL, plural, =0 {are} =1 {is} other {are}}</source>
@@ -2826,7 +2826,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1571478181217186234" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> with pending courses and/or resources for download.</source>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {communities} =1 {community} other {communities}}}           center {{pendingPushCount, plural, =0 {nations} =1 {nation} other {nations}}}         }" xid="1375675989039748630"/> का लागि डाउनलोड गर्न बाँकी पाठ्यक्रम र/वा स्रोतहरू छन्।</target>
+        <target state="translated">अपूर्ण पाठ्यक्रमहरू र/वा स्रोतहरू डाउनलोडका लागि भएका <x id="ICU" equiv-text="{planetType, select,           nation {{pendingPushCount, plural, =0 {समुदायहरू} =1 {समुदाय} other {समुदायहरू}}}           center {{pendingPushCount, plural, =0 {राष्ट्रहरू} =1 {राष्ट्र} other {राष्ट्रहरू}}}         }" xid="1375675989039748630"/>.</target>
       </trans-unit>
       <trans-unit id="932840045131624829" datatype="html">
         <source>Send On Accept</source>
@@ -2854,7 +2854,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9159586432133749281" datatype="html">
         <source><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/>:</source>
-        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {Nation} nation {Center}}" xid="7719571683848776487"/>:</target>
+        <target state="translated"><x id="ICU" equiv-text="{planetType, select, community {राष्ट्र} nation {केन्द्र}}" xid="7719571683848776487"/>:</target>
       </trans-unit>
       <trans-unit id="7016533713297705274" datatype="html">
         <source>Local:</source>
@@ -2882,11 +2882,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3225437318170282124" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Checking request status...<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Checking request status...<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>अनुरोधको स्थिति जाँच गर्दै...<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="8759630366549790025" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Your request has been rejected by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/>. You can retry or contact <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> planet.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>तपाईंको अनुरोधलाई <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> द्वारा अस्वीकार गरिएको छ। तपाईं पुनः प्रयास गर्न वा <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> प्लानेटलाई सम्पर्क गर्न सक्नुहुन्छ।<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>तपाईंको अनुरोधलाई <x id="ICU" equiv-text="{ planetType, select, community {राष्ट्र} nation {केन्द्र}}" xid="8588305050900886824"/> ले अस्वीकार गरेको छ। तपाईं फेरि प्रयास गर्न सक्नुहुन्छ वा <x id="ICU" equiv-text="{ planetType, select, community {राष्ट्र} nation {केन्द्र}}" xid="8588305050900886824"/> ग्रहसँग सम्पर्क गर्न सक्नुहुन्छ.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="8588305050900886824" datatype="html">
         <source>{VAR_SELECT, select, community {nation} nation {center}}</source>
@@ -2894,7 +2894,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5593504079946406479" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Your request has not yet been accepted by <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>तपाईंको अनुरोधलाई अहिलेसम्म <x id="ICU" equiv-text="{ planetType, select, community {nation} nation {center}}" xid="8588305050900886824"/> द्वारा स्वीकार गरिएको छैन।<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>तपाईंको अनुरोधलाई <x id="ICU" equiv-text="{ planetType, select, community {राष्ट्र} nation {केन्द्र}}" xid="8588305050900886824"/> ले अझै स्वीकार गरेको छैन.<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="3633300711806178527" datatype="html">
         <source>myPlanet Server pin:</source>
@@ -2922,11 +2922,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="323122777831016957" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Resource Views Last 30 Days<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>पछिल्ला 30 दिनका स्रोत दृश्यहरू<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>अन्तिम 30 दिनका स्रोत दृश्यहरू<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="1212433079391326735" datatype="html">
         <source><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>Total Ratings Last 30 Days<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></source>
-        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>पछिल्ला 30 दिनका कुल मूल्याङ्कनहरू<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
+        <target state="translated"><x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/>अन्तिम 30 दिनका कुल मूल्याङ्कनहरू<x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/></target>
       </trans-unit>
       <trans-unit id="1158342469803061053" datatype="html">
         <source>An error occurred please try again.</source>
@@ -2982,7 +2982,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2121344910820993995" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>ताजा गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="1519954996184640001" datatype="html">
         <source>Error</source>
@@ -3022,7 +3022,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5395358025969946986" datatype="html">
         <source>Planet Name</source>
-        <target state="translated">प्लानेट नाम</target>
+        <target state="translated">ग्रहको नाम</target>
       </trans-unit>
       <trans-unit id="8040881171107393560" datatype="html">
         <source>ID</source>
@@ -3082,7 +3082,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="550179982987662180" datatype="html">
         <source>myPlanet on <x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }" xid="4746831788356104312"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{ planetType, select, center {Nations} other {Communities} }" xid="4746831788356104312"/> मा myPlanet</target>
+        <target state="translated"><x id="ICU" equiv-text="{ planetType, select, center {राष्ट्रहरू} other {समुदायहरू} }" xid="4746831788356104312"/> मा myPlanet</target>
       </trans-unit>
       <trans-unit id="4746831788356104312" datatype="html">
         <source>{VAR_SELECT, select, center {Nations} other {Communities}}</source>
@@ -3178,7 +3178,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2947841900277203452" datatype="html">
         <source>Download as image</source>
-        <target state="translated">छविको रूपमा डाउनलोड गर्नुहोस्</target>
+        <target state="translated">छविका रूपमा डाउनलोड गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="8738732372986673558" datatype="html">
         <source>Copy to clipboard</source>
@@ -3294,11 +3294,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7924868316552213402" datatype="html">
         <source>Week 1 End Date</source>
-        <target state="translated">हप्ता 1 समाप्ति मिति</target>
+        <target state="translated">हप्ता 1 को अन्त्य मिति</target>
       </trans-unit>
       <trans-unit id="6200939044344907169" datatype="html">
         <source>Week 2 End Date</source>
-        <target state="translated">हप्ता 2 समाप्ति मिति</target>
+        <target state="translated">हप्ता 2 को अन्त्य मिति</target>
       </trans-unit>
       <trans-unit id="2572999724448976084" datatype="html">
         <source>Compare</source>
@@ -3306,11 +3306,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1028879399806058493" datatype="html">
         <source>Download as CSV</source>
-        <target state="translated">CSV को रूपमा डाउनलोड गर्नुहोस्</target>
+        <target state="translated">CSV का रूपमा डाउनलोड गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="3554511241808542151" datatype="html">
         <source>Loading comparison data...</source>
-        <target state="translated">तुलना डेटा लोड हुँदैछ...</target>
+        <target state="translated">तुलनात्मक डेटा लोड हुँदैछ...</target>
       </trans-unit>
       <trans-unit id="9079143231473125231" datatype="html">
         <source>Metric</source>
@@ -3322,7 +3322,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4410529131290936199" datatype="html">
         <source> Select dates and click Compare to view comparison data </source>
-        <target state="translated"> तुलना डेटा हेर्न मितिहरू चयन गर्नुहोस् र तुलना गर्नुहोस् क्लिक गर्नुहोस् </target>
+        <target state="translated">तुलनात्मक डेटा हेर्न मितिहरू चयन गरेर तुलना गर्नुहोस् मा क्लिक गर्नुहोस् </target>
       </trans-unit>
       <trans-unit id="5426418005604037142" datatype="html">
         <source> No data found </source>
@@ -3398,7 +3398,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2063234114557938514" datatype="html">
         <source>Has Attachments</source>
-        <target state="translated">संलग्नहरू छन्</target>
+        <target state="translated">संलग्नकहरू छन्</target>
       </trans-unit>
       <trans-unit id="7990167846685918034" datatype="html">
         <source>Chat Usage</source>
@@ -3422,15 +3422,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2097037868741038089" datatype="html">
         <source>Week 1 (<x id="PH" equiv-text="formatWeekRange(w1Range)"/>)</source>
-        <target state="translated">हप्ता १ (<x id="PH" equiv-text="formatWeekRange(w1Range)"/>)</target>
+        <target state="translated">हप्ता 1 (<x id="PH" equiv-text="formatWeekRange(w1Range)"/>)</target>
       </trans-unit>
       <trans-unit id="5500551512948402457" datatype="html">
         <source>Week 2 (<x id="PH" equiv-text="formatWeekRange(w2Range)"/>)</source>
-        <target state="translated">हप्ता २ (<x id="PH" equiv-text="formatWeekRange(w2Range)"/>)</target>
+        <target state="translated">हप्ता 2 (<x id="PH" equiv-text="formatWeekRange(w2Range)"/>)</target>
       </trans-unit>
       <trans-unit id="8778525357359342901" datatype="html">
         <source>Unique Member Visits</source>
-        <target state="translated">अनौठा सदस्य भ्रमणहरू</target>
+        <target state="translated">विशिष्ट सदस्य भ्रमणहरू</target>
       </trans-unit>
       <trans-unit id="2725999660502319042" datatype="html">
         <source>Total Member Visits</source>
@@ -3442,11 +3442,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4256634874656434098" datatype="html">
         <source>Voices Created</source>
-        <target state="translated">उत्पन्न आवाजहरू</target>
+        <target state="translated">सिर्जना गरिएका आवाजहरू</target>
       </trans-unit>
       <trans-unit id="4055156853294476179" datatype="html">
         <source>Chart not available. Please wait for the chart to load.</source>
-        <target state="translated">चार्ट उपलब्ध छैन। कृपया चार्ट लोड हुन पर्खनुहोस्।</target>
+        <target state="translated">चार्ट उपलब्ध छैन। कृपया चार्ट लोड हुन कुर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="2367755547196736431" datatype="html">
         <source>Chart copied to clipboard</source>
@@ -3458,11 +3458,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6023427095903292213" datatype="html">
         <source>No comparison data available</source>
-        <target state="translated">तुलना डेटा उपलब्ध छैन</target>
+        <target state="translated">कुनै तुलनात्मक डेटा उपलब्ध छैन</target>
       </trans-unit>
       <trans-unit id="3909592323906913534" datatype="html">
         <source>Comparison table downloaded as CSV</source>
-        <target state="translated">तुलना तालिका CSV का रूपमा डाउनलोड गरियो</target>
+        <target state="translated">तुलनात्मक तालिका CSV का रूपमा डाउनलोड गरियो</target>
       </trans-unit>
       <trans-unit id="4235960290603625197" datatype="html" approved="yes">
         <source>Total Examinations:</source>
@@ -3498,7 +3498,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7875066634319060855" datatype="html">
         <source>Pending Resources/Courses on <x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{ planetType, select, nation {Communities} center {Nations} }" xid="7890622465406389067"/> मा बाँकी स्रोतहरू/पाठ्यक्रमहरू</target>
+        <target state="translated"><x id="ICU" equiv-text="{ planetType, select, nation {समुदायहरू} center {राष्ट्रहरू} }" xid="7890622465406389067"/> मा बाँकी स्रोत/पाठ्यक्रमहरू</target>
       </trans-unit>
       <trans-unit id="7890622465406389067" datatype="html">
         <source>{VAR_SELECT, select, nation {Communities} center {Nations}}</source>
@@ -3506,7 +3506,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5712931470313882827" datatype="html">
         <source>There was a problem getting <x id="PH" equiv-text="this.childType"/></source>
-        <target state="needs-translation">There was a problem getting <x id="PH" equiv-text="this.childType"/></target>
+        <target state="translated"><x id="PH" equiv-text="this.childType"/> प्राप्त गर्दा समस्या भयो</target>
       </trans-unit>
       <trans-unit id="6718184529889415054" datatype="html">
         <source>Last Upgrade</source>
@@ -3570,11 +3570,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6432667455665433426" datatype="html">
         <source>Edit Nation Name</source>
-        <target state="translated">राष्ट्र नाम सम्पादन गर्नुहोस्</target>
+        <target state="translated">राष्ट्रको नाम सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4040314800064170229" datatype="html">
         <source>Edit Community Name</source>
-        <target state="translated">समुदाय नाम सम्पादन गर्नुहोस्</target>
+        <target state="translated">समुदायको नाम सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="1055526813439323803" datatype="html">
         <source>Nation name updated.</source>
@@ -3710,7 +3710,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8706935135272290900" datatype="html">
         <source>{ hub, select, sandbox {Add to { planetType, select, nation {Network} center {Region} }} other {Move { planetType, select, nation {Networks} center {Regions} }} }</source>
-        <target state="translated">{ hub, select, sandbox {थप्नुहोस् { planetType, select, nation {Network} center {Region} }} other {सार्नुहोस् { planetType, select, nation {Networks} center {Regions} }} }</target>
+        <target state="translated">{ hub, select, sandbox {Add to { planetType, select, nation {Network} center {Region} }} other {Move { planetType, select, nation {Networks} center {Regions} }} }</target>
       </trans-unit>
       <trans-unit id="6794494509121806332" datatype="html">
         <source>{VAR_SELECT_2, select, sandbox {Add to {VAR_SELECT, select, nation {Network} center {Region}}} other {Move {VAR_SELECT_1, select, nation {Networks} center {Regions}}}}</source>
@@ -3754,7 +3754,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8518836356271371093" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Delete Network </target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>नेटवर्क मेटाउनुहोस् </target>
       </trans-unit>
       <trans-unit id="1415060111017347427" datatype="html">
         <source>Network</source>
@@ -3766,7 +3766,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5258595085525200029" datatype="html">
         <source>Add <x id="PH" equiv-text="type"/></source>
-        <target state="needs-translation">Add <x id="PH" equiv-text="type"/></target>
+        <target state="translated"><x id="PH" equiv-text="type"/> थप्नुहोस्</target>
       </trans-unit>
       <trans-unit id="3047897875233101157" datatype="html">
         <source>Select Planet</source>
@@ -3778,7 +3778,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="935680876697928477" datatype="html">
         <source>There was an error adding <x id="PH" equiv-text="type"/></source>
-        <target state="needs-translation">There was an error adding <x id="PH" equiv-text="type"/></target>
+        <target state="translated"><x id="PH" equiv-text="type"/> थप्दा त्रुटि भयो</target>
       </trans-unit>
       <trans-unit id="8348734508103087089" datatype="html">
         <source>Syncing started</source>
@@ -3790,7 +3790,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1572317542588758568" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}" xid="5238731865000700958"/> Meetup</source>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {Add new} Update {Update}}" xid="5238731865000700958"/> भेटघाट</target>
+        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add new {नयाँ थप्नुहोस्} Update {अद्यावधिक गर्नुहोस्}}" xid="5238731865000700958"/> भेला</target>
       </trans-unit>
       <trans-unit id="471816275243265264" datatype="html" approved="yes">
         <source>Location</source>
@@ -3838,7 +3838,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2359879184399350005" datatype="html">
         <source> Added event: <x id="PH" equiv-text="meetupInfo.title"/></source>
-        <target state="translated"> Added event: <x id="PH" equiv-text="meetupInfo.title"/></target>
+        <target state="translated"> थपिएको घटना: <x id="PH" equiv-text="meetupInfo.title"/></target>
       </trans-unit>
       <trans-unit id="1252490544773299175" datatype="html">
         <source>&lt;b&gt;&quot;<x id="PH" equiv-text="meetupInfo.title"/>&quot;&lt;/b&gt; has been updated.</source>
@@ -3906,7 +3906,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4088408578325917001" datatype="html">
         <source>You have <x id="PH" equiv-text="msg"/> meetup.</source>
-        <target state="needs-translation">You have <x id="PH" equiv-text="msg"/> meetup.</target>
+        <target state="translated">तपाईंसँग <x id="PH" equiv-text="msg"/> भेला छ।</target>
       </trans-unit>
       <trans-unit id="3919928928256100890" datatype="html">
         <source>You cannot join an old meetup.</source>
@@ -3914,19 +3914,19 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4491293533591377812" datatype="html">
         <source>You have left <x id="PH" equiv-text="countChanged"/> meetups</source>
-        <target state="needs-translation">You have left <x id="PH" equiv-text="countChanged"/> meetups</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="countChanged"/> भेटघाटहरू छोड्नुभयो</target>
       </trans-unit>
       <trans-unit id="1110805787603506098" datatype="html">
         <source>You have joined <x id="PH" equiv-text="countChanged"/> meetups</source>
-        <target state="needs-translation">You have joined <x id="PH" equiv-text="countChanged"/> meetups</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="countChanged"/> भेटघाटहरूमा सहभागी हुनुभयो</target>
       </trans-unit>
       <trans-unit id="9080951878804964068" datatype="html">
         <source>Event deleted: <x id="PH" equiv-text="displayName"/></source>
-        <target state="translated">घटना मेटाइयो: <x id="PH" equiv-text="displayName"/></target>
+        <target state="translated">घटना मेटियो: <x id="PH" equiv-text="displayName"/></target>
       </trans-unit>
       <trans-unit id="5976955468967876827" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="meetups.length"/> events</source>
-        <target state="translated">तपाईंले <x id="PH" equiv-text="meetups.length"/> वटा कार्यक्रमहरू मेटाउनुभयो</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="meetups.length"/> कार्यक्रमहरू मेटाउनुभयो</target>
       </trans-unit>
       <trans-unit id="8842484659556861897" datatype="html">
         <source>There was a problem deleting this meetup</source>
@@ -3970,7 +3970,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7348625224526979018" datatype="html">
         <source>Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</source>
-        <target state="needs-translation">Joined Members: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
+        <target state="translated">सहभागी सदस्यहरू: (<x id="INTERPOLATION" equiv-text="{{members.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="8751974929581180036" datatype="html">
         <source>No members have joined this meetup</source>
@@ -3978,7 +3978,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5192755484233399625" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{mem}}"/> (You)</source>
-        <target state="needs-translation"><x id="INTERPOLATION" equiv-text="{{mem}}"/> (You)</target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{mem}}"/> (तपाईं)</target>
       </trans-unit>
       <trans-unit id="3788701007469870540" datatype="html">
         <source>You cannot join old meetup</source>
@@ -3986,13 +3986,13 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1117122640467458416" datatype="html">
         <source>Invitation<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> sent successfully</source>
-        <target state="translated">Invitation<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> sent successfully</target>
+        <target state="translated">निमन्त्रण<x id="PH" equiv-text="invites.length &gt; 1 ? &apos;s&apos; : &apos;&apos;)"/> सफलतापूर्वक पठाइयो</target>
       </trans-unit>
       <trans-unit id="887946048712515044" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; would like you to join &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; meetup
         <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; ले तपाईंलाई &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; भेटघाटमा सामेल हुन चाहन्छ
-        <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/></target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; ले तपाईंलाई &lt;b&gt;&quot;<x id="PH_1" equiv-text="meetupDetail.title"/>&quot;&lt;/b&gt; भेला
+        <x id="PH_2" equiv-text="meetupDetail.meetupLocation ? &apos; at &apos; + meetupDetail.meetupLocation : &apos;&apos;)"/> मा सामेल हुन चाहन्छ</target>
       </trans-unit>
       <trans-unit id="546766753072101168" datatype="html" approved="yes">
         <source>Labels</source>
@@ -4044,11 +4044,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4152624241324738548" datatype="html">
         <source>Reply to <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Reply to <x id="PH" equiv-text="label"/></target>
+        <target state="translated"><x id="PH" equiv-text="label"/> लाई जवाफ दिनुहोस्</target>
       </trans-unit>
       <trans-unit id="400434969342192894" datatype="html">
         <source>Your <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Your <x id="PH" equiv-text="label"/></target>
+        <target state="translated">तपाईंको <x id="PH" equiv-text="label"/></target>
       </trans-unit>
       <trans-unit id="5989356492462696876" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="replyBy"/>&lt;/b&gt; replied to your <x id="PH_1" equiv-text="news.viewableBy === &apos;community&apos; ? &apos;community &apos; : &apos;&apos;"/>message.</source>
@@ -4056,7 +4056,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8417917245707164827" datatype="html">
         <source>Edit <x id="PH" equiv-text="label"/></source>
-        <target state="needs-translation">Edit <x id="PH" equiv-text="label"/></target>
+        <target state="translated"><x id="PH" equiv-text="label"/> सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="8066608938393600549" datatype="html">
         <source>Message</source>
@@ -4092,7 +4092,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3907433627453313804" datatype="html">
         <source>Label <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></source>
-        <target state="translated"><x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/> लेबल</target>
+        <target state="translated">लेबल <x id="PH" equiv-text="action === &apos;remove&apos; ? &apos;removed&apos; : &apos;added&apos;"/></target>
       </trans-unit>
       <trans-unit id="8434708712599356475" datatype="html">
         <source>Thank you for submitting your message</source>
@@ -4144,7 +4144,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1151108013016521270" datatype="html">
         <source><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> Resource</source>
-        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {Add} Edit {Edit}}" xid="4259908510846969672"/> स्रोत</target>
+        <target state="translated"><x id="ICU" equiv-text="{this.pageType, select, Add {थप्नुहोस्} Edit {सम्पादन गर्नुहोस्}}" xid="4259908510846969672"/> स्रोत</target>
       </trans-unit>
       <trans-unit id="5642836248241530789" datatype="html">
         <source>Title is required</source>
@@ -4229,7 +4229,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2064936693393551817" datatype="html">
         <source>Attribution &amp; License</source>
-        <target state="translated">श्रेयदान र इजाजतपत्र</target>
+        <target state="translated">श्रेय र इजाजतपत्र</target>
       </trans-unit>
       <trans-unit id="6552941649034744368" datatype="html" approved="yes">
         <source>Publisher/Attribution</source>
@@ -4501,16 +4501,16 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8025380752189745299" datatype="html">
         <source>No Resource Found</source>
-        <target state="needs-translation">No Resource Found</target>
+        <target state="translated">कुनै स्रोत फेला परेन</target>
       </trans-unit>
       <trans-unit id="5022177806913011709" datatype="html">
         <source>source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></source>
-        <target state="translated">स्रोत: <x id="PH" equiv-text="element.doc.sourcePlanet"/></target>
+        <target state="translated">source: <x id="PH" equiv-text="element.doc.sourcePlanet"/></target>
         <note>sourcePlanet</note>
       </trans-unit>
       <trans-unit id="3929692497484294202" datatype="html">
         <source>You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></source>
-        <target state="needs-translation">You have deleted resource: <x id="PH" equiv-text="resource.doc.title"/></target>
+        <target state="translated">तपाईंले स्रोत मेटाउनुभयो: <x id="PH" equiv-text="resource.doc.title"/></target>
       </trans-unit>
       <trans-unit id="5126792698020223275" datatype="html">
         <source>There was a problem deleting this resource.</source>
@@ -4518,11 +4518,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="885358008449173667" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> resources</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> resources</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="deleteArray.length"/> संसाधनहरू मेटाउनुभयो</target>
       </trans-unit>
       <trans-unit id="330998501279832459" datatype="html">
         <source>Resources queued to push to <x id="PH" equiv-text="childType"/>.</source>
-        <target state="needs-translation">Resources queued to push to <x id="PH" equiv-text="childType"/>.</target>
+        <target state="translated">स्रोतहरूलाई <x id="PH" equiv-text="childType"/> मा पुश गर्न कतारबद्ध गरिएको छ।</target>
       </trans-unit>
       <trans-unit id="8935371899913532939" datatype="html">
         <source>There was an error sending these resources</source>
@@ -4530,11 +4530,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2621025422283342206" datatype="html">
         <source>Removed from myLibrary: <x id="PH" equiv-text="resourceTitle"/></source>
-        <target state="translated">Removed from myLibrary: <x id="PH" equiv-text="resourceTitle"/></target>
+        <target state="translated">myLibrary बाट हटाइयो: <x id="PH" equiv-text="resourceTitle"/></target>
       </trans-unit>
       <trans-unit id="6309668423866204397" datatype="html">
         <source>Added to myLibrary: <x id="PH" equiv-text="resourceTitle"/></source>
-        <target state="translated">Added to myLibrary: <x id="PH" equiv-text="resourceTitle"/></target>
+        <target state="translated">myLibrary मा थपियो: <x id="PH" equiv-text="resourceTitle"/></target>
       </trans-unit>
       <trans-unit id="3470732430391263457" datatype="html">
         <source>There are new resources in the Library. Click to see them!</source>
@@ -4546,7 +4546,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6719148909128409396" datatype="html">
         <source><x id="ICU" equiv-text="{fullView, select, on {Show} off {Hide}}" xid="7816569886364581184"/> details </source>
-        <target state="translated"> विवरण <x id="ICU" equiv-text="{fullView, select, on {Show} off {Hide}}" xid="7816569886364581184"/> </target>
+        <target state="translated"> <x id="ICU" equiv-text="{fullView, select, on {देखाउनुहोस्} off {लुकाउनुहोस्}}" xid="7816569886364581184"/> विवरण </target>
       </trans-unit>
       <trans-unit id="7816569886364581184" datatype="html">
         <source>{VAR_SELECT, select, on {Show} off {Hide}}</source>
@@ -4653,35 +4653,35 @@ Other Notes</source>
   Always seek clarification before assuming user intent and frame responses toward empowerment, learning, and teamwork.
   </source>
         <target state="translated">
-  तपाईं Open Learning Exchange (OLE): https://ole.org/ का लागि एक समुदाय मन्थन तथा मार्गदर्शन सहायक हुनुहुन्छ।
-  तपाईंसँग Planet (वेब एप) र MyPlanet (अफलाइन-फर्स्ट एन्ड्रोइड एप) बहुभाषिक शिक्षा/समुदाय व्यवस्थापन
-  प्लेटफर्महरूको, OLE द्वारा विकास गरिएका, तिनीहरूका विशेषताहरू सहित, विशेषज्ञ ज्ञान छ।
+  तपाईं Open Learning Exchange (OLE): https://ole.org/ का लागि समुदायका विचार-मन्थन र मार्गदर्शन सहायक हुनुहुन्छ।
+  तपाईंलाई Planet (web app) र MyPlanet (offline-first android app) का बहुभाषिक Learning/Community Management
+  प्लेटफर्महरू र तिनका सुविधाहरूको विशेषज्ञ ज्ञान छ, जुन OLE ले विकास गरेको हो।
 
   तपाईं बुझ्नुहुन्छ कि:
-  • Planet सामुदायिक नेताहरू, कोचहरू, र सिक्नेहरूद्वारा स्रोत, सदस्य, पाठ्यक्रम, सर्वेक्षण, परीक्षा, टिम, उद्यम, प्रमाणपत्र र उपलब्धिहरू व्यवस्थापन गर्न प्रयोग गरिने केन्द्रिय वेब-आधारित शिक्षा व्यवस्थापन प्लेटफर्म हो।
-  • MyPlanet अफलाइन-फर्स्ट एन्ड्रोइड अनुप्रयोग हो जसले सिक्नेहरूलाई Planet सँग समन्वय गर्दै अफलाइन-फर्स्ट आधारमा Planet का सुविधाहरू प्रयोग गर्न दिन्छ।
-  • यी दुवै मिलेर समुदाय-आधारित शिक्षालाई समर्थन गर्ने वितरित शैक्षिक पारिस्थितिकी तन्त्र बनाउँछन्।
+  • Planet समुदायका अगुवा, कोच, र सिक्नेहरूद्वारा स्रोत, सदस्य, पाठ्यक्रम, सर्वेक्षण, परीक्षा, टोली, उद्यम, प्रमाणीकरण र उपलब्धिहरू व्यवस्थापन गर्न प्रयोग हुने केन्द्रीय वेब-आधारित learning management platform हो।
+  • MyPlanet एउटा offline-first android application हो जसले सिक्नेहरूलाई Planet सँग सिङ्क्रोनाइज हुँदै offline-first आधारमा Planet का सुविधाहरू प्रयोग गर्न दिन्छ।
+  • यी दुवै मिलेर समुदाय-आधारित सिकाइलाई समर्थन गर्ने वितरित learning ecosystem बनाउँछन्।
 
   तपाईंको उद्देश्य:
-  • प्रयोगकर्ताका प्रश्नहरूको जवाफ दिनु र मन्थन गर्न, समस्या समाधान गर्न, र शिक्षाका लागि रचनात्मक दृष्टिकोणहरू अन्वेषण गर्न मद्दत गर्नु हो।
-  • OLE का समुदाय सञ्जालहरूमा सिकाइ, मार्गदर्शन, र नेतृत्वलाई सुदृढ पार्ने विचारहरू प्रवर्द्धन गर्नु हो।
-  • समुदायहरूलाई सिकाइ, स्थानीय स्वामित्व, र दिगो विकासमार्फत सशक्त पार्ने OLE को मूल मिशनसँग मेल खाने नवप्रवर्तनलाई प्रोत्साहन गर्नु हो।
+  • प्रयोगकर्ताका प्रश्नहरूको जवाफ दिनु र brainstorming, समस्या समाधान, र सिकाइका लागि रचनात्मक उपायहरू अन्वेषण गर्न मद्दत गर्नु।
+  • OLE का community networks भरि सिकाइ, mentoring, र leadership लाई सुदृढ बनाउने विचारहरू प्रवर्द्धन गर्नु।
+  • समुदायलाई सिकाइ, स्थानीय स्वामित्व, र दिगो विकासमार्फत सशक्त बनाउने OLE को मूल मिशनसँग मिल्दो innovation लाई प्रोत्साहित गर्नु।
 
-  सधैं निम्न जस्ता शब्दहरूलाई जोड दिनुहोस्:
+  सधैं निम्न शब्दहरूमा जोड दिनुहोस्:
   &apos;learning&apos;, &apos;learner&apos;, &apos;coach&apos;, &apos;leader&apos;, &apos;community&apos;, &apos;power&apos;, &apos;team&apos;, र &apos;enterprises&apos;, र सहकार्य तथा सशक्तीकरणलाई उजागर गर्नुहोस्।
-  सुविधाहरूको चर्चा गर्दा, तपाईं यी कुराहरू उल्लेख गर्न सक्नुहुन्छ:
-  • आवाज (समाचार पोस्ट) र समुदाय क्यालेन्डर, वित्त, प्रतिवेदन र लिङ्कसहितको समुदाय पृष्ठ
-  • सिक्नेहरूको myDashboard जसले उनीहरूको सिकाइ र प्रयोग गतिविधिहरूको सारांश दिन्छ
-  • चरणहरू, परीक्षा/क्विज, नोटहरू, प्रगति ट्र्याकिङ, र प्रमाणपत्रसहितका पाठ्यक्रमहरू
-  • pdf, अडियो, ग्राफिक/भिडियो र पाठ अपलोड समर्थनसहितका स्रोतहरू/पुस्तकालय
-  • सहकार्य र योजनाबद्ध गतिविधिहरूलाई प्रवर्द्धन गर्ने टिम र उद्यमहरू, जसमा आवाज, सर्वेक्षण, क्यालेन्डर, कार्य, पाठ्यक्रम, स्रोत, कागजात, वित्त, र प्रतिवेदनहरू समावेश छन्
-  • सर्वेक्षण, उपलब्धि र प्रमाणपत्रहरू
-  • भूमिका (सिक्ने, कोच, नेता, प्रशासक), प्रोफाइल, र अनुमतिसहितको प्रयोगकर्ता व्यवस्थापन
-  • अन्तर्दृष्टिका लागि चार्ट र प्रतिवेदनसहितका प्रशासक ड्यासबोर्डहरू
+  सुविधाहरूबारे कुरा गर्दा, तपाईं यी सन्दर्भहरू प्रयोग गर्न सक्नुहुन्छ:
+  • समुदाय पृष्ठ, voices (news posts) तथा community calendar, finances, reports र links सहित
+  • learner myDashboard जसले तिनको learning र usage गतिविधिहरूको overview दिन्छ
+  • steps, exams/quizzes, notes, progress tracking, र certificates सहितका पाठ्यक्रमहरू
+  • file uploads(pdf), audio, graphic/video र text समर्थन भएको Resources/Library
+  • teams र enterprises जसले voices, surveys, calendar, tasks, courses, resources, documents, finances, र reports सँग सहकार्य र planned activities लाई प्रोत्साहित गर्छ
+  • Surveys, Achievements र Certifications
+  • roles (learner, coach, leader, admin), profiles, र permissions सहितको user management
+  • insights का लागि charts र reports सहितका admin dashboards
 
-  व्यावसायिक तर मैत्रीपूर्ण स्वर कायम राख्नुहोस्, प्रेरणा र समुदाय भावना बढाउँदै।
-  स्पष्टतामा सहयोग गर्ने बाहेक अनावश्यक प्राविधिक शब्दावलीबाट बच्नुहोस्।
-  प्रयोगकर्ताको अभिप्राय अनुमान गर्नु अघि सधैं स्पष्टता माग्नुहोस् र जवाफलाई सशक्तीकरण, सिकाइ, र टोलीकार्यतर्फ केन्द्रित गर्नुहोस्।
+  व्यावसायिक तर न्यानो स्वर कायम राख्नुहोस्, प्रेरणा र समुदाय भावना बढाउँदै।
+  स्पष्टतामा सहयोग गर्ने अवस्थामा बाहेक अनावश्यक प्राविधिक jargon बाट बच्नुहोस्।
+  प्रयोगकर्ताको उद्देश्य अनुमान गर्नुअघि सधैं स्पष्टीकरण खोज्नुहोस् र प्रतिक्रियालाई सशक्तीकरण, सिकाइ, र टोलीकार्यतर्फ उन्मुख राख्नुहोस्।
   </target>
       </trans-unit>
       <trans-unit id="1836515023834744069" datatype="html">
@@ -4732,17 +4732,17 @@ Other Notes</source>
   कृपया PDF निर्यातका लागि विस्तृत AI विश्लेषण तयार गर्नुहोस्, 4 खण्डमा व्यवस्थित गरेर:
 
   1. व्यक्तिगत प्रश्न विश्लेषण
-    यदि प्रश्न **बन्द प्रश्न हो (type - select or selectMultiple or rating scale [1-9 choices]):**
+    यदि प्रश्न **बन्द प्रश्न हो** (type - select or selectMultiple or rating scale [1-9 choices]):
         - शीर्ष तीन उत्तर विकल्पहरू निरपेक्ष सङ्ख्या र प्रतिशतसहित सूचीबद्ध गर्नुहोस्।
         - शीर्ष तीनका अतिरिक्त,
          10% भन्दा कम प्रतिक्रिया पाएका कुनै पनि उत्तर विकल्पलाई उजागर गर्नुहोस् र त्यो किन कम चयन भएको हुन सक्छ भनी सुझाव दिनुहोस्
         - चयनहरूका लागि एउटा परिकल्पना बनाउनुहोस्
-    यदि प्रश्न **खुला प्रश्न हो (type - input or textarea):**
+    यदि प्रश्न **खुला प्रश्न हो** (type - input or textarea):
         - उपलब्ध भएमा उत्तरदाताको जनसांख्यिकीय विवरणसहित प्रत्यक्ष उद्धरणहरू प्रयोग गर्नुहोस्।
-        - भावना (sentiment) र मुख्य शब्द (keyword) विश्लेषण गर्नुहोस्
+        - भावना र मुख्य शब्द विश्लेषण गर्नुहोस्
         - एकल तर उच्च-प्रभाव भएका असामान्य सुझावहरूलाई उजागर गर्नुहोस्।
         - सुझावहरूको कार्यान्वयनयोग्यतालाई उजागर गर्नुहोस्।
-        - निरपेक्ष सङ्ख्या र प्रतिशत विभाजनसहित विषयगत वर्गीकरण अनिवार्य रूपमा गर्नुहोस्, अर्थात् प्रत्येक विषय (theme) का लागि:
+        - निरपेक्ष सङ्ख्या र प्रतिशत विभाजनसहित विषयगत वर्गीकरण अनिवार्य रूपमा गर्नुहोस्, अर्थात् प्रत्येक विषयका लागि:
           1. त्यसलाई उल्लेख गर्ने उत्तरदाताहरूको सङ्ख्या र प्रतिशत।
           2. विषयलाई चित्रण गर्ने एउटा अज्ञातीकृत यथाशब्द उद्धरण।
 
@@ -4753,7 +4753,7 @@ Other Notes</source>
       “Qn मा ‘A’ रोज्ने उत्तरदाताहरूमध्ये X% ले Qm मा ‘B’ पनि रोजे (Y/Z)।”
 
   3. जनसांख्यिकीय विभाजन
-    - निम्न जस्ता जनसांख्यिकीय कारकहरूमा आधारित समूहहरू (cohorts) परिभाषित गर्नुहोस्:
+    - निम्न जस्ता जनसांख्यिकीय कारकहरूमा आधारित समूहहरू परिभाषित गर्नुहोस्:
       - **उमेर समूहहरू:** प्रत्येक बन्द प्रश्नको विकल्पलाई उमेर, लिङ्ग, र स्थान खण्डहरूमा तुलना गर्नुहोस्,
         जहाँ कुनै विकल्प समग्र औसतभन्दा कम्तीमा 15 प्रतिशत-बिन्दुले माथि वा तल छ, त्यहाँ औंल्याउनुहोस्।
       - **लिङ्ग** (उपलब्ध भएमा)
@@ -4771,7 +4771,7 @@ Other Notes</source>
       <trans-unit id="3515009611935359950" datatype="html">
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
   Be sure to assist the learner in the best way you can. </source>
-        <target state="translated">निम्न जानकारी एउटा पाठ्यक्रम चरण हो जुन &quot;<x id="PH" equiv-text="stepTitle"/>&quot; पाठ्यक्रमबाट लिइएको हो, जसको विवरण &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot; छ।
+        <target state="translated">निम्न जानकारी &quot;<x id="PH" equiv-text="stepTitle"/>&quot; पाठ्यक्रमको एउटा चरण हो जसको विवरण &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot; छ।
   सिक्नेलाई सकेसम्म राम्रो तरिकाले सहयोग गर्न निश्चित हुनुहोस्। </target>
       </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
@@ -4784,11 +4784,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2058019742098696745" datatype="html">
         <source>Uncompleted Task</source>
-        <target state="translated">अपूर्ण कार्य</target>
+        <target state="translated">अपुरो कार्य</target>
       </trans-unit>
       <trans-unit id="586988182581968519" datatype="html">
         <source>Completed Task</source>
-        <target state="translated">पूरा गरिएको कार्य</target>
+        <target state="translated">पूरा कार्य</target>
       </trans-unit>
       <trans-unit id="7071035765699070035" datatype="html">
         <source>Add Event</source>
@@ -4824,7 +4824,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2793224927989139973" datatype="html">
         <source>Error fetching document: <x id="PH" equiv-text="err.message"/></source>
-        <target state="translated">कागजात ल्याउँदा त्रुटि: <x id="PH" equiv-text="err.message"/></target>
+        <target state="translated">कागजात ल्याउँदा त्रुटि भयो: <x id="PH" equiv-text="err.message"/></target>
       </trans-unit>
       <trans-unit id="999413599775442225" datatype="html">
         <source>Report of <x id="PH" equiv-text="title"/> on <x id="PH_1" equiv-text="reportDate"/></source>
@@ -4854,7 +4854,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7726080656019750876" datatype="html">
         <source>Unspecified</source>
-        <target state="translated">अनिर्दिष्ट</target>
+        <target state="translated">निर्दिष्ट नगरिएको</target>
       </trans-unit>
       <trans-unit id="8939587804990976924" datatype="html">
         <source>Items per page</source>
@@ -4882,7 +4882,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6254244813559792688" datatype="html">
         <source><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> of <x id="PH_2" equiv-text="length"/></source>
-        <target state="translated"><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> मध्ये <x id="PH_2" equiv-text="length"/></target>
+        <target state="translated"><x id="PH" equiv-text="startIndex + 1"/> – <x id="PH_1" equiv-text="endIndex"/> / <x id="PH_2" equiv-text="length"/></target>
       </trans-unit>
       <trans-unit id="2397816345463091163" datatype="html" approved="yes">
         <source>Old Password</source>
@@ -4934,15 +4934,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="share-with-team-enterprise-panel-title" datatype="html">
         <source>Share with Team/Enterprise</source>
-        <target state="translated">टिम/उद्यमसँग साझा गर्नुहोस्</target>
+        <target state="translated">टीम/उद्यमसँग साझा गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4066773011276373363" datatype="html">
         <source>Team or Enterprise</source>
-        <target state="translated">टिम वा उद्यम</target>
+        <target state="translated">टीम वा उद्यम</target>
       </trans-unit>
       <trans-unit id="3919964185310091527" datatype="html">
         <source>Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></source>
-        <target state="needs-translation">Chat has been shared to <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/></target>
+        <target state="translated">च्याटलाई <x id="PH" equiv-text="this.teamInfo.type"/> <x id="PH_1" equiv-text="this.teamInfo.name"/> मा साझा गरिएको छ</target>
       </trans-unit>
       <trans-unit id="7559166185410431321" datatype="html">
         <source>Chat has been successfully shared to community</source>
@@ -4982,7 +4982,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3373672752728475878" datatype="html">
         <source><x id="ICU" equiv-text="{isAllSelected(), select, yes {Deselect} no {Select}}" xid="5153927020961011618"/> all </source>
-        <target state="translated"> <x id="ICU" equiv-text="{isAllSelected(), select, yes {छान्नु} no {नछान्नु}}" xid="5153927020961011618"/> सबै </target>
+        <target state="translated"> <x id="ICU" equiv-text="{isAllSelected(), select, yes {नछान्नु} no {छान्नु}}" xid="5153927020961011618"/> सबै </target>
       </trans-unit>
       <trans-unit id="5153927020961011618" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, yes {Deselect} no {Select}}</source>
@@ -4994,7 +4994,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8859686160814263783" datatype="html">
         <source><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> selected </source>
-        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, =0 {members} =1 {member} other {members}}}           resources {{selection.selected.length, plural, =0 {resources} =1 {resource} other {resources}}}           courses {{selection.selected.length, plural, =0 {courses} =1 {course} other {courses}}}           meetups {{selection.selected.length, plural, =0 {meetups} =1 {meetup} other {meetups}}}           other {{selection.selected.length, plural, =0 {items} =1 {item} other {items}}}         }" xid="5351867428123862444"/> चयन गरियो </target>
+        <target state="translated"><x id="ICU" equiv-text="{data.itemDescription, select,           members {{selection.selected.length, plural, one {सदस्य} other {सदस्यहरू}}}           resources {{selection.selected.length, plural, one {स्रोत} other {स्रोतहरू}}}           courses {{selection.selected.length, plural, one {पाठ्यक्रम} other {पाठ्यक्रमहरू}}}           meetups {{selection.selected.length, plural, one {भेला} other {भेलाहरू}}}           other {{selection.selected.length, plural, one {वस्तु} other {वस्तुहरू}}}         }" xid="5351867428123862444"/> चयन गरिएका </target>
       </trans-unit>
       <trans-unit id="7619560701830330401" datatype="html" approved="yes">
         <source>Loading</source>
@@ -5006,19 +5006,17 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5754961825546614864" datatype="html">
         <source> Are you sure you want to <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> the <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </source>
-        <target state="translated"> के तपाईं पक्का हुनुहुन्छ कि तपाईं <x id="ICU" equiv-text="{data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}" xid="3080384219063791942"/> गर्न चाहनुहुन्छ <x id="ICU_1" equiv-text="{data.amount, select, single       {following {data.type, select,         community {community}         nation {nation}         course {course}         resource {resource}         document {document}         meetup {meetup}         user {member}         change {change}         team {team}         enterprise {enterprise}         task {task}         certification {certification}         event {event}         transaction {transaction}         link {link}         news {message}         report {report}         changes {form}         pin {pin}         survey {survey}}?       }       many       {selected {{data.count}} {data.type, select,         community {communities}         nation {nations}         course {courses}         resource {resources}         meetup {meetups}         event {events}         survey {surveys}}?       }     }" xid="8234993793051473602"/> </target>
+        <target state="translated"> के तपाईं पक्का हुनुहुन्छ कि तपाईंले <x id="ICU" equiv-text="{data.changeType, select, accept {स्वीकार} archive {अभिलेख} reject {अस्वीकार} delete {मेट्नु} leave {छोड्नु} remove {हटाउनु} leader {नेतृत्व दिनु} exit {छोड्नु} reset {रिसेट गर्नु}}" xid="3080384219063791942"/> गर्न चाहनुहुन्छ <x id="ICU_1" equiv-text="{data.amount, select, single {following {data.type, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {स्रोत} document {कागजात} meetup {भेला} user {सदस्य} change {परिवर्तन} team {टीम} enterprise {उद्यम} task {कार्य} certification {प्रमाणीकरण} event {घटना} transaction {लेनदेन} link {लिङ्क} news {सन्देश} report {प्रतिवेदन} changes {फाराम} pin {पिन} survey {सर्वेक्षण}}?} many {selected {{data.count}} {data.type, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {स्रोतहरू} meetup {भेलाहरू} event {घटनाहरू} survey {सर्वेक्षणहरू}}?}}" xid="8234993793051473602"/> </target>
       </trans-unit>
       <trans-unit id="3080384219063791942" datatype="html">
         <source>{VAR_SELECT, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}</source>
-        <target state="translated">{VAR_SELECT, select, accept {स्वीकार} archive {संग्रहित} reject {अस्वीकार} delete {मेटाउनु} leave {छोड्नु} remove {हटाउनु} leader {नेतृत्व दिनु} exit {छोड्नु} reset {पुनःसेट गर्नु}}</target>
+        <target state="translated">{VAR_SELECT, select, accept {स्वीकार} archive {अभिलेख} reject {अस्वीकार} delete {मेट्नु} leave {छोड्नु} remove {हटाउनु} leader {नेतृत्व दिनु} exit {छोड्नु} reset {रिसेट गर्नु}}</target>
       </trans-unit>
       <trans-unit id="6490858809109190004" datatype="html">
         <source>{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
       } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
       }}</source>
-        <target state="translated">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {community} nation {nation} course {course} resource {resource} document {document} meetup {meetup} user {member} change {change} team {team} enterprise {enterprise} task {task} certification {certification} event {event} transaction {transaction} link {link} news {message} report {report} changes {form} pin {pin} survey {survey}}?
-      } many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {communities} nation {nations} course {courses} resource {resources} meetup {meetups} event {events} survey {surveys}}?
-      }}</target>
+        <target state="translated">{VAR_SELECT_2, select, single {following {VAR_SELECT, select, community {समुदाय} nation {राष्ट्र} course {पाठ्यक्रम} resource {स्रोत} document {कागजात} meetup {भेला} user {सदस्य} change {परिवर्तन} team {टीम} enterprise {उद्यम} task {कार्य} certification {प्रमाणीकरण} event {घटना} transaction {लेनदेन} link {लिङ्क} news {सन्देश} report {प्रतिवेदन} changes {फाराम} pin {पिन} survey {सर्वेक्षण}}?} many {selected <x id="INTERPOLATION"/> {VAR_SELECT_1, select, community {समुदायहरू} nation {राष्ट्रहरू} course {पाठ्यक्रमहरू} resource {स्रोतहरू} meetup {भेलाहरू} event {घटनाहरू} survey {सर्वेक्षणहरू}}?}}</target>
       </trans-unit>
       <trans-unit id="7706831103748816044" datatype="html">
         <source>Ratings for</source>
@@ -5026,7 +5024,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7699622144571229146" datatype="html">
         <source>Sort by</source>
-        <target state="translated">यसअनुसार क्रमबद्ध गर्नुहोस्</target>
+        <target state="translated">अनुसार क्रमबद्ध गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="9143561358718896119" datatype="html">
         <source>Most Recent</source>
@@ -5066,7 +5064,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4197401714183177479" datatype="html">
         <source><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></source>
-        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {Nation} nation {Center} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
+        <target state="translated"><x id="ICU" equiv-text="{ data.allData.planetType, select, community {राष्ट्र} nation {केन्द्र} }" xid="7719571683848776487"/> URL: <x id="INTERPOLATION" equiv-text="{{data.allData.parentDomain}}"/></target>
       </trans-unit>
       <trans-unit id="923710608687288198" datatype="html" approved="yes">
         <source>Planet Type: <x id="INTERPOLATION" equiv-text="{{data.allData.planetType}}"/> </source>
@@ -5110,7 +5108,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2473471587327831287" datatype="html">
         <source>Drag &amp; drop a file here, or <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>browse<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <target state="translated">Drag &amp; drop a file here, or <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>browse<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
+        <target state="translated">फाइल यहाँ तान्नुहोस् र छोड्नुहोस्, वा <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;dz-browse&quot;&gt;"/>ब्राउज गर्नुहोस्<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
       </trans-unit>
       <trans-unit id="1906507263389090131" datatype="html">
         <source>Existing</source>
@@ -5154,7 +5152,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1957682934098401915" datatype="html">
         <source>Maximum file count reached</source>
-        <target state="translated">अधिकतम फाइल संख्या पुगेको छ</target>
+        <target state="translated">अधिकतम फाइल संख्या पुग्यो</target>
       </trans-unit>
       <trans-unit id="8863452099399152076" datatype="html">
         <source>File type not allowed</source>
@@ -5190,7 +5188,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3263559669212223472" datatype="html">
         <source>Unordered List</source>
-        <target state="translated">अक्रमबद्ध सूची</target>
+        <target state="translated">अनियमित सूची</target>
       </trans-unit>
       <trans-unit id="702220727672438878" datatype="html">
         <source>Ordered List</source>
@@ -5202,15 +5200,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6193671119554408029" datatype="html">
         <source>Side by Side</source>
-        <target state="translated">सँगसँगै</target>
+        <target state="translated">साइड बाइ साइड</target>
       </trans-unit>
       <trans-unit id="489844404897890427" datatype="html">
         <source>Fullscreen</source>
-        <target state="translated">पूरै पर्दा</target>
+        <target state="translated">पूर्ण स्क्रिन</target>
       </trans-unit>
       <trans-unit id="1524295519084989120" datatype="html">
         <source>Markdown Guide</source>
-        <target state="translated">मार्कडाउन मार्गदर्शक</target>
+        <target state="translated">मार्कडाउन मार्गदर्शिका</target>
       </trans-unit>
       <trans-unit id="6685892931357659955" datatype="html" approved="yes">
         <source>Average</source>
@@ -5230,11 +5228,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="893583280618238406" datatype="html">
         <source>Please join the course before rating!</source>
-        <target state="translated">कृपया मूल्याङ्कन गर्नु अघि पाठ्यक्रममा सामेल हुनुहोस्!</target>
+        <target state="translated">कृपया मूल्याङ्कन गर्नुअघि पाठ्यक्रममा सामेल हुनुहोस्!</target>
       </trans-unit>
       <trans-unit id="2618809445359391005" datatype="html">
         <source>Please add the resource to your library before rating!</source>
-        <target state="translated">कृपया मूल्याङ्कन गर्नु अघि स्रोतलाई आफ्नो पुस्तकालयमा थप्नुहोस्!</target>
+        <target state="translated">कृपया मूल्याङ्कन गर्नुअघि स्रोतलाई आफ्नो पुस्तकालयमा थप्नुहोस्!</target>
       </trans-unit>
       <trans-unit id="8817338979353272763" datatype="html">
         <source>Thank you, your rating is submitted!</source>
@@ -5250,7 +5248,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2902308078339369859" datatype="html">
         <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</source>
-        <target state="needs-translation"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Return to List</target>
+        <target state="translated"><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>keyboard_arrow_left<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>सूचीमा फर्कनुहोस्</target>
       </trans-unit>
       <trans-unit id="5968366500418000730" datatype="html">
         <source>Collections</source>
@@ -5306,7 +5304,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="97677364433192766" datatype="html">
         <source>Collection deleted: <x id="PH" equiv-text="tag.name"/></source>
-        <target state="translated">सङ्ग्रह मेटाइयो: <x id="PH" equiv-text="tag.name"/></target>
+        <target state="translated">सङ्ग्रह मेटियो: <x id="PH" equiv-text="tag.name"/></target>
       </trans-unit>
       <trans-unit id="4695102721296853836" datatype="html">
         <source>There was a problem deleting this collection.</source>
@@ -5406,7 +5404,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2109025028954046454" datatype="html">
         <source>Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> </source>
-        <target state="needs-translation">Showing <x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> of <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> </target>
+        <target state="translated"><x id="INTERPOLATION" equiv-text="{{table.filteredData.length}}"/> मध्ये <x id="INTERPOLATION_1" equiv-text="{{table.data.length}}"/> देखाइँदै </target>
       </trans-unit>
       <trans-unit id="2891137940671038181" datatype="html">
         <source>{VAR_SELECT, select, resources {{VAR_PLURAL, plural, =0 {resources} =1 {resource} other {resources}}} courses {{VAR_PLURAL_1, plural, =0 {courses} =1 {course} other {courses}}}}</source>
@@ -5414,7 +5412,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7489316373554112115" datatype="html">
         <source>Up to date</source>
-        <target state="translated">अद्यावधिक भएको</target>
+        <target state="translated">समयमै अद्यावधिक</target>
       </trans-unit>
       <trans-unit id="8314700931837210100" datatype="html" approved="yes">
         <source>Newer</source>
@@ -5478,7 +5476,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2389464086242109074" datatype="html">
         <source>Submission status</source>
-        <target state="translated">पेश गर्ने स्थिति</target>
+        <target state="translated">बुझाइको स्थिति</target>
       </trans-unit>
       <trans-unit id="8986421314427632087" datatype="html">
         <source>pending</source>
@@ -5526,13 +5524,13 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6743174526740667520" datatype="html">
         <source>team</source>
-        <target state="translated">टिम</target>
+        <target state="translated">टीम</target>
       </trans-unit>
       <trans-unit id="1159671860655828397" datatype="html">
         <source>&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
         <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</source>
-        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; has
-        <x id="PH_1" equiv-text="isUpdated ? &apos;updated&apos; : isRecorded ? &apos;recorded&apos; : &apos;completed&apos;"/> the survey &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt;</target>
+        <target state="translated">&lt;b&gt;<x id="PH" equiv-text="this.userService.get().name"/>&lt;/b&gt; ले सर्वेक्षण &lt;b&gt;<x id="PH_2" equiv-text="this.submission.parent.name"/>&lt;/b&gt; लाई
+        <x id="PH_1" equiv-text="isUpdated ? &apos;अद्यावधिक&apos; : isRecorded ? &apos;दर्ता&apos; : &apos;पूरा&apos;"/> गरेको छ</target>
       </trans-unit>
       <trans-unit id="2009689739817524652" datatype="html">
         <source>Exam</source>
@@ -5544,7 +5542,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4938712138982229270" datatype="html">
         <source>Age (years)</source>
-        <target state="translated">उमेर (वर्षहरू)</target>
+        <target state="translated">उमेर (वर्ष)</target>
       </trans-unit>
       <trans-unit id="3973931101896534797" datatype="html">
         <source>Date</source>
@@ -5576,7 +5574,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4576685021833017825" datatype="html">
         <source>% of Users*</source>
-        <target state="translated">*प्रयोगकर्ताहरूको प्रतिशत</target>
+        <target state="translated">प्रयोगकर्ताहरूको %*</target>
       </trans-unit>
       <trans-unit id="6452609165384043272" datatype="html">
         <source>Selections count</source>
@@ -5584,7 +5582,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3151274180091052511" datatype="html">
         <source>% of All Selections</source>
-        <target state="translated">सबै चयनहरूको प्रतिशत</target>
+        <target state="translated">सबै चयनहरूको %</target>
       </trans-unit>
       <trans-unit id="5163837751438016016" datatype="html">
         <source>Selection Breakdown</source>
@@ -5600,7 +5598,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8898648218118868158" datatype="html">
         <source>*Percentage of users who selected the choice. Users may select multiple options</source>
-        <target state="translated">* विकल्प चयन गर्ने प्रयोगकर्ताहरूको प्रतिशत। प्रयोगकर्ताहरूले एकभन्दा बढी विकल्प चयन गर्न सक्छन्</target>
+        <target state="translated">*चयन गरिएको विकल्प रोज्ने प्रयोगकर्ताहरूको प्रतिशत। प्रयोगकर्ताले धेरै विकल्प चयन गर्न सक्छन्</target>
       </trans-unit>
       <trans-unit id="3728862431459445553" datatype="html">
         <source>The Score: <x id="PH" equiv-text="averageRating"/></source>
@@ -5612,11 +5610,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7641590258550661146" datatype="html">
         <source>Number of Submissions: <x id="PH" equiv-text="updatedSubmissions.length"/></source>
-        <target state="translated">पेश गरिएका सङ्ख्या: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
+        <target state="translated">बुझाइहरूको संख्या: <x id="PH" equiv-text="updatedSubmissions.length"/></target>
       </trans-unit>
       <trans-unit id="7556405911761495752" datatype="html">
         <source>Error exporting PDF: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">PDF निर्यात गर्दा त्रुटि: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">PDF निर्यात गर्दा त्रुटि भयो: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="2910140776552023546" datatype="html">
         <source>There is no survey response</source>
@@ -5624,7 +5622,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="875621229969091247" datatype="html">
         <source>Submission</source>
-        <target state="translated">पेशी</target>
+        <target state="translated">बुझाइ</target>
       </trans-unit>
       <trans-unit id="6283914624769804238" datatype="html">
         <source>Gender:</source>
@@ -5652,7 +5650,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5328452207922183706" datatype="html">
         <source>% of responders</source>
-        <target state="translated">उत्तरदाताहरूको प्रतिशत</target>
+        <target state="translated">उत्तरदाताहरूको %</target>
       </trans-unit>
       <trans-unit id="8693603235657020323" datatype="html">
         <source>Other</source>
@@ -5668,7 +5666,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1975814388540827143" datatype="html">
         <source>Error analyzing responses: <x id="PH" equiv-text="error.message || error"/></source>
-        <target state="translated">प्रतिक्रियाहरू विश्लेषण गर्दा त्रुटि: <x id="PH" equiv-text="error.message || error"/></target>
+        <target state="translated">प्रतिक्रियाहरू विश्लेषण गर्दा त्रुटि भयो: <x id="PH" equiv-text="error.message || error"/></target>
       </trans-unit>
       <trans-unit id="2860676163395333414" datatype="html">
         <source>Team Surveys</source>
@@ -5696,7 +5694,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8507512534782649196" datatype="html">
         <source> Edit</source>
-        <target state="translated">सम्पादन गर्नुहोस्</target>
+        <target state="translated">सम्पादन</target>
       </trans-unit>
       <trans-unit id="6935415214408993112" datatype="html">
         <source> Send</source>
@@ -5708,15 +5706,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7351124788441583762" datatype="html">
         <source>Copy Public Link</source>
-        <target state="translated">सार्वजनिक लिंक प्रतिलिपि गर्नुहोस्</target>
+        <target state="translated">सार्वजनिक लिङ्क प्रतिलिपि गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="1471263658518011926" datatype="html">
         <source>Generate Public Link</source>
-        <target state="translated">सार्वजनिक लिंक उत्पन्न गर्नुहोस्</target>
+        <target state="translated">सार्वजनिक लिङ्क सिर्जना गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="850330449479132945" datatype="html">
         <source>Revoke Public Link</source>
-        <target state="translated">सार्वजनिक लिंक खारेज गर्नुहोस्</target>
+        <target state="translated">सार्वजनिक लिङ्क खारेज गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="135077277733987408" datatype="html">
         <source>Revoke</source>
@@ -5724,11 +5722,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1375828267046153429" datatype="html">
         <source> Archive</source>
-        <target state="translated">संग्रहित गर्नुहोस्</target>
+        <target state="translated">अभिलेख गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="7667753160625320954" datatype="html">
         <source> Submissions</source>
-        <target state="translated">पेशीहरू</target>
+        <target state="translated">बुझाइहरू</target>
       </trans-unit>
       <trans-unit id="1623146199710279977" datatype="html">
         <source> Adopt</source>
@@ -5748,11 +5746,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5609685069662041812" datatype="html">
         <source>No Survey Found</source>
-        <target state="needs-translation">No Survey Found</target>
+        <target state="translated">कुनै सर्वेक्षण फेला परेन</target>
       </trans-unit>
       <trans-unit id="4059126126596316619" datatype="html">
         <source>You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</source>
-        <target state="needs-translation">You have deleted <x id="PH" equiv-text="deleteArray.length"/> surveys</target>
+        <target state="translated">तपाईंले <x id="PH" equiv-text="deleteArray.length"/> सर्वेक्षणहरू मेटाउनुभयो</target>
       </trans-unit>
       <trans-unit id="302849038487684889" datatype="html">
         <source>There was a problem deleting survey.</source>
@@ -5760,7 +5758,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6391136956444171776" datatype="html">
         <source>Survey deleted: <x id="PH" equiv-text="survey.name"/></source>
-        <target state="needs-translation">Survey deleted: <x id="PH" equiv-text="survey.name"/></target>
+        <target state="translated">सर्वेक्षण मेटियो: <x id="PH" equiv-text="survey.name"/></target>
       </trans-unit>
       <trans-unit id="4314140811591483032" datatype="html">
         <source>There was a problem deleting this survey.</source>
@@ -5768,11 +5766,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="360801093732511077" datatype="html">
         <source>Survey sent to teams</source>
-        <target state="translated">सर्वेक्षण टिमहरूमा पठाइयो</target>
+        <target state="translated">सर्वेक्षण टीमहरूमा पठाइयो</target>
       </trans-unit>
       <trans-unit id="8829311125451365949" datatype="html">
         <source>Error sending survey to teams.</source>
-        <target state="translated">सर्वेक्षण टिमहरूमा पठाउँदा त्रुटि भयो।</target>
+        <target state="translated">सर्वेक्षण टीमहरूमा पठाउँदा त्रुटि भयो।</target>
       </trans-unit>
       <trans-unit id="1052411935253759719" datatype="html">
         <source>Survey adopted</source>
@@ -5784,7 +5782,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5148714587411683072" datatype="html">
         <source>Error adopting survey: <x id="PH" equiv-text="error.message"/></source>
-        <target state="translated">सर्वेक्षण अंगीकार गर्दा त्रुटि: <x id="PH" equiv-text="error.message"/></target>
+        <target state="translated">सर्वेक्षण अंगीकार गर्दा त्रुटि भयो: <x id="PH" equiv-text="error.message"/></target>
       </trans-unit>
       <trans-unit id="717884325364222210" datatype="html">
         <source>Survey requests sent</source>
@@ -5796,31 +5794,31 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1414733139904716677" datatype="html">
         <source>Public link generated for this survey</source>
-        <target state="translated">यस सर्वेक्षणका लागि सार्वजनिक लिंक उत्पन्न गरियो</target>
+        <target state="translated">यस सर्वेक्षणका लागि सार्वजनिक लिङ्क सिर्जना गरियो</target>
       </trans-unit>
       <trans-unit id="684216341271402428" datatype="html">
         <source>Public access disabled for this survey</source>
-        <target state="translated">यस सर्वेक्षणका लागि सार्वजनिक पहुँच अक्षम गरियो</target>
+        <target state="translated">यस सर्वेक्षणका लागि सार्वजनिक पहुँच असक्षम गरियो</target>
       </trans-unit>
       <trans-unit id="7818659923595108905" datatype="html">
         <source>There was a problem updating public survey access.</source>
-        <target state="translated">There was a problem updating public survey access.</target>
+        <target state="translated">सार्वजनिक सर्वेक्षण पहुँच अद्यावधिक गर्दा समस्या भयो।</target>
       </trans-unit>
       <trans-unit id="745200351261498648" datatype="html">
         <source>Generate a public link for this survey first.</source>
-        <target state="translated">पहिला यस सर्वेक्षणका लागि सार्वजनिक लिङ्क उत्पन्न गर्नुहोस्।</target>
+        <target state="translated">पहिले यस सर्वेक्षणका लागि सार्वजनिक लिङ्क सिर्जना गर्नुहोस्।</target>
       </trans-unit>
       <trans-unit id="9076344640012645811" datatype="html">
         <source>Public survey link copied</source>
-        <target state="translated">सार्वजनिक सर्वेक्षण लिंक प्रतिलिपि गरियो</target>
+        <target state="translated">सार्वजनिक सर्वेक्षण लिङ्क प्रतिलिपि गरियो</target>
       </trans-unit>
       <trans-unit id="4802391811703494431" datatype="html">
         <source>Failed to copy public survey link</source>
-        <target state="translated">सार्वजनिक सर्वेक्षण लिंक प्रतिलिपि गर्न असफल भयो</target>
+        <target state="translated">सार्वजनिक सर्वेक्षण लिङ्क प्रतिलिपि गर्न असफल भयो</target>
       </trans-unit>
       <trans-unit id="5947970910041787751" datatype="html">
         <source>Records to Export</source>
-        <target state="translated">निर्यातका लागि रेकर्डहरू</target>
+        <target state="translated">निर्यात गर्नुपर्ने रेकर्डहरू</target>
       </trans-unit>
       <trans-unit id="272476219454502710" datatype="html">
         <source>Include Questions</source>
@@ -5844,7 +5842,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3683154094460542198" datatype="html">
         <source>Survey archived: <x id="PH" equiv-text="survey.name"/></source>
-        <target state="translated">सर्वेक्षण संग्रहित गरियो: <x id="PH" equiv-text="survey.name"/></target>
+        <target state="translated">सर्वेक्षण अभिलेख गरियो: <x id="PH" equiv-text="survey.name"/></target>
       </trans-unit>
       <trans-unit id="1497164951667699968" datatype="html">
         <source>There was a problem archiving this survey or deleting submissions.</source>
@@ -5852,11 +5850,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2682935427353015050" datatype="html">
         <source>Survey is already archived</source>
-        <target state="translated">सर्वेक्षण पहिले नै संग्रहित छ</target>
+        <target state="translated">सर्वेक्षण पहिल्यै अभिलेख गरिएको छ</target>
       </trans-unit>
       <trans-unit id="6173970083872550712" datatype="html">
         <source>Survey is archived and cannot accept new actions</source>
-        <target state="translated">सर्वेक्षण संग्रहित छ र नयाँ कार्यहरू स्वीकार गर्न सक्दैन</target>
+        <target state="translated">सर्वेक्षण अभिलेख गरिएको छ र नयाँ कार्य स्वीकार गर्न सक्दैन</target>
       </trans-unit>
       <trans-unit id="7153260170424586045" datatype="html">
         <source>There is no data to export</source>
@@ -5864,23 +5862,23 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1470801138774792470" datatype="html">
         <source>There are no submissions to view</source>
-        <target state="translated">हेर्नका लागि कुनै पेशीहरू छैनन्</target>
+        <target state="translated">हेर्न कुनै बुझाइ छैन</target>
       </trans-unit>
       <trans-unit id="1723945927449058686" datatype="html">
         <source>This survey was created on the parent planet and cannot be managed here</source>
-        <target state="translated">यो सर्वेक्षण मुख्य प्लानेटमा बनाइएको हो र यहाँ व्यवस्थापन गर्न सकिँदैन</target>
+        <target state="translated">यो सर्वेक्षण मूल ग्रहमा सिर्जना गरिएको थियो र यहाँ व्यवस्थापन गर्न सकिँदैन</target>
       </trans-unit>
       <trans-unit id="7541790190401441000" datatype="html">
         <source>This is a community survey</source>
-        <target state="translated">यो एउटा समुदाय सर्वेक्षण हो</target>
+        <target state="translated">यो समुदाय सर्वेक्षण हो</target>
       </trans-unit>
       <trans-unit id="383841114763363168" datatype="html">
         <source>Survey has no questions</source>
-        <target state="translated">सर्वेक्षणमा कुनै प्रश्न छैनन्</target>
+        <target state="translated">सर्वेक्षणमा कुनै प्रश्न छैन</target>
       </trans-unit>
       <trans-unit id="7733906815413075449" datatype="html">
         <source>Record survey information from a person who is not a member of <x id="PH" equiv-text="this.configuration.name"/></source>
-        <target state="translated"><x id="PH" equiv-text="this.configuration.name"/> को सदस्य नभएका व्यक्तिबाट सर्वेक्षण जानकारी रेकर्ड गर्नुहोस्</target>
+        <target state="translated"><x id="PH" equiv-text="this.configuration.name"/> को सदस्य नभएको व्यक्तिबाट सर्वेक्षण जानकारी रेकर्ड गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="2068924253876022636" datatype="html">
         <source>Record Survey</source>
@@ -5888,11 +5886,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2191705100755243115" datatype="html">
         <source>Copy the public survey link</source>
-        <target state="translated">सार्वजनिक सर्वेक्षण लिंक प्रतिलिपि गर्नुहोस्</target>
+        <target state="translated">सार्वजनिक सर्वेक्षण लिङ्क प्रतिलिपि गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4513200930765275190" datatype="html">
         <source>Generate a public survey link</source>
-        <target state="translated">सार्वजनिक सर्वेक्षण लिंक उत्पन्न गर्नुहोस्</target>
+        <target state="translated">सार्वजनिक सर्वेक्षण लिङ्क सिर्जना गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="5156960600279596789" datatype="html">
         <source>Revoke public access for this survey</source>
@@ -5918,9 +5916,9 @@ Other Notes</source>
         <source>Delete Task</source>
         <target state="needs-translation">Delete Task</target>
       </trans-unit>
-      <trans-unit id="4814285799071780083" datatype="html">
+      <trans-unit id="4814285799071780083" datatype="html" approved="yes">
         <source>Remove</source>
-        <target state="needs-translation">Remove</target>
+        <target state="final">हटाउनुहोस्</target>
       </trans-unit>
       <trans-unit id="632836510174522566" datatype="html">
         <source>Task created successfully</source>
@@ -5940,11 +5938,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1603197821585633928" datatype="html">
         <source>Reassign Task</source>
-        <target state="translated">कार्य पुनःassign गर्नुहोस्</target>
+        <target state="translated">कार्य पुनःनिर्धारण गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4336027280028501448" datatype="html">
         <source>Assign Task</source>
-        <target state="translated">कार्य assign गर्नुहोस्</target>
+        <target state="translated">कार्य तोक्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4578192247039196794" datatype="html">
         <source>Task</source>
@@ -5960,7 +5958,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6218954567289085889" datatype="html">
         <source>JPG, PNG or WEBP attached images</source>
-        <target state="translated">JPG, PNG वा WEBP संलग्न छविहरू</target>
+        <target state="translated">संलग्न JPG, PNG वा WEBP छविहरू</target>
       </trans-unit>
       <trans-unit id="6341772921473084017" datatype="html" approved="yes">
         <source>(You)</source>
@@ -5996,7 +5994,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3676366858777724087" datatype="html">
         <source>Net Profit / Loss</source>
-        <target state="translated">खुद नाफा / घाटा</target>
+        <target state="translated">शुद्ध लाभ / हानि</target>
       </trans-unit>
       <trans-unit id="7366432090842206186" datatype="html">
         <source>Beginning Balance</source>
@@ -6056,7 +6054,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6825329815737519497" datatype="html">
         <source>Export as CSV</source>
-        <target state="needs-translation">Export as CSV</target>
+        <target state="translated">CSV का रूपमा निर्यात गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="6864016537810263548" datatype="html">
         <source>Add Report</source>
@@ -6068,15 +6066,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7078271376845640958" datatype="html">
         <source>Loss</source>
-        <target state="translated">घाटा</target>
+        <target state="translated">हानि</target>
       </trans-unit>
       <trans-unit id="5552946715208529758" datatype="html">
         <source>Profit</source>
-        <target state="translated">नाफा</target>
+        <target state="translated">लाभ</target>
       </trans-unit>
       <trans-unit id="3373415866078287494" datatype="html">
         <source>Net (Profit / Loss)</source>
-        <target state="translated">शुद्ध (नाफा / घाटा)</target>
+        <target state="translated">खुद (लाभ / हानि)</target>
       </trans-unit>
       <trans-unit id="272934122656341350" datatype="html">
         <source>Credit</source>
@@ -6088,7 +6086,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8733605622288277148" datatype="html">
         <source>{VAR_PLURAL, plural, =1 {1 attached image} other {# attached images}}</source>
-        <target state="translated">{VAR_PLURAL, plural, =1 {१ संलग्न छवि} other {# संलग्न छविहरू}}</target>
+        <target state="translated">{VAR_PLURAL, plural, =1 {१ जोडिएको छवि} other {# जोडिएका छविहरू}}</target>
       </trans-unit>
       <trans-unit id="5014540154130052908" datatype="html">
         <source>View Report</source>
@@ -6112,7 +6110,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="report-added" datatype="html">
         <source>added</source>
-        <target state="translated">थपियो</target>
+        <target state="translated">थपिएको</target>
       </trans-unit>
       <trans-unit id="1909009883731319373" datatype="html">
         <source>Report <x id="PH" equiv-text="action"/></source>
@@ -6120,11 +6118,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6402039166454044236" datatype="html">
         <source>Report saved, but some attached images could not be uploaded.</source>
-        <target state="translated">Report saved, but some attached images could not be uploaded.</target>
+        <target state="translated">प्रतिवेदन बचत गरियो, तर केही संलग्न छविहरू अपलोड गर्न सकिएन।</target>
       </trans-unit>
       <trans-unit id="5666281898008893391" datatype="html">
         <source>There was a problem saving the report.</source>
-        <target state="translated">There was a problem saving the report.</target>
+        <target state="translated">प्रतिवेदन बचत गर्दा समस्या भयो।</target>
       </trans-unit>
       <trans-unit id="3338069611336463991" datatype="html">
         <source>Report from</source>
@@ -6144,7 +6142,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8047377907322802891" datatype="html">
         <source>Updated Date</source>
-        <target state="translated">अद्यावधिक गरिएको मिति</target>
+        <target state="translated">अद्यावधिक मिति</target>
       </trans-unit>
       <trans-unit id="8279659101806790636" datatype="html">
         <source>Wages</source>
@@ -6168,7 +6166,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="888341446683346521" datatype="html">
         <source>Start date</source>
-        <target state="translated">सुरु मिति</target>
+        <target state="translated">सुरू मिति</target>
       </trans-unit>
       <trans-unit id="126074860850048964" datatype="html">
         <source>End date</source>
@@ -6192,7 +6190,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="967622916338237066" datatype="html">
         <source>No transactions match this date range</source>
-        <target state="translated">यस मिति दायरामा कुनै कारोबार मेल खाँदैन</target>
+        <target state="translated">यो मिति दायरासँग कुनै लेनदेन मेल खाँदैन</target>
       </trans-unit>
       <trans-unit id="6326803299903087278" datatype="html">
         <source>There are no transactions</source>
@@ -6212,7 +6210,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="6735560439394532506" datatype="html">
         <source>Balance (Net change)</source>
-        <target state="translated">ब्यालेन्स (शुद्ध परिवर्तन)</target>
+        <target state="translated">ब्यालेन्स (खुद परिवर्तन)</target>
       </trans-unit>
       <trans-unit id="7790829556583926754" datatype="html">
         <source>Edit Transaction</source>
@@ -6232,11 +6230,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="4979562951362174794" datatype="html">
         <source>Transaction saved, but some attached images could not be uploaded.</source>
-        <target state="translated">Transaction saved, but some attached images could not be uploaded.</target>
+        <target state="translated">लेनदेन बचत गरियो, तर केही संलग्न छविहरू अपलोड गर्न सकिएन।</target>
       </trans-unit>
       <trans-unit id="2827095881733901664" datatype="html">
         <source>There was a problem saving the transaction.</source>
-        <target state="translated">There was a problem saving the transaction.</target>
+        <target state="translated">लेनदेन बचत गर्दा समस्या भयो।</target>
       </trans-unit>
       <trans-unit id="5926961113186162892" datatype="html">
         <source>You have deleted a transaction.</source>
@@ -6268,7 +6266,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
-        <target state="translated"><x id="PH" equiv-text="titleName"/> का लागि वित्तीय कारोबारहरू</target>
+        <target state="translated"><x id="PH" equiv-text="titleName"/> का लागि वित्तीय लेनदेनहरू</target>
       </trans-unit>
       <trans-unit id="8759370273386874620" datatype="html">
         <source>{VAR_SELECT, select, team {Teams} enterprise {Enterprises}}</source>
@@ -6284,7 +6282,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2758141335411811281" datatype="html">
         <source>Edit details</source>
-        <target state="translated">विवरणहरू सम्पादन गर्नुहोस्</target>
+        <target state="translated">विवरण सम्पादन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="1610023597544138043" datatype="html">
         <source>Manage Surveys</source>
@@ -6308,7 +6306,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8028606890634050029" datatype="html">
         <source>Request status</source>
-        <target state="translated">अनुरोध स्थिति</target>
+        <target state="translated">अनुरोधको स्थिति</target>
       </trans-unit>
       <trans-unit id="8052700124001933096" datatype="html">
         <source>Request pending</source>
@@ -6324,7 +6322,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3501182175883923340" datatype="html">
         <source>No messages available.</source>
-        <target state="translated">उपलब्ध सन्देशहरू छैनन्।</target>
+        <target state="translated">कुनै सन्देश उपलब्ध छैन।</target>
       </trans-unit>
       <trans-unit id="6378579533861082253" datatype="html">
         <source>{VAR_SELECT, select, team {Plan} enterprise {Mission &amp; Services} services {Services}}</source>
@@ -6332,7 +6330,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1898335971618881059" datatype="html">
         <source>What is your enterprise&apos;s Mission?</source>
-        <target state="translated">What is your enterprise&apos;s Mission?</target>
+        <target state="translated">तपाईंको उद्यमको मिशन के हो?</target>
       </trans-unit>
       <trans-unit id="6427786681980602269" datatype="html">
         <source>What are the Services your enterprise provides?</source>
@@ -6344,7 +6342,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1705582254206023287" datatype="html">
         <source>The <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} services {services directory} }" xid="74790541249522894"/> has no <x id="ICU_1" equiv-text="{ mode, select, team {plan} enterprise {mission &amp; services} services {services} }" xid="3993491162549899290"/>.</source>
-        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} services {services directory} }" xid="74790541249522894"/> मा <x id="ICU_1" equiv-text="{ mode, select, team {plan} enterprise {mission &amp;amp; services} services {services} }" xid="3993491162549899290"/> छैन।</target>
+        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {टीम} enterprise {उद्यम} services {सेवाहरूको निर्देशिका} }" xid="74790541249522894"/> को कुनै <x id="ICU_1" equiv-text="{ mode, select, team {योजना} enterprise {मिशन र सेवाहरू} services {सेवाहरू} }" xid="3993491162549899290"/> छैन।</target>
       </trans-unit>
       <trans-unit id="74790541249522894" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise} services {services directory}}</source>
@@ -6376,7 +6374,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="452114524190218508" datatype="html">
         <source><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</source>
-        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
+        <target state="translated"><x id="ICU" equiv-text="{ mode, select, team {सामेल हुने अनुरोधहरू} enterprise {आवेदकहरू} services {सामेल हुने अनुरोधहरू} }" xid="1632071113878813370"/> (<x id="INTERPOLATION" equiv-text="{{requests.length}}"/>)</target>
       </trans-unit>
       <trans-unit id="7378878529334768232" datatype="html">
         <source>Reject</source>
@@ -6388,7 +6386,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1782340738699397677" datatype="html">
         <source>No member has joined this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> मा कुनै सदस्य सामेल भएका छैनन्।</target>
+        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {टीम} enterprise {उद्यम} }" xid="2504433810618665069"/> मा कुनै सदस्य सामेल भएका छैनन्।</target>
       </trans-unit>
       <trans-unit id="2504433810618665069" datatype="html">
         <source>{VAR_SELECT, select, team {team} enterprise {enterprise}}</source>
@@ -6400,7 +6398,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="1319001951842306108" datatype="html">
         <source>There are currently no tasks assigned to this <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> मा हाल कुनै कार्यहरू तोकिएका छैनन्।</target>
+        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {टीम} enterprise {उद्यम} }" xid="2504433810618665069"/> लाई हाल कुनै कार्य तोकिएका छैनन्।</target>
       </trans-unit>
       <trans-unit id="9094381763389549203" datatype="html">
         <source>{VAR_SELECT, select, team {Resources} enterprise {Documents} services {Documents}}</source>
@@ -6408,7 +6406,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2781466644398944405" datatype="html">
         <source>There are no <x id="ICU" equiv-text="{ mode, select, team {resources} enterprise {documents} }" xid="8877383080614301208"/> associated with this <x id="ICU_1" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/>.</source>
-        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {resources} enterprise {documents} }" xid="8877383080614301208"/> सँग सम्बन्धित कुनै <x id="ICU_1" equiv-text="{ mode, select, team {team} enterprise {enterprise} }" xid="2504433810618665069"/> छैनन्।</target>
+        <target state="translated">यस <x id="ICU" equiv-text="{ mode, select, team {टीमका स्रोतहरू} enterprise {उद्यमका कागजातहरू} }" xid="8877383080614301208"/> सँग सम्बन्धित कुनै <x id="ICU_1" equiv-text="{ mode, select, team {टीम} enterprise {उद्यम} }" xid="2504433810618665069"/> छैनन्।</target>
       </trans-unit>
       <trans-unit id="8877383080614301208" datatype="html">
         <source>{VAR_SELECT, select, team {resources} enterprise {documents}}</source>
@@ -6464,7 +6462,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="475085624260986231" datatype="html">
         <source>There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></source>
-        <target state="needs-translation">There was a problem <x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/></target>
+        <target state="translated"><x id="PH" equiv-text="config.errorMsg"/> <x id="PH_1" equiv-text="displayName"/> गर्दा समस्या भयो</target>
       </trans-unit>
       <trans-unit id="2288371087239753666" datatype="html">
         <source>Role has been updated.</source>
@@ -6492,15 +6490,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5669610080181345209" datatype="html">
         <source>Accepted: <x id="PH" equiv-text="memberName"/></source>
-        <target state="translated">स्वीकृत: <x id="PH" equiv-text="memberName"/></target>
+        <target state="translated">स्वीकृत गरियो: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
       <trans-unit id="3610633971641961148" datatype="html">
         <source>Rejected: <x id="PH" equiv-text="memberName"/></source>
-        <target state="translated">अस्वीकृत: <x id="PH" equiv-text="memberName"/></target>
+        <target state="translated">अस्वीकृत गरियो: <x id="PH" equiv-text="memberName"/></target>
       </trans-unit>
       <trans-unit id="1415339856352294696" datatype="html">
         <source><x id="PH" equiv-text="this.configuration.name"/> Services Directory</source>
-        <target state="needs-translation"><x id="PH" equiv-text="this.configuration.name"/> Services Directory</target>
+        <target state="translated"><x id="PH" equiv-text="this.configuration.name"/> सेवाहरूको निर्देशिका</target>
       </trans-unit>
       <trans-unit id="5486212155925071037" datatype="html">
         <source> updated successfully</source>
@@ -6528,11 +6526,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="3190371367567784499" datatype="html">
         <source>Joined Enterprise</source>
-        <target state="translated">उद्यममा सामेल भयो</target>
+        <target state="translated">सामेल भएको उद्यम</target>
       </trans-unit>
       <trans-unit id="4323130826771572620" datatype="html">
         <source>Joined Team</source>
-        <target state="needs-translation">Joined Team</target>
+        <target state="translated">सामेल भएको टीम</target>
       </trans-unit>
       <trans-unit id="2834985596106127763" datatype="html">
         <source>Most recent visit</source>
@@ -6572,7 +6570,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="8284090973555872585" datatype="html">
         <source>No <x id="ICU" equiv-text="{ mode, select, team {Teams} enterprise {Enterprises} }" xid="8759370273386874620"/> Found</source>
-        <target state="translated">कुनै <x id="ICU" equiv-text="{ mode, select, team {Teams} enterprise {Enterprises} }" xid="8759370273386874620"/> फेला परेन</target>
+        <target state="translated">कुनै <x id="ICU" equiv-text="{ mode, select, team {टीमहरू} enterprise {उद्यमहरू} }" xid="8759370273386874620"/> फेला परेन</target>
       </trans-unit>
       <trans-unit id="enterprise-updated-success" datatype="html">
         <source>Enterprise updated successfully</source>
@@ -6580,7 +6578,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="team-updated-success" datatype="html">
         <source>Team updated successfully</source>
-        <target state="translated">टिम सफलतापूर्वक अद्यावधिक गरियो</target>
+        <target state="translated">टीम सफलतापूर्वक अद्यावधिक गरियो</target>
       </trans-unit>
       <trans-unit id="enterprise-created-success" datatype="html">
         <source>Enterprise created successfully</source>
@@ -6588,15 +6586,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="team-created-success" datatype="html">
         <source>Team created successfully</source>
-        <target state="translated">टिम सफलतापूर्वक सिर्जना गरियो</target>
+        <target state="translated">टीम सफलतापूर्वक सिर्जना गरियो</target>
       </trans-unit>
       <trans-unit id="enterprise-left" datatype="html">
         <source>You have left enterprise</source>
-        <target state="translated">तपाईं उद्यम छोड्नुभयो</target>
+        <target state="translated">तपाईं उद्यमबाट बाहिरिनुभयो</target>
       </trans-unit>
       <trans-unit id="team-left" datatype="html">
         <source>You have left team</source>
-        <target state="translated">तपाईं टिम छोड्नुभयो</target>
+        <target state="translated">तपाईं टीमबाट बाहिरिनुभयो</target>
       </trans-unit>
       <trans-unit id="enterprise-deleted" datatype="html">
         <source>You have deleted enterprise</source>
@@ -6604,11 +6602,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="team-deleted" datatype="html">
         <source>You have deleted team</source>
-        <target state="translated">तपाईंले टिम मेटाउनुभयो</target>
+        <target state="translated">तपाईंले टीम मेटाउनुभयो</target>
       </trans-unit>
       <trans-unit id="enterprise-delete-error" datatype="html">
         <source>There was a problem deleting this enterprise.</source>
-        <target state="translated">There was a problem deleting this enterprise.</target>
+        <target state="translated">यो उद्यम मेटाउँदा समस्या भयो।</target>
       </trans-unit>
       <trans-unit id="team-delete-error" datatype="html">
         <source>There was a problem deleting this team.</source>
@@ -6620,23 +6618,23 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="team-join-request" datatype="html">
         <source>Sent request to join team</source>
-        <target state="translated">टिममा सामेल हुन अनुरोध पठाइयो</target>
+        <target state="translated">टीममा सामेल हुन अनुरोध पठाइयो</target>
       </trans-unit>
       <trans-unit id="8286646344321467283" datatype="html">
         <source>What is your team&apos;s plan?</source>
-        <target state="translated">तपाईंको टिमको योजना के हो?</target>
+        <target state="translated">तपाईंको टीमको योजना के हो?</target>
       </trans-unit>
       <trans-unit id="create-team" datatype="html">
         <source>Create Team</source>
-        <target state="translated">टिम बनाउनुहोस्</target>
+        <target state="translated">टीम सिर्जना गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="update-team" datatype="html">
         <source>Update Team</source>
-        <target state="translated">टिम अद्यावधिक गर्नुहोस्</target>
+        <target state="translated">टीम अद्यावधिक गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="create-enterprise" datatype="html">
         <source>Create Enterprise</source>
-        <target state="translated">उद्यम बनाउनुहोस्</target>
+        <target state="translated">उद्यम सिर्जना गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="update-enterprise" datatype="html">
         <source>Update Enterprise</source>
@@ -6648,11 +6646,11 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7784696015165530316" datatype="html">
         <source>Connect with nation</source>
-        <target state="translated">राष्ट्रसँग जडान गर्नुहोस्</target>
+        <target state="translated">राष्ट्रसँग जोडिनुहोस्</target>
       </trans-unit>
       <trans-unit id="6755123663246719541" datatype="html">
         <source>Connect with earth</source>
-        <target state="translated">पृथ्वीसँग जडान गर्नुहोस्</target>
+        <target state="translated">पृथ्वीसँग जोडिनुहोस्</target>
       </trans-unit>
       <trans-unit id="3339419883396525689" datatype="html">
         <source>Local team</source>
@@ -6668,19 +6666,19 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5859925700973676403" datatype="html">
         <source>You have been added to <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have been added to <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">तपाईंलाई <x id="PH" equiv-text="teamMessage"/> मा थपिएको छ</target>
       </trans-unit>
       <trans-unit id="8332877715727171894" datatype="html">
         <source>You have not been accepted to <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have not been accepted to <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">तपाईंलाई <x id="PH" equiv-text="teamMessage"/> मा स्वीकार गरिएको छैन</target>
       </trans-unit>
       <trans-unit id="2593714830120779298" datatype="html">
         <source>You have been removed from <x id="PH" equiv-text="teamMessage"/></source>
-        <target state="needs-translation">You have been removed from <x id="PH" equiv-text="teamMessage"/></target>
+        <target state="translated">तपाईंलाई <x id="PH" equiv-text="teamMessage"/> बाट हटाइएको छ</target>
       </trans-unit>
       <trans-unit id="1597965293531498649" datatype="html">
         <source><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></source>
-        <target state="needs-translation"><x id="PH" equiv-text="newMembersLength"/> member(s) has been added to <x id="PH_1" equiv-text="teamMessage"/></target>
+        <target state="translated"><x id="PH" equiv-text="newMembersLength"/> सदस्य(हरू) लाई <x id="PH_1" equiv-text="teamMessage"/> मा थपिएको छ</target>
       </trans-unit>
       <trans-unit id="4836615552094365703" datatype="html">
         <source>Success!</source>
@@ -6804,7 +6802,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7093385792872454724" datatype="html">
         <source>Upload your CV/Resume below (PDF only)</source>
-        <target state="translated">कृपया तल आफ्नो CV/Resume अपलोड गर्नुहोस् (PDF मात्र)</target>
+        <target state="translated">तल आफ्नो CV/Resume अपलोड गर्नुहोस् (PDF मात्र)</target>
       </trans-unit>
       <trans-unit id="3199420902145943966" datatype="html">
         <source>PDF only — up to 512 MB</source>
@@ -6848,7 +6846,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7254689538615949767" datatype="html">
         <source>Please select a PDF file</source>
-        <target state="translated">कृपया एउटा PDF फाइल चयन गर्नुहोस्</target>
+        <target state="translated">कृपया PDF फाइल चयन गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="4803957677266686067" datatype="html">
         <source>Please select a PDF file smaller than <x id="PH" equiv-text="this.maxResumeSizeMb"/> MB</source>
@@ -6860,15 +6858,15 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="188498249696731690" datatype="html">
         <source>Achievement #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">उपलब्धि #<x id="PH" equiv-text="itemNumber"/> का क्षेत्रहरू अमान्य छन्</target>
+        <target state="translated">उपलब्धि #<x id="PH" equiv-text="itemNumber"/> मा अमान्य फिल्डहरू छन्</target>
       </trans-unit>
       <trans-unit id="5720311531539704100" datatype="html">
         <source>Reference #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">सन्दर्भ #<x id="PH" equiv-text="itemNumber"/> का क्षेत्रहरू अमान्य छन्</target>
+        <target state="translated">सन्दर्भ #<x id="PH" equiv-text="itemNumber"/> मा अमान्य फिल्डहरू छन्</target>
       </trans-unit>
       <trans-unit id="7905884076880343581" datatype="html">
         <source>Link #<x id="PH" equiv-text="itemNumber"/> has invalid fields</source>
-        <target state="translated">लिङ्क #<x id="PH" equiv-text="itemNumber"/> का क्षेत्रहरू अमान्य छन्</target>
+        <target state="translated">लिङ्क #<x id="PH" equiv-text="itemNumber"/> मा अमान्य फिल्डहरू छन्</target>
       </trans-unit>
       <trans-unit id="6761704605632724264" datatype="html">
         <source>Achievements successfully updated</source>
@@ -6940,7 +6938,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="2908578622954397383" datatype="html">
         <source>You haven&apos;t entered any achievements yet. Click </source>
-        <target state="translated">You haven&apos;t entered any achievements yet. Click </target>
+        <target state="translated">तपाईंले अहिलेसम्म कुनै उपलब्धि प्रविष्ट गर्नुभएको छैन। क्लिक गर्नुहोस् </target>
       </trans-unit>
       <trans-unit id="3119322073395850023" datatype="html">
         <source> to add your achievements!</source>
@@ -6956,7 +6954,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5650818321690252427" datatype="html">
         <source><x id="PH" equiv-text="this.user.firstName"/>&apos;s achievements</source>
-        <target state="translated"><x id="PH" equiv-text="this.user.firstName"/> का उपलब्धिहरू</target>
+        <target state="translated"><x id="PH" equiv-text="this.user.firstName"/>&apos;s उपलब्धिहरू</target>
       </trans-unit>
       <trans-unit id="4414798384138362687" datatype="html">
         <source>Birthdate: <x id="PH" equiv-text="formattedBirthDate"/></source>
@@ -6996,7 +6994,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9123388487940260831" datatype="html">
         <source> View full profile </source>
-        <target state="translated"> पूर्ण प्रोफाइल हेर्नुहोस् </target>
+        <target state="translated"> पूरा प्रोफाइल हेर्नुहोस् </target>
       </trans-unit>
       <trans-unit id="2423360150799774909" datatype="html">
         <source>View Achievements</source>
@@ -7044,7 +7042,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5112372552326869849" datatype="html">
         <source>Planet type</source>
-        <target state="translated">प्लानेट प्रकार</target>
+        <target state="translated">ग्रह प्रकार</target>
       </trans-unit>
       <trans-unit id="8674713164354245758" datatype="html">
         <source>No. of Visits</source>
@@ -7084,19 +7082,19 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5601648881531055873" datatype="html">
         <source> Promote </source>
-        <target state="translated"> प्रमोट गर्नुहोस् </target>
+        <target state="translated"> प्रवर्द्धन गर्नुहोस् </target>
       </trans-unit>
       <trans-unit id="3652050946797964239" datatype="html">
         <source> Demote </source>
-        <target state="translated"> डिमोट गर्नुहोस् </target>
+        <target state="translated"> अवनति गर्नुहोस् </target>
       </trans-unit>
       <trans-unit id="6853640386523738286" datatype="html">
         <source>No User Found</source>
-        <target state="needs-translation">No User Found</target>
+        <target state="translated">कुनै प्रयोगकर्ता फेला परेन</target>
       </trans-unit>
       <trans-unit id="5681014148684280536" datatype="html">
         <source>User deleted: <x id="PH" equiv-text="user.name"/></source>
-        <target state="needs-translation">User deleted: <x id="PH" equiv-text="user.name"/></target>
+        <target state="translated">प्रयोगकर्ता मेटियो: <x id="PH" equiv-text="user.name"/></target>
       </trans-unit>
       <trans-unit id="2763810170336668605" datatype="html">
         <source>There was a problem deleting this user.</source>
@@ -7108,7 +7106,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="7006977447062890057" datatype="html">
         <source>There was an error removing the member&apos;s role</source>
-        <target state="translated">There was an error removing the member&apos;s role</target>
+        <target state="translated">सदस्यको भूमिका हटाउँदा त्रुटि भयो</target>
       </trans-unit>
       <trans-unit id="6068329395413518097" datatype="html">
         <source>
@@ -7116,15 +7114,15 @@ Other Notes</source>
           <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/>
           <x id="PH_2" equiv-text="type"/>
         </source>
-        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;demoted from&apos; : &apos;promoted to&apos;"/> <x id="PH_2" equiv-text="type"/></target>
+        <target state="translated"><x id="PH" equiv-text="user.name"/> <x id="PH_1" equiv-text="isDemotion ? &apos;अवनति गरियो&apos; : &apos;प्रवर्द्धन गरियो&apos;"/> <x id="PH_2" equiv-text="type"/></target>
       </trans-unit>
       <trans-unit id="2831387298196857431" datatype="html">
         <source>There was an error <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> user</source>
-        <target state="translated">प्रयोगकर्ता <x id="PH" equiv-text="isDemotion ? &apos;demoting&apos; : &apos;promoting&apos;"/> गर्दा त्रुटि भयो</target>
+        <target state="translated">प्रयोगकर्ता <x id="PH" equiv-text="isDemotion ? &apos;अवनति गर्दै&apos; : &apos;प्रवर्द्धन गर्दै&apos;"/> गर्दा त्रुटि भयो</target>
       </trans-unit>
       <trans-unit id="4235445316920403625" datatype="html">
         <source><x id="PH" equiv-text="user.name"/> roles modified</source>
-        <target state="needs-translation"><x id="PH" equiv-text="user.name"/> roles modified</target>
+        <target state="translated"><x id="PH" equiv-text="user.name"/> का भूमिकाहरू परिमार्जन गरिएका छन्</target>
       </trans-unit>
       <trans-unit id="7709844655689235488" datatype="html" approved="yes">
         <source>Survey Profile</source>
@@ -7152,7 +7150,7 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="9160143324993549255" datatype="html">
         <source>Reset Selection</source>
-        <target state="translated">चयन पुनःसेट गर्नुहोस्</target>
+        <target state="translated">चयन रिसेट गर्नुहोस्</target>
       </trans-unit>
       <trans-unit id="9178182467454450952" datatype="html">
         <source>Confirm</source>

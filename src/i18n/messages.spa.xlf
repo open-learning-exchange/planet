@@ -3168,9 +3168,9 @@ Otras notas</target>
         <source>All Members</source>
         <target state="final">Todos los miembros</target>
       </trans-unit>
-      <trans-unit id="6895106535826141456" datatype="html" approved="yes">
+      <trans-unit id="6895106535826141456" datatype="html">
         <source>Planet</source>
-        <target state="final">Planet</target>
+        <target state="translated">Planet</target>
       </trans-unit>
       <trans-unit id="6251586038459969294" datatype="html" approved="yes">
         <source>Both</source>
@@ -3188,9 +3188,9 @@ Otras notas</target>
         <source>Login Report</source>
         <target state="final">Reporte de acceso</target>
       </trans-unit>
-      <trans-unit id="6916699690223323845" datatype="html" approved="yes">
+      <trans-unit id="6916699690223323845" datatype="html">
         <source>Resources View Report</source>
-        <target state="final">Reporte de vistas de recursos</target>
+        <target state="translated">Reporte de vistas de recursos</target>
       </trans-unit>
       <trans-unit id="1678405793231446080" datatype="html" approved="yes">
         <source>Courses View Report</source>
@@ -3408,9 +3408,9 @@ Otras notas</target>
         <source>Resource Views</source>
         <target state="final">Vistas de recursos</target>
       </trans-unit>
-      <trans-unit id="course-views-single" datatype="html" approved="yes">
+      <trans-unit id="course-views-single" datatype="html">
         <source>Course Views</source>
-        <target state="final">Vistas de curso</target>
+        <target state="translated">Vistas de cursos</target>
       </trans-unit>
       <trans-unit id="7636767686765305289" datatype="html" approved="yes">
         <source>Community Health</source>
@@ -3436,9 +3436,9 @@ Otras notas</target>
         <source>Total Member Visits</source>
         <target state="final">Visitas totales de miembros</target>
       </trans-unit>
-      <trans-unit id="2102187567920963737" datatype="html" approved="yes">
+      <trans-unit id="2102187567920963737" datatype="html">
         <source>Course Views</source>
-        <target state="final">Vistas de curso</target>
+        <target state="translated">Vistas de cursos</target>
       </trans-unit>
       <trans-unit id="4256634874656434098" datatype="html" approved="yes">
         <source>Voices Created</source>
@@ -3596,9 +3596,9 @@ Otras notas</target>
         <source>Resource Views by Month</source>
         <target state="final">Vistas de recursos por mes</target>
       </trans-unit>
-      <trans-unit id="8274964871742592467" datatype="html" approved="yes">
+      <trans-unit id="8274964871742592467" datatype="html">
         <source>Course Views by Month</source>
-        <target state="final">Vistas de cursos por mes</target>
+        <target state="translated">Vistas de cursos por mes</target>
       </trans-unit>
       <trans-unit id="5754271872143949281" datatype="html" approved="yes">
         <source>Total Member Visits by Month</source>
