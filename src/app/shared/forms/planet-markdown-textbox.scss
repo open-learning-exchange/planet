@@ -19,11 +19,23 @@ planet-markdown-textbox.is-focused:not(.is-invalid) {
 }
 
 planet-markdown-textbox {
-  .CodeMirror, .CodeMirror-scroll {
+  .CodeMirror {
     height: inherit;
     min-height: 15vh;
     max-height: 15vh;
+    box-sizing: border-box;
+    overflow: hidden;
     padding-bottom: 30px;
+
+    .CodeMirror-lines {
+      padding-bottom: 15px;
+    }
+  }
+
+  .CodeMirror-scroll {
+    height: 100%;
+    padding-bottom: 30px;
+    margin-bottom: -30px;
   }
 
   .CodeMirror.CodeMirror-fullscreen {

@@ -105,6 +105,9 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     focusMonitor.monitor(elementRef.nativeElement, true).subscribe(origin => {
       this.focused = !!origin;
       this.stateChanges.next();
+      if (origin) {
+        this.editor?.easyMDE?.codemirror?.refresh();
+      }
     });
   }
 
@@ -204,6 +207,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
   ngOnDestroy() {
     this.stateChanges.complete();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.editor?.easyMDE?.codemirror?.refresh();
+    }); 
   }
 
   writeValue(val: string) {
