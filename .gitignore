@@ -41,10 +41,6 @@ Thumbs.db
 # Virtual Machine
 .vagrant/
 
-# NPM/Yarn
-*.lock
-package-lock.json
-
 # extra yml files generated
 docker/planet-*.yml
 planet.yml
