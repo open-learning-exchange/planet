@@ -304,7 +304,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   resourceDescription(element) {
     const description = element.doc.description || '';
     return element.doc.sourcePlanet !== this.planetConfiguration.code && element.doc.sourcePlanet ?
-      `${$localize`:sourcePlanet:source: ${element.doc.sourcePlanet}`} ${description}` :
+      `(${$localize`:sourcePlanet:source: ${element.doc.sourcePlanet}`}) ${description}` :
       description;
   }
 
