@@ -63,7 +63,7 @@
       @if (isLoggedIn) {
         <ng-container *planetAuthorizedRoles="''">
           @if (onlineStatus === 'accepted') {
-            <button mat-icon-button planetSync i18n-title title="Sync"><mat-icon svgIcon="sync"></mat-icon></button>
+            <button mat-icon-button planetSync i18n-title title="Sync"><mat-icon>sync</mat-icon></button>
           }
         </ng-container>
         <button mat-icon-button routerLink="/manager" i18n-title title="Manager Settings" *planetAuthorizedRoles="'manager'"><mat-icon>settings</mat-icon></button>
@@ -282,7 +282,7 @@
           @if (onlineStatus === 'accepted') {
             <li>
               <a mat-button planetSync i18n-title title="Sync">
-                <mat-icon svgIcon="sync"></mat-icon>
+                <mat-icon>sync</mat-icon>
                 <label i18n>Sync</label>
               </a>
             </li>

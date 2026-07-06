@@ -2231,11 +2231,11 @@ Other Notes</source>
       <trans-unit id="3049912957096258224" datatype="html">
         <source>Synchronization Task</source>
       </trans-unit>
-      <trans-unit id="4256940054076823185" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon svgIcon=&quot;sync&quot; class=&quot;svg-icon&quot;&gt;"/><x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Run Sync</source>
+      <trans-unit id="8328243770539165448" datatype="html">
+        <source>Run Sync</source>
       </trans-unit>
-      <trans-unit id="2121344910820993995" datatype="html">
-        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>refresh<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/>Refresh</source>
+      <trans-unit id="1102717806459547726" datatype="html">
+        <source>Refresh</source>
       </trans-unit>
       <trans-unit id="1519954996184640001" datatype="html">
         <source>Error</source>

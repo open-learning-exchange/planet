@@ -52,9 +52,6 @@ export class AppComponent {
       'home',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/home.svg'));
     iconRegistry.addSvgIcon(
-      'sync',
-      sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sync.svg'));
-    iconRegistry.addSvgIcon(
       'pin',
       sanitizer.bypassSecurityTrustResourceUrl('assets/icons/pin.svg'));
     iconRegistry.addSvgIcon(
