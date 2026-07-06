@@ -39,9 +39,6 @@ jobs:
   testing:
     name: Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -49,7 +46,7 @@ jobs:
       - name: Setup Node.js $
         uses: actions/setup-node@v3
         with:
-          node-version: $
+          node-version: 24
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
