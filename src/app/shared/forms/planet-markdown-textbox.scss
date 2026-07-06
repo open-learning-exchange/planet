@@ -2,9 +2,10 @@
 
 @mixin editor-border($color) {
   .EasyMDEContainer .editor-toolbar {
-    border-color: $color;
     border-bottom: 1px solid $color;
+    border-color: $color;
   }
+
   .EasyMDEContainer .CodeMirror {
     border-color: $color;
   }
@@ -20,42 +21,40 @@ planet-markdown-textbox.is-focused:not(.is-invalid) {
 
 planet-markdown-textbox {
   .CodeMirror {
-    height: inherit;
-    min-height: 15vh;
-    max-height: 15vh;
     box-sizing: border-box;
-    overflow: hidden;
-    padding-bottom: 30px;
+    height: inherit;
+    max-height: 15vh;
+    min-height: 15vh;
 
     .CodeMirror-lines {
-      padding-bottom: 15px;
+      padding-bottom: 30px !important;
     }
   }
 
   .CodeMirror-scroll {
     height: 100%;
-    padding-bottom: 30px;
-    margin-bottom: -30px;
   }
 
   .CodeMirror.CodeMirror-fullscreen {
     box-sizing: border-box;
   }
 
-  .CodeMirror.CodeMirror-fullscreen, .CodeMirror-fullscreen .CodeMirror-scroll {
+  .CodeMirror.CodeMirror-fullscreen,
+  .CodeMirror-fullscreen .CodeMirror-scroll {
     height: 100%;
     max-height: 100%;
   }
 
   .editor-statusbar {
-    opacity: 0;
     margin-bottom: -2.75em;
+    opacity: 0;
   }
 
-  .editor-preview, .editor-preview-side {
+  .editor-preview,
+  .editor-preview-side {
     img {
-      width: 100%;
       max-width: 40vw;
+      width: 100%;
     }
   }
 }
@@ -63,6 +62,7 @@ planet-markdown-textbox {
 // EasyMDE fullscreen surfaces need an explicit background after the MDC form migration;
 // otherwise the app chrome shows through the fixed preview/editor layer.
 .EasyMDEContainer .CodeMirror-fullscreen,
-.editor-preview-full, .editor-toolbar.fullscreen {
+.editor-preview-full,
+.editor-toolbar.fullscreen {
   background: white !important;
 }
