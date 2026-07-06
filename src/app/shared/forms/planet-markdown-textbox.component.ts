@@ -1,5 +1,5 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild, AfterViewInit
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +23,7 @@ interface ValueWithImages { text: string; images: ImageInfo[]; }
   'encapsulation': ViewEncapsulation.None,
   imports: [TdTextEditorComponent, NgClass, FormsModule]
 })
-export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
+export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy, AfterViewInit {
 
   static nextId = 0;
 
@@ -212,7 +212,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   ngAfterViewInit() {
     setTimeout(() => {
       this.editor?.easyMDE?.codemirror?.refresh();
-    }); 
+    });
   }
 
   writeValue(val: string) {
