@@ -27,7 +27,7 @@
 <ng-template #searchView>
   <span class="toolbar-fill"></span>
   <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1  mdc-toolbar-input">
+  <mat-form-field class="font-size-1  mdc-toolbar-input searchbar" >
     <mat-label i18n>Type name to search...</mat-label>
     <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
   </mat-form-field>
