@@ -1,0 +1,22 @@
+.mat-column-select {
+  max-width: 44px;
+}
+
+.mat-column-profile {
+  max-width: 100px;
+}
+
+.role-action-button {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  margin: 0.25rem 0;
+  box-sizing: border-box;
+}
+
+.hide-checkbox {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  padding: 0.25rem 0.5rem;
+  margin: 0.25rem 0;
+  align-items: stretch;
+}
