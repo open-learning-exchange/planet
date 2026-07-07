@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ExportToCsv } from 'export-to-csv/build';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
+import { CouchService } from './couchdb.service';
 import { markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 
@@ -16,6 +19,7 @@ export class CsvService {
   };
 
   constructor(
+    private couchService: CouchService,
     private reportsService: ReportsService,
     private planetMessageService: PlanetMessageService
   ) {}
@@ -153,6 +157,38 @@ export class CsvService {
 
   formatHealthConditions(conditions: any) {
     return Object.entries(conditions).filter(([ key, value ]) => value === true).map(([ key, value ]) => key).join(', ');
+  }
+
+  loadCsvAttachment(docId: string, attachmentId: string, domain?: string): Observable<{ columns: string[], rows: any[] }> {
+    // papaparse is only needed when previewing a CSV resource, so load it in its own chunk on demand
+    return forkJoin([
+      this.couchService.get(`resources/${docId}/${attachmentId}`, { responseType: 'text', domain }),
+      import('papaparse')
+    ]).pipe(
+      map(([ csvText, papa ]) => this.parseCsv(papa, csvText))
+    );
+  }
+
+  private parseCsv(papa: typeof import('papaparse'), csvText: string): { columns: string[], rows: any[] } {
+    const data = papa.parse(csvText, { skipEmptyLines: true }).data as string[][];
+    const maxColumns = data.reduce((max, row) => Math.max(max, row.length), 0);
+    // Exported reports start with a title line, so the header row is the first row spanning every column
+    const headerIndex = data.findIndex(row => row.length === maxColumns);
+    const columns = this.uniqueColumnNames(headerIndex > -1 ? data[headerIndex] : []);
+    const rows = data.slice(headerIndex + 1).map(row =>
+      columns.reduce((rowObject, column, index) => ({ ...rowObject, [column]: row[index] ?? '' }), {})
+    );
+    return { columns, rows };
+  }
+
+  private uniqueColumnNames(headerRow: string[]): string[] {
+    const nameCounts = new Map<string, number>();
+    return headerRow.map((header, index) => {
+      const name = (header || '').trim() || $localize`Column ${index + 1}`;
+      const count = (nameCounts.get(name) || 0) + 1;
+      nameCounts.set(name, count);
+      return count > 1 ? `${name} (${count})` : name;
+    });
   }
 
 }
