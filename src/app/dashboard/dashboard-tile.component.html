@@ -60,8 +60,13 @@
           </ng-container>
         }
         @if (itemData.length === 0) {
-          <span class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]" i18n>
-          Add item to {{cardTitle}}
+        <span class="dashboard-item dashboard-empty-item cursor-pointer" [routerLink]="[emptyLink]" i18n>
+          <mat-icon class="dashboard-item-icon">
+            add_circle_outline
+          </mat-icon>
+          <span class="dashboard-item-icon">
+            Add item to {{cardTitle}}
+          </span>
         </span>
         }
       } @else {

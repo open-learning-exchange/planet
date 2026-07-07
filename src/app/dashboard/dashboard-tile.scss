@@ -4,7 +4,7 @@
 :host {
 
   @include m.left-right-grid-areas;
-  // For Firefox.  Otherwise grid tile will expand to fit text.
+  // For Firefox. Otherwise grid tile will expand to fit text.
   min-width: 0;
 
   .dashboard-card {
@@ -18,6 +18,7 @@
     .left-tile {
       border-radius: 2px 0 0 2px;
       color: #fff;
+
       &, & planet-dashboard-tile-title {
         display: flex;
         justify-content: center;
@@ -53,19 +54,41 @@
           padding: 1rem 0.5rem;
           position: relative;
           word-break: break-word;
+
           &:nth-child(even):last-child {
             border-right: 1px solid rgba(0, 0, 0, 0.1);
           }
+
+          &.dashboard-empty-item {
+            flex-direction: row;
+            gap: 0.5rem;
+            white-space: nowrap;
+            background-color: v.$accent;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            width: fit-content;
+            height: fit-content;
+            align-self: center;
+            justify-self: center;
+
+            .dashboard-item-icon {
+              display: flex;
+              align-items: center;
+            }
+          }
+
           .delete-item {
             position: absolute;
             top: -0.25rem;
             right: -0.25rem;
             --mat-icon-button-ripple-color: transparent;
             --mat-icon-button-state-layer-color: transparent;
+
             > .mat-icon {
               width: auto;
             }
           }
+
           p {
             margin: 0;
           }
@@ -95,7 +118,6 @@
               border: 1px solid v.$grey;
             }
           }
-
         }
       }
     }
@@ -112,13 +134,16 @@
   }
 }
 
+.dashboard-item-icon {
+  display: inline-block;
+}
+
 @media (max-width: v.$screen-sm) {
   :host {
     .dashboard-card {
       grid-template-areas: "lt" "rt";
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr;
-
 
       .left-tile {
         border-radius: 2px 2px 0 0;
@@ -187,5 +212,4 @@
       max-height: 300px;
     }
   }
-
 }
