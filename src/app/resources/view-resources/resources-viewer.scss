@@ -32,6 +32,28 @@ $full-height: calc(#{v.$view-container-height} - 2rem);
 
   }
 
+  .csv-container {
+    display: flex;
+    flex-direction: column;
+    max-height: $full-height;
+
+    .csv-table-wrapper {
+      overflow: auto;
+
+      table {
+        width: 100%;
+      }
+
+      th,
+      td {
+        max-width: 20rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
   .pdf-toolbar {
     position: absolute;
     bottom: 10px;

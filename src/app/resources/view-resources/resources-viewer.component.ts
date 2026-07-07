@@ -8,15 +8,26 @@ import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { CsvService } from '../../shared/csv.service';
 import { NgClass } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {
+  MatTable, MatTableDataSource, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'planet-resources-viewer',
   templateUrl: './resources-viewer.component.html',
   styleUrls: ['./resources-viewer.scss'],
-  imports: [NgClass, MatIconButton, MatIcon, MatAnchor]
+  imports: [
+    NgClass, MatIconButton, MatIcon, MatAnchor, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatSort,
+    MatSortHeader, MatPaginator
+  ]
 })
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
@@ -31,8 +42,20 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   resource: any;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
+  csvColumns: string[] = [];
+  dataSource: MatTableDataSource<any>;
   private onDestroy$ = new Subject<void>();
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
+  @ViewChild(MatSort) set sort(sort: MatSort) {
+    if (this.dataSource && sort) {
+      this.dataSource.sort = sort;
+    }
+  }
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+    if (this.dataSource && paginator) {
+      this.dataSource.paginator = paginator;
+    }
+  }
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -41,6 +64,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
+    private csvService: CsvService,
     private router: Router
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -110,8 +134,27 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
+    if (this.contentType === 'text/csv') {
+      this.mediaType = 'spreadsheet';
+      this.loadCsvTable(resource._id, filename);
+    }
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
+  }
+
+  loadCsvTable(docId: string, filename: string) {
+    this.dataSource = undefined;
+    this.csvColumns = [];
+    this.csvService.loadCsvAttachment(docId, filename, this.parent ? this.stateService.configuration.parentDomain : undefined)
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(({ columns, rows }) => {
+        this.csvColumns = columns;
+        this.dataSource = new MatTableDataSource(rows);
+        this.dataSource.sortingDataAccessor = (row, column) => {
+          const value = row[column];
+          return value !== '' && !isNaN(+value) ? +value : (value || '').toLowerCase();
+        };
+      });
   }
 
   openFullscreen() {

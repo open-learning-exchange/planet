@@ -24,6 +24,30 @@
         oallowfullscreen msallowfullscreen></iframe>
       </div>
     }
+    @case ('spreadsheet') {
+      @if (dataSource) {
+        <div class="csv-container">
+          <div class="csv-table-wrapper">
+            <table mat-table [dataSource]="dataSource" matSort>
+              @for (column of csvColumns; track column) {
+                <ng-container [matColumnDef]="column">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header [title]="column">{{ column }}</th>
+                  <td mat-cell *matCellDef="let row" [title]="row[column]">{{ row[column] }}</td>
+                </ng-container>
+              }
+              <tr mat-header-row *matHeaderRowDef="csvColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: csvColumns;"></tr>
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" [attr.colspan]="csvColumns.length" i18n>No data found</td>
+              </tr>
+            </table>
+          </div>
+          <mat-paginator [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+        </div>
+      } @else {
+        <span i18n>Loading spreadsheet...</span>
+      }
+    }
     @case ('other') {
       <div><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
     }
