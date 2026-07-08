@@ -35,6 +35,12 @@
     margin-left: 8px;
   }
 
+  .pending-grading-text {
+    color: v.$accent;
+    margin-right: 8px;
+    align-self: center;
+  }
+
   .view-step-button{
     flex-shrink: 0;
   }

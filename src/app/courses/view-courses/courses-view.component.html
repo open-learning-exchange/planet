@@ -79,6 +79,9 @@
                 {{step.stepTitle || 'Step ' + (stepNum + 1)}}
               </mat-panel-title>
               <mat-panel-description>
+                @if (step.progress?.status === 'requires grading') {
+                  <span class="pending-grading-text" i18n>Pending grading</span>
+                }
                 @if (step?.exam?.questions.length) {
                   <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
                 }
@@ -93,7 +96,11 @@
                 <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
               }
               @if (step.progress && !step.progress.passed) {
-                <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
+                @if (step.progress?.status === 'requires grading') {
+                  <planet-course-icon [icon]="courseIcons.assignmentPending"></planet-course-icon>
+                } @else {
+                  <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
+                }
               }
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>

@@ -1,0 +1,62 @@
+
+> planet@0.23.33 start
+> ng serve
+
+
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues. You might need to use "--disable-host-check" if that's the
+case.
+
+❯ Building...
+One or more browsers which are configured in the project's Browserslist configuration will be ignored as ES5 output is not supported by the Angular CLI.
+Ignored browsers:
+kaios 2.5, op_mini all
+One or more browsers which are configured in the project's Browserslist configuration fall outside Angular's browser support for this version.
+Unsupported browsers:
+and_qq 14.9, and_uc 15.5, android 149, ios_saf 26.5, kaios 3.0-3.1, op_mob 80, opera 131, opera 127, safari 26.5, samsung 30, samsung 29
+✔ Building...
+Initial chunk files                  | Names                    |  Raw size
+chunk-UJBIWS4A.js                    | -                        |   1.01 MB |
+styles.css                           | styles                   | 513.61 kB |
+chunk-TI27EEA6.js                    | -                        |  95.61 kB |
+chunk-56E4MGKC.js                    | -                        |  89.36 kB |
+main.js                              | main                     |  13.77 kB |
+chunk-7EFZ4SYK.js                    | -                        |   1.68 kB |
+polyfills.js                         | polyfills                | 192 bytes |
+
+                                     | Initial total            |   1.73 MB
+
+Lazy chunk files                     | Names                    |  Raw size
+manager-dashboard.module-KQSD7E3E.js | manager-dashboard-module | 663.53 kB |
+chunk-EWDSDH6B.js                    | -                        | 494.06 kB |
+chunk-Y3WKKQ3Y.js                    | -                        | 445.54 kB |
+chunk-DUV5DCLR.js                    | -                        | 320.06 kB |
+home.module-NE5CLWJH.js              | home-module              | 266.54 kB |
+chunk-UOSHDNSV.js                    | -                        | 259.03 kB |
+chunk-YV3E6EQF.js                    | -                        | 219.27 kB |
+health.module-MQJXHD7V.js            | health-module            | 157.11 kB |
+chunk-N76RI3LZ.js                    | -                        | 141.88 kB |
+chunk-KXX3MJEW.js                    | -                        | 117.28 kB |
+chunk-2PMOBNRP.js                    | -                        | 105.42 kB |
+feedback.module-CS7Z2TTC.js          | feedback-module          | 102.50 kB |
+chunk-VFL2OX4V.js                    | -                        |  92.73 kB |
+chunk-WSPUI7DR.js                    | -                        |  72.61 kB |
+certifications.module-GFEUTOO4.js    | certifications-module    |  66.13 kB |
+...and 18 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [26.059 seconds] - 2026-07-08T19:18:42.957Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+One or more browsers which are configured in the project's Browserslist configuration will be ignored as ES5 output is not supported by the Angular CLI.
+Ignored browsers:
+kaios 2.5, op_mini all
+One or more browsers which are configured in the project's Browserslist configuration fall outside Angular's browser support for this version.
+Unsupported browsers:
+and_qq 14.9, and_uc 15.5, android 149, ios_saf 26.5, kaios 3.0-3.1, op_mob 80, opera 131, opera 127, safari 26.5, samsung 30, samsung 29
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://192.168.0.2:3000/

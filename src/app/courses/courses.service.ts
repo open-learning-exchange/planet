@@ -138,19 +138,19 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, passed = true }, userId?) {
+  updateProgress({ courseId, stepNum, passed = true, status = '' }, userId?) {
     if (this.progressUpdateInProgress === true) {
       return;
     }
     this.progressUpdateInProgress = true;
     const configuration = this.stateService.configuration;
-    const newProgress = { stepNum, courseId, passed,
+    const newProgress = { stepNum, courseId, passed, status,
       userId: userId || this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
     this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
       const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
-      if (currentProgress.length === 1 && currentProgress.every(current => current.passed === newProgress.passed)) {
+      if (currentProgress.length === 1 && currentProgress.every(current => (current.passed || newProgress.passed) === current.passed && (newProgress.status === '' || current.status === newProgress.status))) {
         return of({});
       }
       return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
@@ -164,7 +164,7 @@ export class CoursesService {
     return currentProgressDocs.length === 0 ?
       [ { createdDate: this.couchService.datePlaceholder, ...newProgress } ] :
       currentProgressDocs.map((current, index) => index === 0 ?
-        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress, passed: current.passed || newProgress.passed } :
+        { createdDate: this.couchService.datePlaceholder, ...current, ...newProgress, passed: current.passed || newProgress.passed, status: newProgress.status || current.status } :
         { ...current, _deleted: true }
       );
   }
