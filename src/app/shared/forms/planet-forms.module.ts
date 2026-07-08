@@ -14,7 +14,6 @@ import { PlanetStepListComponent, PlanetStepListFormDirective, PlanetStepListIte
   PlanetStepListActionsDirective, PlanetStepListNumberDirective } from './planet-step-list.component';
 import { PlanetMarkdownTextboxComponent } from './planet-markdown-textbox.component';
 import { PlanetTagInputDialogComponent, PlanetTagInputToggleIconComponent } from './planet-tag-input-dialog.component';
-import { SharedComponentsModule } from '../shared-components.module';
 import { PlanetTimeMaskDirective } from './planet-time-mask.directive';
 import { PlanetSelectorComponent } from './planet-selector.component';
 import { PlanetNumberValidatorDirective } from './planet-number-validator.directive';
@@ -28,7 +27,6 @@ import { PlanetRoundDirective } from './planet-round.directive';
     MaterialModule,
     CovalentTextEditorModule,
     CovalentFlavoredMarkdownModule,
-    SharedComponentsModule,
     FormErrorMessagesComponent,
     PlanetRatingComponent,
     PlanetRatingStarsComponent,

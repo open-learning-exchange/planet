@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlanetFormsModule } from '../forms/planet-forms.module';
-import { SharedComponentsModule } from '../shared-components.module';
 import { DialogsFormComponent } from './dialogs-form.component';
 import { DialogsPromptComponent } from './dialogs-prompt.component';
 import { DialogsViewComponent } from './dialogs-view.component';
@@ -25,7 +24,6 @@ import { DialogsRatingsComponent, DialogsRatingsDirective } from './dialogs-rati
     FormsModule,
     ReactiveFormsModule,
     PlanetFormsModule,
-    SharedComponentsModule,
     DialogsFormComponent,
     DialogsViewComponent,
     DialogsPromptComponent,

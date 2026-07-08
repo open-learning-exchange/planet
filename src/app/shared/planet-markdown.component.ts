@@ -5,7 +5,7 @@ import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewT
   markdownImageRegex, normalizeMarkdownWhitespace, truncateText
 } from './utils';
 
-import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 
 @Component({
   selector: 'planet-markdown',
@@ -25,7 +25,7 @@ import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
     `,
   styleUrls: ['./planet-markdown.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [TdFlavoredMarkdownComponent]
+  imports: [CovalentFlavoredMarkdownModule]
 })
 export class PlanetMarkdownComponent implements OnChanges {
 

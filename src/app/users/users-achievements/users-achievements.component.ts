@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
@@ -40,7 +40,7 @@ pdfMake.addVirtualFileSystem(pdfFonts);
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdFlavoredMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     PlanetBetaDirective,
     MatList,
     MatListItem,

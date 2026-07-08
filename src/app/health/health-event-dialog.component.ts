@@ -11,13 +11,13 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
-import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: './health-event-dialog.component.html',
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, TdFlavoredMarkdownComponent,
+    MatDialogTitle, CdkScrollable, MatDialogContent, CovalentFlavoredMarkdownModule,
     MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]
 })

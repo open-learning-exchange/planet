@@ -24,7 +24,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { NgClass, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 
@@ -68,7 +68,7 @@ import { FeedbackDirective } from '../feedback/feedback.directive';
     MatCellDef,
     MatCell,
     MatSortHeader,
-    TdFlavoredMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,

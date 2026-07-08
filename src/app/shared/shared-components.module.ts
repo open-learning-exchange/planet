@@ -13,10 +13,7 @@ import { ResourcesMenuComponent } from '../resources/view-resources/resources-me
 import { AuthorizedRolesDirective } from './authorized-roles.directive';
 import { PlanetBetaDirective } from './beta.directive';
 import { FilteredAmountComponent } from './planet-filtered-amount.component';
-import { TasksComponent, FilterAssigneePipe, AssigneeNamePipe } from '../tasks/tasks.component';
 import { PlanetRoleComponent } from './planet-role.component';
-import { PlanetMarkdownComponent } from './planet-markdown.component';
-import { CommunityListComponent } from '../community/community-list.component';
 import { LabelComponent } from './label.component';
 import { TimePipe } from '../manager-dashboard/reports/time.pipe';
 import { AvatarComponent } from './avatar.component';
@@ -39,12 +36,7 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     AuthorizedRolesDirective,
     PlanetBetaDirective,
     FilteredAmountComponent,
-    TasksComponent,
-    FilterAssigneePipe,
-    AssigneeNamePipe,
     PlanetRoleComponent,
-    PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
     TimePipe,
@@ -64,12 +56,7 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     AuthorizedRolesDirective,
     PlanetBetaDirective,
     FilteredAmountComponent,
-    TasksComponent,
-    FilterAssigneePipe,
-    AssigneeNamePipe,
     PlanetRoleComponent,
-    PlanetMarkdownComponent,
-    CommunityListComponent,
     LabelComponent,
     LanguageLabelComponent,
     TimePipe,
