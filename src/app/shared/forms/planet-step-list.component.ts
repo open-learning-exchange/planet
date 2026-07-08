@@ -136,12 +136,14 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     }
     const { steps } = this;
     if (Array.isArray(steps)) {
-      this.moveArrayStep(index, direction, steps);
-      this.stepsChange.emit(steps);
+      const next = [ ...steps ];
+      this.moveArrayStep(index, direction, next);
+      this.stepsChange.emit(next);
       return;
     }
     if (steps instanceof FormArray) {
       this.moveFormArrayStep(index, direction, steps);
+      this.stepsChange.emit(steps.value);
     }
   }
 
