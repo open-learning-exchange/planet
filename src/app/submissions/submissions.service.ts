@@ -505,36 +505,41 @@ export class SubmissionsService {
         if (!tuple) {
           return;
         }
-        const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const pdfMakePromise = loadPdfMake();
-        const docContent = await this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
-        if (exportOptions.includeCharts) {
-          await this.buildChartSection(exam, updatedSubmissions, docContent);
-        }
-        if (exportOptions.includeAnalysis) {
-          await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
-        }
-        const pdfMake = await pdfMakePromise;
-        pdfMake.createPdf({
-          content: docContent,
-          styles: {
-            title: {
-              fontSize: 24,
-              bold: true,
-              alignment: 'center',
-            },
-            header: {
-              fontSize: 20,
-              bold: true
-            },
-            chartTitle: {
-              fontSize: 12,
-              bold: true,
-              alignment: 'center'
-            }
+        try {
+          const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
+          const pdfMakePromise = loadPdfMake();
+          const docContent = await this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
+          if (exportOptions.includeCharts) {
+            await this.buildChartSection(exam, updatedSubmissions, docContent);
           }
-        }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
-        this.dialogsLoadingService.stop();
+          if (exportOptions.includeAnalysis) {
+            await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
+          }
+          const pdfMake = await pdfMakePromise;
+          pdfMake.createPdf({
+            content: docContent,
+            styles: {
+              title: {
+                fontSize: 24,
+                bold: true,
+                alignment: 'center',
+              },
+              header: {
+                fontSize: 20,
+                bold: true
+              },
+              chartTitle: {
+                fontSize: 12,
+                bold: true,
+                alignment: 'center'
+              }
+            }
+          }).download(`${toProperCase(type)} - ${exam.name}.pdf`);
+        } catch {
+          this.planetMessageService.showAlert($localize`Error exporting PDF`);
+        } finally {
+          this.dialogsLoadingService.stop();
+        }
       });
   }
 

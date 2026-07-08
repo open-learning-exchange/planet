@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { loadPdfMake } from '../shared/pdf-utils';
+import { PlanetMessageService } from '../shared/planet-message.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
@@ -39,7 +40,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    private planetMessageService: PlanetMessageService
   ) {
     this.event = this.data.event || {};
     this.conditions = Object.entries(this.event.conditions || {})
@@ -129,7 +131,9 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
       }
     };
-    loadPdfMake().then(pdfMake => pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`));
+    loadPdfMake()
+      .then(pdfMake => pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`))
+      .catch(() => this.planetMessageService.showAlert($localize`There was an error exporting the PDF`));
   }
 
 }

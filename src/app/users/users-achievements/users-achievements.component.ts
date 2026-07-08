@@ -294,6 +294,8 @@ export class UsersAchievementsComponent implements OnInit {
       },
     };
 
-    loadPdfMake().then(pdfMake => pdfMake.createPdf(documentDefinition).download($localize`${this.user.name} achievements.pdf`));
+    loadPdfMake()
+      .then(pdfMake => pdfMake.createPdf(documentDefinition).download($localize`${this.user.name} achievements.pdf`))
+      .catch(() => this.planetMessageService.showAlert($localize`There was an error exporting the PDF`));
   }
 }

@@ -459,12 +459,14 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
 
     this.resourceForm.controls.openWhichFile.enable();
-    import('jszip').then(({ default: JSZip }) => new JSZip().loadAsync(this.file)).then((data) => {
-      this.attachedZipFiles = this.getFileNames(data);
-    },
-    err => {
-      console.log('error', err.message);
-    });
+    import('jszip')
+      .then(({ default: JSZip }) => new JSZip().loadAsync(this.file))
+      .then((data) => {
+        this.attachedZipFiles = this.getFileNames(data);
+      })
+      .catch(err => {
+        console.log('error', err.message);
+      });
   }
 
   private getNormalizedState(): any {
