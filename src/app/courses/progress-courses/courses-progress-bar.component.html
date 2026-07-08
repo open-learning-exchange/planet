@@ -1,4 +1,4 @@
-@for (step of steps; track step; let i = $index) {
+@for (step of steps; track $index; let i = $index) {
   <div
     i18n-matTooltip
     [matTooltip]="step.stepTitle || 'Step ' + (i+1)"

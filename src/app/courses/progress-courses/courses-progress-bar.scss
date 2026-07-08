@@ -5,9 +5,12 @@
   grid-auto-columns: 1fr;
   grid-column-gap: 3px;
   grid-auto-flow: column;
+  width: 100%;
+  min-height: 10px;
 
   div {
     background-color: v.$accent;
+    height: 10px;
   }
 
   div.completed {
