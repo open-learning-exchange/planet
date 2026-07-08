@@ -176,9 +176,11 @@ export class CsvService {
     }
     const headerIndex = this.headerRowIndex(data);
     const columns = this.uniqueColumnNames(headerIndex > -1 ? data[headerIndex] : []);
-    const rows = data.slice(headerIndex + 1).map(row =>
-      columns.reduce((rowObject, column, index) => ({ ...rowObject, [column]: row[index] ?? '' }), {})
-    );
+    const rows = data.slice(headerIndex + 1).map(row => {
+      const rowObject = {};
+      columns.forEach((column, index) => rowObject[column] = row[index] ?? '');
+      return rowObject;
+    });
     return { columns, rows };
   }
 

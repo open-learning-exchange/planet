@@ -38,6 +38,8 @@ $full-height: calc(#{v.$view-container-height} - 2rem);
     max-height: $full-height;
 
     .csv-table-wrapper {
+      flex: 1 1 auto;
+      min-height: 0;
       overflow: auto;
 
       table {

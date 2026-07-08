@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
@@ -48,6 +48,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   csvLoadError = false;
   private sortRef: MatSort;
   private paginatorRef: MatPaginator;
+  private csvLoadSub: Subscription;
   private onDestroy$ = new Subject<void>();
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
   @ViewChild(MatSort) set sort(sort: MatSort) {
@@ -95,6 +96,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.cancelCsvLoad();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -117,6 +119,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   setResource(resource: any) {
+    this.cancelCsvLoad();
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
@@ -149,7 +152,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     this.dataSource = undefined;
     this.csvColumns = [];
     this.csvLoadError = false;
-    this.csvService.loadCsvAttachment(docId, filename, this.parent ? this.stateService.configuration.parentDomain : undefined)
+    const domain = this.parent ? this.stateService.configuration.parentDomain : undefined;
+    this.csvLoadSub = this.csvService.loadCsvAttachment(docId, filename, domain)
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(({ columns, rows }) => {
         this.csvColumns = columns;
@@ -163,6 +167,13 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
         this.csvLoadError = true;
         this.planetMessageService.showAlert($localize`There was an error loading this CSV`);
       });
+  }
+
+  private cancelCsvLoad() {
+    if (this.csvLoadSub) {
+      this.csvLoadSub.unsubscribe();
+      this.csvLoadSub = undefined;
+    }
   }
 
   private isCsvResource(filename: string) {
