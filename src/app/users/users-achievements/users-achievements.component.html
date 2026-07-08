@@ -68,14 +68,14 @@
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Purpose</h3>
-                  <td-markdown [content]="achievements.purpose"></td-markdown>
+                  <td-flavored-markdown [content]="achievements.purpose"></td-flavored-markdown>
                 </div>
               }
               @if (achievements.goals) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Goals</h3>
-                  <td-markdown [content]="achievements.goals"></td-markdown>
+                  <td-flavored-markdown [content]="achievements.goals"></td-flavored-markdown>
                 </div>
               }
               <ng-container *planetBeta>
@@ -111,7 +111,7 @@
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Achievements</h3>
-                  <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
+                  <td-flavored-markdown [content]="achievements.achievementsHeader"></td-flavored-markdown>
                   <mat-list>
                     @for (achievement of achievements.achievements; track achievement; let i = $index) {
                       <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" (click)="onAchievementClick(achievement, i)">

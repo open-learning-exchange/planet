@@ -5,13 +5,13 @@ import { calculateMdAdjustedLimit, extractMarkdownImageUrls, getMarkdownPreviewT
   markdownImageRegex, normalizeMarkdownWhitespace, truncateText
 } from './utils';
 
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { TdFlavoredMarkdownComponent } from '@covalent/flavored-markdown';
 
 @Component({
   selector: 'planet-markdown',
   template: `
     @if (previewMode) {
-      <td-markdown [content]="limitedContent"></td-markdown>
+      <td-flavored-markdown [content]="limitedContent"></td-flavored-markdown>
       @if (images?.length) {
         <div class="image-gallery">
           @for (image of images; track image) {
@@ -20,12 +20,12 @@ import { TdMarkdownComponent } from '@covalent/markdown';
         </div>
       }
     } @else {
-      <td-markdown [content]="content" [hostedUrl]="couchAddress"></td-markdown>
+      <td-flavored-markdown [content]="content" [hostedUrl]="couchAddress"></td-flavored-markdown>
     }
     `,
   styleUrls: ['./planet-markdown.scss'],
   encapsulation: ViewEncapsulation.None,
-  imports: [TdMarkdownComponent]
+  imports: [TdFlavoredMarkdownComponent]
 })
 export class PlanetMarkdownComponent implements OnChanges {
 

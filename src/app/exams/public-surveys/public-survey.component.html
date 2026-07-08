@@ -15,7 +15,7 @@
     [disableNext]="isLoading || questionNum === maxQuestions"
     (previous)="moveQuestion(-1)"
     (next)="moveQuestion(1)">
-    <td-markdown class="question-body" [content]="question?.body"></td-markdown>
+    <td-flavored-markdown class="question-body" [content]="question?.body"></td-flavored-markdown>
     <planet-exams-take-widget [question]="question" [answer]="answer" [storedAnswerValue]="currentAnswer"></planet-exams-take-widget>
     <div class="action-buttons action-buttons--split">
       <div class="action-buttons__left">

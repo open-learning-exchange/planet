@@ -110,15 +110,15 @@
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>
         }
-        <td-markdown [content]="team.description"></td-markdown>
+        <td-flavored-markdown [content]="team.description"></td-flavored-markdown>
         @if (team?.services) {
           <div class="mat-headline-6" i18n>What are the Services your enterprise provides?</div>
         }
-        <td-markdown [content]="team.services"></td-markdown>
+        <td-flavored-markdown [content]="team.services"></td-flavored-markdown>
         @if (team?.rules) {
           <div class="mat-headline-6" i18n>What are the Rules of your enterprise?</div>
         }
-        <td-markdown [content]="team.rules"></td-markdown>
+        <td-flavored-markdown [content]="team.rules"></td-flavored-markdown>
       } @else {
         <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
         @if (isUserLeader || mode === 'services') {
