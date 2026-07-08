@@ -8,7 +8,8 @@ export const courseIcons = {
   attachFile: 'attach_file',
   description: 'description',
   done: 'done',
-  rotateRight: 'rotate_right'
+  rotateRight: 'rotate_right',
+  assignmentPending: 'pending_actions'
 } as const;
 
 export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
@@ -34,6 +35,9 @@ export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
         }
         @case (courseIcons.rotateRight) {
           <span i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
+        }
+        @case (courseIcons.assignmentPending) {
+        <span i18n-matTooltip matTooltip="Pending grading"><mat-icon>pending_actions</mat-icon></span>
         }
       }
     </div>
