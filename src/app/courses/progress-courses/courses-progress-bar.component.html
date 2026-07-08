@@ -2,7 +2,7 @@
   <div
     i18n-matTooltip
     [matTooltip]="step.stepTitle || 'Step ' + (i+1)"
-    [ngClass]="{ 'completed': step.status === 'completed', 'not-started': step.status === 'not started', 'cursor-pointer': step.status !== 'not started' }"
+    [ngClass]="{ 'completed': step.status === 'completed', 'requires-grading': step.status === 'requires-grading', 'not-started': step.status === 'not started', 'cursor-pointer': step.status !== 'not started' }"
     (click)="routing(step.status,i)">
   </div>
 }

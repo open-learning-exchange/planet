@@ -89,10 +89,11 @@
                   <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
                 }
               </mat-panel-description>
-              @if (step.progress && step.progress.passed) {
+              @if (step.progress?.status === 'requires grading') {
+                <planet-course-icon [icon]="courseIcons.assignmentPending"></planet-course-icon>
+              } @else if (step.progress && step.progress.passed) {
                 <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
-              }
-              @if (step.progress && !step.progress.passed) {
+              } @else if (step.progress && !step.progress.passed) {
                 <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
               }
             </mat-expansion-panel-header>

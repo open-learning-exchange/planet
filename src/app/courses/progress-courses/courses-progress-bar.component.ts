@@ -37,6 +37,9 @@ export class CoursesProgressBarComponent implements OnChanges {
     if (progress === undefined) {
       return 'not started';
     }
+    if (progress.status === 'requires grading') {
+      return 'requires-grading';
+    }
     return progress.passed ? 'completed' : 'pending';
   }
 
