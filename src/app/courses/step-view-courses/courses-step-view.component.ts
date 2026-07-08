@@ -174,7 +174,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
       this.coursesService.updateProgress({
-        courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed
+        courseId: course._id, stepNum: this.stepNum, passed: this.stepDetail.exam === undefined || this.progress.passed, status: this.progress.status
       });
     }
     this.maxStep = course.steps.length;
