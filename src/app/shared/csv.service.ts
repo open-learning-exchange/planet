@@ -171,14 +171,22 @@ export class CsvService {
 
   private parseCsv(papa: typeof import('papaparse'), csvText: string): { columns: string[], rows: any[] } {
     const data = papa.parse(csvText, { skipEmptyLines: true }).data as string[][];
-    const maxColumns = data.reduce((max, row) => Math.max(max, row.length), 0);
-    // Exported reports start with a title line, so the header row is the first row spanning every column
-    const headerIndex = data.findIndex(row => row.length === maxColumns);
+    if (data.length === 0) {
+      return { columns: [], rows: [] };
+    }
+    const headerIndex = this.headerRowIndex(data);
     const columns = this.uniqueColumnNames(headerIndex > -1 ? data[headerIndex] : []);
     const rows = data.slice(headerIndex + 1).map(row =>
       columns.reduce((rowObject, column, index) => ({ ...rowObject, [column]: row[index] ?? '' }), {})
     );
     return { columns, rows };
+  }
+
+  private headerRowIndex(data: string[][]): number {
+    const firstWideRowIndex = data.findIndex(row => row.length > 1);
+    const hasOnlyShortPreamble = firstWideRowIndex > 0 &&
+      data.slice(0, firstWideRowIndex).every(row => row.length < data[firstWideRowIndex].length);
+    return hasOnlyShortPreamble ? firstWideRowIndex : 0;
   }
 
   private uniqueColumnNames(headerRow: string[]): string[] {

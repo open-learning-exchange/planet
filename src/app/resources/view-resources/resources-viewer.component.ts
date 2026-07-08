@@ -9,6 +9,7 @@ import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CsvService } from '../../shared/csv.service';
+import { PlanetMessageService } from '../../shared/planet-message.service';
 import { NgClass } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -44,17 +45,18 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   pdfSrc: any;
   csvColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
+  csvLoadError = false;
+  private sortRef: MatSort;
+  private paginatorRef: MatPaginator;
   private onDestroy$ = new Subject<void>();
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
   @ViewChild(MatSort) set sort(sort: MatSort) {
-    if (this.dataSource && sort) {
-      this.dataSource.sort = sort;
-    }
+    this.sortRef = sort;
+    this.assignCsvTableControls();
   }
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
-    if (this.dataSource && paginator) {
-      this.dataSource.paginator = paginator;
-    }
+    this.paginatorRef = paginator;
+    this.assignCsvTableControls();
   }
 
   constructor(
@@ -65,6 +67,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private userService: UserService,
     private couchService: CouchService,
     private csvService: CsvService,
+    private planetMessageService: PlanetMessageService,
     private router: Router
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -134,8 +137,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
-    if (this.contentType === 'text/csv') {
-      this.mediaType = 'spreadsheet';
+    if (this.isCsvResource(filename)) {
+      this.mediaType = 'csv';
       this.loadCsvTable(resource._id, filename);
     }
     // Emit resource src so parent component can use for links
@@ -145,6 +148,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   loadCsvTable(docId: string, filename: string) {
     this.dataSource = undefined;
     this.csvColumns = [];
+    this.csvLoadError = false;
     this.csvService.loadCsvAttachment(docId, filename, this.parent ? this.stateService.configuration.parentDomain : undefined)
       .pipe(takeUntil(this.onDestroy$))
       .subscribe(({ columns, rows }) => {
@@ -154,7 +158,29 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
           const value = row[column];
           return value !== '' && !isNaN(+value) ? +value : (value || '').toLowerCase();
         };
+        this.assignCsvTableControls();
+      }, () => {
+        this.csvLoadError = true;
+        this.planetMessageService.showAlert($localize`There was an error loading this CSV`);
       });
+  }
+
+  private isCsvResource(filename: string) {
+    const contentType = (this.contentType || '').toLowerCase().split(';')[0].trim();
+    return contentType.indexOf('csv') > -1 || contentType === 'text/comma-separated-values' ||
+      filename.toLowerCase().endsWith('.csv');
+  }
+
+  private assignCsvTableControls() {
+    if (!this.dataSource) {
+      return;
+    }
+    if (this.sortRef) {
+      this.dataSource.sort = this.sortRef;
+    }
+    if (this.paginatorRef) {
+      this.dataSource.paginator = this.paginatorRef;
+    }
   }
 
   openFullscreen() {
