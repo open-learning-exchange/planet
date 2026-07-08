@@ -22,7 +22,11 @@ export class CoursesProgressBarComponent implements OnChanges {
   ngOnChanges() {
     if (this.course?.steps && this.courseProgress) {
       this.steps = this.course.steps.map((step: any, index: number) => {
-        const progress = this.courseProgress.find((p: any) => Number(p.stepNum) === (index + 1));
+        const progress = this.courseProgress.find((p: any) =>
+          (step.id && p.stepId === step.id) ||
+          (step.exam?._id && p.examId === step.exam._id) ||
+          (!p.stepId && !p.examId && Number(p.stepNum) === (index + 1))
+        );
         const status = this.progressStatus(progress);
         return { stepTitle: step.stepTitle, status };
       });

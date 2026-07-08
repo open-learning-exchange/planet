@@ -153,7 +153,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
         if (!this.parent && this.progress.passed !== this.examPassed) {
           this.coursesService.updateProgress({
-            courseId: this.courseId, stepNum: this.stepNum, stepId: this.stepDetail.id, passed: this.examPassed
+            courseId: this.courseId, stepNum: this.stepNum, stepId: this.stepDetail.id, examId: this.stepDetail.exam?._id, passed: this.examPassed
           });
         }
       });
@@ -174,7 +174,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.isUserEnrolled = !this.parent && this.checkMyCourses(course._id);
     if (this.isUserEnrolled && (this.progress.stepNum === undefined || stepProgressDocs.length > 1)) {
       this.coursesService.updateProgress({
-        courseId: course._id, stepNum: this.stepNum, stepId: this.stepDetail.id, passed: this.stepDetail.exam === undefined || this.progress.passed
+        courseId: course._id, stepNum: this.stepNum, stepId: this.stepDetail.id, examId: this.stepDetail.exam?._id, passed: this.stepDetail.exam === undefined || this.progress.passed
       });
     }
     this.maxStep = course.steps.length;

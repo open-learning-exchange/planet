@@ -159,9 +159,12 @@ export class SubmissionsService {
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
+      const stepIndex = res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId));
       this.courseService.updateProgress({
         courseId: res._id,
-        stepNum: res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId)) + 1,
+        stepNum: stepIndex + 1,
+        stepId: res.steps[stepIndex]?.id,
+        examId: examId,
         passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
       }, submission.user._id);
     }, error => console.log(error));
