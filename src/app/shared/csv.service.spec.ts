@@ -55,4 +55,11 @@ describe('CsvService', () => {
       rows: [ { Name: 'Ada', 'Name (2)': '10', 'Column 3': 'x' } ]
     });
   });
+
+  it('deduplicates generated column names that collide with real headers', () => {
+    expect(parseCsv('Name,Name,Name (2)\nAda,10,duplicate')).toEqual({
+      columns: [ 'Name', 'Name (2)', 'Name (2) (2)' ],
+      rows: [ { Name: 'Ada', 'Name (2)': '10', 'Name (2) (2)': 'duplicate' } ]
+    });
+  });
 });

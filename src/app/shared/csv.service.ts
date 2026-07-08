@@ -193,11 +193,18 @@ export class CsvService {
 
   private uniqueColumnNames(headerRow: string[]): string[] {
     const nameCounts = new Map<string, number>();
+    const usedNames = new Set<string>();
     return headerRow.map((header, index) => {
       const name = (header || '').trim() || $localize`Column ${index + 1}`;
-      const count = (nameCounts.get(name) || 0) + 1;
+      let count = (nameCounts.get(name) || 0) + 1;
+      let columnName = count > 1 ? `${name} (${count})` : name;
+      while (usedNames.has(columnName)) {
+        count++;
+        columnName = `${name} (${count})`;
+      }
       nameCounts.set(name, count);
-      return count > 1 ? `${name} (${count})` : name;
+      usedNames.add(columnName);
+      return columnName;
     });
   }
 
