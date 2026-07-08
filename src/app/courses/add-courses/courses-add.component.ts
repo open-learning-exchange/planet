@@ -31,7 +31,7 @@ import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
 import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
-import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
+import { couchAttachmentUrl, normalizeImage, NormalizedImage, uniqueId } from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
@@ -97,6 +97,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   set steps(value: any[]) {
     this._steps = value.map(step => ({
       ...step,
+      id: step.id || uniqueId(),
       description: step.description?.text ?? step.description ?? '',
       images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
@@ -412,6 +413,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   addStep() {
     this.steps.push({
+      id: uniqueId(),
       stepTitle: '',
       description: '',
       resources: [],

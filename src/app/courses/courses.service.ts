@@ -138,18 +138,20 @@ export class CoursesService {
     this.returnUrl = '';
   }
 
-  updateProgress({ courseId, stepNum, passed = true }, userId?) {
+  updateProgress({ courseId, stepNum, stepId, passed = true }: { courseId: string, stepNum: number, stepId?: string, passed?: boolean }, userId?) {
     if (this.progressUpdateInProgress === true) {
       return;
     }
     this.progressUpdateInProgress = true;
     const configuration = this.stateService.configuration;
-    const newProgress = { stepNum, courseId, passed,
+    const newProgress = { stepNum, stepId, courseId, passed,
       userId: userId || this.userService.get()._id, createdOn: configuration.code, parentCode: configuration.parentCode,
       updatedDate: this.couchService.datePlaceholder
     };
     this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
-      const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
+      const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) =>
+        (stepId && p.stepId === stepId) || (!stepId && p.stepNum === stepNum)
+      ) : [];
       if (currentProgress.length === 1 && currentProgress.every(current => current.passed === newProgress.passed)) {
         return of({});
       }
