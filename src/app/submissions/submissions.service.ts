@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -17,10 +16,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-pdfMake.addVirtualFileSystem(pdfFonts);
+import { loadPdfMake, loadHtmlToPdfmake } from '../shared/pdf-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -372,6 +368,7 @@ export class SubmissionsService {
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
+    const htmlToPdfmake = await loadHtmlToPdfmake();
     this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
@@ -437,6 +434,7 @@ export class SubmissionsService {
   }
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
+    const htmlToPdfmake = await loadHtmlToPdfmake();
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
@@ -445,7 +443,8 @@ export class SubmissionsService {
     });
   }
 
-  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+  async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+    const htmlToPdfmake = await loadHtmlToPdfmake();
     const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
     const submissionContents = markdownSubmissions.map((markdown, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
@@ -507,13 +506,15 @@ export class SubmissionsService {
           return;
         }
         const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
+        const pdfMakePromise = loadPdfMake();
+        const docContent = await this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
         if (exportOptions.includeCharts) {
           await this.buildChartSection(exam, updatedSubmissions, docContent);
         }
         if (exportOptions.includeAnalysis) {
           await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
         }
+        const pdfMake = await pdfMakePromise;
         pdfMake.createPdf({
           content: docContent,
           styles: {

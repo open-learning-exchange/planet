@@ -12,8 +12,7 @@ import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { formatStringDate } from '../../shared/utils';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { loadPdfMake } from '../../shared/pdf-utils';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
@@ -24,8 +23,6 @@ import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, Ma
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
-
-pdfMake.addVirtualFileSystem(pdfFonts);
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -297,8 +294,6 @@ export class UsersAchievementsComponent implements OnInit {
       },
     };
 
-    pdfMake
-      .createPdf(documentDefinition)
-      .download($localize`${this.user.name} achievements.pdf`);
+    loadPdfMake().then(pdfMake => pdfMake.createPdf(documentDefinition).download($localize`${this.user.name} achievements.pdf`));
   }
 }
