@@ -80,7 +80,7 @@
               </mat-panel-title>
               <mat-panel-description>
                 @if (step.progress?.status === 'requires grading') {
-                  <span class="pending-grading-text" i18n>Pending grading</span>
+                  <span class="pending-grading-text" i18n>Waiting for grading</span>
                 }
                 @if (step?.exam?.questions.length) {
                   <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
@@ -92,15 +92,12 @@
                   <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
                 }
               </mat-panel-description>
-              @if (step.progress && step.progress.passed) {
+              @if (step.progress?.status === 'requires grading') {
+                <planet-course-icon [icon]="courseIcons.assignmentPending"></planet-course-icon>
+              } @else if (step.progress?.passed) {
                 <planet-course-icon [icon]="courseIcons.done"></planet-course-icon>
-              }
-              @if (step.progress && !step.progress.passed) {
-                @if (step.progress?.status === 'requires grading') {
-                  <planet-course-icon [icon]="courseIcons.assignmentPending"></planet-course-icon>
-                } @else {
-                  <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
-                }
+              } @else if (step.progress) {
+                <planet-course-icon [icon]="courseIcons.rotateRight"></planet-course-icon>
               }
             </mat-expansion-panel-header>
             <planet-markdown [imageSource]="parent ? 'parent' : 'local'" [content]="step.description" class="img-resize"></planet-markdown>

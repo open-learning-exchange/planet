@@ -37,7 +37,7 @@ export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
           <span i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
         }
         @case (courseIcons.assignmentPending) {
-        <span i18n-matTooltip matTooltip="Pending grading"><mat-icon>pending_actions</mat-icon></span>
+        <span i18n-matTooltip matTooltip="Waiting for grading"><mat-icon>pending_actions</mat-icon></span>
         }
       }
     </div>
