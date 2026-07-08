@@ -2,8 +2,8 @@
   <div class="chat-container" #chat>
     @for (conversation of conversations; track trackByFn($index, conversation)) {
       <div>
-        <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-        <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+        <td-flavored-markdown class="conversation-query" [content]="conversation.query"></td-flavored-markdown>
+        <td-flavored-markdown [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [content]="conversation.response"></td-flavored-markdown>
       </div>
     }
   </div>

@@ -72,8 +72,8 @@
         <div class="chat-container">
           @for (conversation of (showLess ? (item.doc.news.conversations | slice:0:1) : item.doc.news.conversations); track conversation) {
             <div>
-              <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
-              <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+              <td-flavored-markdown class="conversation-query" [content]="conversation.query"></td-flavored-markdown>
+              <td-flavored-markdown [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [content]="conversation.response"></td-flavored-markdown>
             </div>
           }
         </div>

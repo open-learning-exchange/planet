@@ -9,6 +9,7 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { DialogsImagesComponent } from '../dialogs/dialogs-images.component';
 import { TdTextEditorComponent } from '@covalent/text-editor';
 import { NgClass } from '@angular/common';
+import { converter } from '../utils';
 
 interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
@@ -91,7 +92,10 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
-  options: any = { hideIcons: [ 'image' ] };
+  options: any = {
+    hideIcons: [ 'image' ],
+    previewRender: (content: string) => converter.makeHtml(content)
+  };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,

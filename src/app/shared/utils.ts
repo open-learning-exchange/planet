@@ -1,6 +1,11 @@
 import * as showdown from 'showdown';
 import mime from 'mime';
-export const converter = new showdown.Converter();
+export const converter = new showdown.Converter({
+  tables: true,
+  strikethrough: true,
+  tasklists: true,
+  ghCodeBlocks: true
+});
 
 // File.type can be empty for some browsers / file sources; fall back to the
 // filename extension via the mime package so callers don't reject valid files.

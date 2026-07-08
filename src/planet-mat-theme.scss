@@ -19,7 +19,48 @@
 @include cov.covalent-theme(v.$planet-app-theme);
 @include markdown.covalent-markdown-theme(v.$planet-app-theme);
 @include highlight.covalent-highlight-theme(v.$planet-app-theme);
-@include markdown-flavored.covalent-flavored-markdown-theme(v.$planet-app-theme);
+
+// Patch for @covalent/flavored-markdown compatibility with Angular Material 20
+// This replaces @include markdown-flavored.covalent-flavored-markdown-theme(v.$planet-app-theme);
+// which is currently broken due to usage of deprecated mat-color() function.
+@mixin patch-covalent-flavored-markdown-theme($theme) {
+  $foreground: map.get($theme, foreground);
+  $background: map.get($theme, background);
+
+  td-flavored-markdown {
+    :not(pre) > code {
+      background: map.get($background, app-bar);
+      color: mat.m2-get-color-from-palette($foreground, secondary-text) !important;
+    }
+
+    .mat-checkbox-disabled {
+      label.mat-checkbox-layout {
+        .mat-checkbox-label {
+          color: currentColor;
+        }
+      }
+    }
+
+    mat-table {
+      --mat-table-row-item-outline-color: var(--cv-theme-outline-variant);
+      --mat-table-background-color: none;
+      --mat-table-header-headline-font: var(--cv-typography-caption-font-family);
+      --mat-table-header-headline-line-height: var(--cv-typography-caption-line-height);
+      --mat-table-header-headline-size: var(--cv-typography-caption-font-size);
+      --mat-table-header-headline-weight: var(--cv-typography-caption-font-weight);
+
+      &.mat-mdc-table {
+        border: 1px solid var(--cv-theme-outline-variant);
+      }
+
+      mat-row.mat-mdc-row:nth-child(even) {
+        background-color: var(--cv-theme-on-surface-4);
+      }
+    }
+  }
+}
+
+@include patch-covalent-flavored-markdown-theme(v.$planet-app-theme);
 
 // Create sub-themes for the different sections which change the accent color.
 $accent-map: (
