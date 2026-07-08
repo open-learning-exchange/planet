@@ -100,7 +100,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         this.courseDetail.steps = this.courseDetail.steps.map((step, index) => ({
           ...step,
           resources: step.resources.filter(res => res._attachments).sort(this.coursesService.stepResourceSort),
-          progress: progress.find((p: any) => p.stepNum === (index + 1))
+          progress: progress.find((p: any) =>
+            (step.id && p.stepId === step.id) ||
+            (step.exam?._id && p.examId === step.exam._id) ||
+            (!p.stepId && !p.examId && p.stepNum === (index + 1))
+          )
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);

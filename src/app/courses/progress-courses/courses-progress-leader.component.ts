@@ -154,9 +154,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
-    const userProgress = this.userProgress(user);
+    const userProgress = this.userProgress(user, step, index);
     if (!step.exam) {
-      return { number: '', fill: userProgress.stepNum > index };
+      return { number: '', fill: userProgress?.passed };
     }
     const submission = submissions.find((sub: any) => {
       return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
@@ -216,10 +216,13 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.chartLabel = $localize`Steps`;
   }
 
-  userProgress(user) {
-    return (this.progress
-      .filter((p: any) => p.userId === user._id && p.createdOn === user.planetCode)
-      .reduce((max: any, p: any) => p.stepNum > max.stepNum ? p : max, { stepNum: 0 }));
+  userProgress(user, step, index) {
+    const userProgressDocs = this.progress.filter((p: any) => p.userId === user._id && p.createdOn === user.planetCode);
+    return userProgressDocs.find((p: any) =>
+      (step.id && p.stepId === step.id) ||
+      (step.exam?._id && p.examId === step.exam._id) ||
+      (!p.stepId && !p.examId && p.stepNum === index + 1)
+    );
   }
 
   isSubmittedExam(submissions: any[], step: any) {

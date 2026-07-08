@@ -152,7 +152,7 @@ export class CoursesService {
       const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) =>
         (stepId && p.stepId === stepId) || (examId && p.examId === examId) || (!stepId && !examId && p.stepNum === stepNum)
       ) : [];
-      if (currentProgress.length === 1 && currentProgress.every(current => current.passed === newProgress.passed)) {
+      if (currentProgress.length === 1 && currentProgress.every(current => current.passed === newProgress.passed && current.stepNum === newProgress.stepNum)) {
         return of({});
       }
       return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));

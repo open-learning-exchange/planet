@@ -90,7 +90,11 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 
   courseBySteps({ doc, progress }, submissions) {
     return doc.steps.map((step: any, index: number) => {
-      const fill = progress.findIndex((prog: any) => prog.stepNum === index + 1) > -1;
+      const fill = progress.findIndex((p: any) =>
+        (step.id && p.stepId === step.id) ||
+        (step.exam?._id && p.examId === step.exam._id) ||
+        (!p.stepId && !p.examId && p.stepNum === index + 1)
+      ) > -1;
       if (!step.exam) {
         return { number: '', fill };
       }
