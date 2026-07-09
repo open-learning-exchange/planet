@@ -36,6 +36,27 @@ jobs:
           version=$(jq '.version' package.json | sed -e 's/^"//' -e 's/"$//')
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+  testing:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run unit Tests
+        run: npm run test
+
   pre-build:
     name: Pre-Planet build
     needs: [build-prepare]
