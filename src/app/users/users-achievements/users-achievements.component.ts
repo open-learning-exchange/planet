@@ -12,7 +12,7 @@ import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
 import { formatStringDate } from '../../shared/utils';
-import { loadPdfMake } from '../../shared/pdf-utils';
+import { loadPdfMake } from '../../shared/lazy-load-utils';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';

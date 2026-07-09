@@ -19,6 +19,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { loadZipFile } from '../shared/lazy-load-utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -406,7 +407,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   zipObs(zipFile) {
     return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
-      import('jszip').then(({ default: JSZip }) => new JSZip().loadAsync(zipFile)).then((zip) => {
+      loadZipFile(zipFile).then((zip) => {
         const fileNames = this.getFileNames(zip);
 
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
@@ -459,8 +460,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
 
     this.resourceForm.controls.openWhichFile.enable();
-    import('jszip')
-      .then(({ default: JSZip }) => new JSZip().loadAsync(this.file))
+    loadZipFile(this.file)
       .then((data) => {
         this.attachedZipFiles = this.getFileNames(data);
       })

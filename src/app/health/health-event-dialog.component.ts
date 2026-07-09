@@ -7,7 +7,7 @@ import { switchMap, takeWhile } from 'rxjs/operators';
 import { UsersService } from '../users/users.service';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { loadPdfMake } from '../shared/pdf-utils';
+import { loadPdfMake } from '../shared/lazy-load-utils';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';

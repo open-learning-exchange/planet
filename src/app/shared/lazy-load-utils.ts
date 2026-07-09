@@ -1,5 +1,8 @@
+import type JSZip from 'jszip';
+
 let pdfMakePromise: Promise<any> | null = null;
 let htmlToPdfmakePromise: Promise<any> | null = null;
+let jsZipPromise: Promise<typeof JSZip> | null = null;
 
 export function loadPdfMake(): Promise<any> {
   if (!pdfMakePromise) {
@@ -26,4 +29,19 @@ export function loadHtmlToPdfmake(): Promise<any> {
     });
   }
   return htmlToPdfmakePromise;
+}
+
+export function loadJSZip(): Promise<typeof JSZip> {
+  if (!jsZipPromise) {
+    jsZipPromise = import('jszip').then(module => module.default).catch((error) => {
+      jsZipPromise = null;
+      throw error;
+    });
+  }
+  return jsZipPromise;
+}
+
+export async function loadZipFile(file: Blob): Promise<JSZip> {
+  const JSZip = await loadJSZip();
+  return new JSZip().loadAsync(file);
 }

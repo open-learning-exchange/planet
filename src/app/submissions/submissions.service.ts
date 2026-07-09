@@ -16,7 +16,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import { loadPdfMake, loadHtmlToPdfmake } from '../shared/pdf-utils';
+import { loadPdfMake, loadHtmlToPdfmake } from '../shared/lazy-load-utils';
 
 @Injectable({
   providedIn: 'root'
