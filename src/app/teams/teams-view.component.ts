@@ -196,7 +196,27 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getTeam(teamId: string) {
-    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
+      switchMap((team: any) => {
+        if (team && team.courses && team.courses.length > 0) {
+          const courseIds = team.courses.map(c => c._id);
+          return this.couchService.findAll('courses', findDocuments({ _id: { '$in': courseIds } })).pipe(
+            switchMap((existingCourses: any[]) => {
+              const existingIds = existingCourses.map(c => c._id);
+              if (existingIds.length < courseIds.length) {
+                const updatedTeam = { ...team, courses: team.courses.filter(c => existingIds.includes(c._id)) };
+                return this.teamsService.updateTeam(updatedTeam).pipe(
+                  catchError(() => of(updatedTeam))
+                );
+              }
+              return of(team);
+            })
+          );
+        }
+        return of(team);
+      }),
+      tap((data) => this.team = data)
+    );
   }
 
   initTeam(teamId: string) {
