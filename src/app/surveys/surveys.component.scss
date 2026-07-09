@@ -29,24 +29,28 @@
 
 .surveys-table {
   min-width: 1120px;
+  width: 100%;
 }
 
 .survey-action-cell {
-  display: flex;
-  flex-wrap: wrap;
+  display: inline-grid;
+  grid-template-columns: minmax(150px, max-content);
   gap: 8px;
   padding: 5px 0;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: flex-start;
+  width: max-content;
+  max-width: 100%;
 }
 
 .mat-column-action {
   justify-content: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .survey-action-cell button[mat-raised-button] {
-  width: 175px;
-  min-width: 175px;
+  width: 100%;
   height: 36px;
   display: inline-flex;
   align-items: center;
