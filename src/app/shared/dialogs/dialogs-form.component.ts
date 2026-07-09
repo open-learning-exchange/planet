@@ -22,10 +22,12 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { PlanetRatingStarsComponent } from '../forms/planet-rating-stars.component';
 import { PlanetMarkdownTextboxComponent } from '../forms/planet-markdown-textbox.component';
+import { AttachmentInputState, FileUploadComponent } from '../forms/file-upload.component';
 import { AuthorizedRolesDirective } from '../authorized-roles.directive';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SubmitDirective } from '../submit.directive';
+import { deepEqual } from '../utils';
 
 @Component({
   templateUrl: './dialogs-form.component.html',
@@ -65,6 +67,7 @@ import { SubmitDirective } from '../submit.directive';
     MatRadioButton,
     PlanetRatingStarsComponent,
     PlanetMarkdownTextboxComponent,
+    FileUploadComponent,
     AuthorizedRolesDirective,
     MatButton,
     MatDatepickerInput,
@@ -187,6 +190,31 @@ export class DialogsFormComponent {
 
   getRadioOptionValue(option: { name: string; value?: unknown } | string) {
     return typeof option === 'string' ? option : option.value;
+  }
+
+  updateFileUploadState(fieldName: string, state: AttachmentInputState) {
+    const control = this.modalForm.controls[fieldName];
+    const changed = !deepEqual(control.value, state);
+    control.setValue(state);
+    if (changed) {
+      control.markAsDirty();
+      this.modalForm.markAsDirty();
+    }
+  }
+
+  openNativePicker(input: HTMLInputElement): void {
+    if (input.disabled || input.readOnly) {
+      return;
+    }
+    if (!input.showPicker) {
+      input.focus();
+      return;
+    }
+    try {
+      input.showPicker();
+    } catch {
+      input.focus();
+    }
   }
 
   private createModalForm(formGroup: DialogFormGroupInput<Record<string, unknown>>): FormGroup {

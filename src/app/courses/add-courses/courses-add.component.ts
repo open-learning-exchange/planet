@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, forkJoin, of, combineLatest, race, interval } from 'rxjs';
+import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
+import { environment } from '../../../environments/environment';
 import { CouchService } from '../../shared/couchdb.service';
 import { CustomValidators } from '../../validators/custom-validators';
 import { ValidatorService } from '../../validators/validator.service';
@@ -21,7 +22,6 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
@@ -30,6 +30,10 @@ import { MatAutocompleteTrigger, MatAutocomplete, MatOption } from '@angular/mat
 import { MatSelect } from '@angular/material/select';
 import { PlanetTagInputComponent } from '../../shared/forms/planet-tag-input.component';
 import { SubmitDirective } from '../../shared/submit.directive';
+import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '../../shared/forms/file-upload.component';
+import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
+import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -50,26 +54,11 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar,
-    MatIconAnchor,
-    MatIcon,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
-    MatInput,
-    MatError,
-    FormErrorMessagesComponent,
-    PlanetMarkdownTextboxComponent,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
-    MatOption,
-    MatSelect,
-    PlanetTagInputComponent,
-    NgClass,
-    CoursesStepComponent,
-    MatButton,
-    SubmitDirective
+    MatToolbar, MatIconAnchor, MatIcon, ReactiveFormsModule, MatFormField,
+    MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
+    MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
+    CoursesStepComponent, MatButton, FileUploadComponent, SubmitDirective,
+    MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, TruncateTextPipe
   ]
 })
 export class CoursesAddComponent implements OnInit, OnDestroy {
@@ -81,12 +70,18 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
   private _steps = [];
+  private preserveCoverStateUntilSubmit = false;
+  existingCoverAttachments: ExistingAttachment[] = [];
+  private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
   draftExists: boolean;
   courseForm: FormGroup<CourseFormModel>;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
   pageType: string | null = null;
+  isFormExpanded = true;
+  submitAttempted = false;
+  newCourseLabel = $localize`New Course`;
   tags = this.fb.control<string[]>([]);
   // from the constants import
   gradeLevels = constants.gradeLevels;
@@ -94,8 +89,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   images: any[] = [];
   // from the languages import
   languageNames = languages.map(list => list.name);
-  mockStep = { stepTitle: $localize`Add title`, description: '!!!' };
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
+  @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
   get steps() {
     return this._steps;
   }
@@ -129,6 +124,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const continued = this.route.snapshot.params.continue === 'true' && Object.keys(this.coursesService.course).length;
+    const continuedCourse = continued ? { ...this.coursesService.course } : null;
+    const continuedCoverState = continuedCourse?.coverState;
     forkJoin([
       this.pouchService.getDocEditing(this.dbName, this.courseId),
       this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
@@ -137,26 +134,34 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.savedCourse = saved;
+        if (!continuedCoverState) {
+          this.setExistingCover(saved);
+        }
         this.pageType = 'Edit';
+        this.isFormExpanded = !(saved.steps && saved.steps.length > 0);
       } else {
         this.pageType = 'Add';
         this.savedCourse = null;
+        this.isFormExpanded = true;
       }
       this.draftExists = draft !== undefined;
       const doc = draft === undefined ? saved : draft;
       this.setInitialTags(tags, this.documentInfo, draft);
-      if (!continued) {
+      if (continued) {
+        this.preserveCoverStateUntilSubmit = !!continuedCoverState;
+        this.setFormAndSteps(continuedCourse);
+        this.setCoverState(continuedCoverState || this.coverState);
+        this.submitAddedExam();
+      } else {
         this.setFormAndSteps({ form: doc, steps: doc.steps, tags: doc.tags, initialTags: this.coursesService.course.initialTags });
         this.setInitialState();
       }
     });
-    if (continued) {
-      this.setFormAndSteps(this.coursesService.course);
-      this.submitAddedExam();
-    }
     const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
-    this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    if (!continued) {
+      this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
+    }
     this.coursesService.stepIndex = undefined;
   }
 
@@ -259,13 +264,75 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     });
   }
 
+  onCoverStateChange(state: AttachmentInputState) {
+    if (this.preserveCoverStateUntilSubmit) {
+      this.preserveCoverStateUntilSubmit = false;
+      return;
+    }
+    this.setCoverState(state);
+  }
+
+  setCoverState(state: AttachmentInputState) {
+    this.coverState = state;
+    this.coursesService.course = { coverState: state };
+  }
+
+  setExistingCover(course: any) {
+    const fileName = course.coverFileName;
+    const attachment = course._attachments?.[fileName];
+    this.existingCoverAttachments = fileName && attachment ? [ {
+      name: fileName,
+      contentType: attachment.content_type,
+      url: couchAttachmentUrl(environment.couchAddress, this.dbName, course._id, fileName)
+    } ] : [];
+    // Seed cover state directly so a save can't drop the cover if it fires before the upload child emits.
+    this.setCoverState({ retained: [ ...this.existingCoverAttachments ], removed: [], added: [] });
+  }
+
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
     if (courseInfo.createdDate.constructor === Object) {
       courseInfo.createdDate = this.couchService.datePlaceholder;
     }
-    const newCourse = { ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps), ...this.documentInfo };
-    this.couchService.updateDocument(
-      this.dbName, { ...newCourse, updatedDate: this.couchService.datePlaceholder }
+    const newCourse: any = {
+      ...this.convertMarkdownImagesText({ ...courseInfo, images: this.images }, this.steps),
+      ...this.documentInfo
+    };
+    const addedCover = this.coverState?.added[0];
+    const retainedCover = this.coverState?.retained[0];
+    const existingAttachmentNames = Object.keys(this.savedCourse?._attachments || {});
+    (addedCover ? from(normalizeImage(addedCover.file, { usedNames: existingAttachmentNames })) : of(null)).pipe(
+      switchMap(normalizedCover => {
+        if (normalizedCover) {
+          return this.saveCourseWithNewCover(newCourse, normalizedCover);
+        }
+        if (retainedCover && this.savedCourse?._attachments?.[retainedCover.name]) {
+          newCourse.coverFileName = retainedCover.name;
+          newCourse._attachments = { ...this.savedCourse._attachments };
+        } else {
+          const attachments = { ...(this.savedCourse?._attachments || {}) };
+          if (this.savedCourse?.coverFileName) {
+            delete attachments[this.savedCourse.coverFileName];
+          }
+          delete newCourse.coverFileName;
+          if (Object.keys(attachments).length) {
+            newCourse._attachments = attachments;
+          }
+        }
+        return this.saveCourseDocument(newCourse);
+      })
+    ).subscribe(([ courseRes ]) => {
+      const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
+      this.courseChangeComplete(message, courseRes, shouldNavigate);
+      this.preserveCoverStateUntilSubmit = false;
+    }, (err) => {
+      this.preserveCoverStateUntilSubmit = false;
+      this.planetMessageService.showAlert($localize`There was an error saving this course`);
+    });
+  }
+
+  private saveCourseDocument(course: any) {
+    return this.couchService.updateDocument(
+      this.dbName, { ...course, updatedDate: this.couchService.datePlaceholder }
     ).pipe(switchMap((res: any) =>
       forkJoin([
         of(res),
@@ -274,16 +341,48 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
           this.tagsService.tagBulkDocs(res.id, this.dbName, this.tags.value, this.coursesService.course.initialTags)
         )
       ])
-    )).subscribe(([ courseRes, tagsRes ]) => {
-      const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
-      this.courseChangeComplete(message, courseRes, shouldNavigate);
-    }, (err) => {
-      this.planetMessageService.showAlert($localize`There was an error saving this course`);
-    });
+    )
+    );
+  }
+
+  private saveCourseWithNewCover(course: any, normalizedCover: NormalizedImage) {
+    const existingCourseId = this.documentInfo._id;
+    const existingCourseRev = this.documentInfo._rev;
+    const courseWithoutCover = { ...course };
+    delete courseWithoutCover.coverFileName;
+    const upload$ = existingCourseId && existingCourseRev ?
+      this.couchService.putAttachment(
+        `${this.dbName}/${existingCourseId}/${normalizedCover.fileName}?rev=${existingCourseRev}`,
+        normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+      ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${existingCourseId}`))) :
+      this.couchService.updateDocument(
+        this.dbName, { ...courseWithoutCover, updatedDate: this.couchService.datePlaceholder }
+      ).pipe(
+        switchMap((res: any) => this.couchService.putAttachment(
+          `${this.dbName}/${res.id}/${normalizedCover.fileName}?rev=${res.rev}`,
+          normalizedCover.file, { headers: { 'Content-Type': normalizedCover.contentType } }
+        ).pipe(switchMap(() => this.couchService.get(`${this.dbName}/${res.id}`))))
+      );
+    return upload$.pipe(switchMap((uploadedDoc: any) => {
+      const attachments = { ...(uploadedDoc._attachments || {}) };
+      if (this.savedCourse?.coverFileName && this.savedCourse.coverFileName !== normalizedCover.fileName) {
+        delete attachments[this.savedCourse.coverFileName];
+      }
+      return this.saveCourseDocument({
+        ...course,
+        _id: uploadedDoc._id,
+        _rev: uploadedDoc._rev,
+        coverFileName: normalizedCover.fileName,
+        _attachments: attachments
+      });
+    }));
   }
 
   onSubmit(shouldNavigate = true) {
     if (!this.courseForm.valid) {
+      this.preserveCoverStateUntilSubmit = false;
+      this.submitAttempted = true;
+      this.isFormExpanded = true;
       showFormErrors(this.courseForm.controls as unknown as { [key: string]: AbstractControl });
       return;
     }
@@ -321,6 +420,17 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.planetStepListService.addStep(this.steps.length - 1);
   }
 
+  openCourseDetails() {
+    this.isFormExpanded = true;
+    this.coursesStepComponent?.toList();
+  }
+
+  onStepEditorOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      this.isFormExpanded = false;
+    }
+  }
+
   cancel() {
     this.navigateBack();
   }
@@ -329,18 +439,22 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.draftExists) {
       return;
     }
+    this.coverUploadComponent?.clear();
     if (this.savedCourse) {
       this.setFormAndSteps({
         form: this.savedCourse,
         steps: this.savedCourse.steps || [],
         tags: this.savedCourse.tags || []
       });
+      this.setExistingCover(this.savedCourse);
     } else {
       this.setFormAndSteps({
         form: { courseTitle: '', description: '', languageOfInstruction: '', gradeLevel: '', subjectLevel: '' },
         steps: [],
         tags: []
       });
+      this.existingCoverAttachments = [];
+      this.setCoverState({ retained: [], removed: [], added: [] });
     }
     this.coursesStepComponent.toList();
     this.setInitialState();
