@@ -45,9 +45,8 @@ planet-courses {
       max-width: 70px;
     }
   }
-}
 
-.course-table-container {
+  .course-table-container {
   display: flex;
   flex-direction: column;
   height: v.$view-container-height;
@@ -59,3 +58,6 @@ planet-courses {
   min-height: 0;
   overflow: auto;
 }
+
+}
+
