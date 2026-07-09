@@ -77,6 +77,25 @@
             overflow: hidden;
           }
 
+          &.has-course-cover {
+            padding: 0.5rem;
+          }
+
+          .dashboard-course-cover {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 0.25rem;
+
+            img {
+              width: 48px;
+              height: 48px;
+              object-fit: cover;
+              border-radius: 4px;
+              border: 1px solid v.$grey;
+            }
+          }
+
         }
       }
     }
