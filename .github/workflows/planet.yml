@@ -176,6 +176,9 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
       - name: Build image
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
@@ -202,7 +205,6 @@ jobs:
             cp -ar ./ng-app/langbuild/ng-app/dist/$lang2 ./ng-app/dist/
             mv ./ng-app/dist/$lang2 ./ng-app/dist/$LANGUAGE
           done
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           docker build \
             -f './docker/planet/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \

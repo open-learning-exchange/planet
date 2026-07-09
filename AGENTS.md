@@ -4,7 +4,7 @@ This file provides shared guidance for AI coding agents working in this reposito
 
 ## Commands
 
-Prerequisites: Node.js v18, npm v10, Angular CLI v18. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `chatapi` on port 5000).
+Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be running (the README describes a Docker Compose setup that exposes CouchDB on port 2200 and `chatapi`/`gateway` on port 5000).
 
 ### Angular app (root)
 

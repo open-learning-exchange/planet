@@ -1,10 +1,10 @@
 {
   "name": "planet",
   "license": "AGPL-3.0",
-  "version": "0.23.33",
+  "version": "0.23.38",
   "myplanet": {
-    "latest": "v0.59.59",
-    "min": "v0.59.0"
+    "latest": "v0.60.50",
+    "min": "v0.59.59"
   },
   "scripts": {
     "ng": "ng",
@@ -79,7 +79,7 @@
     "@eslint/js": "^9.39.4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@types/node": "^20.19.39",
+    "@types/node": "^22.0.0",
     "@types/pouchdb": "^6.4.0",
     "@types/pouchdb-find": "^6.3.4",
     "@typescript-eslint/eslint-plugin": "^8.57.1",
