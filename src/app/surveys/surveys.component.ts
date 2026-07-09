@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, takeUntil, shareReplay } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -117,7 +117,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   availableAIProviders: any[] = [];
   deviceType: DeviceType;
   isMobile: boolean;
-  private recordTeam$: Observable<any>;
 
   get teamSurveyMode() {
     return !!(this.teamId || this.routeTeamId);
@@ -501,8 +500,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!targetTeamId) {
       return of(null);
     }
-    this.recordTeam$ = this.recordTeam$ || this.couchService.get('teams/' + targetTeamId).pipe(shareReplay(1));
-    return this.recordTeam$;
+    return this.couchService.get('teams/' + targetTeamId);
   }
 
   recordSurvey(survey: any) {
@@ -513,6 +511,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
         return this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo);
       }),
+      takeUntil(this.onDestroy$),
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res: any) => {
       this.router.navigate([
