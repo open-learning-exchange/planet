@@ -130,7 +130,7 @@
     }
   </ng-template>
 
-  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm }">
+  <div class="card-table" [ngClass]="{ 'view-container view-full-height view-table': !isForm && !isDialog, 'view-with-search': showFilters && !isDialog }">
     <mat-table #table [dataSource]="courses" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

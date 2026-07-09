@@ -143,7 +143,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search':showFilters}">
+  <div class="card-table" [ngClass]="{'view-container view-full-height view-table': !isDialog, 'view-with-search':showFilters && !isDialog}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
