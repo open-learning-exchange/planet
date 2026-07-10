@@ -17,10 +17,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-pdfMake.addVirtualFileSystem(pdfFonts);
+import { PdfService } from '../shared/pdf.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +44,7 @@ export class SubmissionsService {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private chatService: ChatService,
+    private pdfService: PdfService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
 
@@ -547,7 +545,7 @@ export class SubmissionsService {
         if (exportOptions.includeAnalysis) {
           await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
         }
-        pdfMake.createPdf({
+        this.pdfService.download({
           content: docContent,
           styles: {
             title: {
@@ -565,7 +563,7 @@ export class SubmissionsService {
               alignment: 'center'
             }
           }
-        }).download(`${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
+        }, `${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
         this.dialogsLoadingService.stop();
       });
   }

@@ -8,8 +8,8 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { map, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { finalize, map, switchMap, tap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
@@ -22,6 +22,8 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface NewReportForm {
   _id?: string,
@@ -50,6 +52,9 @@ interface NewReportForm {
     MatCard,
     MatCardContent,
     MatCardActions,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     DatePipe,
     CurrencyPipe
   ]
@@ -107,6 +112,7 @@ export class TeamsReportsComponent implements OnChanges {
     private teamsService: TeamsService,
     private teamsAttachmentsService: TeamsAttachmentsService,
     private csvService: CsvService,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
     @Inject(LOCALE_ID) private localeId: string
@@ -268,7 +274,44 @@ export class TeamsReportsComponent implements OnChanges {
   }
 
   exportReports() {
-    const exportData = this.reportCards.map(({ report }) => ({
+    const { data, title } = this.reportsExportData();
+    this.csvService.exportCSV({ data, title });
+  }
+
+  exportReportsPdf() {
+    const { data, title, titleName } = this.reportsExportData();
+    const totalIncome = this.reportCards.reduce((sum, card) => sum + card.income, 0);
+    const totalExpenses = this.reportCards.reduce((sum, card) => sum + card.expenses, 0);
+    this.dialogsLoadingService.start();
+    this.receiptImageSections()
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
+        data,
+        title,
+        currencyCode: this.curCode?.code,
+        currencySymbol: this.curCode?.symbol,
+        moneyColumns: [
+          $localize`Beginning Balance`,
+          $localize`Sales`,
+          $localize`Other Income`,
+          $localize`Wages`,
+          $localize`Other Expenses`,
+          $localize`Profit/Loss`,
+          $localize`Ending Balance`
+        ],
+        summary: [
+          { label: $localize`Reports`, value: this.reportCards.length },
+          { label: $localize`Total Credit`, value: totalIncome, format: 'currency' },
+          { label: $localize`Total Debit`, value: totalExpenses, format: 'currency' },
+          { label: $localize`Net Profit/Loss`, value: totalIncome - totalExpenses, format: 'currency' }
+        ],
+        imageSections,
+        filename: $localize`Financial Summary for ${titleName}.pdf`
+      }));
+  }
+
+  private reportsExportData() {
+    const data = this.reportCards.map(({ report, income, expenses, net, endingBalance }) => ({
       [$localize`Start Date`]: fullLabel(report.startDate, this.localeId),
       [$localize`End Date`]: fullLabel(report.endDate, this.localeId),
       [$localize`Created Date`]: fullLabel(report.createdDate, this.localeId),
@@ -278,16 +321,32 @@ export class TeamsReportsComponent implements OnChanges {
       [$localize`Other Income`]: report.otherIncome,
       [$localize`Wages`]: report.wages,
       [$localize`Other Expenses`]: report.otherExpenses,
-      [$localize`Profit/Loss`]: report.sales + report.otherIncome - report.wages - report.otherExpenses,
-      [$localize`Ending Balance`]: report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
+      [$localize`Profit/Loss`]: net,
+      [$localize`Ending Balance`]: endingBalance
     }));
     const planetName = this.stateService.configuration.name || $localize`Unnamed`;
     const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    this.csvService.exportCSV({
-      data: exportData,
-      title: $localize`Financial Summary for ${titleName}`
-    });
+    return {
+      data,
+      title: $localize`Financial Summary for ${titleName}`,
+      titleName
+    };
+  }
+
+  private receiptImageSections() {
+    const reportsWithReceipts = this.reportCards
+      .map(({ report }) => report)
+      .filter(report => this.teamsAttachmentsService.receiptAttachments(report).length > 0);
+    if (reportsWithReceipts.length === 0) {
+      return of([]);
+    }
+    return forkJoin(reportsWithReceipts.map(report => this.teamsAttachmentsService.receiptAttachmentImages(report).pipe(
+      map(images => ({
+        title: $localize`Receipt images for ${fullLabel(report.startDate, this.localeId)} - ${fullLabel(report.endDate, this.localeId)}`,
+        images
+      }))
+    ))).pipe(map((sections: PdfImageSection[]) => sections.filter(section => section.images.length > 0)));
   }
 
 }
