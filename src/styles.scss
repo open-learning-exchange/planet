@@ -449,6 +449,56 @@ body {
     }
   }
 
+  // Opt-in addition to .responsive-table for tables whose columns (e.g. stacked action buttons)
+  // should never squish: holds a usable min-width at all viewport widths so the surrounding
+  // view-table container scrolls horizontally instead. Override via --responsive-table-min-width.
+  mat-table.responsive-table.min-width-table,
+  table.mat-mdc-table.responsive-table.min-width-table {
+    min-width: var(--responsive-table-min-width, 1000px);
+    width: 100%;
+  }
+
+  // Shared opt-in styling for the button container in a table's action column.
+  // Apply to a div wrapping the buttons inside the action mat-cell; add .horizontal-align to center buttons.
+  .table-action-buttons {
+    display: inline-grid;
+    grid-template-columns: minmax(150px, max-content);
+    align-items: stretch;
+    gap: 0.5rem;
+    width: max-content;
+    max-width: 100%;
+
+    &.horizontal-align {
+      justify-items: center;
+    }
+
+    button[mat-raised-button] {
+      width: 100%;
+      text-align: center;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: v.$screen-md) {
+      gap: 0.75rem;
+    }
+
+    @media (max-width: v.$screen-sm) {
+      grid-template-columns: minmax(120px, max-content);
+
+      button[mat-raised-button] {
+        min-width: 0;
+        padding: 0 3px;
+      }
+    }
+
+    @media (max-width: v.$screen-xs) {
+      button[mat-raised-button] {
+        white-space: normal;
+      }
+    }
+  }
+
   // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
   .card-table {
     .mat-mdc-row {
