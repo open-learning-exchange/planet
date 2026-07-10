@@ -17,13 +17,15 @@
   }
 
   .button-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    display: inline-grid;
+    grid-template-columns: minmax(150px, max-content);
+    align-items: stretch;
     gap: 0.5rem;
+    width: max-content;
+    max-width: 100%;
   }
   .horizontal-align {
-    justify-content: center;
+    justify-items: center;
   }
 
   .team-name{
@@ -32,12 +34,10 @@
   }
 
   .button-container button[mat-raised-button] {
-    width: 150px;
+    width: 100%;
     text-align: center;
     padding: 8px 12px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .highlighted {
@@ -62,15 +62,16 @@
     }
 
     .button-container {
-      flex-direction: column;
-      align-items: flex-start;
+      grid-template-columns: minmax(120px, max-content);
+      align-items: stretch;
       gap: 0.5rem;
     }
   }
 
   @media (max-width: v.$screen-xs) {
     .button-container button[mat-raised-button] {
-      width: 50px;
+      min-width: 0;
+      white-space: normal;
     }
   }
 }
