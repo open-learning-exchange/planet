@@ -90,6 +90,9 @@
         // "@typescript-eslint/member-ordering": "error",
         // "@typescript-eslint/naming-convention": [
         //   "error",
+        //
+        //   Not transferring over the default case, it triggers on object properties which can
+        //   often come from external sources not fitting our naming conventions.
         //   {
         //     "selector": "default",
         //     "format": [ "camelCase" ],
@@ -97,41 +100,6 @@
         //     "trailingUnderscore": "allowSingleOrDouble"
         //   },
 
-        //   // Import seems to be unsupported by the current version of the linter
-        //   // {
-        //   //   "selector": "import",
-        //   //   "format": ["camelCase", "PascalCase"]
-        //   // },
-
-        //   {
-        //     "selector": "variable",
-        //     "format": ["camelCase", "UPPER_CASE"],
-        //     "leadingUnderscore": "allowSingleOrDouble",
-        //     "trailingUnderscore": "allowSingleOrDouble",
-        //     "filter": {
-        //       "regex": "(derived_key|password_scheme|doc.roles)",
-        //       "match": false
-        //     }
-        //   },
-
-        //   {
-        //     "selector": "typeLike",
-        //     "format": ["PascalCase"]
-        //   },
-
-        //   {
-        //     "selector": "classMethod",
-        //     "format": ["PascalCase", "camelCase"]
-        //   },
-
-        //   {
-        //     "selector": "variable",
-        //     "format": null,
-        //     "custom": {
-        //       "regex": "(derived_key|password_scheme|)",
-        //       "match": true
-        //     }
-        //   }
         // ],
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "error",

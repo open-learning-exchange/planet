@@ -102,6 +102,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  joinMeetupTooltip() {
+    return this.isMeetupDisabled() ? $localize`You cannot join old meetup` : '';
+  }
+
   getEnrolledUsers() {
     // find meetupId on User shelf
     return this.couchService.post('shelf/_find', findDocuments({

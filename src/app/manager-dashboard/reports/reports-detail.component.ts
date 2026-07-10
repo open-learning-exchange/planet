@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
+import { formatDate as formatLocaleDate } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -179,7 +180,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     this.initDateFilterForm();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -514,7 +516,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       startDate: this.filter.startDate,
       endDate: this.filter.endDate
     });
-    const labels = months.map(month => monthDataLabels(month));
+    const labels = months.map(month => monthDataLabels(month, this.localeId));
 
     const genderFilter = (gender: string) =>
       months.map((month) => data.find((datum: any) => datum.gender === gender && datum.date === month) || { date: month, unique: [] });
@@ -813,11 +815,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const exportData = data.map(activity => ({
       [$localize`User`]: activity.user || '',
       [$localize`AI Provider`]: activity.aiProvider || '',
-      [$localize`Timestamp`]: new Date(activity.createdDate).toLocaleString(),
+      [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
-      [$localize`Assistant`]: activity.assistant ? 'Yes' : 'No',
-      [$localize`Shared`]: activity.shared ? 'Yes' : 'No',
-      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? 'Yes' : 'No'
+      [$localize`Assistant`]: activity.assistant ? $localize`Yes` : $localize`No`,
+      [$localize`Shared`]: activity.shared ? $localize`Yes` : $localize`No`,
+      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? $localize`Yes` : $localize`No`
     }));
     this.csvService.exportCSV({
       data: exportData,
@@ -899,7 +901,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
             deviceName: activity.deviceName || ''
           };
           if (reportType === 'health' && activity.updatedDate) {
-            baseActivity.updatedDate = fullLabel(activity.updatedDate);
+            baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
           }
           return baseActivity;
         }),
@@ -982,8 +984,10 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.comparisonWeek2End = startOfDay(new Date(this.comparisonWeek2End));
     const w1Range = thursdayWeekRangeFromEnd(this.comparisonWeek1End);
     const w2Range = thursdayWeekRangeFromEnd(this.comparisonWeek2End);
-    this.week1Label = $localize`Week 1 (${weekDataLabels(w1Range.startDate)} - ${weekDataLabels(w1Range.endDate)})`;
-    this.week2Label = $localize`Week 2 (${weekDataLabels(w2Range.startDate)} - ${weekDataLabels(w2Range.endDate)})`;
+    const formatWeekRange = (range) =>
+      `${weekDataLabels(range.startDate, this.localeId)} - ${weekDataLabels(range.endDate, this.localeId)}`;
+    this.week1Label = $localize`Week 1 (${formatWeekRange(w1Range)})`;
+    this.week2Label = $localize`Week 2 (${formatWeekRange(w2Range)})`;
   }
 
   loadComparisonData() {
@@ -1147,7 +1151,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
     this.csvService.exportCSV({
       data,
-      title: `${this.planetName || 'Reports'}_Comparison_${formatDate(new Date())}`
+      title: `${this.planetName || $localize`Reports`}_Comparison_${formatDate(new Date())}`
     });
 
     this.planetMessageService.showMessage($localize`Comparison table downloaded as CSV`);

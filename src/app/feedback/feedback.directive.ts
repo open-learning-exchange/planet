@@ -77,8 +77,9 @@ export class FeedbackDirective {
   addFeedback(post: any) {
     const date = new Date();
     const user = this.userService.get().name;
-    const feedbackUrl = this.router.url && this.router.url !== '/' ? this.router.url.split(';')[0] : '/';
-    const urlParts = feedbackUrl.split('/');
+    const feedbackUrl = this.router.url || '/';
+    const navigationUrl = feedbackUrl !== '/' ? this.removeNavigationParams(feedbackUrl) : '/';
+    const urlParts = navigationUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
     const feedback: any = {
@@ -117,6 +118,11 @@ export class FeedbackDirective {
         }
       );
     }
+  }
+
+  private removeNavigationParams(url: string) {
+    const path = url.split(/[?#]/)[0];
+    return path.split('/').map(part => part.split(';')[0]).join('/');
   }
 
   private updateFeedback(feedback: any, date: Date, user: string, url: string) {
