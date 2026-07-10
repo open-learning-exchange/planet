@@ -33,7 +33,7 @@ export class ReportsPendingComponent implements OnInit {
   planets = [];
   planetType = this.stateService.configuration.planetType;
   get childType() {
-    return this.planetType === 'nation' ? 'Community' : 'Nation';
+    return this.planetType === 'nation' ? $localize`Community` : $localize`Nation`;
   }
   displayedColumns = [ 'item' ];
 

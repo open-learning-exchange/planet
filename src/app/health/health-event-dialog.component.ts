@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { conditionAndTreatmentFields, vitals } from './health.constants';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { UserService } from '../shared/user.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatButton } from '@angular/material/button';
 
@@ -40,7 +40,8 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
     private router: Router,
     private usersService: UsersService,
     private couchService: CouchService,
-    private userService: UserService
+    private userService: UserService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     pdfMake.addVirtualFileSystem(pdfFonts);
     this.event = this.data.event || {};
@@ -89,38 +90,40 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
   }
 
   exportToPdf(event) {
+    const eventDate = formatDate(event.date, 'mediumDate', this.localeId);
+    const fileDate = formatDate(event.date, 'yyyy-MM-dd', this.localeId);
     const documentDefinition = {
       content: [
-        { text: `Health examination on ${new Date(event.date).toLocaleDateString()}`, style: 'header' },
+        { text: $localize`Health examination on ${eventDate}:examDate:`, style: 'header' },
         { canvas: [ { type: 'line', x1: 0, y1: 5, x2: 595, y2: 5, lineWidth: 1 } ] },
-        { text: 'Performed by', style: 'sectionHeader' },
-        { text: `${event.selfExamination ? 'Self' : this.performedBy}`, style: 'subheader' },
-        { text: 'Vitals', style: 'sectionHeader' },
-        event.temperature ? { text: [ { text: 'Temperature: ', bold: true }, `${event.temperature} °C` ], style: 'content' } : '',
-        event.pulse ? { text: [ { text: 'Pulse: ', bold: true }, `${event.pulse} bpm` ], style: 'content' } : '',
-        event.bp ? { text: [ { text: 'Blood Pressure: ', bold: true }, `${event.bp}` ], style: 'content' } : '',
-        event.height ? { text: [ { text: 'Height: ', bold: true }, `${event.height} cm` ], style: 'content' } : '',
-        event.weight ? { text: [ { text: 'Weight: ', bold: true }, `${event.weight} kg` ], style: 'content' } : '',
-        event.vision ? { text: [ { text: 'Vision: ', bold: true }, `${event.vision}` ], style: 'content' } : '',
-        event.hearing ? { text: [ { text: 'Hearing: ', bold: true }, `${event.hearing}` ], style: 'content' } : '',
-        this.conditions ? { text: '\nConditions', style: 'sectionHeader' } : '',
+        { text: $localize`Performed by`, style: 'sectionHeader' },
+        { text: event.selfExamination ? $localize`Self` : this.performedBy, style: 'subheader' },
+        { text: $localize`Vitals`, style: 'sectionHeader' },
+        event.temperature ? { text: [ { text: $localize`Temperature: `, bold: true }, `${event.temperature} °C` ], style: 'content' } : '',
+        event.pulse ? { text: [ { text: $localize`Pulse: `, bold: true }, `${event.pulse} bpm` ], style: 'content' } : '',
+        event.bp ? { text: [ { text: $localize`Blood Pressure: `, bold: true }, `${event.bp}` ], style: 'content' } : '',
+        event.height ? { text: [ { text: $localize`Height: `, bold: true }, `${event.height} cm` ], style: 'content' } : '',
+        event.weight ? { text: [ { text: $localize`Weight: `, bold: true }, `${event.weight} kg` ], style: 'content' } : '',
+        event.vision ? { text: [ { text: $localize`Vision: `, bold: true }, `${event.vision}` ], style: 'content' } : '',
+        event.hearing ? { text: [ { text: $localize`Hearing: `, bold: true }, `${event.hearing}` ], style: 'content' } : '',
+        this.conditions ? { text: $localize`\nConditions`, style: 'sectionHeader' } : '',
         this.conditions ? { text: this.conditions, style: 'content' } : '',
-        { text: '\nOther Notes', style: 'sectionHeader' },
-        event.notes ? { text: 'Observations & Notes:', style: 'subheaderBold' } : '',
+        { text: $localize`\nOther Notes`, style: 'sectionHeader' },
+        event.notes ? { text: $localize`Observations & Notes:`, style: 'subheaderBold' } : '',
         event.notes ? { text: event.notes, style: 'content' } : '',
-        event.diagnosis ? { text: 'Diagnosis:', style: 'subheaderBold' } : '',
+        event.diagnosis ? { text: $localize`Diagnosis:`, style: 'subheaderBold' } : '',
         event.diagnosis ? { text: event.diagnosis, style: 'content' } : '',
-        event.treatments ? { text: 'Treatments:', style: 'subheaderBold' } : '',
+        event.treatments ? { text: $localize`Treatments:`, style: 'subheaderBold' } : '',
         event.treatments ? { text: event.treatments, style: 'content' } : '',
-        event.medications ? { text: 'Medications:', style: 'subheaderBold' } : '',
+        event.medications ? { text: $localize`Medications:`, style: 'subheaderBold' } : '',
         event.medications ? { text: event.medications, style: 'content' } : '',
-        event.immunizations ? { text: 'Immunizations:', style: 'subheaderBold' } : '',
+        event.immunizations ? { text: $localize`Immunizations:`, style: 'subheaderBold' } : '',
         event.immunizations ? { text: event.immunizations, style: 'content' } : '',
-        event.xrays ? { text: 'X-rays:', style: 'subheaderBold' } : '',
+        event.xrays ? { text: $localize`X-rays:`, style: 'subheaderBold' } : '',
         event.xrays ? { text: event.xrays, style: 'content' } : '',
-        event.tests ? { text: 'Lab Tests:', style: 'subheaderBold' } : '',
+        event.tests ? { text: $localize`Lab Tests:`, style: 'subheaderBold' } : '',
         event.tests ? { text: event.tests, style: 'content' } : '',
-        event.referrals ? { text: 'Referrals:', style: 'subheaderBold' } : '',
+        event.referrals ? { text: $localize`Referrals:`, style: 'subheaderBold' } : '',
         event.referrals ? { text: event.referrals, style: 'content' } : ''
       ].filter(Boolean),
       styles: {
@@ -131,7 +134,7 @@ export class HealthEventDialogComponent implements OnInit, OnDestroy {
         content: { fontSize: 12, margin: [ 0, 2, 0, 2 ] }
       }
     };
-    pdfMake.createPdf(documentDefinition).download(`health_event_${event.date}.pdf`);
+    pdfMake.createPdf(documentDefinition).download(`${$localize`health event`}_${fileDate}.pdf`);
   }
 
 }

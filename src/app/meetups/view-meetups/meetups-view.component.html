@@ -30,7 +30,7 @@
           <button mat-stroked-button class="margin-lr-3" [disabled]="this.dateNow > (meetupDetail?.endDate || meetupDetail?.startDate)" (click)="openInviteMemberDialog()">
             <span i18n>Invite Member</span>
           </button>
-          <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="isMeetupDisabled() ? 'You cannot join old meetup' : ''" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
+          <button mat-raised-button color="accent" class="margin-lr-3" [matTooltip]="joinMeetupTooltip()" [disabled]="isMeetupDisabled()" (click)="joinMeetup()">
             @if (meetupDetail?.participate) {
               <span i18n>Leave</span>
             } @else {

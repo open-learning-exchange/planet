@@ -119,7 +119,11 @@
                 <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || element.isArchived">
                   <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
                   @if (!isMobile) {
-                    <label i18n>{{ element.publicAccess === true ? 'Copy Public Link' : 'Generate Public Link' }}</label>
+                    @if (element.publicAccess === true) {
+                      <label i18n>Copy Public Link</label>
+                    } @else {
+                      <label i18n>Generate Public Link</label>
+                    }
                   }
                 </button>
               </div>
