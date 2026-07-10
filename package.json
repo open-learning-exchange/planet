@@ -17,14 +17,11 @@
     "i18n:normalize": "node scripts/i18n-normalize.mjs src/i18n/messages*.xlf",
     "i18n:check": "ng extract-i18n --output-path /tmp/planet-i18n-check && node scripts/i18n-normalize.mjs /tmp/planet-i18n-check/messages.xlf",
     "test": "ng test",
-    "htmlhint": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc",
-    "sass-lint": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
     "lint": "ng lint planet-app",
-    "lint-all": "npm run sass-lint && ng lint planet-app --type-check && npm run htmlhint",
-    "install-hooks": "cp -a git-hooks/. .git/hooks/",
-    "webdriver-set-version": "webdriver-manager update --standalone false --gecko false --versions.chrome 2.37",
-    "starthub-true": "echo \"true\" > /srv/starthub",
-    "starthub-false": "echo \"false\" > /srv/starthub"
+    "lint:html": "./node_modules/htmlhint-ng2/bin/htmlhint --config .htmlhintrc 'src/**/*.html'",
+    "lint:styles": "./node_modules/sass-lint/bin/sass-lint.js -c ./sass-lint.yml -v -q",
+    "lint:all": "npm run lint && npm run lint:styles && npm run lint:html",
+    "install-hooks": "cp -a git-hooks/. .git/hooks/"
   },
   "private": true,
   "dependencies": {
