@@ -19,7 +19,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
-import { loadZipFile } from '../shared/lazy-load-utils';
+import { loadZipFile } from '../shared/zip-utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';

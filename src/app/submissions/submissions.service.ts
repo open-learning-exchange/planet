@@ -16,7 +16,6 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import { loadHtmlToPdfmake } from '../shared/lazy-load-utils';
 import { PdfService } from '../shared/pdf.service';
 
 @Injectable({
@@ -403,7 +402,7 @@ export class SubmissionsService {
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
-    const htmlToPdfmake = await loadHtmlToPdfmake();
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
@@ -469,7 +468,7 @@ export class SubmissionsService {
   }
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
-    const htmlToPdfmake = await loadHtmlToPdfmake();
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
@@ -479,7 +478,7 @@ export class SubmissionsService {
   }
 
   async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
-    const htmlToPdfmake = await loadHtmlToPdfmake();
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
     const submissionContents = markdownSubmissions.map((markdown, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
