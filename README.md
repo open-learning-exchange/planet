@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v20
-* Angular CLI v19
+* Node.js v22
+* Angular CLI v20
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -187,6 +187,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v18. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v22. Other versions of Node may throw errors when installing dependencies.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).
