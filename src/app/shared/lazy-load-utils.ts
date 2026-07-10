@@ -42,6 +42,6 @@ export function loadJSZip(): Promise<typeof JSZip> {
 }
 
 export async function loadZipFile(file: Blob): Promise<JSZip> {
-  const JSZip = await loadJSZip();
-  return new JSZip().loadAsync(file);
+  const jsZip = await loadJSZip();
+  return new jsZip().loadAsync(file);
 }
