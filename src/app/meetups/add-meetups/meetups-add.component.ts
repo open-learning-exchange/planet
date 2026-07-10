@@ -13,7 +13,7 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { NgClass, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
 
@@ -90,7 +90,8 @@ interface MeetupFormControls {
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    SubmitDirective
+    SubmitDirective,
+    DatePipe
   ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
@@ -108,6 +109,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   revision = null;
   id = null;
   days = constants.days;
+  localizedDays = this.days.map((day, index) => ({ value: day, labelDate: new Date(2023, 0, 1 + index) }));
   meetupFrequency: string[] = [];
   initialFormValues = '';
   hasUnsavedChanges = false;

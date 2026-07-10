@@ -78,8 +78,13 @@
         </div>
         @if (meetupForm.controls.recurring.value === 'weekly') {
           <div class="full-width">
-            @for (day of days; track day) {
-              <mat-checkbox (change)="onDayChange(day, $event.checked)"  class="margin-lr" [checked]="meetupForm.controls.day.value.includes(day)"> {{ day }}</mat-checkbox>
+            @for (day of localizedDays; track day.value) {
+              <mat-checkbox
+                (change)="onDayChange(day.value, $event.checked)"
+                class="margin-lr"
+                [checked]="meetupForm.controls.day.value.includes(day.value)">
+                {{ day.labelDate | date: 'EEEE' }}
+              </mat-checkbox>
             }
             @if (meetupForm.controls.day.hasError('noDaysSelected')) {
               <mat-error>

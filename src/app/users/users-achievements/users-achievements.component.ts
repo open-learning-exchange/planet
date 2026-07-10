@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
@@ -11,10 +11,9 @@ import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
 import { environment } from '../../../environments/environment';
 import { CertificationsService } from '../../manager-dashboard/certifications/certifications.service';
-import { formatStringDate } from '../../shared/utils';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe, formatDate } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -75,7 +74,8 @@ export class UsersAchievementsComponent implements OnInit {
     private stateService: StateService,
     private coursesService: CoursesService,
     private certificationsService: CertificationsService,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    @Inject(LOCALE_ID) private localeId: string
   ) { }
 
   ngOnInit() {
@@ -189,7 +189,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   generatePDF() {
-    const formattedBirthDate = this.user.birthDate ? formatStringDate(this.user.birthDate) : '';
+    const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -241,7 +241,7 @@ export class UsersAchievementsComponent implements OnInit {
       optionals.push(
         { text: $localize`My Achievements`, style: 'subHeader', alignment: 'center' },
         ...this.achievements.achievements.map((achievement) => {
-          const formattedDate = achievement.date ? formatStringDate(achievement.date) : '';
+          const formattedDate = achievement.date ? formatDate(achievement.date, 'mediumDate', this.localeId) : '';
           return [
             { text: achievement.title, bold: true, margin: [ 20, 5 ] },
             { text: achievement.date ? formattedDate : '', marginLeft: 40 },
@@ -299,6 +299,6 @@ export class UsersAchievementsComponent implements OnInit {
 
     pdfMake
       .createPdf(documentDefinition)
-      .download($localize`${this.user.name} achievements.pdf`);
+      .download(`${$localize`${this.user.name} achievements`}.pdf`);
   }
 }
