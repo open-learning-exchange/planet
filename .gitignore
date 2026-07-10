@@ -41,10 +41,6 @@ Thumbs.db
 # Virtual Machine
 .vagrant/
 
-# NPM/Yarn
-*.lock
-package-lock.json
-
 # extra yml files generated
 docker/planet-*.yml
 planet.yml
@@ -53,7 +49,3 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
-
-# PouchDB test databases
-courses_new/
-local-*/
