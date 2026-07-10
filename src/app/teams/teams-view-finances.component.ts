@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
@@ -120,7 +120,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
     private teamsTablePdfExportService: TeamsTablePdfExportService,
     private stateService: StateService,
     private teamsService: TeamsService,
-    private teamsAttachmentsService: TeamsAttachmentsService
+    private teamsAttachmentsService: TeamsAttachmentsService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
   ngOnChanges() {
@@ -325,7 +326,7 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
   private financeExportData() {
     const data = this.table.data.map(row => ({
-      [$localize`date`]: fullLabel(row.date),
+      [$localize`date`]: fullLabel(row.date, this.localeId),
       [$localize`description`]: row.description,
       [$localize`credit`]: row.credit,
       [$localize`debit`]: row.debit,
@@ -345,8 +346,8 @@ export class TeamsViewFinancesComponent implements OnChanges {
     if (!this.startDate && !this.endDate) {
       return '';
     }
-    const start = this.startDate ? fullLabel(this.startDate.getTime()) : $localize`Beginning`;
-    const end = this.endDate ? fullLabel(this.endDate.getTime()) : $localize`Today`;
+    const start = this.startDate ? fullLabel(this.startDate.getTime(), this.localeId) : $localize`Beginning`;
+    const end = this.endDate ? fullLabel(this.endDate.getTime(), this.localeId) : $localize`Today`;
     return $localize`Date range: ${start} - ${end}`;
   }
 

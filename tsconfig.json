@@ -22,6 +22,7 @@
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
     "preserveWhitespaces": false
   },
   "include": [ "src/**/*" ]
