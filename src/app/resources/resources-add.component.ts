@@ -190,7 +190,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
       .pipe(
         startWith(''),
-        map(value => this._filter(value))
+        map(value => this.filter(value))
       );
     this.onFormChanges();
     this.captureInitialState();
@@ -274,7 +274,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.captureInitialState();
   }
 
-  private _filter(value: string): string[] {
+  private filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
     return this.attachedZipFiles.filter(option => option.toLowerCase().includes(filterValue));
