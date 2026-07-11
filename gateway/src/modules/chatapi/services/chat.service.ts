@@ -95,7 +95,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
   let vectorStoreIds: string[] | undefined;
   if (context.resource?.id && providerName === 'openai' && runtime.enabled && runtime.client) {
     try {
-      const index = await ensureResourceIndexed(runtime.client, context.resource.id);
+      const index = await ensureResourceIndexed(runtime.client, context.resource.id, options.sessionUser);
       if (index) {
         vectorStoreIds = [ index.vectorStoreId ];
       }

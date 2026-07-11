@@ -84,22 +84,34 @@ describe('resource index service', () => {
     expect(client.files.del).toHaveBeenCalledWith('file_old');
   });
 
-  it('deletes the vector store and files, and strips the doc field', async () => {
+  it('refuses to index a private resource for anyone but its owner', async () => {
+    mocks.resourceDB.get.mockResolvedValue({
+      '_id': 'res1', '_rev': '1-a', 'private': true, 'privateFor': { 'users': 'org.couchdb.user:amara' },
+      '_attachments': { 'guide.pdf': { 'content_type': 'application/pdf', 'digest': 'md5-1' } }
+    });
+    const client: any = fakeClient();
+    await expect(ensureResourceIndexed(client, 'res1', 'mallory')).rejects.toMatchObject({ 'statusCode': 403 });
+    expect(client.files.create).not.toHaveBeenCalled();
+    await expect(ensureResourceIndexed(client, 'res1', 'amara')).resolves.toMatchObject({ 'vectorStoreId': 'vs_new' });
+  });
+
+  it('deletes the vector store and files, strips the doc field and returns the new rev', async () => {
     mocks.resourceDB.get.mockResolvedValue({
       '_id': 'res1', '_rev': '4-d', 'title': 'Guide',
       'aiVectorStore': { 'id': 'vs_old', 'files': { 'guide.pdf': { 'fileId': 'file_old', 'digest': 'md5-1' } }, 'updatedDate': 1 }
     });
+    mocks.resourceDB.insert.mockResolvedValue({ 'ok': true, 'rev': '5-e' });
     const client: any = fakeClient();
-    expect(await deleteResourceIndex(client, 'res1')).toEqual(true);
+    expect(await deleteResourceIndex(client, 'res1')).toEqual({ 'removed': true, 'rev': '5-e' });
     expect(client.files.del).toHaveBeenCalledWith('file_old');
     expect(client.vectorStores.del).toHaveBeenCalledWith('vs_old');
     expect(mocks.resourceDB.insert.mock.calls[0][0]).not.toHaveProperty('aiVectorStore');
   });
 
-  it('reports false when there is nothing to delete', async () => {
+  it('reports nothing removed when there is no index', async () => {
     mocks.resourceDB.get.mockResolvedValue({ '_id': 'res1', '_rev': '1-a' });
     const client: any = fakeClient();
-    expect(await deleteResourceIndex(client, 'res1')).toEqual(false);
+    expect(await deleteResourceIndex(client, 'res1')).toEqual({ 'removed': false });
     expect(mocks.resourceDB.insert).not.toHaveBeenCalled();
   });
 });

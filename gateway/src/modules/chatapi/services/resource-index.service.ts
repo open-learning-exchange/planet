@@ -21,6 +21,8 @@ interface ResourceDoc {
   _id: string;
   _rev: string;
   title?: string;
+  private?: boolean;
+  privateFor?: { users?: string };
   _attachments?: Record<string, Attachment>;
   aiVectorStore?: ResourceVectorStore;
 }
@@ -45,9 +47,16 @@ const isUpToDate = (existing: ResourceVectorStore, eligible: Array<[string, Atta
  * are cleaned up. State is persisted on the resource doc as `aiVectorStore`.
  *
  * Returns null when the resource has no supported attachments.
+ *
+ * When `forUser` is given, personal (`private`) resources are only indexed for
+ * their owner — the gateway reads attachments with service credentials, so this
+ * guards the one visibility rule the resources database has.
  */
-export async function ensureResourceIndexed(client: OpenAI, resourceId: string): Promise<ResourceIndex | null> {
+export async function ensureResourceIndexed(client: OpenAI, resourceId: string, forUser?: string): Promise<ResourceIndex | null> {
   const doc = await resourceDB.get(resourceId) as unknown as ResourceDoc;
+  if (forUser && doc.private && doc.privateFor?.users !== `org.couchdb.user:${forUser}`) {
+    throw new HttpError(403, 'This resource is private');
+  }
   const eligible = eligibleAttachments(doc);
   if (eligible.length === 0) {
     return null;
@@ -133,8 +142,10 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string):
 /**
  * Deletes the vector store and uploaded files for a resource. Call this
  * before deleting the resource doc, otherwise the OpenAI-side objects leak.
+ * Stripping `aiVectorStore` bumps the doc's `_rev`; the new rev is returned so
+ * callers about to delete the doc don't fail with a stale-rev conflict.
  */
-export async function deleteResourceIndex(client: OpenAI, resourceId: string): Promise<boolean> {
+export async function deleteResourceIndex(client: OpenAI, resourceId: string): Promise<{ removed: boolean; rev?: string }> {
   let doc: ResourceDoc | null = null;
   try {
     doc = await resourceDB.get(resourceId) as unknown as ResourceDoc;
@@ -143,7 +154,7 @@ export async function deleteResourceIndex(client: OpenAI, resourceId: string): P
   }
   const store = doc.aiVectorStore;
   if (!store) {
-    return false;
+    return { 'removed': false };
   }
   for (const file of Object.values(store.files)) {
     await client.files.del(file.fileId).catch(() => undefined);
@@ -151,6 +162,6 @@ export async function deleteResourceIndex(client: OpenAI, resourceId: string): P
   await client.vectorStores.del(store.id).catch(() => undefined);
   const { aiVectorStore, ...rest } = doc;
   void aiVectorStore;
-  await resourceDB.insert(rest as any);
-  return true;
+  const response = await resourceDB.insert(rest as any);
+  return { 'removed': true, 'rev': response.rev };
 }

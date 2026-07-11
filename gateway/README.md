@@ -14,6 +14,9 @@ COUCHDB_PASS=planet
 # Optional:
 # CHATAPI_AUTH=none   # disable session auth on chat endpoints (local experiments only)
 # CONFIG_TTL_MS=30000 # AI config cache TTL
+# CORS_ORIGINS=       # comma-separated origins allowed for credentialed CORS + WebSocket
+#                     # handshakes; unset accepts any origin (fine same-origin behind nginx,
+#                     # set it when the gateway is exposed cross-origin since auth uses cookies)
 ```
 
 By default on Linux the gateway uses port `5000`. For Windows and macOS, use `5400` if needed and mirror that value in the root `.env` as `CHAT_PORT`.
@@ -54,7 +57,9 @@ All chat endpoints (and the WebSocket) require a valid CouchDB session cookie
 get `401`. Set `CHATAPI_AUTH=none` to disable. The `/public/` module and
 `GET /checkproviders` are unauthenticated. Continuing a conversation (`_id`) is only
 allowed for its owner, and the resource indexing routes additionally require a manager
-or admin session (`manager` / `_admin` role) — other users get `403`.
+or admin session (`manager` / `_admin` role) — other users get `403`. Personal
+(`private`) resources are only indexed for their owner, including via chat's lazy
+indexing. Set `CORS_ORIGINS` to restrict which origins may make credentialed requests.
 
 ### Endpoints
 

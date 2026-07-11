@@ -20,6 +20,15 @@ const MANAGE_ROLES = [ '_admin', 'manager' ];
 
 const authDisabled = () => (process.env.CHATAPI_AUTH || '').toLowerCase() === 'none';
 
+/**
+ * Origins allowed for credentialed CORS and WebSocket handshakes, from the
+ * comma-separated CORS_ORIGINS env var. Empty means any origin is accepted —
+ * fine when the gateway is only reachable same-origin behind nginx, but
+ * cross-origin deployments should set it since chat auth rides on cookies.
+ */
+export const allowedOrigins = (): string[] =>
+  (process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean);
+
 export const isAuthRequired = (): boolean => !authDisabled();
 
 export async function getSession(cookie: string | undefined): Promise<SessionInfo | null> {

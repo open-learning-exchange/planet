@@ -7,7 +7,7 @@ import { chat } from './services/chat.service';
 import { analyze } from './services/analyze.service';
 import { getAIConfig } from './services/config.service';
 import { deleteResourceIndex, ensureResourceIndexed } from './services/resource-index.service';
-import { getSessionUser, isAuthRequired, requireManager, requireSession } from './middleware/auth';
+import { allowedOrigins, getSessionUser, isAuthRequired, requireManager, requireSession } from './middleware/auth';
 import { providerCapabilities } from './providers';
 import { PROVIDER_NAMES } from './models/chat.model';
 import { HttpError, toHttpError } from './utils/http-error';
@@ -18,6 +18,7 @@ const errorName = (statusCode: number): string => {
   switch (statusCode) {
   case 400: return 'Bad Request';
   case 401: return 'Unauthorized';
+  case 403: return 'Forbidden';
   case 404: return 'Not Found';
   case 502: return 'Bad Gateway';
   case 503: return 'Service Unavailable';
@@ -83,7 +84,7 @@ export function registerChatApiRoutes(app: Express) {
   app.post('/resources/:id/index', requireSession, requireManager, async (req: Request, res: Response) => {
     try {
       const client = await openaiClient();
-      const index = await ensureResourceIndexed(client, req.params.id);
+      const index = await ensureResourceIndexed(client, req.params.id, res.locals.user);
       res.status(200).json({
         'status': 'Success',
         'indexed': !!index,
@@ -99,8 +100,8 @@ export function registerChatApiRoutes(app: Express) {
   app.delete('/resources/:id/index', requireSession, requireManager, async (req: Request, res: Response) => {
     try {
       const client = await openaiClient();
-      const removed = await deleteResourceIndex(client, req.params.id);
-      res.status(200).json({ 'status': 'Success', removed });
+      const { removed, rev } = await deleteResourceIndex(client, req.params.id);
+      res.status(200).json({ 'status': 'Success', removed, ...(rev ? { rev } : {}) });
     } catch (error) {
       handleError(res, error);
     }
@@ -109,6 +110,12 @@ export function registerChatApiRoutes(app: Express) {
 
 export function registerChatApiWebSocket(wss: WebSocket.Server) {
   wss.on('connection', async (ws: WebSocket, req: IncomingMessage) => {
+    // Same origin policy as the credentialed CORS setup; browsers always send Origin on WS handshakes
+    const origins = allowedOrigins();
+    if (origins.length && req.headers.origin && !origins.includes(req.headers.origin)) {
+      ws.close();
+      return;
+    }
     let sessionUser: string | undefined;
     if (isAuthRequired()) {
       sessionUser = await getSessionUser(req.headers.cookie) || undefined;

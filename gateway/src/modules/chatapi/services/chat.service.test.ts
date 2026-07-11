@@ -149,6 +149,12 @@ describe('chat service', () => {
     expect(mocks.runProviderChat.mock.calls[0][1].vectorStoreIds).toEqual([ 'vs_1' ]);
   });
 
+  it('forwards the session user to resource indexing so private resources stay private', async () => {
+    mocks.ensureResourceIndexed.mockResolvedValue(null);
+    await chat({ 'content': 'hi', 'context': { 'resource': { 'id': 'res1' } } }, { 'save': false, 'sessionUser': 'amara' });
+    expect(mocks.ensureResourceIndexed).toHaveBeenCalledWith(expect.anything(), 'res1', 'amara');
+  });
+
   it('degrades gracefully when resource indexing fails', async () => {
     mocks.ensureResourceIndexed.mockRejectedValue(new Error('boom'));
     const outcome = await chat({ 'content': 'hi', 'context': { 'resource': { 'id': 'res1' } } }, { 'save': false });

@@ -11,7 +11,7 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { Subject, forkJoin, of, combineLatest } from 'rxjs';
+import { Observable, Subject, forkJoin, of, combineLatest } from 'rxjs';
 import { ChatService } from '../shared/chat.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -348,17 +348,20 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Vector stores indexed for AI chat live on OpenAI's side; clean them up before the doc disappears.
   // A failed cleanup shouldn't block deletion, but the user is warned about the leaked index.
-  private cleanupResourceIndexes(resources: any[]) {
+  // Returns the new _rev per resource: stripping the index bumps the rev, so deletes must use it.
+  private cleanupResourceIndexes(resources: any[]): Observable<Record<string, string>> {
     const indexed = resources.filter((resource) => resource?.doc?.aiVectorStore);
     if (indexed.length === 0) {
-      return of(null);
+      return of({});
     }
-    return forkJoin(indexed.map((resource) => this.chatService.removeResourceIndex(resource._id))).pipe(
-      map((results: Array<{ cleanupFailed?: boolean }>) => {
-        if (results.some((result) => result?.cleanupFailed)) {
+    return forkJoin(indexed.map((resource) =>
+      this.chatService.removeResourceIndex(resource._id).pipe(map((result) => ({ id: resource._id, ...result })))
+    )).pipe(
+      map((results: Array<{ id: string; cleanupFailed?: boolean; rev?: string }>) => {
+        if (results.some((result) => result.cleanupFailed)) {
           this.planetMessageService.showAlert($localize`Could not clean up the AI search index; the resource will still be deleted`);
         }
-        return null;
+        return results.reduce((revs, result) => result.rev ? { ...revs, [result.id]: result.rev } : revs, {});
       })
     );
   }
@@ -367,7 +370,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const { _id: resourceId, _rev: resourceRev } = resource;
     return {
       request: this.cleanupResourceIndexes([ resource ]).pipe(
-        switchMap(() => this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev))
+        switchMap((revs) => this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + (revs[resourceId] || resourceRev)))
       ),
       onNext: (data) => {
         this.selection.deselect(resourceId);
@@ -380,16 +383,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteResources(resources) {
-    const deleteArray = createDeleteArray(resources);
     return {
       request: this.cleanupResourceIndexes(resources).pipe(
-        switchMap(() => this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }))
+        switchMap((revs) => {
+          const deleteArray = createDeleteArray(resources).map((doc) => ({ ...doc, _rev: revs[doc._id] || doc._rev }));
+          return this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray });
+        })
       ),
       onNext: (data) => {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
+        this.planetMessageService.showMessage($localize`You have deleted ${resources.length} resources`);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };

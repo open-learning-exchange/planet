@@ -5,6 +5,7 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
+import { allowedOrigins } from './modules/chatapi/middleware/auth';
 import { registerPublicRoutes } from './modules/public/register';
 
 dotenv.config();
@@ -13,7 +14,8 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-app.use(cors({ 'origin': true, 'credentials': true }));
+const origins = allowedOrigins();
+app.use(cors({ 'origin': origins.length ? origins : true, 'credentials': true }));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
