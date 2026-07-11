@@ -818,7 +818,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
       [$localize`Shared`]: activity.shared ? $localize`Yes` : $localize`No`,
-      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ||
+      [$localize`Has Attachments`]:
+        (activity.context?.resource?.attachments && Object.keys(activity.context.resource.attachments).length > 0) ||
         activity.conversations?.some((conversation) => conversation.citations?.length) ? $localize`Yes` : $localize`No`
     }));
     this.csvService.exportCSV({

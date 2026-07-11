@@ -17,13 +17,14 @@ describe('config service', () => {
     resetAIConfigCache();
   });
 
-  it('enables only providers with keys and does not fail others when openai is missing', async () => {
+  it('enables only providers with both a key and a model', async () => {
     mocks.configurationDB.list.mockResolvedValue(docRows({
-      'keys': { 'openai': '', 'perplexity': 'pplx-key' },
+      'keys': { 'openai': '', 'perplexity': 'pplx-key', 'deepseek': 'ds-key' },
       'models': { 'perplexity': 'sonar' }
     }));
     const config = await getAIConfig();
     expect(config.providers.openai.enabled).toEqual(false);
+    expect(config.providers.deepseek.enabled).toEqual(false);
     expect(config.providers.perplexity.enabled).toEqual(true);
     expect(config.providers.perplexity.defaultModel).toEqual('sonar');
     expect(config.providers.perplexity.client).toBeTruthy();

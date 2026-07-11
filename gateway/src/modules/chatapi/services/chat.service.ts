@@ -71,6 +71,12 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
   const mode = resolveMode(payload);
   const context = normalizeContext(payload.context);
 
+  // Validate provider readiness before any side effects (lazy indexing uploads
+  // to OpenAI); the billed model is server-configured only and never client-supplied
+  if (!runtime.defaultModel) {
+    throw new HttpError(503, `AI provider "${providerName}" has no model configured`);
+  }
+
   let existingDoc: ChatDoc | undefined;
   const messages: ChatMessage[] = [];
   if (options.save && payload._id) {
@@ -108,11 +114,6 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
       // Degrade to a context-only answer rather than failing the chat turn
       console.error(`chatapi: failed to index resource ${context.resource.id}: ${error}`);
     }
-  }
-
-  // The billed model is server-configured only; a client-supplied model is ignored
-  if (!runtime.defaultModel) {
-    throw new HttpError(503, `AI provider "${providerName}" has no model configured`);
   }
 
   let result: ProviderChatResult;

@@ -16,6 +16,7 @@ export interface AIConfig {
   providers: Record<ProviderName, ProviderRuntime>;
   promptProfiles: Record<ChatMode, string>;
   streaming: boolean;
+  planetCode?: string;
 }
 
 const PROVIDER_BASE_URLS: Record<ProviderName, string | undefined> = {
@@ -49,11 +50,14 @@ const loadConfigDoc = async (): Promise<AIConfigDoc> => {
 
 const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime => {
   const apiKey = doc.keys?.[name] || '';
+  const defaultModel = doc.models?.[name] || '';
   return {
     name,
-    'enabled': !!apiKey,
+    // A provider is only usable with both a key and a model; advertising it
+    // otherwise lets clients start work (e.g. lazy indexing) that ends in a 503
+    'enabled': !!apiKey && !!defaultModel,
     'client': apiKey ? new OpenAI({ apiKey, 'baseURL': PROVIDER_BASE_URLS[name] }) : undefined,
-    'defaultModel': doc.models?.[name] || ''
+    defaultModel
   };
 };
 
@@ -67,7 +71,8 @@ const buildConfig = (doc: AIConfigDoc): AIConfig => ({
     'course_help': doc.promptProfiles?.course_help || defaultPromptProfiles.course_help,
     'survey_analysis': doc.promptProfiles?.survey_analysis || defaultPromptProfiles.survey_analysis
   },
-  'streaming': !!doc.streaming
+  'streaming': !!doc.streaming,
+  'planetCode': typeof doc.code === 'string' ? doc.code : undefined
 });
 
 /**

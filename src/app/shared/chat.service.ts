@@ -95,7 +95,11 @@ import { AIServices, AIProvider, ProviderName, SurveyAnalysisPayload, SurveyAnal
   }
 
   analyzeSurvey(payload: SurveyAnalysisPayload): Observable<SurveyAnalysisResponse> {
-    return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, payload, { withCredentials: true });
+    // Default to an enabled provider — the gateway falls back to OpenAI, which 503s
+    // on communities where only another provider is configured
+    const provider = payload.aiProvider || this.currentChatAIProvider.value || this.aiProvidersSubject.value[0];
+    const body = provider ? { ...payload, aiProvider: { name: provider.name } } : payload;
+    return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, body, { withCredentials: true });
   }
 
   // Cleans up the OpenAI vector store + files for a resource; call before deleting the resource doc.

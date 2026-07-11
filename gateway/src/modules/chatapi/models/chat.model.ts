@@ -70,6 +70,8 @@ export interface PromptProfiles {
 
 /** Shape of the AI fields on the CouchDB configurations document. */
 export interface AIConfigDoc {
+  /** The local planet's code — the config doc doubles as the planet configuration. */
+  code?: string;
   keys?: Partial<Record<ProviderName, string>>;
   models?: Partial<Record<ProviderName, string>>;
   promptProfiles?: PromptProfiles;
