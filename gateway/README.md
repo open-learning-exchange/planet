@@ -11,13 +11,18 @@ SERVE_PORT=5000
 COUCHDB_HOST=http://localhost:2200
 COUCHDB_USER=planet
 COUCHDB_PASS=planet
+CORS_ORIGINS=http://localhost:3000
 # Optional:
-# CHATAPI_AUTH=none   # disable session auth on chat endpoints (local experiments only)
-# CONFIG_TTL_MS=30000 # AI config cache TTL
-# CORS_ORIGINS=       # comma-separated origins allowed for credentialed CORS + WebSocket
-#                     # handshakes; unset accepts any origin (fine same-origin behind nginx,
-#                     # set it when the gateway is exposed cross-origin since auth uses cookies)
+# CHATAPI_AUTH=none          # disable session auth on chat endpoints (local experiments only)
+# CONFIG_TTL_MS=30000        # AI config cache TTL
+# RATE_LIMIT_PER_MINUTE=30   # per-user request cap on the AI endpoints
 ```
+
+`CORS_ORIGINS` is the comma-separated list of browser origins allowed to make
+credentialed cross-origin requests (including the WebSocket handshake). Unset, the
+gateway sends no CORS headers at all — correct for production, where nginx serves the
+gateway same-origin under `/ml/`, but local `ng serve` runs on another port, so dev
+setups need the origin above.
 
 By default on Linux the gateway uses port `5000`. For Windows and macOS, use `5400` if needed and mirror that value in the root `.env` as `CHAT_PORT`.
 
@@ -57,9 +62,11 @@ All chat endpoints (and the WebSocket) require a valid CouchDB session cookie
 get `401`. Set `CHATAPI_AUTH=none` to disable. The `/public/` module and
 `GET /checkproviders` are unauthenticated. Continuing a conversation (`_id`) is only
 allowed for its owner, and the resource indexing routes additionally require a manager
-or admin session (`manager` / `_admin` role) — other users get `403`. Personal
-(`private`) resources are only indexed for their owner, including via chat's lazy
-indexing. Set `CORS_ORIGINS` to restrict which origins may make credentialed requests.
+or admin session (`manager` / `_admin` role; index removal is also allowed for the
+resource's `addedBy` owner) — other users get `403`. Personal (`private`) resources are
+only indexed for their owner, including via chat's lazy indexing. The AI endpoints are
+rate-limited per user (`RATE_LIMIT_PER_MINUTE`, default 30), and cross-origin browser
+access requires `CORS_ORIGINS`.
 
 ### Endpoints
 

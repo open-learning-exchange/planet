@@ -273,7 +273,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       this.data.context = this.context;
     } else {
       // this.data is reused across turns; don't let an old course/resource context leak
-      delete this.data.context;
+      this.data.context = '';
     }
 
     if (this.streaming) {

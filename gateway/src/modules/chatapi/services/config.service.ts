@@ -29,7 +29,13 @@ const CONFIG_TTL_MS = Number(process.env.CONFIG_TTL_MS || 30000);
 
 let cache: { expires: number; value: AIConfig } | undefined;
 
-const looksLikeAIConfig = (doc: any): boolean => doc && (typeof doc.keys === 'object' || typeof doc.models === 'object');
+const looksLikeAIConfig = (doc: any): boolean => !!doc && (
+  typeof doc.keys === 'object' ||
+  typeof doc.models === 'object' ||
+  typeof doc.promptProfiles === 'object' ||
+  typeof doc.assistant === 'object' ||
+  typeof doc.streaming === 'boolean'
+);
 
 const loadConfigDoc = async (): Promise<AIConfigDoc> => {
   const allDocs = await configurationDB.list({ 'include_docs': true });

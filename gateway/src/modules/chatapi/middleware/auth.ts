@@ -18,6 +18,8 @@ export interface SessionInfo {
 /** Roles allowed to manage resource indexes (matches Planet's manager/admin split). */
 const MANAGE_ROLES = [ '_admin', 'manager' ];
 
+export const canManageResources = (roles: string[]): boolean => roles.some((role) => MANAGE_ROLES.includes(role));
+
 const authDisabled = () => (process.env.CHATAPI_AUTH || '').toLowerCase() === 'none';
 
 /**
@@ -75,7 +77,7 @@ export function requireManager(req: Request, res: Response, next: NextFunction) 
     return;
   }
   const roles: string[] = res.locals.roles || [];
-  if (!roles.some((role) => MANAGE_ROLES.includes(role))) {
+  if (!canManageResources(roles)) {
     res.status(403).json({ 'error': 'Forbidden', 'message': 'This operation requires a manager or admin account' });
     return;
   }

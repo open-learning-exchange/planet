@@ -14,8 +14,10 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+// No configured origins means no cross-origin browser access (same-origin
+// deployments behind nginx need no CORS; dev setups set CORS_ORIGINS)
 const origins = allowedOrigins();
-app.use(cors({ 'origin': origins.length ? origins : true, 'credentials': true }));
+app.use(cors({ 'origin': origins.length ? origins : false, 'credentials': true }));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 

@@ -7,7 +7,8 @@ import { chat } from './services/chat.service';
 import { analyze } from './services/analyze.service';
 import { getAIConfig } from './services/config.service';
 import { deleteResourceIndex, ensureResourceIndexed } from './services/resource-index.service';
-import { allowedOrigins, getSessionUser, isAuthRequired, requireManager, requireSession } from './middleware/auth';
+import { allowedOrigins, getSessionUser, isAuthRequired, requireManager, requireSession, SessionInfo } from './middleware/auth';
+import { rateLimit } from './middleware/rate-limit';
 import { providerCapabilities } from './providers';
 import { PROVIDER_NAMES } from './models/chat.model';
 import { HttpError, toHttpError } from './utils/http-error';
@@ -41,7 +42,7 @@ const openaiClient = async () => {
 };
 
 export function registerChatApiRoutes(app: Express) {
-  app.post('/', requireSession, async (req: Request, res: Response) => {
+  app.post('/', requireSession, rateLimit(), async (req: Request, res: Response) => {
     const { data, save } = req.body;
     if (!isValidData(data)) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
@@ -72,7 +73,7 @@ export function registerChatApiRoutes(app: Express) {
     res.status(200).json(providers);
   });
 
-  app.post('/analyze', requireSession, async (req: Request, res: Response) => {
+  app.post('/analyze', requireSession, rateLimit(), async (req: Request, res: Response) => {
     try {
       const result = await analyze(req.body);
       res.status(200).json({ 'status': 'Success', ...result });
@@ -81,7 +82,7 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.post('/resources/:id/index', requireSession, requireManager, async (req: Request, res: Response) => {
+  app.post('/resources/:id/index', requireSession, requireManager, rateLimit(), async (req: Request, res: Response) => {
     try {
       const client = await openaiClient();
       const index = await ensureResourceIndexed(client, req.params.id, res.locals.user);
@@ -97,10 +98,15 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.delete('/resources/:id/index', requireSession, requireManager, async (req: Request, res: Response) => {
+  // Owner-or-manager authorization happens inside deleteResourceIndex (owners may
+  // delete their own resources, so they must be able to clean up the index too)
+  app.delete('/resources/:id/index', requireSession, rateLimit(), async (req: Request, res: Response) => {
     try {
       const client = await openaiClient();
-      const { removed, rev } = await deleteResourceIndex(client, req.params.id);
+      const requester: SessionInfo | undefined = res.locals.user
+        ? { 'name': res.locals.user, 'roles': res.locals.roles || [] }
+        : undefined;
+      const { removed, rev } = await deleteResourceIndex(client, req.params.id, requester);
       res.status(200).json({ 'status': 'Success', removed, ...(rev ? { rev } : {}) });
     } catch (error) {
       handleError(res, error);

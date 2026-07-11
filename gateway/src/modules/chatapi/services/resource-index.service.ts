@@ -3,6 +3,7 @@ import OpenAI, { toFile } from 'openai';
 
 import { resourceDB } from '../../../config/couch.config';
 import { Attachment, ResourceVectorStore, ResourceVectorStoreFile } from '../models/db-doc.model';
+import { canManageResources, SessionInfo } from '../middleware/auth';
 import { HttpError } from '../utils/http-error';
 
 /** Attachment content types OpenAI file_search can ingest. */
@@ -21,6 +22,7 @@ interface ResourceDoc {
   _id: string;
   _rev: string;
   title?: string;
+  addedBy?: string;
   private?: boolean;
   privateFor?: { users?: string };
   _attachments?: Record<string, Attachment>;
@@ -38,6 +40,22 @@ const eligibleAttachments = (doc: ResourceDoc): Array<[string, Attachment]> =>
 const isUpToDate = (existing: ResourceVectorStore, eligible: Array<[string, Attachment]>): boolean =>
   Object.keys(existing.files).length === eligible.length &&
   eligible.every(([ name, attachment ]) => existing.files[name]?.digest === attachment.digest);
+
+// Deletes the OpenAI-side objects and strips `aiVectorStore` from the doc; returns the new rev
+const removeIndexState = async (client: OpenAI, doc: ResourceDoc): Promise<string | undefined> => {
+  const store = doc.aiVectorStore;
+  if (!store) {
+    return undefined;
+  }
+  for (const file of Object.values(store.files)) {
+    await client.files.del(file.fileId).catch(() => undefined);
+  }
+  await client.vectorStores.del(store.id).catch(() => undefined);
+  const { aiVectorStore, ...rest } = doc;
+  void aiVectorStore;
+  const response = await resourceDB.insert(rest as any);
+  return response.rev;
+};
 
 /**
  * Ensures a resource's supported attachments are uploaded to OpenAI and
@@ -59,6 +77,8 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string, 
   }
   const eligible = eligibleAttachments(doc);
   if (eligible.length === 0) {
+    // Attachments may have been removed after indexing; don't leave an orphaned store behind
+    await removeIndexState(client, doc);
     return null;
   }
 
@@ -96,8 +116,17 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string, 
   if (newFileIds.length) {
     const batch = await client.vectorStores.fileBatches.createAndPoll(vectorStoreId, { 'file_ids': newFileIds });
     if (batch.status !== 'completed' || batch.file_counts.failed > 0) {
-      console.error(
-        `chatapi: vector store batch for resource ${resourceId} finished as ${batch.status} (${batch.file_counts.failed} failed)`
+      // Don't persist a partial index — matching digests would stop retries forever.
+      // Roll back this attempt so the next chat starts fresh.
+      for (const fileId of newFileIds) {
+        await client.vectorStores.files.del(vectorStoreId, fileId).catch(() => undefined);
+        await client.files.del(fileId).catch(() => undefined);
+      }
+      if (!existing || existing.id !== vectorStoreId) {
+        await client.vectorStores.del(vectorStoreId).catch(() => undefined);
+      }
+      throw new HttpError(
+        502, `Vector store batch for resource ${resourceId} finished as ${batch.status} (${batch.file_counts.failed} failed)`
       );
     }
   }
@@ -144,24 +173,22 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string, 
  * before deleting the resource doc, otherwise the OpenAI-side objects leak.
  * Stripping `aiVectorStore` bumps the doc's `_rev`; the new rev is returned so
  * callers about to delete the doc don't fail with a stale-rev conflict.
+ *
+ * When `requester` is given, only managers/admins or the resource owner
+ * (`addedBy`) may remove the index — mirroring who can delete the resource.
  */
-export async function deleteResourceIndex(client: OpenAI, resourceId: string): Promise<{ removed: boolean; rev?: string }> {
+export async function deleteResourceIndex(
+  client: OpenAI, resourceId: string, requester?: SessionInfo
+): Promise<{ removed: boolean; rev?: string }> {
   let doc: ResourceDoc | null = null;
   try {
     doc = await resourceDB.get(resourceId) as unknown as ResourceDoc;
   } catch (error) {
     throw new HttpError(404, 'Resource not found');
   }
-  const store = doc.aiVectorStore;
-  if (!store) {
-    return { 'removed': false };
+  if (requester && !canManageResources(requester.roles) && doc.addedBy !== requester.name) {
+    throw new HttpError(403, 'Only managers or the resource owner can remove its index');
   }
-  for (const file of Object.values(store.files)) {
-    await client.files.del(file.fileId).catch(() => undefined);
-  }
-  await client.vectorStores.del(store.id).catch(() => undefined);
-  const { aiVectorStore, ...rest } = doc;
-  void aiVectorStore;
-  const response = await resourceDB.insert(rest as any);
-  return { 'removed': true, 'rev': response.rev };
+  const rev = await removeIndexState(client, doc);
+  return rev ? { 'removed': true, rev } : { 'removed': false };
 }
