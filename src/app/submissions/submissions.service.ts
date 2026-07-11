@@ -15,7 +15,7 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { ChatService } from '../shared/chat.service';
-import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
+import { AnalysisSection } from '../chat/chat.model';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 import { PdfService } from '../shared/pdf.service';
 
@@ -849,30 +849,27 @@ export class SubmissionsService {
       return payloadItem;
     });
 
-    let response;
     try {
-      const payloadString = JSON.stringify(payload, null, 2);
-      response = await this.chatService.getPrompt(
-        {
-          content: surveyAnalysisPrompt(exam.type, exam.name, exam.description, payloadString),
-          aiProvider: { name: 'openai' },
-          assistant: false
-        },
-        false
-      ).toPromise();
+      const analysis = await this.chatService.analyzeSurvey({
+        exam: { name: exam.name, description: exam.description, type: exam.type },
+        questions: payload
+      }).toPromise();
 
       this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);
+      const markdown = (analysis?.sections || [])
+        .map((section: AnalysisSection) => `## ${section.title}\n\n${section.content}`)
+        .join('\n\n');
+      return { chat: markdown, sections: analysis?.sections || [] };
     } catch (error) {
       let message = '';
       if (error && error.status === 0) {
         message = $localize`Error analyzing responses: Chat API is not available.`;
       } else {
-        message = $localize`Error analyzing responses: ${error.message || error}`;
+        message = $localize`Error analyzing responses: ${error.error?.message || error.message || error}`;
       }
       this.planetMessageService.showAlert(message);
-      response = { chat: message };
+      return { chat: message, sections: [] };
     }
-    return response;
   }
 
 }

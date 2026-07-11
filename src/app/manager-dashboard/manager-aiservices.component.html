@@ -65,31 +65,33 @@
 
       <mat-card class="card">
         <mat-card-header>
-          <mat-card-title i18n>Assistant Configuration</mat-card-title>
-          </mat-card-header>
-          @if (configuration.assistant) {
-            <mat-card-content>
-              <mat-list>
-                <mat-list-item>
-                  <div matListItemTitle class="list-item-content">
-                    <span i18n>Name:</span>
-                      <mat-form-field>
-                        <mat-label i18n>Assistant name</mat-label>
-                          <input matInput formControlName="assistantName" />
-                        </mat-form-field>
-                      </div>
-                    </mat-list-item>
-                  </mat-list>
-                  <div class="list-item-content instructions">
-                    <span i18n>Instructions:</span>
-                      <mat-form-field>
-                        <mat-label i18n>Assistant instructions</mat-label>
-                          <textarea matInput formControlName="assistantInstructions"></textarea>
-                        </mat-form-field>
-                      </div>
-                    </mat-card-content>
-                  }
-                </mat-card>
+          <mat-card-title i18n>AI Prompt Profiles</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p i18n>Each mode uses a built-in prompt when its field is left empty. Fill a field to override the prompt for this community.</p>
+          <div class="list-item-content instructions">
+            <span i18n>General chat:</span>
+            <mat-form-field>
+              <mat-label i18n>General chat instructions</mat-label>
+              <textarea matInput formControlName="promptGeneralChat"></textarea>
+            </mat-form-field>
+          </div>
+          <div class="list-item-content instructions">
+            <span i18n>Course help:</span>
+            <mat-form-field>
+              <mat-label i18n>Course help instructions</mat-label>
+              <textarea matInput formControlName="promptCourseHelp"></textarea>
+            </mat-form-field>
+          </div>
+          <div class="list-item-content instructions">
+            <span i18n>Survey analysis:</span>
+            <mat-form-field>
+              <mat-label i18n>Survey analysis instructions</mat-label>
+              <textarea matInput formControlName="promptSurveyAnalysis"></textarea>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
                 <mat-card class="card">
                   <mat-card-header>

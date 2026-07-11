@@ -25,6 +25,18 @@ textarea {
   height: 100px;
 }
 
+.conversation-citations {
+  font-size: 0.75rem;
+  opacity: 0.75;
+
+  .citation {
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 0.75rem;
+  }
+}
+
 button {
   position: absolute;
   top: 70%;

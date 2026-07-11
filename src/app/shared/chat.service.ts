@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
+import { AIServices, AIProvider, ProviderName, SurveyAnalysisPayload, SurveyAnalysisResponse } from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -49,7 +49,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
         try {
           const message = JSON.parse(event.data);
           if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+            this.errorSubject.next(message.message || message.error);
           } else {
             this.chatStreamSubject.next(event.data);
           }
@@ -66,13 +66,13 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
       .pipe(
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
+          return of(null);
         }),
-        map((services: AIServices) => {
+        map((services: AIServices | null) => {
           if (services) {
-            return (Object.entries(services) as [ ProviderName, boolean ][])
-              .filter(([ _, model ]) => model === true)
-              .map(([ key ]) => ({ name: key, model: key }));
+            return (Object.entries(services) as [ ProviderName, AIServices[ProviderName] ][])
+              .filter(([ _, service ]) => service?.enabled === true)
+              .map(([ key ]) => ({ name: key }));
           } else {
             return [];
           }
@@ -91,7 +91,27 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
-    });
+    }, { withCredentials: true });
+  }
+
+  analyzeSurvey(payload: SurveyAnalysisPayload): Observable<SurveyAnalysisResponse> {
+    return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, payload, { withCredentials: true });
+  }
+
+  // Cleans up the OpenAI vector store + files for a resource; call before deleting the resource doc.
+  // Deletion should not be blocked on the gateway, so failures are reported, not thrown:
+  // a missing resource/index is fine, anything else is flagged so the caller can warn about the leak.
+  removeResourceIndex(resourceId: string): Observable<{ cleanupFailed?: boolean }> {
+    return this.httpClient.delete(`${this.baseUrl}/resources/${resourceId}/index`, { withCredentials: true }).pipe(
+      map(() => ({})),
+      catchError((err) => {
+        if (err?.status === 404) {
+          return of({});
+        }
+        console.error(err);
+        return of({ cleanupFailed: true });
+      })
+    );
   }
 
   // Subscribe to stream updates
