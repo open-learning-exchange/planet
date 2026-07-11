@@ -50,8 +50,12 @@ export async function analyze(payload: AnalyzePayload): Promise<AnalysisResult> 
     ? payload.aiProvider.name
     : 'openai';
   const runtime = config.providers[providerName];
+  // The billed model is server-configured only; a client-supplied model is ignored
+  if (!runtime.defaultModel) {
+    throw new HttpError(503, `AI provider "${providerName}" has no model configured`);
+  }
   const request = {
-    'model': payload.aiProvider?.model || runtime.defaultModel,
+    'model': runtime.defaultModel,
     'messages': [ { 'role': 'user' as const, 'content': buildSurveyAnalysisPrompt(payload.exam, payload.questions) } ],
     'instructions': config.promptProfiles.survey_analysis
   };

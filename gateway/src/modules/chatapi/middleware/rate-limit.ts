@@ -30,9 +30,10 @@ export function consumeToken(key: string, maxPerMinute?: number): boolean {
   return entry.count <= max;
 }
 
-export function rateLimit(maxPerMinute?: number) {
+/** `label` lets different transports share one window (e.g. HTTP and WS chat). */
+export function rateLimit(maxPerMinute?: number, label?: string) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const key = `${res.locals.user || req.ip}:${req.method} ${req.route?.path || req.path}`;
+    const key = `${res.locals.user || req.ip}:${label || `${req.method} ${req.route?.path || req.path}`}`;
     if (!consumeToken(key, maxPerMinute)) {
       res.status(429).json({ 'error': 'Too Many Requests', 'message': 'Rate limit exceeded — try again in a minute' });
       return;

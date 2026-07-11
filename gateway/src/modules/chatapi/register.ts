@@ -15,6 +15,17 @@ import { HttpError, toHttpError } from './utils/http-error';
 
 const isValidData = (data: any) => data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
 
+const isTrustedOrigin = (origin: string, host: string | undefined): boolean => {
+  try {
+    if (host && new URL(origin).host === host) {
+      return true;
+    }
+  } catch (error) {
+    return false;
+  }
+  return allowedOrigins().includes(origin);
+};
+
 const errorName = (statusCode: number): string => {
   switch (statusCode) {
   case 400: return 'Bad Request';
@@ -42,7 +53,7 @@ const openaiClient = async () => {
 };
 
 export function registerChatApiRoutes(app: Express) {
-  app.post('/', requireSession, rateLimit(), async (req: Request, res: Response) => {
+  app.post('/', requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
     const { data, save } = req.body;
     if (!isValidData(data)) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
@@ -116,9 +127,12 @@ export function registerChatApiRoutes(app: Express) {
 
 export function registerChatApiWebSocket(wss: WebSocket.Server) {
   wss.on('connection', async (ws: WebSocket, req: IncomingMessage) => {
-    // Same origin policy as the credentialed CORS setup; browsers always send Origin on WS handshakes
-    const origins = allowedOrigins();
-    if (origins.length && req.headers.origin && !origins.includes(req.headers.origin)) {
+    // Browsers always send Origin on WS handshakes and CORS doesn't apply to them:
+    // same-host origins are trusted, CORS_ORIGINS extends the list, anything else is
+    // refused (cookie-authenticated socket = CSRF surface). Non-browser clients send
+    // no Origin and pass through to session auth.
+    const origin = req.headers.origin;
+    if (origin && !isTrustedOrigin(origin, req.headers.host)) {
       ws.close();
       return;
     }
@@ -133,8 +147,8 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
     }
 
     ws.on('message', async (data) => {
-      // Streaming chat costs the same as POST /; count it against the same kind of window
-      if (!consumeToken(`${sessionUser || req.socket.remoteAddress}:WS /`)) {
+      // Streaming chat costs the same as POST /; count it against the same 'chat' window
+      if (!consumeToken(`${sessionUser || req.socket.remoteAddress}:chat`)) {
         ws.send(JSON.stringify(
           { 'type': 'error', 'error': 'Too Many Requests', 'message': 'Rate limit exceeded — try again in a minute' }
         ));

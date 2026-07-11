@@ -12,7 +12,8 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+// Chat turns are small JSON frames; cap them well below the 100 MB ws default
+const wss = new WebSocket.Server({ server, 'maxPayload': 1024 * 1024 });
 
 // No configured origins means no cross-origin browser access (same-origin
 // deployments behind nginx need no CORS; dev setups set CORS_ORIGINS)

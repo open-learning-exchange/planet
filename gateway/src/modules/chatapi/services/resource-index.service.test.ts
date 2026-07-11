@@ -84,6 +84,21 @@ describe('resource index service', () => {
     expect(client.files.del).toHaveBeenCalledWith('file_old');
   });
 
+  it('rebuilds from scratch when the saved store no longer exists on OpenAI', async () => {
+    mocks.resourceDB.get.mockResolvedValue({
+      '_id': 'res1', '_rev': '2-b',
+      '_attachments': { 'guide.pdf': { 'content_type': 'application/pdf', 'digest': 'md5-1' } },
+      'aiVectorStore': { 'id': 'vs_gone', 'files': { 'guide.pdf': { 'fileId': 'file_old', 'digest': 'md5-1' } }, 'updatedDate': 1 }
+    });
+    const client: any = fakeClient();
+    client.vectorStores.retrieve.mockRejectedValue(new Error('404'));
+    const index = await ensureResourceIndexed(client, 'res1');
+    expect(index?.vectorStoreId).toEqual('vs_new');
+    // Digests match but the old file state is unusable — everything is re-uploaded
+    expect(client.files.create).toHaveBeenCalledTimes(1);
+    expect(client.files.del).toHaveBeenCalledWith('file_old');
+  });
+
   it('rolls back instead of persisting a partial index when the batch fails', async () => {
     mocks.resourceDB.get.mockResolvedValue({
       '_id': 'res1', '_rev': '1-a',

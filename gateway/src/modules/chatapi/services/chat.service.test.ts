@@ -75,6 +75,19 @@ describe('chat service', () => {
     expect(mocks.chatDB.insert.mock.calls[1][0].mode).toEqual('general_chat');
   });
 
+  it('ignores a client-supplied model and bills the configured one', async () => {
+    await chat({ 'content': 'hi', 'aiProvider': { 'name': 'openai', 'model': 'gpt-expensive' } }, { 'save': false });
+    expect(mocks.runProviderChat.mock.calls[0][1].model).toEqual('openai-default-model');
+  });
+
+  it('rejects providers with no configured model', async () => {
+    const cfg = config();
+    cfg.providers.openai.defaultModel = '';
+    mocks.getAIConfig.mockResolvedValue(cfg);
+    await expect(chat({ 'content': 'hi' }, { 'save': false })).rejects.toMatchObject({ 'statusCode': 503 });
+    expect(mocks.runProviderChat).not.toHaveBeenCalled();
+  });
+
   it('prefers the session user over the payload user', async () => {
     await chat({ 'content': 'hi', 'user': 'spoofed' }, { 'save': true, 'sessionUser': 'realuser' });
     expect(mocks.chatDB.insert.mock.calls[0][0].user).toEqual('realuser');

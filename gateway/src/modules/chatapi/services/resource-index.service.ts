@@ -82,19 +82,21 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string, 
     return null;
   }
 
-  const existing = doc.aiVectorStore;
+  // Trust-but-verify: the saved state may point at a store deleted on OpenAI's
+  // side; then the prior file state is unusable and the index rebuilds from scratch
+  let existing = doc.aiVectorStore;
+  if (existing) {
+    try {
+      await client.vectorStores.retrieve(existing.id);
+    } catch (error) {
+      existing = undefined;
+    }
+  }
   if (existing && isUpToDate(existing, eligible)) {
     return { 'vectorStoreId': existing.id, 'indexedFiles': Object.keys(existing.files) };
   }
 
   let vectorStoreId = existing?.id;
-  if (vectorStoreId) {
-    try {
-      await client.vectorStores.retrieve(vectorStoreId);
-    } catch (error) {
-      vectorStoreId = undefined;
-    }
-  }
   if (!vectorStoreId) {
     const store = await client.vectorStores.create({ 'name': `planet-resource-${resourceId}` });
     vectorStoreId = store.id;
@@ -132,7 +134,8 @@ export async function ensureResourceIndexed(client: OpenAI, resourceId: string, 
   }
 
   // Remove OpenAI files that no longer correspond to a current attachment
-  for (const [ name, file ] of Object.entries(existing?.files || {})) {
+  // (checked against the saved doc state, so files from a vanished store go too)
+  for (const [ name, file ] of Object.entries(doc.aiVectorStore?.files || {})) {
     if (files[name]?.fileId === file.fileId) {
       continue;
     }

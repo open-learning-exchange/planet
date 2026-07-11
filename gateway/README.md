@@ -99,9 +99,10 @@ alike, and cross-origin browser access requires `CORS_ORIGINS`.
   vector store. State is saved on the resource doc as `aiVectorStore` and re-synced
   automatically when attachment digests change. Chat requests with `context.resource.id`
   index lazily, so calling this is only needed to pre-warm.
-- `DELETE /resources/:id/index` (manager/admin only) — delete the vector store + files on
-  OpenAI's side and strip `aiVectorStore` from the doc. The Planet client calls this
-  before deleting a resource so OpenAI-side storage doesn't leak.
+- `DELETE /resources/:id/index` (manager/admin or the resource's `addedBy` owner) —
+  delete the vector store + files on OpenAI's side and strip `aiVectorStore` from the
+  doc. The Planet client calls this before deleting a resource so OpenAI-side storage
+  doesn't leak.
 
 ### Prompt profiles
 

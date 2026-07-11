@@ -110,10 +110,15 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     }
   }
 
+  // The billed model is server-configured only; a client-supplied model is ignored
+  if (!runtime.defaultModel) {
+    throw new HttpError(503, `AI provider "${providerName}" has no model configured`);
+  }
+
   let result: ProviderChatResult;
   try {
     result = await runProviderChat(runtime, {
-      'model': payload.aiProvider?.model || runtime.defaultModel,
+      'model': runtime.defaultModel,
       messages,
       instructions,
       vectorStoreIds,

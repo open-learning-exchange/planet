@@ -39,7 +39,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   ]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() context: ChatContext;
+  @Input() context?: ChatContext;
   @Input() isEditing: boolean;
   @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;

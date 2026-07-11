@@ -33,6 +33,8 @@ const collectCitations = (response: OpenAI.Responses.Response | undefined): Cita
 
 const buildParams = (request: ProviderChatRequest): OpenAI.Responses.ResponseCreateParamsNonStreaming => ({
   'model': request.model,
+  // History is replayed from CouchDB every turn; don't let OpenAI retain responses too
+  'store': false,
   'input': toInput(request.messages),
   'instructions': request.instructions || undefined,
   'tools': request.vectorStoreIds?.length
