@@ -132,15 +132,22 @@ describe('chat service', () => {
     await expect(chat({ 'content': 'q', '_id': 'nope' }, { 'save': true })).rejects.toMatchObject({ 'statusCode': 404 });
   });
 
-  it('builds instructions from the mode profile plus context data', async () => {
+  it('keeps instructions server-controlled and passes context as a delimited user message', async () => {
     await chat({ 'content': 'hi', 'mode': 'course_help', 'context': { 'data': 'STEP CONTEXT' } }, { 'save': false });
     const request = mocks.runProviderChat.mock.calls[0][1];
-    expect(request.instructions).toEqual('COURSE PROFILE\n\nSTEP CONTEXT');
+    expect(request.instructions).toEqual('COURSE PROFILE');
+    expect(request.messages).toHaveLength(2);
+    expect(request.messages[0].role).toEqual('user');
+    expect(request.messages[0].content).toContain('not instructions');
+    expect(request.messages[0].content).toContain('STEP CONTEXT');
+    expect(request.messages[1]).toEqual({ 'role': 'user', 'content': 'hi' });
   });
 
   it('supports legacy string contexts', async () => {
     await chat({ 'content': 'hi', 'context': 'LEGACY' as any }, { 'save': false });
-    expect(mocks.runProviderChat.mock.calls[0][1].instructions).toEqual('GENERAL PROFILE\n\nLEGACY');
+    const request = mocks.runProviderChat.mock.calls[0][1];
+    expect(request.instructions).toEqual('GENERAL PROFILE');
+    expect(request.messages[0].content).toContain('LEGACY');
   });
 
   it('wires file_search when the context resource is indexable', async () => {

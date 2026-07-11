@@ -17,19 +17,23 @@ const windows = new Map<string, WindowEntry>();
 
 const defaultMax = () => Number(process.env.RATE_LIMIT_PER_MINUTE || 30);
 
+/** Counts one request against the key's window; false when the key is over its limit. */
+export function consumeToken(key: string, maxPerMinute?: number): boolean {
+  const max = maxPerMinute || defaultMax();
+  const now = Date.now();
+  const entry = windows.get(key);
+  if (!entry || now >= entry.resetAt) {
+    windows.set(key, { 'count': 1, 'resetAt': now + WINDOW_MS });
+    return true;
+  }
+  entry.count += 1;
+  return entry.count <= max;
+}
+
 export function rateLimit(maxPerMinute?: number) {
   return (req: Request, res: Response, next: NextFunction) => {
-    const max = maxPerMinute || defaultMax();
     const key = `${res.locals.user || req.ip}:${req.method} ${req.route?.path || req.path}`;
-    const now = Date.now();
-    const entry = windows.get(key);
-    if (!entry || now >= entry.resetAt) {
-      windows.set(key, { 'count': 1, 'resetAt': now + WINDOW_MS });
-      next();
-      return;
-    }
-    entry.count += 1;
-    if (entry.count > max) {
+    if (!consumeToken(key, maxPerMinute)) {
       res.status(429).json({ 'error': 'Too Many Requests', 'message': 'Rate limit exceeded — try again in a minute' });
       return;
     }

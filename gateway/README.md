@@ -65,8 +65,8 @@ allowed for its owner, and the resource indexing routes additionally require a m
 or admin session (`manager` / `_admin` role; index removal is also allowed for the
 resource's `addedBy` owner) — other users get `403`. Personal (`private`) resources are
 only indexed for their owner, including via chat's lazy indexing. The AI endpoints are
-rate-limited per user (`RATE_LIMIT_PER_MINUTE`, default 30), and cross-origin browser
-access requires `CORS_ORIGINS`.
+rate-limited per user (`RATE_LIMIT_PER_MINUTE`, default 30) over HTTP and WebSocket
+alike, and cross-origin browser access requires `CORS_ORIGINS`.
 
 ### Endpoints
 
@@ -76,9 +76,10 @@ access requires `CORS_ORIGINS`.
   - `mode` (`general_chat` | `course_help` | `survey_analysis`, default `general_chat`) —
     selects the prompt profile. The old `assistant: boolean` flag is accepted and ignored
     (deprecated).
-  - `context` (`{ type?, data?, resource? }`) — `data` is appended to the profile
-    instructions for every provider; `resource.id` triggers file_search (OpenAI only, see
-    resource indexing below)
+  - `context` (`{ type?, data?, resource? }`) — `data` is passed to the model as a
+    delimited reference message (never as system-prompt instructions, which stay
+    server-controlled); `resource.id` triggers file_search (OpenAI only, see resource
+    indexing below)
   - `_id`/`_rev` — continue an existing `chat_history` conversation
   - Response: `{ status, chat, citations, couchDBResponse? }`. Only whitelisted fields
     are persisted to CouchDB (the raw payload is never stored); the doc is written only

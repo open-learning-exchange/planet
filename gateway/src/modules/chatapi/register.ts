@@ -8,7 +8,7 @@ import { analyze } from './services/analyze.service';
 import { getAIConfig } from './services/config.service';
 import { deleteResourceIndex, ensureResourceIndexed } from './services/resource-index.service';
 import { allowedOrigins, getSessionUser, isAuthRequired, requireManager, requireSession, SessionInfo } from './middleware/auth';
-import { rateLimit } from './middleware/rate-limit';
+import { consumeToken, rateLimit } from './middleware/rate-limit';
 import { providerCapabilities } from './providers';
 import { PROVIDER_NAMES } from './models/chat.model';
 import { HttpError, toHttpError } from './utils/http-error';
@@ -133,6 +133,13 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
     }
 
     ws.on('message', async (data) => {
+      // Streaming chat costs the same as POST /; count it against the same kind of window
+      if (!consumeToken(`${sessionUser || req.socket.remoteAddress}:WS /`)) {
+        ws.send(JSON.stringify(
+          { 'type': 'error', 'error': 'Too Many Requests', 'message': 'Rate limit exceeded — try again in a minute' }
+        ));
+        return;
+      }
       try {
         const payload = JSON.parse(data.toString());
         if (!isValidData(payload)) {
