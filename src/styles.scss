@@ -427,6 +427,15 @@ body {
     margin: 0 8px;
   }
 
+  // Tables using an explicit min-width should scroll inside their view container
+  // throughout the tablet range instead of overflowing the page.
+  @media (max-width: v.$screen-md) {
+    .view-container.view-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
   // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
   // Courses/resources use a separate pattern

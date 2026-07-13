@@ -33,6 +33,10 @@
   min-width: 0;
 }
 
+.survey-action-cell {
+  padding: 5px 0;
+}
+
 /* Targeting tablet screens */
 @media (max-width: v.$screen-md) {
   .mat-column-name {
