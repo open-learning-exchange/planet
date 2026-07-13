@@ -115,6 +115,7 @@ export const titleOfChartName = (chartName: string) => {
     stepCompletedChart: $localize`Steps Completed by Month`,
     chatUsageChart: $localize`Chats Created by Month`,
     voicesCreatedChart: $localize`Voices Created by Month`,
+    healthExamsCreatedChart: $localize`Health Exams Created by Month`
   };
   return chartNames[chartName];
 };
@@ -174,6 +175,12 @@ export const sortingOptionsMap = {
     { name: $localize`Date (Newest first)`, value: 'createdDateDesc' },
     { name: $localize`AI Provider (A-Z)`, value: 'aiProviderAsc' },
     { name: $localize`AI Provider (Z-A)`, value: 'aiProviderDesc' }
+  ],
+  'healthExams': [
+    { name: $localize`User (A-Z)`, value: 'userAsc' },
+    { name: $localize`User (Z-A)`, value: 'userDesc' },
+    { name: $localize`Date (Oldest first)`, value: 'createdDateAsc' },
+    { name: $localize`Date (Newest first)`, value: 'createdDateDesc' }
   ]
 };
 

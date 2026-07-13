@@ -157,7 +157,7 @@
         @if (progress?.steps) {
           <button mat-menu-item (click)="openExportDialog('stepCompletions')" i18n>Course Progress Report</button>
         }
-        @if (healthComponent?.examinations?.length > 0) {
+        @if (healthExams?.data?.length > 0) {
           <button mat-menu-item (click)="openExportDialog('health')" i18n>Health Report</button>
         }
         @if (chatActivities?.filteredData?.length) {
@@ -179,6 +179,7 @@
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'stepCompletedChart' }"></ng-container>
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'chatUsageChart' }"></ng-container>
         <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'voicesCreatedChart' }"></ng-container>
+        <ng-container *ngTemplateOutlet="chartWithActions; context: { chartId: 'healthExamsCreatedChart' }"></ng-container>
         <div class="reports-table-container">
           <div>
             <h1 class="mat-headline-6" i18n>Members</h1>
@@ -398,6 +399,7 @@
         <div [hidden]="healthLoading || healthNoData">
           <planet-reports-health
             [planetCode]="planetCode"
+            [examinations]="healthExams.data"
             [dateRange]="dateFilterForm?.value"
             [isActive]="healthTab.isActive"
             (changeDateRange)="resetDateFilter($event)"

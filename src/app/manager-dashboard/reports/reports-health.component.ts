@@ -49,7 +49,7 @@ export class ReportsHealthComponent implements OnChanges {
   @ViewChild('diagnosesChart') diagnosesChart;
   charts: any[] = [];
   showChart: boolean;
-  examinations;
+  @Input() examinations;
   weeklyHealthData = [];
   headlineData: { total: number, unique: string[], conditions: any };
   conditions = conditions;
@@ -65,21 +65,7 @@ export class ReportsHealthComponent implements OnChanges {
 
   ngOnChanges(changes) {
     const weeks = generateWeeksArray(this.dateRange);
-    if (this.planetCode && changes.planetCode && changes.planetCode.previousValue !== changes.planetCode.currentValue) {
-      this.headlineData = null;
-      this.healthLoadingChange.emit(true);
-      this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
-        this.examinations = examinations;
-        this.setHealthData(weeks);
-      });
-    } else if (changes.isActive && changes.isActive.currentValue === true && !this.examinations) {
-      this.headlineData = null;
-      this.healthLoadingChange.emit(true);
-      this.healthService.getExaminations(this.planetCode).subscribe(examinations => {
-        this.examinations = examinations;
-        this.setHealthData(weeks);
-      });
-    } else if (this.examinations) {
+    if (this.examinations) {
       this.setHealthData(weeks);
     }
   }
