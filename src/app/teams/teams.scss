@@ -20,7 +20,6 @@
     display: inline-grid;
     grid-template-columns: minmax(150px, max-content);
     align-items: stretch;
-    gap: 0.5rem;
     width: max-content;
     max-width: 100%;
   }
@@ -34,10 +33,13 @@
   }
 
   .button-container button[mat-raised-button] {
+    display: flex;
     width: 100%;
     text-align: center;
     padding: 8px 12px;
     white-space: nowrap;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   .highlighted {
