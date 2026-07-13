@@ -57,7 +57,7 @@
       }
     }
     @if (layout === 'classic' && !forceModern) {
-      <button mat-icon-button routerLink="/chat" i18n-title title="Chat"><mat-icon>question_answer</mat-icon></button>
+      <button mat-icon-button routerLink="/chat" i18n-title title="AI Chat"><mat-icon>question_answer</mat-icon></button>
       <button mat-icon-button planetFeedback i18n-title title="Submit Feedback"><mat-icon svgIcon="feedback"></mat-icon></button>
       <button mat-icon-button routerLink="/feedback" i18n-title title="Review Feedback"><mat-icon svgIcon="feedbacklist"></mat-icon></button>
       @if (isLoggedIn) {
@@ -244,9 +244,9 @@
     <!--Bottom part-->
     <ul class="bottom-nav">
       <li>
-        <a mat-button routerLink="/chat" routerLinkActive="active" i18n-title title="Chat">
+        <a mat-button routerLink="/chat" routerLinkActive="active" i18n-title title="AI Chat">
           <mat-icon>question_answer</mat-icon>
-          <label i18n>Chat</label>
+          <label i18n>AI Chat</label>
         </a>
       </li>
       <li>
