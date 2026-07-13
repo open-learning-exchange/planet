@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ import { LoginDialogComponent } from '../../login/login-dialog.component';
   templateUrl: './public-survey.component.html',
   styleUrls: ['./public-survey.component.scss'],
   imports: [
-    MatIcon, TdMarkdownComponent, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
+    MatIcon, CovalentFlavoredMarkdownModule, ExamsQuestionFrameComponent, ExamsTakeWidgetComponent, MatButton,
     ReactiveFormsModule, MatFormField, MatLabel, MatHint, MatError, MatInput, MatRadioGroup, MatRadioButton
   ]
 })

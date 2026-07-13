@@ -19,7 +19,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
@@ -36,7 +36,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     PlanetBetaDirective,
     MatList,
     MatListItem,

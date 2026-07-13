@@ -36,35 +36,35 @@
   }
   @if (event.notes) {
     <p><b i18n>Observations & Notes: </b></p>
-    <td-markdown [content]="event.notes"></td-markdown>
+    <td-flavored-markdown [content]="event.notes"></td-flavored-markdown>
   }
   @if (event.diagnosis) {
     <p><b i18n>Diagnosis: </b></p>
-    <td-markdown [content]="event.diagnosis"></td-markdown>
+    <td-flavored-markdown [content]="event.diagnosis"></td-flavored-markdown>
   }
   @if (event.treatments) {
     <p><b i18n>Treatments: </b></p>
-    <td-markdown [content]="event.treatments"></td-markdown>
+    <td-flavored-markdown [content]="event.treatments"></td-flavored-markdown>
   }
   @if (event.medications) {
     <p><b i18n>Medications: </b></p>
-    <td-markdown [content]="event.medications"></td-markdown>
+    <td-flavored-markdown [content]="event.medications"></td-flavored-markdown>
   }
   @if (event.immunizations) {
     <p><b i18n>Immunizations: </b></p>
-    <td-markdown [content]="event.immunizations"></td-markdown>
+    <td-flavored-markdown [content]="event.immunizations"></td-flavored-markdown>
   }
   @if (event.xrays) {
     <p><b i18n>X-rays: </b></p>
-    <td-markdown [content]="event.xrays"></td-markdown>
+    <td-flavored-markdown [content]="event.xrays"></td-flavored-markdown>
   }
   @if (event.tests) {
     <p><b i18n>Lab Tests: </b></p>
-    <td-markdown [content]="event.tests"></td-markdown>
+    <td-flavored-markdown [content]="event.tests"></td-flavored-markdown>
   }
   @if (event.referrals) {
     <p><b i18n>Referrals: </b></p>
-    <td-markdown [content]="event.referrals"></td-markdown>
+    <td-flavored-markdown [content]="event.referrals"></td-flavored-markdown>
   }
 </mat-dialog-content>
 <mat-dialog-actions>

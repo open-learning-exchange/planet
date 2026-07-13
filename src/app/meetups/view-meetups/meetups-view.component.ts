@@ -19,7 +19,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
@@ -34,7 +34,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
     MatButton,
     MatTooltip,
     NgClass,
-    TdMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     CdkScrollable,
     MatDialogContent,
     NgTemplateOutlet,

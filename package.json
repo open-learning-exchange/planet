@@ -41,6 +41,7 @@
     "@angular/platform-server": "20.3.21",
     "@angular/router": "20.3.21",
     "@angular/service-worker": "20.3.21",
+    "@covalent/flavored-markdown": "^11.19.8",
     "@covalent/markdown": "^11.19.5",
     "@covalent/text-editor": "^11.19.5",
     "@fullcalendar/angular": "^6.1.10",

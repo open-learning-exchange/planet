@@ -10,13 +10,13 @@ import { UserService } from '../shared/user.service';
 import { PdfService } from '../shared/pdf.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe, formatDate } from '@angular/common';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MatButton } from '@angular/material/button';
 
 @Component({
   templateUrl: './health-event-dialog.component.html',
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, TdMarkdownComponent,
+    MatDialogTitle, CdkScrollable, MatDialogContent, CovalentFlavoredMarkdownModule,
     MatDialogActions, MatButton, MatDialogClose, DatePipe
   ]
 })

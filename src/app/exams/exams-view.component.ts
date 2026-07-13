@@ -19,7 +19,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
@@ -44,7 +44,7 @@ interface ExamViewForm {
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    TdMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     MatFormField,
     MatLabel,
     FormsModule,

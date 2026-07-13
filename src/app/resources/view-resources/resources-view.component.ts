@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { CovalentFlavoredMarkdownModule } from '@covalent/flavored-markdown';
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { ResourcesViewerComponent } from './resources-viewer.component';
@@ -36,7 +36,7 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
     MatAnchor,
     NgClass,
     PlanetRatingComponent,
-    TdMarkdownComponent,
+    CovalentFlavoredMarkdownModule,
     LanguageLabelComponent,
     PlanetLoadingSpinnerComponent,
     ResourcesViewerComponent

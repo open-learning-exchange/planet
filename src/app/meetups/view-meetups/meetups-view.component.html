@@ -81,7 +81,7 @@
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>
-        }<td-markdown [content]="meetupDetail?.description"></td-markdown>
+        }<td-flavored-markdown [content]="meetupDetail?.description"></td-flavored-markdown>
       </div>
       @if (!isDialog) {
         <div class="right-tile">
