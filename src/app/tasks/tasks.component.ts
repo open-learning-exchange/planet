@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation, forwa
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
+import { TasksAssigneesDialogComponent } from './tasks-assignees-dialog.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
@@ -65,7 +66,8 @@ export class AssigneeNamePipe implements PipeTransform {
     MatMenuItem,
     DatePipe,
     forwardRef(() => FilterAssigneePipe),
-    forwardRef(() => AssigneeNamePipe)
+    forwardRef(() => AssigneeNamePipe),
+    TasksAssigneesDialogComponent
   ]
 })
 export class TasksComponent implements OnInit {
@@ -104,7 +106,7 @@ export class TasksComponent implements OnInit {
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
-      this.myTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
+      this.myTasks = this.tasks.filter(task => this.isUserAssigned(task, this.userService.get()._id));
       this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
       this.filterTasks();
     });
@@ -193,15 +195,35 @@ export class TasksComponent implements OnInit {
     event.stopPropagation();
   }
 
-  addAssignee(task, assignee: any = '') {
-    const hasAssignee = assignee !== '' && assignee.userDoc;
-    if (hasAssignee) {
-      const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
-      assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
+  toggleAssignee(task, assignee) {
+    let currentAssignees = task.assignees ? [...task.assignees] : [];
+    if (task.assignee && currentAssignees.length === 0) {
+      currentAssignees.push(task.assignee);
     }
-    this.tasksService.addTask({ ...task, assignee }).pipe(
-      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
-    ).subscribe((res) => {
+
+    const index = currentAssignees.findIndex(a => a.userId === assignee.userId);
+    let isAdding = false;
+    if (index > -1) {
+      currentAssignees.splice(index, 1);
+    } else {
+      isAdding = true;
+      const filename = assignee.userDoc?._attachments && Object.keys(assignee.userDoc._attachments)[0];
+      const assigneeObj = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
+      currentAssignees.push(assigneeObj);
+    }
+
+    const nextAssignee = currentAssignees.length > 0 ? currentAssignees[0] : '';
+    const updatedTask = {
+      ...task,
+      assignee: nextAssignee,
+      assignees: currentAssignees
+    };
+
+    const hasNotification = isAdding && assignee.userId !== this.userService.get()._id;
+
+    this.tasksService.addTask(updatedTask).pipe(
+      switchMap(() => hasNotification ? this.sendNotifications(assignee) : of({}))
+    ).subscribe(() => {
       this.tasksService.getTasks();
     });
   }
@@ -249,7 +271,33 @@ export class TasksComponent implements OnInit {
   }
 
   getAssignTooltip(task: any): string {
-    return task.assignee ? $localize`Reassign Task` : $localize`Assign Task`;
+    const hasAssignee = task.assignee || (task.assignees && task.assignees.length > 0);
+    return hasAssignee ? $localize`Reassign Task` : $localize`Assign Task`;
+  }
+
+  isAssigneeSelected(task, assignee): boolean {
+    if (task.assignees && Array.isArray(task.assignees)) {
+      return task.assignees.some(a => a.userId === assignee.userId);
+    }
+    return !!(task.assignee && task.assignee.userId === assignee.userId);
+  }
+
+  isUserAssigned(task: any, userId: string): boolean {
+    if (task.assignees && Array.isArray(task.assignees)) {
+      return task.assignees.some(a => a.userId === userId);
+    }
+    return !!(task.assignee && task.assignee.userId === userId);
+  }
+
+  openAssigneesPopup(task: any) {
+    let currentAssignees = task.assignees ? [...task.assignees] : [];
+    if (task.assignee && currentAssignees.length === 0) {
+      currentAssignees.push(task.assignee);
+    }
+    this.dialog.open(TasksAssigneesDialogComponent, {
+      data: { assignees: currentAssignees },
+      autoFocus: false
+    });
   }
 
 }
