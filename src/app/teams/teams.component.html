@@ -145,10 +145,10 @@
                   </button>
                 }
                 @case ('requesting') {
-                  <button mat-raised-button color="primary" disabled>
-                    <mat-icon>hourglass_empty</mat-icon>
+                  <button mat-raised-button color="warn" (click)="cancelRequest(element.doc); $event.stopPropagation()">
+                    <mat-icon>cancel</mat-icon>
                     @if (!isMobile) {
-                      <label i18n> Request pending </label>
+                      <label i18n> Cancel Request </label>
                     }
                   </button>
                 }
