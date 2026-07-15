@@ -54,12 +54,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  @media(max-width: v.$screen-sm) {
-    .my-personals-view .mat-column-title {
-      padding-left: 0;
-    }
-  }
 }
 
 .list-content-menu .header {
