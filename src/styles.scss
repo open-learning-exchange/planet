@@ -579,10 +579,6 @@ body {
     gap: 5px;
   }
 
-  .no-max-height-dialog .mat-mdc-dialog-content {
-    max-height: none;
-  }
-
   mat-row mat-cell {
     flex-wrap: wrap;
     .mat-mdc-raised-button {

@@ -194,7 +194,7 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
       minWidth: '25vw',
       maxWidth: '90vw',
-      panelClass: 'no-max-height-dialog',
+      maxHeight: '90vh',
       autoFocus: false,
       data: this.dialogData(true)
     });
