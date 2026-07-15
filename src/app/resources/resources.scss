@@ -13,10 +13,10 @@
 
   .mat-column-title {
     padding: 0;
+  }
 
-    &:first-child {
-      padding-left: 24px;
-    }
+  .my-personals-view .mat-column-title {
+    padding-left: 24px;
   }
 
   .mat-column-createdDate {
@@ -53,6 +53,12 @@
   .filtered-amount-label {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  @media(max-width: v.$screen-sm) {
+    .my-personals-view .mat-column-title {
+      padding-left: 0;
+    }
   }
 }
 
