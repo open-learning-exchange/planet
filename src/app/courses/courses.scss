@@ -45,19 +45,4 @@ planet-courses {
       max-width: 70px;
     }
   }
-
-  .course-table-container {
-  display: flex;
-  flex-direction: column;
-  height: v.$view-container-height;
-  overflow: hidden;
 }
-
-.card-table {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-}
-
-}
-
