@@ -475,6 +475,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openInviteMemberDialog() {
     this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
+      panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
       data: {
         okClick: (selected: any[]) => this.addMembers(selected),
@@ -519,6 +520,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const initialCourses = this.team.courses || [];
     const dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
+      panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
       data: {
         okClick: (courses: any[]) => {
@@ -564,6 +566,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openResourcesDialog(resource?) {
     const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
+      panelClass: 'fit-screen-dialog',
       maxHeight: '90vh',
       data: {
         okClick: (resources: any[]) => {
