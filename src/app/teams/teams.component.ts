@@ -362,6 +362,22 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  cancelRequest(team) {
+    this.dialogsLoadingService.start();
+    this.teamsService.removeFromRequests(team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+      switchMap(() => this.teamsService.getTeamMembers(team)),
+      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
+      switchMap(() => this.getMembershipStatus()),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe(() => {
+      this.teams.data = this.teamList(this.teams.data);
+      const msg = this.mode === 'enterprise'
+        ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
+        : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + team.name;
+      this.planetMessageService.showMessage(msg);
+    });
+  }
+
   resetSearch() {
     this.teams.filter = this.myTeamsFilter ? ' ' : '';
     this.filter = '';

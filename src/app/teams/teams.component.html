@@ -151,6 +151,12 @@
                       <label i18n> Request pending </label>
                     }
                   </button>
+                  <button mat-raised-button color="warn" (click)="cancelRequest(element.doc); $event.stopPropagation()">
+                    <mat-icon>cancel</mat-icon>
+                    @if (!isMobile) {
+                      <label i18n> Cancel Request </label>
+                    }
+                  </button>
                 }
               }
             }
