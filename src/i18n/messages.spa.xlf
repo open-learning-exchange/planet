@@ -70,9 +70,9 @@
         <source>Send a message</source>
         <target state="final">Enviar un mensaje</target>
       </trans-unit>
-      <trans-unit id="6902066591850406795" datatype="html" approved="yes">
-        <source>chat is disabled, contact community admin</source>
-        <target state="final">el chat está desactivado, contacta al administrador de la comunidad</target>
+      <trans-unit id="4863510780187107480" datatype="html" approved="yes">
+        <source>Chat is disabled, contact community admin.</source>
+        <target state="final">El chat está desactivado, contacta al administrador de la comunidad.</target>
       </trans-unit>
       <trans-unit id="6824763714539805412" datatype="html" approved="yes">
         <source>AI Chat</source>
@@ -4006,29 +4006,25 @@ Otras notas</target>
         <source>Member of Planet</source>
         <target state="final">Miembro de Planet</target>
       </trans-unit>
-      <trans-unit id="979982407308007376" datatype="html" approved="yes">
-        <source>shared</source>
-        <target state="final">compartido</target>
+      <trans-unit id="6803597062367514960" datatype="html" approved="yes">
+        <source>Shared: </source>
+        <target state="final">Compartido: </target>
       </trans-unit>
-      <trans-unit id="8458628826516455805" datatype="html" approved="yes">
-        <source>shared: </source>
-        <target state="final">compartido: </target>
+      <trans-unit id="3008573030448240863" datatype="html" approved="yes">
+        <source>Edited</source>
+        <target state="final">Editado</target>
       </trans-unit>
-      <trans-unit id="5611353616187282769" datatype="html" approved="yes">
-        <source>edited</source>
-        <target state="final">editado</target>
+      <trans-unit id="5544096411892796308" datatype="html" approved="yes">
+        <source>Edited: </source>
+        <target state="final">Editado: </target>
       </trans-unit>
-      <trans-unit id="4987321386111294618" datatype="html" approved="yes">
-        <source>edited: </source>
-        <target state="final">editado: </target>
+      <trans-unit id="5757167327375822154" datatype="html" approved="yes">
+        <source>Posted</source>
+        <target state="final">Publicado</target>
       </trans-unit>
-      <trans-unit id="4849135668248755260" datatype="html" approved="yes">
-        <source>posted</source>
-        <target state="final">publicado</target>
-      </trans-unit>
-      <trans-unit id="7177895568262480591" datatype="html" approved="yes">
-        <source>posted: </source>
-        <target state="final">publicado: </target>
+      <trans-unit id="8827585078109747003" datatype="html" approved="yes">
+        <source>Posted: </source>
+        <target state="final">Publicado: </target>
       </trans-unit>
       <trans-unit id="3265536802844555605" datatype="html" approved="yes">
         <source>Copy Voice Link</source>
