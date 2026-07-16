@@ -232,13 +232,31 @@ export class ReportsService {
     return planetType === 'nation' ? $localize`Nation` : $localize`Community`;
   }
 
+  planetDetailsTitle(planetType) {
+    return planetType === 'nation' ? $localize`Nation Details` : $localize`Community Details`;
+  }
+
+  editPlanetNameTitle(planetType) {
+    return planetType === 'nation' ? $localize`Edit Nation Name` : $localize`Edit Community Name`;
+  }
+
+  planetNameUpdatedMessage(planetType) {
+    return planetType === 'nation' ? $localize`Nation name updated.` : $localize`Community name updated.`;
+  }
+
+  planetNameUpdateErrorMessage(planetType) {
+    return planetType === 'nation' ?
+      $localize`There was an error updating Nation name` :
+      $localize`There was an error updating Community name`;
+  }
+
   viewPlanetDetails(planet) {
     this.dialog.open(DialogsViewComponent, {
       width: '600px',
       autoFocus: false,
       data: {
         allData: planet,
-        title: $localize`${this.planetTypeText(planet.planetType)} Details`
+        title: this.planetDetailsTitle(planet.planetType)
       }
     });
   }

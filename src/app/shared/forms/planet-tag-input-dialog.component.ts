@@ -257,7 +257,7 @@ export class PlanetTagInputDialogComponent {
         options: this.subcollectionOfOptions(tag, this.tags), required: false, reset: true
       }
     ];
-    this.dialogsFormService.openDialogsForm('Edit Collection', [
+    this.dialogsFormService.openDialogsForm($localize`Edit Collection`, [
       { placeholder: $localize`Name`, name: 'name', required: true, type: 'textbox' },
       ...subcollectionField
     ], this.tagForm(tag), { onSubmit });
