@@ -1,5 +1,5 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild, AfterViewInit
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +23,7 @@ interface ValueWithImages { text: string; images: ImageInfo[]; }
   'encapsulation': ViewEncapsulation.None,
   imports: [TdTextEditorComponent, NgClass, FormsModule]
 })
-export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy, AfterViewInit {
+export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
 
   static nextId = 0;
 
@@ -91,7 +91,11 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
-  options: any = { hideIcons: [ 'image' ] };
+  options: any = {
+    autoRefresh: true,
+    hideIcons: [ 'image' ],
+    minHeight: 'var(--planet-markdown-textbox-height)'
+  };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -105,9 +109,6 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     focusMonitor.monitor(elementRef.nativeElement, true).subscribe(origin => {
       this.focused = !!origin;
       this.stateChanges.next();
-      if (origin) {
-        this.editor?.easyMDE?.codemirror?.refresh();
-      }
     });
   }
 
@@ -206,13 +207,8 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   ngOnDestroy() {
+    this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
     this.stateChanges.complete();
-  }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.editor?.easyMDE?.codemirror?.refresh();
-    });
   }
 
   writeValue(val: string) {
