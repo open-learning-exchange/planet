@@ -551,6 +551,13 @@ body {
     display: none;
   }
 
+  .hide-checkbox > .mdc-list-item__primary-text {
+    display: grid;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0;
+  }
+
   .ole-logo {
     filter: brightness(0) invert(1);
   }

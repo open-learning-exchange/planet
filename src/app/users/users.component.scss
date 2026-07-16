@@ -14,9 +14,6 @@
 }
 
 .hide-checkbox {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   padding: 0.25rem 0.5rem;
   margin: 0.25rem 0;
-  align-items: stretch;
 }
