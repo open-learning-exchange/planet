@@ -27,42 +27,26 @@
   display: block;
 }
 
-.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-  width: 150px;
-  text-align: center;
-  padding: 8px 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.mat-column-action {
+  justify-content: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.survey-action-cell {
+  padding: 5px 0;
 }
 
 /* Targeting tablet screens */
 @media (max-width: v.$screen-md) {
-
   .mat-column-name {
-    max-width: 125px;
-  }
-
-  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 100px;
-    text-align: center;
-    padding: 8px 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 175px;
   }
 }
 
 /* Targeting mobile screens */
 @media (max-width: v.$screen-sm) {
-
   .mat-column-name {
     max-width: 80px;
-  }
-
-  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: auto;
-    min-width: 0;
-    padding: 0 8px;
   }
 }

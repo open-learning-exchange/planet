@@ -21,6 +21,8 @@ import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { environment } from '../../environments/environment';
+import { couchAttachmentUrl } from '../shared/utils';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -181,8 +183,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeMessage(item) {
-    const message = `Removed from ${this.cardTitle}: ${item.title}`;
-    this.planetMessageService.showMessage($localize`${message}`);
+    this.planetMessageService.showMessage($localize`Removed from ${this.cardTitle}:cardTitle:: ${item.title}:itemTitle:`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -215,5 +216,16 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
+  }
+
+  dashboardTextLines(item: any): number | 'none' {
+    if (this.isAccordionMode) {
+      return 'none';
+    }
+    return this.cardType === 'myCourses' && item.coverFileName ? 2 : this.tileLines;
+  }
+
+  coverImageUrl(item: any): string {
+    return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
   }
 }

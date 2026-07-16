@@ -24,6 +24,17 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   mat-card {
 
     grid-area: hcard;
+    &.horizontal {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .dashboard-info-container {
+      display: flex;
+      align-items: flex-start;
+    }
     display: grid;
     grid-template-areas:
       "img info . date"
@@ -46,6 +57,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       grid-area: info;
       display: flex;
       flex-direction: column;
+      margin-left: 16px;
       h1 {
         display: flex;
         align-items: center;
@@ -58,25 +70,35 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       }
     }
 
+    .dashboard-badges-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
     .date, .badges {
       justify-self: end;
     }
 
     .date {
       grid-area: date;
+      text-align: right;
     }
 
     .badges {
       grid-area: badge;
       width: 100%;
       display: flex;
+      flex-wrap: wrap;
       justify-content: flex-end;
+      max-width: 100%;
+      margin-top: 8px;
 
-      & > div {
-        margin-right: 0.5rem;
+      & .badge-group {
+        margin-right: 4px;
       }
 
-      & > div:last-child {
+      & .badge-group:last-child {
         margin: 0;
       }
 
@@ -104,11 +126,11 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   transform: translateX(-50%);
   width: 90%;
   padding: 20px;
-  background-color: #fdee7f;
-  color: rgb(0, 0, 0);
+  background-color: v.$accent-lighter;
+  color: v.$accent-text;
   text-align: center;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px v.$shadow;
   z-index: 1000;
 }
 
@@ -122,7 +144,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   right: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgb(126, 126, 126);
+  color: v.$grey-text;
   font-weight: bold;
   font-size: 22px;
   cursor: pointer;
@@ -130,7 +152,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
 }
 
 .closebtn:hover {
-  color: rgb(0, 0, 0);
+  color: v.$accent-text;
 }
 
 @media (max-width: v.$screen-sm) {
@@ -149,7 +171,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       &.horizontal {
         flex-direction: column !important;
         align-items: center;
-        div[style*="display: flex; align-items: flex-start;"] {
+        .dashboard-info-container {
           flex-direction: column;
           align-items: center !important;
           width: 100%;
@@ -165,7 +187,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
           }
         }
 
-        div[style*="flex-direction: column; align-items: flex-end;"] {
+        .dashboard-badges-container {
           order: 2;
           width: 100%;
           margin-top: 12px;

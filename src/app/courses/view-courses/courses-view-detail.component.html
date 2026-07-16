@@ -1,3 +1,6 @@
+@if (courseDetail?.coverFileName) {
+  <img class="course-cover" [src]="coverImageUrl()" alt="Course cover" i18n-alt>
+}
 <planet-rating [rating]="courseDetail?.rating" [item]="courseDetail" [parent]="false" [ratingType]="'course'"></planet-rating>
 <p><b i18n>Subject Level:</b> <planet-language-label [options]="subjectOptions" [label]="courseDetail?.subjectLevel"></planet-language-label></p>
 <p><b i18n>Grade Level:</b> <planet-language-label [options]="gradeOptions" [label]="courseDetail?.gradeLevel"></planet-language-label></p>
@@ -7,7 +10,14 @@
 @if (courseDetail?.creatorDoc) {
   <p><b i18n>Creator:</b> {{courseDetail?.creatorDoc?.fullName}} </p>
 }
-<p><b i18n>Created on:</b> {{(courseDetail?.createdDate | date: 'mediumDate') || 'N/A'}}</p>
+<p>
+  <b i18n>Created on:</b>
+  @if (courseDetail?.createdDate) {
+    {{courseDetail.createdDate | date: 'mediumDate'}}
+  } @else {
+    <ng-container i18n>N/A</ng-container>
+  }
+</p>
 @if (courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet) {
   <p><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 }

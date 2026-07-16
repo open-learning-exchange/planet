@@ -117,7 +117,11 @@
           @if (element?.user?.name) {
             <span class="cursor-pointer" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
           } @else {
-            <span i18n>{{element?.submittedBy || 'Unknown'}}</span>
+            @if (element?.submittedBy) {
+              <span>{{element.submittedBy}}</span>
+            } @else {
+              <span i18n>Unknown</span>
+            }
           }
         </mat-cell>
       </ng-container>

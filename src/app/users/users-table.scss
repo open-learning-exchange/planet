@@ -16,34 +16,8 @@
 mat-cell p {
   margin: 0;
 }
-
-button-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.horizontal-align {
-  justify-content: center;
-}
-
-.mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-  width: 150px;
-  text-align: center;
-  padding: 8px 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 @media(max-width: v.$screen-md) {
   .mat-column-visitCount, .mat-column-joinDate, .mat-column-lastLogin {
     max-width: 70px;
-  }
-}
-
-@media (max-width: v.$screen-sm) {
-  .mat-mdc-cell button, .mat-mdc-cell div button[mat-raised-button] {
-    width: 50px;
   }
 }

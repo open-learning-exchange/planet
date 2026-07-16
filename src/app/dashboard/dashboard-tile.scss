@@ -17,7 +17,7 @@
 
     .left-tile {
       border-radius: 2px 0 0 2px;
-      color: #fff;
+      color: v.$white;
       &, & planet-dashboard-tile-title {
         display: flex;
         justify-content: center;
@@ -75,6 +75,25 @@
             width: calc(125px - 1rem);
             -webkit-box-orient: vertical;
             overflow: hidden;
+          }
+
+          &.has-course-cover {
+            padding: 0.5rem;
+          }
+
+          .dashboard-course-cover {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 0.25rem;
+
+            img {
+              width: 48px;
+              height: 48px;
+              object-fit: cover;
+              border-radius: 4px;
+              border: 1px solid v.$grey;
+            }
           }
 
         }
