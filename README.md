@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v20
-* Angular CLI v19
+* Node.js v22
+* Angular CLI v20
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -115,8 +115,34 @@ If you are using generated environment values from `.env`, run:
 ```
 npm run dev:locale --locale=spa
 ```
-Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, or `ara`.
+Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, `ara`, `por`, `hin`, or `swa`.
 *You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
+
+To update the source translation catalog, run:
+```
+npm run i18n:extract
+```
+
+This runs Angular extraction and then removes source file and line number metadata from all `src/i18n/messages*.xlf` catalogs, reducing noisy diffs after ordinary source edits.
+
+To normalize existing translation catalogs without extracting new source messages, run:
+```
+npm run i18n:normalize
+```
+
+To validate extraction without changing the committed catalog, run:
+```
+npm run i18n:check
+```
+
+### Translation workflow
+
+The source and translation catalogs use Angular's current decimal message IDs. Location metadata is stripped from committed catalogs to reduce review noise.
+
+* Mark UI text with `i18n` / `$localize` per the Style Guide.
+* Run `npm run i18n:extract` and commit the normalized `src/i18n/messages.xlf`.
+* Crowdin ingests `src/i18n/messages.xlf`; translated catalogs return through the Crowdin PR workflow.
+* Run `npm run i18n:check` any time to verify extraction succeeds without touching committed files.
 
 ## Tests
 
@@ -187,6 +213,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v18. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v22. Other versions of Node may throw errors when installing dependencies.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

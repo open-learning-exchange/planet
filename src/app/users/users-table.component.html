@@ -83,7 +83,13 @@
     </ng-container>
     <ng-container matColumnDef="birthDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header="birthDate" i18n>Birthdate</mat-header-cell>
-      <mat-cell *matCellDef="let element" i18n>{{(element.doc.birthDate | date: 'mediumDate') || 'Missing'}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        @if (element.doc.birthDate) {
+          {{ element.doc.birthDate | date: 'mediumDate' }}
+        } @else {
+          <ng-container i18n>Missing</ng-container>
+        }
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="lastVisit">
       <mat-header-cell *matHeaderCellDef mat-sort-header="lastVisit" i18n>Last Examination</mat-header-cell>
@@ -135,7 +141,7 @@
                     <button mat-raised-button color="primary" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
                       <mat-icon>lock_open</mat-icon>
                       @if (!isMobile) {
-                        <label>Activate</label>
+                        <label i18n>Activate</label>
                       }
                     </button>
                   }
@@ -158,19 +164,19 @@
                 </button>
               }
               @if (!element.doc.isUserAdmin && filterType === 'local') {
-                <button (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary" i18n>
+                <button (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary">
               <mat-icon>vertical_align_top</mat-icon>
               @if (!isMobile) {
-<label> Promote </label>
+<label i18n> Promote </label>
 }
             </button>
               }
               @if (element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName) {
                 <button
-                  (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)" mat-raised-button color="primary" i18n>
+                  (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)" mat-raised-button color="primary">
               <mat-icon>vertical_align_bottom</mat-icon>
               @if (!isMobile) {
-<label> Demote </label>
+<label i18n> Demote </label>
 }
             </button>
               }
