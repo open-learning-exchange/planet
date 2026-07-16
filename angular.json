@@ -29,6 +29,18 @@
           "es": {
             "translation": "src/i18n/messages.spa.xlf",
             "baseHref": "/spa/"
+          },
+          "pt-BR": {
+            "translation": "src/i18n/messages.por.xlf",
+            "baseHref": "/por/"
+          },
+          "hi": {
+            "translation": "src/i18n/messages.hin.xlf",
+            "baseHref": "/hin/"
+          },
+          "sw": {
+            "translation": "src/i18n/messages.swa.xlf",
+            "baseHref": "/swa/"
           }
         }
       },
@@ -194,6 +206,48 @@
                   "maximumWarning": "6kb"
                 }
               ]
+            },
+            "por": {
+              "outputPath": {
+                "base": "dist/por"
+              },
+              "localize": [
+                "pt-BR"
+              ],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "hin": {
+              "outputPath": {
+                "base": "dist/hin"
+              },
+              "localize": [
+                "hi"
+              ],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
+            },
+            "swa": {
+              "outputPath": {
+                "base": "dist/swa"
+              },
+              "localize": [
+                "sw"
+              ],
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ]
             }
           },
           "defaultConfiguration": ""
@@ -229,6 +283,15 @@
             },
             "spa": {
               "buildTarget": "planet-app:build:spa"
+            },
+            "por": {
+              "buildTarget": "planet-app:build:por"
+            },
+            "hin": {
+              "buildTarget": "planet-app:build:hin"
+            },
+            "swa": {
+              "buildTarget": "planet-app:build:swa"
             }
           },
           "defaultConfiguration": ""

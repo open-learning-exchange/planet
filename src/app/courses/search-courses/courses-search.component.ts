@@ -19,7 +19,13 @@ import { trackByCategory } from '../../shared/table-helpers';
     <mat-selection-list (selectionChange)="selectionChange($event)">
       @for (item of items; track item) {
         <mat-list-option [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
-          <span matListItemTitle>{{item?.label || 'N/A'}}</span>
+          <span matListItemTitle>
+            @if (item?.label) {
+              {{item.label}}
+            } @else {
+              <ng-container i18n>N/A</ng-container>
+            }
+          </span>
         </mat-list-option>
       }
     </mat-selection-list>

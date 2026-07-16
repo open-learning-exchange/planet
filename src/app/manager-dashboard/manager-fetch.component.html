@@ -7,7 +7,7 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button [disabled]="!selection.selected.length" (click)="getPushedItem()">
+    <button mat-button class="fetch-action" [disabled]="!selection.selected.length" (click)="getPushedItem()">
       <mat-icon aria-hidden="true" class="margin-lr-3">cloud_download</mat-icon><span i18n>Get Courses/Resources</span>
     </button>
   </mat-toolbar>

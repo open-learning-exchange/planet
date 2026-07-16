@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -97,6 +97,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
+    @Inject(LOCALE_ID) private localeId: string,
     private dialog: MatDialog,
     private couchService: CouchService,
     private authService: AuthService,
@@ -107,6 +108,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
+    this.calendarOptions.locale = this.localeId;
     this.getMeetups();
     this.getTasks();
     this.buttons = this.editable ?
@@ -223,7 +225,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
       data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
-      panelClass: 'no-max-height-dialog'
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh'
     });
   }
 
