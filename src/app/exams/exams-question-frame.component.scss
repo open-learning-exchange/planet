@@ -34,11 +34,11 @@
   }
 
   .progress-bar-track {
-    background: #d4deea;
+    background: v.$primary-lighter;
   }
 
   .progress-bar-fill {
-    background: #0a2d49;
+    background: v.$primary-dark;
     height: 8px;
     transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -60,7 +60,7 @@
       flex-wrap: wrap;
       margin-top: 28px;
       padding-top: 16px;
-      border-top: 1px solid #f0f0f0;
+      border-top: 1px solid v.$light-grey;
     }
 
     .action-buttons--split {

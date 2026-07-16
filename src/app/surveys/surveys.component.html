@@ -102,8 +102,8 @@
                 </button>
               </div>
               <mat-menu #sendMenu="matMenu">
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
+                <button mat-menu-item class="full-width" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
+                <button mat-menu-item class="full-width" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
               </mat-menu>
             }
             <div [matTooltip]="getActionTooltip(element, 'record')">
