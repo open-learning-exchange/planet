@@ -73,6 +73,14 @@ body {
     width: 100%;
   }
 
+  .half-width {
+    width: 50%;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
   // Use to give elements horizontal space
   .margin-lr {
     margin: 0 5px;
@@ -638,8 +646,8 @@ body {
     gap: 5px;
   }
 
-  .no-max-height-dialog .mat-mdc-dialog-content {
-    max-height: none;
+  .fit-screen-dialog .mat-mdc-dialog-content {
+    max-height: calc(90vh - 96px);
   }
 
   mat-row mat-cell {

@@ -22,6 +22,16 @@ interface ArchiveFormControls {
     :host {
       text-align: center;
     }
+
+    .archive-form-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .warning-text {
+      font-style: italic;
+      margin: 1rem;
+    }
   `],
   imports: [
     FormsModule, ReactiveFormsModule, MatFormField, MatLabel, PlanetMarkdownTextboxComponent, MatError,

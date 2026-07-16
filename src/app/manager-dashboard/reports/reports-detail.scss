@@ -41,7 +41,6 @@ mat-toolbar mat-form-field {
 
     .chart-actions {
       position: absolute;
-      top: 0.5rem;
       right: 0.5rem;
       opacity: 0;
       transition: opacity 0.2s;
@@ -58,7 +57,7 @@ mat-toolbar mat-form-field {
     .comparison-toolbar {
       background: transparent;
       padding: 1rem 0;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid v.$medium-grey;
       margin-bottom: 2rem;
     }
 
