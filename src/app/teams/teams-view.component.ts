@@ -115,6 +115,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   news: any[] = [];
   newsLoading = true;
   resources: any[] = [];
+  visibleCourses: any[] = [];
   isRoot = true;
   visits: any = {};
   leader: any = {};
@@ -196,7 +197,32 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getTeam(teamId: string) {
-    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
+      tap((team) => this.team = team),
+      switchMap((team: any) => this.getVisibleCourses(team).pipe(
+        tap((courses) => this.visibleCourses = courses),
+        map(() => team)
+      ))
+    );
+  }
+
+  getVisibleCourses(team: any) {
+    const courses = team?.courses || [];
+    const courseIds = courses.map(course => course._id);
+    if (courseIds.length === 0) {
+      return of(courses);
+    }
+
+    return this.couchService.post('courses/_find', findDocuments(
+      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+    )).pipe(
+      map(({ docs }) => {
+        const existingIds = new Set(docs.map(course => course._id));
+        return courses.filter(course => existingIds.has(course._id));
+      }),
+      // A failed local lookup is not evidence that synced courses were deleted.
+      catchError(() => of(courses))
+    );
   }
 
   initTeam(teamId: string) {
@@ -378,7 +404,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage($localize`You have ${config.successMsg} ${displayName}`);
-            this.team = change === 'course' ? res : this.team;
+            if (change === 'course') {
+              this.team = res;
+              this.visibleCourses = this.visibleCourses.filter(course => course._id !== item._id);
+            }
             if (change === 'archive') {
               this.goBack();
             }
@@ -530,6 +559,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
             courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
           }).subscribe((updatedTeam) => {
             this.team = updatedTeam;
+            this.visibleCourses = [ ...this.visibleCourses, ...newCourses ]
+              .sort((a, b) => a.courseTitle.localeCompare(b.courseTitle));
             dialogRef.close();
             this.dialogsLoadingService.stop();
           });
