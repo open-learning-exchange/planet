@@ -12,11 +12,6 @@ import { NgClass } from '@angular/common';
 
 @Component({
   templateUrl: './manager-sync.component.html',
-  styles: [`
-    .mat-mdc-button > .mat-icon.svg-icon {
-      height: inherit;
-    }
-  `],
   imports: [
     MatToolbar,
     MatIconButton,
