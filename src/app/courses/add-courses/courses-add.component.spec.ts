@@ -88,6 +88,27 @@ describe('CoursesAddComponent', () => {
     expect(component.cancel()).toBe(undefined);
   });
 
+  // test navigateBack()
+  it('should navigateBack to courses list or course view, ignoring matrix params', () => {
+    const router: any = TestBed.inject(Router);
+    const route = TestBed.inject(ActivatedRoute);
+    const urlExpectations: [ string, string ][] = [
+      [ '/courses/add', '../' ],
+      [ '/courses/add;continue=true', '../' ],
+      [ '/courses/update/123', '../../' ],
+      [ '/courses/update/123;continue=true', '../../' ],
+      [ '/courses/view/123/update', '../' ],
+      [ '/courses/view/123/update;continue=true', '../' ],
+      [ '/myDashboard/myCourses/add;continue=true', '../' ]
+    ];
+    for (const [ url, expected ] of urlExpectations) {
+      router.url = url;
+      component.navigateBack();
+      const calls = router.navigate.mock.calls;
+      expect(calls[calls.length - 1]).toEqual([ [ expected ], { relativeTo: route } ]);
+    }
+  });
+
   // test onDayChange()
   // it('should onDayChange', () => {
   //   expect(component.onDayChange('Monday', true)).toBe(undefined);

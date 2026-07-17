@@ -357,6 +357,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const relativeRoute = (urlArray: string[]) => {
       const lastIndex = urlArray.length - 1;
       const endConditions = [ 'update', 'add' ];
+      // Strip matrix params (e.g. ";continue=true" set when returning from the exam/survey builder)
       const segment = urlArray[lastIndex].split(';')[0];
       return `../${
         (lastIndex === 1 || endConditions.indexOf(segment) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
