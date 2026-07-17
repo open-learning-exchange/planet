@@ -91,7 +91,11 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   stateChanges = new Subject<void>();
   focused = false;
   errorState = false;
-  options: any = { hideIcons: [ 'image' ] };
+  options: any = {
+    autoRefresh: true,
+    hideIcons: [ 'image' ],
+    minHeight: 'var(--planet-markdown-textbox-height)'
+  };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
@@ -203,6 +207,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   ngOnDestroy() {
+    this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
     this.stateChanges.complete();
   }
 

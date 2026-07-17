@@ -143,7 +143,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search':showFilters}">
+  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search': showFilters, 'my-personals-view': myView === 'myPersonals'}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
@@ -203,7 +203,7 @@
           </mat-chip-set>
           <div class="content">
             <div [ngClass]="{'preview-content': !isExpanded(element)}" planetPreviewOverflow (planetPreviewOverflowChange)="setPreviewOverflow(element, $event)">
-              <planet-markdown [content]="element.doc.sourcePlanet !== planetConfiguration.code && element.doc.sourcePlanet ? '(source: ' + element.doc.sourcePlanet + ') ' + element.doc.description : element.doc.description" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
+              <planet-markdown [content]="resourceDescription(element)" [imageSource]="parent ? 'parent' : 'local'" [previewMode]="!isExpanded(element)"></planet-markdown>
             </div>
             @if (showPreviewExpand(element)) {
               <div class="preview-toggle" (click)="toggleRow(element); $event.stopPropagation()">

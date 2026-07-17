@@ -2,11 +2,11 @@ FROM treehouses/node:3.21
 
 WORKDIR /ng-app
 
-COPY package.json ./
+COPY package.json package-lock.json ./
 
 RUN apk add --update \
     python3 \
     build-base \
     jq
 
-RUN npm i --silent
+RUN npm ci --silent

@@ -5,8 +5,14 @@
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
     <span class="toolbar-fill"></span>
-    <button mat-button planetSync (syncComplete)="getReplicators()" i18n><mat-icon svgIcon="sync" class="svg-icon"></mat-icon>Run Sync</button>
-    <button mat-button (click)="getReplicators()" i18n><mat-icon>refresh</mat-icon>Refresh</button>
+    <button mat-button planetSync (syncComplete)="getReplicators()">
+      <mat-icon>sync</mat-icon>
+      <span i18n>Run Sync</span>
+    </button>
+    <button mat-button (click)="getReplicators()">
+      <mat-icon>refresh</mat-icon>
+      <span i18n>Refresh</span>
+    </button>
   </mat-toolbar>
   <mat-list>
     @for (rep of replicators; track rep) {

@@ -144,6 +144,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
+  localLinkTooltip(link: any): string {
+    return link.teamType === 'sync' || !this.planetCode
+      ? ''
+      : $localize`${link.title}:linkTitle: is only available on ${this.configuration.name}:planetName:`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
