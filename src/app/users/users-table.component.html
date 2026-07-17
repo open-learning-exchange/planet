@@ -2,7 +2,7 @@
   @if (isLoading) {
     <planet-loading-spinner text="Loading users..." i18n-text></planet-loading-spinner>
   }
-  <mat-table #table class="responsive-table" [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading">
+  <mat-table #table class="responsive-table" [dataSource]="usersTable" [trackBy]="trackById" matSort [matSortActive]="matSortActive" matSortDirection="desc" [class.hidden]="isLoading" [class.min-width-table]="displayedColumns.includes('action')">
     <ng-container matColumnDef="select">
       <mat-header-cell *matHeaderCellDef>
         <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -132,55 +132,49 @@
     <ng-container matColumnDef="action">
       <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
       <mat-cell *matCellDef="let element">
-        <div [ngClass]="{'horizontal-align button-container': isMobile}">
+        <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile}">
           @if (isUserAdmin && filterType === 'local' && !isDialog) {
-            <span>
-              @if (!element.doc.isUserAdmin) {
-                <span>
-                  @if (element.doc.roles.length === 0) {
-                    <button mat-raised-button color="primary" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
-                      <mat-icon>lock_open</mat-icon>
-                      @if (!isMobile) {
-                        <label i18n>Activate</label>
-                      }
-                    </button>
-                  }
-                  @if (element.doc.roles.length > 0) {
-                    <button mat-raised-button color="primary" (click)="setRoles(element.doc, [], $event)">
-                      <mat-icon>lock</mat-icon>
-                      @if (!isMobile) {
-                        <label i18n>Deactivate</label>
-                      }
-                    </button>
-                  }
-                </span>
-              }
-              @if (!element.doc.isUserAdmin || element.doc.roles.length > 0) {
-                <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)">
-                  <mat-icon>delete</mat-icon>
-                  @if (!isMobile) {
-                    <label i18n> Delete </label>
-                  }
-                </button>
-              }
-              @if (!element.doc.isUserAdmin && filterType === 'local') {
-                <button (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary">
-              <mat-icon>vertical_align_top</mat-icon>
-              @if (!isMobile) {
-<label i18n> Promote </label>
-}
-            </button>
-              }
-              @if (element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName) {
-                <button
-                  (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)" mat-raised-button color="primary">
-              <mat-icon>vertical_align_bottom</mat-icon>
-              @if (!isMobile) {
-<label i18n> Demote </label>
-}
-            </button>
-              }
-            </span>
+            @if (!element.doc.isUserAdmin && element.doc.roles.length === 0) {
+              <button mat-raised-button color="primary" (click)="setRoles(element.doc, element.doc.oldRoles || ['learner'], $event)">
+                <mat-icon>lock_open</mat-icon>
+                @if (!isMobile) {
+                  <label i18n>Activate</label>
+                }
+              </button>
+            }
+            @if (!element.doc.isUserAdmin && element.doc.roles.length > 0) {
+              <button mat-raised-button color="primary" (click)="setRoles(element.doc, [], $event)">
+                <mat-icon>lock</mat-icon>
+                @if (!isMobile) {
+                  <label i18n>Deactivate</label>
+                }
+              </button>
+            }
+            @if (!element.doc.isUserAdmin || element.doc.roles.length > 0) {
+              <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)">
+                <mat-icon>delete</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Delete </label>
+                }
+              </button>
+            }
+            @if (!element.doc.isUserAdmin && filterType === 'local') {
+              <button (click)="toggleStatus($event, element.doc, 'admin', false)" mat-raised-button color="primary">
+                <mat-icon>vertical_align_top</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Promote </label>
+                }
+              </button>
+            }
+            @if (element.doc.isUserAdmin && filterType === 'local' && (element.doc.name + '@' + configuration.code) !== configuration.adminName) {
+              <button
+                (click)="toggleStatus($event, element.doc, element.doc.roles.length === 0 ? 'admin' : 'manager', true)" mat-raised-button color="primary">
+                <mat-icon>vertical_align_bottom</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Demote </label>
+                }
+              </button>
+            }
           }
           <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary">
             <mat-icon>visibility</mat-icon>
@@ -203,7 +197,5 @@
       }</td>
     </tr>
   </mat-table>
-  @if (!isLoading) {
-    <mat-paginator #paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"></mat-paginator>
-  }
+    <mat-paginator #paginator [class.hidden]="isLoading" [pageSize]="50" [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"></mat-paginator>
 </div>

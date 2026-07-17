@@ -9,7 +9,7 @@
     <button mat-stroked-button color="primary" (click)="upgrade()" [disabled]="!enabled || done">{{ message }}</button>
   </div>
   @if (!done) {
-    <div style="height: 5px; padding: 5px;">
+    <div class="upgrade-progress-container">
       @if (working) {
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       }
