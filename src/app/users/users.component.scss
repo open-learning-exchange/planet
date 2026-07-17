@@ -2,14 +2,17 @@
   width: 256px;
 }
 
-.role-action-button {
+.role-actions {
+  display: grid;
+  gap: 0.5rem;
   width: 100%;
   padding: 0.25rem 0.5rem;
   margin: 0.25rem 0;
   box-sizing: border-box;
 }
 
-.hide-checkbox {
+.role-action-button {
+  width: 100%;
   padding: 0.25rem 0.5rem;
-  margin: 0.25rem 0;
+  box-sizing: border-box;
 }
