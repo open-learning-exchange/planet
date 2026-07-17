@@ -58,6 +58,22 @@ body {
     flex: 1 1 auto;
   }
 
+  // Group search controls so the field grows without colliding with adjacent actions
+  .toolbar-search {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 26rem);
+    min-width: 0;
+
+    > .mat-mdc-form-field {
+      align-self: center;
+      min-width: 0;
+      padding-top: 0;
+    }
+  }
+
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
@@ -71,6 +87,14 @@ body {
 
   .full-width {
     width: 100%;
+  }
+
+  .half-width {
+    width: 50%;
+  }
+
+  .text-center {
+    text-align: center;
   }
 
   // Use to give elements horizontal space
@@ -427,6 +451,15 @@ body {
     margin: 0 8px;
   }
 
+  // Tables using an explicit min-width should scroll inside their view container
+  // throughout the tablet range instead of overflowing the page.
+  @media (max-width: v.$screen-md) {
+    .view-container.view-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
   // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
   // Courses/resources use a separate pattern
@@ -445,6 +478,56 @@ body {
       mat-table,
       table.mat-mdc-table {
         min-width: var(--responsive-table-min-width, 800px);
+      }
+    }
+  }
+
+  // Opt-in addition to .responsive-table for tables whose columns (e.g. stacked action buttons)
+  // should never squish: holds a usable min-width at all viewport widths so the surrounding
+  // view-table container scrolls horizontally instead. Override via --responsive-table-min-width.
+  mat-table.responsive-table.min-width-table,
+  table.mat-mdc-table.responsive-table.min-width-table {
+    min-width: var(--responsive-table-min-width, 1000px);
+    width: 100%;
+  }
+
+  // Shared opt-in styling for the button container in a table's action column.
+  // Apply to a div wrapping the buttons inside the action mat-cell; add .horizontal-align to center buttons.
+  .table-action-buttons {
+    display: inline-grid;
+    grid-template-columns: minmax(150px, max-content);
+    align-items: stretch;
+    gap: 0.5rem;
+    width: max-content;
+    max-width: 100%;
+
+    &.horizontal-align {
+      justify-items: center;
+    }
+
+    button[mat-raised-button] {
+      width: 100%;
+      text-align: center;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: v.$screen-md) {
+      gap: 0.75rem;
+    }
+
+    @media (max-width: v.$screen-sm) {
+      grid-template-columns: minmax(120px, max-content);
+
+      button[mat-raised-button] {
+        min-width: 0;
+        padding: 0 3px;
+      }
+    }
+
+    @media (max-width: v.$screen-xs) {
+      button[mat-raised-button] {
+        white-space: normal;
       }
     }
   }
@@ -579,8 +662,8 @@ body {
     gap: 5px;
   }
 
-  .no-max-height-dialog .mat-mdc-dialog-content {
-    max-height: none;
+  .fit-screen-dialog .mat-mdc-dialog-content {
+    max-height: calc(90vh - 96px);
   }
 
   mat-row mat-cell {

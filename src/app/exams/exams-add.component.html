@@ -1,8 +1,10 @@
 <mat-toolbar>
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
-  {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
+  @if (examType === 'exam' && !courseName) {
+    <ng-container i18n>New Course:</ng-container>
+  }
   {{examType === 'exam' && courseName ? courseName + ':' : ''}}
-  {pageType, select, Add {Add} Update {Update} Copy {Copy}}
+  <ng-container i18n>{pageType, select, Add {Add} Update {Update} Copy {Copy}}</ng-container>
   <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
 </mat-toolbar>
 

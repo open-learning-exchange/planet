@@ -23,30 +23,19 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
 
   mat-card {
     grid-area: hcard;
-    padding: 0.5rem;
-    margin: 0 2px;
-
-    &.profile-card {
+    &.horizontal {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: flex-start;
     }
 
-    .profile-main-content {
+    .dashboard-info-container {
       display: flex;
       align-items: flex-start;
     }
-
-    .profile-side-content {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-
-    .badge-group {
-      margin-right: 4px;
-    }
+    padding: 0.5rem;
+    margin: 0 2px;
 
     img {
       width: calc(#{v.$dashboard-tile-width} - 0.5rem);
@@ -71,6 +60,12 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       }
     }
 
+    .dashboard-badges-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
     .date {
       text-align: right;
     }
@@ -78,10 +73,18 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
     .badges {
       width: 100%;
       display: flex;
-      justify-content: flex-end;
       flex-wrap: wrap;
+      justify-content: flex-end;
       max-width: 100%;
       margin-top: 8px;
+
+      & .badge-group {
+        margin-right: 4px;
+      }
+
+      & .badge-group:last-child {
+        margin: 0;
+      }
 
       & mat-icon.fa {
         font-size: 20px;
@@ -107,11 +110,11 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   transform: translateX(-50%);
   width: 90%;
   padding: 20px;
-  background-color: #fdee7f;
-  color: rgb(0, 0, 0);
+  background-color: v.$accent-lighter;
+  color: v.$accent-text;
   text-align: center;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px v.$shadow;
   z-index: 1000;
 }
 
@@ -125,7 +128,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
   right: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgb(126, 126, 126);
+  color: v.$grey-text;
   font-weight: bold;
   font-size: 22px;
   cursor: pointer;
@@ -133,7 +136,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
 }
 
 .closebtn:hover {
-  color: rgb(0, 0, 0);
+  color: v.$accent-text;
 }
 
 @media (max-width: v.$screen-sm) {
@@ -146,11 +149,10 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       display: flex;
       flex-direction: column;
 
-      &.profile-card {
+      &.horizontal {
         flex-direction: column;
         align-items: center;
-
-        .profile-main-content {
+        .dashboard-info-container {
           flex-direction: column;
           align-items: center;
           width: 100%;
@@ -166,7 +168,7 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
           }
         }
 
-        .profile-side-content {
+        .dashboard-badges-container {
           order: 2;
           width: 100%;
           margin-top: 12px;
@@ -184,7 +186,6 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       }
 
       img {
-        justify-self: center;
         max-width: 80px;
       }
     }

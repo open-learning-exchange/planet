@@ -283,7 +283,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   exportChartData() {
     const planetName = this.stateService.configuration.name;
     const courseTitle = this.course.courseTitle;
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const title = $localize`${courseTitle} Course Progress for ${entityLabel} ${planetName}`;
 
     const structuredData = this.structureChartData(this.chartData);

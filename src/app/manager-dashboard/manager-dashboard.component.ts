@@ -56,6 +56,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   versionParent = '';
   versionLatestApk = '';
   versionLocalApk = '';
+  notAvailable = $localize`N/A`;
   dialogRef: MatDialogRef<DialogsListComponent>;
   resetPinDialog: MatDialogRef<DialogsPromptComponent>;
   pin: string;
@@ -320,7 +321,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
       this.managerService.getApkLatestVersion(opts)
     ]).subscribe(( [ localVersion, latestVersion ]: [ string, any ]) => {
       this.versionLocalApk = localVersion.replace(/v/gi, '').trim();
-      this.versionLatestApk = (latestVersion.latestapk || 'N/A').replace(/v/gi, '').trim();
+      this.versionLatestApk = (latestVersion.latestapk || this.notAvailable).replace(/v/gi, '').trim();
     });
   }
 

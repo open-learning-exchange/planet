@@ -6,8 +6,8 @@
     <span class="closebtn" (click)="closeBanner()">&times;</span>
   </div>
 }
-<mat-card class="horizontal profile-card">
-  <div class="profile-main-content">
+<mat-card class="horizontal">
+  <div class="dashboard-info-container">
     <a [routerLink]="['/users/profile', user.name]" class="profile-link">
       <img [src]="profileImg" class="profile-avatar">
     </a>
@@ -28,7 +28,7 @@
     </h1>
   </div>
 </div>
-<div class="profile-side-content">
+<div class="dashboard-badges-container">
   <div class="date">
     <p>{{dateNow | date:'longDate'}}</p>
   </div>

@@ -112,9 +112,9 @@ export class PlanetRatingComponent implements OnChanges {
   onStarClick(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel> = this.rateForm) {
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       if (this.ratingType === 'course') {
-        this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+        this.planetMessage.showMessage($localize`Please join the course before rating!`);
       } else {
-        this.planetMessage.showMessage($localize`Please add the ${this.ratingType} to your library before rating!`);
+        this.planetMessage.showMessage($localize`Please add the resource to your library before rating!`);
       }
       this.enrolled = false;
       return;
