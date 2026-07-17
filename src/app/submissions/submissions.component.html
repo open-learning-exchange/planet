@@ -32,7 +32,7 @@
 }
 
 <ng-template #filterDropdown>
-  <mat-form-field class="font-size-1 margin-lr-3 status-dropdown">
+  <mat-form-field class="font-size-1 margin-lr-3 status-dropdown mdc-toolbar-input">
     <mat-label i18n>Status</mat-label>
     <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
       <mat-option i18n value="All">All</mat-option>
@@ -59,7 +59,7 @@
 </ng-template>
 <ng-template #filterSearch>
   <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
+  <mat-form-field class="font-size-1 mdc-toolbar-input">
     <mat-label i18n>Type name to search...</mat-label>
     <input matInput (keyup)="applyFilter($event.target.value)">
   </mat-form-field>
@@ -117,7 +117,11 @@
           @if (element?.user?.name) {
             <span class="cursor-pointer" [routerLink]="['/users/profile/', element.user.name]" (click)="nameClick($event, element.user)">{{element.submittedBy}}</span>
           } @else {
-            <span i18n>{{element?.submittedBy || 'Unknown'}}</span>
+            @if (element?.submittedBy) {
+              <span>{{element.submittedBy}}</span>
+            } @else {
+              <span i18n>Unknown</span>
+            }
           }
         </mat-cell>
       </ng-container>

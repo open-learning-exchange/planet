@@ -115,7 +115,7 @@
                       <div class="header-items">
                         <div class="header-date">
                           {{ column === 'label' ? '' : (column | date) }}@if (additionalInfo[column]?.hasInfo===true || additionalInfo[column]?.hasConditions===true) {
-                          <mat-icon class="primary-text-color" i18n-tooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
+                          <mat-icon class="primary-text-color" i18n-matTooltip matTooltip="Click for more information" [inline]="true">info</mat-icon>
                         }
                       </div>
                       @if (additionalInfo[column]?.selfExamination===true) {

@@ -58,14 +58,17 @@
   }
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table class="responsive-table" [dataSource]="teams" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
             {{element.doc.name | truncateText:150}}
-            @if (element.userStatus === 'member') {
-              <mat-icon class="margin-lr-3" i18n-title title="{{ mode === 'enterprise' ? 'Joined Enterprise' : 'Joined Team' }}" [inline]="true">check</mat-icon>
+            @if (element.userStatus === 'member' && mode === 'enterprise') {
+              <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
+            }
+            @if (element.userStatus === 'member' && mode !== 'enterprise') {
+              <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true">check</mat-icon>
             }
             @if (myTeamsFilter==='on') {
               <span class="team-type-label">
@@ -78,7 +81,11 @@
       <ng-container matColumnDef="visitLog.lastVisit">
         <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.lastVisit" i18n>Most recent visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{(element.visitLog.lastVisit | date: 'medium') || 'N/A'}}
+          @if (element.visitLog.lastVisit) {
+            {{element.visitLog.lastVisit | date: 'medium'}}
+          } @else {
+            <ng-container i18n>N/A</ng-container>
+          }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.visitCount">
@@ -110,7 +117,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <div class="button-container" [ngClass]="{'horizontal-align': isMobile}">
+          <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile}">
             @if (user.isUserAdmin || user.roles.length) {
               @switch (element.userStatus) {
                 @case ('member') {

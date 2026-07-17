@@ -5,7 +5,7 @@
     <planet-stacked-bar [data]="stackedBarData"></planet-stacked-bar>
   </div>
 
-  <div class="stats-total" i18n>{{ rating.totalRating + ' Total' }}</div>
+  <div class="stats-total">{{ rating.totalRating }} <ng-container i18n>Total</ng-container></div>
 
   <div class="avg-rating">
     <span class="rating-number">{{ rating.totalRating > 0 ? (rating.rateSum / rating.totalRating).toFixed(1) : (rating.rateSum).toFixed(1) }}</span>
