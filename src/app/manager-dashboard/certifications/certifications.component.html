@@ -6,12 +6,14 @@
   <span class="toolbar-fill"></span>
 
   @if (deviceType === deviceTypes.DESKTOP) {
-    <mat-icon>search</mat-icon>
-    <mat-form-field class="font-size-1 margin-lr-3">
-      <mat-label i18n>Type certification name to search</mat-label>
-      <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
-    </mat-form-field>
-    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+    <div class="toolbar-search">
+      <mat-icon>search</mat-icon>
+      <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+        <mat-label i18n>Type certification name to search</mat-label>
+        <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+    </div>
   } @else {
     <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow"><mat-icon>filter_list</mat-icon></button>
   }
@@ -21,12 +23,14 @@
 @if (showFiltersRow && deviceType !== deviceTypes.DESKTOP) {
   <mat-toolbar>
     <mat-toolbar-row>
-      <mat-icon>search</mat-icon>
-      <mat-form-field class="font-size-1 margin-lr-3">
-        <mat-label i18n>Type certification name to search</mat-label>
-        <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
-      </mat-form-field>
-      <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+      <div class="toolbar-search">
+        <mat-icon>search</mat-icon>
+        <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+          <mat-label i18n>Type certification name to search</mat-label>
+          <input matInput (keyup)="applyFilter($event.target.value)" [value]="certifications.filter">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="certifications.filter === ''" i18n><span>Clear</span></button>
+      </div>
     </mat-toolbar-row>
   </mat-toolbar>
 }
