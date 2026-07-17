@@ -26,12 +26,14 @@
 
 <ng-template #searchView>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1  mdc-toolbar-input">
-    <mat-label i18n>Type name to search...</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
+  <div class="toolbar-search">
+    <mat-icon>search</mat-icon>
+    <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+      <mat-label i18n>Type name to search...</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
+  </div>
 </ng-template>
 
 <div [ngClass]="{'space-container':!isDialog}">

@@ -58,6 +58,22 @@ body {
     flex: 1 1 auto;
   }
 
+  // Group search controls so the field grows without colliding with adjacent actions
+  .toolbar-search {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 26rem);
+    min-width: 0;
+
+    > .mat-mdc-form-field {
+      align-self: center;
+      min-width: 0;
+      padding-top: 0;
+    }
+  }
+
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
