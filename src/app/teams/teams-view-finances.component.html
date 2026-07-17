@@ -36,7 +36,13 @@
       }
       <span class="spacer"></span>
       @if (!emptyTable) {
-        <button mat-stroked-button (click)="exportTableData()"><mat-icon>file_download</mat-icon><span i18n>Export</span></button>
+        <button mat-stroked-button [matMenuTriggerFor]="financeExportMenu">
+          <mat-icon>file_download</mat-icon><span i18n>Export</span>
+        </button>
+        <mat-menu #financeExportMenu="matMenu">
+          <button mat-menu-item (click)="exportTableData()" i18n>CSV</button>
+          <button mat-menu-item (click)="exportTablePdf()" i18n>PDF</button>
+        </mat-menu>
       }
       @if (editable) {
         <button mat-raised-button color="primary" (click)="openEditTransactionDialog()"><mat-icon>add</mat-icon><span i18n>Add Transaction</span></button>

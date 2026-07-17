@@ -35,6 +35,9 @@ import { MatCheckbox } from '@angular/material/checkbox';
     .fetch-icon {
       color: #666;
     }
+    .fetch-action .mat-icon {
+      flex: 0 0 auto;
+    }
   `],
   imports: [
     MatToolbar,

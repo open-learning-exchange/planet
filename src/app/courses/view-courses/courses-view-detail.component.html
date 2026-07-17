@@ -10,7 +10,14 @@
 @if (courseDetail?.creatorDoc) {
   <p><b i18n>Creator:</b> {{courseDetail?.creatorDoc?.fullName}} </p>
 }
-<p><b i18n>Created on:</b> {{(courseDetail?.createdDate | date: 'mediumDate') || 'N/A'}}</p>
+<p>
+  <b i18n>Created on:</b>
+  @if (courseDetail?.createdDate) {
+    {{courseDetail.createdDate | date: 'mediumDate'}}
+  } @else {
+    <ng-container i18n>N/A</ng-container>
+  }
+</p>
 @if (courseDetail?.sourcePlanet !== planetConfiguration.code && courseDetail?.sourcePlanet) {
   <p><b i18n>Source:</b> {{courseDetail?.sourcePlanet}}</p>
 }
