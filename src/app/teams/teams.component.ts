@@ -86,6 +86,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   leaveDialog: any;
   message = '';
   deleteDialog: any;
+  cancelDialog: any;
   isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
   private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
@@ -363,18 +364,29 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   cancelRequest(team) {
-    this.dialogsLoadingService.start();
-    this.teamsService.removeFromRequests(team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
-      switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
-      switchMap(() => this.getMembershipStatus()),
-      finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => {
-      this.teams.data = this.teamList(this.teams.data);
-      const msg = this.mode === 'enterprise'
-        ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
-        : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + team.name;
-      this.planetMessageService.showMessage(msg);
+    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.removeFromRequests(team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+            switchMap(() => this.teamsService.getTeamMembers(team)),
+            switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
+            switchMap(() => this.getMembershipStatus())
+          ),
+          onNext: () => {
+            this.cancelDialog.close();
+            this.teams.data = this.teamList(this.teams.data);
+            const msg = this.mode === 'enterprise'
+              ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
+              : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + team.name;
+            this.planetMessageService.showMessage(msg);
+          }
+        },
+        showMainParagraph: false,
+        extraMessage: this.mode === 'enterprise'
+          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+          : $localize`Are you sure you want to cancel the request to join the following team?`,
+        displayName: team.name
+      }
     });
   }
 

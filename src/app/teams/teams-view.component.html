@@ -77,6 +77,7 @@
       }
       @case ('requesting') {
         <mat-chip-set aria-label="Request status" i18n-aria-label><mat-chip color="accent" highlighted i18n>Request pending</mat-chip></mat-chip-set>
+        <button mat-raised-button color="warn" class="toolbar-button margin-lr-3" (click)="cancelRequest()" i18n>Cancel Request</button>
       }
     }
   }

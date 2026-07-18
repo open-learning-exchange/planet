@@ -123,6 +123,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
+  cancelDialog: any;
   finances: any[] = [];
   teamDataLoading = true;
   reports: any[] = [];
@@ -435,6 +436,33 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.leader, this.userService.get());
       this.planetMessageService.showMessage(message);
+    });
+  }
+
+  cancelRequest() {
+    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.teamsService.removeFromRequests(this.team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+            switchMap(() => this.teamsService.getTeamMembers(this.team)),
+            switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team: this.team, url: this.router.url })),
+            switchMap(() => this.getMembers())
+          ),
+          onNext: () => {
+            this.cancelDialog.close();
+            this.setStatus(this.team, this.leader, this.userService.get());
+            const msg = this.mode === 'enterprise'
+              ? $localize`Cancelled request to join enterprise` + ' ' + this.team.name
+              : $localize`Cancelled request to join team` + ' ' + this.team.name;
+            this.planetMessageService.showMessage(msg);
+          }
+        },
+        showMainParagraph: false,
+        extraMessage: this.mode === 'enterprise'
+          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+          : $localize`Are you sure you want to cancel the request to join the following team?`,
+        displayName: this.team.name
+      }
     });
   }
 
