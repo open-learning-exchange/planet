@@ -13,6 +13,7 @@ import { DialogsFormService } from '../../shared/dialogs/dialogs-form.service';
 import { StateService } from '../../shared/state.service';
 import { ResourcesService } from '../resources.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
+import { NavigationService } from '../../shared/navigation.service';
 import { DeviceInfoService } from '../../shared/device-info.service';
 
 describe('ResourcesViewComponent', () => {
@@ -62,6 +63,7 @@ describe('ResourcesViewComponent', () => {
         DeviceInfoService,
         { provide: CouchService, useValue: couchServiceMock },
         { provide: Router, useValue: { navigate: vi.fn() } },
+        { provide: NavigationService, useValue: { back: vi.fn() } },
         {
           provide: ActivatedRoute,
           useValue: {

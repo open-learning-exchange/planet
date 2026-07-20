@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTab, MatTabGroup, MatTabLabel } from '@angular/material/tabs';
 import { Subject, forkJoin, of, throwError } from 'rxjs';
-import { takeUntil, switchMap, finalize, map, tap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, finalize, map, tap, catchError, distinctUntilChanged } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
@@ -26,6 +26,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
+import { NavigationService } from '../shared/navigation.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -49,6 +50,11 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+
+const legacyTabKeys: Record<string, string> = {
+  taskTab: 'tasks',
+  applicantTab: 'members'
+};
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -96,10 +102,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     TruncateTextPipe
   ]
 })
-export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
+export class TeamsViewComponent implements OnInit, OnDestroy {
 
-  @ViewChild('taskTab') taskTab: MatTab;
-  @ViewChild('applicantTab') applicantTab: MatTab;
   team: any;
   teamId: string;
   members = [];
@@ -129,7 +133,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   reports: any[] = [];
   tasks: any[];
   tabSelectedIndex = 0;
-  initTab;
+  requestedTab = 'chat';
   taskCount = 0;
   reportsCount = 0;
   financesCount = 0;
@@ -151,7 +155,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private reportsService: ReportsService,
     private stateService: StateService,
     private tasksService: TasksService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -160,35 +165,95 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   ngOnInit() {
     this.planetCode = this.stateService.configuration.code;
-    this.route.paramMap.pipe(takeUntil(this.onDestroy$), map((params: ParamMap) =>
-      params.get('teamId') || planetAndParentId(this.stateService.configuration)
-    ), tap((teamId) => {
-      this.teamId = teamId;
-      this.initTeam(teamId);
-      this.tasksService.getTasks();
-    }), switchMap((teamId) => this.tasksService.tasksListener({ [this.dbName]: teamId }))
+    this.route.queryParamMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
+      this.requestedTab = params.get('tab') || 'chat';
+      this.applyRequestedTab();
+    });
+    this.route.paramMap.pipe(
+      takeUntil(this.onDestroy$),
+      // Run for every route-param change, including navigations that reuse this
+      // component and only change the legacy activeTab matrix parameter.
+      tap((params: ParamMap) => this.normalizeLegacyTab(params)),
+      map((params: ParamMap) => params.get('teamId') || planetAndParentId(this.stateService.configuration)),
+      // The legacy-tab URL normalization re-emits paramMap for the same team.
+      distinctUntilChanged(),
+      tap((teamId) => {
+        this.teamId = teamId;
+        this.initTeam(teamId);
+        this.tasksService.getTasks();
+      }),
+      switchMap((teamId) => this.tasksService.tasksListener({ [this.dbName]: teamId }))
     ).subscribe(tasks => {
       this.tasks = tasks;
       this.setTasks(tasks);
     });
   }
 
-  ngAfterViewChecked() {
-    const activeTab: MatTab = this.getActiveTab(this.initTab);
-    if (activeTab && activeTab.position !== 0) {
-      setTimeout(() => {
-        this.tabSelectedIndex = this.tabSelectedIndex + activeTab.position;
-        this.initTab = activeTab.position === 0 ? '' : this.initTab;
-      }, 0);
+  private normalizeLegacyTab(params: ParamMap) {
+    const legacyParam = params.get('activeTab');
+    if (!legacyParam) {
+      return;
     }
+    const tab = this.route.snapshot.queryParamMap.get('tab') || legacyTabKeys[legacyParam] || legacyParam;
+    const path = '/' + this.route.snapshot.pathFromRoot
+      .flatMap(snapshot => snapshot.url.map(segment => segment.path))
+      .join('/');
+    this.router.navigate([ path ], {
+      queryParams: { ...this.route.snapshot.queryParams, tab: tab === 'chat' ? null : tab },
+      replaceUrl: true
+    });
   }
 
-  getActiveTab(initTab: string) {
-    const activeTabs = {
-      'taskTab': this.taskTab,
-      'applicantTab': this.applicantTab
-    };
-    return activeTabs[initTab];
+  // Stable keys for the visible tabs, in template order. Conditions must mirror
+  // the template @ifs so a key always resolves to the rendered tab position.
+  visibleTabs(): string[] {
+    const memberVisible = this.team?.public === true || this.userStatus === 'member';
+    return [
+      'chat', 'plan', 'members',
+      ...(memberVisible ? [ 'tasks', 'calendar', ...(this.mode !== 'team' ? [ 'finances' ] : []) ] : []),
+      ...(this.mode === 'enterprise' ? [ 'reports' ] : []),
+      ...(memberVisible ? [ 'resources', 'courses', 'surveys' ] : [])
+    ];
+  }
+
+  applyRequestedTab(visibilityResolved = false) {
+    const index = this.visibleTabs().indexOf(this.requestedTab);
+    if (index > -1 && index !== this.tabSelectedIndex) {
+      // Wait a tick so conditionally rendered tabs exist before the index is set
+      setTimeout(() => this.tabSelectedIndex = index, 0);
+      return;
+    }
+    if (index > -1 || !visibilityResolved) {
+      return;
+    }
+    // A conditional tab can only be rejected after team and membership data
+    // resolves. Replace-normalize unavailable or unknown tabs to Chat.
+    this.requestedTab = 'chat';
+    if (this.tabSelectedIndex !== 0) {
+      setTimeout(() => this.tabSelectedIndex = 0, 0);
+    }
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
+  }
+
+  onTabChange(index: number) {
+    this.tabSelectedIndex = index;
+    const key = this.visibleTabs()[index];
+    // Emissions echoing the requested tab (route-driven changes) must not renavigate
+    if (!key || key === this.requestedTab) {
+      return;
+    }
+    this.requestedTab = key;
+    // Pushes a history entry so browser/app back traverses previous tabs
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab: key === 'chat' ? null : key },
+      queryParamsHandling: 'merge'
+    });
   }
 
   ngOnDestroy() {
@@ -271,6 +336,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(() => {
       this.leader = {};
       this.userStatus = 'member';
+      // Services tabs are available to everyone, independent of membership docs.
+      this.applyRequestedTab(true);
     });
   }
 
@@ -351,8 +418,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
     this.isUserLeader = user._id === leader.userId && user.planetCode === leader.userPlanetCode;
-    if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
-      this.initTab = this.route.snapshot.params.activeTab;
+    // Conditional tabs may only exist now that team/membership data is known
+    if (this.mode !== 'services') {
+      this.applyRequestedTab(true);
     }
   }
 
@@ -638,16 +706,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     if (showMissingMessage) {
       this.planetMessageService.showAlert($localize`This team was not found`);
     }
-    if (this.mode === 'services') {
-      this.router.navigate([ '../' ], { relativeTo: this.route });
-    } else {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-    }
+    const fallback = this.mode === 'services' ? [ '../' ] : [ '../../' ];
+    this.navigationService.back(fallback, { relativeTo: this.route });
   }
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId: courseId, link: this.teamContextLink([ 'courses', courseId ]) },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -659,10 +724,16 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, {
       data: {
         resourceId,
-        returnState: { route: `${this.mode}s/view/${this.teamId}` }
+        link: this.teamContextLink([ 'resources', resourceId ])
       },
       autoFocus: false
     });
+  }
+
+  // Nested team routes only exist under the teams module mounts; the services
+  // pages (/nation, /earth) fall back to the global view routes
+  private teamContextLink(commands: any[]) {
+    return this.mode === 'services' ? undefined : { commands, relativeTo: this.route };
   }
 
   openMemberDialog(member) {

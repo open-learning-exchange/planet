@@ -221,7 +221,7 @@ export class TasksComponent implements OnInit {
       user: assignee.userId,
       'message': $localize`You were assigned a new task`,
       link,
-      linkParams: { activeTab: 'taskTab' },
+      linkParams: { activeTab: 'tasks' },
       'type': 'newTask',
       'priority': 1,
       'status': 'unread',

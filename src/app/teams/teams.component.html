@@ -1,7 +1,7 @@
 <mat-toolbar>
   <mat-toolbar-row>
     @if (!isDialog) {
-      <button mat-icon-button [routerLink]="[ '..' ]"><mat-icon>arrow_back</mat-icon></button>
+      <button mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
     }
     <span i18n>{ mode, select,
       team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
@@ -44,7 +44,7 @@
         <span class="toolbar-fill"></span>
         @if (mode==='team') {
           <div class="margin-lr-3">
-            <button mat-stroked-button routerLink='/teams/users' i18n>All Members</button>
+            <button mat-stroked-button [routerLink]="[ 'users' ]" i18n>All Members</button>
           </div>
         }
       }

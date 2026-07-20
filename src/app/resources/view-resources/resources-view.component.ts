@@ -8,6 +8,7 @@ import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { NavigationService } from '../../shared/navigation.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -81,7 +82,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -104,7 +106,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
             return;
           }
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
-          this.router.navigate([ '/resources' ]);
+          this.goBack();
+          return;
         }
         this.isLoading = false;
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
@@ -140,16 +143,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/resources/update/' + this.resourceId ]);
   }
 
-  /**
-   * If returnState is set in history, it will navigate to that page.(teams/enterprises)
-   * Returns routing to previous parent page
-   */
   goBack() {
-    const returnState = history.state?.returnState;
-    if (returnState) {
-      this.router.navigate([ `${returnState.route}` ]);
-      return;
-    }
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    const fallbackTab = this.route.snapshot.data.fallbackTab;
+    this.navigationService.back([ '../../' ], { relativeTo: this.route, ...(fallbackTab ? { queryParams: { tab: fallbackTab } } : {}) });
   }
 }

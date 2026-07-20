@@ -8,6 +8,7 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
+import { NavigationService } from '../../shared/navigation.service';
 import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -83,7 +84,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -225,17 +227,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   updateCourse() {
     this.router.navigate([ 'update' ], { relativeTo: this.route });
   }
-  /**
-   * If returnState is set in history, it will navigate to that page.(teams/enterprises)
-   * Returns routing to previous parent page on Courses
-   */
   goBack() {
-    const returnState = history.state?.returnState;
-    if (returnState) {
-      this.router.navigate([ `${returnState.route}` ]);
-      return;
-    }
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
+    const fallbackTab = this.route.snapshot.data.fallbackTab;
+    this.navigationService.back([ '../../' ], { relativeTo: this.route, ...(fallbackTab ? { queryParams: { tab: fallbackTab } } : {}) });
   }
 
 }

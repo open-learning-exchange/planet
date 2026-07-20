@@ -299,9 +299,11 @@ export class TeamsService {
   }
 
   teamNotification(message, type, user, { team, url }) {
-    const link = url.split(';')[0];
+    // Notifications append matrix parameters through RouterLink. Keep the stored
+    // link path-only so a current ?tab= query is not encoded as part of a segment.
+    const link = url.split(/[;?#]/)[0];
     const userId = user.userId || user._id;
-    const linkParams = type === 'request' ? { activeTab: 'applicantTab' } : {};
+    const linkParams = type === 'request' ? { activeTab: 'members' } : {};
     return {
       'user': userId,
       message,

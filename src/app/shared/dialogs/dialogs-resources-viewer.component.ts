@@ -1,4 +1,4 @@
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { CdkScrollable } from '@angular/cdk/scrolling';
@@ -22,14 +22,16 @@ export class DialogsResourcesViewerComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<DialogsResourcesViewerComponent>,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   viewResources() {
     this.dialogRef.close();
-    const navigationExtras = this.data.returnState ? { state: { returnState: this.data.returnState } } : { relativeTo: this.route };
-    this.router.navigate([ `/resources/view/${this.data.resourceId}` ], navigationExtras);
+    if (this.data.link) {
+      this.router.navigate(this.data.link.commands, this.data.link.relativeTo ? { relativeTo: this.data.link.relativeTo } : {});
+    } else {
+      this.router.navigate([ '/resources/view', this.data.resourceId ]);
+    }
   }
 
 }

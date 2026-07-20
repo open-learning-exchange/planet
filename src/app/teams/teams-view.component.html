@@ -86,7 +86,7 @@
 </ng-template>
 
 <div class="view-container view-full-height tab-scroll-shell">
-  <mat-tab-group [(selectedIndex)]="tabSelectedIndex" class="tabs-padding tab-scroll-layout">
+  <mat-tab-group [selectedIndex]="tabSelectedIndex" (selectedIndexChange)="onTabChange($event)" class="tabs-padding tab-scroll-layout">
     <mat-tab i18n-label label="Chat">
       @if (newsLoading) {
         <planet-loading-spinner text="Loading messages..." i18n-text></planet-loading-spinner>
@@ -198,7 +198,7 @@
       }
     </mat-tab>
     @if (team?.public === true || userStatus === 'member') {
-      <mat-tab #taskTab>
+      <mat-tab>
         <ng-template mat-tab-label>
           <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
         </ng-template>

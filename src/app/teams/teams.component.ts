@@ -8,6 +8,7 @@ import {
   MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
 } from '@angular/material/table';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -125,7 +126,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private stateService: StateService,
     private route: ActivatedRoute,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -261,6 +263,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       return;
     }
     this.router.navigate([ 'view', teamId ], { relativeTo: this.route });
+  }
+
+  goBack() {
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   addTeam(team: any = {}) {

@@ -1,6 +1,6 @@
 import { Component, Input, Inject, OnInit, OnChanges } from '@angular/core';
 import { StateService } from '../../shared/state.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { take } from 'rxjs/operators';
 import * as constants from '../constants';
@@ -75,7 +75,6 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   courseDetail;
 
   constructor(
-    private route: ActivatedRoute,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private coursesService: CoursesService,
@@ -92,7 +91,10 @@ export class CoursesViewDetailDialogComponent implements OnInit {
   }
 
   routeToCourses(courseId) {
-    const navigationExtras = this.data.returnState ? { state: { returnState: this.data.returnState } } : { relativeTo: this.route };
-    this.router.navigate([ '../../courses/view/', courseId ], navigationExtras);
+    if (this.data.link) {
+      this.router.navigate(this.data.link.commands, this.data.link.relativeTo ? { relativeTo: this.data.link.relativeTo } : {});
+    } else {
+      this.router.navigate([ '/courses/view', courseId ]);
+    }
   }
 }
