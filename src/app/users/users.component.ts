@@ -116,7 +116,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       if (this.isDialog) {
         this.applyFilter(searchText);
       } else {
-        this.router.navigate([], { relativeTo: this.route, queryParams: { search: searchText || null }});
+        this.router.navigate([], { relativeTo: this.route, queryParams: { search: searchText || null }, replaceUrl: true });
       }
     });
     this.usersService.requestUserData();

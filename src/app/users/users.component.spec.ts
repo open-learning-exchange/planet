@@ -11,7 +11,7 @@ import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 describe('Users', () => {
 
@@ -39,6 +39,36 @@ describe('Users', () => {
   it('Should be a UsersComponent', () => {
     const { comp } = setup();
     expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
+  });
+
+  it('replaces debounced search state instead of adding browser history entries', () => {
+    vi.useFakeTimers();
+    const router = { navigate: vi.fn() };
+    const route = { queryParamMap: NEVER };
+    const component = new UsersComponent(
+      { shelf: {}, get: vi.fn(() => ({ isUserAdmin: true })) } as any,
+      router as any,
+      route as any,
+      {} as any,
+      { configuration: { planetType: 'community' } } as any,
+      { start: vi.fn(), stop: vi.fn() } as any,
+      { getChildPlanets: vi.fn(() => NEVER) } as any,
+      { usersListener: vi.fn(() => NEVER), requestUserData: vi.fn(), roleList: [], allRolesList: [] } as any,
+      { watchDeviceType: vi.fn(() => NEVER) } as any,
+      {} as any
+    );
+    component.ngOnInit();
+
+    component.searchChanged('learner');
+    vi.advanceTimersByTime(500);
+
+    expect(router.navigate).toHaveBeenCalledWith([], {
+      relativeTo: route,
+      queryParams: { search: 'learner' },
+      replaceUrl: true
+    });
+    component.ngOnDestroy();
+    vi.useRealTimers();
   });
 
   // describe('Init', () => {

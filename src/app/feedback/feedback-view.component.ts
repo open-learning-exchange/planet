@@ -8,6 +8,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { FeedbackService } from './feedback.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
+import { NavigationService } from '../shared/navigation.service';
 import { StateService } from '../shared/state.service';
 import { urlToParamObject } from '../shared/utils';
 import { UsersService } from '../users/users.service';
@@ -88,7 +89,8 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     private router: Router,
     private dialogsLoadingService: DialogsLoadingService,
     private stateService: StateService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -112,6 +114,10 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.isActive = false;
     this.onDestroy$.next();
     this.onDestroy$.complete();
+  }
+
+  goBack() {
+    this.navigationService.back([ '/feedback' ]);
   }
 
   setFeedback(result) {
