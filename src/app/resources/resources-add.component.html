@@ -1,6 +1,6 @@
 @if (!isDialog) {
   <mat-toolbar>
-    <button type="button" mat-icon-button (click)="cancel()"><mat-icon>arrow_back</mat-icon></button>
+    <button type="button" mat-icon-button (click)="cancel()" aria-label="Back to resources" i18n-aria-label><mat-icon>arrow_back</mat-icon></button>
     @if (pageType) {
       <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Resource</span>
     }

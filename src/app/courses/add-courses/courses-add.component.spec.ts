@@ -88,22 +88,23 @@ describe('CoursesAddComponent', () => {
 
   // test cancel()
   it('should cancel by unwinding history with the list route as fallback', () => {
+    const route = fixture.debugElement.injector.get(ActivatedRoute);
     const navigationService = fixture.debugElement.injector.get(NavigationService);
     component.cancel();
-    expect(navigationService.back).toHaveBeenCalledWith([ '../' ], expect.anything());
+    expect(navigationService.back).toHaveBeenCalledWith([ '../' ], { relativeTo: route });
   });
 
   it('should compute the fallback depth from route segments, ignoring matrix params', () => {
     const route: any = fixture.debugElement.injector.get(ActivatedRoute);
     const navigationService = fixture.debugElement.injector.get(NavigationService);
     // update/:id form reached back from the exam editor: URL ends in ;continue=true
-    route.snapshot.url = [ { path: 'update' }, { path: 'abc123' } ];
+    route.snapshot.url = [ { path: 'update', parameters: { continue: 'true' } }, { path: 'abc123' } ];
     component.navigateBack();
-    expect(navigationService.back).toHaveBeenLastCalledWith([ '../../' ], expect.anything());
+    expect(navigationService.back).toHaveBeenLastCalledWith([ '../../' ], { relativeTo: route });
     // view/:id/update form is only one level above the course detail
     route.snapshot.url = [ { path: 'view' }, { path: 'abc123' }, { path: 'update' } ];
     component.navigateBack();
-    expect(navigationService.back).toHaveBeenLastCalledWith([ '../' ], expect.anything());
+    expect(navigationService.back).toHaveBeenLastCalledWith([ '../' ], { relativeTo: route });
   });
 
   // test onDayChange()

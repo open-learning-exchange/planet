@@ -18,7 +18,7 @@ export class NavigationService {
 
   private index = -1;
   private idToIndex = new Map<number, number>();
-  private currentNav: { id: number, trigger: string, restoredId: number | null, replaceUrl: boolean } = null;
+  private currentNav: { id: number, trigger: string, restoredId: number | null, replaceUrl: boolean } | null = null;
 
   constructor(private router: Router, private location: Location) {
     this.router.events.subscribe(event => {
