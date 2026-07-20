@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -82,7 +83,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -166,9 +168,9 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const teamsUrl = this.router.url.split('/');
     const currentUser = this.userService.get();
     if (currentUser.isUserAdmin || teamsUrl[1] === 'teams') {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
+      this.navigationService.back([ '../../' ], { relativeTo: this.route });
     } else {
-      this.router.navigate([ '/' ]);
+      this.navigationService.back([ '/' ]);
     }
   }
 

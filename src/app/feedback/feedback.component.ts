@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
@@ -141,7 +142,8 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -253,11 +255,7 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    if (this.userService.get().isUserAdmin) {
-      this.router.navigate([ '/manager' ]);
-    } else {
-      this.router.navigate([ '/' ]);
-    }
+    this.navigationService.back([ this.userService.get().isUserAdmin ? '/manager' : '/' ]);
   }
 
   onFilterChange(filterValue: string, field: string) {

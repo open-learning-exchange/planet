@@ -10,6 +10,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { filterSpecificFields, composeFilterFunctions, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -113,7 +114,8 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
     private userService: UserService,
     private meetupService: MeetupService,
     private stateService: StateService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private navigationService: NavigationService
   ) {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().subscribe((date) => this.dateNow = date);
@@ -213,7 +215,7 @@ export class MeetupsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.parent ? this.router.navigate([ '/manager' ]) : this.router.navigate([ '/' ]);
+    this.navigationService.back([ this.parent ? '/manager' : '/' ]);
   }
 
   upcomingMeetups(ids: any) {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { FormGroup, FormControl, NonNullableFormBuilder, FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -136,7 +137,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     private chatService: ChatService,
     private examsService: ExamsService,
     private fb: NonNullableFormBuilder,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -285,7 +287,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    this.navigationService.back([ '../' ], { relativeTo: this.route });
   }
 
   routeToEditSurvey(route, id = '') {
