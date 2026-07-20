@@ -8,6 +8,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
@@ -193,7 +194,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -297,8 +299,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateResource(resource) {
-    const { _id: resourceId } = resource;
-    this.router.navigate([ '/resources/update/' + resource._id ]);
+    this.router.navigate([ 'update', resource._id ], { relativeTo: this.route });
   }
 
   resourceDescription(element) {
@@ -372,7 +373,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route.parent });
+    this.navigationService.back([ '..' ], { relativeTo: this.route.parent });
   }
 
   libraryToggle(resourceIds, type) {

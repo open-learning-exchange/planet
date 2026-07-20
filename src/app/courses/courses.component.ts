@@ -8,6 +8,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, of } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
@@ -208,7 +209,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     private tagsService: TagsService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private navigationService: NavigationService
   ) {
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
@@ -302,8 +304,11 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   updateCourse(course) {
-    const { _id: courseId } = course;
-    this.router.navigate([ '/courses/update/' + course._id ]);
+    if (this.isDialog || this.isForm) {
+      this.router.navigate([ '/courses/update', course._id ]);
+    } else {
+      this.router.navigate([ 'update', course._id ], { relativeTo: this.route });
+    }
   }
 
   deleteClick(course) {
@@ -372,7 +377,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route.parent });
+    this.navigationService.back([ '..' ], { relativeTo: this.route.parent });
   }
 
   enrollLeaveToggle(courseIds, type) {

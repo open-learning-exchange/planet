@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -33,6 +34,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private navigationService: NavigationService,
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private userService: UserService
@@ -113,7 +115,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   }
 
   navigateBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   changeData(event) {}

@@ -126,7 +126,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
-      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat', returnState: { route: 'myDashboard' } },
+      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat' },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
       { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },
@@ -151,10 +151,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     forkJoin([
-      this.getData('resources', userShelf.resourceIds, { linkPrefix: '/resources/view/', addId: true }),
-      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/courses/view/', addId: true }),
+      this.getData('resources', userShelf.resourceIds, { linkPrefix: '/myDashboard/myLibrary/view/', addId: true }),
+      this.getData('courses', userShelf.courseIds, { titleField: 'courseTitle', linkPrefix: '/myDashboard/myCourses/view/', addId: true }),
       this.getData('meetups', userShelf.meetupIds, { linkPrefix: '/meetups/view/', addId: true }),
-      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/teams/view/', addId: true }),
+      this.getData('teams', userShelf.myTeamIds, { titleField: 'name', linkPrefix: '/myDashboard/myTeams/view/', addId: true }),
       this.getTeamMembership()
     ]).pipe(finalize(() => this.isLoading = false)).subscribe(dashboardItems => {
       this.data.resources = dashboardItems[0];
@@ -185,7 +185,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ).pipe(
       switchMap((memberships) => forkJoin([
         of(memberships),
-        this.getData('teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/teams/view/', addId: true })
+        this.getData(
+          'teams', memberships.map((doc: any) => doc.teamId), { titleField: 'name', linkPrefix: '/myDashboard/myTeams/view/', addId: true }
+        )
       ])),
       map(([ memberships, teams ]: any[]) =>
         teams.filter(team => team.type === undefined || team.type === 'team' || team.type === 'enterprise').map(team => ({
@@ -242,7 +244,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openCourseView(course: any) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: course._id, returnState: { route: 'myDashboard' } },
+      data: { courseId: course._id, link: { commands: [ '/myDashboard/myCourses/view', course._id ] } },
       minWidth: '50vw',
       maxWidth: '80vw',
       maxHeight: '80vh',

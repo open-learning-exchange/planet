@@ -237,18 +237,18 @@
                 <span i18n>Edit Course</span>
               </a>
             }
-            <a mat-menu-item [routerLink]="['/courses/view', element._id]">
+            <a mat-menu-item [routerLink]="!isDialog && !isForm ? ['view', element._id] : ['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
               <span i18n>View Course</span>
             </a>
             @if (user.isUserAdmin) {
-              <a mat-menu-item [routerLink]="['/courses/progress', element._id]">
+              <a mat-menu-item [routerLink]="!isDialog && !isForm ? ['progress', element._id] : ['/courses/progress', element._id]">
                 <mat-icon>equalizer</mat-icon>
                 <span i18n>Progress</span>
               </a>
             }
             @if (element.canManage) {
-              <a mat-menu-item [routerLink]="['/courses/enrolled', element._id]">
+              <a mat-menu-item [routerLink]="!isDialog && !isForm ? ['enrolled', element._id] : ['/courses/enrolled', element._id]">
                 <mat-icon>person</mat-icon>
                 <span i18n>Enroll List</span>
               </a>

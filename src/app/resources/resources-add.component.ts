@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
@@ -22,7 +23,7 @@ import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -70,8 +71,6 @@ interface ResourceFormModel {
   styleUrls: ['./resources-add.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
-    RouterLink,
     MatIcon,
     NgClass,
     FormsModule,
@@ -158,6 +157,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private dialogsLoadingService: DialogsLoadingService,
+    private navigationService: NavigationService,
   ) {
     // Adds the dropdown lists to this component
     Object.assign(this, constants);
@@ -364,7 +364,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     if (this.isDialog) {
       this.afterSubmit.next({ doc: resourceRes });
     } else {
-      this.router.navigate([ '/resources' ]);
+      this.navigationService.back(this.listRouteFallback(), { relativeTo: this.route });
     }
     this.planetMessageService.showMessage(message);
   }
@@ -432,7 +432,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   cancel() {
-    this.router.navigate([ '/resources' ]);
+    this.navigationService.back(this.listRouteFallback(), { relativeTo: this.route });
+  }
+
+  // The list route of whichever mount this form is under ('add' is one segment
+  // deep, 'update/:id' is two), so cold fallbacks keep e.g. myDashboard/myLibrary
+  private listRouteFallback() {
+    return [ this.route.snapshot.url.length > 1 ? '../..' : '..' ];
   }
 
   private disableOpenWhichFile() {

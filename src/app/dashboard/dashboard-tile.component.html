@@ -34,7 +34,6 @@
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
               [routerLink]="recentlyDragged ? null : item.link"
-              [state]="item.returnState ? { returnState: item.returnState } : undefined"
               [matTooltip]="item.tooltip"
               cdkDrag
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"

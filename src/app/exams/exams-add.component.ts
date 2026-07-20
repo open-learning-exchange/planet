@@ -11,6 +11,7 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -118,8 +119,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   steps = [];
   showFormError = false;
   showPreviewError = false;
-  isCourseContent = this.router.url.match(/courses/);
-  returnUrl = this.coursesService.returnUrl || 'courses';
+  // Case-insensitive so the /myDashboard/myCourses mount also counts as course content
+  isCourseContent = this.router.url.match(/courses/i);
+  returnUrl = this.coursesService.returnUrl || '';
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
@@ -148,7 +150,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
     private examsService: ExamsService,
     private planetStepListService: PlanetStepListService,
     private dialog: MatDialog,
-    private submissionsService: SubmissionsService
+    private submissionsService: SubmissionsService,
+    private navigationService: NavigationService
   ) {
     const typeParam = this.route.snapshot.paramMap.get('type');
     this.examType = typeParam === 'exam' || typeParam === 'survey' ? typeParam : 'exam';
@@ -296,10 +299,18 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
 
   goBack() {
     if (this.examType === 'survey' && !this.isCourseContent) {
-      this.router.navigate([ this.pageType === 'Add' ? '../' : '../../' ], { relativeTo: this.route });
+      this.navigationService.back([ this.pageType === 'Add' ? '../' : '../../' ], { relativeTo: this.route });
       return;
     }
-    this.router.navigateByUrl(this.returnUrl);
+    // The course form's history entry was rewritten to its ;continue=true URL
+    // when this editor opened, so history back restores the in-progress course.
+    // With no stored return URL (refresh/deep link), fall back to the list route
+    // of whichever mount the editor is under.
+    if (this.returnUrl) {
+      this.navigationService.back(this.returnUrl);
+    } else {
+      this.navigationService.back([ '../'.repeat(this.route.snapshot.url.length) ], { relativeTo: this.route });
+    }
   }
 
   newExamName(existingExams: Array<{ name: string }>, namePrefix: string, nameNumber = 0) {

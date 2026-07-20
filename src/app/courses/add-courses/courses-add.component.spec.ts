@@ -7,6 +7,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CouchService } from '../../shared/couchdb.service';
+import { NavigationService } from '../../shared/navigation.service';
 import { MaterialModule } from '../../shared/material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
@@ -34,7 +35,8 @@ describe('CoursesAddComponent', () => {
           useValue: {
             snapshot: {
               paramMap: { get: () => undefined },
-              params: {}
+              params: {},
+              url: [ { path: 'add' } ]
             }
           }
         },
@@ -46,7 +48,8 @@ describe('CoursesAddComponent', () => {
             serializeUrl: vi.fn().mockReturnValue('/courses/add;continue=true'),
             navigate: vi.fn()
           }
-        }
+        },
+        { provide: NavigationService, useValue: { back: vi.fn() } }
       ]
     });
     fixture = TestBed.createComponent(CoursesAddComponent);
@@ -84,8 +87,23 @@ describe('CoursesAddComponent', () => {
   // });
 
   // test cancel()
-  it('should cancel', () => {
-    expect(component.cancel()).toBe(undefined);
+  it('should cancel by unwinding history with the list route as fallback', () => {
+    const navigationService = fixture.debugElement.injector.get(NavigationService);
+    component.cancel();
+    expect(navigationService.back).toHaveBeenCalledWith([ '../' ], expect.anything());
+  });
+
+  it('should compute the fallback depth from route segments, ignoring matrix params', () => {
+    const route: any = fixture.debugElement.injector.get(ActivatedRoute);
+    const navigationService = fixture.debugElement.injector.get(NavigationService);
+    // update/:id form reached back from the exam editor: URL ends in ;continue=true
+    route.snapshot.url = [ { path: 'update' }, { path: 'abc123' } ];
+    component.navigateBack();
+    expect(navigationService.back).toHaveBeenLastCalledWith([ '../../' ], expect.anything());
+    // view/:id/update form is only one level above the course detail
+    route.snapshot.url = [ { path: 'view' }, { path: 'abc123' }, { path: 'update' } ];
+    component.navigateBack();
+    expect(navigationService.back).toHaveBeenLastCalledWith([ '../' ], expect.anything());
   });
 
   // test onDayChange()

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { NonNullableFormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -67,6 +67,7 @@ export class CoursesStepComponent implements OnDestroy {
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private fb: NonNullableFormBuilder,
     private dialog: MatDialog,
     private coursesService: CoursesService,
@@ -130,11 +131,20 @@ export class CoursesStepComponent implements OnDestroy {
 
   addExam(type = 'exam') {
     this.coursesService.stepIndex = this.activeStepIndex;
-    if (this.activeStep[type]) {
-      this.router.navigate([ '/courses/update/exam/', this.activeStep[type]._id, { type } ]);
-    } else {
-      this.router.navigate([ '/courses/exam/', { type } ]);
-    }
+    // Editor routes exist only under CoursesModule mounts, so forms there stay in
+    // their mount; the teams-nested course form uses the global editor (the same
+    // global-authoring decision as resource editing)
+    const formPath = this.route.snapshot.routeConfig?.path;
+    const toModuleRoot = [ 'add', 'update/:id', 'view/:id/update' ].includes(formPath) ?
+      '../'.repeat(this.route.snapshot.url.length) : '/courses/';
+    const editorRoute = this.activeStep[type] ?
+      [ `${toModuleRoot}update/exam`, this.activeStep[type]._id, { type } ] :
+      [ `${toModuleRoot}exam`, { type } ];
+    // Rewrite the form's history entry to its ;continue=true return URL before
+    // opening the editor, so leaving the editor pops straight back into the
+    // in-progress course instead of pushing a second form entry
+    this.router.navigateByUrl(this.coursesService.returnUrl, { replaceUrl: true })
+      .then(() => this.router.navigate(editorRoute, { relativeTo: this.route }));
   }
 
   stepsMoved(steps) {

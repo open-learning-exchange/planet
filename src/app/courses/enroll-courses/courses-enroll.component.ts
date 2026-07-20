@@ -3,6 +3,7 @@ import { formatDate } from '@angular/common';
 import { zip } from 'rxjs';
 import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { UsersService } from '../../users/users.service';
 import { CoursesService } from '../courses.service';
@@ -44,6 +45,7 @@ export class CoursesEnrollComponent {
     private stateService: StateService,
     private managerService: ManagerService,
     private csvService: CsvService,
+    private navigationService: NavigationService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
     this.coursesService.requestCourses();
@@ -78,7 +80,7 @@ export class CoursesEnrollComponent {
   }
 
   back() {
-    this.router.navigate([ '../..' ], { relativeTo: this.route });
+    this.navigationService.back([ '../..' ], { relativeTo: this.route });
   }
 
   setMembers([ shelfUsers, progresses, users, childPlanets, courses ]) {

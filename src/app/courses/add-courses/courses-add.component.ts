@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { Subject, forkJoin, of, combineLatest, race, interval, from } from 'rxjs';
 import { takeWhile, debounce, catchError, switchMap } from 'rxjs/operators';
 
@@ -116,7 +117,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private navigationService: NavigationService
   ) {
     this.createForm();
     this.onFormChanges();
@@ -465,14 +467,12 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   }
 
   navigateBack() {
-    const relativeRoute = (urlArray: string[]) => {
-      const lastIndex = urlArray.length - 1;
-      const endConditions = [ 'update', 'add' ];
-      return `../${
-        (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
-      }`;
-    };
-    this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
+    // Structured route segments ignore matrix params (e.g. ;continue=true), so
+    // the fallback depth is stable: 'add' and 'view/:id/update' are one level
+    // above their list/detail page, 'update/:id' is two
+    const segments = this.route.snapshot.url.map(segment => segment.path);
+    const anchor = Math.max(segments.lastIndexOf('update'), segments.lastIndexOf('add'), 0);
+    this.navigationService.back([ '../'.repeat(segments.length - anchor) ], { relativeTo: this.route });
   }
 
   removeStep(pos) {

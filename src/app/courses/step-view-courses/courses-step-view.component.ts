@@ -231,6 +231,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  // Breadcrumb-style "up": always targets the course detail. History-based back
+  // would land on the previous step instead of the detail page.
   backToCourseDetail() {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
     const challenge = this.challengesService.getActiveChallengeForCourse(this.courseId);

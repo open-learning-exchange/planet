@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -79,7 +80,8 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private csvService: CsvService,
     private dialog: MatDialog,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -134,7 +136,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   navigateBack() {
-    this.router.navigate([ '/courses' ]);
+    this.navigationService.back([ '../../' ], { relativeTo: this.route });
   }
 
   arraySubmissionAnswers(submission: any) {
