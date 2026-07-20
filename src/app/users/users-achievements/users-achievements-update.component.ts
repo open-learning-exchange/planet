@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy, HostListener, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { combineLatest, forkJoin, Subject, interval, merge, of, race } from 'rxjs';
 import { catchError, takeUntil, debounce, filter, startWith, take, switchMap } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
@@ -150,7 +151,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     private dialogsFormService: DialogsFormService,
     private stateService: StateService,
     private validatorService: ValidatorService,
-    private planetStepListService: PlanetStepListService
+    private planetStepListService: PlanetStepListService,
+    private navigationService: NavigationService
   ) {
     this.createForm();
     this.createProfileForm();
@@ -549,7 +551,7 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   canDeactivate(): boolean {

@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { Router, NavigationStart, NavigationEnd, RouterOutlet } from '@angular/router';
 import { StateService } from './shared/state.service';
+import { NavigationService } from './shared/navigation.service';
 import { Dir } from '@angular/cdk/bidi';
 declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 
@@ -16,7 +17,9 @@ export class AppComponent {
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
     public router: Router,
-    private stateService: StateService
+    private stateService: StateService,
+    // Injected so back-navigation history tracking starts at app boot
+    private navigationService: NavigationService
   ) {
     iconRegistry.addSvgIcon(
       'myLibrary',
