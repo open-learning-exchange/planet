@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { vi } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
 import { CouchService } from '../shared/couchdb.service';
@@ -14,6 +14,8 @@ import { UserService } from '../shared/user.service';
 import { NEVER, of } from 'rxjs';
 
 describe('Users', () => {
+
+  afterEach(() => vi.useRealTimers());
 
   const setup = () => {
     TestBed.configureTestingModule({
@@ -60,15 +62,19 @@ describe('Users', () => {
     component.ngOnInit();
 
     component.searchChanged('learner');
-    vi.advanceTimersByTime(500);
+    vi.advanceTimersByTime(499);
 
+    expect(router.navigate).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(1);
+
+    expect(router.navigate).toHaveBeenCalledTimes(1);
     expect(router.navigate).toHaveBeenCalledWith([], {
       relativeTo: route,
       queryParams: { search: 'learner' },
       replaceUrl: true
     });
     component.ngOnDestroy();
-    vi.useRealTimers();
   });
 
   // describe('Init', () => {
