@@ -34,6 +34,8 @@ import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '.
 import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -75,6 +77,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
   draftExists: boolean;
+  deleteDialog: MatDialogRef<DialogsPromptComponent> | null = null;
   courseForm: FormGroup<CourseFormModel>;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
@@ -98,7 +101,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this._steps = value.map(step => ({
       ...step,
       description: step.description?.text ?? step.description ?? '',
-      images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
+      images: [...(step.description?.images ?? []), ...(step.images || [])]
     }));
     this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
     this.stepsChange$.next(value);
@@ -116,7 +119,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.onFormChanges();
@@ -130,7 +134,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
       this.pouchService.getDocEditing(this.dbName, this.courseId),
       this.couchService.get('courses/' + this.courseId).pipe(catchError((err) => of(err.error))),
       this.stateService.getCouchState('tags', 'local')
-    ]).subscribe(([ draft, saved, tags ]: [ any, any, any[] ]) => {
+    ]).subscribe(([draft, saved, tags]: [any, any, any[]]) => {
       if (saved.error !== 'not_found') {
         this.setDocumentInfo(saved);
         this.savedCourse = saved;
@@ -157,7 +161,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         this.setInitialState();
       }
     });
-    const returnRoute = this.router.createUrlTree([ '.', { continue: true } ], { relativeTo: this.route });
+    const returnRoute = this.router.createUrlTree(['.', { continue: true }], { relativeTo: this.route });
     this.coursesService.returnUrl = this.router.serializeUrl(returnRoute);
     if (!continued) {
       this.coursesService.course = { form: this.courseForm.value, steps: this.steps };
@@ -229,7 +233,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (this.isDestroyed) {
       return;
     }
-    const courseTags = documentInfo._id ? this.tagsService.attachTagsToDocs(this.dbName, [ documentInfo ], tags)[0].tags : [];
+    const courseTags = documentInfo._id ? this.tagsService.attachTagsToDocs(this.dbName, [documentInfo], tags)[0].tags : [];
     this.coursesService.course = { initialTags: courseTags || [] };
     this.tags.setValue(draft === undefined ? this.coursesService.course.initialTags.map((tag: any) => tag._id) : draft.tags);
   }
@@ -242,7 +246,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     ]).pipe(
       debounce(() => race(interval(200), this.onDestroy$)),
       takeWhile(() => this.isDestroyed === false, true)
-    ).subscribe(([ value, steps, tags ]) => {
+    ).subscribe(([value, steps, tags]) => {
       if (this.isSaved) {
         return;
       }
@@ -280,13 +284,13 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   setExistingCover(course: any) {
     const fileName = course.coverFileName;
     const attachment = course._attachments?.[fileName];
-    this.existingCoverAttachments = fileName && attachment ? [ {
+    this.existingCoverAttachments = fileName && attachment ? [{
       name: fileName,
       contentType: attachment.content_type,
       url: couchAttachmentUrl(environment.couchAddress, this.dbName, course._id, fileName)
-    } ] : [];
+    }] : [];
     // Seed cover state directly so a save can't drop the cover if it fires before the upload child emits.
-    this.setCoverState({ retained: [ ...this.existingCoverAttachments ], removed: [], added: [] });
+    this.setCoverState({ retained: [...this.existingCoverAttachments], removed: [], added: [] });
   }
 
   updateCourse(courseInfo: FormGroup<CourseFormModel>['value'], shouldNavigate: boolean) {
@@ -320,7 +324,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
         }
         return this.saveCourseDocument(newCourse);
       })
-    ).subscribe(([ courseRes ]) => {
+    ).subscribe(([courseRes]) => {
       const message = (this.pageType === 'Edit' ? $localize`Edited course: ` : $localize`Added course: `) + courseInfo.courseTitle;
       this.courseChangeComplete(message, courseRes, shouldNavigate);
       this.preserveCoverStateUntilSubmit = false;
@@ -406,7 +410,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     this.stateService.getCouchState('tags', 'local').subscribe((tags) => this.setInitialTags(tags, this.documentInfo));
     this.coursesService.course = { ...this.documentInfo };
     if (this.pageType === 'Add') {
-      this.router.navigate([ '../update/', this.courseId ], { relativeTo: this.route, replaceUrl: true });
+      this.router.navigate(['../update/', this.courseId], { relativeTo: this.route, replaceUrl: true });
     }
   }
 
@@ -439,6 +443,27 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.draftExists) {
       return;
     }
+    const displayName = this.courseForm.value.courseTitle || $localize`Draft`;
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            this.executeDeleteDraft();
+            this.deleteDialog?.close();
+          },
+          onError: () => {
+            this.deleteDialog?.close();
+          }
+        },
+        changeType: 'delete',
+        type: 'course',
+        displayName
+      }
+    });
+  }
+
+  private executeDeleteDraft() {
     this.coverUploadComponent?.clear();
     if (this.savedCourse) {
       this.setFormAndSteps({
@@ -467,12 +492,11 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   navigateBack() {
     const relativeRoute = (urlArray: string[]) => {
       const lastIndex = urlArray.length - 1;
-      const endConditions = [ 'update', 'add' ];
-      return `../${
-        (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
+      const endConditions = ['update', 'add'];
+      return `../${(lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
       }`;
     };
-    this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });
+    this.router.navigate([relativeRoute(this.router.url.split('/'))], { relativeTo: this.route });
   }
 
   removeStep(pos) {

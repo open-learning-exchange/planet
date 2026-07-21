@@ -12,6 +12,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+
 describe('CoursesAddComponent', () => {
   let component: CoursesAddComponent;
   let fixture: ComponentFixture<CoursesAddComponent>;
@@ -73,32 +76,29 @@ describe('CoursesAddComponent', () => {
     expect(component.courseForm.controls.courseTitle.hasError('required')).toBe(true);
   });
 
-  // test addCourse()
-  // it('should make a post request to CouchDB', () => {
-  //   postSpy = spyOn(couchService, 'post').and.returnValue(of({ ...testCourseForm }));
-  //   component.addCourse(testCourseForm);
-  //   fixture.detectChanges();
-  //   fixture.whenStable().then(() => {
-  //     expect(postSpy).toHaveBeenCalled();
-  //   });
-  // });
-
   // test cancel()
   it('should cancel', () => {
     expect(component.cancel()).toBe(undefined);
   });
 
-  // test onDayChange()
-  // it('should onDayChange', () => {
-  //   expect(component.onDayChange('Monday', true)).toBe(undefined);
-  // });
+  it('should not open dialog when deleteDraft is called and draftExists is false', () => {
+    const dialog = TestBed.inject(MatDialog);
+    const openSpy = vi.spyOn(dialog, 'open');
+    component.draftExists = false;
+    component.deleteDraft();
+    expect(openSpy).not.toHaveBeenCalled();
+  });
 
-  // test toogleWeekly()
-  // it('should toogleDaily', () => {
-  //   component.toggleDaily(false);
-  //   fixture.whenStable().then(() => {
-  //     fixture.detectChanges();
-  //     expect(component.showDaysCheckBox).toBe(false);
-  //   });
-  // });
+  it('should open confirmation dialog when deleteDraft is called and draftExists is true', () => {
+    const dialog = TestBed.inject(MatDialog);
+    const openSpy = vi.spyOn(dialog, 'open').mockReturnValue({ close: vi.fn() } as any);
+    component.draftExists = true;
+    component.deleteDraft();
+    expect(openSpy).toHaveBeenCalledWith(DialogsPromptComponent, expect.objectContaining({
+      data: expect.objectContaining({
+        changeType: 'delete',
+        type: 'course'
+      })
+    }));
+  });
 });

@@ -1,16 +1,19 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
   @if (pageType) {
-    <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
+  <span i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</span>
   }
 </mat-toolbar>
 
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}} Course</mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1" i18n>{this.pageType, select, Add {Add} Edit {Edit}}
+    Course</mat-toolbar>
   <div class="view-container view-full-height">
     <div class="course-content">
       <mat-accordion>
-        <mat-expansion-panel class="course-details-panel" [class.course-details-invalid]="submitAttempted && courseForm.invalid" [expanded]="isFormExpanded" (opened)="openCourseDetails()" (closed)="isFormExpanded = false">
+        <mat-expansion-panel class="course-details-panel"
+          [class.course-details-invalid]="submitAttempted && courseForm.invalid" [expanded]="isFormExpanded"
+          (opened)="openCourseDetails()" (closed)="isFormExpanded = false">
           <mat-expansion-panel-header>
             <mat-panel-title class="course-title-header" i18n>
               Course Details: {{ (courseForm.controls.courseTitle.value || newCourseLabel) | truncateText:50 }}
@@ -21,12 +24,15 @@
               <mat-form-field class="full-width">
                 <mat-label i18n>Course Title</mat-label>
                 <input matInput formControlName="courseTitle" required>
-                <mat-error><planet-form-error-messages class="km-coursetitle-errormessage" [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
+                <mat-error><planet-form-error-messages class="km-coursetitle-errormessage"
+                    [control]="courseForm.controls.courseTitle"></planet-form-error-messages></mat-error>
               </mat-form-field>
               <mat-form-field class="full-width mat-form-field-type-no-underline">
                 <mat-label i18n>Description</mat-label>
-                <planet-markdown-textbox class="full-width" required="true" [formControl]="courseForm.controls.description" imageGroup="community"></planet-markdown-textbox>
-                <mat-error><planet-form-error-messages [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
+                <planet-markdown-textbox class="full-width" required="true"
+                  [formControl]="courseForm.controls.description" imageGroup="community"></planet-markdown-textbox>
+                <mat-error><planet-form-error-messages
+                    [control]="courseForm.controls.description"></planet-form-error-messages></mat-error>
               </mat-form-field>
               <div class="collections-field">
                 <planet-tag-input [formControl]="tags" [db]="dbName" mode="add"></planet-tag-input>
@@ -37,9 +43,9 @@
                   <input matInput formControlName="languageOfInstruction" [matAutocomplete]="auto">
                   <mat-autocomplete #auto="matAutocomplete">
                     @for (language of languageNames; track language) {
-                      <mat-option [value]="language">
-                        {{ language }}
-                      </mat-option>
+                    <mat-option [value]="language">
+                      {{ language }}
+                    </mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
@@ -47,7 +53,7 @@
                   <mat-label i18n>Grade Level</mat-label>
                   <mat-select formControlName="gradeLevel" required>
                     @for (grade of gradeLevels; track grade) {
-                      <mat-option [value]="grade.value">{{grade.label}}</mat-option>
+                    <mat-option [value]="grade.value">{{grade.label}}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -55,21 +61,16 @@
                   <mat-label i18n>Subject Level</mat-label>
                   <mat-select formControlName="subjectLevel" required>
                     @for (sub of subjectLevels; track sub) {
-                      <mat-option [value]="sub.value">{{sub.label}}</mat-option>
+                    <mat-option [value]="sub.value">{{sub.label}}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
               </div>
               <div class="cover-field">
                 <label class="cover-label" i18n>Cover image</label>
-                <planet-file-upload
-                  accept="image/*"
-                  [imagePreview]="true"
-                  [maxFiles]="1"
-                  [typePills]="['IMG']"
+                <planet-file-upload accept="image/*" [imagePreview]="true" [maxFiles]="1" [typePills]="['IMG']"
                   hint="Recommended: a square image. Covers are cropped to fit." i18n-hint
-                  [existingAttachments]="existingCoverAttachments"
-                  (stateChange)="onCoverStateChange($event)">
+                  [existingAttachments]="existingCoverAttachments" (stateChange)="onCoverStateChange($event)">
                 </planet-file-upload>
               </div>
             </form>
@@ -77,17 +78,20 @@
         </mat-expansion-panel>
       </mat-accordion>
       <div class="steps-container" [hidden]="steps.length === 0">
-        <planet-courses-step [(steps)]="steps" (stepEditorOpenChange)="onStepEditorOpenChange($event)"></planet-courses-step>
+        <planet-courses-step [(steps)]="steps"
+          (stepEditorOpenChange)="onStepEditorOpenChange($event)"></planet-courses-step>
       </div>
     </div>
     <div class="actions-container">
-      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary" i18n>Submit</button>
+      <button type="submit" (click)="onSubmit()" [planetSubmit]="courseForm.valid" mat-raised-button color="primary"
+        i18n>Submit</button>
       <button type="button" mat-stroked-button color="primary" (click)="addStep()">
         <mat-icon>add</mat-icon>
         <span i18n>Add Step</span>
       </button>
       @if (draftExists) {
-        <button type="button" mat-stroked-button (click)="deleteDraft()" i18n="@@discardDraftButton">Discard Draft</button>
+      <button type="button" mat-stroked-button color="warn" (click)="deleteDraft()" i18n="@@discardDraftButton">Discard
+        Draft</button>
       }
       <button type="button" mat-stroked-button color="warn" (click)="cancel()" i18n>Cancel</button>
     </div>
