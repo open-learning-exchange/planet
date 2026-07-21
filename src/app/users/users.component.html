@@ -85,7 +85,7 @@
         <div class="margin-lr-3">
           @if (isUserAdmin) {
             <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form">
-              <mat-form-field style="width:256px" class="mdc-toolbar-input">
+              <mat-form-field class="mdc-toolbar-input role-set-select">
                 <mat-label i18n>Set roles of selected</mat-label>
                 <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
                   <mat-option disabled="disabled" class="hide-checkbox">

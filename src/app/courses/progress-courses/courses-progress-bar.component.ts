@@ -33,6 +33,10 @@ export class CoursesProgressBarComponent implements OnChanges {
     }
   }
 
+  stepTooltip(step: any, index: number): string {
+    return step.stepTitle || $localize`Step ${index + 1}:stepNumber:`;
+  }
+
   progressStatus(progress: any) {
     if (progress === undefined) {
       return 'not started';

@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { formatDate as formatLocaleDate } from '@angular/common';
 import { ExportToCsv } from 'export-to-csv/build';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -21,7 +22,8 @@ export class CsvService {
   constructor(
     private couchService: CouchService,
     private reportsService: ReportsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
   private generate(data, options?) {
@@ -31,7 +33,8 @@ export class CsvService {
   }
 
   exportCSV({ data, title }: { data: any[], title: string }) {
-    const options = { title, filename: $localize`Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
+    const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
+    const options = { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
       return Object.entries(dataToDisplay).reduce(
         (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
@@ -51,7 +54,7 @@ export class CsvService {
   ) {
     const options = {
       title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
-      filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
+      filename: $localize`Report of ${planetName} on ${formatLocaleDate(new Date(), 'mediumDate', this.localeId)}`,
       showTitle: true,
       showLabels: true,
       useKeysAsHeaders: true
@@ -94,7 +97,7 @@ export class CsvService {
       section.data.forEach(item => allMonths.add(item.date));
     });
     const sortedMonths = Array.from(allMonths).sort();
-    const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    const monthLabels = sortedMonths.map(month => monthDataLabels(month, this.localeId));
     const formattedData = [];
 
     sections.forEach(section => {

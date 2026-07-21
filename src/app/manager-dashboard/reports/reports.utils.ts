@@ -89,12 +89,13 @@ export const reportsDetailParams = (type) => ({
   resourceActivities: { db: 'resource_activities', views: 'totalResourceViews', record: 'resources', chartName: 'resourceViewChart' },
 })[type];
 
-export const monthDataLabels = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+export const monthDataLabels = (date, locale = 'en-US') => new Date(date).toLocaleDateString(locale, { month: 'short', year: 'numeric' });
 
-export const weekDataLabels = (date) => new Date(date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+export const weekDataLabels = (date, locale?: string) =>
+  new Date(date).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 
-export const fullLabel = (date) => new Date(date).toLocaleString(
-  'en-US',
+export const fullLabel = (date, locale = 'en-US') => new Date(date).toLocaleString(
+  locale,
   { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true, timeZoneName: 'short' }
 );
 

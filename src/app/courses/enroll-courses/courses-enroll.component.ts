@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject, LOCALE_ID } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { zip } from 'rxjs';
 import { switchMap, take, finalize } from 'rxjs/operators';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -42,7 +43,8 @@ export class CoursesEnrollComponent {
     private coursesService: CoursesService,
     private stateService: StateService,
     private managerService: ManagerService,
-    private csvService: CsvService
+    private csvService: CsvService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     this.coursesService.requestCourses();
     this.usersService.requestUserData();
@@ -96,11 +98,11 @@ export class CoursesEnrollComponent {
       return {
         [$localize`username`]: user.doc.name,
         [$localize`Date Started`]: user.activityDates.createdDate
-          ? new Date(user.activityDates.createdDate).toLocaleDateString()
-          : 'N/A',
+          ? formatDate(user.activityDates.createdDate, 'mediumDate', this.localeId)
+          : $localize`N/A`,
         [$localize`Most Recent Activity`]: user.activityDates.updatedDate
-          ? new Date(user.activityDates.updatedDate).toLocaleDateString()
-          : 'N/A',
+          ? formatDate(user.activityDates.updatedDate, 'mediumDate', this.localeId)
+          : $localize`N/A`,
       };
     });
     this.csvService.exportCSV({
