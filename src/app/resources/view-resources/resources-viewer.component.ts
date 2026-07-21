@@ -8,8 +8,8 @@ import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
-import { CsvService } from '../../shared/csv.service';
-import { PlanetMessageService } from '../../shared/planet-message.service';
+import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '../../shared/csv.service';
+import { couchAttachmentPath } from '../../shared/utils';
 import { NgClass } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -46,6 +46,10 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   csvColumns: string[] = [];
   dataSource: MatTableDataSource<any>;
   csvLoadError = false;
+  csvPreviewTooLarge = false;
+  csvPreviewTruncated = false;
+  readonly csvPreviewMaxSizeMb = CSV_PREVIEW_MAX_BYTES / 1024 / 1024;
+  readonly csvPreviewMaxRows = CSV_PREVIEW_MAX_ROWS;
   private sortRef: MatSort;
   private paginatorRef: MatPaginator;
   private csvLoadSub: Subscription;
@@ -68,7 +72,6 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private userService: UserService,
     private couchService: CouchService,
     private csvService: CsvService,
-    private planetMessageService: PlanetMessageService,
     private router: Router
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -120,12 +123,14 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   setResource(resource: any) {
     this.cancelCsvLoad();
+    this.resetCsvPreview();
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+    const attachment = resource._attachments[filename];
     this.mediaType = resource.mediaType;
-    this.contentType = resource._attachments[filename].content_type;
-    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+    this.contentType = attachment.content_type;
+    this.resourceSrc = this.urlPrefix + couchAttachmentPath(resource._id, filename);
     if (!this.mediaType) {
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
@@ -142,31 +147,41 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     }
     if (this.isCsvResource(filename)) {
       this.mediaType = 'csv';
-      this.loadCsvTable(resource._id, filename);
+      if (attachment.length > CSV_PREVIEW_MAX_BYTES) {
+        this.csvPreviewTooLarge = true;
+      } else {
+        this.loadCsvTable(resource._id, filename);
+      }
     }
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
   }
 
-  loadCsvTable(docId: string, filename: string) {
-    this.dataSource = undefined;
-    this.csvColumns = [];
-    this.csvLoadError = false;
+  private loadCsvTable(docId: string, filename: string) {
     const domain = this.parent ? this.stateService.configuration.parentDomain : undefined;
     this.csvLoadSub = this.csvService.loadCsvAttachment(docId, filename, domain)
       .pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ columns, rows }) => {
+      .subscribe(({ columns, rows, truncated }) => {
         this.csvColumns = columns;
+        this.csvPreviewTruncated = truncated;
         this.dataSource = new MatTableDataSource(rows);
         this.dataSource.sortingDataAccessor = (row, column) => {
-          const value = row[column];
-          return value !== '' && !isNaN(+value) ? +value : (value || '').toLowerCase();
+          const value = `${row[column] ?? ''}`;
+          const trimmedValue = value.trim();
+          return trimmedValue !== '' && !isNaN(+trimmedValue) ? +trimmedValue : value.toLowerCase();
         };
         this.assignCsvTableControls();
       }, () => {
         this.csvLoadError = true;
-        this.planetMessageService.showAlert($localize`There was an error loading this CSV`);
       });
+  }
+
+  private resetCsvPreview() {
+    this.dataSource = undefined;
+    this.csvColumns = [];
+    this.csvLoadError = false;
+    this.csvPreviewTooLarge = false;
+    this.csvPreviewTruncated = false;
   }
 
   private cancelCsvLoad() {

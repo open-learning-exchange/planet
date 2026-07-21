@@ -25,10 +25,18 @@
       </div>
     }
     @case ('csv') {
-      @if (csvLoadError) {
-        <span i18n>Unable to load CSV.</span>
-      } @else if (dataSource) {
-        <div class="csv-container">
+      <div class="csv-container">
+        <div class="csv-actions">
+          <a mat-raised-button color="primary" i18n [href]="resourceSrc">Download/Open</a>
+        </div>
+        @if (csvPreviewTooLarge) {
+          <span i18n>CSV files larger than {{ csvPreviewMaxSizeMb }} MB cannot be previewed. Download the file to view it.</span>
+        } @else if (csvLoadError) {
+          <span i18n>Unable to load CSV.</span>
+        } @else if (dataSource) {
+          @if (csvPreviewTruncated) {
+            <span i18n>Showing the first {{ csvPreviewMaxRows }} rows.</span>
+          }
           <div class="csv-table-wrapper">
             <table mat-table [dataSource]="dataSource" matSort>
               @for (column of csvColumns; track column) {
@@ -44,11 +52,11 @@
               </tr>
             </table>
           </div>
-          <mat-paginator [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
-        </div>
-      } @else {
-        <span i18n>Loading CSV...</span>
-      }
+          <mat-paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 20, 50, 100, 200]" showFirstLastButtons></mat-paginator>
+        } @else {
+          <span i18n>Loading CSV...</span>
+        }
+      </div>
     }
     @case ('other') {
       <div><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>

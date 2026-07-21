@@ -6,8 +6,17 @@ import { map } from 'rxjs/operators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
 import { CouchService } from './couchdb.service';
-import { markdownToPlainText, formatDate } from './utils';
+import { couchAttachmentPath, markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
+
+export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
+export const CSV_PREVIEW_MAX_ROWS = 5000;
+
+export interface CsvPreview {
+  columns: string[];
+  rows: Array<Record<string, string>>;
+  truncated: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -162,36 +171,49 @@ export class CsvService {
     return Object.entries(conditions).filter(([ key, value ]) => value === true).map(([ key, value ]) => key).join(', ');
   }
 
-  loadCsvAttachment(docId: string, attachmentId: string, domain?: string): Observable<{ columns: string[], rows: any[] }> {
+  loadCsvAttachment(docId: string, attachmentId: string, domain?: string): Observable<CsvPreview> {
     // papaparse is only needed when previewing a CSV resource, so load it in its own chunk on demand
     return forkJoin([
-      this.couchService.get(`resources/${docId}/${attachmentId}`, { responseType: 'text', domain }),
+      this.couchService.get(
+        `resources/${couchAttachmentPath(docId, attachmentId)}`,
+        { responseType: 'text', domain }
+      ),
       import('papaparse')
     ]).pipe(
       map(([ csvText, papa ]) => this.parseCsv(papa, csvText))
     );
   }
 
-  private parseCsv(papa: typeof import('papaparse'), csvText: string): { columns: string[], rows: any[] } {
-    const data = papa.parse(csvText, { skipEmptyLines: true }).data as string[][];
-    if (data.length === 0) {
-      return { columns: [], rows: [] };
-    }
-    const headerIndex = this.headerRowIndex(data);
-    const columns = this.uniqueColumnNames(headerIndex > -1 ? data[headerIndex] : []);
-    const rows = data.slice(headerIndex + 1).map(row => {
-      const rowObject = {};
-      columns.forEach((column, index) => rowObject[column] = row[index] ?? '');
-      return rowObject;
+  private parseCsv(papa: typeof import('papaparse'), csvText: string): CsvPreview {
+    const data: string[][] = [];
+    let headerIndex = 0;
+    let wideHeaderFound = false;
+    let truncated = false;
+    papa.parse<string[]>(csvText, {
+      skipEmptyLines: true,
+      step: ({ data: row }, parser) => {
+        data.push(row);
+        if (!wideHeaderFound && row.length > 1) {
+          headerIndex = data.length - 1;
+          wideHeaderFound = true;
+        }
+        if (data.length > headerIndex + 1 + CSV_PREVIEW_MAX_ROWS) {
+          truncated = true;
+          parser.abort();
+        }
+      }
     });
-    return { columns, rows };
-  }
-
-  private headerRowIndex(data: string[][]): number {
-    const firstWideRowIndex = data.findIndex(row => row.length > 1);
-    const hasOnlyShortPreamble = firstWideRowIndex > 0 &&
-      data.slice(0, firstWideRowIndex).every(row => row.length < data[firstWideRowIndex].length);
-    return hasOnlyShortPreamble ? firstWideRowIndex : 0;
+    if (data.length === 0) {
+      return { columns: [], rows: [], truncated: false };
+    }
+    const previewData = data.slice(0, headerIndex + 1 + CSV_PREVIEW_MAX_ROWS);
+    const widestRowLength = previewData.reduce((max, row) => Math.max(max, row.length), 0);
+    const headerRow = Array.from({ length: widestRowLength }, (_, index) => data[headerIndex][index] ?? '');
+    const columns = this.uniqueColumnNames(headerRow);
+    const rows = previewData.slice(headerIndex + 1).map(row =>
+      Object.fromEntries(columns.map((column, index) => [ column, row[index] ?? '' ]))
+    );
+    return { columns, rows, truncated };
   }
 
   private uniqueColumnNames(headerRow: string[]): string[] {

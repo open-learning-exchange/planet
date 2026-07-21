@@ -48,10 +48,15 @@ export const safeAttachmentName = (name: string, usedNames: string[] = []): stri
   return nextName;
 };
 
+export const couchAttachmentPath = (docId: string, attachmentName: string): string => {
+  const encodedAttachmentName = attachmentName.split('/').map(segment => encodeURIComponent(segment)).join('/');
+  return `${encodeURIComponent(docId)}/${encodedAttachmentName}`;
+};
+
 export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: string, attachmentName: string): string => {
   const trimmedBaseUrl = baseUrl.replace(/\/+$/, '');
   const trimmedDbName = dbName.replace(/^\/+|\/+$/g, '');
-  return `${trimmedBaseUrl}/${trimmedDbName}/${encodeURIComponent(docId)}/${encodeURIComponent(attachmentName)}`;
+  return `${trimmedBaseUrl}/${trimmedDbName}/${couchAttachmentPath(docId, attachmentName)}`;
 };
 
 export interface NormalizeImageOptions {
