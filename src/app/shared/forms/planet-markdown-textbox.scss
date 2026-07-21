@@ -55,14 +55,14 @@ planet-markdown-textbox {
   background: white !important;
 }
 
-.EasyMDEContainer .CodeMirror-fullscreen,
-.EasyMDEContainer .editor-preview-full,
-.EasyMDEContainer .editor-preview-side {
-  bottom: 52px !important;
-}
-
 :has(.CodeMirror-fullscreen),
 :has(.editor-toolbar.fullscreen) {
+  --fullscreen-actions-height: 52px;
+
+  @media (max-width: 600px) {
+    --fullscreen-actions-height: 88px;
+  }
+
   .mat-mdc-dialog-actions,
   mat-dialog-actions,
   .action-buttons {
@@ -71,6 +71,7 @@ planet-markdown-textbox {
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
+    min-height: var(--fullscreen-actions-height) !important;
     margin: 0 !important;
     padding: 8px 16px !important;
     box-sizing: border-box !important;
@@ -80,7 +81,15 @@ planet-markdown-textbox {
     display: flex !important;
     justify-content: flex-end !important;
     align-items: center !important;
+    flex-wrap: wrap !important;
     gap: 8px !important;
   }
 }
+
+.EasyMDEContainer .CodeMirror-fullscreen,
+.EasyMDEContainer .editor-preview-full,
+.EasyMDEContainer .editor-preview-side {
+  bottom: var(--fullscreen-actions-height, 52px) !important;
+}
+
 
