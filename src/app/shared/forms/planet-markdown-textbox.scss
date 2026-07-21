@@ -54,3 +54,33 @@ planet-markdown-textbox {
 .editor-preview-full, .editor-toolbar.fullscreen {
   background: white !important;
 }
+
+.EasyMDEContainer .CodeMirror-fullscreen,
+.EasyMDEContainer .editor-preview-full,
+.EasyMDEContainer .editor-preview-side {
+  bottom: 52px !important;
+}
+
+:has(.CodeMirror-fullscreen),
+:has(.editor-toolbar.fullscreen) {
+  .mat-mdc-dialog-actions,
+  mat-dialog-actions,
+  .action-buttons {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 8px 16px !important;
+    box-sizing: border-box !important;
+    z-index: 1001 !important;
+    background: #fff !important;
+    border-top: 1px solid #ddd !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+}
+
