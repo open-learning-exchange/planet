@@ -1,26 +1,27 @@
 <mat-toolbar>
   <mat-toolbar-row>
     @if (!isDialog) {
-      <button mat-icon-button [routerLink]="[ '..' ]"><mat-icon>arrow_back</mat-icon></button>
+    <button mat-icon-button [routerLink]="[ '..' ]"><mat-icon>arrow_back</mat-icon></button>
     }
     <span i18n>{ mode, select,
       team {{ myTeamsFilter, select, on {myTeams} off {Teams} }}
       enterprise {Enterprises}
-    }</span>
+      }</span>
     <span class="toolbar-fill"></span>
     @if (!isMobile) {
-      <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    <ng-container *ngTemplateOutlet="searchView"></ng-container>
     }
     @if (isMobile) {
-      <button mat-icon-button (click)="this.showFiltersRow = !this.showFiltersRow" ><mat-icon>filter_list</mat-icon></button>
+    <button mat-icon-button
+      (click)="this.showFiltersRow = !this.showFiltersRow"><mat-icon>filter_list</mat-icon></button>
     }
   </mat-toolbar-row>
   @if (showFiltersRow) {
-    <mat-toolbar-row>
-      @if (isMobile) {
-        <ng-container *ngTemplateOutlet="searchView"></ng-container>
-      }
-    </mat-toolbar-row>
+  <mat-toolbar-row>
+    @if (isMobile) {
+    <ng-container *ngTemplateOutlet="searchView"></ng-container>
+    }
+  </mat-toolbar-row>
   }
 </mat-toolbar>
 
@@ -32,48 +33,50 @@
       <mat-label i18n>Type name to search...</mat-label>
       <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span
+        i18n>Clear</span></button>
   </div>
 </ng-template>
 
 <div [ngClass]="{'space-container':!isDialog}">
   @if (!isDialog) {
-    <mat-toolbar class="primary-color font-size-1">
-      @if (isAuthorized) {
-        <button mat-mini-fab (click)="addTeam()"><mat-icon>add</mat-icon></button>
-        <span class="toolbar-fill"></span>
-        @if (mode==='team') {
-          <div class="margin-lr-3">
-            <button mat-stroked-button routerLink='/teams/users' i18n>All Members</button>
-          </div>
-        }
-      }
-    </mat-toolbar>
+  <mat-toolbar class="primary-color font-size-1">
+    @if (isAuthorized) {
+    <button mat-mini-fab (click)="addTeam()"><mat-icon>add</mat-icon></button>
+    <span class="toolbar-fill"></span>
+    @if (mode==='team') {
+    <div class="margin-lr-3">
+      <button mat-stroked-button routerLink='/teams/users' i18n>All Members</button>
+    </div>
+    }
+    }
+  </mat-toolbar>
   }
 
   @if (userNotInShelf) {
-    <div i18n style="text-align: center;">
+  <div i18n style="text-align: center;">
     Oops ... Error: no full access in Teams and Enterprises (data missing) ... please contact the manager of this site
   </div>
   }
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort
+      [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
             {{element.doc.name | truncateText:150}}
             @if (element.userStatus === 'member' && mode === 'enterprise') {
-              <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
+            <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
             }
             @if (element.userStatus === 'member' && mode !== 'enterprise') {
-              <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true">check</mat-icon>
+            <mat-icon class="margin-lr-3" i18n-title title="Joined Team" [inline]="true">check</mat-icon>
             }
             @if (myTeamsFilter==='on') {
-              <span class="team-type-label">
-                ({{getTeamTypeLabel(element)}})
-              </span>
+            <span class="team-type-label">
+              ({{getTeamTypeLabel(element)}})
+            </span>
             }
           </h3>
         </mat-cell>
@@ -82,14 +85,15 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.lastVisit" i18n>Most recent visit</mat-header-cell>
         <mat-cell *matCellDef="let element">
           @if (element.visitLog.lastVisit) {
-            {{element.visitLog.lastVisit | date: 'medium'}}
+          {{element.visitLog.lastVisit | date: 'medium'}}
           } @else {
-            <ng-container i18n>N/A</ng-container>
+          <ng-container i18n>N/A</ng-container>
           }
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="visitLog.visitCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.visitCount" i18n>Total visits from last 30 days</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header="visitLog.visitCount" i18n>Total visits from last 30
+          days</mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{element.visitLog.visitCount}}
         </mat-cell>
@@ -98,19 +102,19 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.teamType" i18n>Type</mat-header-cell>
         <mat-cell *matCellDef="let element">
           @switch (element.doc.teamType) {
-            @case ('local') {
-              <ng-container i18n>Local</ng-container>
-            }
-            @case ('sync') {
-              @if (planetCode === element.doc.teamPlanetCode) {
-                <ng-container i18n>
-                {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
-              </ng-container>
-              }
-              @if (planetCode !== element.doc.teamPlanetCode) {
-                <ng-container i18n>Connected with</ng-container> {{element.teamPlanetName}}
-              }
-            }
+          @case ('local') {
+          <ng-container i18n>Local</ng-container>
+          }
+          @case ('sync') {
+          @if (planetCode === element.doc.teamPlanetCode) {
+          <ng-container i18n>
+            {planetType, select, community {Connected with Nation} nation {Connected with Earth}}
+          </ng-container>
+          }
+          @if (planetCode !== element.doc.teamPlanetCode) {
+          <ng-container i18n>Connected with</ng-container> {{element.teamPlanetName}}
+          }
+          }
           }
         </mat-cell>
       </ng-container>
@@ -119,73 +123,85 @@
         <mat-cell *matCellDef="let element">
           <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile}">
             @if (user.isUserAdmin || user.roles.length) {
-              @switch (element.userStatus) {
-                @case ('member') {
-                  @if (!element.isLeader) {
-                    <button mat-raised-button color="primary" (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
-                      <mat-icon>remove_circle</mat-icon>
-                      @if (!isMobile) {
-                        <label i18n> Leave </label>
-                      }
-                    </button>
-                  }
-                  @if (element.isLeader) {
-                    <button mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()">
-                      <mat-icon>edit</mat-icon>
-                      @if (!isMobile) {
-                        <label i18n> Edit </label>
-                      }
-                    </button>
-                  }
-                }
-                @case ('unrelated') {
-                  <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                    <mat-icon>add_circle</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request to Join </label>
-                    }
-                  </button>
-                }
-                @case ('requesting') {
-                  <button mat-raised-button color="primary" disabled>
-                    <mat-icon>hourglass_empty</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request pending </label>
-                    }
-                  </button>
-                }
-              }
-            }
-            <button mat-raised-button color="primary" planetFeedback [feedbackOf]="{'state': mode + 's', 'item': element.doc._id, name: element.doc.name}" (click)="$event.stopPropagation()">
-              <mat-icon>feedback</mat-icon>
+            @switch (element.userStatus) {
+            @case ('member') {
+            @if (!element.isLeader) {
+            <button mat-raised-button color="primary"
+              (click)="openLeaveDialog(element.doc, element.membershipDoc); $event.stopPropagation()">
+              <mat-icon>remove_circle</mat-icon>
               @if (!isMobile) {
-                <label i18n> Feedback </label>
+              <label i18n> Leave </label>
               }
             </button>
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" (click)="archiveClick(element.doc); $event.stopPropagation()">
+            }
+            @if (element.isLeader) {
+            <button mat-raised-button color="primary" (click)="addTeam(element.doc); $event.stopPropagation()">
+              <mat-icon>edit</mat-icon>
+              @if (!isMobile) {
+              <label i18n> Edit </label>
+              }
+            </button>
+            }
+            }
+            @case ('unrelated') {
+              @if (mode === 'enterprise') {
+                <button mat-raised-button color="primary"
+                  (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
+                  <mat-icon>add_circle</mat-icon>
+                  @if (!isMobile) {
+                    <label i18n> Request to Join </label>
+                  }
+                </button>
+              }
+              @if (mode === 'team') {
+                <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+                  <mat-icon>add_circle</mat-icon>
+                  @if (!isMobile) {
+                    <label i18n> Request to Join </label>
+                  }
+                </button>
+              }
+            }
+            @case ('requesting') {
+              <button mat-raised-button color="primary" disabled>
+                <mat-icon>hourglass_empty</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Request pending </label>
+                }
+              </button>
+            }
+          }
+        }
+            <button mat-raised-button color="primary" planetFeedback
+              [feedbackOf]="{'state': mode + 's', 'item': element.doc._id, name: element.doc.name}"
+              (click)="$event.stopPropagation()">
+              <mat-icon>feedback</mat-icon>
+              @if (!isMobile) {
+              <label i18n> Feedback </label>
+              }
+            </button>
+            <button *planetAuthorizedRoles="''" mat-raised-button color="primary"
+              (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               @if (!isMobile) {
-                <label i18n> Delete </label>
+              <label i18n> Delete </label>
               }
             </button>
           </div>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row
-        (click)="teamClick(row.doc._id, row.doc.teamType)"
-        *matRowDef="let row; columns: displayedColumns;"
+      <mat-row (click)="teamClick(row.doc._id, row.doc.teamType)" *matRowDef="let row; columns: displayedColumns;"
         [class.highlighted]="selectedIds.includes(row.doc._id)">
       </mat-row>
       <tr class="mat-row" *matNoDataRow>
         <td>@if (!isLoading) {
           <div class="view-container" i18n>No { mode, select, team {Teams} enterprise {Enterprises} } Found</div>
-        }</td>
+          }
+        </td>
       </tr>
     </mat-table>
-    <mat-paginator #paginator
-      [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
+    <mat-paginator #paginator [pageSize]="50" [pageSizeOptions]="[5, 10, 20, 50, 100, 200]">
     </mat-paginator>
   </div>
 </div>

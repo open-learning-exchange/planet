@@ -460,6 +460,28 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   changeMembership(type, memberDoc?) {
+    if (type === 'request' && this.mode === 'enterprise') {
+      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          okClick: {
+            request: this.changeMembershipRequest(type, memberDoc)(),
+            onNext: (message) => {
+              this.dialogPrompt.close();
+              this.setStatus(this.team, this.leader, this.userService.get());
+              this.planetMessageService.showMessage(message);
+            }
+          },
+          changeType: 'request',
+          type: 'enterprise',
+          displayName: this.team.name,
+          rules: this.team?.rules,
+          message: $localize`:@@enterprise-join-request-message:By requesting to join this enterprise, ` +
+            'you agree to abide by the rules and guidelines set forth by the enterprise administrators.'
+        }
+      });
+      return;
+    }
+
     this.dialogsLoadingService.start();
     this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.leader, this.userService.get());

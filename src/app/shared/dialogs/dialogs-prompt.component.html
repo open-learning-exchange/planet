@@ -4,7 +4,7 @@
   }
   @if (showMainParagraph) {
     <p i18n>
-    Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset}}
+    Are you sure you want to {data.changeType, select, accept {accept} archive {archive} reject {reject} delete {delete} leave {leave} remove {remove} leader {give leadership to} exit {leave} reset {reset} request {request to join}}
       the {data.amount, select, single
       {following {data.type, select,
         community {community}
@@ -41,14 +41,25 @@
     }
   </p>
 }
-<p [innerHTML]=data.extraMessage></p>
-<b class = break-word>{{data.displayName | truncateText:140}}</b>
-@if (data.displayDates) {
-  <b>{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
-}
-@for (label of labels; track label; let last = $last) {
-  <p><b><planet-label [label]="label.field"></planet-label>: {{label.value}}</b></p>
-}
+  <b class="break-word">{{data.displayName | truncateText:140}}</b>
+  @if (data.rules) {
+    <div style="margin-top: 12px;">
+      <b i18n>Enterprise Rules:</b>
+      <td-markdown [content]="data.rules"></td-markdown>
+    </div>
+  }
+  @if (data.extraMessage) {
+    <p [innerHTML]="data.extraMessage"></p>
+  }
+  @if (data.message) {
+    <p [innerHTML]="data.message"></p>
+  }
+  @if (data.displayDates) {
+    <b>{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
+  }
+  @for (label of labels; track label; let last = $last) {
+    <p><b><planet-label [label]="label.field"></planet-label>: {{label.value}}</b></p>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   @if (cancelable) {
