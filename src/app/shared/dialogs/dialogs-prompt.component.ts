@@ -30,6 +30,9 @@ import { TdMarkdownComponent } from '@covalent/markdown';
       white-space: normal;
       word-break: break-word;
     }
+    .enterprise-rules {
+      margin-top: 12px;
+    }
   `],
   imports: [
     CdkScrollable,

@@ -43,7 +43,7 @@
 }
   <b class="break-word">{{data.displayName | truncateText:140}}</b>
   @if (data.rules) {
-    <div style="margin-top: 12px;">
+    <div class="enterprise-rules">
       <b i18n>Enterprise Rules:</b>
       <td-markdown [content]="data.rules"></td-markdown>
     </div>
