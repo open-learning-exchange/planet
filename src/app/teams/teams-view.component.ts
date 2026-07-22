@@ -439,9 +439,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  cancelRequest() {
+  cancelJoinRequest() {
     return {
-      request: this.teamsService.removeFromRequests(this.team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+      request: this.teamsService.cancelJoinRequest(this.team).pipe(
         switchMap(() => this.getMembers())
       ),
       onNext: () => {
@@ -460,10 +460,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     };
   }
 
-  openCancelRequestDialog() {
+  openCancelJoinRequestDialog() {
     this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: this.cancelRequest(),
+        okClick: this.cancelJoinRequest(),
         showMainParagraph: false,
         extraMessage: this.mode === 'enterprise'
           ? $localize`Are you sure you want to cancel the request to join the following enterprise?`

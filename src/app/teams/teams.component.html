@@ -145,11 +145,11 @@
                   </button>
                 }
                 @case ('requesting') {
-                  <button mat-raised-button color="warn" aria-label="Cancel Request" i18n-aria-label
-                    (click)="openCancelRequestDialog(element.doc); $event.stopPropagation()">
+                  <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label
+                    (click)="openCancelJoinRequestDialog(element.doc); $event.stopPropagation()">
                     <mat-icon>cancel</mat-icon>
                     @if (!isMobile) {
-                      <label i18n> Cancel Request </label>
+                      <label i18n> Cancel Join Request </label>
                     }
                   </button>
                 }
