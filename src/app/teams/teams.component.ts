@@ -364,23 +364,31 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   }
 
   cancelRequest(team) {
+    return {
+      request: this.teamsService.removeFromRequests(team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+        switchMap(() => this.getMembershipStatus())
+      ),
+      onNext: () => {
+        this.cancelDialog.close();
+        this.teams.data = this.teamList(this.teams.data);
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
+          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + team.name;
+        this.planetMessageService.showMessage(msg);
+      },
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`There was a problem cancelling your request to join this enterprise.`
+          : $localize`There was a problem cancelling your request to join this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
+    };
+  }
+
+  openCancelRequestDialog(team) {
     this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: {
-          request: this.teamsService.removeFromRequests(team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
-            switchMap(() => this.teamsService.getTeamMembers(team)),
-            switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
-            switchMap(() => this.getMembershipStatus())
-          ),
-          onNext: () => {
-            this.cancelDialog.close();
-            this.teams.data = this.teamList(this.teams.data);
-            const msg = this.mode === 'enterprise'
-              ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
-              : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + team.name;
-            this.planetMessageService.showMessage(msg);
-          }
-        },
+        okClick: this.cancelRequest(team),
         showMainParagraph: false,
         extraMessage: this.mode === 'enterprise'
           ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
@@ -389,7 +397,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   resetSearch() {
     this.teams.filter = this.myTeamsFilter ? ' ' : '';

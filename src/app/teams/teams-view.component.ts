@@ -440,23 +440,30 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   cancelRequest() {
+    return {
+      request: this.teamsService.removeFromRequests(this.team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
+        switchMap(() => this.getMembers())
+      ),
+      onNext: () => {
+        this.cancelDialog.close();
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
+          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;
+        this.planetMessageService.showMessage(msg);
+      },
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`There was a problem cancelling your request to join this enterprise.`
+          : $localize`There was a problem cancelling your request to join this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
+    };
+  }
+
+  openCancelRequestDialog() {
     this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
-        okClick: {
-          request: this.teamsService.removeFromRequests(this.team, { userId: this.user._id, userPlanetCode: this.user.planetCode }).pipe(
-            switchMap(() => this.teamsService.getTeamMembers(this.team)),
-            switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team: this.team, url: this.router.url })),
-            switchMap(() => this.getMembers())
-          ),
-          onNext: () => {
-            this.cancelDialog.close();
-            this.setStatus(this.team, this.leader, this.userService.get());
-            const msg = this.mode === 'enterprise'
-              ? $localize`Cancelled request to join enterprise` + ' ' + this.team.name
-              : $localize`Cancelled request to join team` + ' ' + this.team.name;
-            this.planetMessageService.showMessage(msg);
-          }
-        },
+        okClick: this.cancelRequest(),
         showMainParagraph: false,
         extraMessage: this.mode === 'enterprise'
           ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
