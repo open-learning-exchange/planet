@@ -332,7 +332,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === user.planetCode);
+    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
   }
 
   toggleMembership(team, leaveTeam) {
@@ -441,11 +441,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   cancelJoinRequest() {
     return {
-      request: this.teamsService.cancelJoinRequest(this.team).pipe(
-        switchMap(() => this.getMembers())
-      ),
+      request: this.teamsService.cancelJoinRequest(this.team),
       onNext: () => {
         this.cancelDialog.close();
+        this.requests = this.requests.filter(request =>
+          request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
+        );
+        this.setStatus(this.team, this.leader, this.userService.get());
         const msg = this.mode === 'enterprise'
           ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
           : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;

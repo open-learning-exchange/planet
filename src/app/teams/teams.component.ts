@@ -196,7 +196,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getMembershipStatus() {
     return forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.user.planetCode } }),
+      this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.planetCode } }),
       this.couchService.get('shelf/' + this.user._id)
     ]).pipe(
       map(([ membershipDocs, shelf ]) => this.userMembership = [
@@ -365,11 +365,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   cancelJoinRequest(team) {
     return {
-      request: this.teamsService.cancelJoinRequest(team).pipe(
-        switchMap(() => this.getMembershipStatus())
-      ),
+      request: this.teamsService.cancelJoinRequest(team),
       onNext: () => {
         this.cancelDialog.close();
+        this.userMembership = this.userMembership.filter(membership =>
+          membership.docType !== 'request' || membership.teamId !== team._id ||
+          membership.teamPlanetCode !== team.teamPlanetCode
+        );
         this.teams.data = this.teamList(this.teams.data);
         const msg = this.mode === 'enterprise'
           ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + team.name
