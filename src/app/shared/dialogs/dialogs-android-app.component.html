@@ -1,0 +1,19 @@
+<h2 mat-dialog-title class="primary-color" i18n>Get the Planet mobile app</h2>
+<mat-dialog-content>
+  <p i18n>You're browsing on an Android device. Install one of our apps for a faster, offline-capable experience.</p>
+  <div class="app-list">
+    @for (app of apps; track app.url) {
+      <div class="app-item">
+        <mat-icon class="app-icon">android</mat-icon>
+        <div class="app-info">
+          <span class="app-name">{{ app.name }}</span>
+          <span class="app-description">{{ app.description }}</span>
+        </div>
+        <a mat-raised-button color="primary" [href]="app.url" target="_blank" rel="noopener" (click)="close()" i18n>Install</a>
+      </div>
+    }
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close i18n>Not now</button>
+</mat-dialog-actions>
