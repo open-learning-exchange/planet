@@ -9,6 +9,7 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   selector: 'planet-markdown',
+  host: { class: 'planet-markdown-renderer' },
   template: `
     @if (previewMode) {
       <td-markdown [content]="limitedContent"></td-markdown>

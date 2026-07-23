@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
-import { CovalentMarkdownModule } from '@covalent/markdown';
 
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
@@ -30,7 +29,7 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule,
+    CommonModule, MaterialModule, RouterModule,
     PlanetLoadingSpinnerComponent,
     PlanetLocalStatusComponent,
     SubmitDirective,

@@ -1,5 +1,6 @@
 import * as showdown from 'showdown';
 import mime from 'mime';
+showdown.setOption('strikethrough', true);
 export const converter = new showdown.Converter();
 
 // File.type can be empty for some browsers / file sources; fall back to the
@@ -279,20 +280,151 @@ export const truncateText = (text, length) => {
   return text;
 };
 
+const markdownColumnWidth = (value: string) => {
+  let width = 0;
+  for (const character of value) {
+    width = character === '\t' ? width + 4 - (width % 4) : width + 1;
+  }
+  return width;
+};
+
+const markdownTableRowRegex = /^[ \t]*\|[^\n]+\|[ \t]*$/;
+const isExcessiveWhitespace = (value: string) => value.length > 8 || (value.match(/\t/g)?.length || 0) > 1;
+const collapseWhitespaceRuns = (value: string) =>
+  value.replace(/[ \t]+/g, (match) => isExcessiveWhitespace(match) ? '  ' : match);
+
+interface MarkdownFence {
+  blockquoteDepth: number;
+  indentation: number;
+  marker: string;
+  length: number;
+}
+
+const stripMarkdownBlockquotePrefix = (line: string) => {
+  const prefix = line.match(/^(?: {0,3}>[ \t]?)+/)?.[0] || '';
+  return {
+    blockquoteDepth: (prefix.match(/>/g) || []).length,
+    content: line.slice(prefix.length),
+    prefix
+  };
+};
+
+const isClosingMarkdownFence = (line: string, fence: MarkdownFence) => {
+  const { blockquoteDepth, content } = stripMarkdownBlockquotePrefix(line);
+  const match = content.match(/^([ \t]*)(`+|~+)[ \t]*$/);
+  if (blockquoteDepth !== fence.blockquoteDepth ||
+      !match || match[2][0] !== fence.marker || match[2].length < fence.length) {
+    return false;
+  }
+  const indentation = markdownColumnWidth(match[1]);
+  return fence.indentation <= 3 ? indentation <= 3 : indentation === fence.indentation;
+};
+
+const getMarkdownFence = (lines: string[], index: number): MarkdownFence | undefined => {
+  const { blockquoteDepth, content } = stripMarkdownBlockquotePrefix(lines[index]);
+  const listPrefix = content.match(/^([ \t]{0,3}(?:[-+*]|\d+\.)[ \t]+)/)?.[0] || '';
+  const match = content.slice(listPrefix.length).match(/^([ \t]*)(`{3,}|~{3,})(.*)$/);
+  if (!match || (match[2][0] === '`' && match[3].includes('`'))) {
+    return;
+  }
+  const fence = {
+    blockquoteDepth,
+    indentation: markdownColumnWidth(listPrefix) + markdownColumnWidth(match[1]),
+    marker: match[2][0],
+    length: match[2].length
+  };
+  for (let lineIndex = index + 1; lineIndex < lines.length; lineIndex += 1) {
+    if (isClosingMarkdownFence(lines[lineIndex], fence)) {
+      return fence;
+    }
+  }
+};
+
+const normalizeMarkdownLine = (line: string, hasFollowingLine: boolean) => {
+  if (line.trim() === '') {
+    return '';
+  }
+  // Preserve ordinary Markdown indentation, but bound legacy alignment whitespace that can block rendering.
+  const { content: containerContent, prefix } = stripMarkdownBlockquotePrefix(line);
+  const leadingWhitespace = containerContent.match(/^[ \t]*/)?.[0] || '';
+  const indentation = markdownColumnWidth(leadingWhitespace);
+  const trailingWhitespace = containerContent.match(/[ \t]+$/)?.[0] || '';
+  const hasExcessiveIndentation = indentation > 8 || isExcessiveWhitespace(leadingWhitespace);
+  const hasExcessiveTrailingWhitespace = isExcessiveWhitespace(trailingWhitespace);
+  const contentWithoutIndentation = containerContent.slice(leadingWhitespace.length);
+  const isListItem = /^(?:[-+*]|\d+\.)[ \t]+/.test(contentWithoutIndentation);
+  const isTableRow = contentWithoutIndentation.startsWith('|');
+  const isIndentedCode = /^ {4,8}\S/.test(containerContent) || /^\t[^\t]/.test(containerContent);
+
+  if (isIndentedCode) {
+    return hasExcessiveTrailingWhitespace ? line.trimEnd() : line;
+  }
+  if (isListItem || isTableRow) {
+    const normalizedIndentation = isTableRow && hasExcessiveIndentation ? '  ' : leadingWhitespace;
+    const normalizedListOrTableLine =
+      `${prefix}${normalizedIndentation}${collapseWhitespaceRuns(contentWithoutIndentation)}`;
+    return !hasFollowingLine && hasExcessiveTrailingWhitespace ?
+      normalizedListOrTableLine.trimEnd() :
+      normalizedListOrTableLine;
+  }
+  const content = hasExcessiveIndentation ? containerContent.trimStart() : containerContent;
+  const normalizedLine = `${prefix}${collapseWhitespaceRuns(content)}`;
+  return !hasFollowingLine && hasExcessiveTrailingWhitespace ? normalizedLine.trimEnd() : normalizedLine;
+};
+
 export const normalizeMarkdownWhitespace = (content: string) => {
-  // Replace excessive consecutive whitespace (tabs, newlines, spaces) with reasonable limits
-  // Replace sequences of tabs/spaces with max 2 spaces
-  content = (content || '').replace(/[ \t]+/g, (match) => match.length > 2 ? '  ' : match);
-  // Replace excessive newlines (more than 2 consecutive) with just 2 newlines
-  content = content.replace(/\n{3,}/g, '\n\n');
-  return content.trim();
+  const lines = String(content ?? '').replace(/\r\n?/g, '\n').split('\n');
+  const normalizedLines: string[] = [];
+  let fence: MarkdownFence | undefined;
+  let blankLineCount = 0;
+
+  lines.forEach((sourceLine, index) => {
+    if (fence) {
+      normalizedLines.push(sourceLine);
+      blankLineCount = 0;
+      if (isClosingMarkdownFence(sourceLine, fence)) {
+        fence = undefined;
+      }
+      return;
+    }
+
+    const openingFence = getMarkdownFence(lines, index);
+    if (openingFence) {
+      fence = openingFence;
+      normalizedLines.push(sourceLine);
+      blankLineCount = 0;
+      return;
+    }
+
+    const line = normalizeMarkdownLine(sourceLine, index < lines.length - 1);
+    if (line === '') {
+      blankLineCount += 1;
+      if (blankLineCount === 1) {
+        normalizedLines.push('');
+      }
+      return;
+    }
+    blankLineCount = 0;
+    normalizedLines.push(line);
+
+    const isTopLevelListItem = /^ {0,3}(?:[-+*]|\d+\.)[ \t]+(?=\S|$)/.test(line);
+    const nextLineIsTableHeader = markdownTableRowRegex.test(lines[index + 1] || '');
+    const followingLineIsTableDivider = /^[ \t]*\|[ \t]*:?-{3,}/.test(lines[index + 2] || '');
+
+    // EasyMDE accepts a table directly below a list item, while Showdown needs a blank line.
+    if (isTopLevelListItem && nextLineIsTableHeader && followingLineIsTableDivider) {
+      normalizedLines.push('');
+    }
+  });
+
+  return normalizedLines.join('\n').replace(/^\n+|\n+$/g, '');
 };
 
 export const markdownImageRegex = /!\[[^\]]*\]\((.*?\.(?:png|jpe?g|gif)(?:\?.*?)?)\)/gi;
 
+// Content must be normalized first so pathological whitespace cannot inflate preview length.
 export const getMarkdownPreviewText = (content: string) => {
-  const normalizedContent = normalizeMarkdownWhitespace(content);
-  const textOnly = normalizedContent.replace(new RegExp(markdownImageRegex), '');
+  const textOnly = (content || '').replace(new RegExp(markdownImageRegex), '');
   return textOnly.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**');
 };
 
@@ -309,7 +441,7 @@ export const calculateMdAdjustedLimit = (content, limit) => {
 export const hasMarkdownImages = (content: string) => new RegExp(markdownImageRegex).test(content || '');
 
 export const doesMarkdownPreviewTruncate = (content: string, limit = 450) => {
-  const previewText = getMarkdownPreviewText(content);
+  const previewText = getMarkdownPreviewText(normalizeMarkdownWhitespace(content));
   return previewText.length > calculateMdAdjustedLimit(previewText, limit);
 };
 

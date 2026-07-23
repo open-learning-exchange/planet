@@ -81,7 +81,11 @@
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>
-        }<td-markdown [content]="meetupDetail?.description"></td-markdown>
+        <planet-markdown
+          [content]="meetupDetail?.description"
+          [imageSource]="parent ? 'parent' : 'local'">
+        </planet-markdown>
+      }
       </div>
       @if (!isDialog) {
         <div class="right-tile">
