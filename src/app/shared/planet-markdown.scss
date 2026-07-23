@@ -1,3 +1,56 @@
+@use '../variables' as v;
+
+planet-markdown.planet-markdown-renderer td-markdown.td-markdown {
+  & > div {
+    overflow-x: auto;
+  }
+
+  pre {
+    padding: 1rem;
+    margin-bottom: 10px;
+    background: v.$light-grey;
+  }
+
+  :not(pre) > code {
+    padding: 0.15em 0.3em;
+    border-radius: 3px;
+    background: v.$light-grey;
+  }
+
+  table {
+    display: table;
+    width: auto;
+    max-width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 5px;
+    border: 1px solid v.$grey;
+  }
+
+  input[type='checkbox'] {
+    accent-color: v.$primary;
+  }
+
+  a[href] {
+    color: v.$primary-dark;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  // Covalent adds an icon using the Material Symbols font, which Planet does not load.
+  a[href][target='_blank'] {
+    display: inline !important;
+    padding-right: 0 !important;
+
+    &::after {
+      display: none !important;
+      content: none !important;
+    }
+  }
+}
+
 planet-markdown.img-resize td-markdown.td-markdown {
   & > div {
     overflow: auto;
