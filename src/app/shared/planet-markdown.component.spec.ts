@@ -49,6 +49,18 @@ describe('PlanetMarkdownComponent', () => {
     expect(fixture.nativeElement.querySelector('br')).toBeTruthy();
   });
 
+  it('renders pasted tables with pathological leading indentation', () => {
+    const fixture = TestBed.createComponent(PlanetMarkdownComponent);
+    fixture.componentRef.setInput(
+      'content',
+      '          | Name | Value |\n          | --- | ---: |\n          | Alpha | 1 |'
+    );
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('table')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('pre')).toBeFalsy();
+  });
+
   it('preserves standard nested lists, tables, code blocks, and links', () => {
     const fixture = TestBed.createComponent(PlanetMarkdownComponent);
     fixture.componentRef.setInput('content', `- Table in a list:

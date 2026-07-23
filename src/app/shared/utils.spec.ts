@@ -37,6 +37,20 @@ describe('utils', () => {
       );
     });
 
+    it('bounds pathological indentation before pasted table rows', () => {
+      const markdown = [
+        '          | Name | Value |',
+        '          | --- | ---: |',
+        '          | Alpha | 1 |'
+      ].join('\n');
+
+      expect(normalizeMarkdownWhitespace(markdown)).toBe([
+        '  | Name | Value |',
+        '  | --- | ---: |',
+        '  | Alpha | 1 |'
+      ].join('\n'));
+    });
+
     it('does not normalize table-shaped content inside fenced code blocks', () => {
       const markdown = [
         '```',

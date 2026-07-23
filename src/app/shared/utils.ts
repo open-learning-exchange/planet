@@ -352,16 +352,20 @@ const normalizeMarkdownLine = (line: string, hasFollowingLine: boolean) => {
   const hasExcessiveIndentation = indentation > 8 || isExcessiveWhitespace(leadingWhitespace);
   const hasExcessiveTrailingWhitespace = isExcessiveWhitespace(trailingWhitespace);
   const contentWithoutIndentation = containerContent.slice(leadingWhitespace.length);
-  const isListOrTable = /^(?:[-+*]|\d+\.)[ \t]+|^\|/.test(contentWithoutIndentation);
+  const isListItem = /^(?:[-+*]|\d+\.)[ \t]+/.test(contentWithoutIndentation);
+  const isTableRow = contentWithoutIndentation.startsWith('|');
   const isIndentedCode = /^ {4,8}\S/.test(containerContent) || /^\t[^\t]/.test(containerContent);
 
   if (isIndentedCode) {
     return hasExcessiveTrailingWhitespace ? line.trimEnd() : line;
   }
-  if (isListOrTable) {
-    const normalizedListLine =
-      `${prefix}${leadingWhitespace}${collapseWhitespaceRuns(contentWithoutIndentation)}`;
-    return !hasFollowingLine && hasExcessiveTrailingWhitespace ? normalizedListLine.trimEnd() : normalizedListLine;
+  if (isListItem || isTableRow) {
+    const normalizedIndentation = isTableRow && hasExcessiveIndentation ? '  ' : leadingWhitespace;
+    const normalizedListOrTableLine =
+      `${prefix}${normalizedIndentation}${collapseWhitespaceRuns(contentWithoutIndentation)}`;
+    return !hasFollowingLine && hasExcessiveTrailingWhitespace ?
+      normalizedListOrTableLine.trimEnd() :
+      normalizedListOrTableLine;
   }
   const content = hasExcessiveIndentation ? containerContent.trimStart() : containerContent;
   const normalizedLine = `${prefix}${collapseWhitespaceRuns(content)}`;
