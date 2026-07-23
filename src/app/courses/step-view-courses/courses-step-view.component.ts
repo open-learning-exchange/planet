@@ -25,6 +25,9 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { of } from 'rxjs';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -49,7 +52,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    DialogsPromptComponent
   ]
 })
 
@@ -60,6 +64,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   stepDetail: any = { stepTitle: '', description: '', resources: [] };
   conversations: any[] = [];
   courseId: string;
+  courseTitle = '';
   maxStep = 1;
   resourceUrl = '';
   examStart = 1;
@@ -91,6 +96,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private deviceInfoService: DeviceInfoService,
     private challengesService: ChallengesService,
+    private planetMessageService: PlanetMessageService,
   ) {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
@@ -165,6 +171,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   initCourse(course, progress, resources, exams) {
+    this.courseTitle = course?.courseTitle || course?.title || '';
     // To be readable by non-technical people stepNum param will start at 1
     this.stepDetail = course.steps[this.stepNum - 1];
     this.initResources(resources);
@@ -251,7 +258,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = value;
   }
 
-  goToExam(type = 'exam', preview = false) {
+  navigateToExam(type = 'exam', preview = false) {
     this.router.navigate(
       [
         'exam',
@@ -266,6 +273,37 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       ],
       { relativeTo: this.route }
     );
+  }
+
+  goToExam(type = 'exam', preview = false) {
+    const displayName = this.stepDetail[type]?.displayName || type;
+    if (preview) {
+      this.navigateToExam(type, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
+    const formType = type === 'survey' ? $localize`Survey` : $localize`Exam`;
+    const extraMessage = $localize`Course: <b>${this.courseTitle}</b>` +
+      `<br>Step: <b>${this.stepDetail?.stepTitle}</b>` +
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (this.stepDetail?.[type]?.questions?.length || 0) + '</b>';
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.navigateToExam(type, preview);
+            const message = `Starting ${displayName}`;
+            this.planetMessageService.showMessage(message);
+          },
+        },
+        changeType: type === 'survey' ? 'take' : (this.attempts > 0 ? 'retake' : 'take'),
+        type: type === 'survey' ? 'survey' : 'exam',
+        extraMessage,
+      }
+    });
   }
 
   filterResources(step, resources) {
