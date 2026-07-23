@@ -57,7 +57,7 @@ export class UsersAchievementsComponent implements OnInit {
   ownAchievements = false;
   urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
-  certifications: any[] = [];
+  earnedCertifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
   isLoading = true;
 
@@ -100,7 +100,7 @@ export class UsersAchievementsComponent implements OnInit {
     combineLatest([
       this.coursesService.coursesListener$(), this.coursesService.progressListener$(), this.certificationsService.getCertifications()
     ]).pipe(auditTime(500)).subscribe(([ courses, progress, certifications ]) => {
-      this.setCertifications(courses, progress, certifications);
+      this.setEarnedCertifications(courses, progress, certifications);
       this.isLoading = false;
     });
     this.coursesService.requestCourses();
@@ -172,8 +172,8 @@ export class UsersAchievementsComponent implements OnInit {
     return 'assets/image.png';
   }
 
-  setCertifications(courses = [], progress = [], certifications = []) {
-    this.certifications = certifications.filter(certification => {
+  setEarnedCertifications(courses = [], progress = [], certifications = []) {
+    this.earnedCertifications = certifications.filter(certification => {
       const certificateCourses = courses
         .filter(course => certification.courseIds.indexOf(course._id) > -1)
         .map(course => ({ ...course, progress: progress.filter(p => p.courseId === course._id) }));
@@ -223,10 +223,34 @@ export class UsersAchievementsComponent implements OnInit {
       );
     }
 
-    if (this.certifications && this.certifications.length > 0) {
+    if (this.achievements.certificationsHeader) {
       optionals.push(
-        { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
+        { text: $localize`Summary of Certifications`, style: 'subHeader', alignment: 'center' },
+        { text: this.achievements.certificationsHeader, alignment: 'left', margin: [ 20, 5 ] },
+        sectionSpacer
+      );
+    }
+
+    if (this.achievements.certifications && this.achievements.certifications.length > 0) {
+      optionals.push(
+        { text: $localize`My Manual Certifications`, style: 'subHeader', alignment: 'center' },
+        ...this.achievements.certifications.map((certification) => {
+          const formattedDate = certification.date ? formatStringDate(certification.date) : '';
+          return [
+            { text: certification.title, bold: true, margin: [ 20, 5 ] },
+            { text: certification.date ? formattedDate : '', marginLeft: 40 },
+            { text: certification.link, marginLeft: 40 },
+            { text: certification.description, marginLeft: 40 },
+          ];
+        }),
+        sectionSpacer
+      );
+    }
+
+    if (this.earnedCertifications && this.earnedCertifications.length > 0) {
+      optionals.push(
+        { text: $localize`My Earned Certifications`, style: 'subHeader', alignment: 'center' },
+        ...this.earnedCertifications.map((certification) => {
           return [
             { text: certification.name, bold: true, margin: [ 20, 5 ] },
           ];
