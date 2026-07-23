@@ -26,7 +26,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styles: ['.role-set-select { width: 256px; }'],
+  styleUrls: ['./users.component.scss'],
   imports: [
     MatToolbar,
     MatIconButton,
