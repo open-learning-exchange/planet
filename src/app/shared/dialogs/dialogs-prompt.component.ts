@@ -20,6 +20,7 @@ import { LabelComponent } from '../label.component';
 import { MatButton } from '@angular/material/button';
 import { SubmitDirective } from '../submit.directive';
 import { TruncateTextPipe } from '../truncate-text.pipe';
+import { TdMarkdownComponent } from '@covalent/markdown';
 
 @Component({
   templateUrl: './dialogs-prompt.component.html',
@@ -28,6 +29,9 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
       word-wrap: break-word;
       white-space: normal;
       word-break: break-word;
+    }
+    .enterprise-rules {
+      margin-top: 12px;
     }
   `],
   imports: [
@@ -39,7 +43,8 @@ import { TruncateTextPipe } from '../truncate-text.pipe';
     MatDialogClose,
     SubmitDirective,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    TdMarkdownComponent
   ]
 })
 export class DialogsPromptComponent {
