@@ -277,6 +277,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   goToExam(type = 'exam', preview = false) {
     const displayName = this.stepDetail[type]?.displayName || type;
+    if (preview) {
+      this.navigateToExam(type, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
     const formType = type === 'survey' ? $localize`Survey` : $localize`Exam`;
     const extraMessage = $localize`Course: <b>${this.courseTitle}</b>` +
       `<br>Step: <b>${this.stepDetail?.stepTitle}</b>` +
@@ -288,12 +293,13 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
           onNext: () => {
             dialogRef.close();
             this.navigateToExam(type, preview);
-            const message = preview ? `Previewing ${displayName}` : `Starting ${displayName}`;
+            const message = `Starting ${displayName}`;
             this.planetMessageService.showMessage(message);
           },
         },
         changeType: type === 'survey' ? 'take' : (this.attempts > 0 ? 'retake' : 'take'),
         type: type === 'survey' ? 'survey' : 'exam',
+        displayName,
         extraMessage,
       }
     });

@@ -216,6 +216,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goToSurvey(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
     const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
     const displayName = stepDetail?.survey?.name || stepDetail?.survey?.displayName || stepDetail?.survey?.title || 'survey';
+    if (preview) {
+      this.navigateToSurvey(stepDetail, stepIndex, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
     const courseTitle = this.courseDetail?.courseTitle || this.courseDetail?.title || '';
     const displayStepNum = stepIndex + 1;
     const formType = $localize`Survey`;
@@ -230,7 +235,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           onNext: () => {
             dialogRef.close();
             this.navigateToSurvey(stepDetail, stepIndex, preview);
-            const message = preview ? `Previewing ${displayName}` : `Starting ${displayName}`;
+            const message = `Starting ${displayName}`;
             this.planetMessageService.showMessage(message);
           },
           onError: () => {
@@ -264,6 +269,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   goToExam(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
     const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
     const displayName = stepDetail?.exam?.name || stepDetail?.exam?.displayName || stepDetail?.exam?.title || 'exam';
+    if (preview) {
+      this.navigateToExam(stepDetail, stepIndex, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
     const courseTitle = this.courseDetail?.courseTitle || this.courseDetail?.title || '';
     const displayStepNum = stepIndex + 1;
     const formType = $localize`Exam`;
@@ -278,7 +288,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           onNext: () => {
             dialogRef.close();
             this.navigateToExam(stepDetail, stepIndex, preview);
-            const message = preview ? `Previewing ${displayName}` : `Starting ${displayName}`;
+            const message = `Starting ${displayName}`;
             this.planetMessageService.showMessage(message);
           },
           onError: () => {
@@ -287,6 +297,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         },
         changeType: stepDetail?.attempts > 0 ? 'retake' : 'take',
         type: 'exam',
+        displayName,
         extraMessage,
       }
     });
