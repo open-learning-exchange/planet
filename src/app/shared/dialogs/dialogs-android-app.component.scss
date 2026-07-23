@@ -1,0 +1,32 @@
+.app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.app-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-icon {
+  flex-shrink: 0;
+}
+
+.app-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.app-name {
+  font-weight: 500;
+}
+
+.app-description {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
