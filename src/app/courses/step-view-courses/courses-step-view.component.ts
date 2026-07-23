@@ -285,7 +285,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     const formType = type === 'survey' ? $localize`Survey` : $localize`Exam`;
     const extraMessage = $localize`Course: <b>${this.courseTitle}</b>` +
       `<br>Step: <b>${this.stepDetail?.stepTitle}</b>` +
-      `<br>Form Type: <b>${formType}</b>`;
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (this.stepDetail?.[type]?.questions?.length || 0) + '</b>';
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {

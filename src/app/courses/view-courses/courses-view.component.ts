@@ -226,7 +226,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     const formType = $localize`Survey`;
     const extraMessage = $localize`Course: <b>${courseTitle}</b>` +
       `<br>Step: <b>${stepDetail?.stepTitle || 'Step ' + displayStepNum}</b>` +
-      `<br>Form Type: <b>${formType}</b>`;
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (stepDetail?.exam?.questions?.length || 0) + '</b>';
 
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
@@ -278,7 +280,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     const formType = $localize`Exam`;
     const extraMessage = $localize`Course: <b>${courseTitle}</b>` +
       `<br>Step: <b>${stepDetail?.stepTitle || 'Step ' + displayStepNum}</b>` +
-      `<br>Form Type: <b>${formType}</b>`;
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (stepDetail?.exam?.questions?.length || 0) + '</b>';
 
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
