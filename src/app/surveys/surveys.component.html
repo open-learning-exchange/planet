@@ -42,7 +42,7 @@
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
-    <mat-table #table class="responsive-table surveys-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
+    <mat-table #table class="responsive-table min-width-table" [dataSource]="surveys" matSort matSortActive="createdDate" matSortDirection="desc" [matSortDisableClear]="true" [class.hidden]="isLoading && !useDialogLoading">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>
           <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -81,6 +81,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element" class="survey-action-cell">
+          <div class="table-action-buttons">
           @if (element.parent !== true && currentFilter.viewMode !== 'adopt') {
             @if (!teamId) {
               <div [matTooltip]="getActionTooltip(element, 'edit')">
@@ -102,8 +103,8 @@
                 </button>
               </div>
               <mat-menu #sendMenu="matMenu">
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
-                <button mat-menu-item style="width: 100%;" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
+                <button mat-menu-item class="full-width" (click)="openSendSurveyToUsersDialog(element)" i18n>User</button>
+                <button mat-menu-item class="full-width" (click)="openSendSurveyToTeamsDialog(element)" [disabled]="!element.teamShareAllowed" i18n>Team</button>
               </mat-menu>
             }
             <div [matTooltip]="getActionTooltip(element, 'record')">
@@ -184,6 +185,7 @@
               </mat-menu>
             </div>
           }
+          </div>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns" [class.hidden]="!surveys.data || surveys.data.length === 0"></mat-header-row>
