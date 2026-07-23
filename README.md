@@ -59,8 +59,7 @@ Clone and configure the Planet project:
 ```
 git clone https://github.com/open-learning-exchange/planet.git
 cd planet
-chmod +x couchdb-setup.sh
-bash couchdb-setup.sh -p 2200
+bash scripts/couchdb-setup.sh -p 2200
 ```
 
 Install dependencies and serve the app:
@@ -98,7 +97,7 @@ For gateway development instructions, refer to the [gateway README](gateway/READ
 ## Project Guidelines
 
 * Check out the project page for tasks.
-* Before contributing also be sure to read our [style guide](Style-Guide.md).
+* Before contributing also be sure to read our [contributing guidelines](.github/CONTRIBUTING.md) and [style guide](docs/Style-Guide.md).
 * Please clone the repository rather than forking, unless you're from outside the organization. It's easier for us to collaborate from a new branch on the same repository.
 * After cloning the repository please run `npm run install-hooks` to add the git hooks to your local repository.
 * If you see something that needs work, please create an issue.  If the issue is on the frontend, please try to make it specific to one component.
@@ -196,7 +195,7 @@ npm install
 
 Run the CouchDB setup script:
 ```
-./couchdb-setup.sh -u <admin-username> -w <admin-password>
+./scripts/couchdb-setup.sh -u <admin-username> -w <admin-password>
 ```
 ### Cannot GET /
 
