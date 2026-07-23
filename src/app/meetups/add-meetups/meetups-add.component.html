@@ -37,28 +37,34 @@
           <planet-markdown-textbox class="full-width" required="true" [formControl]="meetupForm.controls.description"></planet-markdown-textbox>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.description"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field (click)="datepickerStart.open()">
           <mat-label i18n>Start Date</mat-label>
           <input matInput [matDatepicker]="datepickerStart" required="true" formControlName="startDate">
           <mat-datepicker-toggle matIconSuffix [for]="datepickerStart"></mat-datepicker-toggle>
           <mat-datepicker #datepickerStart></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field (click)="datepickerEnd.open()">
           <mat-label i18n>End Date</mat-label>
           <input matInput [matDatepicker]="datepickerEnd" formControlName="endDate">
           <mat-datepicker-toggle matIconSuffix [for]="datepickerEnd"></mat-datepicker-toggle>
           <mat-datepicker #datepickerEnd></mat-datepicker>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endDate"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field (click)="openNativePicker(startTimeInput)">
           <mat-label i18n>Start Time</mat-label>
-          <input matInput planetTimeMask formControlName="startTime">
+          <input #startTimeInput matInput type="time" formControlName="startTime">
+          <button mat-icon-button matIconSuffix type="button" (click)="openNativePicker(startTimeInput); $event.stopPropagation()" aria-label="Open time picker" i18n-aria-label>
+            <mat-icon>access_time</mat-icon>
+          </button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.startTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field (click)="openNativePicker(endTimeInput)">
           <mat-label i18n>End Time</mat-label>
-          <input matInput planetTimeMask formControlName="endTime">
+          <input #endTimeInput matInput type="time" formControlName="endTime">
+          <button mat-icon-button matIconSuffix type="button" (click)="openNativePicker(endTimeInput); $event.stopPropagation()" aria-label="Open time picker" i18n-aria-label>
+            <mat-icon>access_time</mat-icon>
+          </button>
           <mat-error><planet-form-error-messages [control]="meetupForm.controls.endTime"></planet-form-error-messages></mat-error>
         </mat-form-field>
         <div class="full-width">
@@ -72,8 +78,13 @@
         </div>
         @if (meetupForm.controls.recurring.value === 'weekly') {
           <div class="full-width">
-            @for (day of days; track day) {
-              <mat-checkbox (change)="onDayChange(day, $event.checked)"  class="margin-lr" [checked]="meetupForm.controls.day.value.includes(day)"> {{ day }}</mat-checkbox>
+            @for (day of localizedDays; track day.value) {
+              <mat-checkbox
+                (change)="onDayChange(day.value, $event.checked)"
+                class="margin-lr"
+                [checked]="meetupForm.controls.day.value.includes(day.value)">
+                {{ day.labelDate | date: 'EEEE' }}
+              </mat-checkbox>
             }
             @if (meetupForm.controls.day.hasError('noDaysSelected')) {
               <mat-error>

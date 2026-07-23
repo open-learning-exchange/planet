@@ -4,7 +4,6 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
 import { FileUploadComponent } from '../shared/forms/file-upload.component';
 import { UserService } from '../shared/user.service';
@@ -20,6 +19,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { loadZipFile } from '../shared/zip-utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -190,7 +190,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
       .pipe(
         startWith(''),
-        map(value => this._filter(value))
+        map(value => this.filter(value))
       );
     this.onFormChanges();
     this.captureInitialState();
@@ -274,7 +274,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.captureInitialState();
   }
 
-  private _filter(value: string): string[] {
+  private filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
     return this.attachedZipFiles.filter(option => option.toLowerCase().includes(filterValue));
@@ -405,11 +405,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   zipObs(zipFile) {
-    const zip = new JSZip();
     return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
-      zip.loadAsync(zipFile).then((data) => {
-        const fileNames = this.getFileNames(data);
+      loadZipFile(zipFile).then((zip) => {
+        const fileNames = this.getFileNames(zip);
 
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
         forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
@@ -427,7 +426,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
           console.log(error);
           observer.error(error);
         });
-      });
+      }, (error) => observer.error(error));
     });
   }
 
@@ -461,14 +460,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
 
     this.resourceForm.controls.openWhichFile.enable();
-    const zip = new JSZip();
-
-    zip.loadAsync(this.file).then((data) => {
-      this.attachedZipFiles = this.getFileNames(data);
-    },
-    err => {
-      console.log('error', err.message);
-    });
+    loadZipFile(this.file)
+      .then((data) => {
+        this.attachedZipFiles = this.getFileNames(data);
+      })
+      .catch(err => {
+        console.log('error', err.message);
+      });
   }
 
   private getNormalizedState(): any {

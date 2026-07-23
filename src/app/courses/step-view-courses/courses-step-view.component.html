@@ -132,7 +132,7 @@
           @if (stepDetail.resources.length > 1) {
             <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
               @for (resource of stepDetail.resources; track resource; let i = $index) {
-                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
+                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title">{{resource.title}}</mat-button-toggle>
               }
             </mat-button-toggle-group>
           }
@@ -156,7 +156,7 @@
           @if (stepDetail.resources.length > 1) {
             <mat-button-toggle-group class="full-width-toggle-group" [(ngModel)]="resource" (change)="onResourceChange($event.value)">
               @for (resource of stepDetail.resources; track resource; let i = $index) {
-                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title" i18n>{{resource.title}}</mat-button-toggle>
+                <mat-button-toggle [value]="resource" class="full-width-toggle" [matTooltip]="resource.title">{{resource.title}}</mat-button-toggle>
               }
             </mat-button-toggle-group>
           }

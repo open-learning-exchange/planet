@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -94,9 +94,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
-  displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
-    [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
-  );
+  get displayedColumns() {
+    const surveyColumns = this.teamSurveyMode ?
+      [ 'name', 'taken', 'createdDate', 'action' ] :
+      [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+    return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
+  }
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -114,6 +117,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   availableAIProviders: any[] = [];
   deviceType: DeviceType;
   isMobile: boolean;
+
+  get teamSurveyMode() {
+    return !!(this.teamId || this.routeTeamId);
+  }
 
   constructor(
     private couchService: CouchService,
@@ -488,19 +495,31 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  recordSurvey(survey: any) {
+  private getRecordTeam(): Observable<any> {
     const targetTeamId = this.teamId || this.routeTeamId;
-    const teamObservable = targetTeamId ? this.couchService.get('teams/' + targetTeamId) : of(null);
+    if (!targetTeamId) {
+      return of(null);
+    }
+    return this.couchService.get('teams/' + targetTeamId);
+  }
 
-    teamObservable.subscribe((team: any) => {
-      const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-      const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
-      this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo).subscribe((res: any) => {
-        this.router.navigate([
-          this.teamId ? 'surveys/dispense' : 'dispense',
-          { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-        ], { relativeTo: this.route });
-      });
+  recordSurvey(survey: any) {
+    this.dialogsLoadingService.start();
+    this.getRecordTeam().pipe(
+      switchMap((team: any) => {
+        const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
+        const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
+        return this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo);
+      }),
+      takeUntil(this.onDestroy$),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
+      this.router.navigate([
+        this.teamId ? 'surveys/dispense' : 'dispense',
+        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
+      ], { relativeTo: this.route });
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
     });
   }
 

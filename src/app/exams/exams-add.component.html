@@ -1,8 +1,10 @@
 <mat-toolbar>
   <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
-  {{examType === 'exam' && !courseName ? 'New Course:' : ''}}
+  @if (examType === 'exam' && !courseName) {
+    <ng-container i18n>New Course:</ng-container>
+  }
   {{examType === 'exam' && courseName ? courseName + ':' : ''}}
-  {pageType, select, Add {Add} Update {Update} Copy {Copy}}
+  <ng-container i18n>{pageType, select, Add {Add} Update {Update} Copy {Copy}}</ng-container>
   <ng-container i18n>{examType, select, exam {Test} survey {Survey}}</ng-container>
 </mat-toolbar>
 
@@ -11,8 +13,8 @@
     <form [formGroup]="examForm" (ngSubmit)="onSubmit()" [ngClass]="{'survey-form':!isCourseContent}" novalidate>
       <div class="exam-buttons">
         <div class="button-group">
-          <button mat-raised-button color="primary" type="submit" i18n>Save</button>
-          <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" (click)="onSubmit(true)" i18n>Save & Return</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="questions.length === 0" i18n>Save</button>
+          <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" [disabled]="questions.length === 0" (click)="onSubmit(true)" i18n>Save & Return</button>
           <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
           <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
         </div>

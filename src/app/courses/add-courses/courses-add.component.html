@@ -60,6 +60,18 @@
                   </mat-select>
                 </mat-form-field>
               </div>
+              <div class="cover-field">
+                <label class="cover-label" i18n>Cover image</label>
+                <planet-file-upload
+                  accept="image/*"
+                  [imagePreview]="true"
+                  [maxFiles]="1"
+                  [typePills]="['IMG']"
+                  hint="Recommended: a square image. Covers are cropped to fit." i18n-hint
+                  [existingAttachments]="existingCoverAttachments"
+                  (stateChange)="onCoverStateChange($event)">
+                </planet-file-upload>
+              </div>
             </form>
           </div>
         </mat-expansion-panel>

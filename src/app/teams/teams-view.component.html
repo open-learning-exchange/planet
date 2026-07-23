@@ -41,7 +41,7 @@
 
 <ng-template #editDetails>
   @if (isUserLeader) {
-    <button mat-stroked-button (click)="updateTeam()">
+    <button mat-icon-button class="team-edit-button" (click)="updateTeam()" aria-label="Edit details" i18n-aria-label>
       <mat-icon>edit</mat-icon>
     </button>
   }
@@ -293,13 +293,13 @@
       </mat-tab>
       <mat-tab i18n-label label="Courses">
         <ng-template mat-tab-label>
-          <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
+          <ng-container i18n>Courses</ng-container> ({{visibleCourses.length}})
         </ng-template>
-        @if (team?.courses?.length < 1) {
+        @if (visibleCourses.length < 1) {
           <p i18n>There are no courses associated with this team.</p>
         } @else {
           <div class="card-grid">
-            @for (course of team?.courses; track course) {
+            @for (course of visibleCourses; track course) {
               <mat-card (click)="openCourseView(course._id)" class="cursor-pointer">
                 <div class="mat-subtitle-1">
                   <b>{{course.courseTitle | truncateText:75}}</b>

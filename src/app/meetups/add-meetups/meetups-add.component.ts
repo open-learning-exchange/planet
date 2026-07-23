@@ -13,16 +13,16 @@ import { showFormErrors } from '../../shared/table-helpers';
 import { StateService } from '../../shared/state.service';
 import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
-import { NgClass, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
+
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdown-textbox.component';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
-import { PlanetTimeMaskDirective } from '../../shared/forms/planet-time-mask.directive';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { PlanetNumberValidatorDirective } from '../../shared/forms/planet-number-validator.directive';
@@ -64,6 +64,7 @@ interface MeetupFormControls {
   `],
   imports: [
     MatToolbar,
+    MatIconButton,
     MatIconAnchor,
     RouterLink,
     MatIcon,
@@ -80,7 +81,6 @@ interface MeetupFormControls {
     MatDatepickerToggle,
     MatSuffix,
     MatDatepicker,
-    PlanetTimeMaskDirective,
     MatRadioGroup,
     MatRadioButton,
     MatCheckbox,
@@ -90,7 +90,8 @@ interface MeetupFormControls {
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    SubmitDirective
+    SubmitDirective,
+    DatePipe
   ]
 })
 export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
@@ -108,6 +109,7 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
   revision = null;
   id = null;
   days = constants.days;
+  localizedDays = this.days.map((day, index) => ({ value: day, labelDate: new Date(2023, 0, 1 + index) }));
   meetupFrequency: string[] = [];
   initialFormValues = '';
   hasUnsavedChanges = false;
@@ -366,6 +368,21 @@ export class MeetupsAddComponent implements OnInit, CanComponentDeactivate {
       'status': 'unread',
       'time': this.couchService.datePlaceholder
     })) };
+  }
+
+  openNativePicker(input: HTMLInputElement): void {
+    if (input.disabled || input.readOnly) {
+      return;
+    }
+    if (!input.showPicker) {
+      input.focus();
+      return;
+    }
+    try {
+      input.showPicker();
+    } catch {
+      input.focus();
+    }
   }
 
 }
