@@ -4,6 +4,14 @@
       <div>
         <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
         <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+        @if (conversation.citations?.length) {
+          <p class="conversation-citations">
+            <span i18n>Sources:</span>
+            @for (citation of conversation.citations; track citation.title) {
+              <span class="citation">{{ citation.title }}</span>
+            }
+          </p>
+        }
       </div>
     }
   </div>

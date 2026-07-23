@@ -14,7 +14,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { findDocuments } from '../shared/mangoQueries';
 import { ConfigurationService } from './configuration.service';
 import { StateService } from '../shared/state.service';
-import { baseContextPrompt } from '../shared/ai-prompts.constants';
 
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -325,10 +324,8 @@ export class ConfigurationComponent implements OnInit {
         deepseek: '',
         gemini: ''
       },
-      assistant: {
-        name: 'Planet Context',
-        instructions: baseContextPrompt,
-      }
+      // Prompt instructions default to the gateway's built-in profiles; set per-mode overrides here
+      promptProfiles: {}
     };
 
     const configuration = Object.assign(
