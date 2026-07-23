@@ -26,6 +26,7 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
+import { HealthService } from '../../health/health.service';
 import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -127,6 +128,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   };
   chatActivities = new ReportsDetailData('createdDate');
   voicesActivities = new ReportsDetailData('time');
+  healthExams = new ReportsDetailData('date');
   today: Date;
   minDate: Date;
   ratings = { total: new ReportsDetailData('time'), resources: [], courses: [] };
@@ -181,6 +183,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
+    private healthService: HealthService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
     this.initDateFilterForm();
@@ -263,6 +266,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       this.getTeams();
       this.getChatUsage();
       this.getVoicesUsage();
+      this.getHealthExams();
       this.dialogsLoadingService.stop();
     });
   }
@@ -326,6 +330,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.setChatUsage();
     this.voicesActivities.filter(this.filter);
     this.setVoicesUsage();
+    this.healthExams.filter(this.filter);
+    this.setHealthExamsUsage();
   }
 
   getLoginActivities() {
@@ -487,6 +493,21 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   setVoicesUsage() {
     const { byMonth } = this.activityService.groupVoicesCreated(this.voicesActivities.filteredData);
     this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'voicesCreatedChart' });
+  }
+
+  getHealthExams() {
+    this.healthService.getExaminations(this.planetCode).pipe(
+      finalize(() => this.healthLoading = false)
+    ).subscribe((data) => {
+      this.healthExams.data = data;
+      this.healthExams.filter(this.filter);
+      this.setHealthExamsUsage();
+    });
+  }
+
+  setHealthExamsUsage() {
+    const byMonth = this.activityService.groupByMonth(this.healthExams.filteredData, 'date', 'profileId');
+    this.setChart({ ...this.setGenderDatasets(byMonth), chartName: 'healthExamsCreatedChart' });
   }
 
   getTeamMembers(team: any) {
@@ -834,12 +855,13 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     const progressData = filterByMember(filterByDate(this.progress?.steps?.data, 'time', dateRange), members);
     const chatData = filterByMember(filterByDate(this.chatActivities?.data, 'createdDate', dateRange), members);
     const voicesData = filterByMember(filterByDate(this.voicesActivities?.data, 'time', dateRange), members);
+    const healthData = filterByMember(filterByDate(this.healthExams?.data, 'date', dateRange), members);
 
     if (sortBy) {
       const order = sortBy.endsWith('Asc') ? 1 : -1;
       const sortFunction = (a, b) => {
-        const aDate = new Date(a.time || a.loginTime);
-        const bDate = new Date(b.time || b.loginTime);
+        const aDate = new Date(a.time || a.loginTime || a.date);
+        const bDate = new Date(b.time || b.loginTime || b.date);
         const comparison =
           (aDate.getFullYear() - bDate.getFullYear()) ||
           (aDate.getMonth() - bDate.getMonth());
@@ -851,6 +873,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       progressData.sort(sortFunction);
       chatData.sort(sortFunction);
       voicesData.sort(sortFunction);
+      healthData.sort(sortFunction);
     }
 
     this.csvService.exportSummaryCSV(
@@ -860,6 +883,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       progressData,
       chatData,
       voicesData,
+      healthData,
       this.planetName,
       dateRange.startDate,
       dateRange.endDate
@@ -881,7 +905,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       'resourceViews': this.resourceActivities.total.data,
       'courseViews': this.courseActivities.total.data,
       'stepCompletions': this.progress.steps.data,
-      'health': this.healthComponent && this.healthComponent.examinations
+      'health': this.healthExams.data
     }[reportType];
     const title = {
       'resourceViews': $localize`Resource Views`,

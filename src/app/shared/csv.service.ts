@@ -46,7 +46,7 @@ export class CsvService {
 
   exportSummaryCSV(
     logins: any[], resourceViews: any[], courseViews: any[], stepCompletions: any[],
-    chatActivities: any[], voicesActivities: any[], planetName: string, startDate: Date, endDate: Date
+    chatActivities: any[], voicesActivities: any[], healthExams: any[], planetName: string, startDate: Date, endDate: Date
   ) {
     const options = {
       title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
@@ -61,6 +61,7 @@ export class CsvService {
     const groupedStepCompletions = this.reportsService.groupStepCompletion(stepCompletions).byMonth;
     const groupedChatData = this.reportsService.groupChatUsage(chatActivities).byMonth;
     const groupedVoicesData = this.reportsService.groupVoicesCreated(voicesActivities).byMonth;
+    const groupedHealthExams = this.reportsService.groupByMonth(healthExams, 'date', 'profileId');
     const formattedData = this.buildSummaryTable([
       { title: $localize`Unique Member Visits`, data: groupedLogins, countUnique: true },
       { title: $localize`Total Member Visits`, data: groupedLogins, countUnique: false },
@@ -68,7 +69,8 @@ export class CsvService {
       { title: $localize`Course Views`, data: groupedCourseViews, countUnique: false },
       { title: $localize`Steps Completed`, data: groupedStepCompletions, countUnique: false },
       { title: $localize`Chats Created`, data: groupedChatData, countUnique: false },
-      { title: $localize`Voices Created`, data: groupedVoicesData, countUnique: false }
+      { title: $localize`Voices Created`, data: groupedVoicesData, countUnique: false },
+      { title: $localize`Health Exams Created`, data: groupedHealthExams, countUnique: false }
     ]);
     this.generate(formattedData, options);
   }
