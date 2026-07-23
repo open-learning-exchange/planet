@@ -299,7 +299,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
         },
         changeType: type === 'survey' ? 'take' : (this.attempts > 0 ? 'retake' : 'take'),
         type: type === 'survey' ? 'survey' : 'exam',
-        displayName,
         extraMessage,
       }
     });

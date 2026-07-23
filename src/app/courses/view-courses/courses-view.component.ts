@@ -244,7 +244,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         },
         changeType: 'take',
         type: 'survey',
-        displayName,
         extraMessage,
       }
     });
@@ -297,7 +296,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         },
         changeType: stepDetail?.attempts > 0 ? 'retake' : 'take',
         type: 'exam',
-        displayName,
         extraMessage,
       }
     });
