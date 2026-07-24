@@ -1,5 +1,6 @@
 import {
-  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck, ViewChild
+  Component, Input, Optional, Self, OnDestroy, HostBinding, EventEmitter, Output, OnInit, ViewEncapsulation, ElementRef, DoCheck,
+  ViewChild, NgZone
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,6 +13,12 @@ import { NgClass } from '@angular/common';
 
 interface ImageInfo { resourceId: string; filename: string; markdown: string; }
 interface ValueWithImages { text: string; images: ImageInfo[]; }
+interface FullscreenState {
+  owner: HTMLElement;
+  actions: HTMLElement;
+  formField?: HTMLElement;
+  layoutObserver?: ResizeObserver;
+}
 
 @Component({
   'selector': 'planet-markdown-textbox',
@@ -26,6 +33,10 @@ interface ValueWithImages { text: string; images: ImageInfo[]; }
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
 
   static nextId = 0;
+  // Action-row containers this component knows how to pin during fullscreen; a form whose
+  // action row uses a class not listed here keeps the old behavior (buttons hidden behind the overlay).
+  private static readonly actionSelector =
+    '.mat-mdc-dialog-actions, .actions-container, .exam-buttons, .action-buttons, div.action-button';
 
   @HostBinding() id = `planet-markdown-textbox-${PlanetMarkdownTextboxComponent.nextId++}`;
   @HostBinding('attr.aria-describedby') describedBy = '';
@@ -63,6 +74,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   private _placeholder: string;
+  private fullscreenState?: FullscreenState;
   @Input()
   get placeholder() {
     return this._placeholder;
@@ -94,14 +106,16 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   options: any = {
     autoRefresh: true,
     hideIcons: [ 'image' ],
-    minHeight: 'var(--planet-markdown-textbox-height)'
+    minHeight: 'var(--planet-markdown-textbox-height)',
+    onToggleFullScreen: (isFullscreen: boolean) => this.setFullscreenLayout(isFullscreen)
   };
 
   constructor(
     @Optional() @Self() public ngControl: NgControl,
     private focusMonitor: FocusMonitor,
     private elementRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private ngZone: NgZone
   ) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
@@ -207,8 +221,86 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
   }
 
   ngOnDestroy() {
-    this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
-    this.stateChanges.complete();
+    try {
+      if (this.editor?.easyMDE?.isFullscreenActive()) {
+        this.editor.toggleFullScreen();
+      }
+    } finally {
+      this.clearFullscreenLayout();
+      this.focusMonitor.stopMonitoring(this.elementRef.nativeElement);
+      this.stateChanges.complete();
+    }
+  }
+
+  private setFullscreenLayout(isFullscreen: boolean) {
+    this.clearFullscreenLayout();
+    if (!isFullscreen) {
+      return;
+    }
+
+    const layout = this.findFullscreenLayout();
+    if (!layout) {
+      return;
+    }
+
+    this.fullscreenState = layout;
+    const host = this.elementRef.nativeElement as HTMLElement;
+    layout.formField = host.closest<HTMLElement>('.mat-mdc-form-field');
+    host.classList.add('planet-markdown-fullscreen-host');
+    layout.formField?.classList.add('planet-markdown-fullscreen-field');
+    layout.owner.classList.add('planet-markdown-fullscreen-owner');
+    layout.actions.classList.add('planet-markdown-fullscreen-actions');
+
+    this.updateFullscreenLayout();
+    this.ngZone.runOutsideAngular(() => {
+      layout.layoutObserver = new ResizeObserver(() => this.updateFullscreenLayout());
+      layout.layoutObserver.observe(layout.actions);
+    });
+  }
+
+  private findFullscreenLayout(): FullscreenState | undefined {
+    const host = this.elementRef.nativeElement as HTMLElement;
+    let owner = host.parentElement;
+    while (owner && owner !== document.body) {
+      const actions = this.findVisibleActions(owner);
+      if (actions) {
+        return { owner, actions };
+      }
+      owner = owner.parentElement;
+    }
+    return undefined;
+  }
+
+  private findVisibleActions(owner: HTMLElement): HTMLElement | undefined {
+    return Array.from(owner.children)
+      .filter((element): element is HTMLElement => element instanceof HTMLElement)
+      .find(element =>
+        element.matches(PlanetMarkdownTextboxComponent.actionSelector) &&
+        element.getClientRects().length > 0
+      );
+  }
+
+  private updateFullscreenLayout() {
+    const state = this.fullscreenState;
+    if (!state) {
+      return;
+    }
+    const actionsHeight = Math.ceil(state.actions.getBoundingClientRect().height);
+    state.owner.style.setProperty('--fullscreen-actions-height', `${actionsHeight}px`);
+  }
+
+  private clearFullscreenLayout() {
+    const state = this.fullscreenState;
+    if (!state) {
+      return;
+    }
+    state.layoutObserver?.disconnect();
+    state.owner.classList.remove('planet-markdown-fullscreen-owner');
+    state.owner.style.removeProperty('--fullscreen-actions-height');
+    state.actions.classList.remove('planet-markdown-fullscreen-actions');
+    state.formField?.classList.remove('planet-markdown-fullscreen-field');
+    (this.elementRef.nativeElement as HTMLElement).classList.remove('planet-markdown-fullscreen-host');
+    this.fullscreenState = undefined;
   }
 
   writeValue(val: string) {
