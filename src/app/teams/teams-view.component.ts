@@ -115,6 +115,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   news: any[] = [];
   newsLoading = true;
   resources: any[] = [];
+  visibleCourses: any[] = [];
   isRoot = true;
   visits: any = {};
   leader: any = {};
@@ -123,6 +124,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
+  cancelDialog: any;
   finances: any[] = [];
   teamDataLoading = true;
   reports: any[] = [];
@@ -196,7 +198,32 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   getTeam(teamId: string) {
-    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(tap((data) => this.team = data));
+    return this.couchService.get(`${this.dbName}/${teamId}`).pipe(
+      tap((team) => this.team = team),
+      switchMap((team: any) => this.getVisibleCourses(team).pipe(
+        tap((courses) => this.visibleCourses = courses),
+        map(() => team)
+      ))
+    );
+  }
+
+  getVisibleCourses(team: any) {
+    const courses = team?.courses || [];
+    const courseIds = courses.map(course => course._id);
+    if (courseIds.length === 0) {
+      return of(courses);
+    }
+
+    return this.couchService.post('courses/_find', findDocuments(
+      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+    )).pipe(
+      map(({ docs }) => {
+        const existingIds = new Set(docs.map(course => course._id));
+        return courses.filter(course => existingIds.has(course._id));
+      }),
+      // A failed local lookup is not evidence that synced courses were deleted.
+      catchError(() => of(courses))
+    );
   }
 
   initTeam(teamId: string) {
@@ -331,7 +358,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === user.planetCode);
+    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
   }
 
   toggleMembership(team, leaveTeam) {
@@ -378,7 +405,10 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           onNext: (res) => {
             this.dialogPrompt.close();
             this.planetMessageService.showMessage($localize`You have ${config.successMsg} ${displayName}`);
-            this.team = change === 'course' ? res : this.team;
+            if (change === 'course') {
+              this.team = res;
+              this.visibleCourses = this.visibleCourses.filter(course => course._id !== item._id);
+            }
             if (change === 'archive') {
               this.goBack();
             }
@@ -438,6 +468,42 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
+  cancelJoinRequest() {
+    return {
+      request: this.teamsService.cancelJoinRequest(this.team),
+      onNext: () => {
+        this.cancelDialog.close();
+        this.requests = this.requests.filter(request =>
+          request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
+        );
+        this.setStatus(this.team, this.leader, this.userService.get());
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
+          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;
+        this.planetMessageService.showMessage(msg);
+      },
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`There was a problem cancelling your request to join this enterprise.`
+          : $localize`There was a problem cancelling your request to join this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
+    };
+  }
+
+  openCancelJoinRequestDialog() {
+    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.cancelJoinRequest(),
+        showMainParagraph: false,
+        extraMessage: this.mode === 'enterprise'
+          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+          : $localize`Are you sure you want to cancel the request to join the following team?`,
+        displayName: this.team.name
+      }
+    });
+  }
+
   private changeObject(type, memberDoc?) {
     const memberName = memberDoc && memberDoc.userDoc && (memberDoc.userDoc.fullName || memberDoc.name);
     switch (type) {
@@ -475,7 +541,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openInviteMemberDialog() {
     this.dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
-      panelClass: 'no-max-height-dialog',
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh',
       data: {
         okClick: (selected: any[]) => this.addMembers(selected),
         excludeIds: this.members.map(user => user.userId),
@@ -519,7 +586,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const initialCourses = this.team.courses || [];
     const dialogRef = this.dialog.open(DialogsAddTableComponent, {
       width: '80vw',
-      panelClass: 'no-max-height-dialog',
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh',
       data: {
         okClick: (courses: any[]) => {
           const newCourses = courses.map(course => course.doc);
@@ -528,6 +596,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
             courses: [ ...(this.team.courses || []), ...newCourses ].sort((a, b) => a.courseTitle.localeCompare(b.courseTitle))
           }).subscribe((updatedTeam) => {
             this.team = updatedTeam;
+            this.visibleCourses = [ ...this.visibleCourses, ...newCourses ]
+              .sort((a, b) => a.courseTitle.localeCompare(b.courseTitle));
             dialogRef.close();
             this.dialogsLoadingService.stop();
           });
@@ -564,7 +634,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   openResourcesDialog(resource?) {
     const dialogRef = this.dialog.open(DialogsAddResourcesComponent, {
       width: '80vw',
-      panelClass: 'no-max-height-dialog',
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh',
       data: {
         okClick: (resources: any[]) => {
           this.teamsService.linkResourcesToTeam(resources, this.team)

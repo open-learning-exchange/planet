@@ -16,28 +16,9 @@
     cursor: pointer;
   }
 
-  .button-container {
-    display: inline-grid;
-    grid-template-columns: minmax(150px, max-content);
-    align-items: stretch;
-    gap: 0.5rem;
-    width: max-content;
-    max-width: 100%;
-  }
-  .horizontal-align {
-    justify-items: center;
-  }
-
   .team-name{
     max-width: 95%;
     overflow: hidden;
-  }
-
-  .button-container button[mat-raised-button] {
-    width: 100%;
-    text-align: center;
-    padding: 8px 12px;
-    white-space: nowrap;
   }
 
   .highlighted {
@@ -46,32 +27,6 @@
 
   .team-type-label {
     font-size: 12px;
-    color: #666;
-  }
-
-  @media (max-width: v.$screen-md) {
-    .button-container {
-      gap: 0.75rem;
-    }
-  }
-
-  @media (max-width: v.$screen-sm) {
-    mat-cell button {
-      min-width: 0;
-      padding: 0 3px;
-    }
-
-    .button-container {
-      grid-template-columns: minmax(120px, max-content);
-      align-items: stretch;
-      gap: 0.5rem;
-    }
-  }
-
-  @media (max-width: v.$screen-xs) {
-    .button-container button[mat-raised-button] {
-      min-width: 0;
-      white-space: normal;
-    }
+    color: v.$grey-text;
   }
 }
