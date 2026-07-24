@@ -1,5 +1,6 @@
 import { Component, Inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { CouchService } from '../../shared/couchdb.service';
 import { UserService } from '../../shared/user.service';
@@ -73,6 +74,7 @@ export class UsersAchievementsComponent implements OnInit {
     private certificationsService: CertificationsService,
     private clipboard: Clipboard,
     private pdfService: PdfService,
+    private navigationService: NavigationService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
 
@@ -138,7 +140,7 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   toggleOpenAchievementIndex(index) {

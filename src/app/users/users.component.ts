@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, Input } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { Subject } from 'rxjs';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { takeUntil, debounceTime, map } from 'rxjs/operators';
 import { StateService } from '../shared/state.service';
@@ -83,7 +84,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -114,7 +116,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       if (this.isDialog) {
         this.applyFilter(searchText);
       } else {
-        this.router.navigate([], { relativeTo: this.route, queryParams: { search: searchText || null }});
+        this.router.navigate([], { relativeTo: this.route, queryParams: { search: searchText || null }, replaceUrl: true });
       }
     });
     this.usersService.requestUserData();
@@ -168,7 +170,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   back() {
-    this.router.navigate([ '../' ], { relativeTo: this.route });
+    this.navigationService.back([ '../' ], { relativeTo: this.route });
   }
 
   updateSelectedRoles(newSelection: string[]) {

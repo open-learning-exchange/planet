@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
+import { NavigationService } from '../shared/navigation.service';
 import { AIProvider, ProviderName } from './chat.model';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
@@ -28,6 +29,7 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService,
     private route: ActivatedRoute,
     private router: Router,
+    private navigationService: NavigationService,
   ) {}
 
   ngOnInit() {
@@ -53,12 +55,7 @@ export class ChatComponent implements OnInit {
   }
 
   goBack(): void {
-    const returnState = history.state?.returnState;
-    if (returnState) {
-      this.router.navigate([ `${returnState.route}` ]);
-      return;
-    }
-    this.router.navigate([ '/' ], { relativeTo: this.route });
+    this.navigationService.back([ '/' ]);
   }
 
   toggleAIService(): void {
