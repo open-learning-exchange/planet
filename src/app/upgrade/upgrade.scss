@@ -1,13 +1,15 @@
+@use '../variables' as v;
+
 .upgrade_error {
-    color: #C70039;
+  color: v.$warn;
 }
 
 .upgrade_success {
-  color: #4CAF50;
+  color: v.$planet-green;
 }
 
 .upgrade_timeout {
-  color: #FFC107;
+  color: v.$accent;
 }
 
 .upgrade_buttons button {
@@ -29,11 +31,16 @@
 }
 
 .upgrade_output {
-  border: 1px solid #D5D5D5;
+  border: 1px solid v.$medium-grey;
   padding-top: 2px;
   padding-bottom: 2px;
   max-height: 300px;
   min-height: 300px;
   overflow: auto;
   width: 95%;
+}
+
+.upgrade-progress-container {
+  height: 5px;
+  padding: 5px;
 }
