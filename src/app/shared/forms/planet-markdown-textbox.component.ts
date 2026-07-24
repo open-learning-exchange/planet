@@ -245,7 +245,7 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
 
     this.fullscreenState = layout;
     const host = this.elementRef.nativeElement as HTMLElement;
-    layout.formField = host.closest<HTMLElement>('.mat-mdc-form-field');
+    layout.formField = host.closest<HTMLElement>('.mat-mdc-form-field') ?? undefined;
     host.classList.add('planet-markdown-fullscreen-host');
     layout.formField?.classList.add('planet-markdown-fullscreen-field');
     layout.owner.classList.add('planet-markdown-fullscreen-owner');

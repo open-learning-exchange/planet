@@ -63,10 +63,12 @@ planet-markdown-textbox {
   .planet-markdown-fullscreen-actions {
     position: fixed;
     inset: auto 0 0;
+
     // Rows styled `width: 100%` would over-constrain the fixed box and drop `right`.
     width: auto;
     margin: 0;
     padding: 8px 16px;
+
     // EasyMDE uses z-index 7-9 for its fullscreen surfaces.
     z-index: 10;
     background: v.$white;
@@ -121,6 +123,7 @@ planet-markdown-textbox {
   &:has(planet-markdown-textbox.is-invalid) .mat-mdc-form-field-subscript-wrapper {
     position: fixed;
     inset: auto 0 var(--fullscreen-actions-height, 0px);
+
     // Material sets width: 100%; with left and right set it must yield or `right` is ignored.
     width: auto;
     padding: 4px 0;
