@@ -75,7 +75,7 @@
     "@angular-eslint/schematics": "20.7.0",
     "@angular-eslint/template-parser": "20.7.0",
     "@angular/build": "^20.3.26",
-    "@angular/cli": "20.3.26",
+    "@angular/cli": "21.0.4",
     "@angular/compiler-cli": "20.3.21",
     "@angular/language-service": "20.3.21",
     "@eslint/compat": "^1.4.1",
