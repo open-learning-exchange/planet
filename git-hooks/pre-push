@@ -7,7 +7,24 @@
 pass=true
 RED='\033[1;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
+
+protected_branch_pattern='^(refs/heads/)?(master|main)$'
+
+while read -r local_ref local_sha remote_ref remote_sha
+do
+  if [[ $remote_ref =~ $protected_branch_pattern ]]; then
+    if [[ "$ALLOW_PROTECTED_PUSH" != "1" ]]; then
+      printf "${RED}Push blocked.${NC}\n"
+      printf "Refusing to push to ${YELLOW}%s${NC}.\n" "$remote_ref"
+      printf "If this is intentional, rerun with ${YELLOW}ALLOW_PROTECTED_PUSH=1 git push ...${NC}\n"
+      exit 1
+    fi
+
+    printf "${YELLOW}Warning:${NC} pushing to protected branch %s with override enabled.\n" "$remote_ref"
+  fi
+done
 
 # Function to output result of tests
 output_result() {
