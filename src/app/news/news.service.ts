@@ -146,7 +146,7 @@ export class NewsService {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
-  scrubDeletedLabels(deletedLabels: string[]) {
+  scrubDeletedLabels(deletedLabels: string[], planetCode?: string) {
     if (!deletedLabels || deletedLabels.length === 0) {
       return of([]);
     }
@@ -154,6 +154,7 @@ export class NewsService {
     return this.couchService.findAll(this.dbName).pipe(
       switchMap((newsItems: any[]) => {
         const docsToUpdate = newsItems.filter((item: any) =>
+          (!planetCode || item.createdOn === planetCode) &&
           (item.labels || []).some((l: string) => lowerDeleted.includes(l.toLowerCase()))
         ).map((item: any) => ({
           ...item,

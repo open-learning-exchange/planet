@@ -12,44 +12,14 @@ import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NewsService } from '../news/news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
+import { DialogsLoadingService } from '../shared/dialogs-loading.service';
 import { LabelComponent } from '../shared/label.component';
 import { finalize, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'planet-community-voice-labels-dialog',
   templateUrl: './community-voice-labels-dialog.component.html',
-  styles: [`
-    :host {
-      display: block;
-    }
-    .labels-dialog-section {
-      margin-bottom: 16px;
-    }
-    .margin-top-16 {
-      margin-top: 16px;
-    }
-    .full-width {
-      flex: 1;
-    }
-    .add-label-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .add-btn {
-      margin-top: 4px;
-      height: 52px;
-    }
-    .small-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      margin-right: 4px;
-    }
-    .color-grey {
-      color: var(--color-grey, #666);
-    }
-  `],
+  styleUrl: './community-voice-labels-dialog.component.scss',
   imports: [
     MatDialogTitle,
     MatDialogContent,
@@ -83,7 +53,8 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
     private stateService: StateService,
     private couchService: CouchService,
     private newsService: NewsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private dialogsLoadingService: DialogsLoadingService
   ) {}
 
   ngOnInit() {
@@ -133,6 +104,7 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
+    this.dialogsLoadingService.start();
     const currentConfig = this.stateService.configuration || {};
     const updatedConfig = {
       ...currentConfig,
@@ -144,8 +116,11 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
 
     this.couchService.updateDocument('configurations', updatedConfig)
       .pipe(
-        switchMap(() => this.newsService.scrubDeletedLabels(deletedLabels)),
-        finalize(() => this.isSaving = false)
+        switchMap(() => this.newsService.scrubDeletedLabels(deletedLabels, currentConfig.code)),
+        finalize(() => {
+          this.isSaving = false;
+          this.dialogsLoadingService.stop();
+        })
       )
       .subscribe({
         next: () => {

@@ -643,6 +643,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   openManageLabelsDialog() {
+    if (this.planetCode) {
+      return;
+    }
     this.dialog.open(CommunityVoiceLabelsDialogComponent, {
       width: '500px',
       autoFocus: false
