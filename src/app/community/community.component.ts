@@ -45,6 +45,7 @@ import {
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
+import { CommunityVoiceLabelsDialogComponent } from './community-voice-labels-dialog.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
@@ -210,6 +211,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
       this.stateService.couchStateListener('configurations')
     ).subscribe(() => {
       this.getCommunityData();
+    });
+    this.stateService.couchStateListener('configurations').pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.availableLabels = this.getAvailableLabels(this.news);
     });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.user = this.userService.get();
@@ -636,5 +640,16 @@ export class CommunityComponent implements OnInit, OnDestroy {
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
     this.selectedLabel = action === 'select' ? label : '';
     this.applyFilters();
+  }
+
+  openManageLabelsDialog() {
+    this.dialog.open(CommunityVoiceLabelsDialogComponent, {
+      width: '500px',
+      autoFocus: false
+    }).afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.requestNewsAndUsers(this.planetCode);
+      }
+    });
   }
 }

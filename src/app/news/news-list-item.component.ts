@@ -75,6 +75,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   showShare = false;
   planetCode = this.stateService.configuration.code;
   targetLocalPlanet = true;
+  defaultLabels = [ 'help', 'offer', 'advice' ];
   labels = { listed: [], all: [ 'help', 'offer', 'advice' ] };
   teamLabels = [];
   previewLimit = 500;
@@ -100,9 +101,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
+    this.updateLabelsAll();
     this.handleItemExpansion();
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.currentUser = this.userService.get();
+    });
+    this.stateService.couchStateListener('configurations').pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.updateLabelsAll();
     });
     this.addTeamLabelsFromViewIn();
   }
@@ -110,7 +115,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges() {
     this.targetLocalPlanet = this.shareTarget === this.stateService.configuration.planetType;
     this.showShare = this.shouldShowShare();
-    this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+    this.updateLabelsAll();
     if (this.item.doc.viewIn && this.item.doc.viewIn.length > 0 && this.item.sharedDate && !this.item.doc.replyTo) {
       const viewIn = this.item.doc.viewIn[0];
       if (viewIn.name) {
@@ -121,6 +126,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       this.item.sharedSourceInfo = null;
     }
     this.handleItemExpansion();
+  }
+
+  updateLabelsAll() {
+    const customConfigLabels = this.stateService.configuration?.customVoiceLabels || [];
+    const allSet = new Set<string>([...this.defaultLabels, ...customConfigLabels]);
+    this.labels.all = Array.from(allSet);
+    this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);
+  }
+
+  get activeItemLabels(): string[] {
+    const itemLabels = this.item.doc.labels || [];
+    return itemLabels.filter(label => this.labels.all.includes(label));
   }
 
   ngOnDestroy() {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { UserService } from '../shared/user.service';
@@ -146,4 +146,26 @@ export class NewsService {
     return post && post.doc && (post.doc.viewIn || []).some(({ _id }) => _id === planetAndParentId(this.stateService.configuration));
   }
 
+  scrubDeletedLabels(deletedLabels: string[]) {
+    if (!deletedLabels || deletedLabels.length === 0) {
+      return of([]);
+    }
+    const lowerDeleted = deletedLabels.map(l => l.toLowerCase());
+    return this.couchService.findAll(this.dbName).pipe(
+      switchMap((newsItems: any[]) => {
+        const docsToUpdate = newsItems.filter((item: any) =>
+          (item.labels || []).some((l: string) => lowerDeleted.includes(l.toLowerCase()))
+        ).map((item: any) => ({
+          ...item,
+          labels: (item.labels || []).filter((l: string) => !lowerDeleted.includes(l.toLowerCase()))
+        }));
+
+        if (docsToUpdate.length === 0) {
+          return of([]);
+        }
+        return this.couchService.bulkDocs(this.dbName, docsToUpdate);
+      }),
+      tap(() => this.requestNews())
+    );
+  }
 }
