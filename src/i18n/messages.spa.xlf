@@ -2492,13 +2492,49 @@ Otras notas</target>
         <source>See All</source>
         <target state="final">Ver todo</target>
       </trans-unit>
-      <trans-unit id="3335034047405167528" datatype="html" approved="yes">
-        <source>Check out our Android app</source>
-        <target state="final">Echa un vistazo a nuestra aplicación Android</target>
+      <trans-unit id="3534984212959071163" datatype="html" approved="yes">
+        <source>Check out our Android apps</source>
+        <target state="final">Echa un vistazo a nuestras aplicaciones para Android</target>
       </trans-unit>
-      <trans-unit id="3947932744068086415" datatype="html">
-        <source>myPlanet on playstore</source>
-        <target state="translated">myPlanet en Google Play</target>
+      <trans-unit id="9065868234082693767" datatype="html" approved="yes">
+        <source>Close Android app banner</source>
+        <target state="final">Cerrar el banner de aplicaciones para Android</target>
+      </trans-unit>
+      <trans-unit id="2866055652148348809" datatype="html" approved="yes">
+        <source>Full-featured offline learning app</source>
+        <target state="final">Aplicación de aprendizaje sin conexión con todas las funciones</target>
+      </trans-unit>
+      <trans-unit id="4159803850116371687" datatype="html" approved="yes">
+        <source>Install myPlanet</source>
+        <target state="final">Instalar myPlanet</target>
+      </trans-unit>
+      <trans-unit id="7608345630430529300" datatype="html" approved="yes">
+        <source>myPlanet Lite</source>
+        <target state="final">myPlanet Lite</target>
+      </trans-unit>
+      <trans-unit id="5853502135183082395" datatype="html" approved="yes">
+        <source>Lightweight version that uses less storage</source>
+        <target state="final">Versión ligera que ocupa menos espacio de almacenamiento</target>
+      </trans-unit>
+      <trans-unit id="689883195141523023" datatype="html" approved="yes">
+        <source>Install myPlanet Lite</source>
+        <target state="final">Instalar myPlanet Lite</target>
+      </trans-unit>
+      <trans-unit id="3158554629807420909" datatype="html" approved="yes">
+        <source>Get the Planet mobile app</source>
+        <target state="final">Obtén la aplicación móvil de Planet</target>
+      </trans-unit>
+      <trans-unit id="4684839318250929517" datatype="html" approved="yes">
+        <source>You&apos;re browsing on an Android device. Install one of our apps for a faster, offline-capable experience.</source>
+        <target state="final">Estás navegando desde un dispositivo Android. Instala una de nuestras aplicaciones para disfrutar de una experiencia más rápida y con acceso sin conexión.</target>
+      </trans-unit>
+      <trans-unit id="6082171864197428613" datatype="html" approved="yes">
+        <source>Install</source>
+        <target state="final">Instalar</target>
+      </trans-unit>
+      <trans-unit id="5161411570094992408" datatype="html" approved="yes">
+        <source>Not now</source>
+        <target state="final">Ahora no</target>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html" approved="yes">
         <source>Dashboard</source>
@@ -5795,6 +5831,10 @@ Otras notas</target>
         <source>Error sending survey requests.</source>
         <target state="final">Error al enviar las solicitudes de encuesta.</target>
       </trans-unit>
+      <trans-unit id="8902217649532050849" datatype="html" approved="yes">
+        <source>There was a problem recording the survey.</source>
+        <target state="final">Hubo un problema al registrar la encuesta.</target>
+      </trans-unit>
       <trans-unit id="1414733139904716677" datatype="html">
         <source>Public link generated for this survey</source>
         <target state="translated">Se generó un enlace público para esta encuesta</target>
@@ -6055,9 +6095,9 @@ Otras notas</target>
         <source>reports</source>
         <target state="translated">reportes</target>
       </trans-unit>
-      <trans-unit id="6825329815737519497" datatype="html" approved="yes">
-        <source>Export as CSV</source>
-        <target state="final">Exportar como CSV</target>
+      <trans-unit id="7926143511350598250" datatype="html" approved="yes">
+        <source>CSV</source>
+        <target state="final">CSV</target>
       </trans-unit>
       <trans-unit id="6864016537810263548" datatype="html" approved="yes">
         <source>Add Report</source>
@@ -6155,6 +6195,22 @@ Otras notas</target>
         <source>Other Expenses</source>
         <target state="final">Otros gastos</target>
       </trans-unit>
+      <trans-unit id="7531506369118512654" datatype="html" approved="yes">
+        <source>Total Credit</source>
+        <target state="final">Crédito total</target>
+      </trans-unit>
+      <trans-unit id="5935363325942095320" datatype="html" approved="yes">
+        <source>Total Debit</source>
+        <target state="final">Débito total</target>
+      </trans-unit>
+      <trans-unit id="6565745869379859165" datatype="html" approved="yes">
+        <source>Net Profit/Loss</source>
+        <target state="final">Ganancia/pérdida neta</target>
+      </trans-unit>
+      <trans-unit id="4579766002080253515" datatype="html" approved="yes">
+        <source>Financial Summary for <x id="PH" equiv-text="titleName"/>.pdf</source>
+        <target state="final">Resumen financiero de <x id="PH" equiv-text="titleName"/>.pdf</target>
+      </trans-unit>
       <trans-unit id="188408324951035066" datatype="html" approved="yes">
         <source>Unnamed</source>
         <target state="final">Sin nombre</target>
@@ -6162,6 +6218,10 @@ Otras notas</target>
       <trans-unit id="6630681340946694789" datatype="html" approved="yes">
         <source>Financial Summary for <x id="PH" equiv-text="titleName"/></source>
         <target state="final">Resumen financiero de <x id="PH" equiv-text="titleName"/></target>
+      </trans-unit>
+      <trans-unit id="2352646517693441633" datatype="html" approved="yes">
+        <source>Receipt images for <x id="PH" equiv-text="fullLabel(report.startDate, this.localeId)"/> - <x id="PH_1" equiv-text="fullLabel(report.endDate, this.localeId)"/></source>
+        <target state="final">Imágenes de recibos de <x id="PH" equiv-text="fullLabel(report.startDate, this.localeId)"/> - <x id="PH_1" equiv-text="fullLabel(report.endDate, this.localeId)"/></target>
       </trans-unit>
       <trans-unit id="7115407436370620649" datatype="html">
         <source>Balance is negative</source>
@@ -6267,9 +6327,21 @@ Otras notas</target>
         <source>balance</source>
         <target state="final">saldo</target>
       </trans-unit>
+      <trans-unit id="7791553364151343531" datatype="html" approved="yes">
+        <source>Financial Transactions for <x id="PH" equiv-text="titleName"/>.pdf</source>
+        <target state="final">Transacciones financieras de <x id="PH" equiv-text="titleName"/>.pdf</target>
+      </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html" approved="yes">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
         <target state="final">Transacciones financieras de<x id="PH" equiv-text="titleName"/></target>
+      </trans-unit>
+      <trans-unit id="5577210405857641325" datatype="html" approved="yes">
+        <source>Beginning</source>
+        <target state="final">Inicio</target>
+      </trans-unit>
+      <trans-unit id="8571274863118609047" datatype="html" approved="yes">
+        <source>Date range: <x id="PH" equiv-text="start"/> - <x id="PH_1" equiv-text="end"/></source>
+        <target state="final">Rango de fechas: <x id="PH" equiv-text="start"/> - <x id="PH_1" equiv-text="end"/></target>
       </trans-unit>
       <trans-unit id="8759370273386874620" datatype="html" approved="yes">
         <source>{VAR_SELECT, select, team {Teams} enterprise {Enterprises}}</source>
@@ -6967,9 +7039,9 @@ Otras notas</target>
         <source>Birthplace: <x id="PH" equiv-text="this.user.birthplace"/></source>
         <target state="final">Lugar de nacimiento: <x id="PH" equiv-text="this.user.birthplace"/></target>
       </trans-unit>
-      <trans-unit id="1569462115651641805" datatype="html">
-        <source><x id="PH" equiv-text="this.user.name"/> achievements</source>
-        <target state="translated">logros de <x id="PH" equiv-text="this.user.name"/></target>
+      <trans-unit id="6914009700103907353" datatype="html" approved="yes">
+        <source><x id="PH" equiv-text="this.user.name"/> achievements.pdf</source>
+        <target state="final">Logros de <x id="PH" equiv-text="this.user.name"/>.pdf</target>
       </trans-unit>
       <trans-unit id="9082581968602742137" datatype="html" approved="yes">
         <source>Request for User Data Deletion</source>
