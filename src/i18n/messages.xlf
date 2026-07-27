@@ -4375,9 +4375,6 @@ Other Notes</source>
       <trans-unit id="1209916426134713754" datatype="html">
         <source>Error sending survey requests.</source>
       </trans-unit>
-      <trans-unit id="8902217649532050849" datatype="html">
-        <source>There was a problem recording the survey.</source>
-      </trans-unit>
       <trans-unit id="1414733139904716677" datatype="html">
         <source>Public link generated for this survey</source>
       </trans-unit>
@@ -4573,8 +4570,8 @@ Other Notes</source>
       <trans-unit id="6590475405017990661" datatype="html">
         <source>reports</source>
       </trans-unit>
-      <trans-unit id="7926143511350598250" datatype="html">
-        <source>CSV</source>
+      <trans-unit id="6825329815737519497" datatype="html">
+        <source>Export as CSV</source>
       </trans-unit>
       <trans-unit id="6864016537810263548" datatype="html">
         <source>Add Report</source>
@@ -4639,35 +4636,20 @@ Other Notes</source>
       <trans-unit id="1232877081534491011" datatype="html">
         <source>There was a problem deleting the report.</source>
       </trans-unit>
+      <trans-unit id="8047377907322802891" datatype="html">
+        <source>Updated Date</source>
+      </trans-unit>
       <trans-unit id="8279659101806790636" datatype="html">
         <source>Wages</source>
       </trans-unit>
       <trans-unit id="1426475745601890846" datatype="html">
         <source>Other Expenses</source>
       </trans-unit>
-      <trans-unit id="7531506369118512654" datatype="html">
-        <source>Total Credit</source>
-      </trans-unit>
-      <trans-unit id="5935363325942095320" datatype="html">
-        <source>Total Debit</source>
-      </trans-unit>
-      <trans-unit id="6565745869379859165" datatype="html">
-        <source>Net Profit/Loss</source>
-      </trans-unit>
-      <trans-unit id="4579766002080253515" datatype="html">
-        <source>Financial Summary for <x id="PH" equiv-text="titleName"/>.pdf</source>
-      </trans-unit>
-      <trans-unit id="8047377907322802891" datatype="html">
-        <source>Updated Date</source>
-      </trans-unit>
       <trans-unit id="188408324951035066" datatype="html">
         <source>Unnamed</source>
       </trans-unit>
       <trans-unit id="6630681340946694789" datatype="html">
         <source>Financial Summary for <x id="PH" equiv-text="titleName"/></source>
-      </trans-unit>
-      <trans-unit id="2352646517693441633" datatype="html">
-        <source>Receipt images for <x id="PH" equiv-text="fullLabel(report.startDate, this.localeId)"/> - <x id="PH_1" equiv-text="fullLabel(report.endDate, this.localeId)"/></source>
       </trans-unit>
       <trans-unit id="7115407436370620649" datatype="html">
         <source>Balance is negative</source>
@@ -4732,6 +4714,9 @@ Other Notes</source>
       <trans-unit id="1783245762876858628" datatype="html">
         <source>There was a problem deleting this transaction.</source>
       </trans-unit>
+      <trans-unit id="3938396793871184620" datatype="html">
+        <source>date</source>
+      </trans-unit>
       <trans-unit id="6777974573583289938" datatype="html">
         <source>description</source>
       </trans-unit>
@@ -4744,20 +4729,8 @@ Other Notes</source>
       <trans-unit id="5452881409775077105" datatype="html">
         <source>balance</source>
       </trans-unit>
-      <trans-unit id="7791553364151343531" datatype="html">
-        <source>Financial Transactions for <x id="PH" equiv-text="titleName"/>.pdf</source>
-      </trans-unit>
-      <trans-unit id="3938396793871184620" datatype="html">
-        <source>date</source>
-      </trans-unit>
       <trans-unit id="7933600964690636863" datatype="html">
         <source>Financial Transactions for <x id="PH" equiv-text="titleName"/></source>
-      </trans-unit>
-      <trans-unit id="5577210405857641325" datatype="html">
-        <source>Beginning</source>
-      </trans-unit>
-      <trans-unit id="8571274863118609047" datatype="html">
-        <source>Date range: <x id="PH" equiv-text="start"/> - <x id="PH_1" equiv-text="end"/></source>
       </trans-unit>
       <trans-unit id="8759370273386874620" datatype="html">
         <source>{VAR_SELECT, select, team {Teams} enterprise {Enterprises}}</source>
@@ -5281,8 +5254,8 @@ Other Notes</source>
       <trans-unit id="7216178614747796846" datatype="html">
         <source>Birthplace: <x id="PH" equiv-text="this.user.birthplace"/></source>
       </trans-unit>
-      <trans-unit id="6914009700103907353" datatype="html">
-        <source><x id="PH" equiv-text="this.user.name"/> achievements.pdf</source>
+      <trans-unit id="1569462115651641805" datatype="html">
+        <source><x id="PH" equiv-text="this.user.name"/> achievements</source>
       </trans-unit>
       <trans-unit id="9082581968602742137" datatype="html">
         <source>Request for User Data Deletion</source>
