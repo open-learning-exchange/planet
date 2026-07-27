@@ -124,6 +124,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
+  cancelDialog: any;
   finances: any[] = [];
   teamDataLoading = true;
   reports: any[] = [];
@@ -357,7 +358,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === user.planetCode);
+    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
   }
 
   toggleMembership(team, leaveTeam) {
@@ -464,6 +465,42 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
       this.setStatus(this.team, this.leader, this.userService.get());
       this.planetMessageService.showMessage(message);
+    });
+  }
+
+  cancelJoinRequest() {
+    return {
+      request: this.teamsService.cancelJoinRequest(this.team),
+      onNext: () => {
+        this.cancelDialog.close();
+        this.requests = this.requests.filter(request =>
+          request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
+        );
+        this.setStatus(this.team, this.leader, this.userService.get());
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
+          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;
+        this.planetMessageService.showMessage(msg);
+      },
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`There was a problem cancelling your request to join this enterprise.`
+          : $localize`There was a problem cancelling your request to join this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
+    };
+  }
+
+  openCancelJoinRequestDialog() {
+    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.cancelJoinRequest(),
+        showMainParagraph: false,
+        extraMessage: this.mode === 'enterprise'
+          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+          : $localize`Are you sure you want to cancel the request to join the following team?`,
+        displayName: this.team.name
+      }
     });
   }
 
