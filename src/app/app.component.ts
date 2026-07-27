@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
 import { Router, NavigationStart, NavigationEnd, RouterOutlet } from '@angular/router';
 import { StateService } from './shared/state.service';
-import { DialogsAndroidAppComponent } from './shared/dialogs/dialogs-android-app.component';
 import { Dir } from '@angular/cdk/bidi';
 declare let gtag: (type: string, account: string, params: { 'page_path': string }) => void;
 
@@ -13,16 +11,12 @@ declare let gtag: (type: string, account: string, params: { 'page_path': string 
   template: '<div i18n-dir dir="ltr"><router-outlet></router-outlet></div>',
   imports: [Dir, RouterOutlet]
 })
-export class AppComponent implements OnInit {
-
-  private androidAppPromptKey = 'planet-android-app-prompt-dismissed';
-
+export class AppComponent {
   constructor(
     iconRegistry: MatIconRegistry,
     sanitizer: DomSanitizer,
     public router: Router,
-    private stateService: StateService,
-    private dialog: MatDialog
+    private stateService: StateService
   ) {
     iconRegistry.addSvgIcon(
       'myLibrary',
@@ -93,37 +87,5 @@ export class AppComponent implements OnInit {
         gtag('config', 'UA-118745384-1', { 'page_path': event.urlAfterRedirects });
       }
     });
-  }
-
-  ngOnInit() {
-    this.maybePromptAndroidApp();
-  }
-
-  private maybePromptAndroidApp() {
-    if (!this.isAndroid() || this.isDismissed()) {
-      return;
-    }
-    this.dialog.open(DialogsAndroidAppComponent, { maxWidth: '90vw', width: '400px' })
-      .afterClosed().subscribe(() => this.dismissAndroidPrompt());
-  }
-
-  private isAndroid(): boolean {
-    return typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
-  }
-
-  private isDismissed(): boolean {
-    try {
-      return localStorage.getItem(this.androidAppPromptKey) === 'true';
-    } catch {
-      return false;
-    }
-  }
-
-  private dismissAndroidPrompt() {
-    try {
-      localStorage.setItem(this.androidAppPromptKey, 'true');
-    } catch {
-      // Ignore storage errors (e.g. private mode); prompt may reappear next visit.
-    }
   }
 }

@@ -15,6 +15,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
+import { AndroidAppPromptService } from '../../shared/android-app-prompt.service';
 
 @Component({
   selector: 'planet-public-survey',
@@ -63,10 +64,12 @@ export class PublicSurveyComponent implements OnInit {
     private route: ActivatedRoute,
     private publicSurveysService: PublicSurveysService,
     private fb: NonNullableFormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private androidAppPromptService: AndroidAppPromptService
   ) {}
 
   ngOnInit() {
+    this.androidAppPromptService.maybePrompt();
     this.route.paramMap.pipe(
       switchMap(params => this.publicSurveysService.getSurvey(params.get('teamId') || '', params.get('surveyId') || ''))
     ).subscribe({
