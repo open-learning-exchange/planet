@@ -12,7 +12,7 @@ import { StateService } from '../shared/state.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NewsService } from '../news/news.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { DialogsLoadingService } from '../shared/dialogs-loading.service';
+import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { LabelComponent } from '../shared/label.component';
 import { finalize, switchMap } from 'rxjs/operators';
 
