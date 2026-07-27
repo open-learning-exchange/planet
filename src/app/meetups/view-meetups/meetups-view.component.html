@@ -44,7 +44,7 @@
       <div class="meetup-detail" [ngClass]="{'left-tile':!isDialog}">
         @if (meetupDetail?.createdBy) {
           <p>
-            <b i18n>Created By:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode)">{{' ' + meetupDetail?.createdBy}}</a>
+            <b i18n>Created By:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode, $event)" (keydown.space)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode, $event)" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode, $event)">{{' ' + meetupDetail?.createdBy}}</a>
           </p>
         }
         @if (meetupDetail?.category) {
@@ -77,7 +77,7 @@
         <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer">{{meetupDetail?.meetupLink}}</a></p>
       }
       @if (meetupDetail?.assignee) {
-        <p><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+        <p><b i18n>Assigned to:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode, $event)" (keydown.space)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode, $event)" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode, $event)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>

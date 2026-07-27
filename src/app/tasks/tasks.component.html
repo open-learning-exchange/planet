@@ -26,7 +26,7 @@
           <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
         }
         @if (task.assignee) {
-<img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" [src]="
+<img matListItemAvatar tabindex="0" role="button" (keydown.enter)="onAvatarKeydown($event, task.assignee)" (keydown.space)="onAvatarKeydown($event, task.assignee)" (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" [src]="
       task.assignee.attachmentDoc ?
         imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
         task.assignee.avatar ?

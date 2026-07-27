@@ -88,7 +88,11 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.actionClick.emit(actionParams);
   }
 
-  openMemberDialog(member) {
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.dialog.open(UserProfileDialogComponent, {
       data: { member },
       maxWidth: '90vw',
