@@ -2,12 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-
-interface MobileApp {
-  name: string;
-  description: string;
-  url: string;
-}
+import { ANDROID_APPS } from '../android-apps';
 
 @Component({
   templateUrl: './dialogs-android-app.component.html',
@@ -16,18 +11,7 @@ interface MobileApp {
 })
 export class DialogsAndroidAppComponent {
 
-  apps: MobileApp[] = [
-    {
-      name: $localize`myPlanet`,
-      description: $localize`Full-featured offline learning app`,
-      url: 'https://play.google.com/store/apps/details?id=org.ole.planet.myplanet'
-    },
-    {
-      name: $localize`myPlanet Lite`,
-      description: $localize`Lightweight version that uses less storage`,
-      url: 'https://play.google.com/store/apps/details?id=org.ole.planet.myplanet.lite'
-    }
-  ];
+  readonly apps = ANDROID_APPS;
 
   constructor(public dialogRef: MatDialogRef<DialogsAndroidAppComponent>) {}
 

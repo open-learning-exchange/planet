@@ -1,3 +1,9 @@
+@use '../../variables' as v;
+
+.dialog-title {
+  color: v.$primary-text;
+}
+
 .app-list {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title class="primary-color" i18n>Get the Planet mobile app</h2>
+<h2 mat-dialog-title class="dialog-title primary-color" i18n>Get the Planet mobile app</h2>
 <mat-dialog-content>
   <p i18n>You're browsing on an Android device. Install one of our apps for a faster, offline-capable experience.</p>
   <div class="app-list">
@@ -9,11 +9,20 @@
           <span class="app-name">{{ app.name }}</span>
           <span class="app-description">{{ app.description }}</span>
         </div>
-        <a mat-raised-button color="primary" [href]="app.url" target="_blank" rel="noopener" (click)="close()" i18n>Install</a>
+        <a
+          mat-raised-button
+          color="primary"
+          [href]="app.url"
+          target="_blank"
+          rel="noopener"
+          (click)="close()"
+          [attr.aria-label]="app.installLabel">
+          <ng-container i18n>Install</ng-container>
+        </a>
       </div>
     }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close i18n>Not now</button>
+  <button mat-raised-button mat-dialog-close i18n>Not now</button>
 </mat-dialog-actions>
