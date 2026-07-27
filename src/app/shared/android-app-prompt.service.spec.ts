@@ -33,7 +33,7 @@ describe('AndroidAppPromptService', () => {
   it('does not prompt non-Android devices', () => {
     deviceInfoService.isAndroid.mockReturnValue(false);
 
-    service.maybePrompt();
+    service.openIfEligible();
 
     expect(dialog.open).not.toHaveBeenCalled();
   });
@@ -41,13 +41,13 @@ describe('AndroidAppPromptService', () => {
   it('does not prompt after a prior dismissal', () => {
     sessionStorage.setItem('planet-android-survey-app-prompt-dismissed', 'true');
 
-    service.maybePrompt();
+    service.openIfEligible();
 
     expect(dialog.open).not.toHaveBeenCalled();
   });
 
   it('prompts first-time Android visitors and persists after close', () => {
-    service.maybePrompt();
+    service.openIfEligible();
 
     expect(dialog.open).toHaveBeenCalledWith(
       DialogsAndroidAppComponent,
@@ -65,7 +65,7 @@ describe('AndroidAppPromptService', () => {
       throw new Error('Storage unavailable');
     });
 
-    service.maybePrompt();
+    service.openIfEligible();
 
     expect(dialog.open).toHaveBeenCalled();
   });
@@ -75,7 +75,7 @@ describe('AndroidAppPromptService', () => {
       throw new Error('Storage unavailable');
     });
 
-    service.maybePrompt();
+    service.openIfEligible();
 
     expect(() => afterClosed$.next()).not.toThrow();
   });

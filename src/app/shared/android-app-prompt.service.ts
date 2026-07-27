@@ -8,33 +8,33 @@ import { DialogsAndroidAppComponent } from './dialogs/dialogs-android-app.compon
   providedIn: 'root'
 })
 export class AndroidAppPromptService {
-  private readonly promptDismissedKey = 'planet-android-survey-app-prompt-dismissed';
+  private readonly dismissedSessionStorageKey = 'planet-android-survey-app-prompt-dismissed';
 
   constructor(
     private deviceInfoService: DeviceInfoService,
     private dialog: MatDialog
   ) {}
 
-  maybePrompt() {
-    if (!this.deviceInfoService.isAndroid() || this.isDismissed()) {
+  openIfEligible() {
+    if (!this.deviceInfoService.isAndroid() || this.wasDismissedThisSession()) {
       return;
     }
 
     this.dialog.open(DialogsAndroidAppComponent, { maxWidth: '90vw', width: '400px' })
-      .afterClosed().subscribe(() => this.dismissPrompt());
+      .afterClosed().subscribe(() => this.markDismissedForSession());
   }
 
-  private isDismissed(): boolean {
+  private wasDismissedThisSession(): boolean {
     try {
-      return sessionStorage.getItem(this.promptDismissedKey) === 'true';
+      return sessionStorage.getItem(this.dismissedSessionStorageKey) === 'true';
     } catch {
       return false;
     }
   }
 
-  private dismissPrompt() {
+  private markDismissedForSession() {
     try {
-      sessionStorage.setItem(this.promptDismissedKey, 'true');
+      sessionStorage.setItem(this.dismissedSessionStorageKey, 'true');
     } catch {
       // The banner remains available when storage is unavailable.
     }

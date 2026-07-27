@@ -69,7 +69,7 @@ export class PublicSurveyComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.androidAppPromptService.maybePrompt();
+    this.androidAppPromptService.openIfEligible();
     this.route.paramMap.pipe(
       switchMap(params => this.publicSurveysService.getSurvey(params.get('teamId') || '', params.get('surveyId') || ''))
     ).subscribe({
