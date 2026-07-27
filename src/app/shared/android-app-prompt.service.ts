@@ -8,6 +8,7 @@ import { DialogsAndroidAppComponent } from './dialogs/dialogs-android-app.compon
   providedIn: 'root'
 })
 export class AndroidAppPromptService {
+  // Keep the prompt dismissed across reloads and restores for the lifetime of this tab's page session.
   private readonly dismissedSessionStorageKey = 'planet-android-survey-app-prompt-dismissed';
 
   constructor(
