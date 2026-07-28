@@ -112,18 +112,27 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.every(filter => propSet.has(filter));
 };
 
+const matchAnyItem = (filterItems: string[], propItems: string[]) => {
+  if (!filterItems || filterItems.length === 0) {
+    return true;
+  }
+  const propSet = new Set(propItems);
+  return filterItems.some(filter => propSet.has(filter));
+};
+
 const filterArrayField = (filterField: string, filterItems: string[]) => {
   return (data: unknown, _filter: string) => {
     const raw = getProperty(data, filterField);
     const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
 
-    return matchAllItems(filterItems, propItems);
+    return matchAnyItem(filterItems, propItems);
   };
 };
 
 export const filterTags = (filterControl: FormControl) => {
-  return (data: any, filter: string) => {
-    return filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter);
+  return (data: any) => {
+    const raw = data.tags ? data.tags.map((tag: any) => tag._id) : [];
+    return matchAllItems(filterControl.value, raw);
   };
 };
 
