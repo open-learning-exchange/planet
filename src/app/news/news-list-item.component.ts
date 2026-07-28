@@ -133,11 +133,17 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     return (this.item?.doc?.viewIn || []).some((v: any) => v.mode === 'enterprise' || v.mode === 'team');
   }
 
+  get isSharedToCommunity(): boolean {
+    return (this.item?.doc?.viewIn || []).some(
+      (v: any) => v.section === 'community' || v.name === 'community' || v._id === this.planetCode
+    );
+  }
+
   updateLabelsAll() {
     let customConfigLabels: string[] = [];
     if (Array.isArray(this.customLabels) && this.customLabels.length > 0) {
       customConfigLabels = this.customLabels;
-    } else if (!this.isGroupItem) {
+    } else if (!this.isGroupItem || this.isSharedToCommunity) {
       customConfigLabels = this.stateService.configuration?.customVoiceLabels || [];
     }
     const allSet = new Set<string>([...this.defaultLabels, ...customConfigLabels]);
