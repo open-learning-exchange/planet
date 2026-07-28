@@ -67,6 +67,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
   @Output() shareNews = new EventEmitter<{ news: any, local: boolean }>();
+  @Input() customLabels: string[] = [];
   @Output() changeLabels = new EventEmitter<{ label: string, action: 'remove' | 'add' | 'select', news: any }>();
   onDestroy$ = new Subject<void>();
   currentUser = this.userService.get();
@@ -128,8 +129,17 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     this.handleItemExpansion();
   }
 
+  get isGroupItem(): boolean {
+    return (this.item?.doc?.viewIn || []).some((v: any) => v.mode === 'enterprise' || v.mode === 'team');
+  }
+
   updateLabelsAll() {
-    const customConfigLabels = this.stateService.configuration?.customVoiceLabels || [];
+    let customConfigLabels: string[] = [];
+    if (Array.isArray(this.customLabels) && this.customLabels.length > 0) {
+      customConfigLabels = this.customLabels;
+    } else if (!this.isGroupItem) {
+      customConfigLabels = this.stateService.configuration?.customVoiceLabels || [];
+    }
     const allSet = new Set<string>([...this.defaultLabels, ...customConfigLabels]);
     this.labels.all = Array.from(allSet);
     this.labels.listed = this.labels.all.filter(label => (this.item.doc.labels || []).indexOf(label) === -1);

@@ -46,6 +46,8 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
   newLabelInput = '';
   errorMessage = '';
   isSaving = false;
+  target: 'community' | 'team' | 'enterprise' = 'community';
+  team: any;
 
   constructor(
     private dialogRef: MatDialogRef<CommunityVoiceLabelsDialogComponent>,
@@ -58,11 +60,28 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const configCustomLabels = this.stateService.configuration?.customVoiceLabels;
-    if (Array.isArray(configCustomLabels)) {
-      this.initialCustomLabels = [ ...configCustomLabels ];
-      this.customLabels = [ ...configCustomLabels ];
+    this.target = this.data?.target || 'community';
+    this.team = this.data?.team;
+
+    let configCustomLabels: string[] = [];
+    if (this.target === 'community') {
+      configCustomLabels = this.stateService.configuration?.customVoiceLabels || [];
+    } else if (this.team && Array.isArray(this.team.customVoiceLabels)) {
+      configCustomLabels = this.team.customVoiceLabels;
     }
+
+    this.initialCustomLabels = [ ...configCustomLabels ];
+    this.customLabels = [ ...configCustomLabels ];
+  }
+
+  get sectionHeader(): string {
+    if (this.target === 'enterprise') {
+      return $localize`Custom Enterprise Labels`;
+    }
+    if (this.target === 'team') {
+      return $localize`Custom Team Labels`;
+    }
+    return $localize`Custom Community Labels`;
   }
 
   addLabel(): void {
@@ -105,32 +124,57 @@ export class CommunityVoiceLabelsDialogComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     this.dialogsLoadingService.start();
-    const currentConfig = this.stateService.configuration || {};
-    const updatedConfig = {
-      ...currentConfig,
-      keys: this.stateService.keys,
-      customVoiceLabels: [ ...this.customLabels ]
-    };
-
     const deletedLabels = this.initialCustomLabels.filter(label => !this.customLabels.includes(label));
 
-    this.couchService.updateDocument('configurations', updatedConfig)
-      .pipe(
-        switchMap(() => this.newsService.scrubDeletedLabels(deletedLabels, currentConfig.code)),
-        finalize(() => {
-          this.isSaving = false;
-          this.dialogsLoadingService.stop();
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.stateService.requestData('configurations', 'local');
-          this.planetMessageService.showMessage($localize`Voice labels updated successfully.`);
-          this.dialogRef.close(true);
-        },
-        error: () => {
-          this.planetMessageService.showAlert($localize`There was a problem saving custom voice labels.`);
-        }
-      });
+    if (this.target === 'community') {
+      const currentConfig = this.stateService.configuration || {};
+      const updatedConfig = {
+        ...currentConfig,
+        keys: this.stateService.keys,
+        customVoiceLabels: [ ...this.customLabels ]
+      };
+
+      this.couchService.updateDocument('configurations', updatedConfig)
+        .pipe(
+          switchMap(() => this.newsService.scrubDeletedLabels(deletedLabels, 'community')),
+          finalize(() => {
+            this.isSaving = false;
+            this.dialogsLoadingService.stop();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.stateService.requestData('configurations', 'local');
+            this.planetMessageService.showMessage($localize`Voice labels updated successfully.`);
+            this.dialogRef.close(true);
+          },
+          error: () => {
+            this.planetMessageService.showAlert($localize`There was a problem saving custom voice labels.`);
+          }
+        });
+    } else if (this.team) {
+      const updatedTeam = {
+        ...this.team,
+        customVoiceLabels: [ ...this.customLabels ]
+      };
+
+      this.couchService.updateDocument('teams', updatedTeam)
+        .pipe(
+          switchMap(() => this.newsService.scrubDeletedLabels(deletedLabels, 'group', this.team._id)),
+          finalize(() => {
+            this.isSaving = false;
+            this.dialogsLoadingService.stop();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.planetMessageService.showMessage($localize`Voice labels updated successfully.`);
+            this.dialogRef.close(true);
+          },
+          error: () => {
+            this.planetMessageService.showAlert($localize`There was a problem saving custom voice labels.`);
+          }
+        });
+    }
   }
 }

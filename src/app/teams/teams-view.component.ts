@@ -49,6 +49,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { CommunityVoiceLabelsDialogComponent } from '../community/community-voice-labels-dialog.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -171,6 +172,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(tasks => {
       this.tasks = tasks;
       this.setTasks(tasks);
+    });
+
+    this.stateService.couchStateListener('teams').pipe(takeUntil(this.onDestroy$)).subscribe((change: any) => {
+      if (change && change.id === this.teamId) {
+        this.getTeam(this.teamId).subscribe();
+      }
     });
   }
 
@@ -351,10 +358,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
-    this.isUserLeader = user._id === leader.userId && user.planetCode === leader.userPlanetCode;
+    const userMembership = (this.members || []).find((m: any) => m.userId === user._id);
+    const isMemberLeader = !!(userMembership && userMembership.isLeader);
+    const isDocLeader = !!(leader && user._id === leader.userId);
+    this.isUserLeader = isMemberLeader || isDocLeader;
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
+  }
+
+  get canManageLabels(): boolean {
+    return this.isUserLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]);
   }
 
   isUserInMemberDocs(memberDocs, user) {
@@ -628,6 +642,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+    });
+  }
+
+  openManageLabelsDialog() {
+    this.dialog.open(CommunityVoiceLabelsDialogComponent, {
+      width: '500px',
+      autoFocus: false,
+      data: { target: this.mode, team: this.team }
+    }).afterClosed().subscribe((updated) => {
+      if (updated) {
+        this.getTeam(this.teamId).subscribe();
+      }
     });
   }
 
