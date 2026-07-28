@@ -23,9 +23,10 @@
 
   @if (showFilters) {
     <mat-toolbar-row class="search-bar">
-      <planet-resources-search [filteredData]="resources.filteredData" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
+      <planet-resources-search [filteredData]="resources.data" [startingSelection]="searchSelection" (searchChange)="onSearchChange($event)"></planet-resources-search>
     </mat-toolbar-row>
   }
+
 </mat-toolbar>
 
 <ng-template #collectionRow>
