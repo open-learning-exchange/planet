@@ -1,3 +1,5 @@
+@use "../mixins" as m;
+
 :host {
   display: block;
 }
@@ -7,13 +9,8 @@
   height: 100%;
 }
 
-.mat-column-select {
-  flex: 0 0 auto;
-}
-
 .mat-column-name {
-  flex: 1 1 0;
-  min-width: 10rem;
+  @include m.table-column-grow;
 }
 
 .mat-column-name span,
@@ -26,15 +23,8 @@
 }
 
 .mat-column-taken,
-.mat-column-courseTitle,
-.mat-column-createdDate,
-.mat-column-action {
-  min-width: 0;
-}
-
-.mat-column-taken,
 .mat-column-createdDate {
-  flex: 0 1 16rem;
+  @include m.table-column-fixed(16rem);
 }
 
 .mat-column-taken {
@@ -43,7 +33,7 @@
 }
 
 .mat-column-courseTitle {
-  flex: 0 1 15rem;
+  @include m.table-column-fixed(15rem);
 }
 
 .mat-column-createdDate {
@@ -51,6 +41,5 @@
 }
 
 .mat-column-action {
-  flex: 0 1 18rem;
-  justify-content: flex-start;
+  @include m.table-column-fixed(18rem);
 }
