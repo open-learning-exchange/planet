@@ -84,6 +84,26 @@ describe('CoursesAddComponent', () => {
     expect(openSpy).not.toHaveBeenCalled();
   });
 
+  it('should navigateBack to courses list or course view, ignoring matrix params', () => {
+    const router: any = TestBed.inject(Router);
+    const route = TestBed.inject(ActivatedRoute);
+    const urlExpectations: [ string, string ][] = [
+      [ '/courses/add', '../' ],
+      [ '/courses/add;continue=true', '../' ],
+      [ '/courses/update/123', '../../' ],
+      [ '/courses/update/123;continue=true', '../../' ],
+      [ '/courses/view/123/update', '../' ],
+      [ '/courses/view/123/update;continue=true', '../' ],
+      [ '/myDashboard/myCourses/add;continue=true', '../' ]
+    ];
+    for (const [ url, expected ] of urlExpectations) {
+      router.url = url;
+      component.navigateBack();
+      const calls = router.navigate.mock.calls;
+      expect(calls[calls.length - 1]).toEqual([ [ expected ], { relativeTo: route } ]);
+    }
+  });
+
   it('should open confirmation dialog when deleteDraft is called and draftExists is true', () => {
     const dialog = TestBed.inject(MatDialog);
     const pouchService = TestBed.inject(PouchService);
