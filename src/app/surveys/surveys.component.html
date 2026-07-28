@@ -80,7 +80,7 @@
       </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="survey-action-cell">
+        <mat-cell *matCellDef="let element">
           <div class="table-action-buttons">
           @if (element.parent !== true && currentFilter.viewMode !== 'adopt') {
             @if (!teamId) {
