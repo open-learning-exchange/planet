@@ -117,13 +117,14 @@ export class ReportsService {
   }
 
   groupUsers(users: any[]) {
+    const userDocs = users.map((user: any) => user.doc || user);
     return ({
-      count: users.length,
-      byGender: users.reduce((usersByGender: any, user: any) => {
-        usersByGender[normalizeGender((user.doc || user).gender)] += 1;
+      count: userDocs.length,
+      byGender: userDocs.reduce((usersByGender: any, user: any) => {
+        usersByGender[normalizeGender(user.gender)] += 1;
         return usersByGender;
       }, createGenderCounts()),
-      byMonth: this.groupByMonth(users, 'joinDate')
+      byMonth: this.groupByMonth(userDocs, 'joinDate')
     });
   }
 
