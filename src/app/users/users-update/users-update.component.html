@@ -107,7 +107,7 @@
             <mat-radio-button class="planet-radio-button" [value]="genderOption.value">
               <div class="radio-icon-label">
                 @if (genderOption.icon) {
-                  <mat-icon [svgIcon]="genderOption.icon" class="margin-lr-3"></mat-icon>
+                  <mat-icon [svgIcon]="genderOption.icon" class="margin-lr-3" [ngClass]="genderOption.iconClass"></mat-icon>
                 }
                 <span>{{ genderOption.label }}</span>
               </div>

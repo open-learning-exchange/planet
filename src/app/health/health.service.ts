@@ -114,7 +114,7 @@ export class HealthService {
             ...eventData,
             profileId: userKey,
             creatorId: creatorKey,
-            gender: normalizeGender(user.gender),
+            gender: user.gender?.trim() ? normalizeGender(user.gender) : undefined,
             age
           }, keyDoc),
           creatorHealthDoc.userKey || newEvent.selfExamination ?

@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
 import {
   AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -56,6 +57,7 @@ interface UsersUpdateFormGroup {
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
+    NgClass,
     MatToolbar,
     MatIconButton,
     MatIcon,

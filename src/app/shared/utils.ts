@@ -194,6 +194,7 @@ export const styleVariables: any = {
   accent: '#ffc107',
   accentLighter: '#ffecb3',
   accentText: 'rgba(0, 0, 0, 0.87)',
+  greenLighter: '#c8e6c9',
   grey: '#bdbdbd',
   greyText: 'rgba(0, 0, 0, 0.54)'
 };;
