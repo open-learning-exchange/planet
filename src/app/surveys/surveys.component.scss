@@ -1,5 +1,20 @@
 @use "../variables" as v;
 
+:host {
+  display: block;
+  height: 100%;
+}
+
+.view-full-height {
+  height: calc(#{v.$view-container-height} - 64px);
+  overflow: hidden;
+}
+
+.in-tab {
+  height: 100%;
+  overflow: hidden;
+}
+
 .mat-column-taken {
   max-width: 250px;
   display: flex;
@@ -15,11 +30,11 @@
   padding: 0 20px;
 }
 
-.mat-column-name, .mat-column-courseTitle {
+.mat-column-courseTitle {
   max-width: 250px;
 }
 
-.course-title, .mat-column-name span {
+.course-title {
   max-width: 250px;
   white-space: nowrap;
   overflow: hidden;
@@ -27,22 +42,21 @@
   display: block;
 }
 
-.mat-column-action {
-  justify-content: flex-start;
+.mat-column-name {
   flex: 1 1 auto;
   min-width: 0;
-}
 
-/* Targeting tablet screens */
-@media (max-width: v.$screen-md) {
-  .mat-column-name {
-    max-width: 175px;
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
   }
 }
 
-/* Targeting mobile screens */
-@media (max-width: v.$screen-sm) {
-  .mat-column-name {
-    max-width: 80px;
-  }
+.mat-column-action {
+  justify-content: flex-start;
+  flex: 0 0 auto;
 }
+
