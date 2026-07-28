@@ -1,0 +1,37 @@
+:host {
+  display: block;
+}
+
+.labels-dialog-section {
+  margin-bottom: 16px;
+}
+
+.margin-top-16 {
+  margin-top: 16px;
+}
+
+.full-width {
+  flex: 1;
+}
+
+.add-label-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.add-btn {
+  margin-top: 4px;
+  height: 52px;
+}
+
+.small-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+.color-grey {
+  color: var(--color-grey, #666);
+}

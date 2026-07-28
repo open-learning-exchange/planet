@@ -1,5 +1,7 @@
 <div class="news-list-content">
-  <ng-content></ng-content>
+  <div class="news-list-header-actions">
+    <ng-content></ng-content>
+  </div>
   @if (replyViewing._id!=='root') {
     <div class="action-buttons">
       <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>
@@ -15,6 +17,7 @@
       [editable]="editable"
       [isMainPostShared]="showMainPostShare"
       [shareTarget]="shareTarget"
+      [customLabels]="customLabels"
       (changeReplyViewing)="showReplies($event)"
       (updateNews)="openUpdateDialog($event)"
       (deleteNews)="openDeleteDialog($event)"
@@ -32,6 +35,7 @@
         [replyObject]="replyObject"
         [editable]="editable"
         [shareTarget]="shareTarget"
+        [customLabels]="customLabels"
         (changeReplyViewing)="showReplies($event)"
         (updateNews)="openUpdateDialog($event)"
         (deleteNews)="openDeleteDialog($event)"

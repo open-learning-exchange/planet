@@ -10,6 +10,16 @@
   overflow-y: auto;
 }
 
+.news-list-header-actions {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+
+  button {
+    align-self: center;
+  }
+}
+
 planet-news-list-item {
   display: block;
   margin-bottom: 1rem;

@@ -40,6 +40,13 @@
                       <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
                     }
                   </ng-container>
+                  <ng-container *planetAuthorizedRoles="'manager'">
+                    @if (!planetCode) {
+                      <button class="manage-labels-btn margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                        <mat-icon>label</mat-icon>
+                      </button>
+                    }
+                  </ng-container>
                   <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
                     <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
                   </button>
