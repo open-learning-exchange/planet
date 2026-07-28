@@ -14,25 +14,33 @@
 
 <div class="space-container primary-link-hover">
   <mat-toolbar class="primary-color font-size-1">
-    <ng-container *ngIf="!parent && isAuthorized">
+    @if (!parent && isAuthorized) {
       <button mat-mini-fab routerLink="add">
         <mat-icon>add</mat-icon>
       </button>
       <span class="toolbar-fill"></span>
       <button mat-button [disabled]="selectedNotJoined === 0" (click)="meetupsToggle(selection.selected, 'add')">
         <mat-icon aria-hidden="true" class="margin-lr-3">library_add</mat-icon><span i18n>Join Selected</span>
-        <span *ngIf="selectedNotJoined > 0"> ({{selectedNotJoined}})</span>
+        @if (selectedNotJoined > 0) {
+          <span> ({{selectedNotJoined}})</span>
+        }
       </button>
       <button mat-button [disabled]="selectedJoined === 0" (click)="meetupsToggle(selection.selected, 'remove')">
         <mat-icon aria-hidden="true" class="margin-lr-3">clear</mat-icon><span i18n>Leave Selected</span>
-        <span *ngIf="selectedJoined > 0"> ({{selectedJoined}})</span>
+        @if (selectedJoined > 0) {
+          <span> ({{selectedJoined}})</span>
+        }
       </button>
-      <button *ngIf="currentUser.isUserAdmin" mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
-        <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
-        <span i18n>Delete</span>
-        <span *ngIf="selection?.selected?.length"> ({{selection?.selected?.length}})</span>
-      </button>
-    </ng-container>
+      @if (currentUser.isUserAdmin) {
+        <button mat-button (click)="deleteSelected()" [disabled]="!selection.selected.length">
+          <mat-icon aria-hidden="true" class="margin-lr-3">delete_forever</mat-icon>
+          <span i18n>Delete</span>
+          @if (selection?.selected?.length) {
+            <span> ({{selection?.selected?.length}})</span>
+          }
+        </button>
+      }
+    }
   </mat-toolbar>
 
   <div class="view-container view-full-height view-table">
@@ -52,34 +60,45 @@
         <mat-cell *matCellDef="let element" class="list-content-menu">
           <h3 class="header">
             <a [routerLink]="['view', element._id]">{{element.title}}</a>
-            <mat-icon class="margin-lr-3" i18n-title title="Joined Meetup" [inline]="true" *ngIf="element.participate">check</mat-icon>
+            @if (element.participate) {
+              <mat-icon class="margin-lr-3" i18n-title title="Joined Meetup" [inline]="true">check</mat-icon>
+            }
           </h3>
           <div class="content">
             <td-markdown [content]="element.description"></td-markdown>
           </div>
-          <button *ngIf="!parent" class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
+          @if (!parent) {
+            <button class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          }
           <mat-cell>
             <mat-menu #meetupMenu="matMenu">
-              <a mat-menu-item *ngIf="element.participate || ((element.endDate || element.startDate) > dateNow && !element.participate)" (click)="attendMeetup(element)">
-                <span *ngIf="element.participate; else joinMeetup"><mat-icon>clear</mat-icon><span i18n>Leave</span></span>
-                <ng-template #joinMeetup><mat-icon>done</mat-icon><span i18n>Join</span></ng-template>
-              </a>
+              @if (element.participate || ((element.endDate || element.startDate) > dateNow && !element.participate)) {
+                <a mat-menu-item (click)="attendMeetup(element)">
+                  @if (element.participate) {
+                    <span><mat-icon>clear</mat-icon><span i18n>Leave</span></span>
+                  } @else {
+                    <mat-icon>done</mat-icon><span i18n>Join</span>
+                  }
+                </a>
+              }
               <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'meetups', 'item': element._id, name: element.title}" i18n-title title="Feedback">
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
-              <a mat-menu-item [routerLink]="['/meetups/update', element._id]" *ngIf="currentUser.name === element.createdBy">
-                <mat-icon>folder</mat-icon>
-                <span i18n>Manage</span>
-              </a>
-              <ng-container *ngIf="currentUser.name === element.createdBy || currentUser.isUserAdmin">
+              @if (currentUser.name === element.createdBy) {
+                <a mat-menu-item [routerLink]="['/meetups/update', element._id]">
+                  <mat-icon>folder</mat-icon>
+                  <span i18n>Manage</span>
+                </a>
+              }
+              @if (currentUser.name === element.createdBy || currentUser.isUserAdmin) {
                 <button mat-menu-item (click)="deleteClick(element)">
                   <mat-icon>delete_forever</mat-icon>
                   <span i18n>Delete</span>
                 </button>
-              </ng-container>
+              }
             </mat-menu>
           </mat-cell>
         </mat-cell>
@@ -91,27 +110,41 @@
             <p>
               <span i18n>Date:</span>
               <span>{{ ' ' + (element.startDate | date: 'fullDate') + ' ' }}</span>
-              <span *ngIf="element.endDate && element.endDate !== element.startDate">{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
-              <span *ngIf="element.startTime || element.endTime" i18n>at</span>
+              @if (element.endDate && element.endDate !== element.startDate) {
+                <span>{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
+              }
+              @if (element.startTime || element.endTime) {
+                <span i18n>at</span>
+              }
               <span>{{ ' ' + element.startTime }}</span>
-              <span *ngIf="element.endTime">{{ ' - ' + element.endTime }}</span>
+              @if (element.endTime) {
+                <span>{{ ' - ' + element.endTime }}</span>
+              }
             </p>
-            <p *ngIf="element.recurring"><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
-            <p *ngIf="element.recurring === 'weekly'"><span i18n>Recurring Days: </span><span *ngFor="let day of element.day; let isLast= last">{{day}}{{isLast ? '' : ', '}}</span></p>
-            <p *ngIf="element.meetupLocation"><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
-          </div>
-        </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
-      <tr class="mat-row" *matNoDataRow>
-        <td><div class="view-container" i18n>No Meetups Found</div></td>
-      </tr>
-    </mat-table>
-    <mat-paginator #paginator
-      [pageSize]="50"
-      [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
-      (page)="onPaginateChange($event)">
-    </mat-paginator>
-  </div>
+            @if (element.recurring) {
+              <p><span i18n>Recurring:</span>{{ ' ' + element.recurring | titlecase }}</p>
+            }
+            @if (element.recurring === 'weekly') {
+              <p><span i18n>Recurring Days: </span>@for (day of element.day; track day; let isLast = $last) {
+              <span>{{day}}{{isLast ? '' : ', '}}</span>
+            }</p>
+          }
+          @if (element.meetupLocation) {
+            <p><span i18n>Location:</span>{{ ' ' + element.meetupLocation }}</p>
+          }
+        </div>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="hide"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{highlight:selection.isSelected(row._id)}"></mat-row>
+    <tr class="mat-row" *matNoDataRow>
+      <td><div class="view-container" i18n>No Meetups Found</div></td>
+    </tr>
+  </mat-table>
+  <mat-paginator #paginator
+    [pageSize]="50"
+    [pageSizeOptions]="[5, 10, 20, 50, 100, 200]"
+    (page)="onPaginateChange($event)">
+  </mat-paginator>
+</div>
 </div>

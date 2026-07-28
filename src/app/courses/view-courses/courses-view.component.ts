@@ -12,7 +12,7 @@ import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgTemplateOutlet, NgClass, NgFor } from '@angular/common';
+import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
 import { CoursesViewDetailComponent } from './courses-view-detail.component';
 import {
@@ -22,7 +22,7 @@ import {
   MatExpansionPanelDescription,
   MatExpansionPanelActionRow
 } from '@angular/material/expansion';
-import { CoursesIconComponent } from '../courses-icon.component';
+import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
@@ -31,11 +31,29 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
   templateUrl: './courses-view.component.html',
   styleUrls: ['courses-view.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, NgIf, NgTemplateOutlet, MatIconButton, MatMenuTrigger,
-    MatMenu, MatButton, CoursesProgressBarComponent, NgClass, CoursesViewDetailComponent, NgFor,
-    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription,
-    CoursesIconComponent, PlanetMarkdownComponent, MatExpansionPanelActionRow, ResourcesMenuComponent,
-    MatAnchor, MatMenuItem, PlanetLoadingSpinnerComponent]
+    MatToolbar,
+    MatIconAnchor,
+    MatIcon,
+    NgTemplateOutlet,
+    MatIconButton,
+    MatMenuTrigger,
+    MatMenu,
+    MatButton,
+    CoursesProgressBarComponent,
+    NgClass,
+    CoursesViewDetailComponent,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription,
+    CoursesIconComponent,
+    PlanetMarkdownComponent,
+    MatExpansionPanelActionRow,
+    ResourcesMenuComponent,
+    MatAnchor,
+    MatMenuItem,
+    PlanetLoadingSpinnerComponent
+  ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
 
@@ -54,6 +72,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   examText: 'retake' | 'take' = 'take';
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+  courseIcons = courseIcons;
   trackByFn = trackByIndex;
   @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
 

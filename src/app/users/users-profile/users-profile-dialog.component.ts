@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, Ma
 import { UsersProfileComponent } from './users-profile.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
-import { NgIf } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -16,14 +16,23 @@ import { RouterLink } from '@angular/router';
     </mat-dialog-content>
     <mat-dialog-actions>
       <button mat-raised-button mat-dialog-close i18n>Close</button>
-      <button color="primary" *ngIf="editable" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}"
-       mat-raised-button mat-dialog-close i18n>
+      @if (editable) {
+        <button color="primary" (click)="closeDialog()" routerLink="/users/profile/{{usersProfileComponent.urlName}}"
+          mat-raised-button mat-dialog-close i18n>
         View full profile
       </button>
+      }
     </mat-dialog-actions>
-  `,
+    `,
   imports: [
-    MatDialogTitle, CdkScrollable, MatDialogContent, UsersProfileComponent, MatDialogActions, MatButton, MatDialogClose, NgIf, RouterLink
+    MatDialogTitle,
+    CdkScrollable,
+    MatDialogContent,
+    UsersProfileComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    RouterLink
   ]
 })
 export class UserProfileDialogComponent implements AfterContentChecked {

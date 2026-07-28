@@ -26,7 +26,7 @@ import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 interface EditChildNameFormControls {
@@ -37,9 +37,26 @@ interface EditChildNameFormControls {
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
   imports: [
-    MatTable, MatSort, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell,
-    MatButton, MatIcon, NgIf, MatMenuTrigger, MatMenu, NgFor, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow, MatNoDataRow, MatPaginator, DatePipe
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatSortHeader,
+    MatCellDef,
+    MatCell,
+    MatButton,
+    MatIcon,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestroy {
@@ -246,7 +263,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
       })
     });
     this.dialogsFormService.openDialogsForm(
-      $localize`Edit ${this.reportsService.planetTypeText(planet.doc.planetType)} Name`,
+      this.reportsService.editPlanetNameTitle(planet.doc.planetType),
       [ { 'label': $localize`Name`, 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, 'required': true } ],
       form,
       { onSubmit: this.editChildName(planet).bind(this) }
@@ -263,11 +280,11 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {
         this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage($localize`${this.reportsService.planetTypeText(doc.planetType)} name updated.`);
+        this.planetMessageService.showMessage(this.reportsService.planetNameUpdatedMessage(doc.planetType));
         this.requestUpdate.emit();
       },
       () => this.planetMessageService.showAlert(
-        $localize`There was an error updating ${this.reportsService.planetTypeText(doc.planetType)} name`)
+        this.reportsService.planetNameUpdateErrorMessage(doc.planetType))
       );
     };
   }

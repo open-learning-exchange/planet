@@ -12,15 +12,21 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <mat-card *ngFor="let rating of ratings" class="margin-tb">
-    <mat-card-header>
-      <mat-card-title>
-        <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
-        <div class="mat-caption" *ngIf="rating.time">{{rating.time | date:'longDate'}}</div>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content *ngIf="rating.comment">{{rating.comment}}</mat-card-content>
-  </mat-card>
+  @for (rating of ratings; track rating) {
+    <mat-card class="margin-tb">
+      <mat-card-header>
+        <mat-card-title>
+          <planet-rating-stars [value]="rating.rate" [disabled]="true"></planet-rating-stars>
+          @if (rating.time) {
+            <div class="mat-caption">{{rating.time | date:'longDate'}}</div>
+          }
+        </mat-card-title>
+      </mat-card-header>
+      @if (rating.comment) {
+        <mat-card-content>{{rating.comment}}</mat-card-content>
+      }
+    </mat-card>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="primary" mat-dialog-close i18n>OK</button>

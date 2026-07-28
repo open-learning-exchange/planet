@@ -85,6 +85,11 @@ const routes: Routes = [
     children: [ { path: 'voices/:id', component: NewsListComponent } ]
   },
   {
+    path: 'survey/:teamId/:surveyId',
+    loadComponent: () => import('../exams/public-surveys/public-survey.component').then(m => m.PublicSurveyComponent),
+    data: { requiresAuth: false }
+  },
+  {
     path: '',
     children: alwaysGuardedRoutes,
     canActivateChild: [ AuthService ]

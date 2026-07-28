@@ -14,7 +14,7 @@ import { CoursesViewDetailDialogComponent } from '../courses/view-courses/course
 import { foundations, foundationIcons } from '../courses/constants';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NgIf, NgFor, NgClass, DecimalPipe, DatePipe } from '@angular/common';
+import { NgClass, DecimalPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { PlanetRoleComponent } from '../shared/planet-role.component';
@@ -27,8 +27,16 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.scss'],
   imports: [
-    NgIf, RouterLink, MatCard, NgFor, PlanetRoleComponent, MatTooltip, MatIcon, NgClass,
-    DashboardTileComponent, DecimalPipe, DatePipe, TruncateTextPipe
+    RouterLink,
+    MatCard,
+    PlanetRoleComponent,
+    MatTooltip,
+    MatIcon,
+    NgClass,
+    DashboardTileComponent,
+    DecimalPipe,
+    DatePipe,
+    TruncateTextPipe
   ]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
@@ -118,7 +126,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.myLifeItems = [
       { baseFirstLine: $localize`my`, title: $localize`Submissions`, link: 'submissions', authorization: 'leader,manager',
         badge: this.examsCount },
-      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat' },
+      { baseFirstLine: $localize` my `, title: $localize`Chat`, link: '/chat', returnState: { route: 'myDashboard' } },
       { baseFirstLine: $localize` my `, title: $localize`Progress`, link: 'myProgress' },
       { baseFirstLine: $localize`my`, title: $localize`Personals`, link: 'myPersonals' },
       { baseFirstLine: $localize`my`, title: $localize`Achievements`, link: 'myAchievements' },

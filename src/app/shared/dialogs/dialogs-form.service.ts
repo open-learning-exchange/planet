@@ -3,9 +3,10 @@ import { DialogsFormComponent } from './dialogs-form.component';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Injectable } from '@angular/core';
 import { AbstractControlOptions, AsyncValidatorFn, FormArray, FormControl, FormControlState, FormGroup, ValidatorFn } from '@angular/forms';
+import { ExistingAttachment } from '../forms/file-upload.component';
 
 type DialogFieldType = | 'checkbox' | 'textbox' | 'password'| 'selectbox' | 'radio'
-  | 'rating' | 'textarea' | 'markdown' | 'dialog' | 'date' | 'time' | 'toggle' | string;
+  | 'rating' | 'textarea' | 'markdown' | 'dialog' | 'date' | 'time' | 'toggle' | 'file-upload' | string;
 
 export interface DialogField<TName extends string = string> {
   name: TName;
@@ -23,6 +24,15 @@ export interface DialogField<TName extends string = string> {
   authorizedRoles?: string | string[];
   imageGroup?: unknown;
   db?: string;
+  fileUpload?: {
+    accept?: string;
+    existingAttachments?: ExistingAttachment[];
+    hint?: string;
+    imagePreview?: boolean;
+    maxFiles?: number;
+    multiple?: boolean;
+    typePills?: string[];
+  };
   [key: string]: unknown;
 }
 

@@ -1,16 +1,21 @@
 #!/usr/bin/env sh
 
-PREVIOUS_REF="origin/master:package.json"
+PREVIOUS_REF="origin/master"
 
-if [ $(git branch --show-current) = "master" ] || [ "$IS_RELEASE" = "true" ]; then
-  PREVIOUS_REF="origin/master~1:package.json"
+if [ "$(git branch --show-current)" = "master" ] || [ "$IS_RELEASE" = "true" ]; then
+  PREVIOUS_REF="origin/master~1"
+fi
+
+if ! git diff --quiet "$PREVIOUS_REF" -- package-lock.json; then
+  echo 1;
+  exit 0;
 fi
 
 DEPENDENCIES=$(jq -r '.dependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEPENDENCIES=$(git show $PREVIOUS_REF | jq -r '.dependencies');
+OLD_DEPENDENCIES=$(git show "$PREVIOUS_REF:package.json" | jq -r '.dependencies');
 
 DEV_DEPENDENCIES=$(jq -r '.devDependencies | keys[] as $key | "\($key) \(.[$key])"' package.json);
-OLD_DEV_DEPENDENCIES=$(git show $PREVIOUS_REF | jq -r '.devDependencies');
+OLD_DEV_DEPENDENCIES=$(git show "$PREVIOUS_REF:package.json" | jq -r '.devDependencies');
 
 check_dependencies() {
   echo "$1" | while read -r line; do

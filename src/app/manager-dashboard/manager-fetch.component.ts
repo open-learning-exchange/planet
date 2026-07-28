@@ -19,7 +19,7 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgClass, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 
@@ -35,11 +35,33 @@ import { MatCheckbox } from '@angular/material/checkbox';
     .fetch-icon {
       color: #666;
     }
+    .fetch-action .mat-icon {
+      flex: 0 0 auto;
+    }
   `],
   imports: [
-    MatToolbar, MatIconButton, MatIcon, MatButton, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef,
-    MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow, NgClass, MatNoDataRow, MatPaginator, DatePipe
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatButton,
+    PlanetLoadingSpinnerComponent,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    NgClass,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 

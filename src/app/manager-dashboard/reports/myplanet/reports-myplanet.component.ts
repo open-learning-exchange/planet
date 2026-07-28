@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
@@ -8,7 +9,7 @@ import { PlanetMessageService } from '../../../shared/planet-message.service';
 import { ManagerService } from '../../manager.service';
 import { ReportsService } from '../reports.service';
 import { CouchService } from '../../../shared/couchdb.service';
-import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv } from '../reports.utils';
+import { attachNamesToPlanets, getDomainParams, areNoChildren, exportMyPlanetCsv, endOfDay } from '../reports.utils';
 import { findDocuments } from '../../../shared/mangoQueries';
 import { CsvService } from '../../../shared/csv.service';
 import { filterSpecificFields } from '../../../shared/table-helpers';
@@ -16,7 +17,7 @@ import { MyPlanetFiltersBase } from './filter.base';
 import { TimePipe } from '../time.pipe';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
@@ -26,8 +27,17 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
   templateUrl: './reports-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
   imports: [
-    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton,
-    NgFor, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+    MyPlanetToolbarComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatToolbar,
+    MatToolbarRow,
+    MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MyPlanetTableComponent,
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
@@ -41,7 +51,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   hubId: string | null = null;
   hub = { spokes: [] };
   get childType() {
-    return this.planetType === 'center' ? 'Community' : 'Nation';
+    return this.planetType === 'center' ? $localize`Community` : $localize`Nation`;
   }
 
   constructor(
@@ -55,6 +65,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
     private timePipe: TimePipe,
     fb: NonNullableFormBuilder,
     activityService: ReportsService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     super(fb, activityService, 'all');
   }
@@ -79,7 +90,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       .filter(item => !this.selectedVersion || item.versionName === this.selectedVersion)
       .filter(item => {
         const itemDate = item.time || item.last_synced;
-        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= this.endDate.getTime());
+        return !itemDate || (itemDate >= this.startDate.getTime() && itemDate <= endOfDay(this.endDate).getTime());
       });
   }
 
@@ -177,10 +188,10 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
       [$localize`Last Synced`]: data.time && data.time !== 0 ?
-        new Date(data.time).toDateString() :
+        formatDate(data.time, 'mediumDate', this.localeId) :
         data.last_synced && data.last_synced !== 0 ?
-          new Date(data.last_synced).toDateString() :
-          'N/A',
+          formatDate(data.last_synced, 'mediumDate', this.localeId) :
+          $localize`N/A`,
       [$localize`Version`]: data.versionName,
       [$localize`No of Visits`]: data.count,
       [$localize`Used Time`]: this.timePipe.transform(data.totalUsedTime),

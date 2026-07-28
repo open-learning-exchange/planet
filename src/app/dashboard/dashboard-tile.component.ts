@@ -12,7 +12,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatCard } from '@angular/material/card';
-import { NgIf, NgClass, NgFor, NgStyle } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
@@ -21,6 +21,8 @@ import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { environment } from '../../environments/environment';
+import { couchAttachmentUrl } from '../shared/utils';
 
 @Component({
   selector: 'planet-dashboard-tile-title',
@@ -44,9 +46,20 @@ export class DashboardTileTitleComponent {
   templateUrl: './dashboard-tile.component.html',
   styleUrls: ['./dashboard-tile.scss'],
   imports: [
-    MatCard, NgIf, RouterLink, forwardRef(() => DashboardTileTitleComponent), MatIcon,
-    CdkDropList, NgClass, NgFor, AuthorizedRolesDirective, CdkDrag, MatTooltip, MatBadge,
-    NgStyle, MatIconButton, PlanetLoadingSpinnerComponent, TruncateTextPipe
+    MatCard,
+    RouterLink,
+    forwardRef(() => DashboardTileTitleComponent),
+    MatIcon,
+    CdkDropList,
+    NgClass,
+    AuthorizedRolesDirective,
+    CdkDrag,
+    MatTooltip,
+    MatBadge,
+    NgStyle,
+    MatIconButton,
+    PlanetLoadingSpinnerComponent,
+    TruncateTextPipe
   ]
 })
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
@@ -170,8 +183,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeMessage(item) {
-    const message = `Removed from ${this.cardTitle}: ${item.title}`;
-    this.planetMessageService.showMessage($localize`${message}`);
+    this.planetMessageService.showMessage($localize`Removed from ${this.cardTitle}:cardTitle:: ${item.title}:itemTitle:`);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -204,5 +216,16 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
+  }
+
+  dashboardTextLines(item: any): number | 'none' {
+    if (this.isAccordionMode) {
+      return 'none';
+    }
+    return this.cardType === 'myCourses' && item.coverFileName ? 2 : this.tileLines;
+  }
+
+  coverImageUrl(item: any): string {
+    return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
   }
 }

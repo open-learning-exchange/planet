@@ -19,7 +19,7 @@ const compat = new FlatCompat({
     allConfig: js.configs.all
 });
 
-export default defineConfig([globalIgnores(["projects/**/*", "chatapi/**/*"]), {
+export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
     files: ["**/*.ts"],
     extends: compat.extends("plugin:@angular-eslint/template/process-inline-templates"),
 
@@ -88,6 +88,35 @@ export default defineConfig([globalIgnores(["projects/**/*", "chatapi/**/*"]), {
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "import",
+            "format": ["camelCase", "PascalCase"]
+          },
+
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE"],
+            "leadingUnderscore": "allowSingleOrDouble",
+            "trailingUnderscore": "allowSingleOrDouble",
+            "filter": {
+              "regex": "(derived_key|password_scheme|Chart)",
+              "match": false
+            }
+          },
+
+          {
+            "selector": "typeLike",
+            "format": ["PascalCase"]
+          },
+
+          {
+            "selector": "classMethod",
+            "format": ["PascalCase", "camelCase"]
+          },
+
+        ],
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "off",

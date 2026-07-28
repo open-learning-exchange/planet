@@ -16,7 +16,6 @@ export abstract class MyPlanetFiltersBase {
   isEmpty = false;
   isLoading = false;
   versions: string[] = [];
-  showFiltersRow = false;
   timeFilterOptions: any[] = this.activityService.standardTimeFilters;
   minDate: Date = new Date();
   today: Date = new Date();

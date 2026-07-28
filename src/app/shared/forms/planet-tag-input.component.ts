@@ -11,9 +11,11 @@ import { Subject } from 'rxjs';
 import { TagsService } from './tags.service';
 import { PlanetTagInputDialogComponent } from './planet-tag-input-dialog.component';
 import { dedupeShelfReduce } from '../utils';
-import { NgIf, NgSwitch, NgClass, NgSwitchCase } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { PlanetTagSelectedInputComponent } from './planet-tag-selected-input.component';
 import { MatButton } from '@angular/material/button';
+import { MatChip, MatChipRemove, MatChipSet } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
 
 interface SelectedDialogTag { tagId: string; indeterminate: boolean; }
 type DialogStartingTag = string | SelectedDialogTag;
@@ -37,7 +39,9 @@ interface PlanetTagDialogData {
   'providers': [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ],
-  imports: [NgIf, PlanetTagSelectedInputComponent, MatButton, NgSwitch, NgClass, NgSwitchCase]
+  imports: [
+    PlanetTagSelectedInputComponent, MatButton, NgClass, MatChip, MatChipRemove, MatChipSet, MatIcon
+  ]
 })
 export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, OnChanges, OnDestroy {
 
@@ -165,6 +169,10 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.writeValue(this.value.filter(tag => tag !== tagToRemove));
   }
 
+  tagName(tagId: string) {
+    return this.tagsService.findTag(tagId, this.tags).name;
+  }
+
   writeValue(tags: string[] | null = []) {
     this.value = tags ?? [];
   }
@@ -186,7 +194,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
       minWidth: '25vw',
       maxWidth: '90vw',
-      panelClass: 'no-max-height-dialog',
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh',
       autoFocus: false,
       data: this.dialogData(true)
     });
@@ -218,9 +227,13 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
 
   tagsInSelection(selectedIds: string[], data: FilteredDataItem[]): SelectedDialogTag[] {
+    const dataMap = new Map<string, FilteredDataItem>();
+    for (const item of data) {
+      dataMap.set(item._id, item);
+    }
     const selectedTagsObject = selectedIds
       .reduce<Record<string, number>>((selectedTags, id) => {
-        const tags = data.find((item) => item._id === id)?.tags || [];
+        const tags = dataMap.get(id)?.tags || [];
         tags.forEach((tag) => {
           selectedTags[tag._id] = selectedTags[tag._id] === undefined ? 1 : selectedTags[tag._id] + 1;
         });

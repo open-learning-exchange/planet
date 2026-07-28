@@ -34,9 +34,11 @@
         <mat-form-field>
           <mat-label i18n>Language</mat-label>
           <mat-select required formControlName="language">
-            <mat-option *ngFor="let language of languages" [value]="language.name">
-              {{language.name}}
-            </mat-option>
+            @for (language of languages; track language) {
+              <mat-option [value]="language.name">
+                {{language.name}}
+              </mat-option>
+            }
           </mat-select>
           <mat-error><planet-form-error-messages [control]="profileForm.controls.language"></planet-form-error-messages></mat-error>
         </mat-form-field>

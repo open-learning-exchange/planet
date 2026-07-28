@@ -1,30 +1,48 @@
-<planet-loading-spinner *ngIf="isLoading" text="Loading communities..." i18n-text></planet-loading-spinner>
-<p *ngIf="!isLoading && planets.hubs.length === 0 && planets.sandboxPlanets.length === 0" i18n>No communities available.</p>
-<mat-list *ngIf="!isLoading">
-  <ng-container *ngFor="let hub of planets.hubs">
-    <h3 mat-subheader>{{hub.name}}</h3>
-    <mat-list-item *ngFor="let planet of hub.children" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
-      <mat-checkbox *ngIf="selectMode" matListItemIcon [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
-      <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
-      <div class="action-buttons" *ngIf="!selectMode" matListItemMeta>
-        <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
-        <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
+@if (isLoading) {
+  <planet-loading-spinner text="Loading communities..." i18n-text></planet-loading-spinner>
+}
+@if (!isLoading && planets.hubs.length === 0 && planets.sandboxPlanets.length === 0) {
+  <p i18n>No communities available.</p>
+}
+@if (!isLoading) {
+  <mat-list>
+    @for (hub of planets.hubs; track hub) {
+      <h3 mat-subheader>{{hub.name}}</h3>
+      @for (planet of hub.children; track planet) {
+        <mat-list-item [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
+          @if (selectMode) {
+            <mat-checkbox matListItemIcon [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
+          }
+          <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
+          @if (!selectMode) {
+            <div class="action-buttons" matListItemMeta>
+              <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
+              <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
           View Report
         </a>
-      </div>
-    </mat-list-item>
-  </ng-container>
-  <ng-container *ngIf="planets.sandboxPlanets.length > 0">
-    <h3 mat-subheader i18n>Sandbox Planets</h3>
-    <mat-list-item *ngFor="let planet of planets.sandboxPlanets" class="action-button" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
-      <mat-checkbox *ngIf="selectMode" matListItemIcon [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
-      <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
-      <div class="action-buttons" *ngIf="!selectMode" matListItemMeta>
-        <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
-        <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
+            </div>
+          }
+        </mat-list-item>
+      }
+    }
+    @if (planets.sandboxPlanets.length > 0) {
+      <h3 mat-subheader i18n>Sandbox Planets</h3>
+      @for (planet of planets.sandboxPlanets; track planet) {
+        <mat-list-item class="action-button" [ngClass]="{ 'cursor-pointer': selectMode }" (click)="selectChange(planet)">
+          @if (selectMode) {
+            <mat-checkbox matListItemIcon [checked]="planet.selected" (click)="$event.preventDefault()"></mat-checkbox>
+          }
+          <span matListItemTitle>{{planet.nameDoc?.name || planet.doc.name}}</span>
+          @if (!selectMode) {
+            <div class="action-buttons" matListItemMeta>
+              <a mat-raised-button color="primary" [routerLink]="'community/' + planet.doc.code" i18n>View Exchange</a>
+              <a mat-raised-button color="primary" [routerLink]="['/manager/reports/detail', { parentCode: planet.doc.parentCode, code: planet.doc.code }]" i18n>
           View Report
         </a>
-      </div>
-    </mat-list-item>
-  </ng-container>
-</mat-list>
+            </div>
+          }
+        </mat-list-item>
+      }
+    }
+  </mat-list>
+}

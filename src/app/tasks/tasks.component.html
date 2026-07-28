@@ -1,38 +1,54 @@
-<button i18n mat-stroked-button (click)="addTask()" *ngIf="editable">Add a task</button>
-<mat-button-toggle-group
-  class="margin-lr-5"
-  (change)="setFilter($event.value)"
-  #filterGroup="matButtonToggleGroup"
-  *ngIf="editable">
-  <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
+@if (editable) {
+  <button i18n mat-stroked-button (click)="addTask()">Add a task</button>
+}
+@if (editable) {
+  <mat-button-toggle-group
+    class="margin-lr-5"
+    (change)="setFilter($event.value)"
+    #filterGroup="matButtonToggleGroup"
+    >
+    <mat-button-toggle value="self" [checked]="filter === 'self'" [disabled]="myTasks.length === 0" i18n>
     myTasks
   </mat-button-toggle>
-  <mat-button-toggle value="all" [checked]="filter === 'all'" i18n>
+    <mat-button-toggle value="all" [checked]="filter === 'all'" i18n>
     All Tasks
   </mat-button-toggle>
-</mat-button-toggle-group>
+  </mat-button-toggle-group>
+}
 <mat-action-list [disableRipple]="!editable">
-  <button mat-list-item *ngFor="let task of filteredTasks; trackBy: trackById" (click)="openTaskDetail(task)" [disabled]="!editable">
-    <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
-    <span matListItemTitle>{{task.title}}</span>
+  @for (task of filteredTasks; track trackById($index, task)) {
+    <button mat-list-item (click)="openTaskDetail(task)" [disabled]="!editable">
+      <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
+      <span matListItemTitle>{{task.title}}</span>
     <span matListItemLine [ngClass]="{'deadline-soon': isTaskDueSoon(task),
     'deadline-passed': isTaskOverdue(task)}"><ng-container i18n>Deadline:</ng-container> {{task.deadline | date}} {{task.deadline | date: 'shortTime'}}</span>
-    <span matListItemLine *ngIf="task.completed"><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
-    <img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" *ngIf="task.assignee" [src]="
+        @if (task.completed) {
+          <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
+        }
+        @if (task.assignee) {
+<img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" [src]="
       task.assignee.attachmentDoc ?
         imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
         task.assignee.avatar ?
         imgUrlPrefix + task.assignee.avatar :
         'assets/image.png'
     ">
-    <ng-container matListItemMeta *ngIf="editable">
-      <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
-      <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
-    </ng-container>
-    <mat-menu #assigneeMenu="matMenu">
-      <button *ngIf="task.assignee" (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee | assigneeName}}</button>
-      <button *ngFor="let assignee of (assignees | filterAssignee: task.assignee)" mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
-    </mat-menu>
-  </button>
-</mat-action-list>
+        }
+        @if (editable) {
+          <ng-container matListItemMeta>
+            <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
+            <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
+          </ng-container>
+        }
+        <mat-menu #assigneeMenu="matMenu">
+          @if (task.assignee) {
+            <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee | assigneeName}}</button>
+          }
+          @for (assignee of (assignees | filterAssignee: task.assignee); track assignee) {
+            <button mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
+          }
+        </mat-menu>
+      </button>
+    }
+  </mat-action-list>

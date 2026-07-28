@@ -1,10 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { formatDate as formatLocaleDate } from '@angular/common';
 import { ExportToCsv } from 'export-to-csv/build';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ReportsService } from '../manager-dashboard/reports/reports.service';
 import { PlanetMessageService } from './planet-message.service';
-import { markdownToPlainText, formatDate } from './utils';
+import { CouchService } from './couchdb.service';
+import { couchAttachmentPath, markdownToPlainText, formatDate } from './utils';
 import { monthDataLabels } from '../manager-dashboard/reports/reports.utils';
 import { reportGenderOptions, ReportGenderValue } from './gender.constants';
+
+export const CSV_PREVIEW_MAX_BYTES = 5 * 1024 * 1024;
+export const CSV_PREVIEW_MAX_ROWS = 5000;
+
+export interface CsvPreview {
+  columns: string[];
+  rows: Array<Record<string, string>>;
+  truncated: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +30,10 @@ export class CsvService {
   };
 
   constructor(
+    private couchService: CouchService,
     private reportsService: ReportsService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
   private generate(data, options?) {
@@ -28,7 +43,8 @@ export class CsvService {
   }
 
   exportCSV({ data, title }: { data: any[], title: string }) {
-    const options = { title, filename: $localize`Report of ${title} on ${new Date().toDateString()}`, showTitle: true };
+    const reportDate = formatLocaleDate(new Date(), 'mediumDate', this.localeId);
+    const options = { title, filename: $localize`Report of ${title} on ${reportDate}`, showTitle: true };
     const formattedData = data.map(({ _id, _rev, resourceId, type, createdOn, parentCode, data: d, hasInfo, ...dataToDisplay }) => {
       return Object.entries(dataToDisplay).reduce(
         (object, [ key, value ]: [ string, any ]) => ({ ...object, [markdownToPlainText(key)]: this.formatValue(key, value) }),
@@ -48,7 +64,7 @@ export class CsvService {
   ) {
     const options = {
       title: $localize`Summary report for ${planetName}\n${formatDate(startDate)} - ${formatDate(endDate)}`,
-      filename: $localize`Report of ${planetName} on ${new Date().toDateString()}`,
+      filename: $localize`Report of ${planetName} on ${formatLocaleDate(new Date(), 'mediumDate', this.localeId)}`,
       showTitle: true,
       showLabels: true,
       useKeysAsHeaders: true
@@ -91,7 +107,7 @@ export class CsvService {
       section.data.forEach(item => allMonths.add(item.date));
     });
     const sortedMonths = Array.from(allMonths).sort();
-    const monthLabels = sortedMonths.map(month => monthDataLabels(month));
+    const monthLabels = sortedMonths.map(month => monthDataLabels(month, this.localeId));
     const formattedData = [];
 
     sections.forEach(section => {
@@ -166,6 +182,68 @@ export class CsvService {
 
   formatHealthConditions(conditions: any) {
     return Object.entries(conditions).filter(([ key, value ]) => value === true).map(([ key, value ]) => key).join(', ');
+  }
+
+  loadCsvAttachment(docId: string, attachmentId: string, domain?: string): Observable<CsvPreview> {
+    // papaparse is only needed when previewing a CSV resource, so load it in its own chunk on demand
+    return forkJoin([
+      this.couchService.get(
+        `resources/${couchAttachmentPath(docId, attachmentId)}`,
+        { responseType: 'text', domain }
+      ),
+      import('papaparse')
+    ]).pipe(
+      map(([ csvText, papa ]) => this.parseCsv(papa, csvText))
+    );
+  }
+
+  private parseCsv(papa: typeof import('papaparse'), csvText: string): CsvPreview {
+    const data: string[][] = [];
+    let headerIndex = 0;
+    let wideHeaderFound = false;
+    let truncated = false;
+    papa.parse<string[]>(csvText, {
+      skipEmptyLines: true,
+      step: ({ data: row }, parser) => {
+        data.push(row);
+        if (!wideHeaderFound && row.length > 1) {
+          headerIndex = data.length - 1;
+          wideHeaderFound = true;
+        }
+        if (data.length > headerIndex + 1 + CSV_PREVIEW_MAX_ROWS) {
+          truncated = true;
+          parser.abort();
+        }
+      }
+    });
+    if (data.length === 0) {
+      return { columns: [], rows: [], truncated: false };
+    }
+    const previewData = data.slice(0, headerIndex + 1 + CSV_PREVIEW_MAX_ROWS);
+    const widestRowLength = previewData.reduce((max, row) => Math.max(max, row.length), 0);
+    const headerRow = Array.from({ length: widestRowLength }, (_, index) => data[headerIndex][index] ?? '');
+    const columns = this.uniqueColumnNames(headerRow);
+    const rows = previewData.slice(headerIndex + 1).map(row =>
+      Object.fromEntries(columns.map((column, index) => [ column, row[index] ?? '' ]))
+    );
+    return { columns, rows, truncated };
+  }
+
+  private uniqueColumnNames(headerRow: string[]): string[] {
+    const nameCounts = new Map<string, number>();
+    const usedNames = new Set<string>();
+    return headerRow.map((header, index) => {
+      const name = (header || '').trim() || $localize`Column ${index + 1}`;
+      let count = (nameCounts.get(name) || 0) + 1;
+      let columnName = count > 1 ? `${name} (${count})` : name;
+      while (usedNames.has(columnName)) {
+        count++;
+        columnName = `${name} (${count})`;
+      }
+      nameCounts.set(name, count);
+      usedNames.add(columnName);
+      return columnName;
+    });
   }
 
 }

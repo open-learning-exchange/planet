@@ -13,7 +13,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 }) export class ChatService {
   readonly dbName = 'chat_history';
 
-  private baseUrl = environment.chatAddress;
+  private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
   private socket: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
@@ -41,7 +41,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 
   initializeWebSocket() {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-      this.socket = new WebSocket('ws' + this.baseUrl.slice(4));
+      this.socket = new WebSocket(this.baseUrl.replace(/^http/, 'ws'));
       this.socket.onerror = (error) => {
         this.errorSubject.next('WebSocket connection error');
       };
@@ -88,7 +88,7 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {
-    return this.httpClient.post(this.baseUrl, {
+    return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
     });

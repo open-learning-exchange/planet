@@ -3,37 +3,119 @@
 :host {
   .view-container {
     display: grid;
-    grid-template-rows: auto 42px;
-    > :first-child {
+    grid-template-rows: 1fr auto;
+
+    > form {
       overflow-y: auto;
     }
   }
 
   .actions-container {
     align-self: flex-start;
+    margin-top: 1rem;
   }
 
-  .form-spacing {
-    width: auto;
+  .section-panel {
+    margin-bottom: 1rem;
+    border-radius: 4px;
+
+    &.section-invalid {
+      border: 1px solid v.$warn;
+    }
+
+    ::ng-deep .mat-expansion-panel-header {
+      height: 64px;
+      padding: 0 24px;
+    }
+
+    ::ng-deep .mat-expansion-panel-body {
+      padding: 0 24px 16px;
+    }
+  }
+
+  .section-title {
+    align-items: center;
+    gap: 0.5rem;
+
+    .num {
+      width: 26px;
+      height: 26px;
+      flex: none;
+      border-radius: 50%;
+      background: v.$primary-lighter;
+      color: v.$primary;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    mat-icon {
+      color: v.$primary;
+    }
+  }
+
+  .section-hint {
+    align-items: center;
+    justify-content: flex-end;
+    color: v.$grey-text;
+  }
+
+  .section-body {
+    padding-top: 0.5rem;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0 1rem;
+  }
+
+  .collections-field {
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
-  }
+    margin: 0.75rem 0 1rem;
 
-  .header-label {
-    display: block;
-    margin-top: 10px;
+    planet-tag-input {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+    }
   }
 
   .markdown-field {
     display: block;
+    margin-bottom: 0.5rem;
   }
 
   .markdown-label {
+    display: block;
     margin-top: 0;
     margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: v.$grey-text;
   }
 
   .markdown-error {
     margin: 0.25rem 0 0;
+  }
+
+  .file-error {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  .replace-warning p {
+    margin: 0.5rem 0;
+  }
+
+  .existing-file {
+    margin-top: 0.75rem;
   }
 
   .existing-file-container {
@@ -45,11 +127,18 @@
     flex: 1;
   }
 
-  @media (max-width: v.$screen-md) {
-    .form-container {
-      width: auto;
-    }
+  .open-fields,
+  .checkbox-row {
+    margin-top: 0.75rem;
+  }
 
+  .checkbox-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: v.$screen-md) {
     .filename {
       white-space: nowrap;
       overflow: hidden;

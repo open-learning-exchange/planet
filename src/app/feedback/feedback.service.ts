@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { map } from 'rxjs/operators';
+import { normalizeFeedbackStatus } from './feedback.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class FeedbackService {
 
   openFeedback(feedback: any) {
     return this.modifyFeedback(
-      { ...feedback, closeTime: '', status: 'Reopened' },
+      { ...feedback, closeTime: '', status: normalizeFeedbackStatus('reopened') },
       $localize`You re-opened this feedback.`
     );
   }
@@ -31,7 +32,7 @@ export class FeedbackService {
 
   closeFeedback(feedback: any) {
     return this.modifyFeedback(
-      { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': 'Closed' },
+      { ...feedback, 'closeTime': this.couchService.datePlaceholder, 'status': normalizeFeedbackStatus('closed') },
       $localize`You closed this feedback.`
     );
   }

@@ -9,8 +9,11 @@
   </ng-container>
   <ng-container matColumnDef="count">
     <mat-header-cell *matHeaderCellDef mat-sort-header="count">
-      <ng-container *ngIf="activityType==='health'; else views" i18n>Examinations</ng-container>
-      <ng-template #views i18n>Views</ng-template>
+      @if (activityType==='health') {
+        <ng-container i18n>Examinations</ng-container>
+      } @else {
+        <ng-container i18n>Views</ng-container>
+      }
     </mat-header-cell>
     <mat-cell *matCellDef="let element">{{element?.count}}</mat-cell>
   </ng-container>

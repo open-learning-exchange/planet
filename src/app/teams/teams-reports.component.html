@@ -1,30 +1,102 @@
-<div class="fixed action-buttons" *ngIf="editable">
-  <button mat-raised-button color="primary" i18n (click)="openAddReportDialog(false)">Add Report</button>
-  <button mat-raised-button color="accent" i18n *ngIf="reports && reports.length > 0" (click)="exportReports()">
-    Export as CSV
-  </button>
-</div>
-<planet-loading-spinner *ngIf="isLoading" text="Loading reports..." i18n-text></planet-loading-spinner>
-<div *ngIf="!isLoading && (!reports || reports?.length === 0)">
-  <p i18n>No reports available at the moment.</p>
-</div>
-<mat-grid-list *ngIf="!isLoading" [cols]="columns" gutterSize="0.5rem" rowHeight="22rem" id="report-grid">
-  <mat-grid-tile *ngFor="let report of reports" (click)="openReportDialog(report)">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title i18n>Financial Report</mat-card-title>
-        <mat-card-subtitle>{{ report.startDate | date : 'mediumDate' : '+0000' }} - {{ report.endDate | date : 'mediumDate' : '+0000' }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <planet-teams-reports-detail [report]="report"></planet-teams-reports-detail>
-      </mat-card-content>
-      <mat-card-footer class="action-buttons margin-lr-10">
-        <ng-container *ngIf="editable">
-          <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(report)"><mat-icon>delete</mat-icon></button>
-          <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(report, true)"><mat-icon>edit</mat-icon></button>
-        </ng-container>
-        <button mat-button i18n>View Report</button>
-      </mat-card-footer>
-    </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
+@if (isLoading) {
+  <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
+}
+
+@if (!isLoading) {
+  <div class="reports-container">
+    <div class="reports-toolbar">
+      <span class="reports-count">
+        <mat-icon>description</mat-icon>
+        <span><strong>{{ reportCards.length }}</strong>&nbsp;<ng-container i18n>reports</ng-container></span>
+      </span>
+      <span class="spacer"></span>
+      @if (reportCards.length > 0) {
+        <button mat-stroked-button [matMenuTriggerFor]="reportsExportMenu">
+          <mat-icon>file_download</mat-icon><span i18n>Export</span>
+        </button>
+        <mat-menu #reportsExportMenu="matMenu">
+          <button mat-menu-item (click)="exportReports()" i18n>CSV</button>
+          <button mat-menu-item (click)="exportReportsPdf()" i18n>PDF</button>
+        </mat-menu>
+      }
+      @if (editable) {
+        <button mat-raised-button color="primary" (click)="openAddReportDialog(false)">
+          <mat-icon>add</mat-icon><span i18n>Add Report</span>
+        </button>
+      }
+    </div>
+    @if (reportCards.length === 0) {
+      <p class="reports-empty" i18n>No reports available at the moment.</p>
+    }
+    @if (reportCards.length > 0) {
+      <div class="reports-grid">
+        @for (card of reportCards; track trackByReport($index, card)) {
+          <mat-card class="report-card"
+            role="button" tabindex="0"
+            (click)="openReportCard($event, card.report)"
+            (keydown.enter)="openReportCard($event, card.report)"
+            (keydown.space)="openReportCard($event, card.report)">
+            <mat-card-content>
+              <div class="report-card-header">
+                <div>
+                  <div class="report-card-eyebrow" i18n>Financial Report</div>
+                  <div class="report-card-range">
+                    {{ card.report.startDate | date : 'mediumDate' : '+0000' }} &ndash;
+                    {{ card.report.endDate | date : 'mediumDate' : '+0000' }}
+                  </div>
+                </div>
+                <span class="report-card-chip" [ngClass]="card.isLoss ? 'loss' : 'profit'">
+                  <mat-icon>{{ card.isLoss ? 'trending_down' : 'trending_up' }}</mat-icon>
+                  @if (card.isLoss) {
+                    <span i18n>Loss</span>
+                  }
+                  @if (!card.isLoss) {
+                    <span i18n>Profit</span>
+                  }
+                </span>
+              </div>
+              <div class="report-card-hero">
+                <div class="report-card-hero-label" i18n>Net (Profit / Loss)</div>
+                <div class="report-card-hero-value" [ngClass]="card.isLoss ? 'debit' : 'credit'">
+                  {{ card.net | currency:curCode?.code:curCode?.symbol:'1.0-2' }}
+                </div>
+              </div>
+              <div class="report-card-stats">
+                <div class="report-card-stat credit">
+                  <div class="report-card-stat-label" i18n>Credit</div>
+                  <div class="report-card-stat-value">{{ card.income | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</div>
+                </div>
+                <div class="report-card-stat debit">
+                  <div class="report-card-stat-label" i18n>Debit</div>
+                  <div class="report-card-stat-value">{{ card.expenses | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</div>
+                </div>
+              </div>
+              <div class="report-card-balance">
+                <span i18n>Ending Balance</span>
+                <span class="num">{{ card.endingBalance | currency:curCode?.code:curCode?.symbol:'1.0-2' }}</span>
+              </div>
+              @if (card.receiptImageCount > 0) {
+                <div class="report-card-receipt-images">
+                  <mat-icon>photo_library</mat-icon>
+                  <span i18n>{card.receiptImageCount, plural, =1 {1 attached image} other {# attached images}}</span>
+                </div>
+              }
+            </mat-card-content>
+            <mat-card-actions class="report-card-actions">
+              @if (editable) {
+                <button mat-icon-button (click)="$event.stopPropagation(); openAddReportDialog(card.report, true)"
+                  i18n-aria-label aria-label="Edit"><mat-icon>edit</mat-icon></button>
+                  <button mat-icon-button (click)="$event.stopPropagation(); openDeleteReportDialog(card.report)"
+                    i18n-aria-label aria-label="Delete"><mat-icon>delete_outline</mat-icon></button>
+                  }
+                  <span class="spacer"></span>
+                  <button mat-raised-button color="primary" (click)="$event.stopPropagation(); openReportDialog(card.report)">
+                    <span i18n>View Report</span><mat-icon>arrow_forward</mat-icon>
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </div>
+    }

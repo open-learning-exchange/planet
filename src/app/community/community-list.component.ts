@@ -3,7 +3,7 @@ import { forkJoin } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { arrangePlanetsIntoHubs, attachNamesToPlanets, planetAndParentId, sortPlanet } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import {
   MatList, MatListSubheaderCssMatStyler, MatListItem, MatListItemIcon, MatListItemTitle, MatListItemMeta
@@ -16,10 +16,8 @@ import { RouterLink } from '@angular/router';
   selector: 'planet-community-list',
   templateUrl: './community-list.component.html',
   imports: [
-    NgIf,
     PlanetLoadingSpinnerComponent,
     MatList,
-    NgFor,
     MatListSubheaderCssMatStyler,
     MatListItem,
     NgClass,

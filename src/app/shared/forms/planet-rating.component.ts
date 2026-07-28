@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { DialogsFormService } from '../dialogs/dialogs-form.service';
 import { RatingService } from './rating.service';
 import { StateService } from '../state.service';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { PlanetStackedBarComponent } from './planet-stacked-bar.component';
 import { PlanetRatingStarsComponent } from './planet-rating-stars.component';
@@ -44,7 +44,7 @@ interface PopupFormModel {
     max-width: 225px;
   } `],
   selector: 'planet-rating',
-  imports: [NgClass, MatIcon, PlanetStackedBarComponent, NgIf, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
+  imports: [NgClass, MatIcon, PlanetStackedBarComponent, FormsModule, ReactiveFormsModule, PlanetRatingStarsComponent]
 })
 export class PlanetRatingComponent implements OnChanges {
   @Input() rating: any = { userRating: {} };
@@ -115,9 +115,9 @@ export class PlanetRatingComponent implements OnChanges {
   onStarClick(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel> = this.rateForm) {
     if (!this.isEnrolled(this.item._id, this.ratingType)) {
       if (this.ratingType === 'course') {
-        this.planetMessage.showMessage($localize`Please join the ${this.ratingType} before rating!`);
+        this.planetMessage.showMessage($localize`Please join the course before rating!`);
       } else {
-        this.planetMessage.showMessage($localize`Please add the ${this.ratingType} to your library before rating!`);
+        this.planetMessage.showMessage($localize`Please add the resource to your library before rating!`);
       }
       this.enrolled = false;
       return;

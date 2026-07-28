@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
 import { NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { CouchService } from '../../../shared/couchdb.service';
@@ -13,7 +14,7 @@ import { MyPlanetFiltersBase } from './filter.base';
 import { exportMyPlanetCsv } from '../reports.utils';
 import { MyPlanetToolbarComponent } from './myplanet-toolbar.component';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { MyPlanetTableComponent } from './myplanet-table.component';
@@ -23,8 +24,17 @@ import { PlanetLoadingSpinnerComponent } from '../../../shared/planet-loading-sp
   templateUrl: './logs-myplanet.component.html',
   styleUrls: ['./myplanet.scss'],
   imports: [
-    MyPlanetToolbarComponent, FormsModule, ReactiveFormsModule, MatToolbar, MatToolbarRow, NgIf, MatButton, NgFor,
-    MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MyPlanetTableComponent, PlanetLoadingSpinnerComponent
+    MyPlanetToolbarComponent,
+    FormsModule,
+    ReactiveFormsModule,
+    MatToolbar,
+    MatToolbarRow,
+    MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MyPlanetTableComponent,
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit {
@@ -48,6 +58,7 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
     private managerService: ManagerService,
     fb: NonNullableFormBuilder,
     activityService: ReportsService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     super(fb, activityService, '24h');
   }
@@ -145,9 +156,9 @@ export class LogsMyPlanetComponent extends MyPlanetFiltersBase implements OnInit
       [$localize`ID`]: data.androidId,
       [$localize`Name`]: data.deviceName || data.customDeviceName,
       [$localize`Type`]: data.type,
-      [$localize`Time`]: new Date(Number(data.time)),
+      [$localize`Time`]: data.time ? formatDate(Number(data.time), 'medium', this.localeId) : $localize`N/A`,
       [$localize`Version`]: data.version,
-      [$localize`Error`]:  data.error || 'N/A',
+      [$localize`Error`]:  data.error || $localize`N/A`,
     }));
   }
 

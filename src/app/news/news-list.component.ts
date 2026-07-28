@@ -12,7 +12,7 @@ import { CommunityListDialogComponent } from '../community/community-list-dialog
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
 import { dedupeShelfReduce } from '../shared/utils';
 import { trackById } from '../shared/table-helpers';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import { NewsListItemComponent } from './news-list-item.component';
 import { MatDivider } from '@angular/material/list';
@@ -23,7 +23,7 @@ import { MatPaginator } from '@angular/material/paginator';
   selector: 'planet-news-list',
   templateUrl: './news-list.component.html',
   styleUrls: ['./news-list.component.scss'],
-  imports: [NgIf, MatButton, NewsListItemComponent, MatDivider, NgFor, MatProgressSpinner, MatPaginator]
+  imports: [MatButton, NewsListItemComponent, MatDivider, MatProgressSpinner, MatPaginator]
 })
 export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 

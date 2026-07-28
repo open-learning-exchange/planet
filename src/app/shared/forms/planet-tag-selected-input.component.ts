@@ -1,25 +1,32 @@
-import { Component, DestroyRef, Input, OnChanges, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, Input, OnChanges, HostListener } from '@angular/core';
 import { TagsService } from './tags.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { truncateText } from '../../shared/utils';
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+
 import { MatTooltip } from '@angular/material/tooltip';
 
-@Component({
-  template: `
-    <span [ngSwitch]="selectedIds.length" class="small margin-lr-5">
-      <span *ngSwitchCase="0" i18n>No collections selected</span>
-      <span *ngSwitchCase="1"><span i18n>Selected:</span>
-        {{ getTruncatedTooltip() }}
-    </span>
-    <span *ngSwitchDefault [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
-  `,
-  selector: 'planet-tag-selected-input',
-  imports: [NgSwitch, NgSwitchCase, NgSwitchDefault, MatTooltip]
-})
+  @Component({
+    template: `
+      <span class="small margin-lr-5">
+        @switch (selectedIds.length) {
+          @case (0) {
+            <span i18n>No collections selected</span>
+          }
+          @case (1) {
+            <span><span i18n>Selected:</span>
+              {{ getTruncatedTooltip() }}
+            </span>
+          }
+          @default {
+            <span [matTooltip]="tooltipLabels"><span i18n>Hover to see selected collections</span></span>
+          }
+        }
+      </span>
+    `,
+    selector: 'planet-tag-selected-input',
+    imports: [MatTooltip]
+  })
 export class PlanetTagSelectedInputComponent implements OnChanges {
-  private readonly destroyRef = inject(DestroyRef);
 
   @Input() selectedIds: string[] = [];
   @Input() allTags: any[] = [];
@@ -31,16 +38,14 @@ export class PlanetTagSelectedInputComponent implements OnChanges {
   constructor(
     private tagsService: TagsService,
     private deviceInfoService: DeviceInfoService
-  ) {
-    this.deviceInfoService.watchDeviceType()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((deviceType) => {
-        this.deviceType = deviceType;
-      });
-  }
+  ) {}
 
   ngOnChanges() {
     this.setTooltipLabels(this.selectedIds, this.allTags);
+  }
+
+  @HostListener('window:resize') OnResize() {
+    this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
   setTooltipLabels(selectedIds, allTags) {

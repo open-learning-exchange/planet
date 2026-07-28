@@ -11,10 +11,19 @@
     max-height: 60vh;
     overflow: auto;
   }
-  .left-tile {
+  .meetup-detail {
     a {
       color: v.$primary;
     }
+
+    a[href] {
+      text-decoration: underline;
+    }
+  }
+
+  ::ng-deep .meetup-detail td-markdown a {
+    color: v.$primary;
+    text-decoration: underline;
   }
 
   .button-group-right {

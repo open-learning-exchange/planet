@@ -1,5 +1,159 @@
 import * as showdown from 'showdown';
+import mime from 'mime';
 export const converter = new showdown.Converter();
+
+// File.type can be empty for some browsers / file sources; fall back to the
+// filename extension via the mime package so callers don't reject valid files.
+export const normalizedContentType = (file: File): string =>
+  file.type || mime.getType(file.name) || '';
+
+// HTML accept attribute matcher. Supports extension tokens (".pdf"), MIME
+// types ("image/png") and MIME wildcards ("image/*"). Empty/missing accept allows anything.
+export const isAcceptableFile = (file: File, accept?: string): boolean => {
+  if (!accept || !accept.trim()) {
+    return true;
+  }
+  const filename = file.name.toLowerCase();
+  const ext = filename.includes('.') ? '.' + filename.split('.').pop() : '';
+  const contentType = normalizedContentType(file).toLowerCase();
+  return accept
+    .split(',')
+    .map(token => token.trim().toLowerCase())
+    .filter(Boolean)
+    .some(token => {
+      if (token.startsWith('.')) {
+        return ext === token;
+      }
+      if (token.endsWith('/*')) {
+        return contentType.startsWith(token.slice(0, -1));
+      }
+      return contentType === token;
+    });
+};
+
+export const safeAttachmentName = (name: string, usedNames: string[] = []): string => {
+  const trimmed = name.trim().replace(/\s+/g, '_').replace(/[/?#\\%*:|"<>]/g, '_') || 'attachment';
+  if (usedNames.indexOf(trimmed) === -1) {
+    return trimmed;
+  }
+  const lastDot = trimmed.lastIndexOf('.');
+  const baseName = lastDot > 0 ? trimmed.slice(0, lastDot) : trimmed;
+  const ext = lastDot > 0 ? trimmed.slice(lastDot) : '';
+  let index = 1;
+  let nextName = `${baseName}-${index}${ext}`;
+  while (usedNames.indexOf(nextName) > -1) {
+    index += 1;
+    nextName = `${baseName}-${index}${ext}`;
+  }
+  return nextName;
+};
+
+export const couchAttachmentPath = (docId: string, attachmentName: string): string => {
+  const encodedAttachmentName = attachmentName.split('/').map(segment => encodeURIComponent(segment)).join('/');
+  return `${encodeURIComponent(docId)}/${encodedAttachmentName}`;
+};
+
+export const couchAttachmentUrl = (baseUrl: string, dbName: string, docId: string, attachmentName: string): string => {
+  const trimmedBaseUrl = baseUrl.replace(/\/+$/, '');
+  const trimmedDbName = dbName.replace(/^\/+|\/+$/g, '');
+  return `${trimmedBaseUrl}/${trimmedDbName}/${couchAttachmentPath(docId, attachmentName)}`;
+};
+
+export interface NormalizeImageOptions {
+  maxDimension?: number;
+  quality?: number;
+  usedNames?: string[];
+}
+
+export interface NormalizedImage {
+  file: File;
+  contentType: string;
+  fileName: string;
+}
+
+export const scaledDimensions = (width: number, height: number, maxDimension: number): { width: number; height: number } => {
+  const scale = Math.min(1, maxDimension / Math.max(width, height));
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale))
+  };
+};
+
+const replaceExtension = (name: string, extension: string, usedNames: string[] = []): string => {
+  const safeName = safeAttachmentName(name);
+  const lastDot = safeName.lastIndexOf('.');
+  const baseName = lastDot > 0 ? safeName.slice(0, lastDot) : safeName;
+  return safeAttachmentName(`${baseName}.${extension}`, usedNames);
+};
+
+const canvasToBlob = (canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob | null> =>
+  new Promise(resolve => canvas.toBlob(resolve, type, quality));
+
+interface EncodedImage {
+  blob: Blob;
+  contentType: string;
+  extension: string;
+}
+
+const encodedImage = async (canvas: HTMLCanvasElement, quality: number): Promise<EncodedImage | null> => {
+  const webp = await canvasToBlob(canvas, 'image/webp', quality);
+  if (webp?.type === 'image/webp') {
+    return { blob: webp, contentType: 'image/webp', extension: 'webp' };
+  }
+  const jpeg = await canvasToBlob(canvas, 'image/jpeg', quality);
+  return jpeg?.type === 'image/jpeg' ? { blob: jpeg, contentType: 'image/jpeg', extension: 'jpg' } : null;
+};
+
+// Browser-side cover/image normalization: bounds replicated payloads while keeping upload UX permissive.
+export const normalizeImage = async (file: File, opts: NormalizeImageOptions = {}): Promise<NormalizedImage> => {
+  const maxDimension = opts.maxDimension ?? 600;
+  const quality = opts.quality ?? 0.82;
+  const fallback = (): NormalizedImage => ({
+    file,
+    contentType: normalizedContentType(file),
+    fileName: safeAttachmentName(file.name, opts.usedNames)
+  });
+  let objectUrl = '';
+  try {
+    objectUrl = URL.createObjectURL(file);
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = objectUrl;
+    });
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    if (!sourceWidth || !sourceHeight) {
+      return fallback();
+    }
+    const dimensions = scaledDimensions(sourceWidth, sourceHeight, maxDimension);
+    const canvas = document.createElement('canvas');
+    canvas.width = dimensions.width;
+    canvas.height = dimensions.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      return fallback();
+    }
+    ctx.drawImage(image, 0, 0, dimensions.width, dimensions.height);
+    const encoded = await encodedImage(canvas, quality);
+    if (!encoded) {
+      return fallback();
+    }
+    const fileName = replaceExtension(file.name, encoded.extension, opts.usedNames);
+    return {
+      file: new File([ encoded.blob ], fileName, { type: encoded.contentType, lastModified: file.lastModified }),
+      contentType: encoded.contentType,
+      fileName
+    };
+  } catch {
+    return fallback();
+  } finally {
+    if (objectUrl) {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
+};
 
 // Highly unlikely random numbers will not be unique for practical amount of course steps
 export const uniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
@@ -46,8 +200,6 @@ export const styleVariables: any = {
 
 export const filterById = (array = [], id: string) => array.filter(item => item._id !== id);
 
-export const itemsShown = (paginator: any) => Math.min(paginator.length - (paginator.pageIndex * paginator.pageSize), paginator.pageSize);
-
 export const isInMap = (tag: string, map: Map<string, boolean>) => map.get(tag);
 
 export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
@@ -62,7 +214,7 @@ export const mapToArray = (map: Map<string, boolean>, equalValue?) => {
   return keyToArray(iterable.next(), []);
 };
 
-export const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
+const twoDigitNumber = (number: number) => `${number.toString().length < 2 ? '0' : ''}${number.toString()}`;
 
 export const addDateAndTime = (date, time) => new Date(date + (Date.parse('1970-01-01T' + time + 'Z') || 0));
 

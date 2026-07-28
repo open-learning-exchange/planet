@@ -10,22 +10,36 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { NotificationsService } from './notifications.service';
-import { DialogsAnnouncementComponent, includedCodes, challengePeriod } from '../shared/dialogs/dialogs-announcement.component';
-import { StateService } from '../shared/state.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgFor, NgClass, NgIf, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
+import { ChallengesService } from '../shared/challenges/challenges.service';
 
 @Component({
   templateUrl: './notifications.component.html',
   styleUrls: ['./notifications.component.scss'],
   imports: [
-    MatToolbar, MatButton, MatFormField, MatLabel, MatSelect, NgFor, MatOption, MatTable, MatColumnDef, MatCellDef,
-    MatCell, NgClass, NgIf, RouterLink, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+    MatToolbar,
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatTable,
+    MatColumnDef,
+    MatCellDef,
+    MatCell,
+    NgClass,
+    RouterLink,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class NotificationsComponent implements OnInit, AfterViewInit {
@@ -43,10 +57,10 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dialog: MatDialog,
-    private stateService: StateService,
     private notificationsService: NotificationsService,
     private couchService: CouchService,
     private userService: UserService,
+    private challengesService: ChallengesService,
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -106,13 +120,12 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notificationsService.setNotificationsAsRead(this.notifications.data);
   }
 
-  openAnnouncementDialog() {
-    const challengeActive = includedCodes.includes(this.stateService.configuration.code) && challengePeriod;
-    if (challengeActive) {
-      this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
+  openAnnouncementDialog(notification?: any) {
+    const challenge = notification ?
+      this.challengesService.getChallengeForNotification(notification) :
+      this.challengesService.getActiveChallenge();
+    if (challenge) {
+      this.challengesService.openChallengeDialog(this.dialog, challenge);
     }
   }
 }

@@ -1,25 +1,48 @@
 import { Component, Input } from '@angular/core';
-import { NgSwitch, NgSwitchCase } from '@angular/common';
+
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
+
+export const courseIcons = {
+  assignment: 'assignment',
+  attachFile: 'attach_file',
+  description: 'description',
+  done: 'done',
+  rotateRight: 'rotate_right'
+} as const;
+
+export type CourseIcon = typeof courseIcons[keyof typeof courseIcons] | '';
 
 @Component({
   selector: 'planet-course-icon',
   template: `
-    <div [ngSwitch]="icon">
-      <span *ngSwitchCase="'assignment'" i18n-matTooltip matTooltip="Test"><mat-icon>assignment</mat-icon></span>
-      <span *ngSwitchCase="'attach_file'" i18n-matTooltip matTooltip="Resource(s)"><mat-icon>attach_file</mat-icon></span>
-      <span *ngSwitchCase="'description'" i18n-matTooltip matTooltip="Survey">
-        <mat-icon >description</mat-icon>
-      </span>
-      <span *ngSwitchCase="'done'" i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
-      <span *ngSwitchCase="'rotate_right'" i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
+    <div>
+      @switch (icon) {
+        @case (courseIcons.assignment) {
+          <span i18n-matTooltip matTooltip="Test"><mat-icon>assignment</mat-icon></span>
+        }
+        @case (courseIcons.attachFile) {
+          <span i18n-matTooltip matTooltip="Resource(s)"><mat-icon>attach_file</mat-icon></span>
+        }
+        @case (courseIcons.description) {
+          <span i18n-matTooltip matTooltip="Survey">
+            <mat-icon >description</mat-icon>
+          </span>
+        }
+        @case (courseIcons.done) {
+          <span i18n-matTooltip matTooltip="This step has been completed."><mat-icon>done</mat-icon></span>
+        }
+        @case (courseIcons.rotateRight) {
+          <span i18n-matTooltip matTooltip="This step is in progress."><mat-icon >rotate_right</mat-icon></span>
+        }
+      }
     </div>
-  `,
-  imports: [NgSwitch, NgSwitchCase, MatTooltip, MatIcon]
+    `,
+  imports: [MatTooltip, MatIcon]
 })
 export class CoursesIconComponent {
 
-  @Input() icon: '';
+  courseIcons = courseIcons;
+  @Input() icon: CourseIcon = '';
 
 }

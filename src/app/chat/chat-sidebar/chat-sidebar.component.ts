@@ -15,7 +15,7 @@ import { UserService } from '../../shared/user.service';
 import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgIf, NgFor, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,7 +40,6 @@ interface TitleForm {
     MatDrawer,
     MatButton,
     MatIcon,
-    NgIf,
     MatMiniFabButton,
     MatFormField,
     MatLabel,
@@ -53,7 +52,6 @@ interface TitleForm {
     CdkConnectedOverlay,
     MatButtonToggleGroup,
     MatButtonToggle,
-    NgFor,
     ReactiveFormsModule,
     MatError,
     FormErrorMessagesComponent,

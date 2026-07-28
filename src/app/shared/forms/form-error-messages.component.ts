@@ -8,13 +8,14 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-form-error-messages',
   template: `
-    <span *ngIf="error" [matTooltip]="tooltipText()" i18n>{error, select,
+    @if (error) {
+      <span [matTooltip]="tooltipText()" i18n>{error, select,
       required {This field is required}
       min {The number cannot be below}
       max {The number cannot exceed}
@@ -46,12 +47,13 @@ import { MatTooltip } from '@angular/material/tooltip';
       bp {Blood Pressure should be systolic/diastolic}
       notFileMatch {File not found in list}
       invalidLink {Invalid link. Must be a valid URL e.g https://ole.org/}
-    }</span>{{number === undefined ? '' : ' ' + number}}
-    <ng-container *ngIf="error === 'matDatepickerMin' || error === 'matDatepickerMax'">
-      {{date === undefined ? '' : ' ' + (date | date)}}
-    </ng-container>
-  `,
-  imports: [NgIf, MatTooltip, DatePipe]
+    }</span>
+      }{{number === undefined ? '' : ' ' + number}}
+      @if (error === 'matDatepickerMin' || error === 'matDatepickerMax') {
+        {{date === undefined ? '' : ' ' + (date | date)}}
+      }
+    `,
+  imports: [MatTooltip, DatePipe]
 })
 export class FormErrorMessagesComponent implements OnInit {
 

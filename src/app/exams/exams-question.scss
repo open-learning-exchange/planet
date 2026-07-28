@@ -4,24 +4,37 @@
 
   form {
     display: grid;
-    grid-template-rows: 56px auto 56px;
+    grid-template-rows: auto auto auto;
+    grid-row-gap: 1rem;
   }
 
   .question-choices {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     flex-wrap: wrap;
   }
 
   .question-choices > div {
-    margin-right: 0.5rem;
-    max-height: 56px;
+    margin: 0 .5rem .75rem 0;
   }
 
   .type-title-container {
     display: grid;
-    grid-template-columns: 1fr v.$form-width-1;
-    grid-column-gap: 0.5rem;
+    grid-template-columns: 2fr 8fr;
+    grid-column-gap: 1rem;
+    align-items: center;
+  }
+
+  .scale-max-field {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .scale-max-label {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
   }
 
 }

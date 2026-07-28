@@ -1,13 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgFor, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-courses-progress-bar',
   templateUrl: 'courses-progress-bar.component.html',
   styleUrls: ['courses-progress-bar.scss'],
-  imports: [NgFor, MatTooltip, NgClass]
+  imports: [MatTooltip, NgClass]
 })
 export class CoursesProgressBarComponent implements OnChanges {
 
@@ -31,6 +31,10 @@ export class CoursesProgressBarComponent implements OnChanges {
     if (status !== 'not started') {
       this.router.navigate([ '/courses/view', this.course._id, 'step', i + 1 ]);
     }
+  }
+
+  stepTooltip(step: any, index: number): string {
+    return step.stepTitle || $localize`Step ${index + 1}:stepNumber:`;
   }
 
   progressStatus(progress: any) {

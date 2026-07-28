@@ -1,18 +1,27 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClient } from '@angular/common/http';
+import { HttpTestingController } from '@angular/common/http/testing';
+
 import { AppComponent } from './app.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
 
 describe('App', () => {
+  let fixture: ComponentFixture<AppComponent>;
+  let component: AppComponent;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, AppComponent]
+      imports: [AppComponent],
+      providers: [{ provide: HttpClient, useValue: HttpTestingController}]
     });
   });
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
   it('Should be an AppComponent', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    expect(fixture.componentInstance instanceof AppComponent).toBe(true, 'Should create AppComponent');
+    expect(fixture).toMatchSnapshot();
   });
 });

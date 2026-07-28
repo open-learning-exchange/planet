@@ -15,7 +15,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatCard, MatCardHeader, MatCardSubtitle, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
-import { NgFor, NgIf, NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { NgClass, NgTemplateOutlet, SlicePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { LabelComponent } from '../shared/label.component';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -30,9 +30,28 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
   templateUrl: 'news-list-item.component.html',
   styleUrls: ['./news-list-item.scss'],
   imports: [
-    MatCard, MatCardHeader, MatCardSubtitle, MatChipSet, NgFor, MatChip, MatIcon, LabelComponent,
-    NgIf, MatChipRemove, MatTooltip, MatCardContent, PlanetMarkdownComponent, ChatOutputDirective, NgClass,
-    MatIconButton, MatCardActions, MatButton, MatMenuTrigger, MatMenu, NgTemplateOutlet, MatMenuItem, SlicePipe, TimeAgoPipe
+    MatCard,
+    MatCardHeader,
+    MatCardSubtitle,
+    MatChipSet,
+    MatChip,
+    MatIcon,
+    LabelComponent,
+    MatChipRemove,
+    MatTooltip,
+    MatCardContent,
+    PlanetMarkdownComponent,
+    ChatOutputDirective,
+    NgClass,
+    MatIconButton,
+    MatCardActions,
+    MatButton,
+    MatMenuTrigger,
+    MatMenu,
+    NgTemplateOutlet,
+    MatMenuItem,
+    SlicePipe,
+    TimeAgoPipe
   ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {

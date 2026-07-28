@@ -9,15 +9,25 @@ import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.serv
 import { languages } from '../../shared/languages';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
 import { LanguageLabelComponent } from '../../shared/language-label.component';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { MatButton } from '@angular/material/button';
+import { environment } from '../../../environments/environment';
+import { couchAttachmentUrl } from '../../shared/utils';
 
 @Component({
   selector: 'planet-courses-detail',
   templateUrl: './courses-view-detail.component.html',
-  imports: [PlanetRatingComponent, LanguageLabelComponent, NgIf, PlanetMarkdownComponent, DatePipe]
+  styles: [ `.course-cover {
+    display: block;
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+  }` ],
+  imports: [PlanetRatingComponent, LanguageLabelComponent, PlanetMarkdownComponent, DatePipe]
 })
 export class CoursesViewDetailComponent implements OnChanges {
 
@@ -36,11 +46,18 @@ export class CoursesViewDetailComponent implements OnChanges {
   ngOnChanges() {
     this.imageSource = this.parent === true ? 'parent' : 'local';
   }
+
+  coverImageUrl() {
+    const base = this.imageSource === 'parent' ?
+      `${environment.parentProtocol}://${this.planetConfiguration.parentDomain}` :
+      environment.couchAddress;
+    return couchAttachmentUrl(base, 'courses', this.courseDetail._id, this.courseDetail.coverFileName);
+  }
 }
 
 @Component({
   template: `
-    <ng-container *ngIf="courseDetail">
+    @if (courseDetail) {
       <h3 mat-dialog-title>{{courseDetail.courseTitle}}</h3>
       <mat-dialog-content>
         <planet-courses-detail [courseDetail]="courseDetail"></planet-courses-detail>
@@ -49,9 +66,9 @@ export class CoursesViewDetailComponent implements OnChanges {
         <button mat-dialog-close mat-raised-button i18n>Close</button>
         <button mat-dialog-close mat-raised-button color="primary" (click)="routeToCourses(courseDetail._id)" i18n>View Course</button>
       </mat-dialog-actions>
-    </ng-container>
-  `,
-  imports: [NgIf, MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
+    }
+    `,
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, CoursesViewDetailComponent, MatDialogActions, MatButton, MatDialogClose]
 })
 export class CoursesViewDetailDialogComponent implements OnInit {
 

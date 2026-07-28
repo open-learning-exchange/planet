@@ -22,7 +22,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
-import { NgClass, NgIf, NgFor, DatePipe } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatChipSet, MatChip, MatChipRemove } from '@angular/material/chips';
@@ -42,10 +42,31 @@ export class TableState {
   templateUrl: './users-table.component.html',
   styleUrls: ['./users-table.scss'],
   imports: [
-    NgClass, NgIf, PlanetLoadingSpinnerComponent, MatTable, MatSort, MatColumnDef, MatHeaderCellDef,
-    MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatSortHeader, MatChipSet, MatChip, MatProgressBar,
-    NgFor, PlanetRoleComponent, MatIcon, MatChipRemove, MatButton, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow, MatNoDataRow, MatPaginator, DatePipe
+    NgClass,
+    PlanetLoadingSpinnerComponent,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatSortHeader,
+    MatChipSet,
+    MatChip,
+    MatProgressBar,
+    PlanetRoleComponent,
+    MatIcon,
+    MatChipRemove,
+    MatButton,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {

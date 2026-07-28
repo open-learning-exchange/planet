@@ -10,7 +10,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { NgIf } from '@angular/common';
+
 import { CoursesComponent } from '../../courses/courses.component';
 
 @Component({
@@ -21,7 +21,7 @@ import { CoursesComponent } from '../../courses/courses.component';
       display: block;
     }
   `],
-  imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, NgIf, CoursesComponent, UsersTableComponent]
+  imports: [MatToolbar, MatIconButton, RouterLink, MatIcon, MatButton, MatTabGroup, MatTab, CoursesComponent, UsersTableComponent]
 })
 export class CertificationsViewComponent implements OnInit, OnDestroy {
 

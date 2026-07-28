@@ -12,7 +12,7 @@ import { TableState, UsersTableComponent } from './users-table.component';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { NgIf, NgTemplateOutlet, NgFor } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -26,20 +26,24 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'planet-users',
   templateUrl: './users.component.html',
-  styles: [`
-    /* Column Widths */
-    .mat-column-select {
-      max-width: 44px;
-    }
-
-    .mat-column-profile {
-      max-width: 100px;
-    }
-  `],
+  styleUrls: ['./users.component.scss'],
   imports: [
-    MatToolbar, NgIf, MatIconButton, MatIcon, NgTemplateOutlet, MatToolbarRow, MatButtonToggleGroup,
-    MatButtonToggle, MatFormField, MatLabel, MatSelect, NgFor, MatOption, PlanetRoleComponent, MatInput,
-    MatButton, FormsModule, UsersTableComponent
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    NgTemplateOutlet,
+    MatToolbarRow,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    PlanetRoleComponent,
+    MatInput,
+    MatButton,
+    FormsModule,
+    UsersTableComponent
   ]
 })
 export class UsersComponent implements OnInit, OnDestroy {

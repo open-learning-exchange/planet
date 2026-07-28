@@ -19,18 +19,18 @@ planet-markdown-textbox.is-focused:not(.is-invalid) {
 }
 
 planet-markdown-textbox {
-  .CodeMirror, .CodeMirror-scroll {
-    height: inherit;
-    min-height: 15vh;
-    max-height: 15vh;
-    padding-bottom: 30px;
+  --planet-markdown-textbox-height: clamp(10rem, 20vh, 13rem);
+
+  .CodeMirror {
+    min-height: 0;
   }
 
-  .CodeMirror.CodeMirror-fullscreen {
-    box-sizing: border-box;
+  .CodeMirror-scroll {
+    max-height: var(--planet-markdown-textbox-height);
+    overflow-y: auto !important;
   }
 
-  .CodeMirror.CodeMirror-fullscreen, .CodeMirror-fullscreen .CodeMirror-scroll {
+  .CodeMirror-fullscreen .CodeMirror-scroll {
     height: 100%;
     max-height: 100%;
   }

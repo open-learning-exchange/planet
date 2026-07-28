@@ -4,9 +4,8 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
-import { FileInputComponent } from '../shared/forms/file-input.component';
+import { FileUploadComponent } from '../shared/forms/file-upload.component';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { ValidatorService } from '../validators/validator.service';
@@ -17,10 +16,11 @@ import { languages } from '../shared/languages';
 import { ResourcesService } from './resources.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { showFormErrors } from '../shared/table-helpers';
-import { deepEqual } from '../shared/utils';
+import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
-import { NgIf, NgClass, NgFor, AsyncPipe } from '@angular/common';
+import { loadZipFile } from '../shared/zip-utils';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -34,6 +34,9 @@ import { MatOption, MatAutocompleteTrigger, MatAutocomplete } from '@angular/mat
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../shared/submit.directive';
+import {
+  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelDescription
+} from '@angular/material/expansion';
 
 type DatePlaceholderType = CouchService['datePlaceholder'];
 
@@ -66,10 +69,35 @@ interface ResourceFormModel {
   templateUrl: './resources-add.component.html',
   styleUrls: ['./resources-add.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconAnchor, RouterLink, MatIcon, NgClass, FormsModule, ReactiveFormsModule,
-    MatFormField, MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
-    PlanetTagInputComponent, MatSelect, NgFor, MatOption, MatAutocompleteTrigger, MatAutocomplete, FileInputComponent,
-    MatIconButton, MatTooltip, MatCheckbox, MatButton, SubmitDirective, AsyncPipe
+    MatToolbar,
+    MatIconAnchor,
+    RouterLink,
+    MatIcon,
+    NgClass,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    PlanetMarkdownTextboxComponent,
+    PlanetTagInputComponent,
+    MatSelect,
+    MatOption,
+    MatAutocompleteTrigger,
+    MatAutocomplete,
+    FileUploadComponent,
+    MatIconButton,
+    MatTooltip,
+    MatCheckbox,
+    MatButton,
+    SubmitDirective,
+    AsyncPipe,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelDescription
   ]
 })
 
@@ -78,7 +106,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   file: any;
   attachedZipFiles: string[] = [];
   filteredZipFiles: Observable<string[]>;
-  deleteAttachment = false;
   resourceForm!: FormGroup<ResourceFormModel>;
   readonly dbName = 'resources'; // make database name a constant
   currentUsername = '';
@@ -103,8 +130,22 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @Output() afterSubmit = new EventEmitter<any>();
   attachmentMarkedForDeletion = false;
   hasUnsavedChanges = false;
+  submitAttempted = false;
+  sectionsExpanded = { details: true, file: false, classification: false, attribution: false };
   private initialState = '';
-  @ViewChild('fileInput') fileInput!: FileInputComponent;
+  @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
+
+  get detailsInvalid(): boolean {
+    return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
+  }
+
+  get fileInvalid(): boolean {
+    return !!this.resourceForm.errors?.fileTooBig || this.resourceForm.controls.openWhichFile.invalid;
+  }
+
+  get classificationInvalid(): boolean {
+    return this.resourceForm.controls.subject.invalid || this.resourceForm.controls.level.invalid;
+  }
 
   constructor(
     private router: Router,
@@ -149,7 +190,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.filteredZipFiles = this.resourceForm.controls.openWhichFile.valueChanges
       .pipe(
         startWith(''),
-        map(value => this._filter(value))
+        map(value => this.filter(value))
       );
     this.onFormChanges();
     this.captureInitialState();
@@ -233,7 +274,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.captureInitialState();
   }
 
-  private _filter(value: string): string[] {
+  private filter(value: string): string[] {
     const filterValue = value.toLowerCase();
 
     return this.attachedZipFiles.filter(option => option.toLowerCase().includes(filterValue));
@@ -254,6 +295,16 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
     if (!this.resourceForm.valid) {
       this.dialogsLoadingService.stop();
+      this.submitAttempted = true;
+      if (this.detailsInvalid) {
+        this.sectionsExpanded.details = true;
+      }
+      if (this.fileInvalid) {
+        this.sectionsExpanded.file = true;
+      }
+      if (this.classificationInvalid) {
+        this.sectionsExpanded.classification = true;
+      }
       showFormErrors(this.resourceForm.controls);
       return;
     }
@@ -279,7 +330,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   createFileObs() {
     // If file doesn't exist, mediaType will be undefined or null
-    const mediaType = this.file && this.resourcesService.simpleMediaType(this.file.type);
+    const mediaType = this.file && this.resourcesService.simpleMediaType(normalizedContentType(this.file));
     if (!mediaType) {
       // Creates an observable that immediately returns an empty object
       return of({ resource: {} });
@@ -318,13 +369,6 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.planetMessageService.showMessage(message);
   }
 
-  deleteAttachmentToggle(event) {
-    this.deleteAttachment = event.checked;
-    // Also disable downloadable toggle if user is removing file
-    this.showDownloadCheckbox = !event.checked;
-    this.resourceForm.patchValue({ isDownloadable: false });
-  }
-
   markAttachmentForDeletion() {
     this.attachmentMarkedForDeletion = true;
     this.resourceFilename = '';
@@ -361,11 +405,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   zipObs(zipFile) {
-    const zip = new JSZip();
     return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
-      zip.loadAsync(zipFile).then((data) => {
-        const fileNames = this.getFileNames(data);
+      loadZipFile(zipFile).then((zip) => {
+        const fileNames = this.getFileNames(zip);
 
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
         forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
@@ -383,7 +426,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
           console.log(error);
           observer.error(error);
         });
-      });
+      }, (error) => observer.error(error));
     });
   }
 
@@ -391,43 +434,39 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.router.navigate([ '/resources' ]);
   }
 
+  private disableOpenWhichFile() {
+    this.resourceForm.controls.openWhichFile.setValue('');
+    this.resourceForm.controls.openWhichFile.disable();
+    this.attachedZipFiles = [];
+  }
+
   removeNewFile() {
     this.file = null;
-    this.fileInput.clearFile();
+    this.fileUpload?.clear();
+    this.disableOpenWhichFile();
     this.showDownloadCheckbox = !!this.existingResource.doc?._attachments && !this.attachmentMarkedForDeletion;
     this.resourceForm.updateValueAndValidity();
     this.hasUnsavedChanges = true;
   }
 
-  bindFile(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const disableOpenWhichFile = () => {
-      this.resourceForm.controls.openWhichFile.setValue('');
-      this.resourceForm.controls.openWhichFile.disable();
-      this.attachedZipFiles = [];
-    };
-    if (!input.files || input.files.length === 0) {
-      disableOpenWhichFile();
-      return;
-    }
-    this.file = input.files[0];
+  onFileSelected(file: File) {
+    this.file = file;
     this.showDownloadCheckbox = true;
     this.resourceForm.updateValueAndValidity();
 
-    if (this.resourcesService.simpleMediaType(this.file.type) !== 'zip') {
-      disableOpenWhichFile();
+    if (this.resourcesService.simpleMediaType(normalizedContentType(this.file)) !== 'zip') {
+      this.disableOpenWhichFile();
       return;
     }
 
     this.resourceForm.controls.openWhichFile.enable();
-    const zip = new JSZip();
-
-    zip.loadAsync(this.file).then((data) => {
-      this.attachedZipFiles = this.getFileNames(data);
-    },
-    err => {
-      console.log('error', err.message);
-    });
+    loadZipFile(this.file)
+      .then((data) => {
+        this.attachedZipFiles = this.getFileNames(data);
+      })
+      .catch(err => {
+        console.log('error', err.message);
+      });
   }
 
   private getNormalizedState(): any {

@@ -20,16 +20,12 @@ import { CustomValidators } from '../validators/custom-validators';
 import { environment } from '../../environments/environment';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import {
-  DialogsAnnouncementComponent,
-  DialogsAnnouncementSuccessComponent,
-  includedCodes,
-  challengePeriod
-} from '../shared/dialogs/dialogs-announcement.component';
+import { DialogsAnnouncementSuccessComponent } from '../shared/dialogs/dialogs-announcement.component';
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
+import { ChallengesService } from '../shared/challenges/challenges.service';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { NgIf, NgClass, NgFor } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -66,7 +62,6 @@ interface CommunityDescriptionForm {
   imports: [
     MatTabGroup,
     MatTab,
-    NgIf,
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatToolbar,
@@ -81,7 +76,6 @@ interface CommunityDescriptionForm {
     MatSelectTrigger,
     LabelComponent,
     MatOption,
-    NgFor,
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
@@ -150,6 +144,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
+  localLinkTooltip(link: any): string {
+    return link.teamType === 'sync' || !this.planetCode
+      ? ''
+      : $localize`${link.title}:linkTitle: is only available on ${this.configuration.name}:planetName:`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -166,7 +166,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
     private userStatusService: UserChallengeStatusService,
     private deviceInfoService: DeviceInfoService,
     private fb: NonNullableFormBuilder,
-    private configurationCheckService: ConfigurationCheckService
+    private configurationCheckService: ConfigurationCheckService,
+    private challengesService: ChallengesService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -224,30 +225,20 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   communityChallenge() {
-    const challengeActive = includedCodes.includes(this.configuration.code) && challengePeriod;
-
-    if (challengeActive) {
-      const dialogRef = this.dialog.open(DialogsAnnouncementComponent, {
-        width: '50vw',
-        maxHeight: '100vh'
-      });
-      dialogRef.afterClosed().subscribe(() => {
-        if (!this.userStatusService.getCompleteChallenge()) {
-          this.sendChallengeNotification(this.user).subscribe();
-        }
-      });
+    const challenge = this.challengesService.getActiveChallenge();
+    if (!challenge) {
+      return;
     }
+    const dialogRef = this.challengesService.openChallengeDialog(this.dialog, challenge);
+    dialogRef.afterClosed().subscribe(() => {
+      if (!this.userStatusService.getCompleteChallenge()) {
+        this.sendChallengeNotification(this.user, challenge).subscribe();
+      }
+    });
   }
 
-  sendChallengeNotification(user) {
-    const data = {
-      'user': user._id,
-      'message': 'El reto está en',
-      'type': 'challenges',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
-    };
+  sendChallengeNotification(user, challenge) {
+    const data = this.challengesService.createChallengeNotification(user._id, challenge, this.couchService.datePlaceholder);
     return this.couchService.updateDocument('notifications', data);
   }
 
@@ -333,18 +324,21 @@ export class CommunityComponent implements OnInit, OnDestroy {
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.dialogsFormService.closeDialogsForm();
+      const challenge = this.challengesService.getActiveChallenge();
       if (
+        challenge &&
         this.userStatusService.getStatus('joinedCourse') &&
         this.userStatusService.getStatus('surveyComplete') &&
         !this.userStatusService.getStatus('hasPost')
       ) {
         this.dialog.open(DialogsAnnouncementSuccessComponent, {
           width: '50vw',
-          maxHeight: '100vh'
+          maxHeight: '100vh',
+          data: challenge
         });
         this.userStatusService.updateStatus(
           'hasPost',
-          { status: true, amount: 1 }
+          { status: true, amount: challenge.voicePostReward ?? 2 }
         );
       }
     });

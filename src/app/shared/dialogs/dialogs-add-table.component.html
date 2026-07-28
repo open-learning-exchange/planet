@@ -1,23 +1,32 @@
 <mat-dialog-content>
-  <ng-container [ngSwitch]="mode">
-    <planet-courses *ngSwitchCase="'courses'" [isDialog]="true" [excludeIds]="data.excludeIds"></planet-courses>
-    <planet-users *ngSwitchCase="'users'" [isDialog]="true" [hideChildren]="data.hideChildren" [excludeIds]="data.excludeIds"></planet-users>
-    <div *ngSwitchCase="'teams'">
-      <mat-form-field class="full-width">
-        <mat-label i18n>Send to team or enterprise</mat-label>
-        <mat-select (selectionChange)="onSelectionChange($event)">
-          <mat-option *ngFor="let link of links" [value]="link">{{link.title}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <planet-teams
-        *ngIf="selectedLink"
-        [isDialog]="true"
-        [excludeIds]="data.excludeIds"
-        [mode]="selectedLink?.selector?.type"
-        (rowClick)="teamSelect($event)"
-      ></planet-teams>
-    </div>
-  </ng-container>
+  @switch (mode) {
+    @case ('courses') {
+      <planet-courses [isDialog]="true" [excludeIds]="data.excludeIds"></planet-courses>
+    }
+    @case ('users') {
+      <planet-users [isDialog]="true" [hideChildren]="data.hideChildren" [excludeIds]="data.excludeIds"></planet-users>
+    }
+    @case ('teams') {
+      <div>
+        <mat-form-field class="full-width">
+          <mat-label i18n>Send to team or enterprise</mat-label>
+          <mat-select (selectionChange)="onSelectionChange($event)">
+            @for (link of links; track link) {
+              <mat-option [value]="link">{{link.title}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        @if (selectedLink) {
+          <planet-teams
+            [isDialog]="true"
+            [excludeIds]="data.excludeIds"
+            [mode]="selectedLink?.selector?.type"
+            (rowClick)="teamSelect($event)"
+          ></planet-teams>
+        }
+      </div>
+    }
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n>Cancel</button>

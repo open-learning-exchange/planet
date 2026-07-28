@@ -5,7 +5,7 @@ import { DialogsLoadingService } from './dialogs-loading.service';
 import { UsersComponent } from '../../users/users.component';
 import { TeamsComponent } from '../../teams/teams.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
-import { NgSwitch, NgSwitchCase, NgFor, NgIf } from '@angular/common';
+
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
@@ -14,8 +14,18 @@ import { MatButton } from '@angular/material/button';
 @Component({
   templateUrl: 'dialogs-add-table.component.html',
   imports: [
-    CdkScrollable, MatDialogContent, NgSwitch, NgSwitchCase, CoursesComponent, UsersComponent, MatFormField,
-    MatLabel, MatSelect, NgFor, MatOption, NgIf, TeamsComponent, MatDialogActions, MatButton, MatDialogClose
+    CdkScrollable,
+    MatDialogContent,
+    CoursesComponent,
+    UsersComponent,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    TeamsComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose
   ]
 })
 export class DialogsAddTableComponent implements AfterViewInit {

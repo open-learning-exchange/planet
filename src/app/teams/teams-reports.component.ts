@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, DoCheck } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, Output, EventEmitter, OnChanges } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
@@ -8,19 +8,22 @@ import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
-import { tap } from 'rxjs/operators';
+import { finalize, map, switchMap, tap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 import { convertUtcDate } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { fullLabel } from '../manager-dashboard/reports/reports.utils';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import { AttachmentInputState } from '../shared/forms/file-upload.component';
+import { TeamsAttachmentsService } from './teams-attachments.service';
+import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
-import { MatGridList, MatGridTile } from '@angular/material/grid-list';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatCardContent, MatCardFooter } from '@angular/material/card';
-import { TeamsReportsDetailComponent } from './teams-reports-detail.component';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { PdfImageSection, TeamsTablePdfExportService } from './teams-table-pdf-export.service';
 
 interface NewReportForm {
   _id?: string,
@@ -30,6 +33,7 @@ interface NewReportForm {
   endDate: Date,
   otherExpenses: number,
   otherIncome: number,
+  receiptImages?: AttachmentInputState,
   sales: number,
   startDate: Date,
   wages: string
@@ -40,22 +44,65 @@ interface NewReportForm {
   styleUrls: ['./teams-reports.scss'],
   templateUrl: './teams-reports.component.html',
   imports: [
-    NgIf, MatButton, PlanetLoadingSpinnerComponent, MatGridList, NgFor, MatGridTile, MatCard, MatCardHeader,
-    MatCardTitle, MatCardSubtitle, MatCardContent, TeamsReportsDetailComponent, MatCardFooter, MatIconButton,
-    MatIcon, DatePipe
+    NgClass,
+    MatButton,
+    MatIconButton,
+    MatIcon,
+    PlanetLoadingSpinnerComponent,
+    MatCard,
+    MatCardContent,
+    MatCardActions,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    DatePipe,
+    CurrencyPipe
   ]
 })
-export class TeamsReportsComponent implements DoCheck {
+export class TeamsReportsComponent implements OnChanges {
 
   @Input() reports: any[];
   @Input() editable = false;
   @Input() isLoading = false;
   @Input() team;
   @Output() reportsChanged = new EventEmitter<void>();
-  columns = 4;
-  minColumnWidth = 300;
-  configuration: any = {};
-  planetName: any;
+  configuration = this.stateService.configuration;
+  curCode = this.stateService.configuration.currency || {};
+  reportCards: any[] = [];
+
+  ngOnChanges() {
+    this.reportCards = (this.reports || [])
+      .filter(report => report.status !== 'archived')
+      .map(report => {
+        const income = (+report.sales || 0) + (+report.otherIncome || 0);
+        const expenses = (+report.wages || 0) + (+report.otherExpenses || 0);
+        const net = income - expenses;
+        return {
+          report,
+          receiptImageCount: this.teamsAttachmentsService.receiptAttachments(report).length,
+          income,
+          expenses,
+          net,
+          endingBalance: net + (+report.beginningBalance || 0),
+          isLoss: net < 0
+        };
+      });
+  }
+
+  trackByReport(index: number, card: any) {
+    return card.report._id || index;
+  }
+
+  openReportCard(event: MouseEvent | KeyboardEvent, report: any) {
+    const target = event.target as HTMLElement;
+    if (target.closest('button, a, input, select, textarea, [tabindex]:not(.report-card)')) {
+      return;
+    }
+    if (event instanceof KeyboardEvent && event.key === ' ') {
+      event.preventDefault();
+    }
+    this.openReportDialog(report);
+  }
 
   constructor(
     private couchService: CouchService,
@@ -63,25 +110,15 @@ export class TeamsReportsComponent implements DoCheck {
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private teamsService: TeamsService,
+    private teamsAttachmentsService: TeamsAttachmentsService,
     private csvService: CsvService,
-    private elementRef: ElementRef,
+    private teamsTablePdfExportService: TeamsTablePdfExportService,
     private stateService: StateService,
     private planetMessageService: PlanetMessageService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
-  ngDoCheck() {
-    const gridElement = this.elementRef.nativeElement.children['report-grid'];
-    if (!gridElement) {
-      return;
-    }
-    const newColumns = Math.floor(gridElement.offsetWidth / this.minColumnWidth);
-    if (this.columns !== newColumns) {
-      this.columns = newColumns;
-    }
-  }
-
   openAddReportDialog(oldReport = {}, isEdit: boolean) {
-    const actionType = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
     const dialogTitle = isEdit ? $localize`:@@edit-report-dialog-title:Edit Report` : $localize`:@@add-report-dialog-title:Add Report`;
 
     this.couchService.currentTime().subscribe((time: number) => {
@@ -98,15 +135,38 @@ export class TeamsReportsComponent implements DoCheck {
           { name: 'sales', placeholder: $localize`Sales`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'otherIncome', placeholder: $localize`Other Income`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'wages', placeholder: $localize`Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 }
+          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          {
+            name: 'receiptImages',
+            placeholder: $localize`Attached Images`,
+            type: 'file-upload',
+            fileUpload: {
+              accept: this.teamsAttachmentsService.receiptImageAccept,
+              existingAttachments: this.teamsAttachmentsService.receiptAttachments(oldReport),
+              hint: this.teamsAttachmentsService.receiptImageHint,
+              imagePreview: true,
+              maxFiles: this.teamsAttachmentsService.maxReceiptImages,
+              multiple: true,
+              typePills: this.teamsAttachmentsService.receiptImagePills
+            }
+          }
         ],
         this.addFormInitialValues(oldReport, { startDate: lastMonthStart, endDate: lastMonthEnd }),
         {
           disableIfInvalid: true,
-          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe(() => {
-            this.dialogsFormService.closeDialogsForm();
-            const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
-            this.planetMessageService.showMessage($localize`Report ${action}`);
+          onSubmit: (newReport) => this.updateReport(oldReport, newReport).subscribe({
+            next: (result: any) => {
+              this.dialogsFormService.closeDialogsForm();
+              const action = isEdit ? $localize`:@@report-edited:edited` : $localize`:@@report-added:added`;
+              this.planetMessageService.showMessage($localize`Report ${action}`);
+              if (result?.failedAttachments?.length) {
+                this.planetMessageService.showAlert($localize`Report saved, but some attached images could not be uploaded.`);
+              }
+            },
+            error: () => {
+              this.dialogsLoadingService.stop();
+              this.dialogsFormService.showErrorMessage($localize`There was a problem saving the report.`);
+            }
           })
         }
       );
@@ -118,8 +178,8 @@ export class TeamsReportsComponent implements DoCheck {
       data: {
         changeType: 'delete',
         type: 'report',
-        displayName: `${$localize`Report from`} ${new Date(report.startDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}
-          ${$localize`to`} ${new Date(report.endDate).toLocaleDateString('en-US', { timeZone: 'UTC' })}`,
+        displayName: `${$localize`Report from`} ${formatDate(report.startDate, 'mediumDate', this.localeId, 'UTC')}
+          ${$localize`to`} ${formatDate(report.endDate, 'mediumDate', this.localeId, 'UTC')}`,
         okClick: {
           request: this.updateReport(report),
           onNext: () => {
@@ -138,6 +198,10 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   addFormInitialValues(oldReport, { startDate, endDate }) {
+    // Only these fields are shown in the dialog, so only these get validators.
+    const formFields = [
+      'startDate', 'endDate', 'description', 'beginningBalance', 'sales', 'otherIncome', 'wages', 'otherExpenses'
+    ];
     const initialValues = {
       description: '',
       beginningBalance: 0,
@@ -146,13 +210,13 @@ export class TeamsReportsComponent implements DoCheck {
       wages: 0,
       otherExpenses: 0,
       ...oldReport,
+      receiptImages: this.teamsAttachmentsService.attachmentStateForDoc(oldReport),
       startDate: new Date(convertUtcDate(oldReport.startDate) || startDate),
       endDate: new Date(convertUtcDate(oldReport.endDate) || endDate)
     };
-    const formControl = (initialValue, fieldName: string) => [
-      initialValue,
-      [ CustomValidators.required, this.addFormValidator(fieldName) ]
-    ];
+    const formControl = (initialValue, fieldName: string) => formFields.indexOf(fieldName) > -1 ?
+      [ initialValue, [ CustomValidators.required, this.addFormValidator(fieldName) ] ] :
+      [ initialValue ];
     return Object.entries(initialValues).reduce(
       (formObj, [ key, value ]) => ({ ...formObj, [key]: formControl(value, key) }), {}
     );
@@ -174,7 +238,8 @@ export class TeamsReportsComponent implements DoCheck {
       numberFields.indexOf(key) > -1 ?
         +value :
         value;
-    const { _id, _rev, ...newDoc } = Object.entries(newReport).reduce(
+    const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
+    const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
       (obj, [ key, value ]: [ string, string | Date | number ]) => {
         return {
           ...obj,
@@ -184,10 +249,21 @@ export class TeamsReportsComponent implements DoCheck {
       {}
     ) as any;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);
-    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(tap(() => {
-      this.reportsChanged.emit();
-      this.dialogsLoadingService.stop();
-    }));
+    const newDocIndex = docs.length - 1;
+    return this.teamsService.updateAdditionalDocs(docs, this.team, 'report', { utcKeys: dateFields }).pipe(
+      switchMap((response: any) => {
+        const savedReport = response.res?.[newDocIndex];
+        return savedReport ?
+          this.teamsAttachmentsService.uploadReceiptImages(savedReport.id, savedReport.rev, receiptImages)
+            .pipe(map(uploadResult => ({ uploadResult }))) :
+          of({ uploadResult: { failedAttachments: [] } });
+      }),
+      tap(() => {
+        this.reportsChanged.emit();
+        this.dialogsLoadingService.stop();
+      }),
+      map(({ uploadResult }) => ({ failedAttachments: uploadResult.failedAttachments }))
+    );
   }
 
   openReportDialog(report) {
@@ -198,26 +274,79 @@ export class TeamsReportsComponent implements DoCheck {
   }
 
   exportReports() {
-    const exportData = this.reports.map(report => ({
-      [$localize`Start Date`]: fullLabel(report.startDate),
-      [$localize`End Date`]: fullLabel(report.endDate),
-      [$localize`Created Date`]: fullLabel(report.createdDate),
-      [$localize`Updated Date`]: fullLabel(report.updatedDate),
+    const { data, title } = this.reportsExportData();
+    this.csvService.exportCSV({ data, title });
+  }
+
+  exportReportsPdf() {
+    const { data, title, titleName } = this.reportsExportData();
+    const totalIncome = this.reportCards.reduce((sum, card) => sum + card.income, 0);
+    const totalExpenses = this.reportCards.reduce((sum, card) => sum + card.expenses, 0);
+    this.dialogsLoadingService.start();
+    this.receiptImageSections()
+      .pipe(finalize(() => this.dialogsLoadingService.stop()))
+      .subscribe(imageSections => this.teamsTablePdfExportService.exportTable({
+        data,
+        title,
+        currencyCode: this.curCode?.code,
+        currencySymbol: this.curCode?.symbol,
+        moneyColumns: [
+          $localize`Beginning Balance`,
+          $localize`Sales`,
+          $localize`Other Income`,
+          $localize`Wages`,
+          $localize`Other Expenses`,
+          $localize`Profit/Loss`,
+          $localize`Ending Balance`
+        ],
+        summary: [
+          { label: $localize`Reports`, value: this.reportCards.length },
+          { label: $localize`Total Credit`, value: totalIncome, format: 'currency' },
+          { label: $localize`Total Debit`, value: totalExpenses, format: 'currency' },
+          { label: $localize`Net Profit/Loss`, value: totalIncome - totalExpenses, format: 'currency' }
+        ],
+        imageSections,
+        filename: $localize`Financial Summary for ${titleName}.pdf`
+      }));
+  }
+
+  private reportsExportData() {
+    const data = this.reportCards.map(({ report, income, expenses, net, endingBalance }) => ({
+      [$localize`Start Date`]: fullLabel(report.startDate, this.localeId),
+      [$localize`End Date`]: fullLabel(report.endDate, this.localeId),
+      [$localize`Created Date`]: fullLabel(report.createdDate, this.localeId),
+      [$localize`Updated Date`]: fullLabel(report.updatedDate, this.localeId),
       [$localize`Beginning Balance`]: report.beginningBalance,
       [$localize`Sales`]: report.sales,
       [$localize`Other Income`]: report.otherIncome,
       [$localize`Wages`]: report.wages,
       [$localize`Other Expenses`]: report.otherExpenses,
-      [$localize`Profit/Loss`]: report.sales + report.otherIncome - report.wages - report.otherExpenses,
-      [$localize`Ending Balance`]: report.beginningBalance + report.sales + report.otherIncome - report.wages - report.otherExpenses
+      [$localize`Profit/Loss`]: net,
+      [$localize`Ending Balance`]: endingBalance
     }));
-    const planetName = this.stateService.configuration.name || 'Unnamed';
-    const entityLabel = this.configuration.planetType === 'nation' ? 'Nation' : 'Community';
+    const planetName = this.stateService.configuration.name || $localize`Unnamed`;
+    const entityLabel = this.configuration.planetType === 'nation' ? $localize`Nation` : $localize`Community`;
     const titleName = this.team.name || `${entityLabel} ${planetName}`;
-    this.csvService.exportCSV({
-      data: exportData,
-      title: $localize`Financial Summary for ${titleName}`
-    });
+    return {
+      data,
+      title: $localize`Financial Summary for ${titleName}`,
+      titleName
+    };
+  }
+
+  private receiptImageSections() {
+    const reportsWithReceipts = this.reportCards
+      .map(({ report }) => report)
+      .filter(report => this.teamsAttachmentsService.receiptAttachments(report).length > 0);
+    if (reportsWithReceipts.length === 0) {
+      return of([]);
+    }
+    return forkJoin(reportsWithReceipts.map(report => this.teamsAttachmentsService.receiptAttachmentImages(report).pipe(
+      map(images => ({
+        title: $localize`Receipt images for ${fullLabel(report.startDate, this.localeId)} - ${fullLabel(report.endDate, this.localeId)}`,
+        images
+      }))
+    ))).pipe(map((sections: PdfImageSection[]) => sections.filter(section => section.images.length > 0)));
   }
 
 }

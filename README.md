@@ -17,8 +17,8 @@ For development, the following additional tools are required:
 * Docker
 * Git
 * NPM v10
-* Node.js v18
-* Angular CLI v18
+* Node.js v22
+* Angular CLI v20
 
 The only other prerequisite is Docker Desktop. After cloning the repository, follow the steps below to set up the development environment using Docker:
 
@@ -69,16 +69,31 @@ npm install
 ng serve
 ```
 
-Visit localhost:3000 to access the Planet app.
-If port 3000 is in use, try ```ng serve --port 3001```
+By default, Planet expects CouchDB on port `2200` and the gateway on port `5000`. To use different local values, add a `.env` file in the project root:
 
-## Chatapi Notes
+```
+CHAT_PORT=5000
+COUCH_PORT=2200
+PARENT_PROTOCOL=https
+```
+
+Add only the values you need to override, then run:
+```
+npm run dev
+```
+
+`npm run dev` runs `dev-env.sh` before starting Angular. The script generates `src/environments/environment.dev.ts` from `src/environments/environment.template` so local development can point to the configured CouchDB and gateway ports. Both `.env` and `src/environments/environment.dev.ts` are local development files and should not be committed.
+
+Visit localhost:3000 to access the Planet app.
+If port 3000 is in use, try ```ng serve --port 3001``` or ```npm run dev -- --port 3001``` when using generated environment values.
+
+## Gateway Notes
 
 Configure the models (API keys & Models & Assistant settings) through the `manager dashboard -> AI Configurations` or directly in the `configurations` database in CouchDB. 
 
 Supported models: *OpenAI*, *Perplexity*, *Deepseek*, and *Gemini*
 
-For chatapi development instructions, refer to the [chatapi README](chatapi/README.md).
+For gateway development instructions, refer to the [gateway README](gateway/README.md).
 
 ## Project Guidelines
 
@@ -94,13 +109,40 @@ For chatapi development instructions, refer to the [chatapi README](chatapi/READ
 
 To run planet in development with a different locale, you can set the configuration to one of the supported language tags. For example, to run in Spanish, use:
 ```
-  npm run dev -- --configuration spa 
-
-  or 
-
-  ng serve --configuration spa
+ng serve --configuration spa
 ```
-*You can use the short-hand `-c` in place of `--configuration`*
+If you are using generated environment values from `.env`, run:
+```
+npm run dev:locale --locale=spa
+```
+Replace `spa` with any supported locale configuration, such as `eng`, `som`, `fra`, `nep`, `ara`, `por`, `hin`, or `swa`.
+*You can use the short-hand `-c` in place of `--configuration` for direct `ng serve` commands.*
+
+To update the source translation catalog, run:
+```
+npm run i18n:extract
+```
+
+This runs Angular extraction and then removes source file and line number metadata from all `src/i18n/messages*.xlf` catalogs, reducing noisy diffs after ordinary source edits.
+
+To normalize existing translation catalogs without extracting new source messages, run:
+```
+npm run i18n:normalize
+```
+
+To validate extraction without changing the committed catalog, run:
+```
+npm run i18n:check
+```
+
+### Translation workflow
+
+The source and translation catalogs use Angular's current decimal message IDs. Location metadata is stripped from committed catalogs to reduce review noise.
+
+* Mark UI text with `i18n` / `$localize` per the Style Guide.
+* Run `npm run i18n:extract` and commit the normalized `src/i18n/messages.xlf`.
+* Crowdin ingests `src/i18n/messages.xlf`; translated catalogs return through the Crowdin PR workflow.
+* Run `npm run i18n:check` any time to verify extraction succeeds without touching committed files.
 
 ## Tests
 
@@ -171,6 +213,6 @@ ng serve
 
 ### Error on initial npm install
 
-If your npm install fails on your first try, first check if you are using Node v18. Other versions of Node may throw errors when installing dependencies.
+If your npm install fails on your first try, first check if you are using Node v22. Other versions of Node may throw errors when installing dependencies.
 
 This project is tested with [BrowserStack](https://www.browserstack.com/).

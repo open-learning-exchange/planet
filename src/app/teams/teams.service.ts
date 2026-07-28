@@ -135,7 +135,10 @@ export class TeamsService {
 
   requestToJoinTeam(team, user) {
     const userPlanetCode = this.stateService.configuration.code;
-    return this.couchService.post(this.dbName, this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')).pipe(
+    return this.couchService.updateDocument(this.dbName, {
+      createdDate: this.couchService.datePlaceholder,
+      ...this.membershipProps(team, { userId: user._id, userPlanetCode }, 'request')
+    }).pipe(
       switchMap(() => team.teamType === 'sync' ? this.userService.addImageForReplication(true, [ user ]) : of({}))
     );
   }
@@ -144,6 +147,11 @@ export class TeamsService {
     return this.couchService.findAll(this.dbName, findDocuments(this.membershipProps(team, memberInfo, 'request'))).pipe(
       switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, _deleted: true }))))
     );
+  }
+
+  cancelJoinRequest(team) {
+    const user = this.userService.get();
+    return this.removeFromRequests(team, { userId: user._id, userPlanetCode: this.stateService.configuration.code });
   }
 
   toggleTeamMembership(team, leaveTeam, memberInfo) {

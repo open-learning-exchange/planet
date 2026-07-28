@@ -18,7 +18,7 @@ import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/f
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { MatSelect } from '@angular/material/select';
-import { NgFor } from '@angular/common';
+
 import { MatOption } from '@angular/material/autocomplete';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
@@ -58,9 +58,24 @@ type HealthFormGroup = {
   templateUrl: './health-update.component.html',
   styleUrls: ['./health-update.scss'],
   imports: [
-    MatToolbar, MatIconButton, MatIcon, FormsModule, ReactiveFormsModule, MatFormField, MatLabel,
-    MatInput, MatError, FormErrorMessagesComponent, MatSelect, NgFor, MatOption, MatDatepickerInput,
-    MatDatepickerToggle, MatSuffix, MatDatepicker, PlanetMarkdownTextboxComponent, MatButton
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatError,
+    FormErrorMessagesComponent,
+    MatSelect,
+    MatOption,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    PlanetMarkdownTextboxComponent,
+    MatButton
   ]
 })
 export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {

@@ -66,6 +66,11 @@ export class CouchService {
     return this.couchDBReq('delete', db, this.setOpts(opts));
   }
 
+  getAttachment(url: string, opts?: any): Observable<Blob> {
+    const [ , , httpOpts ] = this.setOpts(opts);
+    return this.formatHttpReq(this.http.get(url, { ...httpOpts, responseType: 'blob' as const })) as Observable<Blob>;
+  }
+
   putAttachment(db: string, file: File | FormData, opts?: any) {
     return this.couchDBReq('put', db, this.setOpts(opts), file);
   }

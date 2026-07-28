@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, Inject, Input, LOCALE_ID, OnChanges, EventEmitter, Output, ViewChild } from '@angular/core';
 import type { ChartConfiguration } from 'chart.js';
 import { loadChart } from '../../shared/chart-utils';
 import { StateService } from '../../shared/state.service';
@@ -8,7 +8,7 @@ import { ReportsService } from './reports.service';
 import { millisecondsToDay } from '../../meetups/constants';
 import { dedupeShelfReduce, styleVariables } from '../../shared/utils';
 import { conditions } from '../../health/health.constants';
-import { NgIf, NgFor } from '@angular/common';
+
 import { LabelComponent } from '../../shared/label.component';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
@@ -35,7 +35,7 @@ import { ReportsDetailActivitiesComponent } from './reports-detail-activities.co
       align-self: center;
     }
   `],
-  imports: [NgIf, NgFor, LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
+  imports: [LabelComponent, MatFormField, MatSelect, MatOption, ReportsDetailActivitiesComponent]
 })
 export class ReportsHealthComponent implements OnChanges {
 
@@ -59,7 +59,8 @@ export class ReportsHealthComponent implements OnChanges {
   constructor(
     private reportsService: ReportsService,
     private stateService: StateService,
-    private healthService: HealthService
+    private healthService: HealthService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {}
 
   ngOnChanges(changes) {
@@ -122,7 +123,7 @@ export class ReportsHealthComponent implements OnChanges {
     this.showChart = true;
     this.weeklyHealthData.sort((a, b) => a.weekOf - b.weekOf);
     const data = this.weeklyHealthData.map(week => week.docs.filter(doc => doc.conditions[diagnosis] === true).length);
-    const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf));
+    const labels = this.weeklyHealthData.map(week => weekDataLabels(week.weekOf, this.localeId));
     this.setChart({
       data: { labels, datasets: [ { label: diagnosis, data, borderColor: styleVariables.primary, lineTension: 0 } ] },
       chartName: 'diagnosesTrend'

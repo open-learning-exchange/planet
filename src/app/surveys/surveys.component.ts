@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject, throwError, of } from 'rxjs';
-import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { catchError, finalize, switchMap, tap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { ChatService } from '../shared/chat.service';
 import { filterSpecificFields, sortNumberOrString, createDeleteArray } from '../shared/table-helpers';
@@ -26,7 +26,7 @@ import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { ExamsService } from '../exams/exams.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NgIf, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -51,10 +51,40 @@ interface SurveyFilterForm {
   templateUrl: './surveys.component.html',
   styleUrls: ['./surveys.component.scss'],
   imports: [
-    NgIf, MatToolbar, MatIconButton, MatIcon, MatFormField, MatLabel, MatInput, MatMiniFabButton, MatButtonToggleGroup,
-    FormsModule, MatButtonToggle, AuthorizedRolesDirective, MatButton, PlanetLoadingSpinnerComponent, MatTable, MatSort,
-    MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCheckbox, MatCellDef, MatCell, MatTooltip, MatSortHeader, RouterLink,
-    MatMenuTrigger, MatMenu, MatMenuItem, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatPaginator, DatePipe
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatMiniFabButton,
+    MatButtonToggleGroup,
+    FormsModule,
+    MatButtonToggle,
+    AuthorizedRolesDirective,
+    MatButton,
+    PlanetLoadingSpinnerComponent,
+    MatTable,
+    MatSort,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCheckbox,
+    MatCellDef,
+    MatCell,
+    MatTooltip,
+    MatSortHeader,
+    RouterLink,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    DatePipe
   ]
 })
 export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -64,9 +94,12 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @Output() surveyCount = new EventEmitter<number>();
-  displayedColumns = (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(
-    [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ]
-  );
+  get displayedColumns() {
+    const surveyColumns = this.teamSurveyMode ?
+      [ 'name', 'taken', 'createdDate', 'action' ] :
+      [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+    return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
+  }
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
@@ -84,6 +117,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   availableAIProviders: any[] = [];
   deviceType: DeviceType;
   isMobile: boolean;
+
+  get teamSurveyMode() {
+    return !!(this.teamId || this.routeTeamId);
+  }
 
   constructor(
     private couchService: CouchService,
@@ -458,19 +495,65 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  recordSurvey(survey: any) {
+  private getRecordTeam(): Observable<any> {
     const targetTeamId = this.teamId || this.routeTeamId;
-    const teamObservable = targetTeamId ? this.couchService.get('teams/' + targetTeamId) : of(null);
+    if (!targetTeamId) {
+      return of(null);
+    }
+    return this.couchService.get('teams/' + targetTeamId);
+  }
 
-    teamObservable.subscribe((team: any) => {
-      const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
-      const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
-      this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo).subscribe((res: any) => {
-        this.router.navigate([
-          this.teamId ? 'surveys/dispense' : 'dispense',
-          { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
-        ], { relativeTo: this.route });
+  recordSurvey(survey: any) {
+    this.dialogsLoadingService.start();
+    this.getRecordTeam().pipe(
+      switchMap((team: any) => {
+        const teamInfo = team ? { _id: team._id, name: team.name, type: team.type } : undefined;
+        const { teamIds, taken, courseTitle, course, ...surveyInfo } = survey;
+        return this.submissionsService.createSubmission(surveyInfo, 'survey', {}, teamInfo);
+      }),
+      takeUntil(this.onDestroy$),
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe((res: any) => {
+      this.router.navigate([
+        this.teamId ? 'surveys/dispense' : 'dispense',
+        { questionNum: 1, submissionId: res.id, status: 'pending', mode: 'take', snap: this.route.snapshot.url }
+      ], { relativeTo: this.route });
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem recording the survey.`);
+    });
+  }
+
+  toggleSurveyPublicAccess(survey: any) {
+    const nextPublicAccess = survey.publicAccess !== true;
+    this.couchService.updateDocument(this.dbName, {
+      ...survey,
+      publicAccess: nextPublicAccess
+    }).subscribe((res: any) => {
+      this.updateSurveyState(survey._id, {
+        publicAccess: nextPublicAccess,
+        _rev: res.rev
       });
+      this.applyViewModeFilter();
+      this.planetMessageService.showMessage(
+        nextPublicAccess ? $localize`Public link generated for this survey` : $localize`Public access disabled for this survey`
+      );
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem updating public survey access.`);
+    });
+  }
+
+  copyPublicSurveyLink(survey: any) {
+    const targetTeamId = survey.teamId || this.teamId || this.routeTeamId;
+    if (!targetTeamId || survey.publicAccess !== true) {
+      this.planetMessageService.showAlert($localize`Generate a public link for this survey first.`);
+      return;
+    }
+
+    const link = `${window.location.origin}/survey/${targetTeamId}/${survey._id}`;
+    navigator.clipboard.writeText(link).then(() => {
+      this.planetMessageService.showMessage($localize`Public survey link copied`);
+    }).catch(() => {
+      this.planetMessageService.showAlert($localize`Failed to copy public survey link`);
     });
   }
 
@@ -574,15 +657,36 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate([ survey._id, { type: 'survey' } ], { relativeTo: this.route });
   }
 
-  getActionTooltip(survey: any, action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export'): string {
+  revokeSurveyPublicAccess(survey: any) {
+    this.couchService.updateDocument(this.dbName, {
+      ...survey,
+      publicAccess: false
+    }).subscribe((res: any) => {
+      this.updateSurveyState(survey._id, {
+        publicAccess: false,
+        _rev: res.rev
+      });
+      this.applyViewModeFilter();
+      this.planetMessageService.showMessage($localize`Public access disabled for this survey`);
+    }, () => {
+      this.planetMessageService.showAlert($localize`There was a problem updating public survey access.`);
+    });
+  }
+
+  private updateSurveyState(surveyId: string, changes: Partial<any>) {
+    this.allSurveys = this.allSurveys.map(item => item._id === surveyId ? { ...item, ...changes } : item);
+    this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
+  }
+
+  getActionTooltip(
+    survey: any,
+    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke'
+  ): string {
     if (survey.isArchived) {
-      const messages = {
-        edit: $localize`Survey is archived and cannot be edited`,
-        send: $localize`Survey is archived and cannot be sent`,
-        record: $localize`Survey is archived and cannot be recorded`,
-        archive: $localize`Survey is already archived`
-      };
-      return messages[action];
+      if (action === 'archive') {
+        return $localize`Survey is already archived`;
+      }
+      return $localize`Survey is archived and cannot accept new actions`;
     }
 
     if (!survey.taken) {
@@ -610,6 +714,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return this.isManagerRoute
         ? $localize`Record survey information from a person who is not a member of ${this.configuration.name}`
         : $localize`Record Survey`;
+    }
+
+    if (action === 'public') {
+      return survey.publicAccess === true ? $localize`Copy the public survey link` : $localize`Generate a public survey link`;
+    }
+
+    if (action === 'revoke') {
+      return $localize`Revoke public access for this survey`;
     }
 
     return '';

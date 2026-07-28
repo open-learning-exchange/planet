@@ -12,12 +12,13 @@ import { TeamsService } from '../../teams/teams.service';
 import { UserService } from '../../shared/user.service';
 import { UserChallengeStatusService } from '../user-challenge-status.service';
 import { DialogsAnnouncementSuccessComponent } from '../../shared/dialogs/dialogs-announcement.component';
+import { ChallengesService } from '../challenges/challenges.service';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle, MatExpansionPanelContent
 } from '@angular/material/expansion';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { NgIf, NgFor } from '@angular/common';
+
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
@@ -44,9 +45,28 @@ interface CommunityForm {
     }
   `],
   imports: [
-    CdkScrollable, MatDialogContent, MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
-    MatExpansionPanelContent, MatCheckbox, FormsModule, ReactiveFormsModule, NgIf, MatFormField, MatLabel, MatInput, MatButton,
-    MatDialogClose, MatSelect, NgFor, MatOption, MatStepper, MatStep, TeamsComponent, MatError, FormErrorMessagesComponent,
+    CdkScrollable,
+    MatDialogContent,
+    MatAccordion,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
+    MatExpansionPanelContent,
+    MatCheckbox,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatButton,
+    MatDialogClose,
+    MatSelect,
+    MatOption,
+    MatStepper,
+    MatStep,
+    TeamsComponent,
+    MatError,
+    FormErrorMessagesComponent,
     MatDialogActions
   ]
 })
@@ -77,6 +97,7 @@ export class DialogsChatShareComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private userStatusService: UserChallengeStatusService,
+    private challengesService: ChallengesService,
   ) {
     this.conversation = data || this.conversation;
   }
@@ -178,14 +199,21 @@ export class DialogsChatShareComponent implements OnInit {
     this.conversation.chat = true;
     this.interact();
     this.newsService.shareNews(this.conversation, null, $localize`Chat has been successfully shared to community`).subscribe(() => {});
+    const challenge = this.challengesService.getActiveChallenge();
     if (
+      challenge &&
       this.userStatusService.getStatus('joinedCourse') &&
       this.userStatusService.getStatus('surveyComplete') &&
       !this.userStatusService.getStatus('hasPost')
     ) {
       this.dialog.open(DialogsAnnouncementSuccessComponent, {
         width: '50vw',
-        maxHeight: '100vh'
+        maxHeight: '100vh',
+        data: challenge
+      });
+      this.userStatusService.updateStatus('hasPost', {
+        status: true,
+        amount: challenge.voicePostReward ?? 2
       });
     }
   }

@@ -112,7 +112,7 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.every(filter => propSet.has(filter));
 };
 
-export const filterArrayField = (filterField: string, filterItems: string[]) => {
+const filterArrayField = (filterField: string, filterItems: string[]) => {
   return (data: unknown, _filter: string) => {
     const raw = getProperty(data, filterField);
     const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
@@ -172,15 +172,6 @@ export const dropdownsFill = (filterObj) => Object.entries(filterObj).reduce((em
   }
   return emptySpace;
 }, '');
-
-export const filteredItemsInPage = (filteredData: any[], pageIndex: number, pageSize: number) => {
-  return pageIndex === undefined ? filteredData : filteredData.slice(pageIndex * pageSize, (pageIndex * pageSize) + pageSize);
-};
-
-export const selectedOutOfFilter = (filteredData: any[], selection: any, paginator: any = {}) => {
-  const itemsInPage = filteredItemsInPage(filteredData, paginator.pageIndex, paginator.pageSize);
-  return selection.selected.filter((selectedId) => itemsInPage.find((filtered: any) => filtered._id === selectedId ) === undefined);
-};
 
 export const createDeleteArray = (array) => array.map((item: any) => ({ _id: item._id, _rev: item._rev, _deleted: true }));
 
