@@ -1,73 +1,56 @@
-@use "../variables" as v;
-
 :host {
   display: block;
-  height: 100%;
 }
 
-.view-full-height {
-  height: calc(#{v.$view-container-height} - 64px);
-  overflow: hidden;
-}
-
-.in-tab {
+:host(.embedded),
+:host(.embedded) > .primary-link-hover {
   height: 100%;
-  overflow: hidden;
 }
 
 .mat-column-select {
-  flex: 0 0 50px;
-  max-width: 50px;
+  flex: 0 0 auto;
 }
 
 .mat-column-name {
-  flex: 1 1 auto;
-  min-width: 150px;
+  flex: 1 1 0;
+  min-width: 10rem;
+}
 
-  span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 100%;
-  }
+.mat-column-name span,
+.mat-column-courseTitle .course-title {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mat-column-taken,
+.mat-column-courseTitle,
+.mat-column-createdDate,
+.mat-column-action {
+  min-width: 0;
+}
+
+.mat-column-taken,
+.mat-column-createdDate {
+  flex: 0 1 16rem;
 }
 
 .mat-column-taken {
-  flex: 0 0 220px;
-  max-width: 220px;
   justify-content: center;
   text-align: center;
-
-  ::ng-deep .mat-sort-header-container {
-    justify-content: center;
-  }
 }
 
 .mat-column-courseTitle {
-  flex: 0 0 240px;
-  max-width: 240px;
-
-  .course-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    max-width: 100%;
-  }
+  flex: 0 1 15rem;
 }
 
 .mat-column-createdDate {
-  flex: 0 0 220px;
-  max-width: 220px;
-  justify-content: flex-start;
-  text-align: left;
+  text-align: start;
 }
 
 .mat-column-action {
-  flex: 0 0 240px;
-  min-width: 240px;
-  max-width: 240px;
+  flex: 0 1 18rem;
   justify-content: flex-start;
 }
-

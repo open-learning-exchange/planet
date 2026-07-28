@@ -13,7 +13,7 @@
   </mat-toolbar>
 }
 
-<div class="primary-link-hover" [class.space-container]="!teamSurveyMode">
+<div class="primary-link-hover" [class.space-container]="!teamId">
   @if (!teamId) {
     <mat-toolbar class="primary-color font-size-1">
       @if (isAuthorized) {
@@ -38,7 +38,7 @@
       </ng-container>
     </mat-toolbar>
   }
-  <div class="view-container view-table" [class.view-full-height]="!teamSurveyMode" [class.in-tab]="teamSurveyMode">
+  <div class="view-container view-full-height view-table" [class.fill-parent]="teamId">
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
