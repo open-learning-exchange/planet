@@ -25,11 +25,14 @@ type ConfigurationDoc = {
   parentCode?: string;
 };
 
+const PUBLIC_SURVEY_GENDER_VALUES = [ 'male', 'female', 'other' ] as const;
+type GenderValue = typeof PUBLIC_SURVEY_GENDER_VALUES[number];
+
 type PublicSubmissionPayload = {
   answers?: any[];
   user?: {
     age?: number;
-    gender?: string;
+    gender?: GenderValue;
   };
 };
 
@@ -112,6 +115,15 @@ const normalizeAnswers = (answers: any[] = []): StoredPublicAnswer[] => answers.
   'passed': isValidAnswer(answer)
 }));
 
+const getGenderValue = (gender: unknown): GenderValue | null => {
+  if (typeof gender !== 'string') {
+    return null;
+  }
+
+  const normalizedGender = gender.trim() as GenderValue;
+  return PUBLIC_SURVEY_GENDER_VALUES.includes(normalizedGender) ? normalizedGender : null;
+};
+
 const validatePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => {
   if (user === undefined) {
     return null;
@@ -125,8 +137,8 @@ const validatePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => 
     return 'user.age must be an integer between 1 and 130';
   }
 
-  if ('gender' in user && (typeof user.gender !== 'string' || ![ 'male', 'female' ].includes(user.gender.trim()))) {
-    return 'user.gender must be either male or female';
+  if ('gender' in user && getGenderValue(user.gender) === null) {
+    return 'user.gender must be male, female, or other';
   }
 
   return null;
@@ -139,7 +151,7 @@ const sanitizePublicSubmissionUser = (user: PublicSubmissionPayload['user']) => 
 
   const sanitizedUser: NonNullable<PublicSubmissionPayload['user']> = {};
   const age = user.age;
-  const gender = typeof user.gender === 'string' ? user.gender.trim() : '';
+  const gender = getGenderValue(user.gender);
 
   if (typeof age === 'number') {
     sanitizedUser.age = age;

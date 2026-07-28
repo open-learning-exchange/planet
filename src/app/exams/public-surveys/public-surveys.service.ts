@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
 import { ExamAnswerValue } from '../exams-take/exam-answer.helpers';
+import type { GenderValue } from '../../shared/gender.constants';
 
 export interface PublicSurveyDemographics {
   age?: number;
-  gender?: string;
+  gender?: GenderValue;
 }
 
 export interface PublicSurvey {
