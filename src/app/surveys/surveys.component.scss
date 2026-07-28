@@ -15,36 +15,14 @@
   overflow: hidden;
 }
 
-.mat-column-taken {
-  max-width: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 32px;
-}
-
-.mat-column-createdDate {
-  max-width: 200px;
-  text-align: left;
-  padding: 0 20px;
-}
-
-.mat-column-courseTitle {
-  max-width: 250px;
-}
-
-.course-title {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
+.mat-column-select {
+  flex: 0 0 50px;
+  max-width: 50px;
 }
 
 .mat-column-name {
   flex: 1 1 auto;
-  min-width: 0;
+  min-width: 150px;
 
   span {
     white-space: nowrap;
@@ -55,8 +33,41 @@
   }
 }
 
-.mat-column-action {
+.mat-column-taken {
+  flex: 0 0 180px;
+  max-width: 180px;
+  justify-content: center;
+  text-align: center;
+
+  ::ng-deep .mat-sort-header-container {
+    justify-content: center;
+  }
+}
+
+.mat-column-courseTitle {
+  flex: 0 0 200px;
+  max-width: 200px;
+
+  .course-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+  }
+}
+
+.mat-column-createdDate {
+  flex: 0 0 180px;
+  max-width: 180px;
   justify-content: flex-start;
-  flex: 0 0 auto;
+  text-align: left;
+}
+
+.mat-column-action {
+  flex: 0 0 200px;
+  min-width: 200px;
+  max-width: 200px;
+  justify-content: flex-start;
 }
 
