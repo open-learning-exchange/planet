@@ -4,8 +4,8 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -28,6 +28,8 @@ import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.compone
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -58,7 +60,7 @@ interface ExamViewForm {
     ExamsTakeWidgetComponent
   ]
 })
-export class ExamsViewComponent implements OnInit, OnDestroy {
+export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
 
@@ -92,6 +94,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   currentAnswer: ExamAnswerValue | null = null;
   slideDirection: 'right' | 'left' = 'right';
   slideAnimationVariant: 'a' | 'b' = 'a';
+  isInternalNavigation = false;
+  isFinished = false;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
@@ -151,6 +155,26 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.isInternalNavigation || this.isFinished) {
+      this.isInternalNavigation = false;
+      return true;
+    }
+    if (this.mode === 'take' && !this.previewMode) {
+      const isSurvey = this.examType === 'survey';
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'exit',
+          type: isSurvey ? 'survey' : 'exam',
+          extraMessage: $localize`Your progress and responses will be saved.`,
+          cancelable: true
+        }
+      });
+      return dialogRef.afterClosed().pipe(map(result => !!result));
+    }
+    return true;
+  }
+
   setExam(params) {
     this.stepNum = +params.get('stepNum');
     this.examType = params.get('type') || this.examType;
@@ -158,6 +182,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const submissionId = params.get('submissionId');
     const mode = params.get('mode');
     this.mode = mode || this.mode;
+    this.isFinished = false;
+    this.isInternalNavigation = false;
     this.answer.setValue(null);
     this.currentAnswer = null;
     if (courseId) {
@@ -256,11 +282,14 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.setExamPreview();
       return;
     }
+    this.isInternalNavigation = true;
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
 
   examComplete() {
+    this.isFinished = true;
+    this.isInternalNavigation = true;
     if (this.route.snapshot.data.newUser === true) {
       this.router.navigate(
         [ '/users/submission', { id: this.submissionId } ],
@@ -348,6 +377,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const nextUnansweredQuestion = this.unansweredQuestions[0];
         if (this.questionNum !== nextUnansweredQuestion) {
           this.questionNum = nextUnansweredQuestion;
+          this.isInternalNavigation = true;
           this.router.navigate([ {
             ...this.route.snapshot.params,
             questionNum: this.questionNum
