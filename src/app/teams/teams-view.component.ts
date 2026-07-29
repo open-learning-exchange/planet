@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -36,9 +35,7 @@ import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { TdMarkdownComponent } from '@covalent/markdown';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -75,11 +72,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatTabLabel,
     TdMarkdownComponent,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -699,14 +691,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
-    });
-  }
-
-  openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
     });
   }
 
