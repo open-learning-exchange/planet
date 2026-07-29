@@ -24,7 +24,7 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -146,6 +146,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
@@ -703,11 +704,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+    this.usersProfileDialogService.open({ member });
   }
 
 }

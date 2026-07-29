@@ -13,7 +13,7 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
@@ -61,6 +61,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     @Optional() public dialogRef: MatDialogRef<MeetupsViewComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
@@ -202,19 +203,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   openProfile(username, planetCode) {
-    this.dialog.open(
-      UserProfileDialogComponent,
-      {
-        data: {
-          member: {
-            name: username,
-            userPlanetCode: planetCode
-          },
-          dialogRef: this.dialogRef
-        },
-        autoFocus: false
-      }
-    );
+    this.usersProfileDialogService.open({
+      member: { name: username, userPlanetCode: planetCode },
+      dialogRef: this.dialogRef
+    });
   }
 
   editTask() {
