@@ -175,7 +175,21 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           }
         }
       });
-      return dialogRef.afterClosed().pipe(map(result => !!result));
+      return dialogRef.afterClosed().pipe(
+        switchMap(result => {
+          if (!result) {
+            return of(false);
+          }
+          if (this.answer.valid) {
+            const { obs } = this.createAnswerObservable();
+            return obs.pipe(
+              map(() => true),
+              catchError(() => of(false))
+            );
+          }
+          return of(true);
+        })
+      );
     }
     return true;
   }
