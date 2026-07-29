@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "sass:map";
 @use '@angular/material' as mat;
 
@@ -43,6 +44,12 @@ $warn-dark: mat.m2-get-color-from-palette($planet-app-warn, $dark-hue);
 $planet-green: mat.m2-get-color-from-palette($planet-app-green, $primary-hue);
 $planet-green-lighter: mat.m2-get-color-from-palette($planet-app-green, 100);
 $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
+
+// Text shades that clear WCAG AA on the matching *-lighter surface. The -lighter
+// shades are the established low-emphasis fill (chips, table highlights, selected
+// states); pair them with these rather than inventing a new tint.
+$primary-lighter-text: mat.m2-get-color-from-palette($planet-app-primary, 900);
+$accent-lighter-text: color.adjust($accent, $lightness: -30%);
 
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);

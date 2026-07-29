@@ -1,72 +1,66 @@
-import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, Input, EventEmitter, Output, OnInit, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
+import { MatDialog } from '@angular/material/dialog';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
-import { MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
-import { MatIconButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatSelectionListChange, MatListOption, MatListItemTitle } from '@angular/material/list';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { TimeAgoPipe } from '../shared/time-ago.pipe';
+
+const defaultAvatar = 'assets/image.png';
+// Saturation/lightness are fixed so only the hue varies per member. 42%/32% is the
+// lightest pair that keeps white initials above WCAG AA (4.5:1) on every hue —
+// the yellow-green band around 60deg is the worst case at roughly 4.9:1.
+const initialsSaturation = 42;
+const initialsLightness = 32;
 
 @Component({
   selector: 'planet-teams-member',
   templateUrl: './teams-member.component.html',
-  styles: [`
-    .mat-mdc-list-item-disabled {
-      background-color: white;
-    }
-    .mat-caption {
-      font-size: 16px;
-      font-weight: bold;
-    }
-    .member-name {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      word-break: break-word;
-    }
-    .avatar-spacing {
-      margin-right: 5px;
-    }
-  `],
+  styleUrls: [ './teams-member.component.scss' ],
   imports: [
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
+    MatButton,
     MatIconButton,
     MatMenuTrigger,
     MatIcon,
     MatMenu,
     MatMenuItem,
-    MatCardContent,
     MatSelectionList,
     MatListOption,
     MatListItemTitle,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    TimeAgoPipe
   ]
 })
 export class TeamsMemberComponent implements OnInit, OnChanges {
 
   @Input() member: any;
-  @Input() actionMenu: ('remove' | 'leader' | 'title')[];
+  @Input() actionMenu: ('remove' | 'leader' | 'title')[] = [];
   @Input() visits: { [_id: string]: number };
   @Input() userStatus = '';
   @Input() leadershipTitle = '';
   @Input() teamLeader;
+  @Input() @HostBinding('class.request-tile') isRequest = false;
+  @Input() canManageRequests = false;
+  @Input() disableAccept = false;
   @Output() actionClick = new EventEmitter<any>();
+  @Output() requestAction = new EventEmitter<'added' | 'rejected'>();
   memberType: 'community' | 'other' = 'other';
   // i18n template only accepts strings, not boolean
   hasRole: 'true' | 'false';
   user = this.userService.get();
   planetCode = this.stateService.configuration.code;
   titleChangeText: 'Add' | 'Change';
+  displayName = '';
+  initials = '';
+  initialsColor = '';
+  hasImage = false;
 
   constructor(
     private userService: UserService,
@@ -75,13 +69,42 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     private dialog: MatDialog
   ) {}
 
+  get isTeamLeader() {
+    return !!this.teamLeader && this.member?.userId === this.teamLeader.userId &&
+      this.member?.userPlanetCode === this.teamLeader.userPlanetCode;
+  }
+
+  get isSelf() {
+    return this.member?.userId === this.user._id && this.member?.userPlanetCode === this.planetCode;
+  }
+
   ngOnInit() {
     this.memberType = this.member.teamId === undefined ? 'community' : 'other';
     this.hasRole = this.member.role ? 'true' : 'false';
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.titleChangeText = this.leadershipTitle === undefined || this.leadershipTitle === '' ? 'Add' : 'Change';
+    // Only rebuild the avatar when the member itself changes. Both call sites rebuild
+    // actionMenu as a new array literal every change detection pass, so an unguarded
+    // ngOnChanges would keep resetting hasImage and re-request a failing avatar forever.
+    if (!changes.member) {
+      return;
+    }
+    const userDoc = this.member?.userDoc;
+    this.displayName = userDoc?.fullName || userDoc?.firstName || userDoc?.doc?.fullName || userDoc?.doc?.firstName ||
+      this.member?.name || '';
+    this.hasImage = !!this.member?.avatar && this.member.avatar !== defaultAvatar;
+    this.setInitials(this.displayName);
+  }
+
+  setInitials(name: string) {
+    const parts = name.trim().split(/\s+/).filter(part => part.length > 0);
+    const first = (parts[0] || '?').charAt(0);
+    const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+    this.initials = (first + last).toUpperCase();
+    const hue = Array.from(name).reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 360, 0);
+    this.initialsColor = `hsl(${hue}, ${initialsSaturation}%, ${initialsLightness}%)`;
   }
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {
@@ -92,6 +115,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.dialog.open(UserProfileDialogComponent, {
       data: { member },
       maxWidth: '90vw',
+      // The profile is taller than the dialog, so focusing the first tabbable element
+      // scrolls the content past the header on open. Focus the container instead.
+      autoFocus: false,
       maxHeight: '90vh'
     });
   }
