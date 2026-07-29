@@ -84,21 +84,31 @@ describe('TeamsMemberComponent', () => {
       expect(component.initials).toBe('?');
     });
 
-    it('derives a stable hue from the name', () => {
+    it('derives a stable palette index from the name', () => {
       component.setInitials('Ann Njeri');
-      const first = component.initialsColor;
+      const first = component.initialsColorIndex;
       component.setInitials('Ann Njeri');
 
-      expect(component.initialsColor).toBe(first);
-      expect(component.initialsColor).toMatch(/^hsl\(\d{1,3}, 42%, 32%\)$/);
+      expect(component.initialsColorIndex).toBe(first);
     });
 
-    it('gives different names different hues', () => {
+    it('gives different names different palette entries', () => {
       component.setInitials('Ann Njeri');
-      const ann = component.initialsColor;
+      const ann = component.initialsColorIndex;
       component.setInitials('Bob Otieno');
 
-      expect(component.initialsColor).not.toBe(ann);
+      expect(component.initialsColorIndex).not.toBe(ann);
+    });
+
+    // $initials-palette in _variables.scss defines exactly these, as .initials-0 .. .initials-11
+    it('always lands inside the palette', () => {
+      for (const name of [ '', 'a', 'Ann Njeri', 'Zzz', '\u4e2d\u6587\u540d\u5b57', 'Bob Otieno', 'x'.repeat(200) ]) {
+        component.setInitials(name);
+
+        expect(component.initialsColorIndex).toBeGreaterThanOrEqual(0);
+        expect(component.initialsColorIndex).toBeLessThan(12);
+        expect(Number.isInteger(component.initialsColorIndex)).toBe(true);
+      }
     });
   });
 

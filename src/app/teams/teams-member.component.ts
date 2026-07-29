@@ -13,11 +13,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 
 const defaultAvatar = 'assets/image.png';
-// Saturation/lightness are fixed so only the hue varies per member. 42%/32% is the
-// lightest pair that keeps white initials above WCAG AA (4.5:1) on every hue —
-// the yellow-green band around 60deg is the worst case at roughly 4.9:1.
-const initialsSaturation = 42;
-const initialsLightness = 32;
+// Must match the length of $initials-palette in _variables.scss, which owns the colors.
+const initialsColorCount = 12;
 
 @Component({
   selector: 'planet-teams-member',
@@ -59,7 +56,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   titleChangeText: 'Add' | 'Change';
   displayName = '';
   initials = '';
-  initialsColor = '';
+  initialsColorIndex = 0;
   hasImage = false;
 
   constructor(
@@ -103,8 +100,8 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     const first = (parts[0] || '?').charAt(0);
     const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
     this.initials = (first + last).toUpperCase();
-    const hue = Array.from(name).reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) % 360, 0);
-    this.initialsColor = `hsl(${hue}, ${initialsSaturation}%, ${initialsLightness}%)`;
+    const hash = Array.from(name).reduce((total, char) => (total * 31 + char.charCodeAt(0)) % 104729, 0);
+    this.initialsColorIndex = hash % initialsColorCount;
   }
 
   openDialog(actionParams: { member, change: 'remove' | 'leader' | 'title' }) {

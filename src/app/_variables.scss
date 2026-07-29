@@ -51,6 +51,24 @@ $planet-green-dark: mat.m2-get-color-from-palette($planet-app-green, $dark-hue);
 $primary-lighter-text: mat.m2-get-color-from-palette($planet-app-primary, 900);
 $accent-lighter-text: color.adjust($accent, $lightness: -30%);
 
+// Backgrounds for generated member initials, picked by hashing the name. A fixed set
+// rather than a computed hue, so every option is theme-derived and verified: each
+// clears WCAG AA against white text, the blue at 4.6:1 being the tightest.
+$initials-palette: (
+  mat.m2-get-color-from-palette(mat.$m2-blue-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-deep-purple-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-purple-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-pink-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-red-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-deep-orange-palette, 900),
+  mat.m2-get-color-from-palette(mat.$m2-brown-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-green-palette, 800),
+  mat.m2-get-color-from-palette(mat.$m2-teal-palette, 700),
+  mat.m2-get-color-from-palette(mat.$m2-cyan-palette, 900),
+  mat.m2-get-color-from-palette(mat.$m2-blue-grey-palette, 700)
+);
+
 $white: rgba(255, 255, 255, 1);
 $shadow: rgba(0, 0, 0, 0.2);
 $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-button');

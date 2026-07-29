@@ -4,7 +4,7 @@
   @if (hasImage) {
     <img [src]="member?.avatar" [alt]="displayName" (error)="hasImage = false">
   } @else {
-    <div class="tile-initials" [style.background-color]="initialsColor">{{initials}}</div>
+    <div class="tile-initials initials-{{initialsColorIndex}}">{{initials}}</div>
   }
   @if (isTeamLeader) {
     <span class="leader-badge"><mat-icon>star</mat-icon></span>
