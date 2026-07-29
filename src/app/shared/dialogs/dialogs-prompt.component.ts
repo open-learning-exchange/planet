@@ -12,7 +12,7 @@
  */
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
-import { timer, throwError } from 'rxjs';
+import { timer, throwError, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DatePipe } from '@angular/common';
@@ -59,7 +59,11 @@ export class DialogsPromptComponent {
     this.data.amount = this.setDefault(this.data.amount, 'single');
     this.showMainParagraph = this.setDefault(this.data.showMainParagraph, true);
     this.cancelable = this.setDefault(this.data.cancelable, true);
-    this.data.okClick = this.setDefault(this.data.okClick, this.close.bind(this));
+    this.data.okClick = this.setDefault(this.data.okClick, {
+      request: of(true),
+      onNext: () => this.dialogRef.close(true),
+      onError: () => this.dialogRef.close(false)
+    });
     this.spinnerOn = this.setDefault(this.data.spinnerOn, true);
     this.labels = this.data.showLabels;
     this.isDateUtc = this.data.isDateUtc;

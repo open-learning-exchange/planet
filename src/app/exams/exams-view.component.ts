@@ -167,7 +167,12 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
           changeType: 'exit',
           type: isSurvey ? 'survey' : 'exam',
           extraMessage: $localize`Your progress and responses will be saved.`,
-          cancelable: true
+          cancelable: true,
+          okClick: {
+            request: of(true),
+            onNext: () => dialogRef.close(true),
+            onError: () => dialogRef.close(false)
+          }
         }
       });
       return dialogRef.afterClosed().pipe(map(result => !!result));
