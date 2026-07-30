@@ -20,7 +20,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
-import { genderOptions } from '../../shared/gender.constants';
+import { genderOptions, normalizeGender } from '../../shared/gender.constants';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -379,6 +379,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   private mapUserToFormValue(user: UserDocument): Partial<UsersUpdateFormValue> {
+    const normalizedGender = normalizeGender(user.gender);
     return {
       firstName: user.firstName ?? '',
       middleName: user.middleName ?? '',
@@ -389,7 +390,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,
       age: user.age ?? null,
-      gender: user.gender ?? '',
+      gender: normalizedGender === 'didNotSpecify' ? '' : normalizedGender,
       level: user.level ?? '',
       betaEnabled: user.betaEnabled ?? false
     };

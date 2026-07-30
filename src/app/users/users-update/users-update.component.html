@@ -1,6 +1,6 @@
 <mat-toolbar>
   @if (!submissionMode) {
-    <button mat-icon-button (click)="goBack()">
+    <button mat-icon-button (click)="goBack()" aria-label="Back" i18n-aria-label>
       <mat-icon>arrow_back</mat-icon>
     </button>
   }
@@ -101,8 +101,9 @@
             </mat-form-field>
           </div>
         }
-        <mat-radio-group class="radio-group full-width" formControlName="gender" [required]="!submissionMode">
-          <label i18n>Gender</label>
+        <mat-radio-group class="radio-group full-width" formControlName="gender" [required]="!submissionMode"
+          aria-labelledby="gender-label">
+          <label id="gender-label" i18n>Gender</label>
           @for (genderOption of genderOptions; track genderOption.value) {
             <mat-radio-button class="planet-radio-button" [value]="genderOption.value">
               <div class="radio-icon-label">
@@ -151,15 +152,15 @@
   <div class="profile-image-column">
     <div class="profile-image-content">
       @if (showImagePreview) {
-        <img class="profile-image-update" [src]="previewSrc">
+        <img class="profile-image-update" [src]="previewSrc" alt="Profile image preview" i18n-alt>
         }<br>
         <planet-file-upload #profileUpload accept="image/*" i18n-hint hint="Animated GIFs will be saved as static images." [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="openImageEditDialog($event)"></planet-file-upload>
         <div class="action-buttons">
           @if (imageFile || attachmentDeleted) {
-            <button mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
+            <button type="button" mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
           }
           @if (uploadImage && currentImgKey && !imageFile && !attachmentDeleted) {
-            <button mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+            <button type="button" mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
           }
         </div>
       </div>
@@ -169,7 +170,7 @@
 </div>
 <ng-template #imageEditDialog>
   <mat-dialog-content class="profile-image-section">
-    <img class="profile-image-update" [src]="previewSrc"/>
+    <img class="profile-image-update" [src]="previewSrc" alt="Profile image preview" i18n-alt/>
     <div class="profile-image-upload">
       <image-cropper [imageFile]="imageFile" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
     </div>

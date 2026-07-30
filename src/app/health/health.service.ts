@@ -108,13 +108,14 @@ export class HealthService {
         const creatorKey = newEvent.selfExamination ? userKey : (creatorHealthDoc.userKey || this.generateKey(32));
         const age = ageFromBirthDate(time, user.birthDate);
         const eventData = this.newEventDoc(oldEvent, newEvent, time);
+        const normalizedGender = normalizeGender(user.gender);
         return forkJoin([
           this.postHealthDoc(healthDoc, { userKey, lastExamination: time }, keyDoc),
           this.postHealthDoc({}, {
             ...eventData,
             profileId: userKey,
             creatorId: creatorKey,
-            gender: user.gender?.trim() ? normalizeGender(user.gender) : undefined,
+            gender: normalizedGender === 'didNotSpecify' ? undefined : normalizedGender,
             age
           }, keyDoc),
           creatorHealthDoc.userKey || newEvent.selfExamination ?

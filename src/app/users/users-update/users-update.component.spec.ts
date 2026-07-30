@@ -67,4 +67,24 @@ describe('UserUpdateProfileComponent', () => {
     expect(component).toBeTruthy();
     expect(couchServiceMock.get).toHaveBeenCalledWith('_users/org.couchdb.user:testuser');
   });
+
+  it('normalizes legacy gender values before populating the form', () => {
+    const formValue = component['mapUserToFormValue']({
+      name: 'testuser',
+      roles: [],
+      gender: ' Female '
+    });
+
+    expect(formValue.gender).toBe('female');
+  });
+
+  it('leaves unsupported gender values unselected', () => {
+    const formValue = component['mapUserToFormValue']({
+      name: 'testuser',
+      roles: [],
+      gender: 'unknown'
+    });
+
+    expect(formValue.gender).toBe('');
+  });
 });

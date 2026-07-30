@@ -54,7 +54,7 @@ export const getGenderLabel = (
   gender?: string | null,
   { fallback = $localize`N/A` }: { fallback?: string } = {}
 ): string => {
-  if (!gender) {
+  if (!gender?.trim()) {
     return fallback;
   }
   const normalizedGender = normalizeGender(gender);

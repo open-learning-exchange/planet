@@ -46,8 +46,9 @@ describe('gender constants', () => {
       expect(getGenderLabel('unknown')).toBe('Did not specify');
     });
 
-    it('uses the provided fallback when gender is omitted', () => {
+    it('uses the provided fallback when gender is omitted or blank', () => {
       expect(getGenderLabel(undefined, { fallback: 'Not available' })).toBe('Not available');
+      expect(getGenderLabel('   ', { fallback: 'Not available' })).toBe('Not available');
     });
 
     it('uses the localized default fallback when gender is omitted', () => {
