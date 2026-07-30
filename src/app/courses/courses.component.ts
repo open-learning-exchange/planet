@@ -153,14 +153,14 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   };
   filterIds = { ids: [] };
   readonly myCoursesFilter: { value: 'on' | 'off' } = { value: this.route.snapshot.data.myCourses === true ? 'on' : 'off' };
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch;
+    return this.#titleSearch;
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the courses filter
     this.courses.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
   }
@@ -171,7 +171,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   isAuthorized = false;
   tagFilter = new FormControl<string[]>([], { nonNullable: true });
   tagFilterValue: string[] = [];
-  searchSelection: any = { _empty: true };
+  searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions([
     filterAdvancedSearch(this.searchSelection),
     filterTags(this.tagFilter),
@@ -428,7 +428,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+    this.searchSelection.isEmpty = Object.entries(this.searchSelection).every(
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
@@ -448,7 +448,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   recordSearch(complete = false) {
     if (this.courses.filter !== '') {
       this.searchService.recordSearch({
-        text: this._titleSearch,
+        text: this.titleSearch,
         type: this.dbName,
         filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);

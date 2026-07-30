@@ -19,12 +19,12 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  private _course: any = {};
+  #course: any = {};
   get course() {
-    return this._course;
+    return this.#course;
   }
   set course(newCourse: any) {
-    this._course = { ...this._course, ...newCourse };
+    this.#course = { ...this.#course, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -133,7 +133,7 @@ export class CoursesService {
   }
 
   reset() {
-    this._course = {};
+    this.#course = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }

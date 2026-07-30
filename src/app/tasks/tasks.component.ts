@@ -74,13 +74,13 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private _assigness: any[];
+  private #assigness: any[];
   @Input()
   get assignees() {
-    return this._assigness;
+    return this.#assigness;
   }
   set assignees(newAssignees: any[]) {
-    this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
+    this.#assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
   }
   dbName = 'tasks';
   deleteDialog: any;
