@@ -15,6 +15,7 @@ import { ExamsTakeWidgetComponent } from '../exams-take/exams-take-widget.compon
 import { StoredExamAnswer, ExamAnswerValue, examAnswerValidator } from '../exams-take/exam-answer.helpers';
 import { PublicSurvey, PublicSurveyDemographics, PublicSurveysService } from './public-surveys.service';
 import { LoginDialogComponent } from '../../login/login-dialog.component';
+import { genderOptions, type GenderValue } from '../../shared/gender.constants';
 
 @Component({
   selector: 'planet-public-survey',
@@ -37,6 +38,7 @@ export class PublicSurveyComponent implements OnInit {
   isSubmitting = false;
   isSubmitted = false;
   showDemographics = false;
+  readonly genderOptions = genderOptions;
   readonly answer = new FormControl<ExamAnswerValue>(null, { validators: examAnswerValidator });
   readonly demographicsForm = this.fb.group({
     birthYear: this.fb.control<number | null>(null, [
@@ -44,7 +46,7 @@ export class PublicSurveyComponent implements OnInit {
       Validators.max(new Date().getFullYear() - 1),
       Validators.pattern(/^\d{4}$/)
     ]),
-    gender: this.fb.control('')
+    gender: this.fb.control<GenderValue | ''>('')
   });
 
   get question() {

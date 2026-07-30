@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { NgClass } from '@angular/common';
 import {
   AbstractControl, FormControl, FormGroup, NonNullableFormBuilder, ValidatorFn, Validators, FormsModule, ReactiveFormsModule
 } from '@angular/forms';
@@ -19,6 +20,7 @@ import { CanComponentDeactivate } from '../../shared/unsaved-changes.guard';
 import { warningMsg } from '../../shared/unsaved-changes.component';
 import { CouchService } from '../../shared/couchdb.service';
 import { SubmissionUserPayload, UserAttachment, UserDocument, UsersUpdateFormValue } from './users-update.model';
+import { genderOptions, normalizeGender } from '../../shared/gender.constants';
 import { MatToolbar } from '@angular/material/toolbar';
 
 import { MatIconButton, MatButton } from '@angular/material/button';
@@ -55,6 +57,7 @@ interface UsersUpdateFormGroup {
   templateUrl: './users-update.component.html',
   styleUrls: ['./users-update.scss'],
   imports: [
+    NgClass,
     MatToolbar,
     MatIconButton,
     MatIcon,
@@ -91,6 +94,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   user: UserDocument = { name: '', roles: [] };
   initialFormValues: UsersUpdateFormValue | null = null;
   educationLevel = educationLevel;
+  genderOptions = genderOptions;
   readonly dbName = '_users'; // make database name a constant
   editForm: FormGroup<UsersUpdateFormGroup>;
   currentImgKey: string | null = null;
@@ -375,6 +379,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   private mapUserToFormValue(user: UserDocument): Partial<UsersUpdateFormValue> {
+    const normalizedGender = normalizeGender(user.gender);
     return {
       firstName: user.firstName ?? '',
       middleName: user.middleName ?? '',
@@ -385,7 +390,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
       birthDate: user.birthDate ?? null,
       birthYear: user.birthYear ?? null,
       age: user.age ?? null,
-      gender: user.gender ?? '',
+      gender: normalizedGender === 'didNotSpecify' ? '' : normalizedGender,
       level: user.level ?? '',
       betaEnabled: user.betaEnabled ?? false
     };

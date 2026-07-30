@@ -16,6 +16,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
+import { getGenderLabel, normalizeGender } from '../shared/gender.constants';
 import { PdfService } from '../shared/pdf.service';
 
 @Injectable({
@@ -301,15 +302,8 @@ export class SubmissionsService {
     return $localize`N/A`;
   }
 
-  private localizedGender(gender?: string) {
-    switch (gender) {
-      case 'male':
-        return $localize`Male`;
-      case 'female':
-        return $localize`Female`;
-      default:
-        return gender || this.notAvailable();
-    }
+  private localizedGender(gender?: string, fallback = this.notAvailable()) {
+    return getGenderLabel(gender, { fallback });
   }
 
   private localizedGroupType(type?: string) {
@@ -589,7 +583,7 @@ export class SubmissionsService {
       const userAge = submission.user.birthDate ?
         ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate) :
         submission.user.age;
-      const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
+      const userGender = this.localizedGender(submission.user.gender, '');
       const communityOrNation = submission.planetName;
       const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
@@ -813,7 +807,7 @@ export class SubmissionsService {
     const userSubmissions = submissions.map(submission => ({
       userInfo: {
         age: submission.user.age || ageFromBirthDate(submission.lastUpdateTime, submission.user.birthDate),
-        gender: submission.user.gender
+        gender: normalizeGender(submission.user.gender)
       },
       answers: submission.answers
     }));

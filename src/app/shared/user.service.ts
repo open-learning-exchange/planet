@@ -6,6 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
 import { StateService } from './state.service';
+import { normalizeGender } from './gender.constants';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -307,7 +308,7 @@ export class UserService {
 
   isProfileComplete() {
     const isComplete = !!(this.user.firstName && this.user.lastName && this.user.email && this.user.birthDate &&
-      this.user.gender && this.user.language && this.user.phoneNumber && this.user.level);
+      normalizeGender(this.user.gender) !== 'didNotSpecify' && this.user.language && this.user.phoneNumber && this.user.level);
     this.profileComplete.next(isComplete);
   }
 

@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
+import { createGenderCounts, normalizeGender } from '../../shared/gender.constants';
 
 interface ActivityRequestObject {
   planetCode?: string;
@@ -68,7 +69,11 @@ export class ReportsService {
     return this.groupBy(
       array.map(item => {
         const fullDate = new Date(item[dateField]);
-        return { ...item, date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf() };
+        return {
+          ...item,
+          gender: normalizeGender(item.gender),
+          date: new Date(fullDate.getFullYear(), fullDate.getMonth(), 1).valueOf()
+        };
       }),
       [ 'date', 'gender' ],
       { uniqueField }
@@ -112,13 +117,14 @@ export class ReportsService {
   }
 
   groupUsers(users: any[]) {
+    const userDocs = users.map((user: any) => user.doc || user);
     return ({
-      count: users.length,
-      byGender: users.reduce((usersByGender: any, user: any) => {
-        usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
+      count: userDocs.length,
+      byGender: userDocs.reduce((usersByGender: any, user: any) => {
+        usersByGender[normalizeGender(user.gender)] += 1;
         return usersByGender;
-      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
-      byMonth: this.groupByMonth(users, 'joinDate')
+      }, createGenderCounts()),
+      byMonth: this.groupByMonth(userDocs, 'joinDate')
     });
   }
 
@@ -201,7 +207,7 @@ export class ReportsService {
       const user = this.users.find((u: any) => u.name === item.user) || {};
       return ({
         ...item,
-        gender: user.gender
+        gender: normalizeGender(user.gender)
       });
     });
   }
