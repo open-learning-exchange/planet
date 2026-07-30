@@ -83,26 +83,26 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   set search(newSearch: string) {
     this.usersTable.filter = newSearch || ' ';
   }
-  private _filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
+  #filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
   @Input()
   get filter() {
-    return this._filter;
+    return this.#filter;
   }
   set filter(newFilter) {
     // Trigger filter changes in the Material table
     this.usersTable.filter = this.usersTable.filter;
-    this._filter = newFilter;
+    this.#filter = newFilter;
   }
-  private _tableState: TableState;
+  #tableState: TableState;
   @Input()
   get tableState(): TableState {
-    return this._tableState;
+    return this.#tableState;
   }
   set tableState(newState: TableState) {
     this.filter['doc.planetCode'] = newState.selectedChild.code ||
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
-    this._tableState = newState;
+    this.#tableState = newState;
   }
   get tableData() {
     return this.usersTable;

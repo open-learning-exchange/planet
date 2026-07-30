@@ -67,15 +67,15 @@ export class DashboardTileTitleComponent {
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
-  private _cardType: string;
+  #cardType: string;
   @Input() set cardType(value: string) {
-    this._cardType = value;
+    this.#cardType = value;
     if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
       this.isExpanded = true;
     }
   }
   get cardType(): string {
-    return this._cardType;
+    return this.#cardType;
   }
   @Input() color: string;
   @Input() itemData;

@@ -20,14 +20,14 @@ export class UserService {
   private user: any = { name: '', roles: [] };
   private usersDb = '_users';
   private logsDb = 'login_activities';
-  private _shelf: any = { };
+  private #shelf: any = { };
   skipNextShelfRefresh = false;
 
   get shelf(): any {
-    return this._shelf;
+    return this.#shelf;
   }
   set shelf(shelf: any) {
-    this._shelf = shelf;
+    this.#shelf = shelf;
     if (Object.keys(shelf).length > 0 && !this.skipNextShelfRefresh) {
       this.shelfChange.next(shelf);
     }

@@ -115,12 +115,12 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control<string[]>([]);
-  _existingResource: any = {};
+  #existingResource: any = {};
   get existingResource(): any {
-    return this._existingResource;
+    return this.#existingResource;
   }
   @Input() set existingResource(resource) {
-    this._existingResource = resource;
+    this.#existingResource = resource;
     if (this.resourceForm) {
       this.setFormValues(resource);
     }

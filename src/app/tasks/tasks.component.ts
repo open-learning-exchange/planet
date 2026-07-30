@@ -80,15 +80,15 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private _assignees: any[] = [];
+  #assignees: any[] = [];
   private currentAssignees = new Map<string, any>();
   private failedAvatarSources = new Map<string, string>();
   @Input()
   get assignees() {
-    return this._assignees;
+    return this.#assignees;
   }
   set assignees(newAssignees: any[]) {
-    this._assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    this.#assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     this.setCurrentAssignees();
     this.setTaskViews();
     this.filterTasks();
@@ -125,7 +125,7 @@ export class TasksComponent implements OnInit {
   }
 
   private setCurrentAssignees() {
-    this.currentAssignees = new Map(this._assignees
+    this.currentAssignees = new Map(this.#assignees
       .filter(assignee => assigneeKey(assignee))
       .map(assignee => [ assigneeKey(assignee), assignee ]));
   }
