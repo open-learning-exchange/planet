@@ -20,7 +20,7 @@ export class UserService {
   private user: any = { name: '', roles: [] };
   private usersDb = '_users';
   private logsDb = 'login_activities';
-  private #shelf: any = { };
+  #shelf: any = { };
   skipNextShelfRefresh = false;
 
   get shelf(): any {
