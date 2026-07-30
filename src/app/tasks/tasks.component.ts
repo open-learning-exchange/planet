@@ -74,7 +74,7 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private #assigness: any[];
+  #assigness: any[];
   @Input()
   get assignees() {
     return this.#assigness;
