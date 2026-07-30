@@ -1,16 +1,16 @@
 <mat-toolbar>
   @if (!submissionMode) {
-  <button mat-icon-button (click)="goBack()">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
   }
   @switch (submissionMode) {
-  @case (true) {
-  <span i18n>Survey Profile</span>
-  }
-  @case (false) {
-  <span i18n>Edit Member Profile</span>
-  }
+    @case (true) {
+      <span i18n>Survey Profile</span>
+    }
+    @case (false) {
+      <span i18n>Edit Member Profile</span>
+    }
   }
 </mat-toolbar>
 
@@ -18,112 +18,116 @@
   <mat-toolbar class="primary-color font-size-1">
     <span>{{user.name}}</span>
     @if (submissionMode) {
-    <span>{{title}}</span>
+      <span>{{title}}</span>
     }
   </mat-toolbar>
   <div class="view-container">
     <div class="form-container">
       <form [formGroup]="editForm" class="form-space" (ngSubmit)="onSubmit()">
         @if (!submissionMode || (submissionMode && showAdditionalFields)) {
-        <div class="profile-names">
-          <mat-form-field>
-            <mat-label i18n>First Name</mat-label>
-            <input matInput formControlName="firstName" [required]="!submissionMode">
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n>Middle Name</mat-label>
-            <input matInput formControlName="middleName">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n>Last Name</mat-label>
-            <input matInput formControlName="lastName" [required]="!submissionMode">
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="profile-contacts">
-          <mat-form-field>
-            <mat-label i18n>Email</mat-label>
-            <input matInput formControlName="email" [required]="!submissionMode">
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n>Phone Number</mat-label>
-            <input matInput formControlName="phoneNumber" [required]="!submissionMode">
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n>Birthdate</mat-label>
-            <input matInput [matDatepicker]="dp" formControlName="birthDate" [required]="!submissionMode"
-              [min]="minBirthDate">
-            <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-            <mat-datepicker #dp></mat-datepicker>
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div class="profile-dropdowns">
-          <mat-form-field>
-            <mat-label i18n>Language</mat-label>
-            <mat-select formControlName="language" [required]="!submissionMode">
-              @for (language of languages; track language) {
-              <mat-option [value]="language.name">
-                {{language.name}}
-              </mat-option>
-              }
-            </mat-select>
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label i18n>level</mat-label>
-            <mat-select formControlName="level" [required]="!submissionMode">
-              @for (level of educationLevel; track level) {
-              <mat-option [value]="level.value">{{level.label}}</mat-option>
-              }
-            </mat-select>
-            <mat-error>
-              <planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages>
-            </mat-error>
-          </mat-form-field>
-        </div>
+          <div class="profile-names">
+            <mat-form-field>
+              <mat-label i18n>First Name</mat-label>
+              <input matInput formControlName="firstName"
+                [required]="!submissionMode">
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.firstName"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Middle Name</mat-label>
+              <input matInput formControlName="middleName">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Last Name</mat-label>
+              <input matInput formControlName="lastName"
+                [required]="!submissionMode">
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.lastName"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="profile-contacts">
+            <mat-form-field>
+              <mat-label i18n>Email</mat-label>
+              <input matInput formControlName="email" [required]="!submissionMode">
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.email"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Phone Number</mat-label>
+              <input matInput formControlName="phoneNumber"
+                [required]="!submissionMode">
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.phoneNumber"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>Birthdate</mat-label>
+              <input matInput [matDatepicker]="dp" formControlName="birthDate"
+                [required]="!submissionMode" [min]="minBirthDate">
+              <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+              <mat-datepicker #dp></mat-datepicker>
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.birthDate"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="profile-dropdowns">
+            <mat-form-field>
+              <mat-label i18n>Language</mat-label>
+              <mat-select formControlName="language" [required]="!submissionMode">
+                @for (language of languages; track language) {
+                  <mat-option [value]="language.name">
+                    {{language.name}}
+                  </mat-option>
+                }
+              </mat-select>
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.language"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label i18n>level</mat-label>
+              <mat-select formControlName="level" [required]="!submissionMode">
+                @for (level of educationLevel; track level) {
+                  <mat-option [value]="level.value">{{level.label}}</mat-option>
+                }
+              </mat-select>
+              <mat-error>
+                <planet-form-error-messages [control]="editForm.controls.level"></planet-form-error-messages>
+              </mat-error>
+            </mat-form-field>
+          </div>
         }
         <mat-radio-group class="radio-group full-width" formControlName="gender" [required]="!submissionMode">
           <label i18n>Gender</label>
           @for (genderOption of genderOptions; track genderOption.value) {
-          <mat-radio-button class="planet-radio-button" [value]="genderOption.value">
-            <div class="radio-icon-label">
-              @if (genderOption.icon) {
-              <mat-icon [svgIcon]="genderOption.icon" class="margin-lr-3" [ngClass]="genderOption.iconClass"></mat-icon>
-              }
-              <span>{{ genderOption.label }}</span>
-            </div>
-          </mat-radio-button>
+            <mat-radio-button class="planet-radio-button" [value]="genderOption.value">
+              <div class="radio-icon-label">
+                @if (genderOption.icon) {
+                  <mat-icon [svgIcon]="genderOption.icon" class="margin-lr-3" [ngClass]="genderOption.iconClass"></mat-icon>
+                }
+                <span>{{ genderOption.label }}</span>
+              </div>
+            </mat-radio-button>
           }
           @if (editForm.controls.gender.invalid && editForm.controls.gender.touched) {
-          <mat-error i18n>
+            <mat-error i18n>
             This field is required
           </mat-error>
           }
           @if (!submissionMode && planetConfiguration.betaEnabled==='user') {
-          <mat-slide-toggle formControlName="betaEnabled" i18n i18n-matTooltip
-            matTooltip="Beta features may not work as intended. It's recommended to leave this off">
+            <mat-slide-toggle
+              formControlName="betaEnabled" i18n i18n-matTooltip
+              matTooltip="Beta features may not work as intended. It's recommended to leave this off">
             Enable Beta features
-          </mat-slide-toggle>
+            </mat-slide-toggle>
           }
         </mat-radio-group>
-        @if (submissionMode) {
-        @if (!showAdditionalFields) {
+    @if (submissionMode) {
+      @if (!showAdditionalFields) {
         <mat-form-field>
           <mat-label i18n>Birth Year</mat-label>
           <input matInput type="number" formControlName="birthYear" [required]="false">
@@ -132,45 +136,42 @@
             <planet-form-error-messages [control]="editForm.controls.birthYear"></planet-form-error-messages>
           </mat-error>
         </mat-form-field>
-        }
-        <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
-          <span>{{ additionalFieldsButtonText }}</span>
-        </button>
-        }
-        <div class="action-buttons">
-          <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
-          <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
-        </div>
-      </form>
+      }
+      <button mat-button type="button" (click)="showAdditionalFields = !showAdditionalFields">
+        <span>{{ additionalFieldsButtonText }}</span>
+      </button>
+    }
+    <div class="action-buttons">
+      <button type="submit" mat-raised-button [planetSubmit]="editForm.valid" color="primary" i18n>Update</button>
+      <button type="button" mat-raised-button color="warn" (click)="goBack()" i18n>Cancel</button>
     </div>
-    @if (!submissionMode) {
-    <div class="profile-image-column">
-      <div class="profile-image-content">
-        @if (showImagePreview) {
+  </form>
+</div>
+@if (!submissionMode) {
+  <div class="profile-image-column">
+    <div class="profile-image-content">
+      @if (showImagePreview) {
         <img class="profile-image-update" [src]="previewSrc">
         }<br>
-        <planet-file-upload #profileUpload accept="image/*" i18n-hint
-          hint="Animated GIFs will be saved as static images." [typePills]="['JPG','PNG','GIF','WEBP']"
-          (fileSelected)="openImageEditDialog($event)"></planet-file-upload>
+        <planet-file-upload #profileUpload accept="image/*" i18n-hint hint="Animated GIFs will be saved as static images." [typePills]="['JPG','PNG','GIF','WEBP']" (fileSelected)="openImageEditDialog($event)"></planet-file-upload>
         <div class="action-buttons">
           @if (imageFile || attachmentDeleted) {
-          <button mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
+            <button mat-raised-button color="accent" (click)="resetSelection()"><span i18n>Reset Selection</span></button>
           }
           @if (uploadImage && currentImgKey && !imageFile && !attachmentDeleted) {
-          <button mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
+            <button mat-raised-button color="accent" (click)="deleteImageAttachment()"><span i18n>Remove</span></button>
           }
         </div>
       </div>
     </div>
-    }
-  </div>
+  }
+</div>
 </div>
 <ng-template #imageEditDialog>
   <mat-dialog-content class="profile-image-section">
-    <img class="profile-image-update" [src]="previewSrc" />
+    <img class="profile-image-update" [src]="previewSrc"/>
     <div class="profile-image-upload">
-      <image-cropper [imageFile]="imageFile" format="webp" output="base64"
-        (imageCropped)="onImageSelect($event)"></image-cropper>
+      <image-cropper [imageFile]="imageFile" format="webp" output="base64" (imageCropped)="onImageSelect($event)"></image-cropper>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
