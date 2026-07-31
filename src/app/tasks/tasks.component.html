@@ -30,6 +30,7 @@
           <img matListItemAvatar
             (click)="openMemberDialog(assignee); $event.stopPropagation()"
             (error)="useDefaultAvatar(taskView)"
+            alt="{{assignee | assigneeName}}"
             matTooltip="{{assignee | assigneeName}}"
             [src]="taskView.avatarSrc">
         }
@@ -44,7 +45,7 @@
           @if (taskView.assignee; as assignee) {
             <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{assignee | assigneeName}}</button>
           }
-          @for (assignee of (assignees | filterAssignee: task.assignee: legacyPlanetCode); track assignee) {
+          @for (assignee of (assignees | filterAssignee: task.assignee); track assignee) {
             <button mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
           }
         </mat-menu>

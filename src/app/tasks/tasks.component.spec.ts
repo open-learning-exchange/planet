@@ -157,7 +157,7 @@ describe('TasksComponent', () => {
       .toMatch(/\/attachments\/org\.couchdb\.user:alex@planet-a\/img$/);
   });
 
-  it('does not treat a same-named user from another planet as the current user', () => {
+  it('keeps existing ID-only My Tasks ownership until the shared identity migration', () => {
     component.ngOnInit();
 
     taskUpdates.next([
@@ -177,10 +177,10 @@ describe('TasksComponent', () => {
       }
     ]);
 
-    expect(component.myTasks.map(task => task._id)).toEqual([ 'local-task' ]);
+    expect(component.myTasks.map(task => task._id)).toEqual([ 'remote-task', 'local-task' ]);
   });
 
-  it('notifies a same-named assignee on another planet but not the signed-in user', () => {
+  it('keeps existing ID-only self-notification suppression', () => {
     const task = { _id: 'task-1' };
 
     component.addAssignee(task, {
@@ -189,20 +189,7 @@ describe('TasksComponent', () => {
       name: 'alex',
       userDoc: {}
     });
-    component.addAssignee(task, {
-      userId: 'org.couchdb.user:alex',
-      userPlanetCode: 'planet-a',
-      name: 'alex',
-      userDoc: {}
-    });
-
-    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledTimes(1);
-    expect(notificationsService.sendNotificationToUser).toHaveBeenCalledWith(
-      expect.objectContaining({
-        user: 'org.couchdb.user:alex',
-        userPlanetCode: 'planet-b'
-      })
-    );
+    expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
   });
 
   it('opens the profile dialog with the assignee planet code', () => {
@@ -216,38 +203,37 @@ describe('TasksComponent', () => {
     );
   });
 
-  it('falls back through bound view state and retries the URL after member data refreshes', () => {
-    const member = {
+  it('retains a failed avatar until the member source changes', () => {
+    const member = (attachmentName: string) => ({
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-b',
       name: 'alex',
-      avatar: 'https://planet.example/avatar',
-      userDoc: { doc: { _attachments: { img: {} } } }
-    };
-    component.assignees = [ member ];
+      attachmentDoc: {
+        _id: 'org.couchdb.user:alex@planet-b',
+        _attachments: { [attachmentName]: { digest: `md5-${attachmentName}` } }
+      }
+    });
+    component.assignees = [ member('img') ];
     component.ngOnInit();
     taskUpdates.next([ {
       _id: 'task-1',
       assignee: {
-        userId: member.userId,
-        userPlanetCode: member.userPlanetCode
+        userId: 'org.couchdb.user:alex',
+        userPlanetCode: 'planet-b'
       }
     } ]);
 
     component.useDefaultAvatar(component.filteredTaskViews[0]);
     expect(component.filteredTaskViews[0].avatarSrc).toBe('assets/image.png');
 
-    component.assignees = [ member ];
-    expect(component.filteredTaskViews[0].avatarSrc).toBe(member.avatar);
+    component.assignees = [ member('img') ];
+    expect(component.filteredTaskViews[0].avatarSrc).toBe('assets/image.png');
+
+    component.assignees = [ member('img_') ];
+    expect(component.filteredTaskViews[0].avatarSrc).toMatch(/\/img_$/);
   });
 
-  it('treats a missing historical planet code as local without matching a remote member', () => {
-    const localMember = {
-      userId: 'org.couchdb.user:alex',
-      userPlanetCode: 'planet-a',
-      name: 'local-alex',
-      userDoc: { doc: {} }
-    };
+  it('keeps a historical missing-code assignee unresolved', () => {
     const remoteMember = {
       userId: 'org.couchdb.user:alex',
       userPlanetCode: 'planet-b',
@@ -260,40 +246,13 @@ describe('TasksComponent', () => {
         name: 'old-alex'
       }
     };
-    component.assignees = [ remoteMember, localMember ];
+    component.assignees = [ remoteMember ];
     component.ngOnInit();
 
     taskUpdates.next([ task ]);
 
     expect(component.myTasks).toEqual([ task ]);
-    expect(component.taskViews[0].assignee).toBe(localMember);
-  });
-
-  it('uses the synchronized team origin for a legacy task when viewed from another planet', () => {
-    userService.get.mockReturnValue({
-      _id: 'org.couchdb.user:alex',
-      planetCode: 'nation-n'
-    });
-    component.sync = { type: 'sync', planetCode: 'community-c' };
-    const currentMember = {
-      userId: 'org.couchdb.user:alex',
-      userPlanetCode: 'community-c',
-      name: 'current-alex',
-      userDoc: { doc: {} }
-    };
-    component.assignees = [ currentMember ];
-    component.ngOnInit();
-
-    taskUpdates.next([ {
-      _id: 'legacy-task',
-      assignee: {
-        userId: 'org.couchdb.user:alex',
-        name: 'snapshot-alex'
-      }
-    } ]);
-
-    expect(component.taskViews[0].assignee).toBe(currentMember);
-    expect(component.myTasks).toEqual([]);
+    expect(component.taskViews[0].assignee).toBe(task.assignee);
   });
 
   it('precomputes the current attachment key whenever member data refreshes', () => {
@@ -359,7 +318,7 @@ describe('TasksComponent', () => {
     expect(component.filteredTaskViews[0].assignee).toBe(secondMember);
   });
 
-  it('keeps snapshot paths and absolute avatar URLs distinct', () => {
+  it('keeps relative and absolute fallback avatar URLs distinct', () => {
     expect(component.avatarSrc({ avatar: '/_users/org.couchdb.user:alex/img' }))
       .toBe(`${component.imgUrlPrefix}/_users/org.couchdb.user:alex/img`);
     expect(component.avatarSrc({ avatar: 'https://planet.example/_users/org.couchdb.user:alex/img' }))
@@ -376,7 +335,7 @@ describe('TasksComponent', () => {
     expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
   });
 
-  it('stores only the resolved avatar and non-sensitive assignee metadata', () => {
+  it('stores only non-sensitive, server-independent assignee metadata', () => {
     const assignee = {
       userId: 'org.couchdb.user:other',
       userPlanetCode: 'planet-b',
@@ -401,20 +360,15 @@ describe('TasksComponent', () => {
         userId: assignee.userId,
         userPlanetCode: assignee.userPlanetCode,
         name: assignee.name,
-        avatar: assignee.avatar,
         attachmentDoc: assignee.attachmentDoc,
         userDoc: { fullName: 'Other User' }
       }
     });
   });
 
-  it('does not resolve a missing-code identity when no legacy planet is available', () => {
+  it('does not resolve when neither snapshot nor member has a planet code', () => {
     const currentMember = { userId: 'org.couchdb.user:alex', name: 'current' };
     const snapshot = { userId: 'org.couchdb.user:alex', name: 'snapshot' };
-    userService.get.mockReturnValue({
-      _id: 'org.couchdb.user:alex',
-      planetCode: ''
-    });
     component.assignees = [ currentMember ];
     component.ngOnInit();
 
@@ -422,23 +376,31 @@ describe('TasksComponent', () => {
 
     expect(component.taskViews[0].assignee).toBe(snapshot);
   });
+
+  it('filters task views when switching between My Tasks and All Tasks', () => {
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'owned', assignee: { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' } },
+      { _id: 'other', assignee: { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' } }
+    ]);
+
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+
+    component.setFilter('all');
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned', 'other' ]);
+
+    component.setFilter('self');
+    expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
+  });
 });
 
 describe('FilterAssigneePipe', () => {
-  it('keeps a same-named member from another planet in the assignment menu', () => {
+  it('keeps existing ID-only assignment-menu filtering', () => {
     const pipe = new FilterAssigneePipe();
     const current = { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' };
     const remote = { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' };
+    const other = { userId: 'org.couchdb.user:other', userPlanetCode: 'planet-a' };
 
-    expect(pipe.transform([ current, remote ], current)).toEqual([ remote ]);
-  });
-
-  it('filters a legacy assignment as local without hiding a same-named remote member', () => {
-    const pipe = new FilterAssigneePipe();
-    const legacy = { userId: 'org.couchdb.user:alex' };
-    const local = { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-a' };
-    const remote = { userId: 'org.couchdb.user:alex', userPlanetCode: 'planet-b' };
-
-    expect(pipe.transform([ local, remote ], legacy, 'planet-a')).toEqual([ remote ]);
+    expect(pipe.transform([ current, remote, other ], current)).toEqual([ other ]);
   });
 });
