@@ -143,6 +143,7 @@ export class FeedbackDirective {
     this.couchService.updateDocument('feedback', newFeedback).subscribe(
       () => {
         this.feedbackService.setFeedback();
+        this.feedbackService.clearDraftFeedback();
         this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
       },
       () => {
@@ -159,7 +160,8 @@ export class FeedbackDirective {
   openFeedback() {
     const title = $localize`Feedback`;
     const fields = dialogFieldOptions;
-    const draft = this.feedbackService.getDraftFeedback();
+    const currentUser = this.userService.get()?.name;
+    const draft = this.feedbackService.getDraftFeedback(currentUser);
     const formGroup = {
       priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : (draft?.priority || ''), Validators.required ],
       type: [ this.type ? normalizeFeedbackType(this.type) : (draft?.type || ''), Validators.required ],
@@ -168,15 +170,14 @@ export class FeedbackDirective {
     const dialogRef = this.dialogsFormService.confirmRef(title, fields, formGroup);
 
     dialogRef.componentInstance?.modalForm?.valueChanges.subscribe((value) => {
-      this.feedbackService.setDraftFeedback(value);
+      this.feedbackService.setDraftFeedback(value, currentUser);
     });
 
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response === 'cancel') {
         this.feedbackService.clearDraftFeedback();
-      } else if (response !== undefined) {
+      } else if (response !== undefined && response !== 'cancel') {
         this.addFeedback(response);
-        this.feedbackService.clearDraftFeedback();
       }
     });
   }

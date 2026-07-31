@@ -5,6 +5,13 @@ import { PlanetMessageService } from '../shared/planet-message.service';
 import { map } from 'rxjs/operators';
 import { normalizeFeedbackStatus } from './feedback.utils';
 
+export interface DraftFeedback {
+  user?: string;
+  priority?: string;
+  type?: string;
+  message?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,17 +19,20 @@ export class FeedbackService {
   readonly dbName = 'feedback';
   private feedbackUpdate = new Subject<any[]>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
-  private draftFeedback: { priority?: string; type?: string; message?: string } | null = null;
+  private draftFeedback: DraftFeedback | null = null;
 
   setFeedback() {
     this.feedbackUpdate.next();
   }
 
-  setDraftFeedback(draft: { priority?: string; type?: string; message?: string }) {
-    this.draftFeedback = draft;
+  setDraftFeedback(draft: DraftFeedback, user?: string) {
+    this.draftFeedback = { ...draft, user };
   }
 
-  getDraftFeedback() {
+  getDraftFeedback(currentUser?: string): DraftFeedback | null {
+    if (this.draftFeedback && currentUser && this.draftFeedback.user && this.draftFeedback.user !== currentUser) {
+      return null;
+    }
     return this.draftFeedback;
   }
 

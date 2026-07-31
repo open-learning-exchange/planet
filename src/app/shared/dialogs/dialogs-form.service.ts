@@ -83,8 +83,9 @@ export class DialogsFormService {
     formGroup: DialogFormGroupInput<T>,
     autoFocus = false
   ): Observable<T | undefined> {
-    const dialogRef = this.confirmRef(title, fields, formGroup, autoFocus);
-    return dialogRef.afterClosed() as Observable<T | undefined>;
+    return this.confirmRef(title, fields, formGroup, autoFocus).afterClosed().pipe(
+      map(res => res === 'cancel' ? undefined : res as T | undefined)
+    );
   }
 
   public confirmRef<T extends DialogFormValueMap = DialogFormValueMap>(
