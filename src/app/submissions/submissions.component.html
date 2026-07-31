@@ -61,7 +61,10 @@
   <mat-icon>search</mat-icon>
   <mat-form-field class="font-size-1 mdc-toolbar-input">
     <mat-label i18n>Type name to search...</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)">
+    <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="searchValue">
+    <button mat-icon-button matSuffix (click)="searchValue = ''; applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear Search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
 </ng-template>
 

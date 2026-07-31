@@ -111,6 +111,9 @@
   <mat-form-field class="font-size-1 mdc-toolbar-input">
     <mat-label i18n>Search</mat-label>
     <input matInput (keyup)="onSearch($event.target.value)" [value]="searchValue">
+    <button mat-icon-button matSuffix (click)="onSearch('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear Search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
   <button mat-raised-button (click)="onClear()" color="primary" [disabled]="!searchValue && !selectedVersion && (!showTypeFilter || !selectedType) && disableShowAllTime" class="margin-lr-5">
     <span i18n>Clear</span>

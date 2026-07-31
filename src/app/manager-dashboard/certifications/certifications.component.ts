@@ -17,8 +17,9 @@ import { MatIconButton, MatButton, MatMiniFabAnchor, MatAnchor } from '@angular/
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   templateUrl: './certifications.component.html',
@@ -39,7 +40,9 @@ import { MatInput } from '@angular/material/input';
     MatIcon,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
+    MatTooltip,
     MatButton,
     MatToolbarRow,
     MatMiniFabAnchor,

@@ -31,8 +31,10 @@
     <mat-form-field subscriptSizing="dynamic" class="font-size-1">
       <mat-label i18n>Type name to search...</mat-label>
       <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
+      <button mat-icon-button matSuffix (click)="filter = ''; resetSearch()" [style.visibility]="filter ? 'visible' : 'hidden'" matTooltip="Clear Search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
   </div>
 </ng-template>
 
