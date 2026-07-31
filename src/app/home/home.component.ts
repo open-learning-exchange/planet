@@ -11,7 +11,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -222,12 +222,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   getNotification() {
-    const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
-    if (this.userService.get().isUserAdmin) {
-      userFilter.push({ 'user': 'SYSTEM' });
-    }
+    const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
