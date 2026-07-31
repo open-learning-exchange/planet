@@ -26,7 +26,7 @@ describe('FeedbackDirective', () => {
       couchService,
       {} as any,
       router,
-      { setFeedback: vi.fn() } as any,
+      { setFeedback: vi.fn(), setDraftFeedback: vi.fn(), getDraftFeedback: vi.fn(), clearDraftFeedback: vi.fn() } as any,
       { showMessage: vi.fn(), showAlert: vi.fn() } as any,
       { configuration: { code: 'planet', parentCode: 'nation' } } as any,
       {} as any
