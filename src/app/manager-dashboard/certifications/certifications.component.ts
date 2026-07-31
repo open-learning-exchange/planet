@@ -13,7 +13,7 @@ import { sortNumberOrString, filterSpecificFieldsByWord } from '../../shared/tab
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { DialogsLoadingService } from '../../shared/dialogs/dialogs-loading.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
-import { MatIconButton, MatButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
+import { MatIconButton, MatMiniFabAnchor, MatAnchor } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
@@ -43,7 +43,6 @@ import { MatTooltip } from '@angular/material/tooltip';
     MatSuffix,
     MatInput,
     MatTooltip,
-    MatButton,
     MatToolbarRow,
     MatMiniFabAnchor,
     MatTable,
