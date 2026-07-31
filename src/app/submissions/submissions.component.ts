@@ -168,7 +168,14 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
         }, []);
       }
 
-      submissions = normalized.map(submission => this.appendCourseInfo(submission, courses));
+      submissions = normalized
+        .map(submission => this.appendCourseInfo(submission, courses))
+        .filter(submission => {
+          if (submission.parentId && submission.parentId.includes('@')) {
+            return submission.hasValidCourse && submission.hasValidStep;
+          }
+          return true;
+        });
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
@@ -306,12 +313,22 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     }
     const [ examId, courseId ] = submission.parentId.split('@');
     if (!courseId) {
-      return submission;
+      return { ...submission, hasValidCourse: false, hasValidStep: false };
     }
-    const submissionCourse = courses.find(course => course._id === courseId) || { doc: { steps: [] } };
+    const submissionCourse = courses.find(course => course._id === courseId);
+    if (!submissionCourse || !submissionCourse.doc || !submissionCourse.doc.steps) {
+      return { ...submission, courseTitle: '', stepNum: 0, hasValidCourse: false, hasValidStep: false };
+    }
     const stepNum = submissionCourse.doc.steps
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
-    return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
+    const hasValidStep = stepNum > 0;
+    return {
+      ...submission,
+      courseTitle: submissionCourse.doc.courseTitle,
+      stepNum,
+      hasValidCourse: true,
+      hasValidStep
+    };
   }
 
   getTeamTypeLabel(teamType: string): string {
