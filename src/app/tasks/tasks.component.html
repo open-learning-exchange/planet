@@ -16,7 +16,8 @@
   </mat-button-toggle-group>
 }
 <mat-action-list [disableRipple]="!editable">
-  @for (task of filteredTasks; track trackById($index, task)) {
+  @for (taskView of filteredTaskViews; track trackById($index, taskView.task)) {
+    @let task = taskView.task;
     <button mat-list-item (click)="openTaskDetail(task)" [disabled]="!editable">
       <mat-checkbox matListItemIcon [checked]="task.completed" [disabled]="!editable" (change)="toggleTaskComplete(task)" (click)="$event.stopPropagation()"></mat-checkbox>
       <span matListItemTitle>{{task.title}}</span>
@@ -25,14 +26,12 @@
         @if (task.completed) {
           <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
         }
-        @if (task.assignee) {
-<img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" [src]="
-      task.assignee.attachmentDoc ?
-        imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
-        task.assignee.avatar ?
-        imgUrlPrefix + task.assignee.avatar :
-        'assets/image.png'
-    ">
+        @if (taskView.assignee; as assignee) {
+          <img matListItemAvatar
+            (click)="openMemberDialog(assignee); $event.stopPropagation()"
+            (error)="useDefaultAvatar(taskView)"
+            matTooltip="{{assignee | assigneeName}}"
+            [src]="taskView.avatarSrc">
         }
         @if (editable) {
           <ng-container matListItemMeta>
@@ -42,10 +41,10 @@
           </ng-container>
         }
         <mat-menu #assigneeMenu="matMenu">
-          @if (task.assignee) {
-            <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee | assigneeName}}</button>
+          @if (taskView.assignee; as assignee) {
+            <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{assignee | assigneeName}}</button>
           }
-          @for (assignee of (assignees | filterAssignee: task.assignee); track assignee) {
+          @for (assignee of (assignees | filterAssignee: task.assignee: legacyPlanetCode); track assignee) {
             <button mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
           }
         </mat-menu>

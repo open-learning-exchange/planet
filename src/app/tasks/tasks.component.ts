@@ -24,10 +24,23 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
+export const assigneeCompare = (assignee1, assignee2, legacyPlanetCode?: string) => {
+  const planetCode1 = assignee1?.userPlanetCode || legacyPlanetCode;
+  const planetCode2 = assignee2?.userPlanetCode || legacyPlanetCode;
+  return !!assignee1?.userId && !!planetCode1 &&
+    assignee1.userId === assignee2?.userId && planetCode1 === planetCode2;
+};
+
+const assigneeKey = (assignee, legacyPlanetCode?: string) => {
+  const userId = assignee?.userId;
+  const planetCode = assignee?.userPlanetCode || legacyPlanetCode;
+  return userId && planetCode ? `${userId}\u0000${planetCode}` : undefined;
+};
+
 @Pipe({ name: 'filterAssignee' })
 export class FilterAssigneePipe implements PipeTransform {
-  transform(assignees: any[], assignee: any) {
-    return assignees.filter(a => a.userId !== assignee.userId);
+  transform(assignees: any[], assignee: any, legacyPlanetCode?: string) {
+    return (assignees || []).filter(item => !assigneeCompare(item, assignee, legacyPlanetCode));
   }
 }
 
@@ -74,22 +87,34 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private _assigness: any[];
+  private _assignees: any[] = [];
+  private currentAssignees = new Map<string, any>();
   @Input()
   get assignees() {
-    return this._assigness;
+    return this._assignees;
   }
   set assignees(newAssignees: any[]) {
-    this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
+    this._assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    this.currentAssignees = new Map(this._assignees
+      .filter(assignee => assigneeKey(assignee, this.legacyPlanetCode))
+      .map(assignee => [ assigneeKey(assignee, this.legacyPlanetCode), assignee ]));
+    this.setTaskViews();
+    this.filterTasks();
   }
   dbName = 'tasks';
   deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
   filteredTasks: any[] = [];
+  taskViews: any[] = [];
+  filteredTaskViews: any[] = [];
   imgUrlPrefix = environment.couchAddress;
   filter: 'self' | 'all' = 'self';
   trackById = trackById;
+
+  get legacyPlanetCode() {
+    return this.sync?.planetCode || this.userService.get().planetCode;
+  }
 
   constructor(
     private tasksService: TasksService,
@@ -104,7 +129,10 @@ export class TasksComponent implements OnInit {
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
-      this.myTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
+      this.setTaskViews();
+      const user = this.userService.get();
+      const currentUser = { userId: user._id, userPlanetCode: user.planetCode };
+      this.myTasks = this.tasks.filter(task => assigneeCompare(task.assignee, currentUser, this.legacyPlanetCode));
       this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
       this.filterTasks();
     });
@@ -194,13 +222,21 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    const hasAssignee = assignee !== '' && assignee.userDoc;
-    if (hasAssignee) {
-      const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
-      assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
-    }
-    this.tasksService.addTask({ ...task, assignee }).pipe(
-      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
+    const hasAssignee = assignee !== '';
+    const storedAssignee = hasAssignee ? {
+      userId: assignee.userId,
+      userPlanetCode: assignee.userPlanetCode || this.legacyPlanetCode,
+      name: assignee.name,
+      avatar: assignee.avatar,
+      attachmentDoc: assignee.attachmentDoc,
+      userDoc: assignee.userDoc?.fullName ? { fullName: assignee.userDoc.fullName } : undefined
+    } : '';
+    const user = this.userService.get();
+    const currentUser = { userId: user._id, userPlanetCode: user.planetCode };
+    this.tasksService.addTask({ ...task, assignee: storedAssignee }).pipe(
+      switchMap(() => hasAssignee && assignee.userDoc && !assigneeCompare(assignee, currentUser, this.legacyPlanetCode) ?
+        this.sendNotifications(assignee) :
+        of({}))
     ).subscribe((res) => {
       this.tasksService.getTasks();
     });
@@ -213,6 +249,8 @@ export class TasksComponent implements OnInit {
 
   filterTasks() {
     this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
+    const filteredTaskIds = new Set(this.filteredTasks.map(task => task._id));
+    this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
   }
 
   sendNotifications(assignee: any = '') {
@@ -245,11 +283,46 @@ export class TasksComponent implements OnInit {
 
   openMemberDialog(assignee) {
     this.dialog.open(UserProfileDialogComponent,
-      { data: { member: { name: assignee.name, userPlanetCode: assignee.teamPlanetCode } }, autoFocus: false });
+      {
+        data: { member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode || this.legacyPlanetCode } },
+        autoFocus: false
+      });
   }
 
   getAssignTooltip(task: any): string {
     return task.assignee ? $localize`Reassign Task` : $localize`Assign Task`;
+  }
+
+  avatarSrc(assignee) {
+    const attachmentName = Object.keys(assignee?.attachmentDoc?._attachments || {})[0];
+    if (attachmentName) {
+      return `${this.imgUrlPrefix}/attachments/${assignee.attachmentDoc._id}/${attachmentName}`;
+    }
+    if (!assignee?.avatar) {
+      return 'assets/image.png';
+    }
+    return assignee.avatar.startsWith('/') ? this.imgUrlPrefix + assignee.avatar : assignee.avatar;
+  }
+
+  useDefaultAvatar(taskView) {
+    taskView.avatarSrc = 'assets/image.png';
+  }
+
+  private setTaskViews() {
+    this.taskViews = this.tasks.map(task => {
+      const key = assigneeKey(task.assignee, this.legacyPlanetCode);
+      const currentAssignee = key && this.currentAssignees.get(key);
+      const hasResolvedMetadata = currentAssignee && (
+        currentAssignee.userDoc ||
+        currentAssignee.attachmentDoc
+      );
+      const assignee = hasResolvedMetadata ? currentAssignee : task.assignee || currentAssignee;
+      return {
+        task,
+        assignee,
+        avatarSrc: assignee ? this.avatarSrc(assignee) : undefined
+      };
+    });
   }
 
 }
