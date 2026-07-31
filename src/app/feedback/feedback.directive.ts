@@ -159,18 +159,26 @@ export class FeedbackDirective {
   openFeedback() {
     const title = $localize`Feedback`;
     const fields = dialogFieldOptions;
+    const draft = this.feedbackService.getDraftFeedback();
     const formGroup = {
-      priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : '', Validators.required ],
-      type: [ this.type ? normalizeFeedbackType(this.type) : '', Validators.required ],
-      message: [ this.message, CustomValidators.required ]
+      priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : (draft?.priority || ''), Validators.required ],
+      type: [ this.type ? normalizeFeedbackType(this.type) : (draft?.type || ''), Validators.required ],
+      message: [ this.message || draft?.message || '', CustomValidators.required ]
     };
-    this.dialogsFormService
-      .confirm(title, fields, formGroup)
-      .subscribe((response) => {
-        if (response !== undefined) {
-          this.addFeedback(response);
-        }
-      });
+    const dialogRef = this.dialogsFormService.confirmRef(title, fields, formGroup);
+
+    dialogRef.componentInstance?.modalForm?.valueChanges.subscribe((value) => {
+      this.feedbackService.setDraftFeedback(value);
+    });
+
+    dialogRef.afterClosed().subscribe((response: any) => {
+      if (response === 'cancel') {
+        this.feedbackService.clearDraftFeedback();
+      } else if (response !== undefined) {
+        this.addFeedback(response);
+        this.feedbackService.clearDraftFeedback();
+      }
+    });
   }
 
 }

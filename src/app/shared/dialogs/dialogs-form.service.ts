@@ -83,12 +83,21 @@ export class DialogsFormService {
     formGroup: DialogFormGroupInput<T>,
     autoFocus = false
   ): Observable<T | undefined> {
-    const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
+    const dialogRef = this.confirmRef(title, fields, formGroup, autoFocus);
+    return dialogRef.afterClosed() as Observable<T | undefined>;
+  }
+
+  public confirmRef<T extends DialogFormValueMap = DialogFormValueMap>(
+    title: string,
+    fields: DialogField[],
+    formGroup: DialogFormGroupInput<T>,
+    autoFocus = false
+  ): MatDialogRef<DialogsFormComponent, any> {
+    return this.dialog.open<DialogsFormComponent, DialogsFormData<T>, any>(DialogsFormComponent, {
       width: '600px',
       autoFocus,
       data: { title, fields, formGroup, closeOnSubmit: true }
     });
-    return dialogRef.afterClosed() as Observable<T | undefined>;
   }
 
   openDialogsForm<T extends DialogFormValueMap = DialogFormValueMap>(

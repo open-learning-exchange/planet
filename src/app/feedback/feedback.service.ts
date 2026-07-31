@@ -12,9 +12,22 @@ export class FeedbackService {
   readonly dbName = 'feedback';
   private feedbackUpdate = new Subject<any[]>();
   feedbackUpdate$ = this.feedbackUpdate.asObservable();
+  private draftFeedback: { priority?: string; type?: string; message?: string } | null = null;
 
   setFeedback() {
     this.feedbackUpdate.next();
+  }
+
+  setDraftFeedback(draft: { priority?: string; type?: string; message?: string }) {
+    this.draftFeedback = draft;
+  }
+
+  getDraftFeedback() {
+    return this.draftFeedback;
+  }
+
+  clearDraftFeedback() {
+    this.draftFeedback = null;
   }
 
   constructor(
