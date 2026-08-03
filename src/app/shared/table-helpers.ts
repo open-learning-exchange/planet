@@ -40,8 +40,13 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 
 // Multi level field filter by spliting each field by '.'
 export const filterSpecificFields = (filterFields: string[]): any => {
+  let lastFilter: string;
+  let normalizedFilter: string;
   return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (filter !== lastFilter) {
+      lastFilter = filter;
+      normalizedFilter = filter ? filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+    }
     for (let i = 0; i < filterFields.length; i++) {
       const fieldValue = getProperty(data, filterFields[i]);
       if (typeof fieldValue === 'string' &&
@@ -54,9 +59,14 @@ export const filterSpecificFields = (filterFields: string[]): any => {
 };
 
 export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
+  let lastFilter: string;
+  let words: string[];
   return (data: any, filter: string) => {
-    // Normalize each word
-    const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    if (filter !== lastFilter) {
+      lastFilter = filter;
+      // Normalize each word
+      words = filter ? filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')) : [];
+    }
     return words.every(word => {
       return filterFields.some(field => {
         const fieldValue = getProperty(data, field);
@@ -69,8 +79,13 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
 
 // Enhanced version that combines exact and fuzzy search
 export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
+  let lastFilter: string;
+  let normalizedFilter: string;
   return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (filter !== lastFilter) {
+      lastFilter = filter;
+      normalizedFilter = filter ? filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') : '';
+    }
     if (!normalizedFilter) {
       return true;
     }
