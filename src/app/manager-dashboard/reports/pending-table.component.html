@@ -17,7 +17,7 @@
   <ng-container matColumnDef="actions">
     <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
     <mat-cell *matCellDef="let element">
-      <button mat-raised-button color="primary" (click)="deleteItem(element)"><mat-icon>delete</mat-icon><ng-container i18n>Delete</ng-container></button>
+      <button mat-raised-button color="warn" (click)="deleteItem(element)"><mat-icon>delete</mat-icon><ng-container i18n>Delete</ng-container></button>
     </mat-cell>
   </ng-container>
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

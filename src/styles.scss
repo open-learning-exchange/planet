@@ -424,6 +424,11 @@ body {
     height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
+
+    // Use the parent's bounds when the view is inside an already-sized container.
+    &.fill-parent {
+      height: 100%;
+    }
   }
 
   .view-container.view-full-height.view-table {
