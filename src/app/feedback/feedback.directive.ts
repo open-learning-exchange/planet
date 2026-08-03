@@ -143,7 +143,6 @@ export class FeedbackDirective {
     this.couchService.updateDocument('feedback', newFeedback).subscribe(
       () => {
         this.feedbackService.setFeedback();
-        this.feedbackService.clearDraftFeedback?.();
         this.planetMessageService.showMessage($localize`Thank you, your feedback is submitted!`);
       },
       () => {
@@ -160,26 +159,18 @@ export class FeedbackDirective {
   openFeedback() {
     const title = $localize`Feedback`;
     const fields = dialogFieldOptions;
-    const currentUser = this.userService.get()?.name;
-    const draft = this.feedbackService.getDraftFeedback?.(currentUser);
     const formGroup = {
-      priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : (draft?.priority || ''), Validators.required ],
-      type: [ this.type ? normalizeFeedbackType(this.type) : (draft?.type || ''), Validators.required ],
-      message: [ this.message || draft?.message || '', CustomValidators.required ]
+      priority: [ this.priority ? normalizeFeedbackPriority(this.priority) : '', Validators.required ],
+      type: [ this.type ? normalizeFeedbackType(this.type) : '', Validators.required ],
+      message: [ this.message, CustomValidators.required ]
     };
-    const dialogRef = this.dialogsFormService.confirmRef(title, fields, formGroup);
-
-    dialogRef.componentInstance?.modalForm?.valueChanges.subscribe((value) => {
-      this.feedbackService.setDraftFeedback?.(value, currentUser);
-    });
-
-    dialogRef.afterClosed().subscribe((response: any) => {
-      if (response === 'cancel') {
-        this.feedbackService.clearDraftFeedback?.();
-      } else if (response !== undefined && response !== 'cancel') {
-        this.addFeedback(response);
-      }
-    });
+    this.dialogsFormService
+      .confirm(title, fields, formGroup, false, true)
+      .subscribe((response) => {
+        if (response !== undefined) {
+          this.addFeedback(response);
+        }
+      });
   }
 
 }

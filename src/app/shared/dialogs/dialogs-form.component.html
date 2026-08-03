@@ -138,7 +138,7 @@
   @if (title !== 'Rating') {
     <mat-dialog-actions>
       <span class="mat-caption warn-text-color margin-lr-8">{{errorMessage}}</span>
-      <button type="button" mat-raised-button (click)="dialogRef.close('cancel')" i18n>Cancel</button>
+      <button type="button" mat-raised-button (click)="onCancel()" i18n>Cancel</button>
       <button type="submit" [planetSubmit]="modalForm.valid && isSpinnerOk" color="primary" mat-raised-button [disabled]="!isValid() && (disableIfInvalid || !isDirty())" i18n>Submit</button>
     </mat-dialog-actions>
   }
