@@ -1,9 +1,17 @@
 @use '../variables' as v;
+@use '../mixins' as m;
+
+.mat-column-name {
+  @include m.table-column-grow;
+}
 
 .mat-column-name,
 .mat-column-courseTitle {
-  max-width: 25vw;
   overflow: hidden;
+}
+
+.mat-column-courseTitle {
+  @include m.table-column-fixed(15rem);
 }
 
 .cell-content {
@@ -14,22 +22,43 @@
 }
 
 .mat-column-stepNum {
-  max-width: 150px;
+  @include m.table-column-fixed(9rem);
 }
 
+.mat-column-docSource {
+  @include m.table-column-fixed(10rem);
+}
+
+// table-column-fixed allows these to shrink to nothing, but the status chip and the
+// 'medium' date format both have a hard legible floor, so keep the minimums they had before.
 .mat-column-status {
-  min-width: 150px;
+  @include m.table-column-fixed(11rem);
+  min-width: 9.5rem;
 }
 
 .mat-column-lastUpdateTime,
 .mat-column-gradeTime {
-  min-width: 165px;
+  @include m.table-column-fixed(11rem);
+  min-width: 10.5rem;
+}
+
+.mat-column-grade {
+  @include m.table-column-fixed(7rem);
+}
+
+.mat-column-user {
+  @include m.table-column-fixed(12rem);
+}
+
+.no-name-column .mat-column-lastUpdateTime {
+  @include m.table-column-grow;
 }
 
 @media (max-width: v.$screen-sm) {
-  mat-header-cell,
-  mat-cell {
-    min-width: 130px;
+  // Every cell used to hold a 130px floor here, with the container scrolling. Raise the
+  // table's floor to the sum of the column bases so nothing shrinks below its basis instead.
+  .min-width-table {
+    --responsive-table-min-width: 96rem;
   }
 
   .status-dropdown {
