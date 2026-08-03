@@ -81,6 +81,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       interactionPlugin
     ],
     initialView: 'dayGridMonth',
+    eventDisplay: 'block',
     contentHeight: 'auto',
     locales: allLocales,
     locale: this.document.documentElement.lang,
@@ -157,9 +158,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
       this.tasks = tasks.filter(task => task.status !== 'archived').map(task => {
         const taskColors = task.completed ? {
-          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
+          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: 'white'
         } : {
-          backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
+          backgroundColor: 'orange', borderColor: 'orange', textColor: 'white'
         };
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
@@ -176,11 +177,19 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
     }
   ) {
-    const allDay = !meetup.isTask && meetup.startTime === undefined || meetup.startTime === '';
+    const allDay = !meetup.isTask && (meetup.startTime === undefined || meetup.startTime === '' || meetup.startTime === null);
+    const startMidnight = new Date(startDate);
+    startMidnight.setHours(0, 0, 0, 0);
+
+    const endMidnight = new Date(endDate);
+    endMidnight.setHours(0, 0, 0, 0);
+
+    const isMultiDayAllDay = allDay && endMidnight.getTime() > startMidnight.getTime();
+
     return {
       title: meetup.title,
-      start: addDateAndTime(startDate, meetup.startTime),
-      end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
+      start: addDateAndTime(startMidnight.getTime(), meetup.startTime),
+      end: addDateAndTime(endMidnight.getTime(), isMultiDayAllDay ? '24:00' : meetup.endTime),
       allDay,
       editable: true,
       extendedProps: { meetup },
