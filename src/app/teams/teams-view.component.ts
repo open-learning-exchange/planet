@@ -660,7 +660,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const { tasks, ...currentLeader } = this.members.find(mem => memberCompare(mem, this.leader));
+    const { tasks, ...currentLeader } = this.members.find(mem => memberCompare(mem, this.leader)) || {};
     return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
   }
 

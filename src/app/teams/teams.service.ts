@@ -208,7 +208,16 @@ export class TeamsService {
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
-    return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
+    const oldLeaderUpdate = oldLeader?._id && oldLeader.fromShelf !== true ?
+      [ this.membershipWriteDoc(oldLeader, { isLeader: false }) ] :
+      [];
+    const promotionRequest = this.writeMembershipDocs([ this.membershipWriteDoc(newLeader, { isLeader: true }) ]);
+    return promotionRequest.pipe(
+      switchMap(promotionResponse => oldLeaderUpdate.length > 0 ?
+        this.writeMembershipDocs(oldLeaderUpdate).pipe(map(() => promotionResponse)) :
+        of(promotionResponse)
+      )
+    );
   }
 
   // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
