@@ -9,7 +9,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 
@@ -93,6 +93,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
+  @Input() confirmDelete = false;
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepsChange = new EventEmitter<unknown[]>();
 
@@ -102,7 +103,6 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   openIndex = -1;
   private onDestroy$ = new Subject<void>();
   listId = uniqueId();
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
 
   constructor(
     private planetStepListService: PlanetStepListService,
@@ -144,14 +144,14 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (listId !== this.listId) {
       return;
     }
-    if (direction === 0) {
-      this.promptDeleteStep(index, direction);
+    if (direction === 0 && this.confirmDelete) {
+      this.promptDeleteStep(index);
       return;
     }
     this.performStepMove(index, direction);
   }
 
-  promptDeleteStep(index: number, direction: number) {
+  promptDeleteStep(index: number) {
     const { steps } = this;
     const stepItem = Array.isArray(steps)
       ? steps[index]
@@ -162,13 +162,13 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
       : null;
     const stepTitle = titleVal || `${this.defaultName} ${index + 1}`;
 
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
           request: of(true),
           onNext: () => {
-            this.deleteDialog.close();
-            this.performStepMove(index, direction);
+            dialogRef.close();
+            this.performStepMove(index, 0);
             if (!this.listMode) {
               if (this.openIndex === index) {
                 this.toList();
@@ -179,8 +179,8 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
           },
           onError: () => {}
         },
-        changeType: 'delete',
-        type: 'step',
+        showMainParagraph: false,
+        extraMessage: $localize`Are you sure you want to delete the following step?`,
         displayName: stepTitle
       }
     });
@@ -222,6 +222,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   removeStep() {
     this.moveStep({ index: this.openIndex, direction: 0, listId: this.listId });
+    if (!this.confirmDelete) {
+      this.toList();
+    }
   }
 
 }
