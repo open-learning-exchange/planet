@@ -164,12 +164,14 @@
             }
           }
           @if (routeTeamId && currentFilter.viewMode === 'adopt') {
-            <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
-              <mat-icon>get_app</mat-icon>
-              @if (!isMobile) {
-                <label i18n> Adopt</label>
-              }
-            </button>
+            <div [matTooltip]="getActionTooltip(element, 'adopt')">
+              <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
+                <mat-icon>get_app</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Adopt</label>
+                }
+              </button>
+            </div>
           }
           @if (currentFilter.viewMode !== 'adopt') {
             <div [matTooltip]="getActionTooltip(element, 'export')">
