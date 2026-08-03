@@ -81,7 +81,7 @@
         }
       </ng-container>
     }
-    <button mat-icon-button [matMenuTriggerFor]="userProfile">
+    <button mat-icon-button [matMenuTriggerFor]="userProfile" i18n-title title="User Profile">
       @if (user._attachments) {
         <img class="profile-image-large" [src]="userImgSrc">
       } @else {
