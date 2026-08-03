@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin } from 'rxjs';
+import { of, empty, forkJoin, throwError } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -183,8 +183,11 @@ export class TeamsService {
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
-      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
+      switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
+        membershipDocs.map(membershipDoc => this.membershipWriteDoc(
+          { ...membershipDoc, ...memberInfo, ...membershipProps },
+          deleted
+        ))
       ))
     );
   }
@@ -216,11 +219,66 @@ export class TeamsService {
     ));
   }
 
+  // Membership documents contain exactly this persisted schema; other member fields are enriched view data.
+  private membershipWriteDoc(member, overrides: any = {}) {
+    const {
+      _id,
+      _rev,
+      createdDate,
+      updatedDate,
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType,
+      isLeader,
+      role,
+      _deleted
+    } = { ...member, ...overrides };
+    return {
+      ...(_id ? { _id } : {}),
+      ...(_rev ? { _rev } : {}),
+      ...(createdDate !== undefined ? { createdDate } : {}),
+      ...(updatedDate !== undefined ? { updatedDate } : {}),
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType: docType || 'membership',
+      ...(isLeader !== undefined ? { isLeader } : {}),
+      ...(role !== undefined ? { role } : {}),
+      ...(_deleted === true ? { _deleted: true } : {})
+    };
+  }
+
+  private writeMembershipDocs(docs: any[]) {
+    return this.couchService.bulkDocs(this.dbName, docs).pipe(
+      switchMap(response => this.validateBulkDocsResponse(response))
+    );
+  }
+
+  private validateBulkDocsResponse(response: any) {
+    const results = Array.isArray(response) ? response : response?.res;
+    if (!Array.isArray(results)) {
+      return throwError(new Error('Unexpected bulk document response.'));
+    }
+    const error = results.find(result => result.error);
+    return error ? throwError(error) : of(response);
+  }
+
   membershipProps(team, memberInfo, docType) {
     const { userId, userPlanetCode, isLeader } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType, isLeader
+      teamId,
+      userId,
+      teamPlanetCode,
+      teamType,
+      userPlanetCode,
+      docType,
+      ...(isLeader !== undefined ? { isLeader } : {})
     };
   }
 
