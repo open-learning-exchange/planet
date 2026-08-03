@@ -266,6 +266,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         sync: this.sync,
         editable: this.editable,
         isTask: true,
+        onMeetupsChange: () => this.getTasks(),
         onEditTask: () => this.openTaskEditDialog(task),
         onDeleteTask: () => this.openTaskDeleteDialog(task)
       }
