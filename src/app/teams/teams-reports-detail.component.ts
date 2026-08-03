@@ -4,6 +4,7 @@ import { MatDivider } from '@angular/material/list';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
+import { roundCurrency, sumCurrency } from './teams.utils';
 
 @Component({
   selector: 'planet-teams-reports-detail',
@@ -28,10 +29,10 @@ export class TeamsReportsDetailComponent implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.expenses = this.report.wages + this.report.otherExpenses;
-    this.income = this.report.sales + this.report.otherIncome;
-    this.net = this.income - this.expenses;
-    this.endingBalance = this.net + this.report.beginningBalance;
+    this.expenses = sumCurrency([ this.report.wages, this.report.otherExpenses ]);
+    this.income = sumCurrency([ this.report.sales, this.report.otherIncome ]);
+    this.net = roundCurrency(this.income - this.expenses);
+    this.endingBalance = sumCurrency([ this.net, this.report.beginningBalance ]);
     this.receiptImages = this.teamsAttachmentsService.receiptAttachments(this.report);
   }
 
