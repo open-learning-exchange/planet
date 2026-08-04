@@ -5,7 +5,8 @@ LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 COPY ./gateway/src ./src/
 COPY ./gateway/tsconfig.json ./
@@ -18,7 +19,8 @@ LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 RUN apk add --no-cache poppler-utils
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev
 COPY --from=builder /dist ./dist/
 
 CMD ["node", "dist/index.js"]
