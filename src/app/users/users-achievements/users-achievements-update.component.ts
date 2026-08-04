@@ -138,7 +138,6 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     return this.editForm.controls.links;
   }
   minBirthDate: Date = this.userService.minBirthDate;
-  today: Date = new Date();
 
   constructor(
     private fb: NonNullableFormBuilder,
