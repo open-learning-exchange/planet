@@ -188,6 +188,7 @@ export class UsersAchievementsComponent implements OnInit {
 
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
+    const formattedMemberSince = this.user.joinDate ? formatDate(this.user.joinDate, 'mediumDate', this.localeId) : '';
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -199,6 +200,7 @@ export class UsersAchievementsComponent implements OnInit {
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
+          ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
           `,
         alignment: 'center',
       },

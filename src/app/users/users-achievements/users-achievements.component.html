@@ -56,13 +56,18 @@
               @if (!publicView) {
                 <div class="birth-info">
                   @if (user.birthDate) {
-                    <span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span>
+                    <span i18n>Birthdate: {{' ' + (user.birthDate | date:'mediumDate') + ' '}}</span>
                     }<br/><br/>
                     @if (user.birthplace) {
                       <span i18n>Birthplace: {{' ' + user.birthplace}} </span>
                     }
                   </div>
+                @if (user.joinDate) {
+                  <div class="user-join-info">
+                    <span i18n>Member since: {{ user.joinDate | date:'mediumDate' }}</span>
+                  </div>
                 }
+              }
               </div>
               @if (achievements.purpose) {
                 <div>
