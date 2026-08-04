@@ -55,10 +55,11 @@
 }
 
 @media (max-width: v.$screen-sm) {
-  // Every cell used to hold a 130px floor here, with the container scrolling. Raise the
-  // table's floor to the sum of the column bases so nothing shrinks below its basis instead.
+  // Let the rendered fixed columns determine the scroll width so each configuration only
+  // scrolls as far as its displayed columns require.
   .min-width-table {
-    --responsive-table-min-width: 96rem;
+    --responsive-table-min-width: 100%;
+    --table-column-flex-shrink: 0;
   }
 
   .status-dropdown {
