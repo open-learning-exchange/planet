@@ -75,8 +75,9 @@ jobs:
           cacherepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-cache"
           cacheargs=( --cache-from "type=registry,ref=$cacherepo" )
           # Every branch reads the shared cache, only master and releases write it
-          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ]; then
-            cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max" )
+          # TODO drop the last clause before merge, it just proves the export path runs
+          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ] || [ "$GITHUB_REF_NAME" = 'claude/docker-npm-cache-buildkit-ervz2o' ]; then
+            cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max,ignore-error=true" )
           fi
           docker buildx build \
             -f './docker/db-init/Dockerfile' \
