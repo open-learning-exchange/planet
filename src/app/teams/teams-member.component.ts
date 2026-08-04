@@ -1,9 +1,8 @@
 import { Component, Input, EventEmitter, Output, OnInit, OnChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardContent } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
@@ -72,7 +71,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     private userService: UserService,
     private stateService: StateService,
     private tasksService: TasksService,
-    private dialog: MatDialog
+    private usersProfileDialogService: UsersProfileDialogService
   ) {}
 
   ngOnInit() {
@@ -89,11 +88,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+    this.usersProfileDialogService.open({ member });
   }
 
   toggleTask(event: MatSelectionListChange) {
