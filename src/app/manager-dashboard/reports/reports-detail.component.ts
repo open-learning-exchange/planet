@@ -918,7 +918,11 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
-  openMemberView(user) {
+  openMemberView(user, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { name: user.name, userPlanetCode: user.planetCode } },
       autoFocus: false

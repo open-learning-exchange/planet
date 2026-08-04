@@ -189,6 +189,12 @@ export class TasksComponent implements OnInit {
     });
   }
 
+  onAvatarKeydown(event: KeyboardEvent, assignee: any): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.openMemberDialog(assignee);
+  }
+
   openAssigneeMenu(event) {
     event.stopPropagation();
   }

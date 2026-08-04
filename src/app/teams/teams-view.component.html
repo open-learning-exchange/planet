@@ -146,8 +146,8 @@
             @for (request of requests; track request) {
               <mat-card>
                 <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">
+                  <img mat-card-avatar [src]="request.avatar" tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openMemberDialog(request, $event)" (keydown.space)="openMemberDialog(request, $event)" (click)="openMemberDialog(request, $event)">
+                  <a mat-card-title tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openMemberDialog(request, $event)" (keydown.space)="openMemberDialog(request, $event)" (click)="openMemberDialog(request, $event)">
                     {{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name | truncateText:20}}
                   </a>
                   <mat-card-subtitle>
