@@ -168,14 +168,13 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeCourse(item: any) {
-    const courseTitle = this.coursesService.getCourseNameFromId(item._id);
     this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
       data: {
         changeType: 'leave',
         type: 'course',
-        displayName: courseTitle,
+        displayName: item.title,
         okClick: {
-          request: this.coursesService.courseResignAdmission(item._id, 'resign', courseTitle),
+          request: this.coursesService.courseResignAdmission(item._id, 'resign', item.title),
           onNext: () => {
             this.dialogPrompt.close();
             this.removeMessage(item);
