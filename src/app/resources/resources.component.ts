@@ -138,14 +138,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
   }
@@ -155,7 +155,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedSync = [];
   isAuthorized = false;
   showFilters = false;
-  searchSelection: any = { _empty: true };
+  searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
@@ -400,7 +400,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+    this.searchSelection.isEmpty = Object.entries(this.searchSelection).every(
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
@@ -420,7 +420,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSearch(complete = false) {
     if (this.resources.filter !== '') {
       this.searchService.recordSearch({
-        text: this._titleSearch,
+        text: this.titleSearch,
         type: this.dbName,
         filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);

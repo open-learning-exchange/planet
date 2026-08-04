@@ -89,14 +89,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   cancelDialog: any;
   isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
-  private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  #mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
   get mode(): 'team' | 'enterprise' {
-    return this._mode;
+    return this.#mode;
   }
   set mode(newMode: 'team' | 'enterprise') {
-    if (newMode !== this._mode) {
-      this._mode = newMode;
+    if (newMode !== this.#mode) {
+      this.#mode = newMode;
       this.getTeams();
     }
   }
