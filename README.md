@@ -144,6 +144,10 @@ The source and translation catalogs use Angular's current decimal message IDs. L
 * Crowdin ingests `src/i18n/messages.xlf`; translated catalogs return through the Crowdin PR workflow.
 * Run `npm run i18n:check` any time to verify extraction succeeds without touching committed files.
 
+## Environment Files
+
+Angular uses `fileReplacements` in `angular.json` for the `dev`, `production`, and `test` build configurations. `src/environments/environment.dev.ts` is generated from `src/environments/environment.template` by running `./dev-env.sh`. If you change environment files, keep the corresponding `fileReplacements` entries in sync.
+
 ## Tests
 
 You can run tests directly from the host or within the development container.
