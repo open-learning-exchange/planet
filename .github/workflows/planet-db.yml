@@ -57,16 +57,34 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
+      # Provides the docker-container driver, the only one that can export a
+      # layer cache with `--cache-to`.
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Exposes ACTIONS_RUNTIME_TOKEN / ACTIONS_RESULTS_URL to the build step;
+      # without them `type=gha` cannot reach the Actions cache.
+      - name: Expose GitHub Actions runtime
+        uses: crazy-max/ghaction-github-runtime@v3
+
       - name: Build image
+        # `docker build` always resolves to the default docker-driver builder,
+        # so the build must name the buildx builder explicitly.
+        env:
+          BUILDX_BUILDER: ${{ steps.buildx.outputs.name }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
           repo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           branchrepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-db-init-$PLANET_VERSION-$SAFE_BRANCH"
-          docker build \
+          docker buildx build \
             -f './docker/db-init/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
+            --cache-from type=gha,scope=db-init-${{ matrix.arch }} \
+            --cache-to type=gha,scope=db-init-${{ matrix.arch }},mode=max \
+            --load \
             -t $repo .
           docker images
           docker tag $repo $branchrepo
