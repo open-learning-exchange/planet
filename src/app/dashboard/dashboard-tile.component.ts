@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
+import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -99,6 +100,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
+    private coursesService: CoursesService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
@@ -157,10 +159,31 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
       this.removeTeam(item, userId, userPlanetCode);
+    } else if (this.shelfName === 'courseIds') {
+      this.removeCourse(item);
     } else {
       const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
       this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
+  }
+
+  removeCourse(item: any) {
+    const courseTitle = this.coursesService.getCourseNameFromId(item._id);
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'leave',
+        type: 'course',
+        displayName: courseTitle,
+        okClick: {
+          request: this.coursesService.courseResignAdmission(item._id, 'resign', courseTitle),
+          onNext: () => {
+            this.dialogPrompt.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
   }
 
   removeTeam(item, userId, userPlanetCode) {
