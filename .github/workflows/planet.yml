@@ -186,10 +186,6 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v3
 
-      # type=gha needs ACTIONS_RUNTIME_TOKEN / ACTIONS_RESULTS_URL in the build
-      - name: Expose GitHub Actions runtime
-        uses: crazy-max/ghaction-github-runtime@v3
-
       - name: Build image
         # docker build would resolve to the default docker-driver builder
         env:
@@ -219,11 +215,16 @@ jobs:
             cp -ar ./ng-app/langbuild/ng-app/dist/$lang2 ./ng-app/dist/
             mv ./ng-app/dist/$lang2 ./ng-app/dist/$LANGUAGE
           done
+          cacherepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-planet-cache"
+          cacheargs=( --cache-from "type=registry,ref=$cacherepo" )
+          # Every branch reads the shared cache, only master and releases write it
+          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ]; then
+            cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max" )
+          fi
           docker buildx build \
             -f './docker/planet/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
-            --cache-from type=gha,scope=planet-${{ matrix.arch }} \
-            --cache-to type=gha,scope=planet-${{ matrix.arch }},mode=max \
+            "${cacheargs[@]}" \
             --load \
             -t $repo .
           docker images
