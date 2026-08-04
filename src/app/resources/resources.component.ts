@@ -37,7 +37,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
@@ -68,6 +68,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatIcon,
     ResourcesSearchComponent,
     MatFormField,
+    MatSuffix,
     PlanetTagInputComponent,
     FormsModule,
     ReactiveFormsModule,

@@ -29,7 +29,7 @@ import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
@@ -70,6 +70,7 @@ interface CommunityDescriptionForm {
     MatLabel,
     MatIcon,
     MatPrefix,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatSelect,
