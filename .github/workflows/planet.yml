@@ -218,8 +218,7 @@ jobs:
           cacherepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-planet-cache"
           cacheargs=( --cache-from "type=registry,ref=$cacherepo" )
           # Every branch reads the shared cache, only master and releases write it
-          # TODO drop the last clause before merge, it just proves the export path runs
-          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ] || [ "$GITHUB_REF_NAME" = 'claude/docker-npm-cache-buildkit-ervz2o' ]; then
+          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ]; then
             cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max,ignore-error=true" )
           fi
           docker buildx build \
