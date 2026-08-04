@@ -2,21 +2,33 @@ import { Component, Input, OnChanges, OnDestroy, EventEmitter, Output, ViewChild
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ResourcesService } from '../resources.service';
 import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
+import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '../../shared/csv.service';
+import { couchAttachmentPath } from '../../shared/utils';
 import { NgClass } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {
+  MatTable, MatTableDataSource, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell,
+  MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'planet-resources-viewer',
   templateUrl: './resources-viewer.component.html',
   styleUrls: ['./resources-viewer.scss'],
-  imports: [NgClass, MatIconButton, MatIcon, MatAnchor]
+  imports: [
+    NgClass, MatIconButton, MatIcon, MatAnchor, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatSort,
+    MatSortHeader, MatPaginator
+  ]
 })
 export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
@@ -31,8 +43,26 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   resource: any;
   parent = this.route.snapshot.data.parent;
   pdfSrc: any;
+  csvColumns: string[] = [];
+  dataSource: MatTableDataSource<any>;
+  csvLoadError = false;
+  csvPreviewTooLarge = false;
+  csvPreviewTruncated = false;
+  readonly csvPreviewMaxSizeMb = CSV_PREVIEW_MAX_BYTES / 1024 / 1024;
+  readonly csvPreviewMaxRows = CSV_PREVIEW_MAX_ROWS;
+  private sortRef: MatSort;
+  private paginatorRef: MatPaginator;
+  private csvLoadSub: Subscription;
   private onDestroy$ = new Subject<void>();
   @ViewChild('pdfViewer') pdfViewer: ElementRef;
+  @ViewChild(MatSort) set sort(sort: MatSort) {
+    this.sortRef = sort;
+    this.assignCsvTableControls();
+  }
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
+    this.paginatorRef = paginator;
+    this.assignCsvTableControls();
+  }
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -41,6 +71,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
     private stateService: StateService,
     private userService: UserService,
     private couchService: CouchService,
+    private csvService: CsvService,
     private router: Router
   ) {
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))
@@ -68,6 +99,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.cancelCsvLoad();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -90,12 +122,15 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   }
 
   setResource(resource: any) {
+    this.cancelCsvLoad();
+    this.resetCsvPreview();
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
+    const attachment = resource._attachments[filename];
     this.mediaType = resource.mediaType;
-    this.contentType = resource._attachments[filename].content_type;
-    this.resourceSrc = this.urlPrefix + resource._id + '/' + filename;
+    this.contentType = attachment.content_type;
+    this.resourceSrc = this.urlPrefix + couchAttachmentPath(resource._id, filename);
     if (!this.mediaType) {
       const mediaTypes = [ 'image', 'pdf', 'audio', 'video', 'zip' ];
       this.mediaType = mediaTypes.find((type) => this.contentType.indexOf(type) > -1) || 'other';
@@ -110,8 +145,68 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
       this.mediaType = 'HTML';
       this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.resourceSrc);
     }
+    if (this.isCsvResource(filename)) {
+      this.mediaType = 'csv';
+      if (attachment.length > CSV_PREVIEW_MAX_BYTES) {
+        this.csvPreviewTooLarge = true;
+      } else {
+        this.loadCsvTable(resource._id, filename);
+      }
+    }
     // Emit resource src so parent component can use for links
     this.resourceUrl.emit(this.resourceSrc);
+  }
+
+  private loadCsvTable(docId: string, filename: string) {
+    const domain = this.parent ? this.stateService.configuration.parentDomain : undefined;
+    this.csvLoadSub = this.csvService.loadCsvAttachment(docId, filename, domain)
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(({ columns, rows, truncated }) => {
+        this.csvColumns = columns;
+        this.csvPreviewTruncated = truncated;
+        this.dataSource = new MatTableDataSource(rows);
+        this.dataSource.sortingDataAccessor = (row, column) => {
+          const value = `${row[column] ?? ''}`;
+          const trimmedValue = value.trim();
+          return trimmedValue !== '' && !isNaN(+trimmedValue) ? +trimmedValue : value.toLowerCase();
+        };
+        this.assignCsvTableControls();
+      }, () => {
+        this.csvLoadError = true;
+      });
+  }
+
+  private resetCsvPreview() {
+    this.dataSource = undefined;
+    this.csvColumns = [];
+    this.csvLoadError = false;
+    this.csvPreviewTooLarge = false;
+    this.csvPreviewTruncated = false;
+  }
+
+  private cancelCsvLoad() {
+    if (this.csvLoadSub) {
+      this.csvLoadSub.unsubscribe();
+      this.csvLoadSub = undefined;
+    }
+  }
+
+  private isCsvResource(filename: string) {
+    const contentType = (this.contentType || '').toLowerCase().split(';')[0].trim();
+    return contentType.indexOf('csv') > -1 || contentType === 'text/comma-separated-values' ||
+      filename.toLowerCase().endsWith('.csv');
+  }
+
+  private assignCsvTableControls() {
+    if (!this.dataSource) {
+      return;
+    }
+    if (this.sortRef) {
+      this.dataSource.sort = this.sortRef;
+    }
+    if (this.paginatorRef) {
+      this.dataSource.paginator = this.paginatorRef;
+    }
   }
 
   openFullscreen() {

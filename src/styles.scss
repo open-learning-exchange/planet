@@ -424,6 +424,11 @@ body {
     height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
+
+    // Use the parent's bounds when the view is inside an already-sized container.
+    &.fill-parent {
+      height: 100%;
+    }
   }
 
   .view-container.view-full-height.view-table {
@@ -498,6 +503,7 @@ body {
     grid-template-columns: minmax(150px, max-content);
     align-items: stretch;
     gap: 0.5rem;
+    padding: 5px 0;
     width: max-content;
     max-width: 100%;
 
@@ -627,11 +633,6 @@ body {
   .vertical-form {
     display: flex;
     flex-direction: column;
-  }
-
-  // Add to a mat-option to remove the checkbox
-  .hide-checkbox > .mat-pseudo-checkbox {
-    display: none;
   }
 
   .ole-logo {

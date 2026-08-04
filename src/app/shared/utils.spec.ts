@@ -1,9 +1,23 @@
 import { vi } from 'vitest';
 import {
-  doesMarkdownPreviewTruncate, hasMarkdownImages, normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
+  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, hasMarkdownImages, normalizeImage,
+  normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
+
+  describe('CouchDB attachment URLs', () => {
+
+    it('encodes document IDs and individual attachment path segments', () => {
+      expect(couchAttachmentPath('doc/with?chars', 'site/assets/main #1%.css')).toBe(
+        'doc%2Fwith%3Fchars/site/assets/main%20%231%25.css'
+      );
+      expect(couchAttachmentUrl('http://localhost:2200/', '/resources/', 'doc/id', 'site/index.html')).toBe(
+        'http://localhost:2200/resources/doc%2Fid/site/index.html'
+      );
+    });
+
+  });
 
   describe('normalizeMarkdownWhitespace', () => {
 

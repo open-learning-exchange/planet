@@ -1,52 +1,45 @@
-@use "../variables" as v;
+@use "../mixins" as m;
 
-.mat-column-taken {
-  max-width: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 32px;
-}
-
-.mat-column-createdDate {
-  max-width: 200px;
-  text-align: left;
-  padding: 0 20px;
-}
-
-.mat-column-name, .mat-column-courseTitle {
-  max-width: 250px;
-}
-
-.course-title, .mat-column-name span {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+:host {
   display: block;
 }
 
+:host(.embedded),
+:host(.embedded) > .primary-link-hover {
+  height: 100%;
+}
+
+.mat-column-name {
+  @include m.table-column-grow;
+}
+
+.mat-column-name span,
+.mat-column-courseTitle .course-title {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mat-column-taken,
+.mat-column-createdDate {
+  @include m.table-column-fixed(16rem);
+}
+
+.mat-column-taken {
+  justify-content: center;
+  text-align: center;
+}
+
+.mat-column-courseTitle {
+  @include m.table-column-fixed(15rem);
+}
+
+.mat-column-createdDate {
+  text-align: start;
+}
+
 .mat-column-action {
-  justify-content: flex-start;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.survey-action-cell {
-  padding: 5px 0;
-}
-
-/* Targeting tablet screens */
-@media (max-width: v.$screen-md) {
-  .mat-column-name {
-    max-width: 175px;
-  }
-}
-
-/* Targeting mobile screens */
-@media (max-width: v.$screen-sm) {
-  .mat-column-name {
-    max-width: 80px;
-  }
+  @include m.table-column-fixed(18rem);
 }

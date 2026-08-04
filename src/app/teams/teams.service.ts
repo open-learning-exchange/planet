@@ -149,6 +149,11 @@ export class TeamsService {
     );
   }
 
+  cancelJoinRequest(team) {
+    const user = this.userService.get();
+    return this.removeFromRequests(team, { userId: user._id, userPlanetCode: this.stateService.configuration.code });
+  }
+
   toggleTeamMembership(team, leaveTeam, memberInfo) {
     return (memberInfo.fromShelf === true && leaveTeam === true ?
       this.updateShelf(memberInfo) :
