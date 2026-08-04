@@ -113,8 +113,8 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
       data: { member },
       maxWidth: '90vw',
       // The profile is taller than the dialog, so focusing the first tabbable element
-      // scrolls the content past the header on open. Focus the container instead.
-      autoFocus: false,
+      // scrolls the content past the header on open. Focus the dialog container instead.
+      autoFocus: 'dialog',
       maxHeight: '90vh'
     });
   }

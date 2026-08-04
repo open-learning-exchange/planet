@@ -1,15 +1,14 @@
 <div class="tile-band" [class.band-leader]="isTeamLeader" [class.band-request]="isRequest"></div>
-<!-- Hidden from assistive tech on purpose: the name button below is the same action with a real label -->
-<div class="tile-avatar cursor-pointer" aria-hidden="true" (click)="openMemberDialog(member)">
+<button type="button" class="tile-avatar cursor-pointer" [attr.aria-label]="displayName" (click)="openMemberDialog(member)">
   @if (hasImage) {
-    <img [src]="member?.avatar" [alt]="displayName" (error)="hasImage = false">
+    <img [src]="member?.avatar" alt="" (error)="hasImage = false">
   } @else {
     <div class="tile-initials initials-{{initialsColorIndex}}">{{initials}}</div>
   }
   @if (isTeamLeader) {
     <span class="leader-badge"><mat-icon>star</mat-icon></span>
   }
-</div>
+</button>
 <button type="button" class="tile-name cursor-pointer" (click)="openMemberDialog(member)">{{displayName | truncateText:70}}</button>
 <div class="tile-chips">
   @if (isTeamLeader) {

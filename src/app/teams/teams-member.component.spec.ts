@@ -203,7 +203,7 @@ describe('TeamsMemberComponent', () => {
 
       expect(dialog.open).toHaveBeenCalledWith(
         expect.anything(),
-        expect.objectContaining({ data: { member }, autoFocus: false })
+        expect.objectContaining({ data: { member }, autoFocus: 'dialog' })
       );
     });
   });
