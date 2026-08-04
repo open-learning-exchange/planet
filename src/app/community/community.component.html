@@ -58,14 +58,12 @@
             }
             <div class="card-grid">
               @for (councillor of councillors; track councillor) {
-                <mat-card>
-                  <planet-teams-member
-                    [leadershipTitle]="councillor.doc.leadershipTitle"
-                    [member]="councillor"
-                    [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
-                    (actionClick)="openChangeTitleDialog($event)">
-                  </planet-teams-member>
-                </mat-card>
+                <planet-teams-member
+                  [leadershipTitle]="councillor.doc.leadershipTitle"
+                  [member]="councillor"
+                  [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                  (actionClick)="openChangeTitleDialog($event)">
+                </planet-teams-member>
               }
             </div>
           </mat-tab>

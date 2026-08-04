@@ -36,13 +36,8 @@ planet-calendar {
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 125px;
+  grid-auto-rows: auto;
   margin: 0 0.5rem;
-  .top-right-icon {
-    position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-  }
   word-break: break-word;
 }
 
