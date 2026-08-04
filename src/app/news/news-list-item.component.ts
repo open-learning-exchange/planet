@@ -4,7 +4,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
@@ -164,13 +164,15 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
 
   sendNewsNotifications(news: any = '') {
     const replyBy = this.currentUser.name;
-    const userId = news.user._id;
-    if (replyBy === news.user.name) {
+    const legacyPlanetCode = news.createdOn || this.stateService.configuration.code;
+    const recipient = notificationRecipient(news.user, legacyPlanetCode);
+    const sender = notificationRecipient(this.currentUser, this.stateService.configuration.code);
+    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
       return;
     }
     const link = this.router.url;
     const notification = {
-      user: userId,
+      ...recipient,
       'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
       'priority': 1,
