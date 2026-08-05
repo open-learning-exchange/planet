@@ -159,7 +159,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   }
 
   canDeactivate(): Observable<boolean> | boolean {
-    if (this.isInternalNavigation || this.isFinished) {
+    // The router re-runs this guard whenever questionNum changes, whether the component navigated
+    // itself or the learner used browser history.  Clearing the flag re-arms the next exit.
+    if (this.isInternalNavigation || this.isFinished || this.isSameExamDestination()) {
       this.isInternalNavigation = false;
       return true;
     }
@@ -192,6 +194,17 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     );
   }
 
+  // Only questionNum may differ between two views of one test, so any other change of destination
+  // -- a different submission, mode or test id -- still counts as leaving
+  isSameExamDestination(): boolean {
+    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const identity = (url: string) => {
+      const [ path, ...params ] = url.split(';');
+      return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
+    };
+    return !!destination && identity(this.router.serializeUrl(destination)) === identity(this.router.url);
+  }
+
   setExam(params) {
     this.stepNum = +params.get('stepNum');
     this.examType = params.get('type') || this.examType;
@@ -201,6 +214,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.mode = mode || this.mode;
     this.isFinished = false;
     this.isInternalNavigation = false;
+    // Params only change by moving to a question, including via browser history, so the stored
+    // answer for the destination has to be restored again
+    this.isNewQuestion = true;
     this.answer.setValue(null);
     this.currentAnswer = null;
     if (courseId) {
@@ -299,7 +315,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.setExamPreview();
       return;
     }
-    this.isInternalNavigation = true;
+    // A zero direction keeps the same url, which the router skips without running the guard, so
+    // flagging it would leave the next real exit unprompted
+    this.isInternalNavigation = direction !== 0;
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
@@ -359,6 +377,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
         const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
         if (!step?.[this.examType]?._id) {
           this.planetMessageService.showAlert($localize`This test is not available`);
+          this.isInternalNavigation = true;
           this.goBack();
           return EMPTY;
         }
