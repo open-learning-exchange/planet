@@ -146,7 +146,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
       );
       if (response['_attachments']) {
         const filename = Object.keys(response._attachments)[0];
-        this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
+        this.imageSrc = `${environment.couchAddress}/${dbName}/${userId}/${filename}`;
       }
       this.checkHasAchievments();
     }, (error) => {
