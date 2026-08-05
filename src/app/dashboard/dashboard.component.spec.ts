@@ -68,9 +68,9 @@ describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
     getCertifications: vi.fn().mockReturnValue(of([]))
   };
 
-  const deviceTypeSubject = new BehaviorSubject<DeviceType>(DeviceType.DESKTOP);
+  let deviceTypeSubject: BehaviorSubject<DeviceType>;
   const deviceInfoServiceMock = {
-    watchDeviceType: vi.fn().mockReturnValue(deviceTypeSubject.asObservable())
+    watchDeviceType: vi.fn()
   };
 
   const teamsServiceMock = {
@@ -84,6 +84,10 @@ describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    deviceTypeSubject = new BehaviorSubject<DeviceType>(DeviceType.DESKTOP);
+    deviceInfoServiceMock.watchDeviceType.mockReturnValue(deviceTypeSubject.asObservable());
+    userServiceMock.profileBanner = new BehaviorSubject<boolean>(true);
+    userServiceMock.profileComplete$ = new BehaviorSubject<boolean>(false);
     userServiceMock.get.mockReturnValue({ ...mockUser });
     couchServiceMock.currentTime.mockReturnValue(of(1700000000000));
     couchServiceMock.findAll.mockReturnValue(of([]));
@@ -149,7 +153,7 @@ describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
     it('should handle error when fetching login activities smoothly', () => {
       couchServiceMock.findAll.mockImplementation((db: string) => {
         if (db === 'login_activities') {
-          return throwError(() => new Error('CouchDB connection error'));
+          return throwError(new Error('CouchDB connection error'));
         }
         return of([]);
       });
@@ -297,7 +301,7 @@ describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
     });
 
     it('should handle bulkGet error gracefully without crashing initDashboard', () => {
-      couchServiceMock.bulkGet.mockReturnValue(throwError(() => new Error('Bulk get failed')));
+      couchServiceMock.bulkGet.mockReturnValue(throwError(new Error('Bulk get failed')));
       fixture.detectChanges();
       expect(component.data.resources).toEqual([]);
       expect(component.isLoading).toBe(false);
