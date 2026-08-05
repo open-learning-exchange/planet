@@ -127,7 +127,7 @@ export class CoursesService {
     forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
     this.usersService.requestUserData();
   }

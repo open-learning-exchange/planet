@@ -240,6 +240,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "no-var": "error",
+        "object-shorthand": ["error", "always"],
         quotes: "off",
 
         "@stylistic/quotes": ["error", "single", {
