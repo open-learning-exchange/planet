@@ -111,9 +111,13 @@ jobs:
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-db-init-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
-          docker manifest annotate $manifesttag $armtag --os linux --arch arm
+          # arm images are ARMv6 (Alpine armhf); without --variant they inherit a wrong v7
+          docker manifest annotate $manifesttag $armtag --os linux --arch arm --variant v6
           docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
           docker manifest push $manifesttag
+          armvariant="$(docker manifest inspect "$manifesttag" \
+            | jq -r '.manifests[] | select(.platform.architecture=="arm") | .platform.variant')"
+          [ "$armvariant" = 'v6' ] || { echo "arm variant regressed: expected v6, got ${armvariant:-<none>}"; exit 1; }
 
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
@@ -127,7 +131,7 @@ jobs:
           for tag in "$DOCKER_ORG/$DOCKER_REPO:db-init-$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:db-init"; do
             docker manifest create $tag $amd64tag $armtag $arm64tag
             docker manifest annotate $tag $amd64tag --os linux --arch amd64
-            docker manifest annotate $tag $armtag --os linux --arch arm
+            docker manifest annotate $tag $armtag --os linux --arch arm --variant v6
             docker manifest annotate $tag $arm64tag --os linux --arch arm64
             docker manifest push $tag
           done
