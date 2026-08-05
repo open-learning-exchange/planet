@@ -23,7 +23,7 @@
     background-color: v.$primary;
   }
 
-  .profile-image{
+  .profile-image {
     max-width: 15vh;
     border-radius: 50%;
     width: 100px;
@@ -37,22 +37,21 @@
     justify-content: center;
     text-align: center;
     margin-bottom: 2rem;
-   }
+  }
 
-   .birth-info {
+  .birth-info {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
-   }
+  }
 
-
-   .logo {
+  .logo {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 2rem;
-   }
+  }
 
   .mat-mdc-list-base .mat-mdc-list-item {
     &.mat-mdc-list-item-word-wrap {
@@ -100,7 +99,7 @@
     color: v.$primary;
     text-decoration: none;
     font-weight: bold;
-    display:block;
+    display: block;
     margin-top: 0.75rem;
   }
 
