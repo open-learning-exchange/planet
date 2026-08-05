@@ -1,12 +1,7 @@
 #!/bin/bash
 
-# Pre-push hook: lints the files this branch touches before allowing a push.
-# The list comes from `master...HEAD` plus anything edited or added but not yet
-# committed, and contents are read from the working tree, so reported line
-# numbers match what is on disk. CI lints the whole project against the pushed
-# commits and remains the authoritative gate.
-#
-# Set PRE_PUSH_BASE=<ref> for branches that are not based on master.
+# Pre-push hook: lints the current Planet and gateway working trees before
+# allowing a push. CI remains the authoritative check for pushed commits.
 
 pass=true
 RED='\033[1;31m'
@@ -15,57 +10,13 @@ NC='\033[0m'
 
 repo_root=$(git rev-parse --show-toplevel) || exit 1
 
-base_ref=$PRE_PUSH_BASE
-if [ -z "$base_ref" ]; then
-  for candidate in origin/master master; do
-    if git rev-parse --verify --quiet "$candidate" > /dev/null; then
-      base_ref=$candidate
-      break
-    fi
-  done
-fi
-
-# Paths the branch touches, plus uncommitted edits and untracked additions.
-changed_files() {
-  {
-    if [ -n "$base_ref" ]; then
-      git diff --name-only --diff-filter=d "$base_ref...HEAD"
-    fi
-    git diff --name-only --diff-filter=d HEAD
-    git ls-files --others --exclude-standard
-  } | sort -u
-}
-
-# Fills the `filtered` array with the paths on stdin that still exist on disk.
-filtered=()
-collect() {
-  local file
-  filtered=()
-  while IFS= read -r file; do
-    if [ -n "$file" ] && [ -f "$repo_root/$file" ]; then
-      filtered+=("$file")
-    fi
-  done
-}
-
-run_eslint() {
-  local label=$1
-  local dir=$2
-  local use_flat=$3
-  shift 3
-
-  local target="$repo_root/$dir"
-  local eslint="$target/node_modules/.bin/eslint"
+run_lint() {
+  local dir=$1
+  local label=$2
   local output
 
-  if [ ! -x "$eslint" ]; then
-    printf "${RED}%s lint skipped: no eslint in %s. Run npm install there.${NC}\n" "$label" "$dir"
-    pass=false
-    return
-  fi
-
-  echo "Running $label lint on $# file(s)"
-  if ! output=$(cd "$target" && ESLINT_USE_FLAT_CONFIG=$use_flat "$eslint" "$@" 2>&1); then
+  echo "Running $label lint"
+  if ! output=$(cd "$repo_root/$dir" && npm run lint 2>&1); then
     printf "${RED}%s lint failed.${NC}\n" "$label"
     echo "$output"
     pass=false
@@ -74,29 +25,8 @@ run_eslint() {
   fi
 }
 
-changed=$(changed_files)
-
-collect < <(printf '%s\n' "$changed" | grep -E '^src/.+\.(ts|html)$')
-planet_files=("${filtered[@]}")
-
-collect < <(printf '%s\n' "$changed" | grep -E '^gateway/.+\.ts$' | grep -vE '^gateway/(node_modules|dist)/')
-gateway_files=()
-for file in "${filtered[@]}"; do
-  gateway_files+=("${file#gateway/}")
-done
-
-# TODO: add lint:styles and lint:html here once their baselines pass
-if [ ${#planet_files[@]} -gt 0 ]; then
-  run_eslint "planet" "." "true" "${planet_files[@]}"
-fi
-
-if [ ${#gateway_files[@]} -gt 0 ]; then
-  run_eslint "gateway" "gateway" "false" "${gateway_files[@]}"
-fi
-
-if [ ${#planet_files[@]} -eq 0 ] && [ ${#gateway_files[@]} -eq 0 ]; then
-  echo "No changed TypeScript or template files to lint."
-fi
+run_lint "." "planet"
+run_lint "gateway" "gateway"
 
 if $pass; then
   exit 0

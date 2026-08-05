@@ -9,12 +9,12 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 ### Angular app (root)
 
 - `npm install` — install dependencies.
-- `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs ESLint over the files the branch touches (`master...HEAD` plus uncommitted and untracked edits) in both the root and `gateway/`; set `PRE_PUSH_BASE=<ref>` for branches not based on `master`. It is a copy, so re-run this command whenever `git-hooks/` changes.
+- `npm run install-hooks` — copy `git-hooks/*` into `.git/hooks`. The `pre-push` hook runs `npm run lint` against the current working tree in both the root and `gateway/`; CI remains authoritative for pushed commits. It is a copy, so re-run this command whenever `git-hooks/` changes.
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
 - `npm run dev` — runs `scripts/dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
-- `npm run test` — Karma + Jasmine; opens `localhost:9876`. There is no `e2e` workflow wired up on this branch.
-- Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `fdescribe` / `fit`).
+- `npm run test` — unit tests with Vitest through `@analogjs/vitest-angular`. There is no `e2e` workflow wired up on this branch.
+- Single spec: `ng test --test-files src/app/path/to/file.spec.ts` (or temporarily use `describe.only` / `it.only`).
 - `npm run lint` — ESLint over `src/**/*.{ts,html}` via `@angular-eslint/builder`. `ng lint --fix` auto-fixes.
 - `npm run lint:all` — ESLint + sass-lint (`lint:styles`) + htmlhint (`lint:html`). Not yet gating: the style/html baselines have pre-existing failures, so CI runs only `npm run lint` and the pre-push hook only ESLint until that debt is cleared.
 - Locales (en, so, fr, ne, ar, es): `ng serve --configuration <spa|fra|nep|ara|som>` or `LNG=es npm start`. Locale configs, base hrefs, and xlf sources are defined in `angular.json` under `projects.planet-app.i18n`.
@@ -65,4 +65,4 @@ From `docs/Style-Guide.md` (read it before making UI changes):
 
 ### Git workflow
 
-Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` lints the files your branch touches in both `./` and `gateway/`.
+Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` runs lint in both `./` and `gateway/`.

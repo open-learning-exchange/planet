@@ -266,8 +266,6 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         // "@typescript-eslint/member-ordering": "error",
         // "@typescript-eslint/no-unused-expressions": "error",
         // "@typescript-eslint/prefer-for-of": "error",
-        // "no-var": "error",
-        // "object-shorthand": "error",
         // "one-var": ["error", "never"],
         // "prefer-arrow/prefer-arrow-functions": "error",
         // "prefer-const": "error",
