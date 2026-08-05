@@ -26,6 +26,10 @@ import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PlanetMessageService } from '../../shared/planet-message.service';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { of } from 'rxjs';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -52,7 +56,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     ResourcesMenuComponent,
     MatAnchor,
     MatMenuItem,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    DialogsPromptComponent
   ]
 })
 export class CoursesViewComponent implements OnInit, OnDestroy {
@@ -83,7 +88,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog,
+    private planetMessageService: PlanetMessageService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -169,23 +176,133 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
   }
 
-  goToSurvey(stepNum, preview = false) {
+  private resolveStepAndIndex(
+    stepOrIndex: any, indexOrPreview?: any, previewParam = false
+  ): { stepDetail: any, stepIndex: number, preview: boolean } {
+    let stepIndex: number;
+    let preview = previewParam;
+
+    if (typeof stepOrIndex === 'number') {
+      stepIndex = stepOrIndex;
+      if (typeof indexOrPreview === 'boolean') {
+        preview = indexOrPreview;
+      }
+    } else if (typeof indexOrPreview === 'number') {
+      stepIndex = indexOrPreview;
+    } else {
+      stepIndex = 0;
+    }
+
+    if (typeof indexOrPreview === 'boolean') {
+      preview = indexOrPreview;
+    }
+
+    const stepDetail = (typeof stepIndex === 'number' && this.courseDetail?.steps?.[stepIndex])
+      ? this.courseDetail.steps[stepIndex]
+      : (typeof stepOrIndex === 'object' && stepOrIndex ? stepOrIndex : {});
+    return { stepDetail, stepIndex, preview };
+  }
+
+  navigateToSurvey(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
+    const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
+    const stepNum = stepIndex + 1;
+    const examId = stepDetail?.survey?._id;
     this.router.navigate(
-      [ `./step/${stepNum + 1}/exam`, { questionNum: 1, type: 'survey', preview, examId: this.courseDetail.steps[stepNum].survey._id } ],
+      [ `./step/${stepNum}/exam`, { questionNum: 1, type: 'survey', preview, examId } ],
       { relativeTo: this.route }
     );
   }
 
-  goToExam(step, stepIndex, preview = false) {
-    const questionNum = (this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1) || 1;
+  goToSurvey(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
+    const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
+    const displayName = stepDetail?.survey?.name || stepDetail?.survey?.displayName || stepDetail?.survey?.title || 'survey';
+    if (preview) {
+      this.navigateToSurvey(stepDetail, stepIndex, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
+    const courseTitle = this.courseDetail?.courseTitle || this.courseDetail?.title || '';
+    const displayStepNum = stepIndex + 1;
+    const formType = $localize`Survey`;
+    const extraMessage = $localize`Course: <b>${courseTitle}</b>` +
+      `<br>Step: <b>${stepDetail?.stepTitle || 'Step ' + displayStepNum}</b>` +
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (stepDetail?.exam?.questions?.length || 0) + '</b>';
+
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.navigateToSurvey(stepDetail, stepIndex, preview);
+            const message = `Starting ${displayName}`;
+            this.planetMessageService.showMessage(message);
+          },
+          onError: () => {
+            dialogRef.close();
+          }
+        },
+        changeType: 'take',
+        type: 'survey',
+        extraMessage,
+      }
+    });
+  }
+
+  navigateToExam(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
+    const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
+    const submission = stepDetail?.submission;
+    const questionNum = submission?.answers ?
+      (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1 : 1;
     const stepNum = stepIndex + 1;
+    const examId = stepDetail?.exam?._id;
     this.router.navigate(
       [
         `./step/${stepNum}/exam`,
-        { id: this.courseId, stepNum, questionNum, type: 'exam', preview, examId: this.courseDetail.steps[stepIndex].exam._id }
+        { id: this.courseId, stepNum, questionNum, type: 'exam', preview, examId }
       ],
       { relativeTo: this.route }
     );
+  }
+
+  goToExam(stepOrIndex: any, indexOrPreview?: any, previewParam = false) {
+    const { stepDetail, stepIndex, preview } = this.resolveStepAndIndex(stepOrIndex, indexOrPreview, previewParam);
+    const displayName = stepDetail?.exam?.name || stepDetail?.exam?.displayName || stepDetail?.exam?.title || 'exam';
+    if (preview) {
+      this.navigateToExam(stepDetail, stepIndex, true);
+      this.planetMessageService.showMessage(`Previewing ${displayName}`);
+      return;
+    }
+    const courseTitle = this.courseDetail?.courseTitle || this.courseDetail?.title || '';
+    const displayStepNum = stepIndex + 1;
+    const formType = $localize`Exam`;
+    const extraMessage = $localize`Course: <b>${courseTitle}</b>` +
+      `<br>Step: <b>${stepDetail?.stepTitle || 'Step ' + displayStepNum}</b>` +
+      `<br>Form Type: <b>${formType}</b>` +
+      '<br/></br>' +
+      '<br>Total Questions: <b>' + (stepDetail?.exam?.questions?.length || 0) + '</b>';
+
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.navigateToExam(stepDetail, stepIndex, preview);
+            const message = `Starting ${displayName}`;
+            this.planetMessageService.showMessage(message);
+          },
+          onError: () => {
+            dialogRef.close();
+          }
+        },
+        changeType: stepDetail?.attempts > 0 ? 'retake' : 'take',
+        type: 'exam',
+        extraMessage,
+      }
+    });
   }
 
   previewButtonClick(step: any, stepNum: any): void {
@@ -193,7 +310,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     if (stepType === 'both' || stepType === undefined) {
       return;
     }
-    this.previewButton.closeMenu();
+    this.previewButton?.closeMenu();
     if (stepType === 'exam') {
       this.goToExam(step, stepNum, true);
     }
