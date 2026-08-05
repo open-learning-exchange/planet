@@ -78,13 +78,50 @@
                   <td-markdown [content]="achievements.goals"></td-markdown>
                 </div>
               }
+              @if (achievements.certificationsHeader || (achievements.certifications?.length ?? 0) > 0) {
+                <div>
+                  <mat-divider></mat-divider>
+                  <h3 i18n>My Certifications</h3>
+                  <td-markdown [content]="achievements.certificationsHeader"></td-markdown>
+                  <mat-list>
+                    @for (certification of achievements.certifications; track certification; let i = $index) {
+                      <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(certification)}" (click)="onAchievementClick(certification, i + 1000)">
+                        <span matListItemTitle class="achievement-header">
+                          <span class="achievement-text">{{certification.title || certification}}
+                            @if (isClickable(certification)) {
+                              @if (openAchievementIndex !== i + 1000) {
+                                <mat-icon color="primary">expand_more</mat-icon>
+                              }
+                              @if (openAchievementIndex === i + 1000) {
+                                <mat-icon color="primary">expand_less</mat-icon>
+                              }
+                            }
+                          </span>
+                          <span class="achievement-date">{{certification.date | date: medium}}</span>
+                        </span>
+                        @if (openAchievementIndex === i + 1000) {
+                          <span matListItemLine>
+                            {{certification.description}}
+                            @if (certification.link) {
+                              <a href="{{certification.link}}" target="_blank" class="styled-link">{{certification.link}}</a>
+                            }
+                          </span>
+                        }
+                        @if (openAchievementIndex === i + 1000) {
+                          <span matListItemLine class="achievement-buttons"></span>
+                        }
+                      </mat-list-item>
+                    }
+                  </mat-list>
+                </div>
+              }
               <ng-container *planetBeta>
-                @if (certifications.length > 0) {
+                @if (earnedCertifications.length > 0) {
                   <div>
                     <mat-divider></mat-divider>
-                    <h3 i18n>My Certifications</h3>
+                    <h3 i18n>My Earned Certifications</h3>
                     <mat-list class="certs-list">
-                      @for (certification of certifications; track certification) {
+                      @for (certification of earnedCertifications; track certification) {
                         <mat-list-item>
                           <span matListItemTitle class="cert-item">{{certification.name}}</span>
                         </mat-list-item>
