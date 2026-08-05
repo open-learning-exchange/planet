@@ -63,12 +63,12 @@
                     }
                   </div>
                 }
+                @if (user.joinDate) {
+                  <div>
+                    <span i18n>Member since: {{ user.joinDate | date:'mediumDate' }}</span>
+                  </div>
+                }
               </div>
-              @if (user.joinDate) {
-                <div class="user-join-info">
-                  <span i18n>Member since: {{ user.joinDate | date:'mediumDate' }}</span>
-                </div>
-              }
               @if (achievements.purpose) {
                 <div>
                   <mat-divider></mat-divider>
