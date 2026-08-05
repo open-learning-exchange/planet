@@ -25,28 +25,24 @@
         @if (task.completed) {
           <span matListItemLine><ng-container i18n>Completed:</ng-container> {{task.completedTime | date}} {{task.completedTime | date: 'shortTime'}}</span>
         }
-        @if (task.assignee) {
-<img matListItemAvatar (click)="openMemberDialog(task.assignee); $event.stopPropagation()" matTooltip="{{task.assignee | assigneeName}}" [src]="
-      task.assignee.attachmentDoc ?
-        imgUrlPrefix + '/attachments/' + task.assignee.attachmentDoc._id + '/' + (task.assignee.attachmentDoc._attachments.img ? 'img' : 'img_') :
-        task.assignee.avatar ?
-        imgUrlPrefix + task.assignee.avatar :
-        'assets/image.png'
-    ">
-        }
-        @if (editable) {
-          <ng-container matListItemMeta>
+        <ng-container matListItemMeta>
+          @if (task.assignee || (task.assignees && task.assignees.length > 0)) {
+            <button mat-icon-button class="assignees-eye-btn" (click)="openAssigneesPopup(task); $event.stopPropagation()" matTooltip="View Assignees" i18n-matTooltip>
+              <mat-icon>visibility</mat-icon>
+            </button>
+          }
+          @if (editable) {
             <button mat-icon-button matTooltip="Edit Task" i18n-matTooltip (click)="addTask(task); $event.stopPropagation()"><mat-icon>edit</mat-icon></button>
             <button mat-icon-button matTooltip="Delete Task" i18n-matTooltip (click)="archiveClick(task); $event.stopPropagation()"><mat-icon>delete</mat-icon></button>
             <button mat-icon-button [matTooltip]="getAssignTooltip(task)" [matMenuTriggerFor]="assigneeMenu" (click)="openAssigneeMenu($event)"><mat-icon>add</mat-icon></button>
-          </ng-container>
-        }
-        <mat-menu #assigneeMenu="matMenu">
-          @if (task.assignee) {
-            <button (click)="addAssignee(task)" mat-menu-item><mat-icon>clear</mat-icon> <ng-container i18n>Remove</ng-container> {{task.assignee | assigneeName}}</button>
           }
-          @for (assignee of (assignees | filterAssignee: task.assignee); track assignee) {
-            <button mat-menu-item (click)="addAssignee(task, assignee)">{{assignee | assigneeName}}</button>
+        </ng-container>
+        <mat-menu #assigneeMenu="matMenu">
+          @for (assignee of assignees; track assignee.userId) {
+            <button mat-menu-item (click)="toggleAssignee(task, assignee); $event.stopPropagation()">
+              <mat-icon>{{ isAssigneeSelected(task, assignee) ? 'check' : '' }}</mat-icon>
+              {{assignee | assigneeName}}
+            </button>
           }
         </mat-menu>
       </button>
