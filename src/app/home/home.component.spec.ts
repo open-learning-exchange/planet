@@ -40,8 +40,8 @@ describe('Home', () => {
     });
     const router = TestBed.inject(Router);
     Object.defineProperty(router, 'events', { value: routerEvents.asObservable(), configurable: true });
-    const fixture = TestBed.createComponent(HomeComponent),
-      comp = fixture.componentInstance;
+    const fixture = TestBed.createComponent(HomeComponent);
+    const comp = fixture.componentInstance;
     activeFixture = fixture;
     return { fixture, comp, routerEvents };
   };
