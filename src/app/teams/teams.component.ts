@@ -12,8 +12,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, map, finalize, catchError } from 'rxjs/operators';
-import { forkJoin, throwError } from 'rxjs';
+import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
+import { forkJoin, of, throwError } from 'rxjs';
 import { filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -266,16 +266,29 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   addTeam(team: any = {}) {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
-    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
-      this.getTeams();
-      const msg = team._id
-        ? (this.mode === 'enterprise'
-          ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
-          : $localize`:@@team-updated-success:Team updated successfully`)
-        : (this.mode === 'enterprise'
-          ? $localize`:@@enterprise-created-success:Enterprise created successfully`
-          : $localize`:@@team-created-success:Team created successfully`);
-      this.planetMessageService.showMessage(msg);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe({
+      next: () => {
+        this.getTeams();
+        const msg = team._id
+          ? (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
+            : $localize`:@@team-updated-success:Team updated successfully`)
+          : (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-created-success:Enterprise created successfully`
+            : $localize`:@@team-created-success:Team created successfully`);
+        this.planetMessageService.showMessage(msg);
+      },
+      error: () => {
+        this.getTeams();
+        const msg = team._id
+          ? (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-updated-error:There was a problem updating this enterprise.`
+            : $localize`:@@team-updated-error:There was a problem updating this team.`)
+          : (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-created-error:There was a problem creating this enterprise.`
+            : $localize`:@@team-created-error:There was a problem creating this team.`);
+        this.planetMessageService.showAlert(msg);
+      }
     });
   }
 
@@ -283,6 +296,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     return this.teamsService.toggleTeamMembership(
       team, true, membershipDoc
     ).pipe(
+      catchError(error => this.getMembershipStatus().pipe(
+        catchError(() => of(this.userMembership)),
+        tap(() => {
+          this.teams.data = this.teamList(this.teams.data);
+        }),
+        switchMap(() => throwError(error))
+      )),
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
           this.removeTeamFromTable(team);
@@ -304,6 +324,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
               : $localize`:@@team-left:You have left team` + ' ' + team.name;
             this.planetMessageService.showMessage(msg);
           },
+          onError: () => {
+            const msg = this.mode === 'enterprise'
+              ? $localize`:@@enterprise-leave-error:There was a problem leaving this enterprise.`
+              : $localize`:@@team-leave-error:There was a problem leaving this team.`;
+            this.planetMessageService.showAlert(msg);
+          }
         },
         changeType: 'leave',
         type: this.mode === 'enterprise' ? 'enterprise' : 'team',
