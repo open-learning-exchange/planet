@@ -39,6 +39,7 @@ jobs:
   testing:
     name: Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -63,6 +64,7 @@ jobs:
     name: Pre-Planet build
     needs: [build-prepare]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
@@ -111,7 +113,8 @@ jobs:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
     if: ${{ (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
@@ -157,11 +160,14 @@ jobs:
     needs: [build-prepare, deploy-single-language]
     if: ${{ (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
     runs-on: ubuntu-latest
+    # Emulated builds can wedge indefinitely; fail fast instead of burning the 6h default
+    timeout-minutes: 20
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
       BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64
@@ -181,7 +187,15 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
+      # Only the docker-container driver can export a cache with --cache-to
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build image
+        # docker build would resolve to the default docker-driver builder
+        env:
+          BUILDX_BUILDER: ${{ steps.buildx.outputs.name }}
         run: |
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
@@ -207,9 +221,17 @@ jobs:
             cp -ar ./ng-app/langbuild/ng-app/dist/$lang2 ./ng-app/dist/
             mv ./ng-app/dist/$lang2 ./ng-app/dist/$LANGUAGE
           done
-          docker build \
+          cacherepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-planet-cache"
+          cacheargs=( --cache-from "type=registry,ref=$cacherepo" )
+          # Every branch reads the shared cache, only master and releases write it
+          if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ]; then
+            cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max,ignore-error=true" )
+          fi
+          docker buildx build \
             -f './docker/planet/Dockerfile' \
             --build-arg BASE_IMAGE='${{ matrix.base_image }}' \
+            "${cacheargs[@]}" \
+            --load \
             -t $repo .
           docker images
           docker tag $repo $branchrepo
@@ -239,9 +261,13 @@ jobs:
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
-          docker manifest annotate $manifesttag $armtag --os linux --arch arm
+          # arm image is ARMv6 (balena rpi base); pin it rather than relying on inheritance
+          docker manifest annotate $manifesttag $armtag --os linux --arch arm --variant v6
           docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
           docker manifest push $manifesttag
+          armvariant="$(docker manifest inspect "$manifesttag" \
+            | jq -r '.manifests[] | select(.platform.architecture=="arm") | .platform.variant')"
+          [ "$armvariant" = 'v6' ] || { echo "arm variant regressed: expected v6, got ${armvariant:-<none>}"; exit 1; }
 
       - name: Multiarch Deploy Versioned
         if: ${{ github.event_name == 'release' }}
@@ -255,7 +281,10 @@ jobs:
           for tag in "$DOCKER_ORG/$DOCKER_REPO:$PLANET_VERSION" "$DOCKER_ORG/$DOCKER_REPO:latest"; do
             docker manifest create $tag $amd64tag $armtag $arm64tag
             docker manifest annotate $tag $amd64tag --os linux --arch amd64
-            docker manifest annotate $tag $armtag --os linux --arch arm
+            docker manifest annotate $tag $armtag --os linux --arch arm --variant v6
             docker manifest annotate $tag $arm64tag --os linux --arch arm64
             docker manifest push $tag
+            armvariant="$(docker manifest inspect "$tag" \
+              | jq -r '.manifests[] | select(.platform.architecture=="arm") | .platform.variant')"
+            [ "$armvariant" = 'v6' ] || { echo "arm variant regressed on $tag: expected v6, got ${armvariant:-<none>}"; exit 1; }
           done
