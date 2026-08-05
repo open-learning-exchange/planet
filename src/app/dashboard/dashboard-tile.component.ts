@@ -157,10 +157,33 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
       this.removeTeam(item, userId, userPlanetCode);
+    } else if (this.shelfName === 'resourceIds') {
+      this.removeResource(item);
     } else {
       const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
       this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
+  }
+
+  removeResource(item: any) {
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'remove',
+        type: 'resource',
+        displayName: item.title,
+        okClick: {
+          request: this.userService.updateShelf(
+            this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
+            'resourceIds'
+          ),
+          onNext: () => {
+            this.dialogPrompt.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
   }
 
   removeTeam(item, userId, userPlanetCode) {
