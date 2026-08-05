@@ -1,7 +1,7 @@
 # Planet Style Guide
-Below is a brief summary of code standards we'd like to keep with this project.  For the most part this follows the [Angular Style Guide](https://angular.io/guide/styleguide), but in a more concise way so you have a quick to read reference guide.
+Below is a brief summary of code standards we'd like to keep with this project.  For the most part this follows the [Angular Style Guide](https://angular.io/guide/styleguide), but in a more concise way so you have a quick-to-read reference guide.
 ## Editor Config
-If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files.  There's more info on specific IDE installations [here](http://www.editorconfig.org).
+If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files. See the [EditorConfig installation instructions](http://www.editorconfig.org) for specific IDEs.
 
 This will help with a few things: maintaining 2 space indentations, ensuring there is a newline at the end of each file, and removing unnecessary whitespace at the end of a line.
 ## Angular & TypeScript
@@ -10,25 +10,27 @@ If the HTML & CSS are fewer than 12 lines total, please keep the `template` and 
 
 If there are more than 12 lines, but the component has little to no TypeScript functionality, then an exception can be made if code reviewers agree to it.
 
-### TSLint
-We have a git hook to run TSLint before pushing code to the repository.  Please install this hook to your local machine by running the following command:
-```
+### ESLint
+Run `npm run lint` to check the Angular application with `eslint.config.mjs`. Install the pre-push hook with:
+
+```sh
 npm run install-hooks
 ```
-The only limitation with TSLint currently is that it is not very good at indentation rules.  Please make sure to comply with 2 space indents and to indent the appropriate number of times.
+
+The hook runs `npm run lint` against the current working tree in both the repository root and `gateway/`. CI remains authoritative for pushed commits.
 ### Naming
 We follow the standard Angular naming and would like to stick to simple names for files and classes.  Each name should follow the format:
-```
+```text
 <feature><sub-feature?><type>
 ```
 For files the different parts should be separated with a dash, for class names we should use camel case.  Here are some examples:
 #### Courses Component
-```
+```text
 File: courses.component.ts
 Class name: CoursesComponent
 ```
 #### Resources Review Service
-```
+```text
 File: resources-review.service.ts
 Class name: ResourcesReviewService
 ```
@@ -43,23 +45,23 @@ Please don't use the following name for variable since it is used by our `entryp
 | planet-db-host 	| used in the docker script 	|
 | planet-db-port 	| used in the docker script 	|
 
-### il8n
-Planet uses the `il8n` translation module to translate our content and make it accessible. This module can be included in an html tag with the keyword il8n. For example, `<p il8n>Text to be translated</p>`.
+### i18n
+Planet uses Angular's `i18n` support to translate our content and make it accessible. Text can be marked for translation with the `i18n` attribute. For example, `<p i18n>Text to be translated</p>`.
 
-If there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `il8n` attribute should not be used as it will raise errors during compilation. For example, `<p>{{interpolatedString}}</p>` needs no `il8n` tag.
+If there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `i18n` attribute should not be used as it will raise errors during compilation. For example, `<p>{{interpolatedString}}</p>` needs no `i18n` tag.
 
-If text of an attribute needs to be translated an `il8n` translation attribute can be added by including a label with the format `il8n-x` where `x` represents the label that needs to be translated. For example, `<img src="oleImg" il8n-title title="Example image" />`.
+If text of an attribute needs to be translated, add an attribute with the format `i18n-x`, where `x` is the attribute to translate. For example, `<img src="oleImg" i18n-title title="Example image" />`.
 
-For more information, see the docs [here](https://angular.io/guide/i18n).
+For more information, see the [Angular i18n documentation](https://angular.io/guide/i18n).
 
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
 
 The `src/app/shared` directory is intended for files which are used across different features.  Rather than creating more directories in the `src/app` directory, we can store these files here to reduce the number of files & directories in the main app directory.
 
-### Naming
+### Component File Naming
 Component files should be named after their page/feature and follow Angular's standard naming pattern:
-```
+```text
 feature.component.ts      // Component logic
 feature.component.html    // Component template
 feature.component.scss    // Component styles
@@ -79,7 +81,7 @@ For CSS class names, keep them descriptive and concise. Feature or role of the c
 
 ### Variables
 #### Color & Theme Variables
-All color variables should be defined in `/src/app/_variables.scss`:
+All color variables should be defined in `src/app/_variables.scss`:
 - Use Material's theme system (`$primary`, `$accent`, `$warn`)
 - Define semantic variables (e.g., `$light-grey` not `$color-1`)
 - Use Material's `mat-color()` function to access theme colors
@@ -105,8 +107,8 @@ If, in the future, the `styles.scss` file becomes so large it is difficult to ma
 ### Test classes
 For unit tests it is easier to locate tags with a specific unit test class that has a prefix `km-`.  These __should not be used for any CSS styling__.  By limiting these to unit test use it allows people working on testing to remove unused `km-` classes knowing that they are not affecting the site in any way.
 
-### Variables
-Please put variables in the `/src/app/_variables.scss`.
+### Shared SCSS Variables
+Please put variables in `src/app/_variables.scss`.
 
 ## Unit & End-to-end Testing
 ### Classes
@@ -223,7 +225,7 @@ For consistency in forms across the application, follow these standards:
 For form validation, refer to these standard validator implementations:
 
 - Built-in validators: Angular's `Validators` class
-- Custom validators: Found in `/src/app/validators/custom-validators.ts`
+- Custom validators: Found in `src/app/validators/custom-validators.ts`
   - Common use cases: time, date, password matching, link validation
-- Async validators: Found in `/src/app/validators/validator.service.ts`
+- Async validators: Found in `src/app/validators/validator.service.ts`
   - Common use cases: unique field checking, password verification
