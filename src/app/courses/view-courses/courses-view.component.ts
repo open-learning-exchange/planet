@@ -26,6 +26,8 @@ import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
@@ -83,7 +85,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -212,6 +215,24 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   courseToggle(courseId, type) {
     const courseTitle = this.courseDetail.courseTitle;
+    if (type === 'resign') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          displayName: courseTitle,
+          okClick: {
+            request: this.coursesService.courseResignAdmission(courseId, type, courseTitle),
+            onNext: () => {
+              this.isUserEnrolled = !this.isUserEnrolled;
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
