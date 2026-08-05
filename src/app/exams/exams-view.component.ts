@@ -101,6 +101,9 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
   get answer(): FormControl<ExamAnswerValue> {
     return this.examForm.controls.answer;
   }
+  get isScoredQuestion(): boolean {
+    return (this.question?.correctChoice || '').length > 0;
+  }
   get disableFrameNext(): boolean {
     return this.isLoading ||
       this.questionNum === this.maxQuestions ||
@@ -165,20 +168,26 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     }
     return UnsavedChangesPromptComponent.open(this.dialog, {
       type: this.examType === 'survey' ? 'survey' : 'exam',
-      extraMessage: $localize`Your progress and responses will be saved.`
+      extraMessage: $localize`Your progress will be saved.`
     }).pipe(
       switchMap(confirmed => {
         if (!confirmed) {
           return of(false);
         }
-        if (this.answer.valid) {
-          const { obs } = this.createAnswerObservable();
-          return obs.pipe(
-            map(() => true),
-            catchError(() => of(false))
-          );
+        // Scored questions are only submitted from the next button, where a wrong answer shows
+        // feedback and lets the learner try again, so leaving must never grade one for them.
+        if (!this.answer.valid || !this.question || this.isScoredQuestion) {
+          return of(true);
         }
-        return of(true);
+        this.dialogsLoadingService.start();
+        return this.createAnswerObservable().obs.pipe(
+          map(() => true),
+          catchError(() => {
+            this.planetMessageService.showAlert($localize`Your answer could not be saved`);
+            return of(false);
+          }),
+          finalize(() => this.dialogsLoadingService.stop())
+        );
       })
     );
   }
