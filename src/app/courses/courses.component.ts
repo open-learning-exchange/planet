@@ -312,9 +312,9 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   deleteSelected() {
     const selected = this.selection.selected.map(courseId => findByIdInArray(this.courses.data, courseId).doc);
-    let amount = 'many',
-      okClick = this.deleteCourses(selected),
-      displayName = '';
+    let amount = 'many';
+    let okClick = this.deleteCourses(selected);
+    let displayName = '';
     if (selected.length === 1) {
       const course = selected[0];
       amount = 'single';

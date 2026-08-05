@@ -314,9 +314,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
-    let amount = 'many',
-      okClick = this.deleteResources(resources),
-      displayName = '';
+    let amount = 'many';
+    let okClick = this.deleteResources(resources);
+    let displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
@@ -383,8 +383,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   shareResource(type, resources) {
-    const msg = (type === 'pull' ? 'fetch' : 'send'),
-      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    const msg = (type === 'pull' ? 'fetch' : 'send');
+    const items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
       .subscribe((response: any) => {
         this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
