@@ -55,7 +55,6 @@ export class UsersAchievementsComponent implements OnInit {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
@@ -165,9 +164,13 @@ export class UsersAchievementsComponent implements OnInit {
   }
 
   get profileImg() {
-    const attachments = this.userService.get()._attachments;
-    if (attachments) {
-      return this.urlPrefix + Object.keys(attachments)[0];
+    const attachments = this.user?._attachments;
+    if (attachments && this.user?._id) {
+      const filename = Object.keys(attachments)[0];
+      const planetCode = this.user.planetCode;
+      const isLocal = !planetCode || planetCode === this.stateService.configuration.code;
+      const db = isLocal ? '_users' : 'child_users';
+      return `${environment.couchAddress}/${db}/${this.user._id}/${filename}`;
     }
     return 'assets/image.png';
   }
