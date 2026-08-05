@@ -280,14 +280,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       },
       error: () => {
         this.getTeams();
-        const msg = team._id
-          ? (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-updated-error:There was a problem updating this enterprise.`
-            : $localize`:@@team-updated-error:There was a problem updating this team.`)
-          : (this.mode === 'enterprise'
-            ? $localize`:@@enterprise-created-error:There was a problem creating this enterprise.`
-            : $localize`:@@team-created-error:There was a problem creating this team.`);
-        this.planetMessageService.showAlert(msg);
+        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
       }
     });
   }
@@ -307,7 +300,10 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         if (newTeam.status === 'archived') {
           this.removeTeamFromTable(team);
         }
-        return this.getMembershipStatus();
+        return this.getMembershipStatus().pipe(
+          map(() => true),
+          catchError(() => of(false))
+        );
       }));
   }
 
@@ -316,9 +312,13 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       data: {
         okClick: {
           request: this.leaveTeam(team, membershipDoc),
-          onNext: () => {
+          onNext: (membershipStatusRefreshed) => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
+            if (!membershipStatusRefreshed) {
+              this.planetMessageService.showAlert($localize`You left successfully, but the list could not be refreshed.`);
+              return;
+            }
             const msg = this.mode === 'enterprise'
               ? $localize`:@@enterprise-left:You have left enterprise` + ' ' + team.name
               : $localize`:@@team-left:You have left team` + ' ' + team.name;
@@ -326,8 +326,8 @@ export class TeamsComponent implements OnInit, AfterViewInit {
           },
           onError: () => {
             const msg = this.mode === 'enterprise'
-              ? $localize`:@@enterprise-leave-error:There was a problem leaving this enterprise.`
-              : $localize`:@@team-leave-error:There was a problem leaving this team.`;
+              ? $localize`There was a problem leaving this enterprise.`
+              : $localize`There was a problem leaving this team.`;
             this.planetMessageService.showAlert(msg);
           }
         },

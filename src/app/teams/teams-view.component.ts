@@ -50,12 +50,6 @@ import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
-class MembershipFollowUpError extends Error {
-  constructor() {
-    super('Membership change follow-up failed.');
-  }
-}
-
 @Component({
   templateUrl: './teams-view.component.html',
   styleUrls: ['./teams-view.scss'],
@@ -420,10 +414,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
               this.goBack();
             }
           },
-          onError: (error) => this.planetMessageService.showAlert(this.membershipErrorMessage(
-            error,
-            $localize`There was a problem ${config.errorMsg} ${displayName}`
-          ))
+          onError: () => this.planetMessageService.showAlert($localize`There was a problem ${config.errorMsg} ${displayName}`)
         },
         displayName,
         ...dialogParams
@@ -475,7 +466,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
         catchError(error => membershipWriteCompleted ?
-          this.refreshMembersOnError(new MembershipFollowUpError()) : throwError(error)),
+          this.refreshMembersOnError(error) : throwError(error)),
         finalize(() => this.dialogsLoadingService.stop())
       );
     };
@@ -488,10 +479,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         this.setStatus(this.team, this.leader, this.userService.get());
         this.planetMessageService.showMessage(message);
       },
-      error: (error) => this.planetMessageService.showAlert(this.membershipErrorMessage(
-        error,
-        $localize`There was a problem updating team membership.`
-      ))
+      error: () => this.planetMessageService.showAlert($localize`There was a problem updating team membership.`)
     });
   }
 
@@ -608,8 +596,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       error: () => {
         const message = membershipWriteCompleted
-          ? $localize`:@@team-members-follow-up-error:Members were added, but notifications or the member-list refresh failed.`
-          : $localize`:@@team-members-add-error:There was a problem adding members.`;
+          ? $localize`Members were added, but notifications or the member-list refresh failed.`
+          : $localize`There was a problem adding members.`;
         this.planetMessageService.showAlert(message);
       }
     });
@@ -711,12 +699,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       catchError(() => of([])),
       switchMap(() => throwError(error))
     );
-  }
-
-  private membershipErrorMessage(error, fallbackMessage: string) {
-    return error instanceof MembershipFollowUpError
-      ? $localize`:@@team-membership-follow-up-error:The membership change was saved, but a follow-up action could not be completed.`
-      : fallbackMessage;
   }
 
   removeCourse(course) {
