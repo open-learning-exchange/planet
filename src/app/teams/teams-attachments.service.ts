@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
@@ -41,6 +41,20 @@ export class TeamsAttachmentsService {
         size: attachment.length,
         url: `${environment.couchAddress}/teams/${doc._id}/${encodeURIComponent(name)}`
       }));
+  }
+
+  receiptAttachmentImages(doc: any): Observable<Array<{ image: string; name: string }>> {
+    const attachments = this.receiptAttachments(doc);
+    if (attachments.length === 0) {
+      return of([]);
+    }
+    return forkJoin(attachments.map(attachment =>
+      this.couchService.getAttachment(attachment.url).pipe(
+        switchMap(blob => this.receiptBlobToPdfDataUrl(blob, attachment.contentType)),
+        map(image => ({ image, name: attachment.name })),
+        catchError(() => of(null))
+      )
+    )).pipe(map(images => images.filter((image): image is { image: string; name: string } => !!image)));
   }
 
   retainSelectedAttachments(doc: any, state: AttachmentInputState) {
@@ -99,6 +113,59 @@ export class TeamsAttachmentsService {
 
   private attachmentName(attachment: ExistingAttachment | PendingAttachment) {
     return 'file' in attachment ? attachment.safeName : attachment.name;
+  }
+
+  private blobToDataUrl(blob: Blob): Observable<string> {
+    return new Observable(observer => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        observer.next(reader.result as string);
+        observer.complete();
+      };
+      reader.onerror = () => observer.error(reader.error);
+      reader.readAsDataURL(blob);
+      return () => {
+        if (reader.readyState === FileReader.LOADING) {
+          reader.abort();
+        }
+      };
+    });
+  }
+
+  private receiptBlobToPdfDataUrl(blob: Blob, contentType?: string): Observable<string> {
+    return (contentType || blob.type).toLowerCase() === 'image/webp' ?
+      this.webpBlobToPngDataUrl(blob) :
+      this.blobToDataUrl(blob);
+  }
+
+  private webpBlobToPngDataUrl(blob: Blob): Observable<string> {
+    return new Observable(observer => {
+      const url = URL.createObjectURL(blob);
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const context = canvas.getContext('2d');
+        URL.revokeObjectURL(url);
+        if (!context) {
+          observer.error(new Error('Unable to convert WebP receipt image'));
+          return;
+        }
+        context.drawImage(image, 0, 0);
+        observer.next(canvas.toDataURL('image/png'));
+        observer.complete();
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        observer.error(new Error('Unable to load WebP receipt image'));
+      };
+      image.src = url;
+      return () => {
+        URL.revokeObjectURL(url);
+        image.src = '';
+      };
+    });
   }
 
   private isReceiptImage(attachment: any) {

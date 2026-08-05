@@ -34,6 +34,8 @@ import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '.
 import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -75,6 +77,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
   draftExists: boolean;
+  deleteDialog: MatDialogRef<DialogsPromptComponent> | null = null;
   courseForm: FormGroup<CourseFormModel>;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
@@ -116,7 +119,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.onFormChanges();
@@ -439,6 +443,26 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.draftExists) {
       return;
     }
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            this.executeDeleteDraft();
+            this.deleteDialog?.close();
+          }
+        },
+        changeType: 'delete',
+        type: 'courseDraft',
+        displayName: this.courseForm.value.courseTitle
+      }
+    });
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.deleteDialog = null;
+    });
+  }
+
+  private executeDeleteDraft() {
     this.coverUploadComponent?.clear();
     if (this.savedCourse) {
       this.setFormAndSteps({
@@ -468,8 +492,10 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     const relativeRoute = (urlArray: string[]) => {
       const lastIndex = urlArray.length - 1;
       const endConditions = [ 'update', 'add' ];
+      // Strip matrix params (e.g. ";continue=true" set when returning from the exam/survey builder)
+      const segment = urlArray[lastIndex].split(';')[0];
       return `../${
-        (lastIndex === 1 || endConditions.indexOf(urlArray[lastIndex]) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
+        (lastIndex === 1 || endConditions.indexOf(segment) > -1) ? '' : relativeRoute(urlArray.slice(0, lastIndex))
       }`;
     };
     this.router.navigate([ relativeRoute(this.router.url.split('/')) ], { relativeTo: this.route });

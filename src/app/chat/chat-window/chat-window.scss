@@ -1,3 +1,5 @@
+@use '../../variables' as v;
+
 .full-container {
   display: flex;
   flex-direction: column;
@@ -11,8 +13,8 @@
 }
 
 .form-container {
-  background-color: #f4f4f4;
-  border-top: 1px solid #ccc;
+  background-color: v.$light-grey;
+  border-top: 1px solid v.$grey;
   width: 100%;
 }
 

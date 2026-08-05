@@ -80,7 +80,7 @@
       }
     </div>
     @if (showExpand) {
-      <div class="full-width" style="text-align: center;" (click)="showLess = !showLess">
+      <div class="full-width text-center" (click)="showLess = !showLess">
         <button mat-icon-button>
           <mat-icon>{{showLess ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}}</mat-icon>
         </button>
@@ -117,8 +117,8 @@
         <mat-icon>link</mat-icon>
       </button>
       @if ((item.doc.user.name === currentUser.name || currentUser.isUserAdmin)) {
-        <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
-        <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button type="button" matTooltip="Edit Voice" i18n-matTooltip (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button type="button" matTooltip="Delete Voice" i18n-matTooltip (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
         @if (editable && labels.listed.length > 0) {
           <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
         }

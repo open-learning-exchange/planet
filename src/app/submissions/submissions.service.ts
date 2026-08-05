@@ -2,7 +2,6 @@ import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
-import htmlToPdfmake from 'html-to-pdfmake';
 import { findDocuments } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
@@ -17,10 +16,7 @@ import { attachNamesToPlanets, codeToPlanetName, fullLabel } from '../manager-da
 import { ChatService } from '../shared/chat.service';
 import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-pdfMake.addVirtualFileSystem(pdfFonts);
+import { PdfService } from '../shared/pdf.service';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +43,7 @@ export class SubmissionsService {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private chatService: ChatService,
+    private pdfService: PdfService,
     @Inject(LOCALE_ID) private localeId: string
   ) { }
 
@@ -405,6 +402,7 @@ export class SubmissionsService {
   }
 
   async buildChartSection(exam, updatedSubmissions, docContent) {
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     this.setHeader(docContent, $localize`Charts`);
     for (let i = 0; i < exam.questions.length; i++) {
       const question = exam.questions[i];
@@ -470,6 +468,7 @@ export class SubmissionsService {
   }
 
   async buildAnalysisSection(exam, updatedSubmissions, docContent) {
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     const analysisPayload = await this.analyseResponses(exam, updatedSubmissions);
     this.setHeader(docContent, $localize`AI Analysis`);
     docContent.push({
@@ -478,7 +477,8 @@ export class SubmissionsService {
     });
   }
 
-  buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+  async buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions) {
+    const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     const markdownSubmissions = this.preparePDF(exam, updatedSubmissions, questionTexts, exportOptions);
     const submissionContents = markdownSubmissions.map((markdown, index) => {
       const pageBreak = index === 0 ? {} : { pageBreak: 'before' };
@@ -539,34 +539,39 @@ export class SubmissionsService {
         if (!tuple) {
           return;
         }
-        const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
-        const docContent = this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
-        if (exportOptions.includeCharts) {
-          await this.buildChartSection(exam, updatedSubmissions, docContent);
-        }
-        if (exportOptions.includeAnalysis) {
-          await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
-        }
-        pdfMake.createPdf({
-          content: docContent,
-          styles: {
-            title: {
-              fontSize: 24,
-              bold: true,
-              alignment: 'center',
-            },
-            header: {
-              fontSize: 20,
-              bold: true
-            },
-            chartTitle: {
-              fontSize: 12,
-              bold: true,
-              alignment: 'center'
-            }
+        try {
+          const [ updatedSubmissions, time, questionTexts ] = tuple as [any[], number, string[]];
+          const docContent = await this.buildInitialSubmissionPDF(exam, updatedSubmissions, questionTexts, exportOptions);
+          if (exportOptions.includeCharts) {
+            await this.buildChartSection(exam, updatedSubmissions, docContent);
           }
-        }).download(`${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
-        this.dialogsLoadingService.stop();
+          if (exportOptions.includeAnalysis) {
+            await this.buildAnalysisSection(exam, updatedSubmissions, docContent);
+          }
+          await this.pdfService.download({
+            content: docContent,
+            styles: {
+              title: {
+                fontSize: 24,
+                bold: true,
+                alignment: 'center',
+              },
+              header: {
+                fontSize: 20,
+                bold: true
+              },
+              chartTitle: {
+                fontSize: 12,
+                bold: true,
+                alignment: 'center'
+              }
+            }
+          }, `${this.localizedSubmissionType(type)} - ${exam.name}.pdf`);
+        } catch {
+          this.planetMessageService.showAlert($localize`Error exporting PDF`);
+        } finally {
+          this.dialogsLoadingService.stop();
+        }
       });
   }
 
