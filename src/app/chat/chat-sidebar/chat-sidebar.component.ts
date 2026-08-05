@@ -165,7 +165,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.dbName, {
         ...conversation,
         title: title !== undefined && title !== null ? title : conversation.title,
-        shared: shared,
+        shared,
         updatedDate: this.couchService.datePlaceholder
       }
     ).subscribe((data) => {
