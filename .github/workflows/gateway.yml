@@ -33,11 +33,14 @@ jobs:
     name: Gateway build
     needs: [ build-prepare ]
     runs-on: ubuntu-latest
+    # Emulated npm can wedge indefinitely; fail fast instead of burning the 6h default
+    timeout-minutes: 20
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
       BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64

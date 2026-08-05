@@ -39,6 +39,7 @@ jobs:
   testing:
     name: Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -63,6 +64,7 @@ jobs:
     name: Pre-Planet build
     needs: [build-prepare]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
@@ -111,7 +113,8 @@ jobs:
     name: Deploy single language build
     needs: [build-prepare, pre-build]
     if: ${{ (github.event.inputs.buildtype == 'prebuild' || ((github.event.inputs.buildtype == 'single-language' || github.event_name != 'workflow_dispatch') && always())) }}
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
 
@@ -157,11 +160,14 @@ jobs:
     needs: [build-prepare, deploy-single-language]
     if: ${{ (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
     runs-on: ubuntu-latest
+    # Emulated builds can wedge indefinitely; fail fast instead of burning the 6h default
+    timeout-minutes: 20
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
       BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: amd64
