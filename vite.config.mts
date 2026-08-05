@@ -26,7 +26,6 @@ export default defineConfig(({ mode }) => ({
       'src/**/login.component.spec.ts',
       'src/**/resources.component.spec.ts',
       'src/**/meetups.component.spec.ts',
-      'src/**/dashboard.component.spec.ts',
       'src/**/meetups-add.component.spec.ts',
     ],
     reporters: ['default'],
