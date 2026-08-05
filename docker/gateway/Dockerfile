@@ -6,6 +6,10 @@ ARG BUILD_IMAGE=treehouses/node:3.21
 FROM ${BUILD_IMAGE} AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
+# Both stages state the directory the cross-stage COPY paths below depend on,
+# rather than inheriting it from the base image
+WORKDIR /
+
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
 RUN --mount=type=cache,id=npm-builder,target=/root/.npm npm ci
@@ -18,6 +22,8 @@ RUN --mount=type=cache,id=npm-builder,target=/root/.npm npm prune --omit=dev
 
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
+
+WORKDIR /
 
 RUN apk add --no-cache poppler-utils
 COPY ./gateway/package.json ./gateway/package-lock.json ./
