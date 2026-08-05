@@ -8,7 +8,8 @@
  * message - Optional.  Error message that is displayed when value is truthy.
  * displayName - Optional. If deleteItem does not have a 'name' property, set this to
  *  display to the user what is being deleted.
- * okClick - Optional.  Function to call when user clicks OK.
+ * okClick - Optional.  { request, onNext, onError } run when user clicks OK.  Defaults to closing
+ *  the dialog with true, or false if the request errors.
  */
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';

@@ -29,7 +29,7 @@ import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -160,38 +160,27 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.isInternalNavigation = false;
       return true;
     }
-    if (this.mode === 'take' && !this.previewMode) {
-      const isSurvey = this.examType === 'survey';
-      const dialogRef = this.dialog.open(DialogsPromptComponent, {
-        data: {
-          changeType: 'exit',
-          type: isSurvey ? 'survey' : 'exam',
-          extraMessage: $localize`Your progress and responses will be saved.`,
-          cancelable: true,
-          okClick: {
-            request: of(true),
-            onNext: () => dialogRef.close(true),
-            onError: () => dialogRef.close(false)
-          }
-        }
-      });
-      return dialogRef.afterClosed().pipe(
-        switchMap(result => {
-          if (!result) {
-            return of(false);
-          }
-          if (this.answer.valid) {
-            const { obs } = this.createAnswerObservable();
-            return obs.pipe(
-              map(() => true),
-              catchError(() => of(false))
-            );
-          }
-          return of(true);
-        })
-      );
+    if (this.mode !== 'take' || this.previewMode) {
+      return true;
     }
-    return true;
+    return UnsavedChangesPromptComponent.open(this.dialog, {
+      type: this.examType === 'survey' ? 'survey' : 'exam',
+      extraMessage: $localize`Your progress and responses will be saved.`
+    }).pipe(
+      switchMap(confirmed => {
+        if (!confirmed) {
+          return of(false);
+        }
+        if (this.answer.valid) {
+          const { obs } = this.createAnswerObservable();
+          return obs.pipe(
+            map(() => true),
+            catchError(() => of(false))
+          );
+        }
+        return of(true);
+      })
+    );
   }
 
   setExam(params) {
