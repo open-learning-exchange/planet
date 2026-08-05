@@ -179,17 +179,40 @@ export class TeamsService {
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
+    if (!memberInfo?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
       switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
         membershipDocs.map(membershipDoc => this.membershipWriteDoc(
-          { ...membershipDoc, ...memberInfo, ...membershipProps },
+          {
+            ...membershipDoc,
+            ...memberInfo,
+            ...membershipProps,
+            ...(membershipProps.userPlanetCode === undefined && membershipDoc.userPlanetCode !== undefined ?
+              { userPlanetCode: membershipDoc.userPlanetCode } : {}),
+            ...(membershipDoc._rev ? { _id: membershipDoc._id, _rev: membershipDoc._rev } : {})
+          },
           deleted
         ))
       ))
     );
+  }
+
+  addMembers(team, selected, requests) {
+    if (selected.some(user => !user?._id)) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    const selectedUserIds = new Set(selected.map(user => user._id));
+    const newMembershipDocs = selected.map(user =>
+      this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
+    );
+    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
+      .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
+    return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 
   updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
@@ -208,14 +231,19 @@ export class TeamsService {
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
-    const oldLeaderUpdate = oldLeader?._id && oldLeader.fromShelf !== true ?
-      [ this.membershipWriteDoc(oldLeader, { isLeader: false }) ] :
-      [];
-    const promotionRequest = this.writeMembershipDocs([ this.membershipWriteDoc(newLeader, { isLeader: true }) ]);
-    return promotionRequest.pipe(
-      switchMap(promotionResponse => oldLeaderUpdate.length > 0 ?
-        this.writeMembershipDocs(oldLeaderUpdate).pipe(map(() => promotionResponse)) :
-        of(promotionResponse)
+    const shouldDemoteOldLeader = Boolean(oldLeader?._id) && oldLeader._id !== newLeader?._id && oldLeader.fromShelf !== true;
+    return this.freshMembershipDoc(newLeader).pipe(
+      // Shelf revisions belong to another database, so preserving them makes unsupported promotions fail closed with a conflict.
+      switchMap(freshNewLeader => this.writeMembershipDocs([
+        this.membershipWriteDoc(freshNewLeader, { isLeader: true })
+      ])),
+      switchMap(promotionResponse => shouldDemoteOldLeader ?
+        this.freshMembershipDoc(oldLeader).pipe(
+          switchMap(freshOldLeader => this.writeMembershipDocs([
+            this.membershipWriteDoc(freshOldLeader, { isLeader: false })
+          ])),
+          map(() => promotionResponse)
+        ) : of(promotionResponse)
       )
     );
   }
@@ -262,19 +290,37 @@ export class TeamsService {
     };
   }
 
-  private writeMembershipDocs(docs: any[]) {
+  private writeMembershipDocs(docs: any[], requiredResultCount = docs.length) {
     return this.couchService.bulkDocs(this.dbName, docs).pipe(
-      switchMap(response => this.validateBulkDocsResponse(response))
+      switchMap(response => this.validateBulkDocsResponse(response, docs.length, requiredResultCount))
     );
   }
 
-  private validateBulkDocsResponse(response: any) {
+  private freshMembershipDoc(member) {
+    if (!member?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    return member._id && member.fromShelf !== true ?
+      this.couchService.get(`${this.dbName}/${member._id}`).pipe(map(doc => ({ ...member, ...doc }))) :
+      of(member);
+  }
+
+  private validateBulkDocsResponse(response: any, expectedCount: number, requiredResultCount = expectedCount) {
     const results = Array.isArray(response) ? response : response?.res;
     if (!Array.isArray(results)) {
       return throwError(new Error('Unexpected bulk document response.'));
     }
-    const error = results.find(result => result.error);
-    return error ? throwError(error) : of(response);
+    const requiredResults = results.slice(0, requiredResultCount);
+    const error = requiredResults.find(result => result?.error);
+    if (error) {
+      return throwError(error);
+    }
+    const hasUnexpectedResult = requiredResultCount > expectedCount || requiredResults.length !== requiredResultCount ||
+      (requiredResultCount === expectedCount && results.length !== expectedCount) || requiredResults.some(result =>
+      typeof result?.id !== 'string' || result.id.length === 0 ||
+      typeof result?.rev !== 'string' || result.rev.length === 0
+    );
+    return hasUnexpectedResult ? throwError(new Error('Unexpected bulk document response.')) : of(response);
   }
 
   membershipProps(team, memberInfo, docType) {
@@ -285,7 +331,7 @@ export class TeamsService {
       userId,
       teamPlanetCode,
       teamType,
-      userPlanetCode,
+      ...(userPlanetCode !== undefined ? { userPlanetCode } : {}),
       docType,
       ...(isLeader !== undefined ? { isLeader } : {})
     };
