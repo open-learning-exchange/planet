@@ -137,4 +137,7 @@ jobs:
             docker manifest annotate $tag $armtag --os linux --arch arm --variant v6
             docker manifest annotate $tag $arm64tag --os linux --arch arm64
             docker manifest push $tag
+            armvariant="$(docker manifest inspect "$tag" \
+              | jq -r '.manifests[] | select(.platform.architecture=="arm") | .platform.variant')"
+            [ "$armvariant" = 'v6' ] || { echo "arm variant regressed on $tag: expected v6, got ${armvariant:-<none>}"; exit 1; }
           done
