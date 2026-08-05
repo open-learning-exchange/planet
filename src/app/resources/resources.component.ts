@@ -376,6 +376,30 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   libraryToggle(resourceIds, type) {
+    if (type === 'remove') {
+      const foundResource = resourceIds.length === 1 ?
+        (this.resources.data.find((r: any) => r._id === resourceIds[0]) as any) : null;
+      const resourceTitle = foundResource?.doc?.title || foundResource?.title || '';
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          amount: resourceIds.length === 1 ? 'single' : 'many',
+          count: resourceIds.length,
+          displayName: resourceTitle,
+          okClick: {
+            request: this.resourcesService.libraryAddRemove(resourceIds, type),
+            onNext: () => {
+              this.removeFilteredFromSelection();
+              this.onSelectionChange(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
     this.resourcesService.libraryAddRemove(resourceIds, type).subscribe((res) => {
       this.removeFilteredFromSelection();
       this.onSelectionChange(this.selection.selected);

@@ -20,6 +20,8 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { ResourcesViewerComponent } from './resources-viewer.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -81,7 +83,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -131,6 +134,24 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
+    if (type === 'remove') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          displayName: this.resource?.doc?.title || this.resource?.title || '',
+          okClick: {
+            request: this.resourcesService.libraryAddRemove([ resourceId ], type),
+            onNext: () => {
+              this.isUserEnrolled = !this.isUserEnrolled;
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
