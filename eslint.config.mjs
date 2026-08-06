@@ -88,6 +88,16 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "@typescript-eslint/adjacent-overload-signatures": "error",
         "@typescript-eslint/array-type": "off",
         "@typescript-eslint/consistent-type-assertions": "error",
+
+        // The default selector remains excluded because it also checks object
+        // properties that can come from external sources outside our naming
+        // conventions. Keep its former configuration here for reevaluation.
+        // {
+        //     selector: "default",
+        //     format: ["camelCase"],
+        //     leadingUnderscore: "allowSingleOrDouble",
+        //     trailingUnderscore: "allowSingleOrDouble",
+        // },
         "@typescript-eslint/naming-convention": [
           "error",
           {
@@ -248,6 +258,34 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
+
+        // Rules pending evaluation for re-enablement. Keep their previous
+        // settings in the active config so this work is not lost with the
+        // removal of the obsolete .eslintrc.json file.
+        // "@angular-eslint/no-host-metadata-property": "error",
+        // "@typescript-eslint/member-ordering": "error",
+        // "@typescript-eslint/no-unused-expressions": "error",
+        // "@typescript-eslint/prefer-for-of": "error",
+        // "one-var": ["error", "never"],
+        // "prefer-arrow/prefer-arrow-functions": "error",
+        // "prefer-const": "error",
+        // "arrow-body-style": "error",
+        // "quote-props": ["error", "as-needed"],
+        // "space-before-function-paren": ["error", {
+        //     anonymous: "never",
+        //     asyncArrow: "always",
+        //     named: "never",
+        // }],
+        // "@typescript-eslint/member-delimiter-style": ["error", {
+        //     multiline: {
+        //         delimiter: "semi",
+        //         requireLast: true,
+        //     },
+        //     singleline: {
+        //         delimiter: "semi",
+        //         requireLast: false,
+        //     },
+        // }],
     },
 }, {
     files: ["**/*.html"],

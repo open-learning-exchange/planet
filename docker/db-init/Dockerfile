@@ -11,7 +11,7 @@ RUN npm install -g add-cors-to-couchdb
 WORKDIR /root
 
 COPY ./docker/db-init/docker-entrypoint.sh /root/docker-entrypoint.sh
-COPY ./couchdb-setup.sh /root/couchdb-setup.sh
+COPY ./scripts/couchdb-setup.sh /root/couchdb-setup.sh
 ADD ./design /root/design
 
 CMD ["bash", "./docker-entrypoint.sh"]

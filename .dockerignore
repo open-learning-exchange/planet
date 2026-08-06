@@ -7,7 +7,5 @@ Dockerfile
 
 .gitignore
 .env
-.eslintrc
 .editorconfig
-.travis.yml
 
