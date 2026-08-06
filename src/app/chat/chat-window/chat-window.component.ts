@@ -3,7 +3,7 @@ import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFo
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
-import { ConversationForm, AIProvider } from '../chat.model';
+import { ConversationForm, AIProvider, ChatContext } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -39,7 +39,7 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   ]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() context: any;
+  @Input() context?: ChatContext;
   @Input() isEditing: boolean;
   @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
@@ -54,12 +54,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedConversationId: any;
   promptForm: PromptFormGroup;
   data: ConversationForm = {
-    _id: '',
-    _rev: '',
     user: this.userService.get().name,
     content: '',
     aiProvider: { name: 'openai' },
-    assistant: true,
+    mode: 'general_chat',
     context: '',
   };
   providers: AIProvider[] = [];
@@ -232,6 +230,10 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
+      const lastConversation = this.conversations[this.conversations.length - 1];
+      if (lastConversation && message.citations?.length) {
+        lastConversation.citations = message.citations;
+      }
       this.postSubmit();
     } else {
       this.spinnerOn = false;
@@ -257,14 +259,21 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    this.data = { ...this.data, content, aiProvider: this.provider, assistant: this.provider?.name === 'openai' };
+    this.data = {
+      ...this.data,
+      content,
+      aiProvider: this.provider || this.data.aiProvider,
+      mode: this.context?.type === 'coursestep' ? 'course_help' : 'general_chat'
+    };
 
     this.chatService.setChatAIProvider(this.data.aiProvider);
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
+    } else {
+      // this.data is reused across turns; don't let an old course/resource context leak
+      this.data.context = '';
     }
 
     if (this.streaming) {
@@ -273,7 +282,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
+          this.conversations.push({
+            id: Date.now().toString(), query: content, response: completion?.chat, citations: completion?.citations
+          });
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
             '_rev': completion.couchDBResponse?.rev

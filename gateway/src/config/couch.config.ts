@@ -15,6 +15,9 @@ const withCredentials = (url: string, user: string, pass: string) => {
   return parsedUrl.toString().replace(/\/$/, '');
 };
 
+/** CouchDB base URL without embedded credentials (fetch() rejects credentialed URLs). */
+const couchBaseUrl = (couchUrl || defaultCouchUrl).replace(/\/$/, '');
+
 const couchHost = couchUser && couchPass
   ? withCredentials(couchUrl || defaultCouchUrl, couchUser, couchPass)
   : (couchUrl || defaultCouchUrl);
@@ -27,4 +30,4 @@ const examsDB = db.use('exams');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
 
-export { chatDB, configurationDB, examsDB, resourceDB, submissionsDB, teamsDB };
+export { chatDB, configurationDB, couchBaseUrl, examsDB, resourceDB, submissionsDB, teamsDB };

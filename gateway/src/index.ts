@@ -5,15 +5,20 @@ import http from 'http';
 import WebSocket from 'ws';
 
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
+import { allowedOrigins } from './modules/chatapi/middleware/auth';
 import { registerPublicRoutes } from './modules/public/register';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+// Chat turns are small JSON frames; cap them well below the 100 MB ws default
+const wss = new WebSocket.Server({ server, 'maxPayload': 1024 * 1024 });
 
-app.use(cors());
+// No configured origins means no cross-origin browser access (same-origin
+// deployments behind nginx need no CORS; dev setups set CORS_ORIGINS)
+const origins = allowedOrigins();
+app.use(cors({ 'origin': origins.length ? origins : false, 'credentials': true }));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json());
 
