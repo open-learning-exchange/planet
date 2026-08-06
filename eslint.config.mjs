@@ -248,6 +248,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
     },
 }, {
     files: ["**/*.html"],

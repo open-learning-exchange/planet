@@ -3,10 +3,10 @@ import { FuzzySearchService } from './fuzzy-search.service';
 
 // Takes an object and string of dot seperated property keys.  Returns the nested value of the succession of
 // keys or undefined.
-function getProperty(data: any, fields: string) {
+const getProperty = (data: any, fields: string) => {
   const propertyArray = fields.split('.');
   return propertyArray.reduce((obj, prop) => (obj && obj[prop] !== undefined) ? obj[prop] : undefined, data);
-}
+};
 
 const dropdownString = (fieldValue: any, value: string) => {
   if (fieldValue === undefined || value === undefined) {
