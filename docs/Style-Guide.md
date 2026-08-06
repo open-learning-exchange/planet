@@ -1,7 +1,7 @@
 # Planet Style Guide
 Below is a brief summary of code standards we'd like to keep with this project.  For the most part this follows the [Angular Style Guide](https://angular.io/guide/styleguide), but in a more concise way so you have a quick-to-read reference guide.
 ## Editor Config
-If you have an IDE that supports a `.editorconfig` file, please make sure you take the necessary steps to install those files. See the [EditorConfig installation instructions](http://www.editorconfig.org) for specific IDEs.
+Most modern editors automatically discover and use the repository's `.editorconfig` file. For editors without native support, install an EditorConfig plugin. See the [EditorConfig documentation](https://editorconfig.org) for specific installation instructions.
 
 This will help with a few things: maintaining 2 space indentations, ensuring there is a newline at the end of each file, and removing unnecessary whitespace at the end of a line.
 ## Angular & TypeScript
@@ -48,11 +48,11 @@ Please don't use the following name for variable since it is used by our `entryp
 ### i18n
 Planet uses Angular's `i18n` support to translate our content and make it accessible. Text can be marked for translation with the `i18n` attribute. For example, `<p i18n>Text to be translated</p>`.
 
-If there are no strings enclosed by the tag, or if only interpolation strings are enclosed, then the `i18n` attribute should not be used as it will raise errors during compilation. For example, `<p>{{interpolatedString}}</p>` needs no `i18n` tag.
+Angular supports interpolation inside i18n-marked elements. For example, `<p i18n>Hello {{name}}</p>` is valid translatable content. If there are no strings enclosed by the tag (only whitespace or no content), then the `i18n` attribute should not be used.
 
 If text of an attribute needs to be translated, add an attribute with the format `i18n-x`, where `x` is the attribute to translate. For example, `<img src="oleImg" i18n-title title="Example image" />`.
 
-For more information, see the [Angular i18n documentation](https://angular.io/guide/i18n).
+For more information, see the [Angular i18n documentation](https://angular.dev/guide/i18n).
 
 ### App Directory Structure
 Within the `src/app` directory, each feature should have its own directory.  Within that directory as we add sub-features, if there are more than 9 files we should create a sub-directory with the same naming convention as files (i.e. Resources Review would be in a `resources-review` directory).
