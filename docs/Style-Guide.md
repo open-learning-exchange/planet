@@ -17,7 +17,7 @@ Run `npm run lint` to check the Angular application with `eslint.config.mjs`. In
 npm run install-hooks
 ```
 
-The hook runs `npm run lint` against the current working tree in both the repository root and `gateway/`. CI remains authoritative for pushed commits.
+The hook runs `npm run lint` in both the repository root and `gateway/`.
 ### Naming
 We follow the standard Angular naming and would like to stick to simple names for files and classes.  Each name should follow the format:
 ```text

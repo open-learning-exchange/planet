@@ -18,9 +18,9 @@
     "i18n:check": "ng extract-i18n --output-path /tmp/planet-i18n-check && node scripts/i18n-normalize.mjs /tmp/planet-i18n-check/messages.xlf",
     "test": "ng test",
     "lint": "ng lint planet-app",
-    "lint:html": "htmlhint-ng2 --config .htmlhintrc \"src/**/*.html\"",
+    "lint:html": "htmlhint-ng2 --config .htmlhintrc",
     "lint:styles": "sass-lint -c ./sass-lint.yml -v -q",
-    "lint:all": "npm run lint && npm run lint:styles && npm run lint:html",
+    "lint-all": "npm run lint:styles && npm run lint && npm run lint:html",
     "install-hooks": "cp -a git-hooks/. .git/hooks/"
   },
   "private": true,

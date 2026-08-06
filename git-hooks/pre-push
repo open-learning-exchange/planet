@@ -1,33 +1,65 @@
 #!/bin/bash
 
-# Pre-push hook: lints the current Planet and gateway working trees before
-# allowing a push. CI remains the authoritative check for pushed commits.
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
 
 pass=true
 RED='\033[1;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-repo_root=$(git rev-parse --show-toplevel) || exit 1
+# Function to output result of tests
+output_result() {
+  ret_code=$1
+  message=$2
+  output=$3
 
-run_lint() {
-  local dir=$1
-  local label=$2
-  local output
-
-  echo "Running $label lint"
-  if ! output=$(cd "$repo_root/$dir" && npm run lint 2>&1); then
-    printf "${RED}%s lint failed.${NC}\n" "$label"
+  if [ $ret_code != 0 ]; then
+    printf "${RED}${message} failed.${NC}\n"
     echo "$output"
     pass=false
   else
-    printf "${GREEN}%s lint passed.${NC}\n" "$label"
+    printf "${GREEN}$message passed.${NC}\n"
   fi
 }
 
-run_lint "." "planet"
-run_lint "gateway" "gateway"
+# Get number of uncommitted changes
+CHANGES=$(git diff --numstat | wc -l)
+CHANGES_CACHED=$(git diff --cached --numstat | wc -l)
+TOTAL_CHANGES=$(($CHANGES + $CHANGES_CACHED))
 
+# Stash all uncommitted changes before running tests
+git stash -k
+
+run_lint() {
+  local dir=$1
+
+  cd $dir
+  tslint=$(npm run lint)
+}
+
+echo "Running planet linters"
+run_lint .
+
+ret_code_tslint=$?
+output_result $ret_code_tslint "eslint" $tslint
+
+echo "Running gateway linters"
+run_lint gateway
+
+ret_code_tslint=$?
+output_result $ret_code_tslint "tslint" $tslint
+
+# If we stashed changes earlier, pop them back off the stack
+if [ $TOTAL_CHANGES -ne "0" ]
+then
+  echo "Popping" $TOTAL_CHANGES "changes off the stack..."
+  git stash pop -q
+fi
+
+# The 0 exit code will only be sent if pass=true
+# Any failure will set pass=false
 if $pass; then
   exit 0
 fi
