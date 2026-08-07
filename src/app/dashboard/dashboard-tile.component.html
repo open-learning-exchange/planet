@@ -27,12 +27,16 @@
           <ng-container *planetAuthorizedRoles="item.authorization || '_any'">
             <div
               class="dashboard-item"
+              role="button"
+              tabindex="0"
               [ngClass]="{
                 'bg-grey': even,
                 'cursor-pointer': item.link && !recentlyDragged,
                 'accordion-item': isAccordionMode,
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
+              (keydown.enter)="navigateToItem(item)"
+              (keydown.space)="$event.preventDefault(); navigateToItem(item)"
               [routerLink]="recentlyDragged ? null : item.link"
               [state]="item.returnState ? { returnState: item.returnState } : undefined"
               [matTooltip]="item.tooltip"

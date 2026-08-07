@@ -13,7 +13,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatCard } from '@angular/material/card';
 import { NgClass, NgStyle } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router, RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -101,7 +101,9 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private teamsService: TeamsService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.deviceInfoService.watchDeviceType()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -227,5 +229,16 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
 
   coverImageUrl(item: any): string {
     return couchAttachmentUrl(environment.couchAddress, 'courses', item._id, item.coverFileName);
+  }
+
+  navigateToItem(item: any) {
+    if (item?.link && !this.recentlyDragged) {
+      const extras: NavigationExtras = { relativeTo: this.route };
+      if (item.returnState) {
+        extras.state = { returnState: item.returnState };
+      }
+      const link = Array.isArray(item.link) ? item.link : [item.link];
+      this.router.navigate(link, extras);
+    }
   }
 }
