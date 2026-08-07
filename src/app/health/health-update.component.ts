@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { interval, of, race, forkJoin } from 'rxjs';
 import { debounce } from 'rxjs/operators';
@@ -94,7 +95,8 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
     private userService: UserService,
     private healthService: HealthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private navigationService: NavigationService
   ) {
     this.initProfileForm();
     this.initHealthForm();
@@ -206,7 +208,7 @@ export class HealthUpdateComponent implements OnInit, CanComponentDeactivate {
   }
 
   goBack() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   canDeactivate(): boolean {

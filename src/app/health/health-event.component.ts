@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HealthService } from './health.service';
 import { conditions, conditionAndTreatmentFields } from './health.constants';
@@ -88,7 +89,8 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
     private stateService: StateService,
     private couchService: CouchService,
     private dialog: MatDialog,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private navigationService: NavigationService
   ) {
     this.healthForm = this.fb.group({
       temperature: this.fb.control<number | null>(null, { validators: [ Validators.min(1) ] }),
@@ -189,7 +191,7 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
 
   goBack() {
     // Let the router guard handle the unsaved changes prompt
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   conditionChange(condition: string) {
