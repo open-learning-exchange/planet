@@ -1,31 +1,101 @@
-export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+export const PROVIDER_NAMES = [ 'openai', 'perplexity', 'deepseek', 'gemini' ] as const;
+
+export type ProviderName = typeof PROVIDER_NAMES[number];
 
 export interface AIProvider {
   name: ProviderName;
-  model?: string;
 }
 
-interface Providers {
+export const CHAT_MODES = [ 'general_chat', 'course_help', 'survey_analysis' ] as const;
+
+export type ChatMode = typeof CHAT_MODES[number];
+
+export interface Citation {
+  title?: string;
+  fileId: string;
+}
+
+export interface ChatContext {
+  type?: string;
+  data?: string;
+  resource?: {
+    id?: string;
+    attachments?: Record<string, unknown>;
+  };
+}
+
+export interface ChatRequestPayload {
+  content: string;
+  aiProvider?: AIProvider;
+  mode?: ChatMode;
+  context?: ChatContext | string;
+  user?: unknown;
+  _id?: string;
+  _rev?: string;
+  /** @deprecated Older clients sent this; it is accepted and ignored. Use `mode`. */
+  assistant?: boolean;
+}
+
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+/** Request handed to a provider adapter. */
+export interface ProviderChatRequest {
+  model: string;
+  messages: ChatMessage[];
+  instructions?: string;
+  onDelta?: (delta: string) => void;
+  vectorStoreIds?: string[];
+  jsonSchema?: {
+    name: string;
+    schema: Record<string, unknown>;
+  };
+  signal?: AbortSignal;
+}
+
+export interface ProviderChatResult {
+  text: string;
+  citations: Citation[];
+}
+
+export interface PromptProfiles {
+  general_chat?: string;
+  course_help?: string;
+  survey_analysis?: string;
+}
+
+/** Shape of the AI fields on the CouchDB configurations document. */
+export interface AIConfigDoc {
+  _id?: string;
+  code?: string;
+  planetType?: string;
+  keys?: Partial<Record<ProviderName, string>>;
+  models?: Partial<Record<ProviderName, string>>;
+  promptProfiles?: PromptProfiles;
+  /** @deprecated Legacy assistant instructions remain the general-chat fallback. */
+  assistant?: {
+    name?: string;
+    instructions?: string;
+  };
+}
+
+// Transitional shapes used by the legacy route until the cutover commit removes it.
+interface LegacyProviderFields {
   openai?: string;
   perplexity?: string;
   deepseek?: string;
   gemini?: string;
 }
 
-interface Assistant {
-  name: string;
-  instructions: string;
-}
-
 export interface ModelsDocument {
-  models: Providers;
-  keys: Providers;
-  assistant?: Assistant;
-}
-
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
+  models: LegacyProviderFields;
+  keys: LegacyProviderFields;
+  assistant?: {
+    name: string;
+    instructions: string;
+  };
 }
 
 export interface ChatItem {
@@ -33,4 +103,3 @@ export interface ChatItem {
   query: string;
   response: string;
 }
-
