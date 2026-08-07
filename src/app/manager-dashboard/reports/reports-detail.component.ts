@@ -295,7 +295,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           },
           queryParamsHandling: 'merge'
         });
-        this.location.replaceState(urlTree.toString());
+        this.location.replaceState(urlTree.toString(), '', this.location.getState());
       }
       this.filterData();
     });

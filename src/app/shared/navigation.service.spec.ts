@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { provideLocationMocks } from '@angular/common/testing';
 import { TestBed } from '@angular/core/testing';
-import { NavigationStart, NavigationEnd, provideRouter, Router } from '@angular/router';
+import { NavigationStart, NavigationEnd, provideRouter, Router, withRouterConfig } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { Subject } from 'rxjs';
 import { vi } from 'vitest';
 
-import { NavigationService } from './navigation.service';
+import { FALLBACK_NAVIGATION, NavigationService, navigationRouterOptions } from './navigation.service';
 
 describe('NavigationService', () => {
   let events: Subject<any>;
@@ -15,8 +15,24 @@ describe('NavigationService', () => {
   let location: any;
   let service: NavigationService;
 
-  const navigate = (id: number, trigger: 'imperative' | 'popstate' = 'imperative', restoredId: number = null, replaceUrl = false) => {
-    router.getCurrentNavigation = () => ({ extras: { replaceUrl } });
+  // Asserts the navigation carries the fallback marker, without which the service
+  // would count it as a new entry and let repeated back loop through fallbacks
+  const expectFallbackNavigation = (spy: any, target: any, extras: object = {}) => {
+    const [ calledTarget, calledExtras ] = spy.mock.calls.at(-1);
+    expect(calledTarget).toEqual(target);
+    expect(calledExtras[FALLBACK_NAVIGATION]).toBe(true);
+    expect(calledExtras.replaceUrl).not.toBe(true);
+    expect(calledExtras).toMatchObject(extras);
+  };
+
+  const navigate = (
+    id: number,
+    trigger: 'imperative' | 'popstate' = 'imperative',
+    restoredId: number = null,
+    replaceUrl = false,
+    extras: Record<PropertyKey, unknown> = {}
+  ) => {
+    router.getCurrentNavigation = () => ({ extras: { ...extras, replaceUrl } });
     events.next(new NavigationStart(id, `/url-${id}`, trigger, restoredId !== null ? { navigationId: restoredId } : null));
     events.next(new NavigationEnd(id, `/url-${id}`, `/url-${id}`));
   };
@@ -32,7 +48,7 @@ describe('NavigationService', () => {
     navigate(1);
     service.back([ '../../' ], { relativeTo: 'route' } as any);
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith([ '../../' ], { replaceUrl: true, relativeTo: 'route' });
+    expectFallbackNavigation(router.navigate, [ '../../' ], { relativeTo: 'route' });
   });
 
   it('uses browser history when a previous in-app page exists', () => {
@@ -49,7 +65,7 @@ describe('NavigationService', () => {
     navigate(3, 'popstate', 1);
     service.back([ '/fallback' ]);
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith([ '/fallback' ], { replaceUrl: true });
+    expectFallbackNavigation(router.navigate, [ '/fallback' ]);
   });
 
   it('is not fooled by browser forward (popstate is not always back)', () => {
@@ -67,7 +83,7 @@ describe('NavigationService', () => {
     navigate(2, 'imperative', null, true);
     service.back([ '/list' ]);
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith([ '/list' ], { replaceUrl: true });
+    expectFallbackNavigation(router.navigate, [ '/list' ]);
   });
 
   it('treats popstate to an entry from a previous document as history start', () => {
@@ -76,7 +92,7 @@ describe('NavigationService', () => {
     navigate(3, 'popstate', 99);
     service.back([ '/' ]);
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith([ '/' ], { replaceUrl: true });
+    expectFallbackNavigation(router.navigate, [ '/' ]);
   });
 
   it('resumes normal counting after a browser back then a new navigation', () => {
@@ -88,20 +104,30 @@ describe('NavigationService', () => {
     expect(location.back).toHaveBeenCalled();
   });
 
-  it('accepts a serialized URL fallback and replace-navigates to it', () => {
+  it('accepts a serialized URL fallback without replacing the current entry', () => {
     navigate(1);
     service.back('/courses/update/abc;continue=true');
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigateByUrl).toHaveBeenCalledWith('/courses/update/abc;continue=true', { replaceUrl: true });
+    expectFallbackNavigation(router.navigateByUrl, '/courses/update/abc;continue=true');
   });
 
-  it('keeps the fallback at history start so repeated back does not loop into the abandoned page', () => {
+  it('preserves caller navigation info exactly on a fallback', () => {
+    const info = 'caller-info';
+    navigate(1);
+    service.back([ '/parent' ], { info });
+
+    expectFallbackNavigation(router.navigate, [ '/parent' ], { info });
+    expect(router.navigate.mock.calls[0][1].info).toBe(info);
+  });
+
+  it('keeps pushed fallbacks at logical history start so repeated back does not loop', () => {
     navigate(1);
     service.back([ '/parent' ]);
-    navigate(2, 'imperative', null, true);
+    const fallbackExtras = router.navigate.mock.calls[0][1];
+    navigate(2, 'imperative', null, false, fallbackExtras);
     service.back([ '/grandparent' ]);
     expect(location.back).not.toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenLastCalledWith([ '/grandparent' ], { replaceUrl: true });
+    expectFallbackNavigation(router.navigate, [ '/grandparent' ]);
   });
 });
 
@@ -112,22 +138,35 @@ describe('NavigationService (router integration)', () => {
   let service: NavigationService;
   let location: Location;
   let harness: RouterTestingHarness;
+  let allowGuardedNavigation: boolean;
+  let guardedCanDeactivate: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
+    allowGuardedNavigation = true;
+    guardedCanDeactivate = vi.fn(() => allowGuardedNavigation);
     TestBed.configureTestingModule({
-      providers: [ provideRouter([ { path: '**', component: BlankComponent } ]), provideLocationMocks() ]
+      providers: [
+        provideRouter([
+          { path: 'guarded-editor', component: BlankComponent, canDeactivate: [ guardedCanDeactivate ] },
+          { path: '**', component: BlankComponent }
+        ], withRouterConfig(navigationRouterOptions)),
+        provideLocationMocks()
+      ]
     });
     service = TestBed.inject(NavigationService);
     location = TestBed.inject(Location);
+    TestBed.inject(Router).setUpLocationChangeListener();
     harness = await RouterTestingHarness.create();
   });
 
   const settle = async () => {
+    await new Promise(resolve => setTimeout(resolve, 0));
     await harness.fixture.whenStable();
+    await new Promise(resolve => setTimeout(resolve, 0));
     await harness.fixture.whenStable();
   };
 
-  it('cold-start fallback replaces the entry so back cannot loop into the abandoned child', async () => {
+  it('pushes cold-start fallbacks without making Planet back loop into the abandoned child', async () => {
     await harness.navigateByUrl('/teams/view/t1/courses/c1');
     service.back([ '/teams/view/t1' ]);
     await settle();
@@ -135,6 +174,14 @@ describe('NavigationService (router integration)', () => {
     service.back([ '/teams' ]);
     await settle();
     expect(location.path()).toBe('/teams');
+
+    location.back();
+    await settle();
+    expect(location.path()).toBe('/teams/view/t1');
+
+    location.back();
+    await settle();
+    expect(location.path()).toBe('/teams/view/t1/courses/c1');
   });
 
   it('walks real browser history back after in-app navigation', async () => {
@@ -143,6 +190,23 @@ describe('NavigationService (router integration)', () => {
     service.back([ '/never-used' ]);
     await settle();
     expect(location.path()).toBe('/teams');
+  });
+
+  it('restores browser position when guarded back navigation is canceled', async () => {
+    await harness.navigateByUrl('/parent');
+    await harness.navigateByUrl('/guarded-editor');
+    allowGuardedNavigation = false;
+
+    service.back([ '/unused' ]);
+    await settle();
+    expect(guardedCanDeactivate).toHaveBeenCalled();
+    expect(TestBed.inject(Router).url).toBe('/guarded-editor');
+    expect(location.path()).toBe('/guarded-editor');
+
+    allowGuardedNavigation = true;
+    service.back([ '/unused' ]);
+    await settle();
+    expect(location.path()).toBe('/parent');
   });
 
   // The course-form/exam-editor flow: the form rewrites its own history entry to
