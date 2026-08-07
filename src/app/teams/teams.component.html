@@ -63,7 +63,12 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
-            {{element.doc.name | truncateText:150}}
+            <a (click)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.space)="$event.preventDefault(); $event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.enter)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               tabindex="0" role="button">
+              {{element.doc.name | truncateText:150}}
+            </a>
             @if (element.userStatus === 'member' && mode === 'enterprise') {
               <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
             }
