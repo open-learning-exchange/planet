@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import { ChatService } from '../shared/chat.service';
 import { NavigationService } from '../shared/navigation.service';
@@ -27,9 +26,7 @@ export class ChatComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private navigationService: NavigationService,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -55,7 +52,8 @@ export class ChatComponent implements OnInit {
   }
 
   goBack(): void {
-    this.navigationService.back([ '/' ]);
+    const returnRoute = history.state?.returnState?.route ?? '/';
+    this.navigationService.back([ returnRoute ]);
   }
 
   toggleAIService(): void {
