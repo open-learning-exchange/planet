@@ -78,6 +78,7 @@ export interface Message {
   query: string;
   response: string;
   citations?: Citation[];
+  hasAttachments?: boolean;
 }
 
 export interface AIServiceStatus {
