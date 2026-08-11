@@ -191,9 +191,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
   }
 
   navigateToGrading() {
-    if (this.course?._id) {
-      this.router.navigate([ '/courses/submissions', this.course._id ]);
-    }
+    this.router.navigate([ '/myDashboard/submissions' ]);
   }
 
   applyFilter(filterValue: string) {

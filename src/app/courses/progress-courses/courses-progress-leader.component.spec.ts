@@ -150,9 +150,8 @@ describe('CoursesProgressLeaderComponent', () => {
   });
 
   it('should navigate to grading page when navigateToGrading is called', () => {
-    component.course = { _id: 'course_123' };
     component.navigateToGrading();
-    expect(routerMock.navigate).toHaveBeenCalledWith([ '/courses/submissions', 'course_123' ]);
+    expect(routerMock.navigate).toHaveBeenCalledWith([ '/myDashboard/submissions' ]);
   });
 
   it('should navigate to /courses on navigateBack', () => {
