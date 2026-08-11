@@ -1,86 +1,65 @@
-import { ComponentFixture, TestBed } from '@angular/core';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, Subject } from 'rxjs';
-
+import { vi } from 'vitest';
 import { CoursesSubmissionsComponent } from './courses-submissions.component';
-import { CoursesService } from '../courses.service';
-import { UserService } from '../../shared/user.service';
-import { DeviceInfoService } from '../../shared/device-info.service';
 
 describe('CoursesSubmissionsComponent', () => {
   let component: CoursesSubmissionsComponent;
-  let fixture: ComponentFixture<CoursesSubmissionsComponent>;
+  let routerMock: any;
+  let routeMock: any;
+  let coursesServiceMock: any;
+  let userServiceMock: any;
+  let deviceInfoServiceMock: any;
+  let courseUpdated$: Subject<any>;
 
-  const courseUpdated$ = new Subject<any>();
+  beforeEach(() => {
+    courseUpdated$ = new Subject<any>();
 
-  const coursesServiceMock = {
-    requestCourse: jasmine.createSpy('requestCourse'),
-    courseUpdated$: courseUpdated$.asObservable()
-  };
+    routerMock = {
+      navigate: vi.fn()
+    };
+    routeMock = {
+      paramMap: of({ get: (key: string) => key === 'id' ? 'course_123' : null })
+    };
+    coursesServiceMock = {
+      requestCourse: vi.fn(),
+      courseUpdated$: courseUpdated$.asObservable()
+    };
+    userServiceMock = {
+      get: vi.fn().mockReturnValue({ isUserAdmin: true, name: 'admin' })
+    };
+    deviceInfoServiceMock = {
+      watchDeviceType: vi.fn().mockReturnValue(of('desktop'))
+    };
 
-  const userServiceMock = {
-    get: () => ({ isUserAdmin: true, name: 'admin' })
-  };
-
-  const deviceInfoServiceMock = {
-    watchDeviceType: () => of('desktop'),
-    getDeviceType: () => 'desktop'
-  };
-
-  const routerMock = {
-    navigate: jasmine.createSpy('navigate')
-  };
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [
-        CoursesSubmissionsComponent,
-        NoopAnimationsModule
-      ],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: CoursesService, useValue: coursesServiceMock },
-        { provide: UserService, useValue: userServiceMock },
-        { provide: DeviceInfoService, useValue: deviceInfoServiceMock },
-        { provide: Router, useValue: routerMock },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            paramMap: of(convertToParamMap({ id: 'course_123' })),
-            snapshot: { paramMap: convertToParamMap({ id: 'course_123' }), data: {} }
-          }
-        }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(CoursesSubmissionsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new CoursesSubmissionsComponent(
+      routerMock,
+      routeMock,
+      coursesServiceMock,
+      userServiceMock,
+      deviceInfoServiceMock
+    );
   });
 
-  it('should create the component', () => {
+  it('should create CoursesSubmissionsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should request course details on init', () => {
+  it('should request course on ngOnInit', () => {
+    component.ngOnInit();
     expect(coursesServiceMock.requestCourse).toHaveBeenCalledWith({ courseId: 'course_123', forceLatest: true });
   });
 
-  it('should update course title and manage status when courseUpdated$ fires', () => {
+  it('should update state when courseUpdated$ emits', () => {
+    component.ngOnInit();
     courseUpdated$.next({
-      course: { _id: 'course_123', courseTitle: 'Test Math Course', creator: 'admin@ole' }
+      course: { _id: 'course_123', courseTitle: 'Math 101', creator: 'admin@ole' }
     });
-    fixture.detectChanges();
-    expect(component.headingStart).toBe('Test Math Course');
-    expect(component.canManage).toBeTrue();
-    expect(component.isLoading).toBeFalse();
+    expect(component.headingStart).toBe('Math 101');
+    expect(component.canManage).toBe(true);
+    expect(component.isLoading).toBe(false);
   });
 
-  it('should navigate back to /courses when navigateBack is called', () => {
+  it('should navigate to /courses on navigateBack', () => {
     component.navigateBack();
     expect(routerMock.navigate).toHaveBeenCalledWith([ '/courses' ]);
   });
