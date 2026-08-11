@@ -1,6 +1,11 @@
 import { millisecondsToDay } from '../../meetups/constants';
 import { CsvService } from '../../shared/csv.service';
 
+export const chatActivityHasAttachments = (activity: any): boolean => !!(
+  (activity.context?.resource?.attachments && Object.keys(activity.context.resource.attachments).length > 0) ||
+  activity.conversations?.some((conversation: any) => conversation.hasAttachments || conversation.citations?.length)
+);
+
 export const attachNamesToPlanets = (planetDocs: any[]) => {
   const names = planetDocs.filter(doc => doc.docType === 'parentName');
   return planetDocs.map(doc => ({ doc, nameDoc: names.find((name: any) => name.planetId === doc._id) }));
