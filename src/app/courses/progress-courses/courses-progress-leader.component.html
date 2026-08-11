@@ -188,7 +188,7 @@
             <ng-container matColumnDef="lastActive">
               <mat-header-cell *matHeaderCellDef mat-sort-header="lastActive" i18n>Last Active</mat-header-cell>
               <mat-cell *matCellDef="let element">
-                <span>{{ (element.lastActive | date:'medium') || '--' }}</span>
+                <span>{{ (element.lastActive | date:'short') || '--' }}</span>
               </mat-cell>
             </ng-container>
 
@@ -220,7 +220,7 @@
             @for (step of stepDifficultyList; track step; let idx = $index) {
               <div class="step-difficulty-item margin-bottom-3">
                 <div class="step-title-row">
-                  <span class="step-name font-weight-bold">Step {{ idx+1 }}: {{ step.stepTitle || 'Untitled Step' }}</span>
+                  <span class="step-name font-weight-bold">{{ step.stepTitle }}</span>
                   <span class="step-errors-badge">{{ step.totalErrors }} mistakes</span>
                 </div>
                 <div class="step-sub-row margin-tb-1">

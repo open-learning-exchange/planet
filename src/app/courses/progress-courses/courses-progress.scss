@@ -1,8 +1,8 @@
 @use '../../variables' as v;
 
 .dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .kpi-grid {
@@ -16,12 +16,14 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 16px;
+    padding: 16px 20px;
   }
 
   .kpi-icon-box {
     width: 48px;
     height: 48px;
+    min-width: 48px;
+    min-height: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -90,6 +92,19 @@
   .user-cell {
     display: flex;
     align-items: center;
+
+    planet-avatar, img {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+      max-height: 36px !important;
+      border-radius: 50% !important;
+      object-fit: cover !important;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
   }
 
   .progress-cell {

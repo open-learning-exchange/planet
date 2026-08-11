@@ -328,6 +328,10 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
       let stepPending = 0;
       let passCount = 0;
 
+      const sanitizedTitle = step.stepTitle && !step.stepTitle.startsWith(`Step ${index + 1}`)
+        ? `Step ${index + 1}: ${step.stepTitle}`
+        : (step.stepTitle || `Step ${index + 1}`);
+
       if (step.exam) {
         const stepSubs = submissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
         stepSubs.forEach((sub: any) => {
@@ -343,7 +347,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
         const passPercentage = stepSubs.length ? Math.round((passCount / stepSubs.length) * 100) : 0;
         return {
           stepIndex: index + 1,
-          stepTitle: step.stepTitle || `Step ${index + 1}`,
+          stepTitle: sanitizedTitle,
           hasExam: true,
           submissionCount: stepSubs.length,
           totalErrors: stepErrors,
@@ -354,7 +358,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
 
       return {
         stepIndex: index + 1,
-        stepTitle: step.stepTitle || `Step ${index + 1}`,
+        stepTitle: sanitizedTitle,
         hasExam: false,
         submissionCount: 0,
         totalErrors: 0,
