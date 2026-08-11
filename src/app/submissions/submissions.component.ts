@@ -168,16 +168,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
         }, []);
       }
 
-      submissions = normalized
-        .map(submission => this.appendCourseInfo(submission, courses))
-        .filter(submission => {
-          if (submission.parentId && submission.parentId.includes('@')) {
-            if (submission.status === 'pending') {
-              return submission.hasValidCourse && submission.hasValidStep;
-            }
-          }
-          return true;
-        });
+      submissions = normalized.map(submission => this.appendCourseInfo(submission, courses));
       // Sort in descending lastUpdateTime order, so the recent submission can be shown on the top
       submissions.sort((a, b) => b.lastUpdateTime - a.lastUpdateTime);
       this.submissions.data = submissions.map(submission => ({
@@ -317,7 +308,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (!courseId) {
       return {
         ...submission,
-        courseTitle: $localize`(Removed course)`,
+        courseTitle: $localize`Course not available`,
         stepNum: '--',
         hasValidCourse: false,
         hasValidStep: false
@@ -327,7 +318,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (!submissionCourse || !submissionCourse.doc || !submissionCourse.doc.steps) {
       return {
         ...submission,
-        courseTitle: $localize`(Removed course)`,
+        courseTitle: $localize`Course not available`,
         stepNum: '--',
         hasValidCourse: false,
         hasValidStep: false
@@ -339,7 +330,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     return {
       ...submission,
       courseTitle: submissionCourse.doc.courseTitle,
-      stepNum: hasValidStep ? stepNum : $localize`(Removed step)`,
+      stepNum: hasValidStep ? stepNum : $localize`Step not available`,
       hasValidCourse: true,
       hasValidStep
     };
