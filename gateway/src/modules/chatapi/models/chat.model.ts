@@ -20,7 +20,6 @@ export interface ChatContext {
   data?: string;
   resource?: {
     id?: string;
-    attachments?: Record<string, unknown>;
   };
 }
 
@@ -31,13 +30,10 @@ export interface ChatRequestPayload {
   context?: ChatContext | string;
   user?: unknown;
   _id?: string;
-  _rev?: string;
-  /** @deprecated Older clients sent this; it is accepted and ignored. Use `mode`. */
-  assistant?: boolean;
 }
 
 export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: 'user' | 'assistant';
   content: string;
 }
 
@@ -79,27 +75,4 @@ export interface AIConfigDoc {
     name?: string;
     instructions?: string;
   };
-}
-
-// Transitional shapes used by the legacy route until the cutover commit removes it.
-interface LegacyProviderFields {
-  openai?: string;
-  perplexity?: string;
-  deepseek?: string;
-  gemini?: string;
-}
-
-export interface ModelsDocument {
-  models: LegacyProviderFields;
-  keys: LegacyProviderFields;
-  assistant?: {
-    name: string;
-    instructions: string;
-  };
-}
-
-export interface ChatItem {
-  id: string;
-  query: string;
-  response: string;
 }
