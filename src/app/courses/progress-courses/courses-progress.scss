@@ -1,7 +1,157 @@
-:host {
+@use '../../variables' as v;
 
-  .view-container {
-    overflow: auto;
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.kpi-card {
+  .kpi-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
   }
 
+  .kpi-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: v.$white;
+
+    &.primary-bg { background-color: v.$primary; }
+    &.accent-bg { background-color: v.$accent; }
+    &.warn-bg { background-color: v.$warn; }
+    &.error-bg { background-color: #e53935; }
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .kpi-info {
+    display: flex;
+    flex-direction: column;
+
+    .kpi-label {
+      font-size: 13px;
+      color: v.$grey-text;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 2px 0 0 0;
+    }
+  }
+}
+
+.dashboard-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.table-card {
+  overflow: hidden;
+
+  .table-header-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .search-field {
+      max-width: 260px;
+    }
+  }
+
+  .user-cell {
+    display: flex;
+    align-items: center;
+  }
+
+  .progress-cell {
+    width: 100%;
+    padding-right: 12px;
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 4px;
+
+      .progress-pct {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .steps-chip-set {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    .step-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+
+      &.step-success { background-color: #e8f5e9; color: #2e7d32; }
+      &.step-warning { background-color: #fff3e0; color: #ef6c00; }
+      &.step-active { background-color: #e3f2fd; color: #1565c0; }
+      &.step-muted { background-color: #f5f5f5; color: #9e9e9e; }
+    }
+  }
+}
+
+.analytics-card {
+  .step-difficulty-list {
+    display: flex;
+    flex-direction: column;
+
+    .step-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .step-sub-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .step-errors-badge {
+      font-size: 12px;
+      color: v.$warn;
+      font-weight: 500;
+    }
+  }
 }

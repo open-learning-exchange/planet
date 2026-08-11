@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -12,45 +12,75 @@ import { UserProfileDialogComponent } from '../../users/users-profile/users-prof
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet, DatePipe, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
-import { CoursesProgressChartComponent } from './courses-progress-chart.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+  MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AvatarComponent } from '../../shared/avatar.component';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styles: [`
-    mat-toolbar.primary-color {
-      padding-top: 8px;
-    }
-  `],
+  styleUrls: ['./courses-progress.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
+    NgClass,
     MatIconButton,
     MatMenuTrigger,
     MatMenu,
     PlanetSelectorComponent,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatButton,
-    CoursesProgressChartComponent,
     PlanetLoadingSpinnerComponent,
-    TruncateTextPipe
+    TruncateTextPipe,
+    MatCard,
+    MatCardContent,
+    MatProgressBar,
+    MatChipSet,
+    MatChip,
+    MatTable,
+    MatSort,
+    MatSortHeader,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    MatInput,
+    MatTooltip,
+    AvatarComponent,
+    DatePipe
   ]
 })
-export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
+export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   course: any;
   headingStart = '';
@@ -58,7 +88,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedStep: any;
   allChartData: any[] = [];
   chartData: any[];
-  csvChartData: any[];
   submissions: any[] = [];
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
@@ -70,6 +99,17 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isLoading = false;
+
+  totalLearners = 0;
+  avgCompletionPercentage = 0;
+  pendingGradesCount = 0;
+  totalErrorsCount = 0;
+  displayedColumns = [ 'user', 'progress', 'stepStatus', 'totalErrors', 'lastActive', 'actions' ];
+  dataSource = new MatTableDataSource<any>();
+  stepDifficultyList: any[] = [];
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private router: Router,
@@ -84,6 +124,10 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
     });
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      return data.user.name.toLowerCase().includes(filter) || data.user.planetCode.toLowerCase().includes(filter);
+    };
   }
 
   ngOnInit() {
@@ -101,6 +145,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.filterSubmittedExamSteps(submissions);
       this.isLoading = false;
     });
+  }
+
+  ngAfterViewChecked() {
+    if (this.paginator && !this.dataSource.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+    if (this.sort && !this.dataSource.sort) {
+      this.dataSource.sort = this.sort;
+    }
   }
 
   ngOnDestroy() {
@@ -137,6 +190,16 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.router.navigate([ '/courses' ]);
   }
 
+  navigateToGrading() {
+    if (this.course?._id) {
+      this.router.navigate([ '/courses/submissions', this.course._id ]);
+    }
+  }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
   arraySubmissionAnswers(submission: any) {
     return submission.answers.map(a => ({ number: this.answerErrorCount(a), fill: true })).reverse();
   }
@@ -171,7 +234,81 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
+
     const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+    this.totalLearners = users.length;
+
+    let totalPctSum = 0;
+    let pendingCount = 0;
+    let totalErrors = 0;
+
+    const learnerRows = users.map((user: any) => {
+      const userProgressDoc = this.userProgress(user);
+      const userSubmissions = submissions.filter((sub: any) => sub.user.name === user.name && sub.source === user.planetCode);
+      const passedExamSteps = userSubmissions.filter((s: any) => s.status === 'complete').length;
+      const stepNumCompleted = Math.max(userProgressDoc?.stepNum || 0, passedExamSteps);
+      const totalSteps = Math.max(this.course.steps.length, 1);
+      const completionPercentage = Math.min(100, Math.round((stepNumCompleted / totalSteps) * 100));
+      totalPctSum += completionPercentage;
+      let userErrorCount = 0;
+      let lastActiveTimestamp = 0;
+
+      const stepStatuses = this.course.steps.map((step: any, index: number) => {
+        let stepStatus = 'not_started';
+        let stepErrCount = 0;
+
+        if (step.exam) {
+          const sub = userSubmissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
+          if (sub) {
+            stepStatus = sub.status;
+            stepErrCount = this.totalSubmissionAnswers(sub).number || 0;
+            userErrorCount += stepErrCount;
+            if (sub.status === 'requires grading') {
+              pendingCount++;
+            }
+            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = sub.lastUpdateTime;
+            }
+          } else if (stepNumCompleted > index) {
+            stepStatus = 'complete';
+          } else if (stepNumCompleted === index) {
+            stepStatus = 'in_progress';
+          }
+        } else {
+          if (stepNumCompleted > index) {
+            stepStatus = 'complete';
+          } else if (stepNumCompleted === index) {
+            stepStatus = 'in_progress';
+          }
+        }
+
+        return {
+          stepIndex: index + 1,
+          stepTitle: step.stepTitle || `Step ${index + 1}`,
+          status: stepStatus,
+          errors: stepErrCount
+        };
+      });
+
+      totalErrors += userErrorCount;
+
+      return {
+        user,
+        stepNum: stepNumCompleted,
+        completionPercentage,
+        stepStatuses,
+        totalErrors: userErrorCount,
+        lastActive: lastActiveTimestamp || null
+      };
+    });
+
+    this.avgCompletionPercentage = users.length ? Math.round(totalPctSum / users.length) : 0;
+    this.pendingGradesCount = pendingCount;
+    this.totalErrorsCount = totalErrors;
+
+    this.dataSource.data = learnerRows;
+    this.calculateStepDifficulty(submissions);
+
     this.allChartData = users.map((user: any) => {
       const answers = this.course.steps.map((step: any, index: number) => {
         return this.userCourseAnswers(user, step, index, submissions);
@@ -183,6 +320,48 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       });
     });
     this.filterDataByPlanet();
+  }
+
+  calculateStepDifficulty(submissions: any[]) {
+    this.stepDifficultyList = this.course.steps.map((step: any, index: number) => {
+      let stepErrors = 0;
+      let stepPending = 0;
+      let passCount = 0;
+
+      if (step.exam) {
+        const stepSubs = submissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
+        stepSubs.forEach((sub: any) => {
+          stepErrors += this.totalSubmissionAnswers(sub).number || 0;
+          if (sub.status === 'requires grading') {
+            stepPending++;
+          }
+          if (sub.status === 'complete') {
+            passCount++;
+          }
+        });
+
+        const passPercentage = stepSubs.length ? Math.round((passCount / stepSubs.length) * 100) : 0;
+        return {
+          stepIndex: index + 1,
+          stepTitle: step.stepTitle || `Step ${index + 1}`,
+          hasExam: true,
+          submissionCount: stepSubs.length,
+          totalErrors: stepErrors,
+          pendingCount: stepPending,
+          passPercentage
+        };
+      }
+
+      return {
+        stepIndex: index + 1,
+        stepTitle: step.stepTitle || `Step ${index + 1}`,
+        hasExam: false,
+        submissionCount: 0,
+        totalErrors: 0,
+        pendingCount: 0,
+        passPercentage: 100
+      };
+    });
   }
 
   setSingleStep(submissions: any[]) {
@@ -228,8 +407,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   filterSubmittedExamSteps(submissions: any[]) {
+    this.submittedExamSteps = [];
     this.course.steps
-      .filter((step: any, index: number) => {
+      .forEach((step: any, index: number) => {
         if (this.isSubmittedExam(submissions, step)) {
           step.index = index;
           this.submittedExamSteps.push(step);
@@ -246,7 +426,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
   }
 
-  memberClick({ label: name, planetCode: userPlanetCode }) {
+  memberClick(user: any) {
+    const name = user.name || user.label;
+    const userPlanetCode = user.planetCode || user.source;
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { name, userPlanetCode } },
       maxWidth: '90vw',
