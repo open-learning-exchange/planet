@@ -1,0 +1,17 @@
+<mat-toolbar>
+  <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
+  <span i18n>Course Submissions & Grading</span>
+</mat-toolbar>
+
+<mat-toolbar class="primary-color font-size-1">
+  <h3 class="ellipsis-title margin-lr-3">{{ headingStart | truncateText:140 }}</h3>
+</mat-toolbar>
+
+<div class="view-container view-full-height km-courses-submissions-container">
+  @if (isLoading) {
+    <planet-loading-spinner text="Loading submissions..." i18n-text></planet-loading-spinner>
+  }
+  @if (!isLoading && courseId) {
+    <planet-submissions [courseId]="courseId" [hideHeader]="true" class="km-courses-submissions"></planet-submissions>
+  }
+</div>

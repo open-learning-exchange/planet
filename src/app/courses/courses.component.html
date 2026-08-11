@@ -254,6 +254,12 @@
               </a>
             }
             @if (element.canManage) {
+              <a mat-menu-item [routerLink]="['/courses/submissions', element._id]" class="km-course-submissions-btn">
+                <mat-icon>assignment_turned_in</mat-icon>
+                <span i18n>Submissions & Grading</span>
+              </a>
+            }
+            @if (element.canManage) {
               <button mat-menu-item (click)="deleteClick(element.doc)">
                 <mat-icon>delete_forever</mat-icon>
                 <span i18n>Delete</span>

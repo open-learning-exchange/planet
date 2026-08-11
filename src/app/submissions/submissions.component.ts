@@ -79,6 +79,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
 
   @Input() isDialog = false;
   @Input() parentId: string;
+  @Input() courseId: string;
+  @Input() hideHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -207,6 +209,9 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     if (this.surveyId) {
       this.filter.type = 'survey';
       return { surveyId: this.surveyId, type: 'survey' as const };
+    }
+    if (this.courseId) {
+      return { query: findDocuments({ parentId: { '$regex': this.courseId } }) };
     }
     switch (this.mode) {
       case 'survey':
