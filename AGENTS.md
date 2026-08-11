@@ -13,18 +13,19 @@ Prerequisites: Node.js v22, npm v10, Angular CLI v20. A CouchDB instance must be
 - `npm start` / `ng serve` — dev server on port 3000 (host `0.0.0.0`). If 3000 is taken, use `ng serve --port 3001`.
 - `npm run dev` — runs `scripts/dev-env.sh` (which templates `src/environments/environment.dev.ts` from `environment.template` using `CHAT_PORT`, `COUCH_PORT`, `PARENT_PROTOCOL` from an optional `.env`) then `ng serve --configuration dev`. Use this when chatapi or CouchDB are on non-default ports.
 - `npm run build` — production build via `ng-high-memory` (`--max_old_space_size=4096`); large builds OOM without it.
-- `npm run test` — Karma + Jasmine; opens `localhost:9876`. There is no `e2e` workflow wired up on this branch.
-- Single spec: `ng test --include src/app/path/to/file.spec.ts` (or temporarily use `fdescribe` / `fit`).
+- `npm run test` — Angular unit tests through Vitest. Use `npm test -- --watch=false` for a single non-watch run. There is no `e2e` workflow wired up on this branch.
+- Single spec: `npm test -- --watch=false --test-files=src/app/path/to/file.spec.ts` (or temporarily use `describe.only` / `it.only`).
 - `npm run lint` — ESLint over `src/**/*.{ts,html}` via `@angular-eslint/builder`. `ng lint --fix` auto-fixes.
 - `npm run lint-all` — sass-lint + `ng lint --type-check` + htmlhint. Heavier than the pre-push hook.
 - Locales (en, so, fr, ne, ar, es): `ng serve --configuration <spa|fra|nep|ara|som>` or `LNG=es npm start`. Locale configs, base hrefs, and xlf sources are defined in `angular.json` under `projects.planet-app.i18n`.
 
 ### gateway (`gateway/`)
 
-Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`.
+Independent Node service; requires its own `.env` (see `gateway/README.md`) with `SERVE_PORT`, `COUCHDB_HOST`, `COUCHDB_USER`, `COUCHDB_PASS`, and the Angular development origin in `CORS_ORIGINS`. macOS/Windows users typically use `SERVE_PORT=5400` and mirror it in the root `.env` as `CHAT_PORT`.
 
 - `cd gateway && npm install && npm run dev` — nodemon + ts-node.
 - `npm run build` — `tsc`.
+- `npm test` — type-check gateway source and specs, then run Vitest. Install root dependencies first because Vitest resolves from the repository root.
 - `npm run lint` / `npm run lint-fix` — uses legacy ESLint config (`ESLINT_USE_FLAT_CONFIG=false`); the root app uses flat config (`eslint.config.mjs`), so don't try to unify them casually.
 - Only one `gateway` instance can bind the port at a time; stop the Docker gateway container before `npm run dev`.
 
