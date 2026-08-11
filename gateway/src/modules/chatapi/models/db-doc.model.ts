@@ -1,15 +1,4 @@
-import { ChatItem, ChatMode, Citation, ProviderName } from './chat.model';
-
-// Transitional document shape used by the legacy route until the cutover commit.
-export interface DbDoc {
-  _id: string;
-  _rev: string;
-  user: unknown;
-  title: string;
-  createdDate: number;
-  aiProvider?: ProviderName;
-  conversations: ChatItem[];
-}
+import { ChatMode, Citation, ProviderName } from './chat.model';
 
 export interface ChatTurn {
   id: string;
@@ -34,10 +23,8 @@ export interface ChatDoc {
 
 export interface Attachment {
   content_type: string;
-  revpos?: number;
   digest: string;
   length?: number;
-  stub?: boolean;
 }
 
 export interface ResourceVectorStoreFile {
@@ -48,7 +35,5 @@ export interface ResourceVectorStoreFile {
 export interface ResourceVectorStore {
   id: string;
   files: Record<string, ResourceVectorStoreFile>;
-  pendingCleanupFileIds?: string[];
-  updatedDate: number;
   dirty?: boolean;
 }
