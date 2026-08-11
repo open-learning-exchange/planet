@@ -74,7 +74,7 @@ export interface AnalyzeExam {
 }
 
 export const buildSurveyAnalysisPrompt = (exam: AnalyzeExam, questions: AnalyzeQuestion[]): string => {
-  const payloadString = JSON.stringify(questions, null, 2);
+  const payloadString = JSON.stringify(questions);
   return `The following is a ${exam.type || 'survey'} named “${exam.name}” with description “${exam.description || ''}”.
 ${payloadString}
 
