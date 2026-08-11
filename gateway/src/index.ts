@@ -6,6 +6,7 @@ import WebSocket from 'ws';
 
 import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
 import { registerPublicRoutes } from './modules/public/register';
+import { startResourceIndexReconciliation } from './modules/chatapi/services/resource-index.service';
 
 dotenv.config();
 
@@ -40,4 +41,7 @@ app.use((error: any, req: Request, res: Response, next: any) => {
 
 const port = Number(process.env.SERVE_PORT || 5000);
 
-server.listen(port, () => console.log(`Gateway running on port ${port}`)); // eslint-disable-line no-console
+server.listen(port, () => {
+  startResourceIndexReconciliation();
+  console.log(`Gateway running on port ${port}`); // eslint-disable-line no-console
+});
