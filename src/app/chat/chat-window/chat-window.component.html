@@ -4,6 +4,14 @@
       <div>
         <p class="conversation-query" [planetChatOutput]="conversation.query"></p>
         <p [ngClass]="{'conversation-error': conversation.error, 'conversation-response': !conversation.error}" [planetChatOutput]="conversation.response"></p>
+        @if (conversation.citations?.length) {
+          <p class="conversation-citations">
+            <span i18n>Sources:</span>
+            @for (citation of conversation.citations; track citation.fileId || $index) {
+              <span class="citation">{{ citation.title || attachedResourceLabel }}</span>
+            }
+          </p>
+        }
       </div>
     }
   </div>
@@ -17,7 +25,7 @@
           mat-icon-button
           matIconSuffix
           [planetSubmit]="promptForm.valid && spinnerOn"
-          [disabled]="!promptForm.valid || providers.length === 0"
+          [disabled]="!promptForm.valid || providers.length === 0 || streamingPending"
           i18n-matTooltip
           matTooltip="chat is disabled, contact community admin"
           [matTooltipDisabled]="providers.length > 0"

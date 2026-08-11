@@ -14,6 +14,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
 import { environment } from '../../environments/environment';
+import { ChatService } from '../shared/chat.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,11 +29,13 @@ export class LoginTasksService {
     private stateService: StateService,
     private healthService: HealthService,
     private submissionsService: SubmissionsService,
+    private chatService: ChatService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog
   ) {}
 
   postLoginTasks$(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
+    this.chatService.refreshAIProviders();
     return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
       switchMap(this.createSession(name, password)),
       switchMap((sessionData) => {

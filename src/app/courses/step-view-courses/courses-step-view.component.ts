@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ChatContext } from '../../chat/chat.model';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -73,7 +74,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
-  isOpenai = false;
+  isChatEnabled = false;
   isLoading = true;
   deviceType: DeviceType;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
@@ -105,7 +106,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   get hasActionButtons(): boolean {
     const hasExam = !!this.stepDetail?.exam?.questions.length;
     const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isOpenai && !!this.stepDetail?.description) ||
+    return (this.isChatEnabled && !!this.stepDetail?.description) ||
       this.attempts > 0 ||
       ((hasExam || hasSurvey) && this.isUserEnrolled) ||
       (this.canManage && (hasExam || hasSurvey)) ||
@@ -137,8 +138,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
-    this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
+      this.isChatEnabled = providers.length > 0;
     });
   }
 
@@ -268,10 +269,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   filterResources(step, resources) {
-    const resourceIds = resources.map((res: any) => res._id);
-    return step.resources ?
-      step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
-      [];
+    const resourcesById = new Map(resources.map((resource: any) => [ resource._id, resource ]));
+    return (step.resources || [])
+      .map((resource) => resourcesById.get(resource._id))
+      .filter((resource: any) => resource?._attachments);
   }
 
   openReviewDialog() {
@@ -294,6 +295,16 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   get localizedStepInfo(): string {
     return coursesStepPrompt(this.stepDetail?.stepTitle, this.stepDetail?.description);
+  }
+
+  get chatContext(): ChatContext {
+    return {
+      'type': 'coursestep',
+      'data': this.localizedStepInfo,
+      ...(!this.parent && this.resource?._id ? {
+        'resource': { 'id': this.resource._id, 'attachments': this.resource._attachments }
+      } : {})
+    };
   }
 
 }
