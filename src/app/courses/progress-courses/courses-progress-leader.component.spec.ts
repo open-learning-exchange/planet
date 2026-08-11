@@ -152,6 +152,42 @@ describe('CoursesProgressLeaderComponent', () => {
     expect(component.stepDifficultyList[0].passPercentage).toBe(0);
   });
 
+  it('should sum mistakes across retake attempts while marking step complete if any attempt passed', () => {
+    component.ngOnInit();
+    courseUpdated$.next({
+      course: {
+        _id: 'course_123',
+        courseTitle: 'Algebra 101',
+        steps: [ { stepTitle: 'Step 1', exam: { _id: 'exam_1' } } ]
+      }
+    });
+
+    submissionsUpdated$.next([
+      {
+        _id: 'sub_1',
+        parentId: 'exam_1@course_123',
+        status: 'complete',
+        source: 'community_1',
+        user: { name: 'Student 1', planetCode: 'community_1' },
+        answers: [ { grade: 0, mistakes: 1 } ]
+      },
+      {
+        _id: 'sub_2',
+        parentId: 'exam_1@course_123',
+        status: 'complete',
+        source: 'community_1',
+        user: { name: 'Student 1', planetCode: 'community_1' },
+        answers: [ { grade: 1, mistakes: 2 } ]
+      }
+    ]);
+
+    expect(component.dataSource.data[0].stepStatuses[0].status).toBe('complete');
+    expect(component.dataSource.data[0].totalErrors).toBe(3);
+    expect(component.totalErrorsCount).toBe(3);
+    expect(component.stepDifficultyList[0].totalErrors).toBe(3);
+    expect(component.stepDifficultyList[0].passPercentage).toBe(100);
+  });
+
   it('should require both exam and survey to be completed for step to be marked complete', () => {
     component.ngOnInit();
     courseUpdated$.next({

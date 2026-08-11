@@ -175,8 +175,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
   setSubmissions() {
     this.chartData = [];
     this.submissionsService.updateSubmissions({
-      query: findDocuments({ parentId: { '$regex': this.course._id } }),
-      onlyBest: true
+      query: findDocuments({ parentId: { '$regex': this.course._id } })
     });
   }
 
@@ -221,11 +220,12 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission = submissions.find((sub: any) => {
+    const userSubs = submissions.filter((sub: any) => {
       return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
     });
-    if (submission) {
-      return this.totalSubmissionAnswers(submission);
+    if (userSubs.length > 0) {
+      const totalErrors = userSubs.reduce((sum, s) => sum + (this.totalSubmissionAnswers(s).number || 0), 0);
+      return { number: totalErrors || 0, fill: true, clickable: true };
     }
     return { number: '', fill: false, clickable: true };
   }
@@ -255,30 +255,31 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
         const hasSurvey = !!step.survey;
 
         if (hasExam || hasSurvey) {
-          const examSub = hasExam ? userSubmissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : null;
-          const surveySub = hasSurvey ? userSubmissions.find((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : null;
+          const examSubs = hasExam ? userSubmissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : [];
+          const surveySubs = hasSurvey ? userSubmissions.filter((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : [];
 
-          if (examSub) {
-            stepErrCount += this.totalSubmissionAnswers(examSub).number || 0;
-            if (examSub.lastUpdateTime && examSub.lastUpdateTime > lastActiveTimestamp) {
-              lastActiveTimestamp = examSub.lastUpdateTime;
+          examSubs.forEach((sub: any) => {
+            stepErrCount += this.totalSubmissionAnswers(sub).number || 0;
+            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = sub.lastUpdateTime;
             }
-          }
-          if (surveySub) {
-            stepErrCount += this.totalSubmissionAnswers(surveySub).number || 0;
-            if (surveySub.lastUpdateTime && surveySub.lastUpdateTime > lastActiveTimestamp) {
-              lastActiveTimestamp = surveySub.lastUpdateTime;
+          });
+          surveySubs.forEach((sub: any) => {
+            stepErrCount += this.totalSubmissionAnswers(sub).number || 0;
+            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = sub.lastUpdateTime;
             }
-          }
+          });
           userErrorCount += stepErrCount;
 
-          const isExamGradingPending = hasExam && examSub?.status === 'requires grading';
-          const isSurveyGradingPending = hasSurvey && surveySub?.status === 'requires grading';
+          const isExamGradingPending = hasExam && examSubs.some((s: any) => s.status === 'requires grading');
+          const isSurveyGradingPending = hasSurvey && surveySubs.some((s: any) => s.status === 'requires grading');
 
-          const isExamComplete = !hasExam || (examSub && this.isSubmissionPassed(examSub));
-          const isSurveyComplete = !hasSurvey || (surveySub && surveySub.status === 'complete');
+          const isExamComplete = !hasExam || examSubs.some((s: any) => this.isSubmissionPassed(s));
+          const isSurveyComplete = !hasSurvey || surveySubs.some((s: any) => s.status === 'complete');
 
-          const isExamFailed = hasExam && examSub && examSub.status === 'complete' && !this.isSubmissionPassed(examSub);
+          const isExamFailed = hasExam && !isExamComplete &&
+            examSubs.some((s: any) => s.status === 'complete' && !this.isSubmissionPassed(s));
 
           if (isExamGradingPending || isSurveyGradingPending) {
             stepStatus = 'requires grading';
@@ -287,7 +288,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
             stepStatus = 'failed';
           } else if (isExamComplete && isSurveyComplete) {
             stepStatus = 'complete';
-          } else if (examSub || surveySub) {
+          } else if (examSubs.length > 0 || surveySubs.length > 0) {
             stepStatus = 'in_progress';
           } else {
             stepStatus = 'not_started';
@@ -367,13 +368,21 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
           if (sub.status === 'requires grading') {
             stepPending++;
           }
-          if (this.isSubmissionPassed(sub) || (sub.type === 'survey' && sub.status === 'complete')) {
+        });
+
+        const usersWithSubs = dedupeObjectArray(allSubs.map((s: any) => s.user), ['name', 'planetCode']);
+        usersWithSubs.forEach((user: any) => {
+          const userExamSubs = hasExam ? examSubs.filter((s: any) => s.user?.name === user.name && s.source === user.planetCode) : [];
+          const userSurveySubs = hasSurvey ? surveySubs.filter((s: any) => s.user?.name === user.name && s.source === user.planetCode) : [];
+
+          const isExamPass = !hasExam || userExamSubs.some((s: any) => this.isSubmissionPassed(s));
+          const isSurveyPass = !hasSurvey || userSurveySubs.some((s: any) => s.status === 'complete');
+          if (isExamPass && isSurveyPass) {
             passCount++;
           }
         });
 
-        const totalSubs = examSubs.length + surveySubs.length;
-        const passPercentage = totalSubs ? Math.round((passCount / totalSubs) * 100) : 0;
+        const passPercentage = usersWithSubs.length ? Math.round((passCount / usersWithSubs.length) * 100) : 0;
         return {
           stepIndex: index + 1,
           stepTitle: sanitizedTitle,
