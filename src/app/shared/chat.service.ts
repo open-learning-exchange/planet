@@ -6,7 +6,14 @@ import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices, AIProvider, ProviderName, SurveyAnalysisPayload, SurveyAnalysisResponse } from '../chat/chat.model';
+import {
+  AIServices,
+  AIProvider,
+  ProviderName,
+  ResourceIndexCleanupResponse,
+  SurveyAnalysisPayload,
+  SurveyAnalysisResponse
+} from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +50,9 @@ import { AIServices, AIProvider, ProviderName, SurveyAnalysisPayload, SurveyAnal
   chatErrorMessage(error: { code?: string; message?: string } | undefined, fallback = $localize`Chat request failed`): string {
     if (error?.code === 'resource_attachments_unsupported') {
       return $localize`This AI provider does not support resource attachments. Use OpenAI for attachment questions.`;
+    }
+    if (error?.code === 'resource_context_unavailable') {
+      return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
     }
     return error?.message || fallback;
   }
@@ -150,9 +160,13 @@ import { AIServices, AIProvider, ProviderName, SurveyAnalysisPayload, SurveyAnal
     return providers.find((provider) => provider.capabilities?.includes('structuredOutput')) || providers[0];
   }
 
-  // Cleans deployment-local OpenAI index state before the corresponding resource docs are deleted.
-  removeResourceIndexes(resourceIds: string[]): Observable<{ results: Array<{ resourceId: string; removed: boolean }> }> {
-    return this.httpClient.post<{ results: Array<{ resourceId: string; removed: boolean }> }>(
+  hasFileSearchProvider(): boolean {
+    return this.aiProvidersSubject.value.some((provider) => provider.capabilities?.includes('fileSearch'));
+  }
+
+  // Attempts immediate cleanup; retained local state lets the gateway retry after resource deletion.
+  removeResourceIndexes(resourceIds: string[]): Observable<ResourceIndexCleanupResponse> {
+    return this.httpClient.post<ResourceIndexCleanupResponse>(
       `${this.baseUrl}/resources/indexes/cleanup`,
       { resourceIds },
       { withCredentials: true }
