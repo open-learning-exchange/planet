@@ -104,7 +104,7 @@
         <mat-card-content class="kpi-content">
           <div class="kpi-icon-box error-bg"><mat-icon>error_outline</mat-icon></div>
           <div class="kpi-info">
-            <span class="kpi-label" i18n>Total Errors Tracked</span>
+            <span class="kpi-label" i18n>Total Errors</span>
             <h2 class="kpi-value">{{ totalErrorsCount }}</h2>
           </div>
         </mat-card-content>
@@ -161,6 +161,9 @@
                       }
                       @case ('complete') {
                         <span class="step-chip step-success" [matTooltip]="'Step ' + (idx+1) + ': Passed'">{{ idx+1 }}</span>
+                      }
+                      @case ('failed') {
+                        <span class="step-chip step-danger" [matTooltip]="'Step ' + (idx+1) + ': Failed (' + step.errors + ' mistakes)'">{{ idx+1 }}</span>
                       }
                       @case ('in_progress') {
                         <span class="step-chip step-active" [matTooltip]="'Step ' + (idx+1) + ': In Progress'">{{ idx+1 }}</span>

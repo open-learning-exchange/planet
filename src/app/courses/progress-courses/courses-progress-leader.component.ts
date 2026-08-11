@@ -260,12 +260,20 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
         if (step.exam) {
           const sub = userSubmissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
           if (sub) {
-            stepStatus = sub.status;
             stepErrCount = this.totalSubmissionAnswers(sub).number || 0;
             userErrorCount += stepErrCount;
+
             if (sub.status === 'requires grading') {
+              stepStatus = 'requires grading';
               pendingCount++;
+            } else if (sub.status === 'complete') {
+              const allAnswersPassed = sub.answers.every((a: any) => a.grade === 1 || a.grade === undefined);
+              const isPassed = sub.passed !== false && stepErrCount === 0 && allAnswersPassed;
+              stepStatus = isPassed ? 'complete' : 'failed';
+            } else {
+              stepStatus = sub.status;
             }
+
             if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
               lastActiveTimestamp = sub.lastUpdateTime;
             }
