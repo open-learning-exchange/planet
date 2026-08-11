@@ -8,7 +8,7 @@
     <mat-form-field class="mdc-toolbar-input">
       <mat-select [(ngModel)]="activeService" (selectionChange)="toggleAIService()">
         @for (service of aiServices; track service) {
-          <mat-option [value]="service.model">
+          <mat-option [value]="service.name">
             {{service.name}}
           </mat-option>
         }

@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
 import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
-import { ConversationForm, AIProvider } from '../chat.model';
+import { ConversationForm, AIProvider, ChatContext, hasSearchableAttachments } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -39,34 +39,31 @@ type PromptFormGroup = FormGroup<{ prompt: FormControl<string> }>;
   ]
 })
 export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() context: any;
+  @Input() context?: ChatContext;
   @Input() isEditing: boolean;
   @Input() conversations: any[] | null = null;
   @ViewChild('chatInput') chatInput: ElementRef;
   @ViewChild('chat') chatContainer: ElementRef;
   private onDestroy$ = new Subject<void>();
+  private pendingStreamingTurnId?: string;
   spinnerOn = true;
   streaming: boolean;
-  disabled = false;
+  streamingPending = false;
   clearChat = true;
   provider: AIProvider;
-  fallbackConversation: any[] = [];
+  readonly attachedResourceLabel = $localize`Attached resource`;
   selectedConversationId: any;
   promptForm: PromptFormGroup;
   data: ConversationForm = {
-    _id: '',
-    _rev: '',
     user: this.userService.get().name,
     content: '',
-    aiProvider: { name: 'openai' },
-    assistant: true,
+    mode: 'general_chat',
     context: '',
   };
   providers: AIProvider[] = [];
   trackByFn = trackByIdVal;
 
   constructor(
-    private changeDetectorRef: ChangeDetectorRef,
     private chatService: ChatService,
     private fb: NonNullableFormBuilder,
     private stateService: StateService,
@@ -75,14 +72,14 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     if (this.conversations === null) {
-      this.conversations = this.fallbackConversation;
+      this.conversations = [];
     }
     this.createForm();
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
     this.checkStreamingStatusAndInitialize();
-    this.chatService.listAIProviders().subscribe((providers) => {
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
       this.providers = providers;
     });
   }
@@ -121,6 +118,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         })
       )
       .subscribe((conversationId) => {
+        this.cancelPendingStreamingTurn();
         this.selectedConversationId = conversationId;
         this.fetchConversation(this.selectedConversationId?._id);
         if (!this.isEditing) {
@@ -145,8 +143,18 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   resetConversation() {
+    this.cancelPendingStreamingTurn();
     this.conversations = [];
     this.selectedConversationId = null;
+  }
+
+  private cancelPendingStreamingTurn() {
+    if (!this.streamingPending) {
+      return;
+    }
+    this.chatService.closeWebSocket();
+    this.pendingStreamingTurnId = undefined;
+    this.streamingPending = false;
   }
 
   createForm() {
@@ -161,7 +169,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         this.chatService.findConversations([ id ]).subscribe(
           (conversation: object) => {
             const messages = conversation[0]?.conversations;
-            this.conversations = messages;
+            this.conversations = messages || [];
           }
         );
       } catch (error) {
@@ -194,7 +202,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   checkStreamingStatusAndInitialize() {
     this.isStreamingEnabled();
     if (this.streaming) {
-      this.chatService.initializeWebSocket();
       this.initializeChatStream();
       this.initializeErrorStream();
     }
@@ -206,37 +213,57 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   initializeErrorStream() {
-    this.chatService.getErrorStream().subscribe((errorMessage) => {
-      const lastConversation = this.conversations[this.conversations.length - 1];
-      this.conversations[this.conversations.length - 1] = {
-        ...lastConversation,
-        response: 'Error: ' + errorMessage,
-        error: true
-      };
+    this.chatService.getErrorStream().pipe(takeUntil(this.onDestroy$)).subscribe((errorMessage) => {
+      const pendingIndex = this.pendingStreamingTurnId
+        ? this.conversations.findIndex((conversation) => conversation.id === this.pendingStreamingTurnId)
+        : -1;
+      if (pendingIndex >= 0) {
+        const pendingConversation = this.conversations[pendingIndex];
+        const partialResponse = pendingConversation.response?.trim();
+        this.conversations[pendingIndex] = {
+          ...pendingConversation,
+          response: partialResponse
+            ? `${partialResponse}\n\nError: ${errorMessage}`
+            : 'Error: ' + errorMessage,
+          error: true
+        };
+        this.promptForm.controls.prompt.setValue('');
+      }
+      this.pendingStreamingTurnId = undefined;
+      this.streamingPending = false;
       this.spinnerOn = true;
-      this.promptForm.controls.prompt.setValue('');
     });
   }
 
   initializeChatStream() {
     // Subscribe to WebSocket messages
-    this.chatService.getChatStream().subscribe((message) => {
+    this.chatService.getChatStream().pipe(takeUntil(this.onDestroy$)).subscribe((message) => {
       // Handle incoming messages from the chat stream
       this.handleIncomingMessage(JSON.parse(message));
     });
   }
 
   handleIncomingMessage(message: any) {
+    const pendingConversation = this.pendingStreamingTurnId
+      ? this.conversations.find((conversation) => conversation.id === this.pendingStreamingTurnId)
+      : undefined;
+    if (!pendingConversation) {
+      return;
+    }
     if (message.type === 'final') {
       this.selectedConversationId = {
         '_id': message.couchDBResponse?.id,
         '_rev': message.couchDBResponse?.rev
       };
+      if (message.citations?.length) {
+        pendingConversation.citations = message.citations;
+      }
+      this.pendingStreamingTurnId = undefined;
+      this.streamingPending = false;
       this.postSubmit();
     } else {
       this.spinnerOn = false;
-      const lastConversation = this.conversations[this.conversations.length - 1];
-      lastConversation.response += message.response;
+      pendingConversation.response += message.response;
       this.scrollTo('bottom');
     }
   }
@@ -257,23 +284,47 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    this.data = { ...this.data, content, aiProvider: this.provider, assistant: this.provider?.name === 'openai' };
+    const contextHasAttachments = hasSearchableAttachments(this.context?.resource?.attachments);
+    const attachmentProvider = contextHasAttachments
+      ? this.providers.find((provider) => provider.capabilities?.includes('fileSearch'))
+      : undefined;
+    const selectedProvider = attachmentProvider || this.provider || this.chatService.getChatAIProvider() || this.providers[0];
+    if (!selectedProvider) {
+      return;
+    }
+    this.data = {
+      ...this.data,
+      content,
+      aiProvider: selectedProvider,
+      mode: this.context?.type === 'coursestep' ? 'course_help' : 'general_chat'
+    };
 
-    this.chatService.setChatAIProvider(this.data.aiProvider);
+    // Attachment capability is a turn-level course requirement, not a change to
+    // the learner's provider preference for general chat.
+    if (!attachmentProvider) {
+      this.chatService.setChatAIProvider(selectedProvider);
+    }
     this.setSelectedConversation();
 
     if (this.context) {
-      // this.data.assistant = true;
       this.data.context = this.context;
+    } else {
+      // this.data is reused across turns; don't let an old course/resource context leak
+      this.data.context = '';
     }
 
     if (this.streaming) {
-      this.conversations.push({ id: Date.now().toString(), role: 'user', query: content, response: '' });
+      const turnId = Date.now().toString();
+      this.pendingStreamingTurnId = turnId;
+      this.streamingPending = true;
+      this.conversations.push({ id: turnId, role: 'user', query: content, response: '' });
       this.chatService.sendUserInput(this.data);
     } else {
       this.chatService.getPrompt(this.data, true).subscribe(
         (completion: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
+          this.conversations.push({
+            id: Date.now().toString(), query: content, response: completion?.chat, citations: completion?.citations
+          });
           this.selectedConversationId = {
             '_id': completion.couchDBResponse?.id,
             '_rev': completion.couchDBResponse?.rev
@@ -281,7 +332,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           this.postSubmit();
         },
         (error: any) => {
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + error.message, error: true });
+          const errorMessage = this.chatService.chatErrorMessage(error.error, error.message);
+          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + errorMessage, error: true });
           this.spinnerOn = true;
           this.promptForm.controls.prompt.setValue('');
         }
