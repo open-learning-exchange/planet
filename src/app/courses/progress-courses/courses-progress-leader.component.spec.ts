@@ -123,6 +123,32 @@ describe('CoursesProgressLeaderComponent', () => {
     expect(component.stepDifficultyList[0].passPercentage).toBe(0);
   });
 
+  it('should require both exam and survey to be completed for step to be marked complete', () => {
+    component.ngOnInit();
+    courseUpdated$.next({
+      course: {
+        _id: 'course_123',
+        courseTitle: 'Algebra 101',
+        steps: [ { stepTitle: 'Step 1', exam: { _id: 'exam_1' }, survey: { _id: 'survey_1' } } ]
+      }
+    });
+
+    submissionsUpdated$.next([
+      {
+        _id: 'sub_1',
+        parentId: 'exam_1@course_123',
+        status: 'complete',
+        source: 'community_1',
+        user: { name: 'Student 1', planetCode: 'community_1' },
+        answers: [ { grade: 1, mistakes: 0 } ]
+      }
+    ]);
+
+    // Exam is submitted but Survey is missing, so step must be in_progress and not complete
+    expect(component.dataSource.data[0].stepStatuses[0].status).toBe('in_progress');
+    expect(component.dataSource.data[0].completionPercentage).toBe(0);
+  });
+
   it('should navigate to grading page when navigateToGrading is called', () => {
     component.course = { _id: 'course_123' };
     component.navigateToGrading();

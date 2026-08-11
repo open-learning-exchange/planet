@@ -260,29 +260,46 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
       const stepStatuses = this.course.steps.map((step: any, index: number) => {
         let stepStatus = 'not_started';
         let stepErrCount = 0;
+        const hasExam = !!step.exam;
+        const hasSurvey = !!step.survey;
 
-        if (step.exam) {
-          const sub = userSubmissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
-          if (sub) {
-            stepErrCount = this.totalSubmissionAnswers(sub).number || 0;
-            userErrorCount += stepErrCount;
+        if (hasExam || hasSurvey) {
+          const examSub = hasExam ? userSubmissions.find((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : null;
+          const surveySub = hasSurvey ? userSubmissions.find((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : null;
 
-            if (sub.status === 'requires grading') {
-              stepStatus = 'requires grading';
-              pendingCount++;
-            } else if (sub.status === 'complete') {
-              stepStatus = this.isSubmissionPassed(sub) ? 'complete' : 'failed';
-            } else {
-              stepStatus = sub.status;
+          if (examSub) {
+            stepErrCount += this.totalSubmissionAnswers(examSub).number || 0;
+            if (examSub.lastUpdateTime && examSub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = examSub.lastUpdateTime;
             }
-
-            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
-              lastActiveTimestamp = sub.lastUpdateTime;
+          }
+          if (surveySub) {
+            stepErrCount += this.totalSubmissionAnswers(surveySub).number || 0;
+            if (surveySub.lastUpdateTime && surveySub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = surveySub.lastUpdateTime;
             }
-          } else if (userProgressDoc?.stepNum > index) {
+          }
+          userErrorCount += stepErrCount;
+
+          const isExamGradingPending = hasExam && examSub?.status === 'requires grading';
+          const isSurveyGradingPending = hasSurvey && surveySub?.status === 'requires grading';
+
+          const isExamComplete = !hasExam || (examSub && this.isSubmissionPassed(examSub));
+          const isSurveyComplete = !hasSurvey || (surveySub && surveySub.status === 'complete');
+
+          const isExamFailed = hasExam && examSub && examSub.status === 'complete' && !this.isSubmissionPassed(examSub);
+
+          if (isExamGradingPending || isSurveyGradingPending) {
+            stepStatus = 'requires grading';
+            pendingCount += (isExamGradingPending ? 1 : 0) + (isSurveyGradingPending ? 1 : 0);
+          } else if (isExamFailed) {
+            stepStatus = 'failed';
+          } else if (isExamComplete && isSurveyComplete) {
             stepStatus = 'complete';
-          } else if (userProgressDoc?.stepNum === index) {
+          } else if (examSub || surveySub) {
             stepStatus = 'in_progress';
+          } else {
+            stepStatus = 'not_started';
           }
         } else {
           if (userProgressDoc?.stepNum > index) {
@@ -342,29 +359,36 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
       let stepErrors = 0;
       let stepPending = 0;
       let passCount = 0;
+      const hasExam = !!step.exam;
+      const hasSurvey = !!step.survey;
 
       const sanitizedTitle = step.stepTitle && !step.stepTitle.startsWith(`Step ${index + 1}`)
         ? `Step ${index + 1}: ${step.stepTitle}`
         : (step.stepTitle || `Step ${index + 1}`);
 
-      if (step.exam) {
-        const stepSubs = submissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id));
-        stepSubs.forEach((sub: any) => {
+      if (hasExam || hasSurvey) {
+        const examSubs = hasExam ? submissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : [];
+        const surveySubs = hasSurvey ? submissions.filter((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : [];
+        const allSubs = dedupeObjectArray([...examSubs, ...surveySubs], ['_id']);
+
+        allSubs.forEach((sub: any) => {
           stepErrors += this.totalSubmissionAnswers(sub).number || 0;
           if (sub.status === 'requires grading') {
             stepPending++;
           }
-          if (this.isSubmissionPassed(sub)) {
+          if (this.isSubmissionPassed(sub) || (sub.type === 'survey' && sub.status === 'complete')) {
             passCount++;
           }
         });
 
-        const passPercentage = stepSubs.length ? Math.round((passCount / stepSubs.length) * 100) : 0;
+        const totalSubs = examSubs.length + surveySubs.length;
+        const passPercentage = totalSubs ? Math.round((passCount / totalSubs) * 100) : 0;
         return {
           stepIndex: index + 1,
           stepTitle: sanitizedTitle,
-          hasExam: true,
-          submissionCount: stepSubs.length,
+          hasExam,
+          hasSurvey,
+          submissionCount: allSubs.length,
           totalErrors: stepErrors,
           pendingCount: stepPending,
           passPercentage
@@ -375,6 +399,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
         stepIndex: index + 1,
         stepTitle: sanitizedTitle,
         hasExam: false,
+        hasSurvey: false,
         submissionCount: 0,
         totalErrors: 0,
         pendingCount: 0,

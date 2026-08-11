@@ -157,11 +157,25 @@ export class SubmissionsService {
     }
     const [ examId, getCourseId ] = this.submission.parentId.split('@');
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
-      this.courseService.updateProgress({
-        courseId: res._id,
-        stepNum: res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId)) + 1,
-        passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
-      }, submission.user._id);
+      const stepIndex = res.steps.findIndex((step: any) =>
+        (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)
+      );
+      if (stepIndex > -1) {
+        const targetStep = res.steps[stepIndex];
+        const isExamSatisfied = !targetStep.exam || (
+          submission.parentId.startsWith(targetStep.exam._id) &&
+          submission.answers.every((ans: any) => ans.grade === 1)
+        );
+        const isSurveySatisfied = !targetStep.survey || submission.parentId.startsWith(targetStep.survey._id);
+
+        if (isExamSatisfied && isSurveySatisfied) {
+          this.courseService.updateProgress({
+            courseId: res._id,
+            stepNum: stepIndex + 1,
+            passed: true
+          }, submission.user._id);
+        }
+      }
     }, error => console.log(error));
     return 'complete';
   }
