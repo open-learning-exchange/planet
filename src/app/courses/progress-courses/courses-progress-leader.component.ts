@@ -216,6 +216,15 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     return answer?.grade === undefined ? '' : answer?.mistakes || (1 - answer?.grade);
   }
 
+  isSubmissionPassed(sub: any): boolean {
+    if (!sub || sub.status !== 'complete') {
+      return false;
+    }
+    const errCount = this.totalSubmissionAnswers(sub).number || 0;
+    const allAnswersPassed = sub.answers.every((a: any) => a.grade === 1 || a.grade === undefined);
+    return sub.passed !== false && errCount === 0 && allAnswersPassed;
+  }
+
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
     const userProgress = this.userProgress(user);
     if (!step.exam) {
@@ -245,11 +254,6 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     const learnerRows = users.map((user: any) => {
       const userProgressDoc = this.userProgress(user);
       const userSubmissions = submissions.filter((sub: any) => sub.user.name === user.name && sub.source === user.planetCode);
-      const passedExamSteps = userSubmissions.filter((s: any) => s.status === 'complete').length;
-      const stepNumCompleted = Math.max(userProgressDoc?.stepNum || 0, passedExamSteps);
-      const totalSteps = Math.max(this.course.steps.length, 1);
-      const completionPercentage = Math.min(100, Math.round((stepNumCompleted / totalSteps) * 100));
-      totalPctSum += completionPercentage;
       let userErrorCount = 0;
       let lastActiveTimestamp = 0;
 
@@ -267,9 +271,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
               stepStatus = 'requires grading';
               pendingCount++;
             } else if (sub.status === 'complete') {
-              const allAnswersPassed = sub.answers.every((a: any) => a.grade === 1 || a.grade === undefined);
-              const isPassed = sub.passed !== false && stepErrCount === 0 && allAnswersPassed;
-              stepStatus = isPassed ? 'complete' : 'failed';
+              stepStatus = this.isSubmissionPassed(sub) ? 'complete' : 'failed';
             } else {
               stepStatus = sub.status;
             }
@@ -277,15 +279,15 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
             if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
               lastActiveTimestamp = sub.lastUpdateTime;
             }
-          } else if (stepNumCompleted > index) {
+          } else if (userProgressDoc?.stepNum > index) {
             stepStatus = 'complete';
-          } else if (stepNumCompleted === index) {
+          } else if (userProgressDoc?.stepNum === index) {
             stepStatus = 'in_progress';
           }
         } else {
-          if (stepNumCompleted > index) {
+          if (userProgressDoc?.stepNum > index) {
             stepStatus = 'complete';
-          } else if (stepNumCompleted === index) {
+          } else if (userProgressDoc?.stepNum === index) {
             stepStatus = 'in_progress';
           }
         }
@@ -300,9 +302,14 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
 
       totalErrors += userErrorCount;
 
+      const passedStepsCount = stepStatuses.filter((s: any) => s.status === 'complete').length;
+      const totalSteps = Math.max(this.course.steps.length, 1);
+      const completionPercentage = Math.min(100, Math.round((passedStepsCount / totalSteps) * 100));
+      totalPctSum += completionPercentage;
+
       return {
         user,
-        stepNum: stepNumCompleted,
+        stepNum: passedStepsCount,
         completionPercentage,
         stepStatuses,
         totalErrors: userErrorCount,
@@ -347,7 +354,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
           if (sub.status === 'requires grading') {
             stepPending++;
           }
-          if (sub.status === 'complete') {
+          if (this.isSubmissionPassed(sub)) {
             passCount++;
           }
         });

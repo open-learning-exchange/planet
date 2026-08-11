@@ -118,6 +118,9 @@ describe('CoursesProgressLeaderComponent', () => {
 
     expect(component.dataSource.data[0].stepStatuses[0].status).toBe('failed');
     expect(component.dataSource.data[0].totalErrors).toBe(2);
+    expect(component.dataSource.data[0].completionPercentage).toBe(0);
+    expect(component.avgCompletionPercentage).toBe(0);
+    expect(component.stepDifficultyList[0].passPercentage).toBe(0);
   });
 
   it('should navigate to grading page when navigateToGrading is called', () => {
