@@ -8,9 +8,11 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { catchError, map, skip, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { ChatService } from '../shared/chat.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -193,7 +195,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private chatService: ChatService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -343,10 +346,36 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Immediate cleanup is best-effort; the gateway retains failed index state for reconciliation.
+  private cleanupResourceIndexes(resources: any[]): Observable<boolean> {
+    if (resources.length === 0 || !this.chatService.hasFileSearchProvider()) {
+      return of(false);
+    }
+    const resourceIds = resources.map((resource) => resource._id);
+    const immediateResourceIds = resourceIds.slice(0, 500);
+    return this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
+      map((response) => response.results.some((result) => result.deferred || result.failed)),
+      catchError(() => of(true))
+    );
+  }
+
+  private showDeferredIndexCleanup(cleanupDeferred: boolean) {
+    if (!cleanupDeferred) {
+      return;
+    }
+    this.planetMessageService.showAlert(
+      $localize`The resource was deleted, but its AI search index could not be cleaned up now. Cleanup will be retried.`
+    );
+  }
+
   deleteResource(resource) {
     const { _id: resourceId, _rev: resourceRev } = resource;
     return {
-      request: this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev),
+      request: this.cleanupResourceIndexes([ resource ]).pipe(
+        switchMap((cleanupDeferred) => this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev).pipe(
+          tap(() => this.showDeferredIndexCleanup(cleanupDeferred))
+        ))
+      ),
       onNext: (data) => {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
@@ -358,14 +387,18 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteResources(resources) {
-    const deleteArray = createDeleteArray(resources);
     return {
-      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
+      request: this.cleanupResourceIndexes(resources).pipe(
+        switchMap((cleanupDeferred) => this.couchService.post(
+          this.dbName + '/_bulk_docs',
+          { docs: createDeleteArray(resources) }
+        ).pipe(tap(() => this.showDeferredIndexCleanup(cleanupDeferred))))
+      ),
       onNext: (data) => {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
+        this.planetMessageService.showMessage($localize`You have deleted ${resources.length} resources`);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };

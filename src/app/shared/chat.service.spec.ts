@@ -186,6 +186,15 @@ describe('ChatService', () => {
     expect(socket.close).toHaveBeenCalled();
   });
 
+  it('localizes unavailable resource context without exposing gateway text', () => {
+    const { service } = createService();
+
+    expect(service.chatErrorMessage({
+      'code': 'resource_context_unavailable',
+      'message': 'Resource context is unavailable'
+    })).toEqual('This resource is unavailable for AI chat. Reload the course step or ask a manager for access.');
+  });
+
   it('closes a streaming socket after its terminal frame', () => {
     const { service } = createService();
     const { socket, emitMessage } = installWebSocketMock();
@@ -215,5 +224,15 @@ describe('ChatService', () => {
 
     expect(service.getPreferredAnalysisProvider()).toMatchObject({ 'name': 'openai' });
     expect(httpClient.post.mock.calls[0][1]).toMatchObject({ 'aiProvider': { 'name': 'openai' } });
+  });
+
+  it('reports whether an enabled provider supports file search', () => {
+    const providerResponse = of({
+      ...services({ 'openai': true }),
+      'openai': { 'enabled': true, 'capabilities': [ 'chat', 'fileSearch' ] }
+    });
+    const { service } = createService(providerResponse);
+
+    expect(service.hasFileSearchProvider()).toEqual(true);
   });
 });
