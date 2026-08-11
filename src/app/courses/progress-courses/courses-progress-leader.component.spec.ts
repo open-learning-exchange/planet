@@ -95,7 +95,7 @@ describe('CoursesProgressLeaderComponent', () => {
     expect(component.pendingGradesCount).toBe(0);
   });
 
-  it('should mark step as failed if submission status is complete but contains mistakes', () => {
+  it('should mark step as complete when exam is finished with correct answers, even if mistakes were recorded on trial 1', () => {
     component.ngOnInit();
     courseUpdated$.next({
       course: {
@@ -112,12 +112,41 @@ describe('CoursesProgressLeaderComponent', () => {
         status: 'complete',
         source: 'community_1',
         user: { name: 'Student 1', planetCode: 'community_1' },
-        answers: [ { grade: 0, mistakes: 2 } ]
+        answers: [ { grade: 1, mistakes: 2 } ]
+      }
+    ]);
+
+    expect(component.dataSource.data[0].stepStatuses[0].status).toBe('complete');
+    expect(component.dataSource.data[0].totalErrors).toBe(2);
+    expect(component.dataSource.data[0].completionPercentage).toBe(100);
+    expect(component.avgCompletionPercentage).toBe(100);
+    expect(component.stepDifficultyList[0].passPercentage).toBe(100);
+    expect(component.stepDifficultyList[0].totalErrors).toBe(2);
+  });
+
+  it('should mark step as failed if submission status is complete but contains failing grades (grade 0)', () => {
+    component.ngOnInit();
+    courseUpdated$.next({
+      course: {
+        _id: 'course_123',
+        courseTitle: 'Algebra 101',
+        steps: [ { stepTitle: 'Step 1', exam: { _id: 'exam_1' } } ]
+      }
+    });
+
+    submissionsUpdated$.next([
+      {
+        _id: 'sub_1',
+        parentId: 'exam_1@course_123',
+        status: 'complete',
+        source: 'community_1',
+        user: { name: 'Student 1', planetCode: 'community_1' },
+        answers: [ { grade: 0, mistakes: 1 } ]
       }
     ]);
 
     expect(component.dataSource.data[0].stepStatuses[0].status).toBe('failed');
-    expect(component.dataSource.data[0].totalErrors).toBe(2);
+    expect(component.dataSource.data[0].totalErrors).toBe(1);
     expect(component.dataSource.data[0].completionPercentage).toBe(0);
     expect(component.avgCompletionPercentage).toBe(0);
     expect(component.stepDifficultyList[0].passPercentage).toBe(0);
@@ -157,5 +186,10 @@ describe('CoursesProgressLeaderComponent', () => {
   it('should navigate to /courses on navigateBack', () => {
     component.navigateBack();
     expect(routerMock.navigate).toHaveBeenCalledWith([ '/courses' ]);
+  });
+
+  it('should navigate to full profile page on memberClick', () => {
+    component.memberClick({ name: 'Student 1' });
+    expect(routerMock.navigate).toHaveBeenCalledWith([ '/users/profile', 'Student 1' ]);
   });
 });

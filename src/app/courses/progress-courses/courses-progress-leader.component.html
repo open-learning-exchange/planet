@@ -1,12 +1,7 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
   <span>
-    @if (selectedStep === undefined) {
-      <ng-container i18n>Course Progress Dashboard</ng-container>
-    }
-    @if (selectedStep !== undefined) {
-      <ng-container i18n>Test Progress</ng-container>
-    }
+    <ng-container i18n>Course Progress Dashboard</ng-container>
   </span>
 </mat-toolbar>
 
@@ -33,28 +28,9 @@
   @if (planetCodes.length > 1) {
     <planet-selector [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
   }
-  @if (submittedExamSteps?.length > 1) {
-    <mat-form-field class="margin-lr-3">
-      <mat-label i18n>View Test Progress</mat-label>
-      <mat-select [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
-        @for (step of submittedExamSteps; track step) {
-          <mat-option [value]="step">
-            @if (step.stepTitle) {
-              {{ step.stepTitle }}
-            } @else {
-              <ng-container i18n>Step</ng-container> {{ step.index + 1 }}
-            }
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
 </ng-template>
 
 <ng-template #actionButtons>
-  @if (selectedStep !== undefined) {
-    <button mat-raised-button color="accent" (click)="resetToFullCourse()" class="margin-lr-3" i18n>Show full course</button>
-  }
   <button mat-raised-button color="primary" (click)="navigateToGrading()" class="margin-lr-3" i18n>Submissions & Grading</button>
   @if (dataSource.data?.length || chartData?.length) {
     <button mat-raised-button color="accent" (click)="exportChartData()" class="margin-lr-3" i18n>Export CSV</button>
@@ -81,7 +57,7 @@
         <mat-card-content class="kpi-content">
           <div class="kpi-icon-box accent-bg"><mat-icon>donut_large</mat-icon></div>
           <div class="kpi-info">
-            <span class="kpi-label" i18n>Avg Completion Rate</span>
+            <span class="kpi-label" i18n>Average Completion Rate</span>
             <h2 class="kpi-value">{{ avgCompletionPercentage }}%</h2>
           </div>
         </mat-card-content>
@@ -160,7 +136,7 @@
                         <span class="step-chip step-warning" [matTooltip]="'Step ' + (idx+1) + ': Requires Grading'">{{ idx+1 }}</span>
                       }
                       @case ('complete') {
-                        <span class="step-chip step-success" [matTooltip]="'Step ' + (idx+1) + ': Passed'">{{ idx+1 }}</span>
+                        <span class="step-chip step-success" [matTooltip]="'Step ' + (idx+1) + ': Passed' + (step.errors > 0 ? ' (' + step.errors + ' mistakes)' : '')">{{ idx+1 }}</span>
                       }
                       @case ('failed') {
                         <span class="step-chip step-danger" [matTooltip]="'Step ' + (idx+1) + ': Failed (' + step.errors + ' mistakes)'">{{ idx+1 }}</span>
@@ -218,18 +194,18 @@
       <!-- Right Column: Step Difficulty Analytics -->
       <mat-card class="analytics-card">
         <mat-card-content>
-          <h3 i18n class="margin-bottom-3">Step Difficulty Breakdown</h3>
+          <h3 i18n class="margin-bottom-3">Step Difficulty</h3>
           <div class="step-difficulty-list">
             @for (step of stepDifficultyList; track step; let idx = $index) {
-              <div class="step-difficulty-item margin-bottom-3">
+              <div class="step-difficulty-item">
                 <div class="step-title-row">
-                  <span class="step-name font-weight-bold">{{ step.stepTitle }}</span>
+                  <span class="step-name">{{ step.stepTitle }}</span>
                   <span class="step-errors-badge">{{ step.totalErrors }} mistakes</span>
                 </div>
-                <div class="step-sub-row margin-tb-1">
-                  <span class="font-size-small text-secondary">Pass Rate: {{ step.passPercentage }}%</span>
+                <div class="step-sub-row">
+                  <span class="text-secondary">Pass Rate: {{ step.passPercentage }}%</span>
                   @if (step.pendingCount > 0) {
-                    <span class="font-size-small text-warn">({{ step.pendingCount }} ungraded)</span>
+                    <span class="ungraded-tag">({{ step.pendingCount }} ungraded)</span>
                   }
                 </div>
                 <mat-progress-bar mode="determinate" [value]="step.passPercentage" [color]="step.passPercentage < 60 ? 'warn' : 'primary'"></mat-progress-bar>
