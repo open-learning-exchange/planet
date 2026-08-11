@@ -25,6 +25,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
+import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -54,6 +55,7 @@ const columnsByFilterAndMode = {
     MatButtonToggleGroup,
     MatButtonToggle,
     MatInput,
+    TruncateTextPipe,
     NgClass,
     MatTable,
     MatSort,
@@ -80,9 +82,11 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   @Input() isDialog = false;
   @Input() parentId: string;
   @Input() courseId: string;
+  @Input() courseTitle: string;
   @Input() hideHeader = false;
   @Input() displayedColumns = [ 'name', 'courseTitle', 'stepNum', 'status', 'user', 'lastUpdateTime', 'gradeTime' ];
   @Output() submissionClick = new EventEmitter<any>();
+  @Output() backClick = new EventEmitter<void>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   submissions = new MatTableDataSource();
@@ -269,6 +273,10 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
+    if (this.backClick.observers.length > 0) {
+      this.backClick.emit();
+      return;
+    }
     this.router.navigate([ '../' ], { relativeTo: this.route.parent });
   }
 

@@ -5,30 +5,16 @@ import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
 import { UserService } from '../../shared/user.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
-import { NgTemplateOutlet } from '@angular/common';
 import { SubmissionsComponent } from '../../submissions/submissions.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
-import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 
 @Component({
   selector: 'planet-courses-submissions',
   templateUrl: './courses-submissions.component.html',
   styleUrls: ['./courses-submissions.component.scss'],
   imports: [
-    MatToolbar,
-    MatIconAnchor,
-    MatIcon,
-    MatIconButton,
-    MatMenuTrigger,
-    MatMenu,
-    NgTemplateOutlet,
     SubmissionsComponent,
-    PlanetLoadingSpinnerComponent,
-    TruncateTextPipe
+    PlanetLoadingSpinnerComponent
   ]
 })
 export class CoursesSubmissionsComponent implements OnInit, OnDestroy {
