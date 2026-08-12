@@ -4,7 +4,7 @@
   </button>
   <span class="header-title" i18n>My Learning Progress - {{ headingStart }}</span>
   <span class="spacer"></span>
-  <button mat-icon-button (click)="refreshData()" matTooltip="Refresh Data" i18n-matTooltip>
+  <button mat-icon-button (click)="refreshData()" matTooltip="Refresh" i18n-matTooltip>
     <mat-icon>refresh</mat-icon>
   </button>
 </mat-toolbar>
@@ -65,25 +65,31 @@
     <div class="loading-container">
       <planet-loading-spinner text="Loading progress..." i18n-text></planet-loading-spinner>
     </div>
-  } @else {
+  }
+
+  @if (!isLoading) {
     <mat-card class="table-card">
       <mat-card-content class="table-card-content">
         <div class="table-toolbar">
+          <div class="toolbar-title-group">
+            <h3 class="toolbar-title" i18n>Enrolled Courses</h3>
+            <p class="toolbar-subtitle" i18n>Track your progress and access course steps</p>
+          </div>
           <mat-form-field appearance="outline" class="search-field">
             <mat-label i18n>Search enrolled courses...</mat-label>
-            <input matInput (keyup)="applyFilter($any($event.target).value)" i18n-placeholder placeholder="e.g. Mathematics">
+            <input matInput (keyup)="applyFilter($any($event.target).value)" i18n-placeholder placeholder="Filter by course title">
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
         </div>
 
         @if (dataSource.data.length === 0) {
-          <div class="empty-state-box">
-            <mat-icon class="empty-icon">school</mat-icon>
-            <h3 i18n>No Course Progress Records Found</h3>
-            <p i18n>You are not currently enrolled in any courses or have no active progress records.</p>
+          <div class="empty-state" i18n>
+            No enrolled courses found.
           </div>
-        } @else {
-          <div class="table-scroll-wrapper">
+        }
+
+        @if (dataSource.data.length > 0) {
+          <div class="table-responsive-wrapper">
             <table mat-table [dataSource]="dataSource" matSort class="progress-table" multiTemplateDataRows>
               <ng-container matColumnDef="courseTitle">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Title</th>
@@ -101,8 +107,8 @@
                 <td mat-cell *matCellDef="let element">
                   <div class="progress-cell">
                     <div class="progress-labels">
-                      <span class="progress-steps">{{ element.passedStepsCount }} / {{ element.totalSteps }} Steps</span>
-                      <span class="progress-percentage">{{ element.completionPercentage }}%</span>
+                      <span>{{ element.passedStepsCount }}/{{ element.totalSteps }} Steps</span>
+                      <span>{{ element.completionPercentage }}%</span>
                     </div>
                     <mat-progress-bar mode="determinate" [value]="element.completionPercentage" class="table-progress-bar"></mat-progress-bar>
                   </div>
@@ -120,7 +126,7 @@
                         [class.step-pending]="step.status === 'requires grading'"
                         [class.step-progress]="step.status === 'in_progress'"
                         [class.step-notstarted]="step.status === 'not_started'"
-                        [matTooltip]="step.stepTitle + ': ' + formatStatusLabel(step.status) + (step.errors ? ' (' + step.errors + ' mistakes)' : '')">
+                        [matTooltip]="'Step ' + step.stepIndex + ' • ' + formatStatusLabel(step.status)">
                         {{ step.stepIndex }}
                       </span>
                     }
@@ -153,7 +159,7 @@
                     <mat-icon>visibility</mat-icon>
                   </button>
                   <button mat-icon-button (click)="toggleExpandCourse(element.courseId)"
-                    [matTooltip]="expandedCourseId === element.courseId ? 'Collapse Details' : 'Expand Details'" i18n-matTooltip>
+                    [matTooltip]="expandedCourseId === element.courseId ? 'Collapse' : 'Expand'" i18n-matTooltip>
                     <mat-icon>{{ expandedCourseId === element.courseId ? 'expand_less' : 'expand_more' }}</mat-icon>
                   </button>
                 </td>
@@ -176,7 +182,7 @@
                             [class.clickable-step]="canAccessStep(step, $index, element.stepStatuses)"
                             [class.locked-step]="!canAccessStep(step, $index, element.stepStatuses)"
                             (click)="navigateToStep(element.courseId, step.stepIndex, canAccessStep(step, $index, element.stepStatuses))"
-                            [matTooltip]="canAccessStep(step, $index, element.stepStatuses) ? ('Click to view ' + step.stepTitle) : 'Complete previous step to unlock'">
+                            [matTooltip]="canAccessStep(step, $index, element.stepStatuses) ? 'Open Step' : 'Locked'">
                             <div class="step-card-header">
                               <span class="step-card-title">{{ step.stepTitle }}</span>
                               <span class="step-badge"
