@@ -61,18 +61,3 @@ Skills wired up here:
 - **merge-prepping** (`.agents/skills/merge-prepping`, source: <https://github.com/dogi/merge-prepping>) — rewrites a PR title into the house style `scope: smoother thing doing (fixes #N)` and makes sure a tracking issue exists. ⚠️ **Planet caveat**: the grammar matches this repo's log exactly (same house style as myplanet), but the skill's scope table and file→gerund mechanics were derived from myplanet's Kotlin corpus. Planet's own scope frequencies over the last ~250 merges: `all` 85 · `teams` 52 · `courses` 37 · `manager` 22 · `actions` 15 · `resources` 11 · `life` 8 · `login` 7 · `community` 7 · `dashboard` 4 · `enterprises` 1 · `chat` 1. Until the skill grows a planet corpus, weigh its scope suggestions against this table and the actual `git log`.
 
 (myplanet's second skill, `kotlin-importing`, was deliberately not adopted — there are no Kotlin imports to sort in an Angular/TypeScript tree.)
-
-### Why this works
-
-- **Claude Code** reads `.claude/settings.json` → fetches plugin marketplaces from GitHub → follows internal symlinks to find `SKILL.md`.
-- **OpenHands** is expected to read `.agents/skills/<name>/SKILL.md` → auto-load on every session, without reading `.claude/settings.json` or fetching marketplaces. Treat that as the design, not a measured fact: the one session that inspected its own loader found the skill supplied from a platform plugin cache while the submodule was still empty (2026-08-12 field note). The `.agents/skills/` path is what makes the skill available without any marketplace fetch — but only where the submodule was initialized while connectivity existed. A fresh checkout that is already offline leaves the gitlink empty and the skill absent, exactly as the offline caveat above says.
-- A **git submodule** at `.agents/skills/<name>/` makes the files physically present after `git submodule update --init`, on any machine or VM.
-- **Symlink support is a prerequisite, not a given.** `merge-prepping` carries exactly two internal links, and both sit *inside* Claude Code's plugin path:
-
-    ```
-    plugins/merge-prepping/skills/prepping/SKILL.md                   -> ../../../../SKILL.md
-    plugins/merge-prepping/skills/prepping/references/title-corpus.md -> ../../../../../references/title-corpus.md
-    ```
-
-    The top-level `SKILL.md` and `references/title-corpus.md` they point at are ordinary files, so aim the `test -L` check below at the nested plugin paths — running it against the top-level pair returns a false negative. Where Git runs with `core.symlinks=false` — Windows without Developer Mode or admin rights — the checkout writes both links as *plain files containing the target path*, so a loader reads the literal string `../../../../SKILL.md` as the skill body instead of failing loudly. Check with `git config core.symlinks` and `test -L <link>`; the fix is a checkout with symlinks enabled, not a workaround in the doc.
-- **Internal symlinks** (inside the skill repo) otherwise resolve on every checkout, since target and link travel together. If one doesn't, check the stored target with `readlink -n <link> | od -c` — a trailing `\n` (from generating the link via echo/printf instead of `ln -s`) makes it point at a filename ending in an invisible newline. Recreate with `ln -s`.
