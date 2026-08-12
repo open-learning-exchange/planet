@@ -22,6 +22,7 @@ import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, Ma
 import { TdMarkdownComponent } from '@covalent/markdown';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/avatar.component';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -45,13 +46,16 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     NgClass,
     MatListItemLine,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
+  userName: string;
+  userPlanetCode: string;
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
@@ -82,11 +86,15 @@ export class UsersAchievementsComponent implements OnInit {
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
+        this.userName = currentUser.name;
+        this.userPlanetCode = currentUser.planetCode;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
         name = name.split('@')[0];
-        this.initUser(name, params.get('planet'));
-        id = 'org.couchdb.user:' + name + '@' + params.get('planet');
+        this.userName = name;
+        this.userPlanetCode = params.get('planet');
+        this.initUser(name, this.userPlanetCode);
+        id = 'org.couchdb.user:' + name + '@' + this.userPlanetCode;
       }
       if (id === (currentUser._id + '@' + currentUser.planetCode)) {
         this.ownAchievements = true;
@@ -161,18 +169,6 @@ export class UsersAchievementsComponent implements OnInit {
       return '';
     }
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
-  }
-
-  get profileImg() {
-    const attachments = this.user?._attachments;
-    if (attachments && this.user?._id) {
-      const filename = Object.keys(attachments)[0];
-      const planetCode = this.user.planetCode;
-      const isLocal = !planetCode || planetCode === this.stateService.configuration.code;
-      const db = isLocal ? '_users' : 'child_users';
-      return `${environment.couchAddress}/${db}/${this.user._id}/${filename}`;
-    }
-    return 'assets/image.png';
   }
 
   setCertifications(courses = [], progress = [], certifications = []) {
