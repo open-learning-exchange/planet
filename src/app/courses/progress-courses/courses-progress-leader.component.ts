@@ -120,7 +120,9 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     });
 
     this.dataSource.filterPredicate = (data: any, filter: string) => {
-      return data.user.name.toLowerCase().includes(filter) || data.user.planetCode.toLowerCase().includes(filter);
+      const name = (data.user?.name || '').toLowerCase();
+      const planetCode = (data.user?.planetCode || '').toLowerCase();
+      return name.includes(filter) || planetCode.includes(filter);
     };
   }
 
@@ -230,12 +232,19 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     return { number: '', fill: false, clickable: true };
   }
 
+  allSubmissions: any[] = [];
+
   setFullCourse(submissions: any[]) {
+    this.allSubmissions = submissions;
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
 
-    const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+    const filteredSubmissions = this.selectedPlanetCode
+      ? submissions.filter((sub: any) => sub.source === this.selectedPlanetCode || sub.user?.planetCode === this.selectedPlanetCode)
+      : submissions;
+
+    const users = dedupeObjectArray(filteredSubmissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
     this.totalLearners = users.length;
 
     let totalPctSum = 0;
@@ -244,7 +253,9 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
 
     const learnerRows = users.map((user: any) => {
       const userProgressDoc = this.userProgress(user);
-      const userSubmissions = submissions.filter((sub: any) => sub.user.name === user.name && sub.source === user.planetCode);
+      const userSubmissions = filteredSubmissions.filter((sub: any) =>
+        sub.user.name === user.name && (sub.source === user.planetCode || sub.user.planetCode === user.planetCode)
+      );
       let userErrorCount = 0;
       let lastActiveTimestamp = 0;
 
@@ -331,11 +342,11 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
     this.totalErrorsCount = totalErrors;
 
     this.dataSource.data = learnerRows;
-    this.calculateStepDifficulty(submissions);
+    this.calculateStepDifficulty(filteredSubmissions);
 
     this.allChartData = users.map((user: any) => {
       const answers = this.course.steps.map((step: any, index: number) => {
-        return this.userCourseAnswers(user, step, index, submissions);
+        return this.userCourseAnswers(user, step, index, filteredSubmissions);
       }).reverse();
       return ({
         items: answers,
