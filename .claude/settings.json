@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "prepping": {
+      "source": {
+        "source": "github",
+        "repo": "dogi/merge-prepping"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "merge-prepping@prepping": true
+  }
+}
