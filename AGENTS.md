@@ -70,23 +70,4 @@ PR titles follow the house style `scope: smoother thing doing (fixes #N)` (see t
 
 ## The Agent Spellbook
 
-`docs/AGENT_SPELLBOOK.md` is the reference for summoning other AI agents (coderabbitai, codex, copilot, devin, openhands, the `jules` label, dependabot) on PRs — who answers, how fast, and with what side effects. Its "The Skill Sync" section covers how the shared agent skills under `.agents/skills/` are wired up and maintained.
-
-### Laws of Summoning
-
-1. **Scope your summons.** Reviewers speak; Doers act. An unleashed mention of a Doer (Copilot, Devin, OpenHands) defaults to commits on your branch — state what it may do ("comment only — do not push") in every summons. Leashes are prompt-level and best-effort, not enforcement; the real guardrails are branch protection and app write permissions.
-2. **Backticks don't defuse a mention.** GitHub notifies on a handle even inside a code span. When *talking about* an agent, drop the `@` (write "openhands prepping"); only write the live handle when you mean to summon.
-3. **Trust the timeline, not the self-report.** Several agents commit under configurable identities and some dispute their own receipts — audit what happened via the PR timeline, not `git log` or the agent's summary.
-4. **One summons, one job.** Each mention spawns work (OpenHands starts a fresh session per mention, and even "help" reads as "fix what's open") — summon with a concrete task and a concrete deliverable, or don't.
-
-### Shared agent skills (`.agents/skills/`)
-
-Skill repos are git submodules — **not** initialized on a default clone or `actions/checkout`. Before reading anything under `.agents/skills/`, run:
-
-```bash
-git submodule update --init --recursive
-```
-
-- **merge-prepping** — rewrite PR titles into the house style above and ensure a tracking issue is attached; source: https://github.com/dogi/merge-prepping. Its scope/gerund tables were derived from myplanet's corpus — cross-check scope suggestions against this repo's `git log` (details: `docs/AGENT_SPELLBOOK.md` → "The Skill Sync").
-
-Each skill's entry point is `.agents/skills/<name>/SKILL.md`. OpenHands auto-loads them (bootstrapped by `.openhands/setup.sh`); Claude Code loads the same skill as a plugin via `.claude/settings.json`; Copilot is pointed at them by `.github/copilot-instructions.md`.
+`docs/AGENT_SPELLBOOK.md` is the reference for working with the other AI agents on PRs (coderabbitai, codex, copilot, devin, openhands, the `jules` label, dependabot): the Grid of who answers how, the **Laws of Summoning** — read them before mentioning any agent handle — and "The Skill Sync", which covers how the shared agent skills under `.agents/skills/` are wired up and maintained. Skill repos are git submodules, **not** initialized on a default clone or `actions/checkout` — run `git submodule update --init --recursive` before reading anything under `.agents/skills/`. Current skills: **merge-prepping** (PR titles into the house style above; source: https://github.com/dogi/merge-prepping).
