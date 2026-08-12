@@ -13,6 +13,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,6 +53,7 @@ export interface LearnerCourseRow {
     MatChipsModule,
     MatProgressBarModule,
     MatPaginatorModule,
+    MatSortModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -72,6 +74,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   totalCourses = 0;
   avgCompletionPercentage = 0;
   pendingGradingCount = 0;
+  totalStepsCompleted = 0;
   totalErrorsCount = 0;
 
   dataSource = new MatTableDataSource<LearnerCourseRow>([]);
@@ -81,6 +84,12 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator) {
     if (paginator) {
       this.dataSource.paginator = paginator;
+    }
+  }
+
+  @ViewChild(MatSort) set sort(sort: MatSort) {
+    if (sort) {
+      this.dataSource.sort = sort;
     }
   }
 
@@ -94,6 +103,20 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.dataSource.sortingDataAccessor = (item: LearnerCourseRow, property: string) => {
+      switch (property) {
+        case 'courseTitle':
+          return item.courseTitle ? item.courseTitle.toLowerCase() : '';
+        case 'progress':
+          return item.completionPercentage || 0;
+        case 'errors':
+          return item.totalErrors || 0;
+        case 'lastActive':
+          return item.lastActive ? new Date(item.lastActive).getTime() : 0;
+        default:
+          return (item as any)[property];
+      }
+    };
     this.coursesService.progressLearnerListener$().pipe(takeUntil(this.onDestroy$)).subscribe((courses: any[]) => {
       if (courses !== undefined) {
         this.courses = courses;
@@ -211,6 +234,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     let totalPctSum = 0;
     let totalPending = 0;
     let totalErrors = 0;
+    let totalPassedSteps = 0;
 
     const courseRows: LearnerCourseRow[] = this.courses.map((courseItem: any) => {
       const courseDoc = courseItem.doc || courseItem;
@@ -316,6 +340,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
       totalPctSum += completionPercentage;
       totalPending += coursePendingCount;
       totalErrors += courseErrorCount;
+      totalPassedSteps += passedStepsCount;
 
       return {
         courseId,
@@ -333,6 +358,7 @@ export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
     this.totalCourses = courseRows.length;
     this.avgCompletionPercentage = this.totalCourses ? Math.round(totalPctSum / this.totalCourses) : 0;
     this.pendingGradingCount = totalPending;
+    this.totalStepsCompleted = totalPassedSteps;
     this.totalErrorsCount = totalErrors;
 
     this.dataSource.data = courseRows;

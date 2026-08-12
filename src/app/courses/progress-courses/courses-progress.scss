@@ -133,13 +133,14 @@
     .table-toolbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       margin-bottom: 12px;
       flex-shrink: 0;
 
       .search-field {
         width: 100%;
         max-width: 360px;
+        margin-left: auto;
       }
     }
 

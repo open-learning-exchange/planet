@@ -93,6 +93,7 @@ describe('CoursesProgressLearnerComponent', () => {
 
     expect(component.totalCourses).toBe(1);
     expect(component.avgCompletionPercentage).toBe(100);
+    expect(component.totalStepsCompleted).toBe(2);
     expect(component.totalErrorsCount).toBe(1);
     expect(component.dataSource.data.length).toBe(1);
     expect(component.dataSource.data[0].passedStepsCount).toBe(2);
@@ -231,5 +232,20 @@ describe('CoursesProgressLearnerComponent', () => {
     routerSpy.mockClear();
     component.navigateToStep('c1', 2, false);
     expect(routerSpy).not.toHaveBeenCalled();
+  });
+
+  it('should sort data by courseTitle, progress, errors, and lastActive', () => {
+    component.ngOnInit();
+    const mockRow: any = {
+      courseTitle: 'Algebra 101',
+      completionPercentage: 75,
+      totalErrors: 3,
+      lastActive: 1700000000000
+    };
+
+    expect(component.dataSource.sortingDataAccessor(mockRow, 'courseTitle')).toBe('algebra 101');
+    expect(component.dataSource.sortingDataAccessor(mockRow, 'progress')).toBe(75);
+    expect(component.dataSource.sortingDataAccessor(mockRow, 'errors')).toBe(3);
+    expect(component.dataSource.sortingDataAccessor(mockRow, 'lastActive')).toBe(1700000000000);
   });
 });

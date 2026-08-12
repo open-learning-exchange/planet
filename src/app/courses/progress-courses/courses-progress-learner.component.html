@@ -14,7 +14,7 @@
     <mat-card class="kpi-card">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-blue">
-          <mat-icon>local_library</mat-icon>
+          <mat-icon>school</mat-icon>
         </div>
         <div class="kpi-details">
           <span class="kpi-label" i18n>Enrolled Courses</span>
@@ -26,10 +26,10 @@
     <mat-card class="kpi-card">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-green">
-          <mat-icon>check_circle</mat-icon>
+          <mat-icon>equalizer</mat-icon>
         </div>
         <div class="kpi-details">
-          <span class="kpi-label" i18n>Avg Course Completion</span>
+          <span class="kpi-label" i18n>Average Course Completion</span>
           <span class="kpi-value">{{ avgCompletionPercentage }}%</span>
           <mat-progress-bar mode="determinate" [value]="avgCompletionPercentage" class="kpi-progress-bar"></mat-progress-bar>
         </div>
@@ -38,24 +38,24 @@
 
     <mat-card class="kpi-card">
       <mat-card-content class="kpi-content">
-        <div class="kpi-icon-wrapper icon-amber">
-          <mat-icon>pending_actions</mat-icon>
+        <div class="kpi-icon-wrapper icon-green">
+          <mat-icon>done_all</mat-icon>
         </div>
         <div class="kpi-details">
-          <span class="kpi-label" i18n>Pending Grading</span>
-          <span class="kpi-value">{{ pendingGradingCount }}</span>
+          <span class="kpi-label" i18n>Total Steps Completed</span>
+          <span class="kpi-value">{{ totalStepsCompleted }}</span>
         </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="kpi-card">
       <mat-card-content class="kpi-content">
-        <div class="kpi-icon-wrapper icon-red">
-          <mat-icon>error_outline</mat-icon>
+        <div class="kpi-icon-wrapper icon-amber">
+          <mat-icon>rate_review</mat-icon>
         </div>
         <div class="kpi-details">
-          <span class="kpi-label" i18n>Total Mistakes & Retakes</span>
-          <span class="kpi-value">{{ totalErrorsCount }}</span>
+          <span class="kpi-label" i18n>Pending Grading</span>
+          <span class="kpi-value">{{ pendingGradingCount }}</span>
         </div>
       </mat-card-content>
     </mat-card>
@@ -84,9 +84,9 @@
           </div>
         } @else {
           <div class="table-scroll-wrapper">
-            <table mat-table [dataSource]="dataSource" class="progress-table" multiTemplateDataRows>
+            <table mat-table [dataSource]="dataSource" matSort class="progress-table" multiTemplateDataRows>
               <ng-container matColumnDef="courseTitle">
-                <th mat-header-cell *matHeaderCellDef i18n>Course Title</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Title</th>
                 <td mat-cell *matCellDef="let element">
                   <div class="course-cell-wrapper">
                     <span class="course-name-link" (click)="navigateToCourse(element.courseId)">
@@ -97,7 +97,7 @@
               </ng-container>
 
               <ng-container matColumnDef="progress">
-                <th mat-header-cell *matHeaderCellDef i18n>Progress</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Progress</th>
                 <td mat-cell *matCellDef="let element">
                   <div class="progress-cell">
                     <div class="progress-labels">
@@ -129,7 +129,7 @@
               </ng-container>
 
               <ng-container matColumnDef="errors">
-                <th mat-header-cell *matHeaderCellDef i18n>Mistakes</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Mistakes</th>
                 <td mat-cell *matCellDef="let element">
                   <span class="error-badge" [class.has-errors]="element.totalErrors > 0">
                     {{ element.totalErrors }}
@@ -138,7 +138,7 @@
               </ng-container>
 
               <ng-container matColumnDef="lastActive">
-                <th mat-header-cell *matHeaderCellDef i18n>Last Active</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Active</th>
                 <td mat-cell *matCellDef="let element">
                   <span class="last-active-text">
                     {{ element.lastActive ? (element.lastActive | date:'short') : 'Never' }}
@@ -213,7 +213,7 @@
             </table>
           </div>
 
-          <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="pinned-paginator"></mat-paginator>
+          <mat-paginator [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons class="pinned-paginator"></mat-paginator>
         }
       </mat-card-content>
     </mat-card>
