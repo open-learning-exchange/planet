@@ -17,6 +17,9 @@ $exam-table-col-width: 100px;
   div > div {
     padding: 1rem;
     font-size: 0.875rem;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 
     h4 {
       font-size: 1rem;
@@ -25,6 +28,8 @@ $exam-table-col-width: 100px;
     h4, p {
       margin: 0;
       font-weight: 400;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 }

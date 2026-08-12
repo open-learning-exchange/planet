@@ -35,7 +35,7 @@
           <div>
             <div>
               <h4 class="primary-text-color" i18n>Full Name</h4>
-              <p><b>{{userDetail.firstName ? ((userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40) : 'N/A'}}</b></p>
+              <p><b>{{userDetail.firstName ? ((userDetail.firstName + (userDetail.middleName ? ' ' + userDetail.middleName : '') + (userDetail.lastName ? ' ' + userDetail.lastName : '')) | truncateText:40) : 'N/A'}}</b></p>
             </div>
             <mat-divider></mat-divider>
           </div>
