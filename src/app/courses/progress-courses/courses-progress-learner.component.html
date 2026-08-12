@@ -169,7 +169,7 @@
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="expanded-cell">
                   @if (expandedCourseId === element.courseId) {
                     <div class="step-detail-container">
-                      <h4 class="step-detail-heading" i18n>Step Details & Educator Feedback</h4>
+                      <h4 class="step-detail-heading" i18n>Step Details</h4>
                       <div class="step-list-grid">
                         @for (step of element.stepStatuses; track step.stepIndex) {
                           <div class="step-detail-card"
