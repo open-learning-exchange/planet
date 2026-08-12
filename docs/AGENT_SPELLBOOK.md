@@ -65,4 +65,4 @@ Skills wired up here:
 - **Claude Code** reads `.claude/settings.json` → fetches plugin marketplaces from GitHub → follows internal symlinks to find `SKILL.md`.
 - **OpenHands** reads `.agents/skills/<name>/SKILL.md` → auto-loads on every session. It does **not** read `.claude/settings.json` or fetch marketplaces.
 - A **git submodule** at `.agents/skills/<name>/` makes the files physically present after `git submodule update --init`, on any machine or VM.
-- **Internal symlinks** (inside the skill repo) normally resolve on every checkout, since target and link travel together. If one doesn't, check the stored target with `readlink <link> | od -c` — a trailing `\n` (from generating the link via echo/printf instead of `ln -s`) makes it point at a filename ending in an invisible newline. Recreate with `ln -s`.
+- **Internal symlinks** (inside the skill repo) normally resolve on every checkout, since target and link travel together. If one doesn't, check the stored target with `readlink -n <link> | od -c` — a trailing `\n` (from generating the link via echo/printf instead of `ln -s`) makes it point at a filename ending in an invisible newline. Recreate with `ln -s`.
