@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { NonNullableFormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
@@ -24,7 +24,7 @@ import { DialogsAnnouncementSuccessComponent } from '../shared/dialogs/dialogs-a
 import { UserChallengeStatusService } from '../shared/user-challenge-status.service';
 import { ConfigurationCheckService } from '../shared/configuration-check.service';
 import { ChallengesService } from '../shared/challenges/challenges.service';
-import { MatTabGroup, MatTab } from '@angular/material/tabs';
+import { MatTabGroup, MatTab, MatTabChangeEvent } from '@angular/material/tabs';
 import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
@@ -131,6 +131,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   selectedLabel = '';
   pinned = false;
   attachmentMap: Record<string, any> = {};
+  @ViewChild('calendarTab') calendarTab: MatTab;
 
   get localLinks(): any[] {
     return (this.links || []).filter(link => link.teamType !== 'social');
@@ -212,7 +213,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       () => this.stateService.configuration?._id !== undefined,
       of(this.stateService.configuration),
       this.stateService.couchStateListener('configurations')
-    ).subscribe(() => {
+    ).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getCommunityData();
     });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -259,7 +260,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       }),
       switchMap(configurations => {
         // Configuration is for planet that is being viewed, not planet the user is on
-        this.configuration = configurations[0];
+        this.configuration = configurations[0] || { code: this.planetCode, planetType: 'community' };
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
@@ -270,7 +271,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.setLinksAndFinances(res);
         return this.couchService.get(`teams/${this.teamId}`);
       }),
-      catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err))
+      catchError(err => err.statusText === 'Object Not Found' ? of(this.team) : throwError(err)),
+      takeUntil(this.onDestroy$)
     ).subscribe(team => {
       this.team = team;
       this.servicesDescriptionLabel = this.team.description ? 'Edit' : 'Add';
@@ -574,17 +576,22 @@ export class CommunityComponent implements OnInit, OnDestroy {
     );
   }
 
-  tabChanged({ index }: { index: number }) {
+  tabChanged({ index, tab }: MatTabChangeEvent) {
     // stash reply only on voices tab change
     if (this.currentTab === 0 && index !== 0) {
       this.lastReplyId = this.activeReplyId;
     }
-    if (index === 0) {
-      this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
-    } else {
-      this.router.navigate([ '' ]);
+    // The voices routes only exist for the planet the user is on, so viewing another
+    // planet's exchange must not navigate away from /community/:code
+    if (!this.planetCode) {
+      if (index === 0) {
+        this.router.navigate([ this.lastReplyId ? `/voices/${this.lastReplyId}` : '' ]);
+      } else {
+        this.router.navigate([ '' ]);
+      }
     }
-    this.resizeCalendar = (index === 5);
+    // The tab set varies by planet type and device, so match the tab itself rather than its index
+    this.resizeCalendar = !!this.calendarTab && tab === this.calendarTab;
     this.currentTab = index;
   }
 

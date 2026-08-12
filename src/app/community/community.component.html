@@ -6,7 +6,7 @@
           @if (newsLoading) {
             <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
           } @else {
-            <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
+            <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="!planetCode" (changeLabelsFilter)="changeLabelsFilter($event)">
               @if (!activeReplyId) {
                 <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
                   <mat-form-field class="search-form-field mdc-toolbar-input">
@@ -36,7 +36,7 @@
                     </mat-select>
                   </mat-form-field>
                   <ng-container *planetAuthorizedRoles="'learner'">
-                    @if (showNewsButton && isLoggedIn) {
+                    @if (showNewsButton && isLoggedIn && !planetCode) {
                       <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
                     }
                   </ng-container>
@@ -141,19 +141,21 @@
               }
             </ng-container>
             <div *planetAuthorizedRoles="''">
-              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                @if (!deleteMode) {
-                  <span i18n>Remove Links</span>
-                }
-                @if (deleteMode) {
-                  <span i18n>Done Removing Links</span>
-                }
-              </button>
+              @if (!planetCode) {
+                <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+                <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+                  @if (!deleteMode) {
+                    <span i18n>Remove Links</span>
+                  }
+                  @if (deleteMode) {
+                    <span i18n>Done Removing Links</span>
+                  }
+                </button>
+              }
             </div>
           </mat-tab>
         }
-        @if (configuration.planetType==='nation' && isLoggedIn) {
+        @if (configuration.planetType==='nation' && isLoggedIn && !planetCode) {
           <mat-tab i18n-label label="Communities">
             <planet-community-list></planet-community-list>
           </mat-tab>
@@ -174,7 +176,7 @@
           </mat-tab>
         }
         @if (deviceType !== deviceTypes.DESKTOP) {
-          <mat-tab i18n-label label="Calendar">
+          <mat-tab i18n-label label="Calendar" #calendarTab>
             <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
           </mat-tab>
         }
