@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
-import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
+import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -127,12 +127,19 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.onDestroy$)
+    ).subscribe(() => {
+      if (this.isMobile) {
+        this.sidenavState = 'closed';
+      }
+    });
   }
 
   ngDoCheck() {
     this.syncToolbarLayout();
   }
-
   ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
     if (!toolbarElement) {
