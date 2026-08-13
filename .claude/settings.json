@@ -5,9 +5,16 @@
         "source": "github",
         "repo": "dogi/merge-prepping"
       }
+    },
+    "overtaking": {
+      "source": {
+        "source": "github",
+        "repo": "dogi/branch-overtaking"
+      }
     }
   },
   "enabledPlugins": {
-    "merge-prepping@prepping": true
+    "merge-prepping@prepping": true,
+    "branch-overtaking@overtaking": true
   }
 }
