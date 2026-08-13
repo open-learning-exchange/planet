@@ -1,14 +1,112 @@
 name: planet automerge
 
+# Manually started queue drainer: for each PR labelled `automerge`, merge the
+# base in, bump the version, wait for the builders, squash merge. The label is
+# the safety rail. Logic in .github/scripts/automerge.sh.
+#
+# Needs AUTOMERGE_TOKEN. GITHUB_TOKEN cannot merge into a protected branch,
+# and its pushes do not trigger the workflow runs the drain waits for.
+
 on:
   workflow_dispatch:
+    inputs:
+      label:
+        description: 'label marking PRs as mergeable'
+        required: false
+        default: 'automerge'
+        type: string
+      base:
+        description: 'base branch to merge into (blank = workflow default)'
+        required: false
+        default: ''
+        type: string
+      owner_login:
+        description: 'credited as co-author on every PR they did not author'
+        required: false
+        default: 'dogi'
+        type: string
+      require_checks:
+        description: 'refuse to merge unless the prepared commit (base merged in + version bumped) is green'
+        required: false
+        default: true
+        type: boolean
+      required_workflows:
+        description: 'comma-separated workflows that must have passed on the prepared commit (blank = judge whatever ran)'
+        required: false
+        default: 'Planet Builder'
+        type: string
+      delete_branch:
+        description: 'delete each head branch after merging'
+        required: false
+        default: true
+        type: boolean
+      max_merges:
+        description: 'stop after this many merges (0 = until the queue is empty)'
+        required: false
+        default: '0'
+        type: string
+      wait_timeout_minutes:
+        description: 'how long to wait for workflows: the builders on the prepared commit, and whatever is in flight on the base'
+        required: false
+        default: '45'
+        type: string
+      dry_run:
+        description: 'report what would happen, change nothing'
+        required: false
+        default: true
+        type: boolean
+
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  checks: read
+  statuses: read
+  actions: read
+
+env:
+  DEFAULT_BASE: master
+  PKG_FILE: package.json
 
 jobs:
   automerge:
-    name: automerge
+    name: planet automerge
     runs-on: ubuntu-latest
+    # GitHub caps a job at 6h; stay under it and re-dispatch to continue.
+    timeout-minutes: 350
     steps:
-      - name: init
-        run: echo "automerge"
+      - name: checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+
+      - name: stage helper scripts outside the work tree
+        id: stage
+        shell: bash
+        run: |
+          # PR branches get checked out; run from a copy they cannot swap.
+          mkdir -p "$RUNNER_TEMP/scripts"
+          cp .github/scripts/automerge.sh \
+             .github/scripts/version.sh \
+             .github/scripts/coauthors.sh "$RUNNER_TEMP/scripts/"
+          chmod +x "$RUNNER_TEMP/scripts/"*.sh
+          echo "dir=$RUNNER_TEMP/scripts" >> "$GITHUB_OUTPUT"
+
+      - name: drain the automerge queue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+          USING_PAT: ${{ secrets.AUTOMERGE_TOKEN != '' }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ inputs.base || env.DEFAULT_BASE }}
+          LABEL: ${{ inputs.label }}
+          REQUIRE_CHECKS: ${{ inputs.require_checks }}
+          REQUIRED_WORKFLOWS: ${{ inputs.required_workflows }}
+          DELETE_BRANCH: ${{ inputs.delete_branch }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          MAX_MERGES: ${{ inputs.max_merges }}
+          WAIT_TIMEOUT_MIN: ${{ inputs.wait_timeout_minutes }}
+          VERSION_SH: ${{ steps.stage.outputs.dir }}/version.sh
+          COAUTHORS_SH: ${{ steps.stage.outputs.dir }}/coauthors.sh
+          OWNER_LOGIN: ${{ inputs.owner_login }}
+        run: '${{ steps.stage.outputs.dir }}/automerge.sh'
