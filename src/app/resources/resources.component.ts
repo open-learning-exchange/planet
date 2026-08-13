@@ -9,8 +9,9 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
+import { Subject, of, combineLatest, defer } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
-import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component'; import { Subject, of, combineLatest } from 'rxjs';
+import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -377,24 +378,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   libraryToggle(resourceIds, type) {
     if (type === 'remove') {
-      const foundResource = resourceIds.length === 1 ?
-        (this.resources.data.find((r: any) => r._id === resourceIds[0]) as any) : null;
-      const resourceTitle = foundResource?.doc?.title || foundResource?.title || '';
+      const removableResourceIds = resourceIds.filter(resourceId => this.userService.shelf.resourceIds.includes(resourceId));
+      if (removableResourceIds.length === 0) {
+        return;
+      }
+      const foundResource = removableResourceIds.length === 1 ?
+        (this.resources.data.find((r: any) => r._id === removableResourceIds[0]) as any) : null;
+      const resourceTitle = foundResource?.doc?.title || '';
       const dialogRef = this.dialog.open(DialogsPromptComponent, {
         data: {
           changeType: 'remove',
           type: 'resource',
-          amount: resourceIds.length === 1 ? 'single' : 'many',
-          count: resourceIds.length,
+          amount: removableResourceIds.length === 1 ? 'single' : 'many',
+          count: removableResourceIds.length,
           displayName: resourceTitle,
           okClick: {
-            request: this.resourcesService.libraryAddRemove(resourceIds, type),
+            request: defer(() => this.resourcesService.libraryAddRemove(removableResourceIds, type)),
             onNext: () => {
               this.removeFilteredFromSelection();
               this.onSelectionChange(this.selection.selected);
               dialogRef.close();
             },
-            onError: () => dialogRef.close()
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing from myLibrary.`)
           }
         }
       });

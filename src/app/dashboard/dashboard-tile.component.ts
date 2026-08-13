@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
@@ -166,18 +167,18 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   removeResource(item: any) {
-    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         changeType: 'remove',
         type: 'resource',
         displayName: item.title,
         okClick: {
-          request: this.userService.updateShelf(
+          request: defer(() => this.userService.updateShelf(
             this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
             'resourceIds'
-          ),
+          )),
           onNext: () => {
-            this.dialogPrompt.close();
+            dialogRef.close();
             this.removeMessage(item);
           },
           onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)

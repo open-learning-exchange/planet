@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, defer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
@@ -139,14 +139,14 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
         data: {
           changeType: 'remove',
           type: 'resource',
-          displayName: this.resource?.doc?.title || this.resource?.title || '',
+          displayName: this.resource?.doc?.title || '',
           okClick: {
-            request: this.resourcesService.libraryAddRemove([ resourceId ], type),
+            request: defer(() => this.resourcesService.libraryAddRemove([ resourceId ], type)),
             onNext: () => {
               this.isUserEnrolled = !this.isUserEnrolled;
               dialogRef.close();
             },
-            onError: () => dialogRef.close()
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing this resource from myLibrary.`)
           }
         }
       });
