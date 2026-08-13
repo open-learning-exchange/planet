@@ -72,7 +72,7 @@
 
           .dashboard-text {
             display: -webkit-box;
-            width: calc(125px - 1rem);
+            width: calc(#{v.$dashboard-tile-width} - 1rem);
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
@@ -83,8 +83,6 @@
 
           .dashboard-course-cover {
             display: flex;
-            justify-content: center;
-            width: 100%;
             margin-bottom: 0.25rem;
 
             img {
@@ -95,7 +93,6 @@
               border: 1px solid v.$grey;
             }
           }
-
         }
       }
     }
@@ -152,20 +149,18 @@
             &.accordion-item {
               flex-direction: row;
               justify-content: flex-start;
-              text-align: left;
+              text-align: start;
               padding: 0.75rem 1rem;
 
               .dashboard-course-cover {
-                width: auto;
                 margin-bottom: 0;
-                margin-right: 0.5rem;
+                margin-inline-end: 0.5rem;
               }
-
               p {
-                margin-right: 0.5rem;
+                margin-inline-end: 0.5rem;
 
                 &[matBadgePosition="before"] {
-                  margin-left: 8px;
+                  margin-inline-start: 8px;
                 }
               }
 
