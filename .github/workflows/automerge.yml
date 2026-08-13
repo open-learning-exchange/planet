@@ -1,22 +1,14 @@
-# Scaffold only — the automerge logic lands in a follow-up PR.
-# Manual trigger by design: `workflow_dispatch` exposes a branch picker, so once
-# this file is on master you can run it against any experiment branch without
-# merging that branch first.
-name: Automerge
+name: planet automerge
 
 on:
   workflow_dispatch:
-
-# Least privilege while this is a no-op; widen when real automerge steps land
-# (that needs at least contents: write and pull-requests: write).
 permissions:
   contents: read
 
 jobs:
-
   automerge:
-    name: Placeholder
+    name: automerge
     runs-on: ubuntu-latest
     steps:
-      - name: No-op
-        run: echo "Automerge scaffold — no steps yet."
+      - name: init
+        run: echo "automerge"
