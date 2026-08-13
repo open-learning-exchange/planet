@@ -1,6 +1,6 @@
 # The Agent Spellbook — Summoning Other AIs on PRs
 
-> **Reviewers** speak; **Doers** act — an unleashed Doer mention defaults to commits on your branch. That's the one distinction to hold before casting anything.
+> **Reviewers** speak; **Doers** act — and an unleashed Copilot, Devin, or OpenHands mention defaults to commits on *your* branch, while Jules and Claude Code sessions only ever work on their own. That's the one distinction to hold before casting anything.
 >
 > This page has two layers. **The Grid** is the timeless mechanics: how each agent is summoned, what it does, and which file binds it — portable to any repo these agents are installed on. **Field notes** are dated observations with receipts. The grid was adopted 2026-08-12 from [myplanet's spellbook](https://github.com/open-learning-exchange/myplanet/blob/master/docs/AGENT_SPELLBOOK.md) (grown in the live multi-agent experiment on [myplanet PR #15436](https://github.com/open-learning-exchange/myplanet/pull/15436), where each agent fact-checked its own row); planet-specific evidence goes in the field notes below, and the grid changes only when observed behavior does. The behavioral rules — the **Laws of Summoning** — follow the grid; `AGENTS.md` (and `CLAUDE.md`, which symlinks to it) points every agent that ingests it at this page, so the laws bind as standing instructions. A third layer, **The Skill Sync** (end of page), is the plumbing that arms the doers: how the shared skills are maintained once in their own repos and synced into Claude Code, OpenHands, and Copilot.
 
