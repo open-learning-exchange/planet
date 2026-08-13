@@ -79,7 +79,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {
     const currRoles = this.user.roles;
     this.roles = currRoles.reduce(dedupeShelfReduce, currRoles.length ? [ 'learner' ] : [ 'Inactive' ]);
-    this.userService.shelfChange$.pipe()
+    this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe(() => {
         this.ngOnInit();
       });
@@ -169,11 +169,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getData(db: string, shelf: string[] = [], { linkPrefix, addId = false, titleField = 'title' }) {
     return this.couchService.bulkGet(db, shelf.filter(id => id))
       .pipe(
-        catchError(() => {
-          return of([]);
-        }),
         map(docs => {
           return docs.map((item) => ({ ...item, title: item[titleField], link: linkPrefix + (addId ? item._id : '') }));
+        }),
+        catchError(() => {
+          return of([]);
         })
       );
   }

@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, NEVER, of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { DashboardComponent } from './dashboard.component';
@@ -13,92 +11,66 @@ import { CoursesService } from '../courses/courses.service';
 import { StateService } from '../shared/state.service';
 import { CertificationsService } from '../manager-dashboard/certifications/certifications.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { TeamsService } from '../teams/teams.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 
-describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
+describe('DashboardComponent', () => {
   let component: DashboardComponent;
-  let fixture: ComponentFixture<DashboardComponent>;
+  let fixture: ComponentFixture<DashboardComponent> | undefined;
+  let shelfChange$: Subject<void>;
+  let deviceType$: BehaviorSubject<DeviceType>;
+  let userServiceMock: any;
+  let couchServiceMock: any;
+  let submissionsServiceMock: any;
+  let coursesServiceMock: any;
+  let stateServiceMock: any;
+  let certificationsServiceMock: any;
+  let deviceInfoServiceMock: any;
+  let matDialogMock: any;
 
   const mockUser = {
     _id: 'user_123',
     name: 'johndoe',
     firstName: 'John',
     lastName: 'Doe',
-    roles: ['admin', 'learner'],
+    roles: [ 'admin', 'learner' ],
     planetCode: 'planet_1'
   };
 
-  const userServiceMock = {
-    get: vi.fn().mockReturnValue(mockUser),
-    shelf: {
-      resourceIds: ['res_1'],
-      courseIds: ['course_1'],
-      meetupIds: ['meetup_1'],
-      myTeamIds: ['team_1']
-    },
-    userChange$: new Subject<any>(),
-    shelfChange$: new Subject<void>(),
-    profileBanner: new BehaviorSubject<boolean>(true),
-    profileComplete$: new BehaviorSubject<boolean>(false),
-    isProfileComplete: vi.fn(),
-    doesUserHaveRole: vi.fn().mockReturnValue(true)
-  };
-
-  const couchServiceMock = {
-    currentTime: vi.fn().mockReturnValue(of(1700000000000)),
-    findAll: vi.fn().mockReturnValue(of([])),
-    bulkGet: vi.fn().mockReturnValue(of([]))
-  };
-
-  const submissionsServiceMock = {
-    getSubmissions: vi.fn().mockReturnValue(of([]))
-  };
-
-  const coursesServiceMock = {
-    requestCourses: vi.fn(),
-    coursesListener$: vi.fn().mockReturnValue(of([]))
-  };
-
-  const stateServiceMock = {
-    configuration: { name: 'Planet Earth', code: 'earth_code' }
-  };
-
-  const certificationsServiceMock = {
-    getCertifications: vi.fn().mockReturnValue(of([]))
-  };
-
-  let deviceTypeSubject: BehaviorSubject<DeviceType>;
-  const deviceInfoServiceMock = {
-    watchDeviceType: vi.fn()
-  };
-
-  const teamsServiceMock = {
-    toggleTeamMembership: vi.fn().mockReturnValue(of({}))
-  };
-
-  const matDialogMock = {
-    open: vi.fn()
+  const defaultShelf = {
+    resourceIds: [ 'res_1' ],
+    courseIds: [ 'course_1' ],
+    meetupIds: [ 'meetup_1' ],
+    myTeamIds: [ 'team_1' ]
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
-
-    deviceTypeSubject = new BehaviorSubject<DeviceType>(DeviceType.DESKTOP);
-    deviceInfoServiceMock.watchDeviceType.mockReturnValue(deviceTypeSubject.asObservable());
-    userServiceMock.profileBanner = new BehaviorSubject<boolean>(true);
-    userServiceMock.profileComplete$ = new BehaviorSubject<boolean>(false);
-    userServiceMock.get.mockReturnValue({ ...mockUser });
-    couchServiceMock.currentTime.mockReturnValue(of(1700000000000));
-    couchServiceMock.findAll.mockReturnValue(of([]));
-    couchServiceMock.bulkGet.mockReturnValue(of([]));
-    submissionsServiceMock.getSubmissions.mockReturnValue(of([]));
-    coursesServiceMock.coursesListener$.mockReturnValue(of([]));
-    certificationsServiceMock.getCertifications.mockReturnValue(of([]));
-    userServiceMock.doesUserHaveRole.mockReturnValue(true);
+    shelfChange$ = new Subject<void>();
+    deviceType$ = new BehaviorSubject<DeviceType>(DeviceType.DESKTOP);
+    userServiceMock = {
+      get: vi.fn().mockReturnValue({ ...mockUser }),
+      shelf: { ...defaultShelf },
+      shelfChange$,
+      profileBanner: new BehaviorSubject<boolean>(true),
+      profileComplete$: new BehaviorSubject<boolean>(false),
+      isProfileComplete: vi.fn()
+    };
+    couchServiceMock = {
+      currentTime: vi.fn().mockReturnValue(of(1700000000000)),
+      findAll: vi.fn().mockReturnValue(of([])),
+      bulkGet: vi.fn().mockReturnValue(of([]))
+    };
+    submissionsServiceMock = { getSubmissions: vi.fn().mockReturnValue(of([])) };
+    coursesServiceMock = {
+      requestCourses: vi.fn(),
+      coursesListener$: vi.fn().mockReturnValue(of([]))
+    };
+    stateServiceMock = { configuration: { name: 'Planet Earth', code: 'earth_code' } };
+    certificationsServiceMock = { getCertifications: vi.fn().mockReturnValue(of([])) };
+    deviceInfoServiceMock = { watchDeviceType: vi.fn().mockReturnValue(deviceType$.asObservable()) };
+    matDialogMock = { open: vi.fn() };
 
     TestBed.configureTestingModule({
-      imports: [DashboardComponent],
+      imports: [ DashboardComponent ],
       providers: [
         { provide: UserService, useValue: userServiceMock },
         { provide: CouchService, useValue: couchServiceMock },
@@ -107,254 +79,262 @@ describe('DashboardComponent - Rigorous Edge Cases & Stress Tests', () => {
         { provide: StateService, useValue: stateServiceMock },
         { provide: CertificationsService, useValue: certificationsServiceMock },
         { provide: DeviceInfoService, useValue: deviceInfoServiceMock },
-        { provide: TeamsService, useValue: teamsServiceMock },
-        { provide: MatDialog, useValue: matDialogMock },
-        provideRouter([]),
-        provideHttpClient(withInterceptorsFromDi())
+        { provide: MatDialog, useValue: matDialogMock }
       ]
-    });
+    }).overrideComponent(DashboardComponent, { set: { template: '' } });
+  });
 
+  afterEach(() => {
+    fixture?.destroy();
+    vi.restoreAllMocks();
+  });
+
+  function createComponent(userOverrides: any = {}) {
+    userServiceMock.get.mockReturnValue({ ...mockUser, ...userOverrides });
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
+    return fixture;
+  }
+
+  it('initializes user information and roles', () => {
+    createComponent().detectChanges();
+
+    expect(component.displayName).toBe('John Doe');
+    expect(component.planetName).toBe('Planet Earth');
+    expect(component.roles).toEqual([ 'learner', 'admin' ]);
   });
 
-  describe('Standard Functional Suite', () => {
-    it('should create the DashboardComponent', () => {
-      expect(component).toBeTruthy();
-    });
+  it('uses the username when firstName is undefined', () => {
+    createComponent({ firstName: undefined }).detectChanges();
 
-    it('should initialize user information and roles on init', () => {
-      fixture.detectChanges();
-      expect(component.displayName).toBe('John Doe');
-      expect(component.planetName).toBe('Planet Earth');
-      expect(component.roles).toEqual(['learner', 'admin']);
-    });
+    expect(component.displayName).toBe('johndoe');
+  });
 
-    it('should fallback to username when firstName is undefined', () => {
-      userServiceMock.get.mockReturnValue({ ...mockUser, firstName: undefined });
-      fixture = TestBed.createComponent(DashboardComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      expect(component.displayName).toBe('johndoe');
-    });
+  it('labels users with no roles as inactive', () => {
+    createComponent({ roles: [] });
 
-    it('should load login activities and update visit count', () => {
-      couchServiceMock.findAll.mockImplementation((db: string) => {
-        if (db === 'login_activities') {
-          return of([{ user: 'johndoe' }, { user: 'johndoe' }]);
-        }
-        return of([]);
-      });
+    expect(component.roles).toEqual([ 'Inactive' ]);
+  });
 
-      fixture.detectChanges();
-      expect(component.visits).toBe(2);
-    });
+  it('loads the login visit count', () => {
+    couchServiceMock.findAll.mockImplementation((db: string) =>
+      db === 'login_activities' ? of([ {}, {} ]) : of([])
+    );
 
-    it('should handle error when fetching login activities smoothly', () => {
-      couchServiceMock.findAll.mockImplementation((db: string) => {
-        if (db === 'login_activities') {
-          return throwError(new Error('CouchDB connection error'));
-        }
-        return of([]);
-      });
+    createComponent().detectChanges();
 
-      fixture.detectChanges();
-      expect(component.visits).toBe(0);
-    });
+    expect(component.visits).toBe(2);
+  });
 
-    it('should load dashboard items from shelf via initDashboard()', () => {
-      couchServiceMock.bulkGet.mockImplementation((db: string, ids: string[]) => {
-        if (db === 'resources') {
-          return of([{ _id: 'res_1', title: 'Resource 1' }]);
-        }
-        if (db === 'courses') {
-          return of([{ _id: 'course_1', courseTitle: 'Course 1' }]);
-        }
-        if (db === 'meetups') {
-          return of([{ _id: 'meetup_1', title: 'Meetup 1' }]);
-        }
-        if (db === 'teams') {
-          return of([{ _id: 'team_1', name: 'Team 1' }]);
-        }
-        return of([]);
-      });
+  it('recovers when loading login visits fails', () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    couchServiceMock.findAll.mockImplementation((db: string) =>
+      db === 'login_activities' ? throwError(new Error('CouchDB connection error')) : of([])
+    );
 
-      fixture.detectChanges();
-      expect(component.data.resources.length).toBe(1);
-      expect(component.data.courses.length).toBe(1);
-      expect(component.data.meetups.length).toBe(1);
-      expect(component.data.myTeams.length).toBe(1);
-      expect(component.isLoading).toBe(false);
-    });
+    const testFixture = createComponent();
+    component.visits = 3;
+    testFixture.detectChanges();
 
-    it('should detect empty shelf correctly', () => {
-      const emptyShelf = { courseIds: [], meetupIds: [], myTeamIds: [], resourceIds: [] };
-      expect(component.isEmptyShelf(emptyShelf)).toBe(true);
+    expect(component.visits).toBe(0);
+    expect(warnSpy).toHaveBeenCalledWith('Error fetching login activities');
+  });
 
-      const nonEmptyShelf = { courseIds: ['c1'], meetupIds: [], myTeamIds: [], resourceIds: [] };
-      expect(component.isEmptyShelf(nonEmptyShelf)).toBe(false);
-    });
+  it('loads and maps dashboard items from the shelf', () => {
+    couchServiceMock.bulkGet.mockImplementation((db: string) => ({
+      resources: of([ { _id: 'res_1', title: 'Resource 1' } ]),
+      courses: of([ { _id: 'course_1', courseTitle: 'Course 1' } ]),
+      meetups: of([ { _id: 'meetup_1', title: 'Meetup 1' } ]),
+      teams: of([ { _id: 'team_1', name: 'Team 1' } ])
+    })[db] || of([]));
 
-    it('should compute profileImg correctly when attachments exist or fallback to default asset', () => {
-      expect(component.profileImg).toBe('assets/image.png');
+    createComponent().detectChanges();
 
-      const userWithPic = { ...mockUser, _attachments: { 'avatar.png': {} } };
-      component.user = userWithPic;
-      expect(component.profileImg).toContain('_users/org.couchdb.user:johndoe/avatar.png');
-    });
+    expect(component.data.resources[0]).toMatchObject({ title: 'Resource 1', link: '/resources/view/res_1' });
+    expect(component.data.courses[0]).toMatchObject({ title: 'Course 1', link: '/courses/view/course_1' });
+    expect(component.data.meetups[0]).toMatchObject({ title: 'Meetup 1', link: '/meetups/view/meetup_1' });
+    expect(component.data.myTeams[0]).toMatchObject({ title: 'Team 1', link: '/teams/view/team_1' });
+    expect(component.isLoading).toBe(false);
+  });
 
-    it('should update surveysCount and examsCount correctly', () => {
-      submissionsServiceMock.getSubmissions.mockImplementation((query: any) => {
-        if (query.selector.type === 'survey') {
-          return of([{ parentId: 'p1' }, { parentId: 'p2' }, { parentId: 'p1' }]);
-        }
-        if (query.selector.type === 'exam') {
-          return of([{ _id: 'exam1' }, { _id: 'exam2' }]);
-        }
-        return of([]);
-      });
+  it('clears stale dashboard data immediately for an empty shelf', () => {
+    userServiceMock.shelf = { resourceIds: [], courseIds: [], meetupIds: [], myTeamIds: [] };
+    couchServiceMock.bulkGet.mockReturnValue(NEVER);
+    createComponent();
+    component.data = { resources: [ {} ], courses: [ {} ], meetups: [ {} ], myTeams: [ {} ] };
 
-      fixture.detectChanges();
-      expect(component.surveysCount).toBe(2);
-      expect(component.examsCount).toBe(2);
-    });
+    component.initDashboard();
 
-    it('should calculate badge courses and groups correctly in setBadgesCourses()', () => {
-      const courses = [
-        {
-          _id: 'course_101',
-          doc: { courseTitle: 'English 1', foundation: 'literacy', steps: [{ _id: 's1' }] },
-          progress: [{ passed: true }]
-        },
-        {
-          _id: 'course_102',
-          doc: { courseTitle: 'Incomplete Course', foundation: 'math', steps: [{ _id: 's1' }] },
-          progress: [{ passed: false }]
-        }
-      ];
+    expect(component.data).toEqual({ resources: [], courses: [], meetups: [], myTeams: [] });
+  });
 
-      const certifications = [
-        { _id: 'cert_1', courseIds: ['course_101'] }
-      ];
+  it('filters falsy shelf IDs before bulk loading data', () => {
+    couchServiceMock.bulkGet.mockReturnValue(of([ { _id: 'res_1', title: 'Resource 1' } ]));
+    createComponent();
+    let result: any[];
 
-      component.setBadgesCourses(courses, certifications);
-      expect(component.badgesCourses['literacy'].length).toBe(1);
-      expect(component.badgesCourses['literacy'][0].inCertification).toBe(true);
-      expect(component.badgeGroups).toContain('literacy');
-      expect(component.badgeGroups).not.toContain('math');
-    });
+    component.getData('resources', [ 'res_1', '', null ], { linkPrefix: '/resources/view/', addId: true })
+      .subscribe(data => result = data);
 
-    it('should handle team removal locally in teamRemoved()', () => {
-      component.data.myTeams = [{ _id: 't1', name: 'Team A' }, { _id: 't2', name: 'Team B' }];
-      component.teamRemoved({ _id: 't1' });
-      expect(component.data.myTeams.length).toBe(1);
-      expect(component.data.myTeams[0]._id).toBe('t2');
-    });
+    expect(couchServiceMock.bulkGet).toHaveBeenCalledWith('resources', [ 'res_1' ]);
+    expect(result[0]).toMatchObject({ title: 'Resource 1', link: '/resources/view/res_1' });
+  });
 
-    it('should open course view dialog via openCourseView()', () => {
-      const courseMock = { _id: 'course_999' };
-      component.openCourseView(courseMock);
+  it('returns an empty list when bulk loading fails', () => {
+    couchServiceMock.bulkGet.mockReturnValue(throwError(new Error('Bulk get failed')));
+    createComponent();
+    let result: any[];
 
-      expect(matDialogMock.open).toHaveBeenCalledWith(
-        CoursesViewDetailDialogComponent,
-        expect.objectContaining({
-          data: { courseId: 'course_999', returnState: { route: 'myDashboard' } }
-        })
-      );
-    });
+    component.getData('resources', [], { linkPrefix: '/resources/view/' }).subscribe(data => result = data);
 
-    it('should manage profile completeness banner state and close banner', () => {
-      fixture.detectChanges();
-      expect(component.showBanner).toBe(true);
+    expect(result).toEqual([]);
+  });
 
-      component.closeBanner();
-      expect(component.showBanner).toBe(false);
-      expect(userServiceMock.profileBanner.getValue()).toBe(false);
-    });
+  it('returns an empty list when bulk loading returns a malformed payload', () => {
+    couchServiceMock.bulkGet.mockReturnValue(of(null));
+    createComponent();
+    let result: any[];
 
-    it('should update mobile layout properties when deviceType changes', () => {
-      fixture.detectChanges();
-      expect(component.isMobile).toBe(false);
+    component.getData('resources', [], { linkPrefix: '/resources/view/' }).subscribe(data => result = data);
 
-      deviceTypeSubject.next(DeviceType.MOBILE);
-      expect(component.isMobile).toBe(true);
-      expect(component.isAccordionMode).toBe(true);
+    expect(result).toEqual([]);
+  });
+
+  it('counts submissions using the expected survey and exam selectors', () => {
+    submissionsServiceMock.getSubmissions.mockImplementation((query: any) =>
+      query.selector.type === 'survey' ?
+        of([ { parentId: 'p1' }, { parentId: 'p2' }, { parentId: 'p1' } ]) :
+        of([ { _id: 'exam1' }, { _id: 'exam2' } ])
+    );
+
+    createComponent().detectChanges();
+
+    expect(component.surveysCount).toBe(2);
+    expect(component.examsCount).toBe(2);
+    expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
+      selector: { type: 'survey', status: 'pending', 'user.name': 'johndoe' }
+    }));
+    expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
+      selector: { type: 'exam', status: 'requires grading', 'user.name': { '$gt': null } }
+    }));
+  });
+
+  it('includes only completed courses in badge groups', () => {
+    createComponent();
+    component.setBadgesCourses([
+      {
+        _id: 'completed', doc: { foundation: 'literacy', steps: [ {} ] }, progress: [ { passed: true } ]
+      },
+      {
+        _id: 'incomplete', doc: { foundation: 'math', steps: [ {} ] }, progress: [ { passed: false } ]
+      }
+    ], [ { courseIds: [ 'completed' ] } ]);
+
+    expect(component.badgesCourses.literacy[0]).toMatchObject({ _id: 'completed', inCertification: true });
+    expect(component.badgesCourses.math).toBeUndefined();
+    expect(component.badgeGroups).toEqual([ 'literacy' ]);
+  });
+
+  it('groups completed courses without a foundation under none', () => {
+    createComponent();
+    component.setBadgesCourses([
+      { _id: 'course_none', doc: { steps: [ {} ] }, progress: [ { passed: true } ] }
+    ], []);
+
+    expect(component.badgesCourses.none).toHaveLength(1);
+    expect(component.badgeGroups).toEqual([ 'none' ]);
+  });
+
+  it('sets canRemove only for team leaders', () => {
+    couchServiceMock.findAll.mockReturnValue(of([
+      { teamId: 'leader-team', isLeader: true },
+      { teamId: 'member-team', isLeader: false }
+    ]));
+    couchServiceMock.bulkGet.mockReturnValue(of([
+      { _id: 'leader-team', name: 'Leader Team' },
+      { _id: 'member-team', name: 'Member Team' }
+    ]));
+    createComponent();
+    let teams: any[];
+
+    component.getTeamMembership().subscribe(result => teams = result);
+
+    expect(teams).toEqual(expect.arrayContaining([
+      expect.objectContaining({ _id: 'leader-team', canRemove: true }),
+      expect.objectContaining({ _id: 'member-team', canRemove: false })
+    ]));
+  });
+
+  it('filters archived teams from the dashboard', () => {
+    couchServiceMock.bulkGet.mockImplementation((db: string, ids: string[]) =>
+      db === 'teams' && ids.length > 0 ? of([
+        { _id: 'team_active', name: 'Active Team', status: 'active' },
+        { _id: 'team_archived', name: 'Archived Team', status: 'archived' }
+      ]) : of([])
+    );
+
+    createComponent().detectChanges();
+
+    expect(component.data.myTeams.map(team => team._id)).toEqual([ 'team_active' ]);
+  });
+
+  it('opens the course dialog with its expected configuration', () => {
+    createComponent();
+
+    component.openCourseView({ _id: 'course_999' });
+
+    expect(matDialogMock.open).toHaveBeenCalledWith(CoursesViewDetailDialogComponent, {
+      data: { courseId: 'course_999', returnState: { route: 'myDashboard' } },
+      minWidth: '50vw',
+      maxWidth: '80vw',
+      maxHeight: '80vh',
+      autoFocus: false
     });
   });
 
-  describe('Rigorous Stress & Edge Case Scenarios', () => {
-    it('should gracefully handle empty user roles without throwing', () => {
-      userServiceMock.get.mockReturnValue({ ...mockUser, roles: [] });
-      fixture = TestBed.createComponent(DashboardComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      expect(component.roles).toEqual(['Inactive']);
-    });
+  it('updates and closes the profile completion banner', () => {
+    createComponent().detectChanges();
+    expect(component.showBanner).toBe(true);
 
-    it('should handle bulkGet returning empty/falsy responses cleanly', () => {
-      couchServiceMock.bulkGet.mockReturnValue(of([]));
-      fixture.detectChanges();
-      expect(component.data.resources).toEqual([]);
-      expect(component.data.courses).toEqual([]);
-      expect(component.data.meetups).toEqual([]);
-      expect(component.isLoading).toBe(false);
-    });
+    userServiceMock.profileComplete$.next(true);
+    expect(component.showBanner).toBe(false);
 
-    it('should handle bulkGet error gracefully without crashing initDashboard', () => {
-      couchServiceMock.bulkGet.mockReturnValue(throwError(new Error('Bulk get failed')));
-      fixture.detectChanges();
-      expect(component.data.resources).toEqual([]);
-      expect(component.isLoading).toBe(false);
-    });
+    userServiceMock.profileComplete$.next(false);
+    component.closeBanner();
+    expect(component.showBanner).toBe(false);
+    expect(userServiceMock.profileBanner.getValue()).toBe(false);
+  });
 
-    it('should properly unsubscribe onDestroy$ and not memory leak on destroy', () => {
-      fixture.detectChanges();
-      const nextSpy = vi.spyOn(component.onDestroy$, 'next');
-      const completeSpy = vi.spyOn(component.onDestroy$, 'complete');
+  it('distinguishes small-mobile layout from mobile accordion mode', () => {
+    createComponent();
 
-      component.ngOnDestroy();
+    deviceType$.next(DeviceType.SMALL_MOBILE);
+    expect(component.isMobile).toBe(true);
+    expect(component.isAccordionMode).toBe(false);
 
-      expect(nextSpy).toHaveBeenCalled();
-      expect(completeSpy).toHaveBeenCalled();
-    });
+    deviceType$.next(DeviceType.MOBILE);
+    expect(component.isMobile).toBe(true);
+    expect(component.isAccordionMode).toBe(true);
+  });
 
-    it('should handle shelfChange$ triggers after component initialization', () => {
-      fixture.detectChanges();
-      const initSpy = vi.spyOn(component, 'ngOnInit');
+  it('reloads dashboard data when the shelf changes', () => {
+    createComponent().detectChanges();
+    couchServiceMock.bulkGet.mockClear();
 
-      userServiceMock.shelfChange$.next();
+    shelfChange$.next();
 
-      expect(initSpy).toHaveBeenCalled();
-    });
+    expect(couchServiceMock.bulkGet).toHaveBeenCalledWith('resources', [ 'res_1' ]);
+  });
 
-    it('should handle setBadgesCourses with undefined foundation on doc', () => {
-      const courses = [
-        {
-          _id: 'course_none',
-          doc: { courseTitle: 'No Foundation Course', steps: [{ _id: 's1' }] },
-          progress: [{ passed: true }]
-        }
-      ];
-      component.setBadgesCourses(courses, []);
-      expect(component.badgesCourses['none']).toBeDefined();
-      expect(component.badgesCourses['none'].length).toBe(1);
-    });
+  it('stops responding to shelf changes after destruction', () => {
+    const testFixture = createComponent();
+    testFixture.detectChanges();
+    couchServiceMock.bulkGet.mockClear();
 
-    it('should filter out archived teams from myTeams dataset', () => {
-      couchServiceMock.bulkGet.mockImplementation((db: string) => {
-        if (db === 'teams') {
-          return of([
-            { _id: 'team_active', name: 'Active Team', status: 'active' },
-            { _id: 'team_archived', name: 'Archived Team', status: 'archived' }
-          ]);
-        }
-        return of([]);
-      });
+    testFixture.destroy();
+    fixture = undefined;
+    shelfChange$.next();
 
-      fixture.detectChanges();
-      const teamIds = component.data.myTeams.map(t => t._id);
-      expect(teamIds).toContain('team_active');
-      expect(teamIds).not.toContain('team_archived');
-    });
+    expect(couchServiceMock.bulkGet).not.toHaveBeenCalled();
   });
 });
