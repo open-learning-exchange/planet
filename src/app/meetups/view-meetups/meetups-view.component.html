@@ -76,8 +76,17 @@
       @if (meetupDetail?.meetupLink) {
         <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer">{{meetupDetail?.meetupLink}}</a></p>
       }
-      @if (meetupDetail?.assignee) {
-        <p><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+      @if (meetupDetail?.assignee || (meetupDetail?.assignees && meetupDetail.assignees.length > 0)) {
+        <p>
+          <b i18n>Assigned to:</b>
+          @if (meetupDetail?.assignees && meetupDetail.assignees.length > 0) {
+            @for (assignee of meetupDetail.assignees; track assignee.userId; let isLast = $last) {
+              <a class="cursor-pointer" (click)="openProfile(assignee.name, assignee.teamPlanetCode || assignee.userPlanetCode)">{{' ' + assignee.name}}</a>{{isLast ? '' : ','}}
+            }
+          } @else if (meetupDetail?.assignee) {
+            <a class="cursor-pointer" (click)="openProfile(meetupDetail.assignee.name, meetupDetail.assignee.teamPlanetCode || meetupDetail.assignee.userPlanetCode)">{{' ' + meetupDetail.assignee.name}}</a>
+          }
+        </p>
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>

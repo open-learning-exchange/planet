@@ -51,7 +51,7 @@ export class TasksService {
 
   addDialogSubmit(additionalFields, task: any, newTask: any, onSuccess) {
     const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
-    this.addTask({ assignee: '', ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
+    this.addTask({ assignee: '', assignees: [], ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       onSuccess(res.doc);
@@ -113,8 +113,43 @@ export class TasksService {
   }
 
   removeAssigneeFromTasks(userId: any, link?: any) {
-    return this.couchService.findAll(this.dbName, findDocuments({ 'assignee.userId': userId, link })).pipe(
-      switchMap((docs: any[]) => this.couchService.bulkDocs(this.dbName, docs.map(doc => ({ ...doc, assignee: '' })))),
+    const selector: any = {
+      $or: [
+        { 'assignee.userId': userId },
+        { 'assignees.userId': userId }
+      ]
+    };
+    if (link) {
+      selector.link = link;
+    }
+    return this.couchService.findAll(this.dbName, findDocuments(selector)).pipe(
+      switchMap((docs: any[]) => {
+        const updatedDocs = docs.map(doc => {
+          let modified = false;
+          let currentAssignees = doc.assignees ? [...doc.assignees] : [];
+          if (doc.assignee && doc.assignee.userId && currentAssignees.length === 0) {
+            currentAssignees.push(doc.assignee);
+          }
+
+          const initialLength = currentAssignees.length;
+          currentAssignees = currentAssignees.filter(a => a.userId !== userId);
+
+          if (currentAssignees.length !== initialLength) {
+            modified = true;
+          }
+
+          if (doc.assignee && doc.assignee.userId === userId) {
+            modified = true;
+          }
+
+          if (modified) {
+            doc.assignees = currentAssignees;
+            doc.assignee = currentAssignees.length > 0 ? currentAssignees[0] : '';
+          }
+          return doc;
+        });
+        return this.couchService.bulkDocs(this.dbName, updatedDocs);
+      }),
       map(() => this.getTasks())
     );
   }
