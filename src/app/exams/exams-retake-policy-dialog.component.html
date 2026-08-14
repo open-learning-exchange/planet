@@ -1,5 +1,5 @@
 <h2 mat-dialog-title i18n>Retake Policy</h2>
-<mat-dialog-content class="retake-dialog-content">
+<mat-dialog-content class="retake-dialog-content km-retake-dialog-content">
   <div class="field-container">
     <mat-form-field class="full-width">
       <mat-label i18n>Max Attempts</mat-label>
@@ -43,7 +43,7 @@
       </mat-form-field>
     </div>
 
-    <div class="cooloff-summary">
+    <div class="cooloff-summary km-cooloff-summary">
       <mat-icon class="summary-icon">schedule</mat-icon>
       <span class="summary-text" i18n>Total cool-off: {{ totalCooloffSummary }}</span>
     </div>
@@ -52,5 +52,5 @@
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close i18n>Cancel</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="getResult()" i18n>Apply</button>
+  <button mat-raised-button color="primary" class="km-apply-retake-policy" [mat-dialog-close]="getResult()" i18n>Apply</button>
 </mat-dialog-actions>

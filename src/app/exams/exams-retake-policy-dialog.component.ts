@@ -91,13 +91,13 @@ export class ExamsRetakePolicyDialogComponent implements OnInit {
     }
     const parts: string[] = [];
     if (this.cooloffDays > 0) {
-      parts.push(this.cooloffDays === 1 ? $localize`1 day` : `${this.cooloffDays} ` + $localize`days`);
+      parts.push(this.cooloffDays === 1 ? $localize`1 day` : $localize`${this.cooloffDays} days`);
     }
     if (this.cooloffHours > 0) {
-      parts.push(this.cooloffHours === 1 ? $localize`1 hour` : `${this.cooloffHours} ` + $localize`hours`);
+      parts.push(this.cooloffHours === 1 ? $localize`1 hour` : $localize`${this.cooloffHours} hours`);
     }
     if (this.cooloffMinutes > 0) {
-      parts.push(`${this.cooloffMinutes} ` + $localize`minutes`);
+      parts.push(this.cooloffMinutes === 1 ? $localize`1 minute` : $localize`${this.cooloffMinutes} minutes`);
     }
     return parts.join(', ');
   }

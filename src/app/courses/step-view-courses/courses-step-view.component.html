@@ -15,20 +15,20 @@
       </button>
     }
     @if (!parent && (attempts || retakePolicy?.effectiveMaxAttempts || retakePolicy?.isCooloffActive)) {
-      <div class="retake-status-stack">
+      <div class="retake-status-stack km-retake-status-stack">
         @if (attempts && !retakePolicy?.effectiveMaxAttempts) {
-          <span class="retake-attempt-count" i18n>Past attempts: {{attempts}}</span>
+          <span class="retake-attempt-count km-retake-attempt-count" i18n>Past attempts: {{attempts}}</span>
         }
         @if (retakePolicy?.effectiveMaxAttempts) {
           @if (retakePolicy?.isMaxAttemptsReached) {
-            <span class="retake-attempt-count" i18n>{{attempts}} of {{retakePolicy?.effectiveMaxAttempts}} attempts used</span>
-            <span class="retake-cooloff-time" i18n>No retakes remaining</span>
+            <span class="retake-attempt-count km-retake-attempt-count" i18n>{{attempts}} of {{retakePolicy?.effectiveMaxAttempts}} attempts used</span>
+            <span class="retake-cooloff-time km-retake-cooloff-time" i18n>No retakes remaining</span>
           } @else {
-            <span class="retake-attempt-count" i18n>Attempt {{ attempts + 1 }} of {{ retakePolicy?.effectiveMaxAttempts }}</span>
+            <span class="retake-attempt-count km-retake-attempt-count" i18n>Attempt {{ attempts + 1 }} of {{ retakePolicy?.effectiveMaxAttempts }}</span>
           }
         }
         @if (!retakePolicy?.isMaxAttemptsReached && retakePolicy?.isCooloffActive) {
-          <span class="retake-cooloff-time" i18n>Available in: {{ retakePolicy?.cooloffRemainingFormatted }}</span>
+          <span class="retake-cooloff-time km-retake-cooloff-time" i18n>Available in: {{ retakePolicy?.cooloffRemainingFormatted }}</span>
         }
       </div>
     }
@@ -84,7 +84,7 @@
       [disabled]="retakePolicy && !retakePolicy.canStartExam"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       (click)="goToExam()" i18n>
-      {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
+      {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test} other {Take Test}}
     </button>
   }
   @if (stepDetail?.survey?.questions.length && isUserEnrolled) {

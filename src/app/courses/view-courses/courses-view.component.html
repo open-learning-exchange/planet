@@ -136,20 +136,20 @@
                   <planet-resources-menu [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
                 }
                 @if (!parent && (step.attempts || step.retakePolicy?.effectiveMaxAttempts || step.retakePolicy?.isCooloffActive)) {
-                  <div class="retake-status-stack">
+                  <div class="retake-status-stack km-retake-status-stack">
                     @if (step.attempts && !step.retakePolicy?.effectiveMaxAttempts) {
-                      <span class="retake-attempt-count" i18n>Past attempts: {{step.attempts}}</span>
+                      <span class="retake-attempt-count km-retake-attempt-count" i18n>Past attempts: {{step.attempts}}</span>
                     }
                     @if (step.retakePolicy?.effectiveMaxAttempts) {
                       @if (step.retakePolicy?.isMaxAttemptsReached) {
-                        <span class="retake-attempt-count" i18n>{{step.attempts}} of {{step.retakePolicy?.effectiveMaxAttempts}} attempts used</span>
-                        <span class="retake-cooloff-time" i18n>No retakes remaining</span>
+                        <span class="retake-attempt-count km-retake-attempt-count" i18n>{{step.attempts}} of {{step.retakePolicy?.effectiveMaxAttempts}} attempts used</span>
+                        <span class="retake-cooloff-time km-retake-cooloff-time" i18n>No retakes remaining</span>
                       } @else {
-                        <span class="retake-attempt-count" i18n>Attempt {{ step.attempts + 1 }} of {{ step.retakePolicy?.effectiveMaxAttempts }}</span>
+                        <span class="retake-attempt-count km-retake-attempt-count" i18n>Attempt {{ step.attempts + 1 }} of {{ step.retakePolicy?.effectiveMaxAttempts }}</span>
                       }
                     }
                     @if (!step.retakePolicy?.isMaxAttemptsReached && step.retakePolicy?.isCooloffActive) {
-                      <span class="retake-cooloff-time" i18n>Available in: {{ step.retakePolicy?.cooloffRemainingFormatted }}</span>
+                      <span class="retake-cooloff-time km-retake-cooloff-time" i18n>Available in: {{ step.retakePolicy?.cooloffRemainingFormatted }}</span>
                     }
                   </div>
                 }
