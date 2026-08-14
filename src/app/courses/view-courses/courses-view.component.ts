@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject } from 'rxjs';
+import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
@@ -222,9 +222,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
           type: 'course',
           displayName: courseTitle,
           okClick: {
-            request: this.coursesService.courseResignAdmission(courseId, type, courseTitle),
+            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
             onNext: () => {
-              this.isUserEnrolled = !this.isUserEnrolled;
+              this.isUserEnrolled = false;
               dialogRef.close();
             },
             onError: () => dialogRef.close()
