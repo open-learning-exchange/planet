@@ -60,7 +60,11 @@ export interface Conversation {
   updatedDate: number;
   aiProvider?: ProviderName;
   mode?: ChatMode;
-  /** Legacy docs from the old chatapi stored the raw context; kept only to filter them out of the main history. */
+  /**
+   * Legacy course-help documents store context at the document level.
+   * The sidebar has always excluded these records from the general-chat history;
+   * retain the field so those existing documents still deserialize correctly.
+   */
   context?: ChatContext | '';
   shared?: boolean;
 }

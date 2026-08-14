@@ -4,7 +4,8 @@ import cors from 'cors';
 import http from 'http';
 import WebSocket from 'ws';
 
-import { registerChatApiRoutes, registerChatApiWebSocket } from './modules/chatapi/register';
+import { registerChatApiRoutes } from './modules/chatapi/routes';
+import { registerChatApiWebSocket } from './modules/chatapi/websocket';
 import { registerPublicRoutes } from './modules/public/register';
 import { browserCorsOptions } from './modules/chatapi/middleware/auth';
 import { startResourceIndexReconciliation } from './modules/chatapi/services/resource-index.service';
