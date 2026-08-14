@@ -3,7 +3,7 @@ import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFo
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { ConfigurationService } from '../configuration/configuration.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { StateService } from '../shared/state.service';
@@ -19,6 +19,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { SubmitDirective } from '../shared/submit.directive';
 import { ChatService } from '../shared/chat.service';
+import { PromptProfiles } from '../chat/chat.model';
 
 interface FixedConfigFormControls {
   streaming: FormControl<boolean>;
@@ -33,8 +34,6 @@ type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
   streaming?: boolean;
-  /** Legacy single-assistant config, superseded by promptProfiles; deleted on save. */
-  assistant?: { instructions?: string };
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
   promptProfiles?: {
@@ -78,6 +77,11 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configuration: AIConfiguration = {};
   configForm: FormGroup<ConfigFormControls>;
   hideKey: { [key: string]: boolean } = {};
+  promptDefaults: PromptProfiles = {
+    'general_chat': '',
+    'course_help': '',
+    'survey_analysis': ''
+  };
   spinnerOn = true;
   private unsubscribe$ = new Subject<void>();
 
@@ -102,6 +106,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
     this.configuration = this.stateService.configuration;
     this.configuration.keys = this.stateService.keys;
     this.initForm();
+    this.chatService.getPromptDefaults()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((defaults) => this.promptDefaults = defaults);
   }
 
   ngOnDestroy() {
@@ -114,11 +121,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       streaming: this.fb.control(!!this.configuration.streaming),
       ...this.mapConfigToFormControls(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
-      // Surface the legacy assistant instructions (still served as general_chat by the
-      // gateway) so they aren't silently lost when the save deletes `assistant`
-      promptGeneralChat: this.fb.control(
-        this.configuration.promptProfiles?.general_chat || this.configuration.assistant?.instructions || ''
-      ),
+      promptGeneralChat: this.fb.control(this.configuration.promptProfiles?.general_chat || ''),
       promptCourseHelp: this.fb.control(this.configuration.promptProfiles?.course_help || ''),
       promptSurveyAnalysis: this.fb.control(this.configuration.promptProfiles?.survey_analysis || '')
     });
@@ -183,6 +186,14 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   private getStringControlValue(controlName: string): string {
     const value = this.configForm.get(controlName)?.value;
     return typeof value === 'string' ? value : '';
+  }
+
+  useBuiltInPrompts() {
+    this.configForm.patchValue({
+      'promptGeneralChat': '',
+      'promptCourseHelp': '',
+      'promptSurveyAnalysis': ''
+    });
   }
 
   toggleHideKey(key: string) {

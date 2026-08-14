@@ -69,27 +69,70 @@
           <mat-card-title i18n>AI Prompt Profiles</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <p i18n>Each mode uses a built-in prompt when its field is left empty. Fill a field to override the prompt for this community.</p>
+          <p i18n>
+            Planet provides built-in instructions for each mode. A value below replaces them for this community;
+            clear the field to restore the built-in instructions.
+          </p>
+          <p i18n>
+            Built-in instructions are written in English. AI responses follow the language selected by each user.
+          </p>
+          <button mat-button type="button" (click)="useBuiltInPrompts()" i18n>Use all built-in prompts</button>
           <div class="list-item-content instructions">
-            <span i18n>General chat:</span>
-            <mat-form-field>
-              <mat-label i18n>General chat instructions</mat-label>
-              <textarea matInput formControlName="promptGeneralChat"></textarea>
-            </mat-form-field>
+            <span i18n>General chat override:</span>
+            <div class="prompt-editor">
+              <mat-form-field>
+                <mat-label i18n>General chat prompt override</mat-label>
+                <textarea
+                  matInput
+                  formControlName="promptGeneralChat"
+                  placeholder="Leave empty to use the built-in prompt"
+                  i18n-placeholder></textarea>
+              </mat-form-field>
+              @if (promptDefaults.general_chat) {
+                <details class="prompt-default">
+                  <summary i18n>View built-in prompt</summary>
+                  <pre>{{ promptDefaults.general_chat }}</pre>
+                </details>
+              }
+            </div>
           </div>
           <div class="list-item-content instructions">
-            <span i18n>Course help:</span>
-            <mat-form-field>
-              <mat-label i18n>Course help instructions</mat-label>
-              <textarea matInput formControlName="promptCourseHelp"></textarea>
-            </mat-form-field>
+            <span i18n>Course help override:</span>
+            <div class="prompt-editor">
+              <mat-form-field>
+                <mat-label i18n>Course help prompt override</mat-label>
+                <textarea
+                  matInput
+                  formControlName="promptCourseHelp"
+                  placeholder="Leave empty to use the built-in prompt"
+                  i18n-placeholder></textarea>
+              </mat-form-field>
+              @if (promptDefaults.course_help) {
+                <details class="prompt-default">
+                  <summary i18n>View built-in prompt</summary>
+                  <pre>{{ promptDefaults.course_help }}</pre>
+                </details>
+              }
+            </div>
           </div>
           <div class="list-item-content instructions">
-            <span i18n>Survey analysis:</span>
-            <mat-form-field>
-              <mat-label i18n>Survey analysis instructions</mat-label>
-              <textarea matInput formControlName="promptSurveyAnalysis"></textarea>
-            </mat-form-field>
+            <span i18n>Survey analysis override:</span>
+            <div class="prompt-editor">
+              <mat-form-field>
+                <mat-label i18n>Survey analysis prompt override</mat-label>
+                <textarea
+                  matInput
+                  formControlName="promptSurveyAnalysis"
+                  placeholder="Leave empty to use the built-in prompt"
+                  i18n-placeholder></textarea>
+              </mat-form-field>
+              @if (promptDefaults.survey_analysis) {
+                <details class="prompt-default">
+                  <summary i18n>View built-in prompt</summary>
+                  <pre>{{ promptDefaults.survey_analysis }}</pre>
+                </details>
+              }
+            </div>
           </div>
         </mat-card-content>
       </mat-card>

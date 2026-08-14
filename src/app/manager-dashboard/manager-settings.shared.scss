@@ -46,6 +46,18 @@ mat-list-item.mat-mdc-list-item {
   line-height: 1.5;
 }
 
+.prompt-editor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.prompt-default pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+}
+
 .hint {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.6);
