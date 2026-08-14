@@ -376,7 +376,32 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   enrollLeaveToggle(courseIds, type) {
-    this.coursesService.courseAdmissionMany(courseIds.filter(id => this.hasSteps(id)), type).subscribe((res) => {
+    const validIds = courseIds.filter(id => this.hasSteps(id));
+    if (type === 'remove') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          amount: validIds.length === 1 ? 'single' : 'many',
+          count: validIds.length,
+          displayName: validIds.length === 1 ? this.coursesService.getCourseNameFromId(validIds[0]) : '',
+          okClick: {
+            request: this.coursesService.courseAdmissionMany(validIds, type),
+            onNext: () => {
+              this.userShelf = this.userService.shelf;
+              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.countSelectNotEnrolled(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
+    this.coursesService.courseAdmissionMany(validIds, type).subscribe((res) => {
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -489,8 +514,30 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.isForm) {
       return;
     }
-    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
-      this.setupList(this.courses.data, this.userShelf.courseIds);
+    const courseTitle = this.coursesService.getCourseNameFromId(courseId);
+    if (type === 'resign') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          displayName: courseTitle,
+          okClick: {
+            request: this.coursesService.courseResignAdmission(courseId, type, courseTitle),
+            onNext: () => {
+              this.userShelf = this.userService.shelf;
+              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.countSelectNotEnrolled(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
