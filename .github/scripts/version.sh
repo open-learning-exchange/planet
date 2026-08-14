@@ -5,8 +5,15 @@
 # 0.22.99 -> 0.23.0. Releases are tagged v<version>, so each merge needs its
 # own number.
 #
+# It also owns the two myplanet pins in the same file, which name the apk
+# planets offer and the oldest one they still accept.
+#
 #   version.sh {read|next} <package-file>
 #   version.sh apply <package-file> <name>
+#   version.sh myplanet <package-file> <latest> <min>   (blank = leave as is)
+#   version.sh check-myplanet <version>                 (prints it normalized)
+#
+# The myplanet subcommands need jq; the rest is sed only.
 #
 set -euo pipefail
 
@@ -60,6 +67,52 @@ apply_version() {
     [ "$cur_name" = "$name" ] || die "failed to write version $name into $file"
 }
 
+normalize_myplanet() {
+    local v=$1
+    [[ "$v" =~ ^v?([0-9]{1,3})\.([0-9]{1,2})\.([0-9]{1,2})$ ]] \
+        || die "myplanet version '$v' is not v<major>.<minor>.<patch> with 1-2 digits in the minor and patch blocks"
+
+    # docker/planet/scripts/create_version_json.sh splits on [v.] to derive the
+    # apk version code and pastes the value straight into the release download
+    # URL, so the leading v is load-bearing rather than decoration.
+    printf 'v%s.%s.%s' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}"
+}
+
+read_myplanet() {
+    local file=$1
+    command -v jq >/dev/null || die "jq is required to read the myplanet pins"
+    mp_latest=$(jq -r '.myplanet.latest // ""' "$file")
+    mp_min=$(jq -r '.myplanet.min // ""'       "$file")
+}
+
+# Scoped to the "myplanet" object, so a same-named key elsewhere is safe.
+set_in_myplanet() {
+    local file=$1 key=$2 val=$3
+    sed -i -E \
+        "/^[[:space:]]*\"myplanet\"[[:space:]]*:[[:space:]]*\{/,/^[[:space:]]*\}/ s/^([[:space:]]*\"${key}\"[[:space:]]*:[[:space:]]*\")[^\"]*\"/\1${val}\"/" \
+        "$file"
+}
+
+apply_myplanet() {
+    local file=$1 latest=$2 min=$3
+    [ -f "$file" ] || die "no such file: $file"
+    [ -n "$latest$min" ] || return 0
+
+    if [ -n "$latest" ]; then
+        latest=$(normalize_myplanet "$latest")
+        set_in_myplanet "$file" latest "$latest"
+    fi
+    if [ -n "$min" ]; then
+        min=$(normalize_myplanet "$min")
+        set_in_myplanet "$file" min "$min"
+    fi
+
+    # A key the sed range never found leaves the file untouched; catch that.
+    read_myplanet "$file"
+    [ -z "$latest" ] || [ "$mp_latest" = "$latest" ] || die "failed to write myplanet.latest $latest into $file"
+    [ -z "$min" ]    || [ "$mp_min"    = "$min" ]    || die "failed to write myplanet.min $min into $file"
+}
+
 case "${1:-}" in
     read)
         read_version "${2:?package file required}"
@@ -72,7 +125,14 @@ case "${1:-}" in
     apply)
         apply_version "${2:?package file required}" "${3:?name required}"
         ;;
+    myplanet)
+        apply_myplanet "${2:?package file required}" "${3-}" "${4-}"
+        ;;
+    check-myplanet)
+        normalize_myplanet "${2:?version required}"
+        echo
+        ;;
     *)
-        die "usage: version.sh {read|next|apply} <package-file> [name]"
+        die "usage: version.sh {read|next|apply|myplanet|check-myplanet} <package-file|version> [args]"
         ;;
 esac

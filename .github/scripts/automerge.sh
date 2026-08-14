@@ -27,6 +27,9 @@ DRY_RUN="${DRY_RUN:-true}"
 MAX_MERGES="${MAX_MERGES:-0}"
 WAIT_TIMEOUT_MIN="${WAIT_TIMEOUT_MIN:-45}"
 USING_PAT="${USING_PAT:-false}"
+# Already normalized and checked against myplanet's releases by the workflow.
+MYPLANET_LATEST="${MYPLANET_LATEST:-}"
+MYPLANET_MIN="${MYPLANET_MIN:-}"
 
 RUN_APPEAR_TIMEOUT_SEC=300
 POLL_INTERVAL_SEC=20
@@ -196,9 +199,13 @@ base_already_failed() {
     return 0
 }
 
-# Guard against a broken version.sh.
+# Guard against a broken version.sh. Only the version line may move, plus the
+# myplanet pins when this run was asked to set them.
 verify_version_only_diff() {
-    local from=$1 to=$2 files bad
+    local from=$1 to=$2 files bad allowed='"version"'
+
+    [ -z "$MYPLANET_LATEST" ] || allowed="$allowed|\"latest\""
+    [ -z "$MYPLANET_MIN" ]    || allowed="$allowed|\"min\""
 
     files=$(git diff --name-only "$from" "$to")
     if [ "$files" != "$PKG_FILE" ]; then
@@ -209,7 +216,7 @@ verify_version_only_diff() {
     bad=$(git diff --unified=0 "$from" "$to" -- "$PKG_FILE" \
           | grep -E '^[+-]' \
           | grep -vE '^(\+\+\+|---)' \
-          | grep -vcE '^[+-][[:space:]]*"version"[[:space:]]*:' || true)
+          | grep -vcE "^[+-][[:space:]]*($allowed)[[:space:]]*:" || true)
     if [ "${bad:-0}" -ne 0 ]; then
         log "  bump changed $bad non-version line(s)"
         return 1
@@ -234,6 +241,15 @@ push_with_retry() {
 log "draining '$LABEL' into $BASE (dry_run=$DRY_RUN)"
 summary "### automerge: draining \`$LABEL\` into \`$BASE\`"
 summary ""
+
+# The pins ride along in the first merge's bump commit, so an empty queue
+# leaves them unset -- there is no merge to carry them.
+if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
+    log "myplanet pins: latest -> ${MYPLANET_LATEST:-unchanged}, min -> ${MYPLANET_MIN:-unchanged}"
+    summary "myplanet pins: latest → \`${MYPLANET_LATEST:-unchanged}\`, min → \`${MYPLANET_MIN:-unchanged}\` (set by the first merge)"
+    summary ""
+fi
+
 summary "| PR | version | result |"
 summary "|---|---|---|"
 
@@ -309,6 +325,9 @@ while :; do
         git checkout --quiet --detach "origin/$HEAD"
         if git merge --quiet --no-edit "origin/$BASE"; then
             log "  dry run: merges cleanly with $BASE, would bump to $new_name,"
+            if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
+                log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged},"
+            fi
             log "           wait for ${REQUIRED_WORKFLOWS:-the triggered workflows}, then squash merge #$NUMBER"
             summary "| #$NUMBER | → \`$new_name\` | dry run: would merge |"
         else
@@ -336,12 +355,28 @@ while :; do
     pre_bump_sha=$(git rev-parse HEAD)
     "$VERSION_SH" apply "$PKG_FILE" "$new_name"
 
+    # The myplanet pins go in the same commit. Rewriting them for every PR is
+    # a no-op after the first one has landed them on $BASE, so this needs no
+    # memory of which PR carried them.
+    bump_msg="version: bump to $new_name"
+    if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
+        mp_before=$(git show "HEAD:$PKG_FILE" | jq -r '[.myplanet.latest, .myplanet.min] | join(" ")')
+        "$VERSION_SH" myplanet "$PKG_FILE" "$MYPLANET_LATEST" "$MYPLANET_MIN"
+        mp_after=$(jq -r '[.myplanet.latest, .myplanet.min] | join(" ")' "$PKG_FILE")
+        if [ "$mp_before" != "$mp_after" ]; then
+            log "  myplanet pins: $mp_before -> $mp_after"
+            bump_msg="$bump_msg, myplanet ${mp_after% *} (min ${mp_after#* })"
+        else
+            log "  myplanet pins already at $mp_after"
+        fi
+    fi
+
     merge_sha="$pre_bump_sha"
     if git diff --quiet -- "$PKG_FILE"; then
         log "  $PKG_FILE already at $new_name, nothing to commit"
     else
         git add "$PKG_FILE"
-        git commit --quiet -m "version: bump to $new_name"
+        git commit --quiet -m "$bump_msg"
         merge_sha=$(git rev-parse HEAD)
         verify_version_only_diff "$pre_bump_sha" "$merge_sha" \
             || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: bump was not version-only |"; exit 1; }
