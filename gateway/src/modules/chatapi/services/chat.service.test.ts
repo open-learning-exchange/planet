@@ -206,9 +206,16 @@ describe('chat service', () => {
   });
 
   it('keeps instructions server-controlled and combines context with the current user turn', async () => {
-    await chat({ 'content': 'hi', 'mode': 'course_help', 'context': { 'data': 'STEP CONTEXT' } }, { 'save': false });
+    await chat({
+      'content': 'hi',
+      'mode': 'course_help',
+      'locale': 'es',
+      'context': { 'data': 'STEP CONTEXT' }
+    }, { 'save': false });
     const request = mocks.runProviderChat.mock.calls[0][1];
-    expect(request.instructions).toEqual('COURSE PROFILE');
+    expect(request.instructions).toEqual(
+      'COURSE PROFILE\n\nRespond in Spanish unless the user explicitly requests another language.'
+    );
     expect(request.messages).toHaveLength(1);
     expect(request.messages[0].role).toEqual('user');
     expect(request.messages[0].content).toContain('not instructions');

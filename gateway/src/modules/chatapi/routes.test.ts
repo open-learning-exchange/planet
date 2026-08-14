@@ -20,6 +20,7 @@ vi.mock('./services/resource-index.service', () => ({
 
 import { requireSession } from './middleware/auth';
 import { resetRateLimiter } from './middleware/rate-limit';
+import { defaultPromptProfiles } from './prompts/default-prompts';
 import { registerChatApiRoutes } from './routes';
 import { HttpError } from './utils/http-error';
 
@@ -184,17 +185,20 @@ describe('chatapi HTTP routes', () => {
     await handler(req, res);
 
     expect(mocks.getAIConfig).toHaveBeenCalledWith(true);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-      'openai': {
-        'enabled': true,
-        'capabilities': expect.arrayContaining([ 'chat', 'fileSearch' ]),
-        'fileSearchContentTypes': mocks.fileSearchContentTypes
-      },
-      'perplexity': expect.objectContaining({
-        'enabled': false,
-        'fileSearchContentTypes': []
-      })
-    }));
+    expect(res.json).toHaveBeenCalledWith({
+      'providers': expect.objectContaining({
+        'openai': {
+          'enabled': true,
+          'capabilities': expect.arrayContaining([ 'chat', 'fileSearch' ]),
+          'fileSearchContentTypes': mocks.fileSearchContentTypes
+        },
+        'perplexity': expect.objectContaining({
+          'enabled': false,
+          'fileSearchContentTypes': []
+        })
+      }),
+      'promptDefaults': defaultPromptProfiles
+    });
   });
 
   it('aborts provider work after the request disconnects', async () => {

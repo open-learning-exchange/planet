@@ -39,16 +39,13 @@ npm install
 npm run dev
 ```
 
-To run the gateway test suite, install the repository root dependencies first and
-then run:
+To run the gateway test suite, install the repository root dependencies first and then run:
 
 ```bash
 npm test
 ```
 
-Vitest intentionally resolves from the repository root's `node_modules`; it is not
-duplicated in the gateway dependencies. `npm test` type-checks source and test files
-before running Vitest; production gateway builds continue to exclude test files.
+Vitest intentionally resolves from the repository root's `node_modules`; it is not duplicated in the gateway dependencies. `npm test` type-checks source and test files before running Vitest; production gateway builds continue to exclude test files.
 
 ## Modules
 
@@ -57,17 +54,11 @@ before running Vitest; production gateway builds continue to exclude test files.
 
 ## ChatAPI
 
-The provider foundation reads keys, models, and prompt-profile overrides from the
-CouchDB `configurations` document. OpenAI uses the Responses API with file search and
-structured-output support. Perplexity, DeepSeek, and Gemini use OpenAI-compatible Chat
-Completions APIs. Course text context is passed as delimited background data for every
-provider. OpenAI can additionally index supported resource attachments (including
-PDFs) and return file citations.
+The provider foundation reads keys, models, and prompt-profile overrides from the CouchDB `configurations` document. OpenAI uses the Responses API with file search and structured-output support. Perplexity, DeepSeek, and Gemini use OpenAI-compatible Chat Completions APIs. Course text context is passed as delimited background data for every provider. OpenAI can additionally index supported resource attachments (including PDFs) and return file citations.
 
-Authenticated endpoints include chat (`POST /` and WebSocket), provider discovery
-(`GET /checkproviders`), survey analysis (`POST /analyze`), and batch resource-index
-cleanup (`POST /resources/indexes/cleanup`). Resource indexes are created on demand
-when an OpenAI course-chat turn needs supported attachments.
+Empty prompt-profile fields use the gateway's built-in instructions; a configured value replaces the built-in instructions for that mode. Clearing the fields in Manager AI Services and saving restores the built-in profiles. The Angular client sends its locale, which the gateway maps to a known response language without accepting arbitrary client-supplied instructions. `/checkproviders` returns provider availability and these built-in defaults so the manager UI can show exactly what an override replaces.
+
+Authenticated endpoints include chat (`POST /` and WebSocket), AI discovery (`GET /checkproviders`), survey analysis (`POST /analyze`), and batch resource-index cleanup (`POST /resources/indexes/cleanup`). Resource indexes are created on demand when an OpenAI course-chat turn needs supported attachments.
 
 ## Public Endpoints
 

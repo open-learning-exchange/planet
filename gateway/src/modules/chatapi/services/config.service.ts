@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 
 import { configurationDB } from '../../../config/couch.config';
 import { AIConfigDoc, ChatMode, ProviderName, PROVIDER_NAMES } from '../models/chat.model';
-import { buildDefaultPromptProfiles, defaultPromptProfiles } from '../prompts/default-prompts';
+import { defaultPromptProfiles } from '../prompts/default-prompts';
 import { getAIRequestTimeoutMs } from '../utils/timeout.utils';
 
 export interface ProviderRuntime {
@@ -68,15 +68,11 @@ const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime =>
   };
 };
 
-const buildPromptProfiles = (doc: AIConfigDoc): Record<ChatMode, string> => {
-  const generalChat = doc.promptProfiles?.general_chat || doc.assistant?.instructions || defaultPromptProfiles.general_chat;
-  const defaults = buildDefaultPromptProfiles(generalChat);
-  return {
-    'general_chat': generalChat,
-    'course_help': doc.promptProfiles?.course_help || defaults.course_help,
-    'survey_analysis': doc.promptProfiles?.survey_analysis || defaults.survey_analysis
-  };
-};
+const buildPromptProfiles = (doc: AIConfigDoc): Record<ChatMode, string> => ({
+  'general_chat': doc.promptProfiles?.general_chat || defaultPromptProfiles.general_chat,
+  'course_help': doc.promptProfiles?.course_help || defaultPromptProfiles.course_help,
+  'survey_analysis': doc.promptProfiles?.survey_analysis || defaultPromptProfiles.survey_analysis
+});
 
 const buildConfig = (doc: AIConfigDoc): AIConfig => ({
   'providers': PROVIDER_NAMES.reduce((providers, name) => {

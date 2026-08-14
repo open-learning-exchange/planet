@@ -1,6 +1,7 @@
 import { AIProvider, ProviderName } from '../models/chat.model';
+import { instructionsForLocale } from '../prompts/default-prompts';
+import { analysisJsonSchema, AnalyzeExam, AnalyzeQuestion, buildSurveyAnalysisPrompt } from '../prompts/survey-analysis';
 import { runProviderChat } from '../providers';
-import { analysisJsonSchema, AnalyzeExam, AnalyzeQuestion, buildSurveyAnalysisPrompt } from '../prompts/default-prompts';
 import { HttpError, toHttpError } from '../utils/http-error';
 import { resolveProviderName } from '../utils/provider-name';
 import { getAIConfig } from './config.service';
@@ -9,6 +10,7 @@ export interface AnalyzePayload {
   exam: AnalyzeExam;
   questions: AnalyzeQuestion[];
   aiProvider?: AIProvider;
+  locale?: string;
 }
 
 export interface AnalysisSection {
@@ -53,7 +55,7 @@ export async function analyze(payload: AnalyzePayload, signal?: AbortSignal): Pr
   const request = {
     'model': runtime.defaultModel,
     'messages': [ { 'role': 'user' as const, 'content': buildSurveyAnalysisPrompt(payload.exam, payload.questions) } ],
-    'instructions': config.promptProfiles.survey_analysis,
+    'instructions': instructionsForLocale(config.promptProfiles.survey_analysis, payload.locale),
     signal
   };
 
