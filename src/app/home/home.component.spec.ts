@@ -16,8 +16,8 @@ describe('Home', () => {
       imports: [RouterTestingModule, BrowserAnimationsModule, CommonModule, MaterialModule, HomeComponent],
       providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
     });
-    const fixture = TestBed.createComponent(HomeComponent),
-      comp = fixture.componentInstance;
+    const fixture = TestBed.createComponent(HomeComponent);
+    const comp = fixture.componentInstance;
     return { fixture, comp };
   };
 
