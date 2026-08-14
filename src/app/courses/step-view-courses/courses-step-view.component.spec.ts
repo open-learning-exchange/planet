@@ -111,6 +111,7 @@ describe('CoursesStepViewComponent Retake Limits', () => {
     component.courseId = 'course_1';
     component.stepNum = 1;
     component.isUserEnrolled = true;
+    component.progress = { passed: false };
   });
 
   it('should allow taking the exam when retake policy allows it', () => {
@@ -171,5 +172,39 @@ describe('CoursesStepViewComponent Retake Limits', () => {
 
     component.goToExam('exam');
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should tick and expire cool-off in real time when active', () => {
+    vi.useFakeTimers();
+    component.getSubmission();
+
+    const retakePolicy: RetakePolicyStatus = {
+      maxAttempts: 0,
+      attemptsUsed: 1,
+      effectiveMaxAttempts: 0,
+      isMaxAttemptsReached: false,
+      isCooloffActive: true,
+      cooloffRemainingMs: 3000,
+      cooloffRemainingFormatted: '1m',
+      canStartExam: false
+    };
+
+    submissionUpdated$.next({
+      submission: { answers: [] },
+      attempts: 1,
+      bestAttempt: { grade: 0 },
+      retakePolicy
+    });
+
+    expect(component.retakePolicy?.isCooloffActive).toBe(true);
+    expect(component.retakePolicy?.canStartExam).toBe(false);
+
+    // Fast-forward 4 seconds
+    vi.advanceTimersByTime(4000);
+
+    expect(component.retakePolicy?.isCooloffActive).toBe(false);
+    expect(component.retakePolicy?.canStartExam).toBe(true);
+    expect(component.retakePolicy?.cooloffRemainingFormatted).toBe('');
+    vi.useRealTimers();
   });
 });

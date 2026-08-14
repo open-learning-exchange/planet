@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject } from 'rxjs';
+import { Subject, Subscription, interval } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
+import { SubmissionsService, formatCooloffDuration } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
@@ -120,7 +120,10 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  private cooloffSub?: Subscription;
+
   ngOnDestroy() {
+    this.cooloffSub?.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -131,13 +134,49 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
       this.setStepButtonStatus(previousStep, stepNum - 1, stepClickedNum, previousStep.exam === undefined);
     }
     if (step.exam && step.submission === undefined) {
-      this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts }) => {
-        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus };
+      this.getStepSubmission(step).subscribe((submissionStatus: { examText, submission, attempts, retakePolicy }) => {
+        const retakePolicy = submissionStatus.retakePolicy;
+        const cooloffEndTimestamp = (retakePolicy?.isCooloffActive && retakePolicy.cooloffRemainingMs > 0)
+          ? Date.now() + retakePolicy.cooloffRemainingMs
+          : 0;
+        this.courseDetail.steps[stepNum] = { ...step, ...submissionStatus, cooloffEndTimestamp };
         this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, submissionStatus.attempts);
+        if (cooloffEndTimestamp > 0) {
+          this.startCooloffTicker();
+        }
       });
       return;
     }
     this.setIsPreviousTestTaken(step, stepNum, stepClickedNum, step.attempts);
+  }
+
+  private startCooloffTicker() {
+    this.cooloffSub?.unsubscribe();
+    const hasActiveCooloff = this.courseDetail.steps?.some(step => step.retakePolicy?.isCooloffActive);
+    if (!hasActiveCooloff) {
+      return;
+    }
+    this.cooloffSub = interval(1000).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      let anyActive = false;
+      this.courseDetail.steps?.forEach(step => {
+        if (step.retakePolicy?.isCooloffActive && step.cooloffEndTimestamp) {
+          const remainingMs = step.cooloffEndTimestamp - Date.now();
+          if (remainingMs <= 0) {
+            step.retakePolicy.isCooloffActive = false;
+            step.retakePolicy.cooloffRemainingMs = 0;
+            step.retakePolicy.cooloffRemainingFormatted = '';
+            step.retakePolicy.canStartExam = !step.retakePolicy.isMaxAttemptsReached;
+          } else {
+            anyActive = true;
+            step.retakePolicy.cooloffRemainingMs = remainingMs;
+            step.retakePolicy.cooloffRemainingFormatted = formatCooloffDuration(remainingMs);
+          }
+        }
+      });
+      if (!anyActive) {
+        this.cooloffSub?.unsubscribe();
+      }
+    });
   }
 
   getStepSubmission(step) {
