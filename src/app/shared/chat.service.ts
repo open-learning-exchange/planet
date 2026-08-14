@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -7,8 +7,10 @@ import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import {
+  AIServiceDiscovery,
   AIServices,
   AIProvider,
+  PromptProfiles,
   ProviderName,
   ResourceIndexCleanupResponse,
   SurveyAnalysisPayload,
@@ -31,18 +33,25 @@ import {
   private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
+  private promptDefaultsSubject = new BehaviorSubject<PromptProfiles>({
+    'general_chat': '',
+    'course_help': '',
+    'survey_analysis': ''
+  });
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   toggleAIService$: Observable<ProviderName> = this.toggleAIService.asObservable();
   aiProviders$ = this.aiProvidersSubject.asObservable();
+  promptDefaults$ = this.promptDefaultsSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
 
   constructor(
     private httpClient: HttpClient,
-    private couchService: CouchService
+    private couchService: CouchService,
+    @Inject(LOCALE_ID) private localeId: string
   ) {
     this.refreshAIProviders();
   }
@@ -116,28 +125,30 @@ import {
 
   refreshAIProviders(): void {
     this.httpClient
-      .get<AIServices>(`${this.baseUrl}/checkproviders`, { withCredentials: true })
+      .get<AIServiceDiscovery>(`${this.baseUrl}/checkproviders`, { withCredentials: true })
       .pipe(
         catchError((err) => {
           console.error(err);
           return of(null);
         }),
-        map((services: AIServices | null) => {
-          if (services) {
-            return (Object.entries(services) as [ ProviderName, AIServices[ProviderName] ][])
+        map((discovery: AIServiceDiscovery | null) => {
+          if (discovery) {
+            const providers = (Object.entries(discovery.providers) as [ ProviderName, AIServices[ProviderName] ][])
               .filter(([ _, service ]) => service?.enabled === true)
               .map(([ key, service ]) => ({
                 'name': key,
                 'capabilities': service.capabilities || [],
                 'fileSearchContentTypes': service.fileSearchContentTypes || []
               }));
+            return { providers, 'promptDefaults': discovery.promptDefaults };
           }
           return null;
         })
       )
-      .subscribe((providers) => {
-        if (providers) {
-          this.aiProvidersSubject.next(providers);
+      .subscribe((discovery) => {
+        if (discovery) {
+          this.aiProvidersSubject.next(discovery.providers);
+          this.promptDefaultsSubject.next(discovery.promptDefaults);
         }
       });
   }
@@ -146,16 +157,20 @@ import {
     return this.aiProviders$;
   }
 
+  getPromptDefaults(): Observable<PromptProfiles> {
+    return this.promptDefaults$;
+  }
+
   getPrompt(data: object, save: boolean): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}/`, {
-      data,
+      'data': this.withLocale(data),
       save,
     }, { withCredentials: true });
   }
 
   analyzeSurvey(payload: SurveyAnalysisPayload): Observable<SurveyAnalysisResponse> {
     const provider = payload.aiProvider || this.getPreferredAnalysisProvider();
-    const body = provider ? { ...payload, aiProvider: { name: provider.name } } : payload;
+    const body = this.withLocale(provider ? { ...payload, aiProvider: { name: provider.name } } : payload);
     return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, body, { withCredentials: true });
   }
 
@@ -200,7 +215,7 @@ import {
     const send = () => {
       if (socket === this.socket && socket.readyState === WebSocket.OPEN) {
         this.pendingSocket = socket;
-        socket.send(JSON.stringify(data));
+        socket.send(JSON.stringify(this.withLocale(data)));
       }
     };
     if (socket.readyState === WebSocket.OPEN) {
@@ -208,6 +223,10 @@ import {
     } else if (socket.readyState === WebSocket.CONNECTING) {
       socket.addEventListener('open', send, { once: true });
     }
+  }
+
+  private withLocale<T extends object>(data: T): T & { locale: string } {
+    return { ...data, 'locale': this.localeId };
   }
 
   // Function to close ws connection

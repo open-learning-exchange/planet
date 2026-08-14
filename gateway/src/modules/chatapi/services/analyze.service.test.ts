@@ -50,11 +50,13 @@ describe('analyze service', () => {
       'text': JSON.stringify({ 'sections': [ { 'title': 'Individual Question Analysis', 'content': 'details' } ] }),
       'citations': []
     });
-    const result = await analyze(payload());
+    const result = await analyze({ ...payload(), 'locale': 'es' });
     const request = mocks.runProviderChat.mock.calls[0][1];
     expect(request.jsonSchema?.name).toEqual('survey_analysis');
     expect(request.jsonSchema?.schema.properties.sections.minItems).toBeUndefined();
-    expect(request.instructions).toEqual('SURVEY PROFILE');
+    expect(request.instructions).toEqual(
+      'SURVEY PROFILE\n\nRespond in Spanish unless the user explicitly requests another language.'
+    );
     expect(request.messages[0].content).toContain('Community Survey');
     expect(result.sections).toEqual([ { 'title': 'Individual Question Analysis', 'content': 'details' } ]);
   });

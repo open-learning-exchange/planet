@@ -28,6 +28,7 @@ export interface ChatRequestPayload {
   aiProvider?: AIProvider;
   mode?: ChatMode;
   context?: ChatContext | string;
+  locale?: string;
   user?: unknown;
   _id?: string;
 }
@@ -70,9 +71,4 @@ export interface AIConfigDoc {
   keys?: Partial<Record<ProviderName, string>>;
   models?: Partial<Record<ProviderName, string>>;
   promptProfiles?: PromptProfiles;
-  /** @deprecated Legacy assistant instructions remain the general-chat fallback. */
-  assistant?: {
-    name?: string;
-    instructions?: string;
-  };
 }

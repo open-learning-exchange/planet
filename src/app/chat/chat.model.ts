@@ -81,6 +81,17 @@ export interface AIServiceStatus {
 
 export type AIServices = Record<ProviderName, AIServiceStatus>;
 
+export interface PromptProfiles {
+  general_chat: string;
+  course_help: string;
+  survey_analysis: string;
+}
+
+export interface AIServiceDiscovery {
+  providers: AIServices;
+  promptDefaults: PromptProfiles;
+}
+
 export interface AnalysisSection {
   title: string;
   content: string;
@@ -99,6 +110,7 @@ export interface SurveyAnalysisPayload {
     responses: unknown;
   }>;
   aiProvider?: AIProvider;
+  locale?: string;
 }
 
 export interface SurveyAnalysisResponse {

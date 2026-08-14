@@ -49,24 +49,23 @@ describe('AI configuration service', () => {
     expect((config.providers.gemini.client as any).baseURL).toEqual('https://generativelanguage.googleapis.com/v1beta/openai/');
   });
 
-  it('falls back through prompt profiles, legacy instructions, and defaults', async () => {
+  it('uses prompt-profile overrides and built-ins for empty modes', async () => {
     mocks.configurationDB.list.mockResolvedValue(docRows({
-      'promptProfiles': { 'course_help': 'CUSTOM COURSE' },
-      'assistant': { 'name': 'Planet Context', 'instructions': 'LEGACY INSTRUCTIONS' }
+      'promptProfiles': { 'course_help': 'CUSTOM COURSE' }
     }));
     const config = await getAIConfig();
     expect(config.promptProfiles.course_help).toEqual('CUSTOM COURSE');
-    expect(config.promptProfiles.general_chat).toEqual('LEGACY INSTRUCTIONS');
+    expect(config.promptProfiles.general_chat).toEqual(defaultPromptProfiles.general_chat);
     expect(config.promptProfiles.survey_analysis).toEqual(defaultPromptProfiles.survey_analysis);
   });
 
-  it('composes default course help from the resolved general profile', async () => {
+  it('keeps prompt modes independent', async () => {
     mocks.configurationDB.list.mockResolvedValue(docRows({
       'promptProfiles': { 'general_chat': 'COMMUNITY GENERAL' }
     }));
     const config = await getAIConfig();
-    expect(config.promptProfiles.course_help).toContain('COMMUNITY GENERAL');
-    expect(config.promptProfiles.course_help).not.toContain(defaultPromptProfiles.general_chat);
+    expect(config.promptProfiles.general_chat).toEqual('COMMUNITY GENERAL');
+    expect(config.promptProfiles.course_help).toEqual(defaultPromptProfiles.course_help);
   });
 
   it('caches the config and supports a forced reload', async () => {

@@ -3,6 +3,7 @@ import { Express, Request, Response } from 'express';
 import { requireSession, SessionInfo } from './middleware/auth';
 import { rateLimit } from './middleware/rate-limit';
 import { PROVIDER_NAMES } from './models/chat.model';
+import { defaultPromptProfiles } from './prompts/default-prompts';
 import { providerCapabilities } from './providers';
 import { analyze } from './services/analyze.service';
 import { chat } from './services/chat.service';
@@ -99,7 +100,7 @@ export function registerChatApiRoutes(app: Express) {
         };
         return result;
       }, {} as Record<string, { enabled: boolean; capabilities: string[]; fileSearchContentTypes: string[] }>);
-      res.status(200).json(providers);
+      res.status(200).json({ providers, 'promptDefaults': defaultPromptProfiles });
     } catch (error) {
       handleError(res, error);
     }

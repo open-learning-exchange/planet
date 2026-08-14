@@ -1,7 +1,7 @@
 import { of, throwError } from 'rxjs';
 import { afterEach, vi } from 'vitest';
 
-import { AIProvider, AIServices } from '../chat/chat.model';
+import { AIProvider, AIServices, AIServiceDiscovery, PromptProfiles } from '../chat/chat.model';
 import { CouchService } from './couchdb.service';
 import { ChatService } from './chat.service';
 
@@ -10,6 +10,17 @@ const services = (enabled: Partial<Record<keyof AIServices, boolean>>): AIServic
   'perplexity': { 'enabled': !!enabled.perplexity, 'capabilities': [], 'fileSearchContentTypes': [] },
   'deepseek': { 'enabled': !!enabled.deepseek, 'capabilities': [], 'fileSearchContentTypes': [] },
   'gemini': { 'enabled': !!enabled.gemini, 'capabilities': [], 'fileSearchContentTypes': [] }
+});
+
+const promptDefaults: PromptProfiles = {
+  'general_chat': 'GENERAL DEFAULT',
+  'course_help': 'COURSE DEFAULT',
+  'survey_analysis': 'SURVEY DEFAULT'
+};
+
+const discovery = (enabled: Partial<Record<keyof AIServices, boolean>>): AIServiceDiscovery => ({
+  'providers': services(enabled),
+  promptDefaults
 });
 
 const installWebSocketMock = () => {
@@ -47,7 +58,7 @@ describe('ChatService', () => {
     vi.unstubAllGlobals();
   });
 
-  const createService = (providerResponse = of(services({ 'perplexity': true }))) => {
+  const createService = (providerResponse = of(discovery({ 'perplexity': true })), locale = 'en') => {
     const httpClient = {
       'get': vi.fn().mockReturnValue(providerResponse),
       'post': vi.fn(),
@@ -55,7 +66,7 @@ describe('ChatService', () => {
     };
     return {
       httpClient,
-      'service': new ChatService(httpClient as any, {} as CouchService)
+      'service': new ChatService(httpClient as any, {} as CouchService, locale)
     };
   };
 
@@ -102,7 +113,7 @@ describe('ChatService', () => {
       socket.readyState = WebSocket.OPEN;
       openHandler();
 
-      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello' }));
+      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
     });
 
     it('opens the production WebSocket through the nginx /ml/ location', () => {
@@ -113,7 +124,7 @@ describe('ChatService', () => {
       service.sendUserInput({ 'content': 'hello' });
 
       expect(webSocketMock).toHaveBeenCalledWith('wss://planet.example/ml/');
-      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello' }));
+      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
     });
 
     it('replaces a closing WebSocket before sending', () => {
@@ -124,7 +135,7 @@ describe('ChatService', () => {
       service.sendUserInput({ 'content': 'hello' });
 
       expect(webSocketMock).toHaveBeenCalledOnce();
-      expect(replacement.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello' }));
+      expect(replacement.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
     });
 
     it('reports an unexpected socket close once and clears the active socket', () => {
@@ -202,9 +213,12 @@ describe('ChatService', () => {
   describe('provider-specific requests', () => {
     it('prefers structured output for survey analysis instead of inheriting the last chat provider', () => {
       const providerResponse = of({
-        ...services({ 'openai': true, 'perplexity': true }),
-        'openai': { 'enabled': true, 'capabilities': [ 'chat', 'structuredOutput' ], 'fileSearchContentTypes': [] },
-        'perplexity': { 'enabled': true, 'capabilities': [ 'chat' ], 'fileSearchContentTypes': [] }
+        'providers': {
+          ...services({ 'openai': true, 'perplexity': true }),
+          'openai': { 'enabled': true, 'capabilities': [ 'chat', 'structuredOutput' ], 'fileSearchContentTypes': [] },
+          'perplexity': { 'enabled': true, 'capabilities': [ 'chat' ], 'fileSearchContentTypes': [] }
+        },
+        promptDefaults
       });
       const { service, httpClient } = createService(providerResponse);
       httpClient.post.mockReturnValue(of({ 'provider': 'openai', 'sections': [] }));
@@ -213,21 +227,29 @@ describe('ChatService', () => {
       service.analyzeSurvey({ 'exam': { 'name': 'Survey' }, 'questions': [] }).subscribe();
 
       expect(service.getPreferredAnalysisProvider()).toMatchObject({ 'name': 'openai' });
-      expect(httpClient.post.mock.calls[0][1]).toMatchObject({ 'aiProvider': { 'name': 'openai' } });
+      expect(httpClient.post.mock.calls[0][1]).toMatchObject({
+        'aiProvider': { 'name': 'openai' },
+        'locale': 'en'
+      });
     });
 
     it('exposes gateway file-search metadata for enabled providers', () => {
       const providerResponse = of({
-        ...services({ 'openai': true }),
-        'openai': {
-          'enabled': true,
-          'capabilities': [ 'chat', 'fileSearch' ],
-          'fileSearchContentTypes': [ 'application/pdf' ]
-        }
+        'providers': {
+          ...services({ 'openai': true }),
+          'openai': {
+            'enabled': true,
+            'capabilities': [ 'chat', 'fileSearch' ],
+            'fileSearchContentTypes': [ 'application/pdf' ]
+          }
+        },
+        promptDefaults
       });
       const { service } = createService(providerResponse);
       let providers: AIProvider[] = [];
+      let defaults: PromptProfiles | undefined;
       service.listAIProviders().subscribe((value) => providers = value);
+      service.getPromptDefaults().subscribe((value) => defaults = value);
 
       expect(service.hasFileSearchProvider()).toEqual(true);
       expect(providers).toEqual([ {
@@ -235,6 +257,7 @@ describe('ChatService', () => {
         'capabilities': [ 'chat', 'fileSearch' ],
         'fileSearchContentTypes': [ 'application/pdf' ]
       } ]);
+      expect(defaults).toEqual(promptDefaults);
     });
   });
 });

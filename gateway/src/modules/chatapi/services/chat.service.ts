@@ -11,6 +11,7 @@ import {
   Citation
 } from '../models/chat.model';
 import { ChatDoc, ChatTurn } from '../models/db-doc.model';
+import { instructionsForLocale } from '../prompts/default-prompts';
 import { runProviderChat } from '../providers';
 import { HttpError, toHttpError } from '../utils/http-error';
 import { resolveProviderName } from '../utils/provider-name';
@@ -192,7 +193,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     result = await runProviderChat(runtime, {
       'model': runtime.defaultModel,
       messages,
-      'instructions': config.promptProfiles[mode],
+      'instructions': instructionsForLocale(config.promptProfiles[mode], payload.locale),
       vectorStoreIds,
       'onDelta': options.onDelta,
       'signal': options.signal
