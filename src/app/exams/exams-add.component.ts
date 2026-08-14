@@ -37,7 +37,7 @@ import { SubmitDirective } from '../shared/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
@@ -101,7 +101,6 @@ interface ExamDocumentInfo {
     MatLabel,
     MatInput,
     MatError,
-    MatHint,
     FormErrorMessagesComponent,
     PlanetMarkdownTextboxComponent,
     PlanetStepListComponent,
