@@ -8,7 +8,7 @@ import { EMPTY, Subject, forkJoin, of } from 'rxjs';
 import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
-import { SubmissionsService } from '../submissions/submissions.service';
+import { SubmissionsService, RetakePolicyStatus } from '../submissions/submissions.service';
 import { CouchService } from '../shared/couchdb.service';
 import { Exam, ExamQuestion } from './exams.model';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -328,9 +328,23 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   }
 
   setSubmissionListener() {
-    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission, retakePolicy }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
+      if (this.mode === 'take' && !this.previewMode && retakePolicy && !retakePolicy.canStartExam) {
+        if (retakePolicy.isCooloffActive) {
+          this.planetMessageService.showAlert(
+            $localize`This test is temporarily locked. Next retake available in ${retakePolicy.cooloffRemainingFormatted}.`
+          );
+        } else if (retakePolicy.isMaxAttemptsReached) {
+          const max = retakePolicy.effectiveMaxAttempts;
+          this.planetMessageService.showAlert(
+            $localize`Maximum exam attempts reached (${max}/${max}). Please contact your course leader.`
+          );
+        }
+        this.goBack();
+        return;
+      }
       const questions = submission.parent.questions || [];
       this.unansweredQuestions = questions.reduce((unanswered, q, index) => [
         ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])

@@ -169,6 +169,41 @@ export class CoursesService {
       );
   }
 
+  // Note: Once the course progress dashboard PR (#10262) is merged, this will be
+  // reworked to integrate directly into the new dashboard table action menus.
+  grantAttemptExtension({ courseId, stepNum, userId, extraAttempts = 1 }: {
+    courseId: string, stepNum: number, userId: string, extraAttempts?: number
+  }) {
+    return this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
+      const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
+      const existingExtra = currentProgress[0]?.extraAttempts || 0;
+      const newProgress = {
+        stepNum,
+        courseId,
+        userId,
+        extraAttempts: existingExtra + extraAttempts,
+        updatedDate: this.couchService.datePlaceholder
+      };
+      return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
+    }));
+  }
+
+  // Note: Once the course progress dashboard PR (#10262) is merged, this will be
+  // reworked to integrate directly into the new dashboard table action menus.
+  resetCooloffLockout({ courseId, stepNum, userId }: { courseId: string, stepNum: number, userId: string }) {
+    return this.findOneCourseProgress(courseId, userId).pipe(switchMap((progress: any[] = []) => {
+      const currentProgress: any[] = progress.length > 0 ? progress.filter((p: any) => p.stepNum === stepNum) : [];
+      const newProgress = {
+        stepNum,
+        courseId,
+        userId,
+        cooloffResetDate: Date.now(),
+        updatedDate: this.couchService.datePlaceholder
+      };
+      return this.couchService.bulkDocs(this.progressDb, this.newProgressDocs(currentProgress, newProgress));
+    }));
+  }
+
   attachedItemsOfCourses(courses: any[]) {
     return courses.reduce((attached, course) => {
       course.steps.forEach(step => {

@@ -135,8 +135,26 @@
                 @if (step?.resources?.length > 0) {
                   <planet-resources-menu [resources]="step?.resources" i18n>View Resource</planet-resources-menu>
                 }
+                @if (!parent && (step.attempts || step.retakePolicy?.effectiveMaxAttempts || step.retakePolicy?.isCooloffActive)) {
+                  <div class="retake-status-stack">
+                    @if (step.attempts && !step.retakePolicy?.effectiveMaxAttempts) {
+                      <span class="retake-attempt-count" i18n>Past attempts: {{step.attempts}}</span>
+                    }
+                    @if (step.retakePolicy?.effectiveMaxAttempts) {
+                      @if (step.retakePolicy?.isMaxAttemptsReached) {
+                        <span class="retake-attempt-count" i18n>{{step.attempts}} of {{step.retakePolicy?.effectiveMaxAttempts}} attempts used</span>
+                        <span class="retake-cooloff-time" i18n>No retakes remaining</span>
+                      } @else {
+                        <span class="retake-attempt-count" i18n>Attempt {{ step.attempts + 1 }} of {{ step.retakePolicy?.effectiveMaxAttempts }}</span>
+                      }
+                    }
+                    @if (!step.retakePolicy?.isMaxAttemptsReached && step.retakePolicy?.isCooloffActive) {
+                      <span class="retake-cooloff-time" i18n>Available in: {{ step.retakePolicy?.cooloffRemainingFormatted }}</span>
+                    }
+                  </div>
+                }
                 @if (step?.exam?.questions.length && isUserEnrolled) {
-                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
+                  <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="(stepNum > 0 && !step.isPreviousTestTaken) || (step.retakePolicy && !step.retakePolicy.canStartExam)" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
                 }
                 @if (step?.survey?.questions.length && isUserEnrolled) {
                   <a mat-raised-button color="accent" class="margin-lr-10" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>

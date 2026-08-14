@@ -72,4 +72,23 @@
     gap: 0.5rem;
   }
 
+  .retake-status-stack {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+    font-size: 12px;
+    margin: 0 8px;
+    vertical-align: middle;
+
+    .retake-attempt-count {
+      font-weight: 500;
+    }
+
+    .retake-cooloff-time {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+  }
+
 }

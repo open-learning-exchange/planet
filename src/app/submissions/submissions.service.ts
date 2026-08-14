@@ -18,6 +18,36 @@ import { surveyAnalysisPrompt } from '../shared/ai-prompts.constants';
 import { loadChart, createChartCanvas, renderNoDataPlaceholder, CHART_COLORS } from '../shared/chart-utils';
 import { PdfService } from '../shared/pdf.service';
 
+export interface RetakePolicyStatus {
+  maxAttempts: number;
+  attemptsUsed: number;
+  effectiveMaxAttempts: number;
+  isMaxAttemptsReached: boolean;
+  isCooloffActive: boolean;
+  cooloffRemainingMs: number;
+  cooloffRemainingFormatted: string;
+  canStartExam: boolean;
+}
+
+export function formatCooloffDuration(remainingMs: number): string {
+  if (remainingMs <= 0) {
+    return '';
+  }
+  const oneHourMs = 3600000;
+  const oneDayMs = 86400000;
+
+  if (remainingMs > oneDayMs) {
+    const days = Math.ceil(remainingMs / oneDayMs);
+    return `${days}d`;
+  }
+  if (remainingMs >= oneHourMs) {
+    const hours = Math.ceil(remainingMs / oneHourMs);
+    return `${hours}h`;
+  }
+  const minutes = Math.max(1, Math.ceil(remainingMs / 60000));
+  return `${minutes}m`;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -110,8 +140,60 @@ export class SubmissionsService {
         this.newSubmission({ parentId, parent, user, type });
       }
       this.submissionAttempts = attempts;
-      this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt });
+      const examObj = typeof parent === 'object' && parent ? parent : this.submission?.parent;
+      const retakePolicy = this.evaluateRetakePolicy(examObj, res.docs);
+      this.submissionUpdated.next({ submission: this.submission, attempts, bestAttempt, retakePolicy });
     });
+  }
+
+  evaluateRetakePolicy(exam: any, submissions: any[] = [], progressDoc?: any, now = Date.now()): RetakePolicyStatus {
+    const maxAttempts = exam?.maxAttempts || 0;
+    const retakeCooloffMinutes = exam?.retakeCooloffMinutes !== undefined
+      ? exam.retakeCooloffMinutes
+      : (exam?.retakeCooloffHours ? exam.retakeCooloffHours * 60 : 0);
+    const extraAttempts = progressDoc?.extraAttempts || 0;
+    const effectiveMaxAttempts = maxAttempts > 0 ? maxAttempts + extraAttempts : 0;
+
+    const completedAttempts = (submissions || []).filter(s => s && (s.status === 'complete' || (s.answers && s.answers.length > 0)));
+    const attemptsUsed = completedAttempts.length;
+    const isMaxAttemptsReached = effectiveMaxAttempts > 0 && attemptsUsed >= effectiveMaxAttempts;
+
+    let latestSubmissionTime = 0;
+    completedAttempts.forEach(s => {
+      const timeVal = s.lastUpdateTime || s.startTime || s.createdDate;
+      const ts = typeof timeVal === 'number' ? timeVal : (typeof timeVal === 'string' ? Date.parse(timeVal) : 0);
+      if (!isNaN(ts) && ts > latestSubmissionTime) {
+        latestSubmissionTime = ts;
+      }
+    });
+
+    let isCooloffActive = false;
+    let cooloffRemainingMs = 0;
+
+    if (!isMaxAttemptsReached && retakeCooloffMinutes > 0 && latestSubmissionTime > 0) {
+      const cooloffResetDate = progressDoc?.cooloffResetDate || 0;
+      if (cooloffResetDate < latestSubmissionTime) {
+        const cooloffEnd = latestSubmissionTime + (retakeCooloffMinutes * 60000);
+        if (now < cooloffEnd) {
+          cooloffRemainingMs = cooloffEnd - now;
+          isCooloffActive = true;
+        }
+      }
+    }
+
+    const cooloffRemainingFormatted = formatCooloffDuration(cooloffRemainingMs);
+    const canStartExam = !isMaxAttemptsReached && !isCooloffActive;
+
+    return {
+      maxAttempts,
+      attemptsUsed,
+      effectiveMaxAttempts,
+      isMaxAttemptsReached,
+      isCooloffActive,
+      cooloffRemainingMs,
+      cooloffRemainingFormatted,
+      canStartExam
+    };
   }
 
   submitAnswer(answer, correct: boolean, index: number, isFinish = false) {
@@ -175,13 +257,15 @@ export class SubmissionsService {
     submission.status = nextQuestion === -1 ? this.updateStatus(submission) : submission.status;
     return this.couchService.updateDocument('submissions', submission).pipe(map((res) => {
       let attempts = this.submissionAttempts;
+      let retakePolicy;
       if (submission.status === 'complete' && takingExam) {
         attempts += 1;
         this.newSubmission(submission);
+        retakePolicy = this.evaluateRetakePolicy(submission.parent, [ submission ]);
       } else {
         this.submission = { ...submission, _id: res.id, _rev: res.rev };
       }
-      this.submissionUpdated.next({ submission: this.submission, attempts });
+      this.submissionUpdated.next({ submission: this.submission, attempts, retakePolicy });
       return { submission, nextQuestion };
     }));
   }

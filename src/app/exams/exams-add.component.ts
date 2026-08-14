@@ -37,12 +37,13 @@ import { SubmitDirective } from '../shared/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
 import { ExamsQuestionComponent } from './exams-question.component';
+import { ExamsRetakePolicyDialogComponent } from './exams-retake-policy-dialog.component';
 
 interface ExamFormControls {
   name: FormControl<string>;
@@ -51,6 +52,9 @@ interface ExamFormControls {
   questions: FormArray<QuestionFormGroup>;
   type: FormControl<'courses' | 'surveys'>;
   teamShareAllowed: FormControl<boolean>;
+  maxAttempts: FormControl<number>;
+  retakeCooloffHours: FormControl<number>;
+  retakeCooloffMinutes: FormControl<number>;
 }
 
 interface ExamInfo {
@@ -61,6 +65,9 @@ interface ExamInfo {
   type: 'courses' | 'surveys';
   teamShareAllowed: boolean;
   teamId?: string | null;
+  maxAttempts?: number;
+  retakeCooloffHours?: number;
+  retakeCooloffMinutes?: number;
   _id?: string;
   _rev?: string;
 }
@@ -94,6 +101,7 @@ interface ExamDocumentInfo {
     MatLabel,
     MatInput,
     MatError,
+    MatHint,
     FormErrorMessagesComponent,
     PlanetMarkdownTextboxComponent,
     PlanetStepListComponent,
@@ -168,7 +176,10 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
       questions: this.fb.array<QuestionFormGroup>([]),
       type: this.fb.control<'courses' | 'surveys'>(examRecordType),
-      teamShareAllowed: this.fb.control(false)
+      teamShareAllowed: this.fb.control(false),
+      maxAttempts: this.fb.control(0, { validators: [ CustomValidators.positiveNumberValidator ] }),
+      retakeCooloffHours: this.fb.control(0, { validators: [ CustomValidators.positiveNumberValidator ] }),
+      retakeCooloffMinutes: this.fb.control(0, { validators: [ CustomValidators.positiveNumberValidator ] })
     });
   }
 
@@ -191,7 +202,12 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.pageType = 'Update';
       this.documentInfo = { _rev: exam._rev, _id: exam._id };
       this.examForm.controls.name.setAsyncValidators(this.nameValidator(exam.name));
-      this.examForm.patchValue(exam);
+      const totalMinutes = exam.retakeCooloffMinutes ?? ((exam.retakeCooloffHours || 0) * 60);
+      this.examForm.patchValue({
+        ...exam,
+        retakeCooloffMinutes: totalMinutes,
+        retakeCooloffHours: Math.round((totalMinutes / 60) * 100) / 100
+      });
       this.initializeQuestions(exam.questions);
       if (submissions.length > 0) {
         this.pageType = 'Copy';
@@ -202,6 +218,26 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.initialFormState = JSON.stringify(this.examForm.getRawValue());
       this.hasUnsavedChanges = false;
     }, error => console.log(error));
+  }
+
+  openRetakePolicyDialog() {
+    const rawVal = this.examForm.getRawValue();
+    const totalMinutes = rawVal.retakeCooloffMinutes ?? ((rawVal.retakeCooloffHours || 0) * 60);
+    const dialogRef = this.dialog.open(ExamsRetakePolicyDialogComponent, {
+      width: '480px',
+      data: {
+        maxAttempts: rawVal.maxAttempts || 0,
+        retakeCooloffMinutes: totalMinutes
+      }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.examForm.controls.maxAttempts.setValue(result.maxAttempts);
+        this.examForm.controls.retakeCooloffMinutes.setValue(result.retakeCooloffMinutes);
+        this.examForm.controls.retakeCooloffHours.setValue(Math.round((result.retakeCooloffMinutes / 60) * 100) / 100);
+        this.examForm.markAsDirty();
+      }
+    });
   }
 
   onSubmit(reRoute = false) {

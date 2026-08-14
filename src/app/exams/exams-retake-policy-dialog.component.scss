@@ -1,0 +1,47 @@
+.retake-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 360px;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.time-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.time-row {
+  display: flex;
+  gap: 12px;
+}
+
+.time-col {
+  flex: 1;
+}
+
+.cooloff-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+  margin-top: 4px;
+}
+
+.summary-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

@@ -6,7 +6,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
+import { SubmissionsService, RetakePolicyStatus } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
@@ -65,6 +65,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examStart = 1;
   examText: 'continue' | 'retake' | 'take' = 'take';
   attempts = 0;
+  retakePolicy: RetakePolicyStatus | null = null;
   isUserEnrolled = false;
   resource: any;
   progress: any;
@@ -145,10 +146,11 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 }, retakePolicy }) => {
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
+        this.retakePolicy = retakePolicy || null;
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
         this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
         if (!this.parent && this.progress.passed !== this.examPassed) {
@@ -252,6 +254,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam(type = 'exam', preview = false) {
+    if (!preview && type === 'exam' && this.retakePolicy && !this.retakePolicy.canStartExam) {
+      return;
+    }
     this.router.navigate(
       [
         'exam',

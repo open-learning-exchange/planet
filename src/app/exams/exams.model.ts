@@ -9,6 +9,9 @@ export interface Exam {
   type: 'courses' | 'survey';
   updatedDate: number;
   sourcePlanet: string;
+  maxAttempts?: number;
+  retakeCooloffHours?: number;
+  retakeCooloffMinutes?: number;
 }
 
 export interface ExamQuestion {

@@ -149,10 +149,11 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     return this.submissionsService.submissionUpdated$.pipe(
       filter(({ submission }) => submission.parent._id === step.exam._id),
       take(1)
-    ).pipe(map(({ submission, attempts }) => ({
+    ).pipe(map(({ submission, attempts, retakePolicy }) => ({
       examText: submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake',
       submission,
-      attempts
+      attempts,
+      retakePolicy
     })));
   }
 
@@ -177,6 +178,9 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam(step, stepIndex, preview = false) {
+    if (!preview && step?.retakePolicy && !step.retakePolicy.canStartExam) {
+      return;
+    }
     const questionNum = (this.submissionsService.nextQuestion(step.submission, step.submission.answers.length - 1, 'passed') + 1) || 1;
     const stepNum = stepIndex + 1;
     this.router.navigate(
