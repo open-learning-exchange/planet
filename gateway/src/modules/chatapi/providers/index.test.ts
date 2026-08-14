@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import OpenAI from 'openai';
 
 import { ProviderChatRequest } from '../models/chat.model';
-import { providerCapabilities, runProviderChat } from './index';
+import { providerCapabilities, providerSupports, runProviderChat } from './index';
 
 const baseRequest = (): ProviderChatRequest => ({
   'model': 'gpt-test',
@@ -74,6 +74,11 @@ describe('provider dispatch', () => {
     const capabilities = providerCapabilities('openai');
     capabilities.pop();
     expect(providerCapabilities('openai')).toEqual([ 'chat', 'fileSearch', 'structuredOutput' ]);
+  });
+
+  it('uses the capability table for feature support checks', () => {
+    expect(providerSupports('openai', 'structuredOutput')).toEqual(true);
+    expect(providerSupports('gemini', 'structuredOutput')).toEqual(false);
   });
 
   it('rejects disabled or model-less providers before dispatch', async () => {

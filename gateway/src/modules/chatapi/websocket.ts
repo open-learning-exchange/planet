@@ -4,22 +4,20 @@ import WebSocket from 'ws';
 
 import {
   authSessionCookie,
-  getSession,
   isAuthRequired,
   isTrustedOrigin,
+  requestScheme,
   SessionInfo,
-  SessionValidationError
+  SessionValidationBusyError,
+  SessionValidationError,
+  validateSession
 } from './middleware/auth';
 import { consumeRequest } from './middleware/rate-limit';
+import { ChatRequestPayload, isNonEmptyObject } from './models/chat.model';
 import { chat } from './services/chat.service';
 import { httpErrorName, toHttpError } from './utils/http-error';
 
-const MAX_CONCURRENT_SESSION_VALIDATIONS = 8;
 const WEBSOCKET_TURN_START_TIMEOUT_MS = 30000;
-let sessionValidationsInFlight = 0;
-
-const isValidData = (data: any): boolean =>
-  data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
 
 const socketIsOpen = (ws: WebSocket): boolean => ws.readyState === WebSocket.OPEN;
 
@@ -41,7 +39,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       console.error(`chatapi: WebSocket transport error: ${error.message}`);
     });
     const origin = req.headers.origin;
-    if (origin && !isTrustedOrigin(origin, req.headers.host)) {
+    if (origin && !isTrustedOrigin(origin, req.headers.host, requestScheme(req.headers))) {
       sendSocket(ws, { 'type': 'error', 'error': 'Forbidden', 'message': 'WebSocket origin is not allowed' });
       ws.close(1008, 'Origin not allowed');
       return;
@@ -90,27 +88,18 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
         ws.close(1008, 'Session expired');
         return;
       }
-      if (sessionValidationsInFlight >= MAX_CONCURRENT_SESSION_VALIDATIONS) {
-        sendSocket(ws, {
-          'type': 'error',
-          'error': 'Service Unavailable',
-          'message': 'Planet session validation is unavailable'
-        });
-        ws.close(1013, 'Session validation busy');
-        return;
-      }
-      sessionValidationsInFlight += 1;
       try {
-        session = await getSession(req.headers.cookie);
+        session = await validateSession(req.headers.cookie);
       } catch (error) {
         const message = error instanceof SessionValidationError
           ? error.message
           : 'Planet session validation is unavailable';
         sendSocket(ws, { 'type': 'error', 'error': 'Service Unavailable', message });
-        ws.close(1011, 'Session validation unavailable');
+        ws.close(
+          error instanceof SessionValidationBusyError ? 1013 : 1011,
+          error instanceof SessionValidationBusyError ? 'Session validation busy' : 'Session validation unavailable'
+        );
         return;
-      } finally {
-        sessionValidationsInFlight -= 1;
       }
       if (!session) {
         sendSocket(ws, { 'type': 'error', 'error': 'Unauthorized', 'message': 'A valid Planet session is required' });
@@ -162,12 +151,12 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           sendSocket(ws, { 'type': 'error', 'error': 'Bad Request', 'message': 'Invalid data format' });
           return;
         }
-        if (!isValidData(payload)) {
+        if (!isNonEmptyObject(payload)) {
           sendSocket(ws, { 'type': 'error', 'error': 'Bad Request', 'message': 'Invalid data format' });
           return;
         }
         activeRequest = new AbortController();
-        const outcome = await chat(payload, {
+        const outcome = await chat(payload as unknown as ChatRequestPayload, {
           'save': true,
           'sessionUser': session?.name,
           'signal': activeRequest.signal,

@@ -7,7 +7,7 @@ import WebSocket from 'ws';
 import { registerChatApiRoutes } from './modules/chatapi/routes';
 import { registerChatApiWebSocket } from './modules/chatapi/websocket';
 import { registerPublicRoutes } from './modules/public/register';
-import { browserCorsOptions } from './modules/chatapi/middleware/auth';
+import { browserCorsOptions, requestScheme } from './modules/chatapi/middleware/auth';
 import { startResourceIndexReconciliation } from './modules/chatapi/services/resource-index.service';
 
 dotenv.config();
@@ -17,7 +17,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server, 'maxPayload': 1024 * 1024 });
 
 app.use(cors((req, callback) => {
-  callback(null, browserCorsOptions(req.headers.origin, req.headers.host));
+  callback(null, browserCorsOptions(req.headers.origin, req.headers.host, requestScheme(req.headers)));
 }));
 // Parse JSON bodies (as sent by API clients)
 app.use(express.json({ 'limit': process.env.GATEWAY_JSON_LIMIT || '1mb' }));

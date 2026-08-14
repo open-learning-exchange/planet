@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 import { NextFunction, Request, Response } from 'express';
+import { IncomingHttpHeaders } from 'http';
 
 import { couchBaseUrl } from '../../../config/couch.config';
+import { getSessionTimeoutMs } from '../utils/timeout.utils';
 
 export interface SessionInfo {
   name: string;
@@ -15,18 +17,13 @@ export class SessionValidationError extends Error {
   }
 }
 
+export class SessionValidationBusyError extends SessionValidationError {}
+
 const UNAVAILABLE_SESSION_STATUSES = new Set([ 408, 429 ]);
-const DEFAULT_SESSION_TIMEOUT_MS = 10000;
-const MAX_TIMER_DURATION_MS = 2147483647;
+const MAX_CONCURRENT_SESSION_VALIDATIONS = 8;
+let sessionValidationsInFlight = 0;
 
 const authDisabled = () => (process.env.CHATAPI_AUTH || '').toLowerCase() === 'none';
-const sessionTimeout = (): number => {
-  const configured = Number(process.env.COUCHDB_SESSION_TIMEOUT_MS);
-  return Number.isFinite(configured) && configured > 0
-    ? Math.min(configured, MAX_TIMER_DURATION_MS)
-    : DEFAULT_SESSION_TIMEOUT_MS;
-};
-
 /**
  * Extra browser origins allowed by future credentialed CORS and WebSocket wiring.
  * An empty list does not permit cross-origin access; same-origin requests need no entry.
@@ -34,9 +31,16 @@ const sessionTimeout = (): number => {
 export const allowedOrigins = (): string[] =>
   (process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean);
 
-export const isTrustedOrigin = (origin: string, host: string | undefined): boolean => {
+export const requestScheme = (headers: IncomingHttpHeaders): string => {
+  const forwarded = headers['x-forwarded-proto'];
+  const value = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  return value?.split(',', 1)[0].trim().toLowerCase() || 'http';
+};
+
+export const isTrustedOrigin = (origin: string, host: string | undefined, scheme: string): boolean => {
   try {
-    if (host && new URL(origin).host === host) {
+    const parsed = new URL(origin);
+    if (host && parsed.host === host && parsed.protocol === `${scheme}:`) {
       return true;
     }
   } catch (error) {
@@ -46,8 +50,8 @@ export const isTrustedOrigin = (origin: string, host: string | undefined): boole
 };
 
 /** Build credentialed CORS options without letting `cors` interpret false as a wildcard. */
-export const browserCorsOptions = (origin: string | undefined, host: string | undefined) => ({
-  'origin': !origin || isTrustedOrigin(origin, host) ? true : [],
+export const browserCorsOptions = (origin: string | undefined, host: string | undefined, scheme: string) => ({
+  'origin': !origin || isTrustedOrigin(origin, host, scheme) ? true : [],
   'credentials': true
 });
 
@@ -74,7 +78,7 @@ export async function getSession(cookie: string | undefined): Promise<SessionInf
   try {
     const response = await fetch(`${couchBaseUrl}/_session`, {
       'headers': { cookie },
-      'signal': AbortSignal.timeout(sessionTimeout())
+      'signal': AbortSignal.timeout(getSessionTimeoutMs())
     });
     if (!response.ok) {
       await response.body?.cancel();
@@ -93,6 +97,19 @@ export async function getSession(cookie: string | undefined): Promise<SessionInf
   }
 }
 
+/** Bound CouchDB session checks shared by HTTP requests and WebSocket handshakes. */
+export async function validateSession(cookie: string | undefined): Promise<SessionInfo | null> {
+  if (sessionValidationsInFlight >= MAX_CONCURRENT_SESSION_VALIDATIONS) {
+    throw new SessionValidationBusyError();
+  }
+  sessionValidationsInFlight += 1;
+  try {
+    return await getSession(cookie);
+  } finally {
+    sessionValidationsInFlight -= 1;
+  }
+}
+
 export async function requireSession(req: Request, res: Response, next: NextFunction) {
   if (authDisabled()) {
     next();
@@ -100,7 +117,7 @@ export async function requireSession(req: Request, res: Response, next: NextFunc
   }
   let session: SessionInfo | null;
   try {
-    session = await getSession(req.headers.cookie);
+    session = await validateSession(req.headers.cookie);
   } catch (error) {
     const sessionError = error instanceof SessionValidationError ? error : new SessionValidationError();
     res.status(503).json({ 'error': 'Service Unavailable', 'message': sessionError.message });

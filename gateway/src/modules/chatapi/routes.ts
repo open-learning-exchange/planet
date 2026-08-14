@@ -2,7 +2,7 @@ import { Express, Request, Response } from 'express';
 
 import { requireSession, SessionInfo } from './middleware/auth';
 import { rateLimit } from './middleware/rate-limit';
-import { PROVIDER_NAMES } from './models/chat.model';
+import { ChatRequestPayload, isNonEmptyObject, PROVIDER_NAMES } from './models/chat.model';
 import { defaultPromptProfiles } from './prompts/default-prompts';
 import { providerCapabilities } from './providers';
 import { analyze } from './services/analyze.service';
@@ -18,10 +18,8 @@ import { HttpError, httpErrorName, toHttpError } from './utils/http-error';
 const MAX_RESOURCE_CLEANUP_BATCH = 500;
 const MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE = 5;
 const RESOURCE_CLEANUP_BUDGET_MS = 10000;
-const resourceCleanupRateLimit = rateLimit(MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE, 'resource-index-cleanup');
-
-const isValidData = (data: any): boolean =>
-  data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
+const RESOURCE_CLEANUP_ROUTE = '/resources/indexes/cleanup';
+const RESOURCE_CLEANUP_RATE_LABEL = 'resource-index-cleanup';
 
 const canWriteResponse = (res: Response): boolean => !res.headersSent && !res.writableEnded && !res.destroyed;
 
@@ -59,12 +57,12 @@ const requestCancellation = (req: Request, res: Response) => {
 export function registerChatApiRoutes(app: Express) {
   app.post('/', requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
     const { data, save } = req.body;
-    if (!isValidData(data)) {
+    if (!isNonEmptyObject(data)) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }
     const cancellation = requestCancellation(req, res);
     try {
-      const outcome = await chat(data, {
+      const outcome = await chat(data as unknown as ChatRequestPayload, {
         'save': !!save,
         'sessionUser': res.locals.user,
         'signal': cancellation.controller.signal
@@ -122,7 +120,8 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.post('/resources/indexes/cleanup', requireSession, resourceCleanupRateLimit, async (req: Request, res: Response) => {
+  // eslint-disable-next-line max-len
+  app.post(RESOURCE_CLEANUP_ROUTE, requireSession, rateLimit(MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE, RESOURCE_CLEANUP_RATE_LABEL), async (req: Request, res: Response) => {
     const resourceIds = req.body?.resourceIds;
     if (!Array.isArray(resourceIds) || resourceIds.length === 0 ||
       resourceIds.some((id) => typeof id !== 'string' || id.trim().length === 0)) {
