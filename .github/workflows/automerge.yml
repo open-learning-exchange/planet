@@ -1,0 +1,14 @@
+name: planet automerge
+
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  automerge:
+    name: automerge
+    runs-on: ubuntu-latest
+    steps:
+      - name: init
+        run: echo "automerge"
