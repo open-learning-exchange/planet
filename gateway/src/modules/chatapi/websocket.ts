@@ -147,7 +147,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       }
       const identity = session?.name || req.socket.remoteAddress || 'unknown';
       try {
-        if (!consumeRequest(`${identity}:chat`)) {
+        if (!await consumeRequest(`${identity}:chat`)) {
           sendSocket(ws, {
             'type': 'error',
             'error': 'Too Many Requests',
