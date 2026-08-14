@@ -10,6 +10,7 @@ import {
   AIServiceDiscovery,
   AIServices,
   AIProvider,
+  ChatStreamMessage,
   PromptProfiles,
   ProviderName,
   ResourceIndexCleanupResponse,
@@ -26,7 +27,7 @@ import {
   private socket?: WebSocket;
   private pendingSocket?: WebSocket;
 
-  private chatStreamSubject: Subject<string> = new Subject<string>();
+  private chatStreamSubject: Subject<ChatStreamMessage> = new Subject<ChatStreamMessage>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
@@ -58,7 +59,7 @@ import {
 
   chatErrorMessage(error: { code?: string; message?: string } | undefined, fallback = $localize`Chat request failed`): string {
     if (error?.code === 'resource_attachments_unsupported') {
-      return $localize`This AI provider does not support resource attachments. Use OpenAI for attachment questions.`;
+      return $localize`This AI provider does not support resource attachments. Use a provider that supports resource attachments for attachment questions.`;
     }
     if (error?.code === 'resource_context_unavailable') {
       return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
@@ -111,7 +112,7 @@ import {
             if (message.type === 'final' && this.pendingSocket === socket) {
               this.pendingSocket = undefined;
             }
-            this.chatStreamSubject.next(event.data);
+            this.chatStreamSubject.next(message as ChatStreamMessage);
             if (message.type === 'final') {
               socket.close();
             }
@@ -193,7 +194,7 @@ import {
   }
 
   // Subscribe to stream updates
-  getChatStream(): Observable<string> {
+  getChatStream(): Observable<ChatStreamMessage> {
     return this.chatStreamSubject.asObservable();
   }
 

@@ -179,7 +179,7 @@ describe('ChatService', () => {
       }));
 
       expect(errors).toEqual([
-        'This AI provider does not support resource attachments. Use OpenAI for attachment questions.'
+        'This AI provider does not support resource attachments. Use a provider that supports resource attachments for attachment questions.'
       ]);
       expect(socket.close).toHaveBeenCalled();
     });
@@ -187,13 +187,13 @@ describe('ChatService', () => {
     it('closes a streaming socket after its terminal frame', () => {
       const { service } = createService();
       const { socket, emitMessage } = installWebSocketMock();
-      const messages: string[] = [];
+      const messages: any[] = [];
       service.getChatStream().subscribe((message) => messages.push(message));
 
       service.sendUserInput({ 'content': 'hello' });
       emitMessage(JSON.stringify({ 'type': 'final', 'completionText': 'done' }));
 
-      expect(messages).toHaveLength(1);
+      expect(messages).toEqual([ { 'type': 'final', 'completionText': 'done' } ]);
       expect(socket.close).toHaveBeenCalled();
       expect((service as any).pendingSocket).toBeUndefined();
     });
