@@ -51,7 +51,7 @@
         @if (achievements !== undefined) {
           <div class="achievements-container">
             <div class="user-info">
-              <img class="profile-image" [src]="profileImg">
+              <planet-avatar [username]="userName" [planetCode]="userPlanetCode" imgClass="profile-image"></planet-avatar>
               <h2>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</h2>
               @if (!publicView) {
                 <div class="birth-info">
