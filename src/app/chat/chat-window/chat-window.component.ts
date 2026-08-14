@@ -3,7 +3,7 @@ import { NonNullableFormBuilder, FormGroup, FormControl, FormsModule, ReactiveFo
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { CustomValidators } from '../../validators/custom-validators';
-import { ConversationForm, AIProvider, ChatContext, hasSearchableAttachments } from '../chat.model';
+import { ConversationForm, AIProvider, ChatContext, ChatStreamMessage, hasSearchableAttachments } from '../chat.model';
 import { ChatService } from '../../shared/chat.service';
 import { showFormErrors, trackByIdVal } from '../../shared/table-helpers';
 import { UserService } from '../../shared/user.service';
@@ -214,11 +214,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initializeChatStream() {
     this.chatService.getChatStream().pipe(takeUntil(this.onDestroy$)).subscribe((message) => {
-      this.handleIncomingMessage(JSON.parse(message));
+      this.handleIncomingMessage(message);
     });
   }
 
-  handleIncomingMessage(message: any) {
+  handleIncomingMessage(message: ChatStreamMessage) {
     const pendingConversation = this.pendingStreamingTurnId
       ? this.conversations.find((conversation) => conversation.id === this.pendingStreamingTurnId)
       : undefined;
@@ -237,7 +237,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       this.postSubmit();
     } else {
       this.spinnerOn = false;
-      pendingConversation.response += message.response;
+      pendingConversation.response += message.response || '';
       this.scrollTo('bottom');
     }
   }

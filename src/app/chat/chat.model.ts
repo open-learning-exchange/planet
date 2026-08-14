@@ -77,6 +77,14 @@ export interface Message {
   hasAttachments?: boolean;
 }
 
+export interface ChatStreamMessage {
+  type: 'partial' | 'final';
+  response?: string;
+  completionText?: string;
+  citations?: Citation[];
+  couchDBResponse?: { id?: string; rev?: string };
+}
+
 export interface AIServiceStatus {
   enabled: boolean;
   capabilities: string[];

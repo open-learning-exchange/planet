@@ -8,7 +8,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, map, skip, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, map, skip, startWith, switchMap, takeUntil, tap, timeout } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
@@ -114,6 +114,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly resourceIndexCleanupTimeoutMs = 11000;
   isLoading = true;
   resources = new MatTableDataSource();
   private renderedRows: any[] = [];
@@ -355,6 +356,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     const resourceIds = resources.map((resource) => resource._id);
     const immediateResourceIds = resourceIds.slice(0, 500);
     return this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
+      timeout(this.resourceIndexCleanupTimeoutMs),
       map((response) => response.results.some((result) => result.deferred || result.failed)),
       catchError(() => of(true))
     );

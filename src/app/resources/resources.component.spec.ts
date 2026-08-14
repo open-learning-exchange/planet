@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { NEVER, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ResourcesComponent } from './resources.component';
@@ -52,6 +52,25 @@ describe('ResourcesComponent', () => {
 
       expect(couchService.delete).toHaveBeenCalled();
       expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
+    });
+
+    it('still deletes and warns when immediate index cleanup times out', async () => {
+      vi.useFakeTimers();
+      try {
+        const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
+        const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(NEVER) };
+        const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+        const component = createComponent(couchService, chatService, planetMessageService);
+        const request = component.deleteResource({ '_id': 'res1', '_rev': '1-a' }).request.toPromise();
+
+        await vi.advanceTimersByTimeAsync(11001);
+
+        await expect(request).resolves.toEqual({ 'id': 'res1' });
+        expect(couchService.delete).toHaveBeenCalled();
+        expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('warns for structured deferred cleanup without displaying gateway text', async () => {
