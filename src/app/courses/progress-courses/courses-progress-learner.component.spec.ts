@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { CoursesProgressLearnerComponent } from './courses-progress-learner.component';
 import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
@@ -50,15 +51,34 @@ describe('CoursesProgressLearnerComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should create component and initialize KPI metrics', () => {
-    component.ngOnInit();
+  it('should create component and render KPI metrics and empty state via km- test hooks', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
     expect(mockSubmissionsService.updateSubmissions).toHaveBeenCalled();
     expect(mockCoursesService.requestCourses).toHaveBeenCalled();
+    expect(component.isLoading).toBe(true);
+
+    progressLearner$.next([]);
+    submissionsUpdated$.next([]);
+    fixture.detectChanges();
+
+    expect(component.isLoading).toBe(false);
+
+    const enrolledKpi = fixture.debugElement.query(By.css('.km-enrolled-courses-kpi'));
+    const avgCompletionKpi = fixture.debugElement.query(By.css('.km-avg-completion-kpi'));
+    const totalStepsKpi = fixture.debugElement.query(By.css('.km-total-steps-kpi'));
+    const pendingGradingKpi = fixture.debugElement.query(By.css('.km-pending-grading-kpi'));
+    const emptyState = fixture.debugElement.query(By.css('.km-empty-state-box'));
+
+    expect(enrolledKpi).toBeTruthy();
+    expect(avgCompletionKpi).toBeTruthy();
+    expect(totalStepsKpi).toBeTruthy();
+    expect(pendingGradingKpi).toBeTruthy();
+    expect(emptyState).toBeTruthy();
   });
 
   it('should process enrolled courses and calculate completion & mistake metrics', () => {
-    component.ngOnInit();
+    fixture.detectChanges();
     progressLearner$.next([
       {
         _id: 'course_1',
@@ -91,12 +111,17 @@ describe('CoursesProgressLearnerComponent', () => {
       }
     ]);
 
+    fixture.detectChanges();
+
     expect(component.totalCourses).toBe(1);
     expect(component.avgCompletionPercentage).toBe(100);
     expect(component.totalStepsCompleted).toBe(2);
     expect(component.totalErrorsCount).toBe(1);
     expect(component.dataSource.data.length).toBe(1);
     expect(component.dataSource.data[0].passedStepsCount).toBe(2);
+
+    const progressTable = fixture.debugElement.query(By.css('.km-progress-table'));
+    expect(progressTable).toBeTruthy();
   });
 
   it('should sum retake mistakes across multiple submission attempts for the same step', () => {

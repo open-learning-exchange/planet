@@ -11,7 +11,7 @@
 
 <div class="progress-dashboard-container">
   <div class="kpi-summary-row">
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card km-enrolled-courses-kpi">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-blue">
           <mat-icon>school</mat-icon>
@@ -23,7 +23,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card km-avg-completion-kpi">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-green">
           <mat-icon>equalizer</mat-icon>
@@ -36,7 +36,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card km-total-steps-kpi">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-green">
           <mat-icon>done_all</mat-icon>
@@ -48,7 +48,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card km-pending-grading-kpi">
       <mat-card-content class="kpi-content">
         <div class="kpi-icon-wrapper icon-amber">
           <mat-icon>rate_review</mat-icon>
@@ -83,19 +83,25 @@
         </div>
 
         @if (dataSource.data.length === 0) {
-          <div class="empty-state" i18n>
-            No enrolled courses found.
+          <div class="empty-state-box km-empty-state-box">
+            <mat-icon class="empty-icon">school</mat-icon>
+            <h3 i18n>No enrolled courses found</h3>
+            <p i18n>You are not currently enrolled in any courses.</p>
           </div>
         }
 
         @if (dataSource.data.length > 0) {
-          <div class="table-responsive-wrapper">
-            <table mat-table [dataSource]="dataSource" matSort class="progress-table" multiTemplateDataRows>
+          <div class="table-scroll-wrapper">
+            <table mat-table [dataSource]="dataSource" matSort class="progress-table km-progress-table" multiTemplateDataRows>
               <ng-container matColumnDef="courseTitle">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Title</th>
                 <td mat-cell *matCellDef="let element">
                   <div class="course-cell-wrapper">
-                    <span class="course-name-link" (click)="navigateToCourse(element.courseId)">
+                    <span class="course-name-link"
+                      role="button"
+                      tabindex="0"
+                      (click)="navigateToCourse(element.courseId)"
+                      (keydown.enter)="navigateToCourse(element.courseId)">
                       {{ element.courseTitle }}
                     </span>
                   </div>
@@ -179,9 +185,13 @@
                       <div class="step-list-grid">
                         @for (step of element.stepStatuses; track step.stepIndex) {
                           <div class="step-detail-card"
+                            role="button"
+                            [attr.aria-disabled]="!canAccessStep(step, $index, element.stepStatuses)"
+                            [tabindex]="canAccessStep(step, $index, element.stepStatuses) ? 0 : -1"
                             [class.clickable-step]="canAccessStep(step, $index, element.stepStatuses)"
                             [class.locked-step]="!canAccessStep(step, $index, element.stepStatuses)"
                             (click)="navigateToStep(element.courseId, step.stepIndex, canAccessStep(step, $index, element.stepStatuses))"
+                            (keydown.enter)="navigateToStep(element.courseId, step.stepIndex, canAccessStep(step, $index, element.stepStatuses))"
                             [matTooltip]="canAccessStep(step, $index, element.stepStatuses) ? 'Open Step' : 'Locked'">
                             <div class="step-card-header">
                               <span class="step-card-title">{{ step.stepTitle }}</span>
