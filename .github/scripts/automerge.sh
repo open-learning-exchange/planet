@@ -53,9 +53,6 @@ MAX_REPREPARES=2
 reprep_pr=""
 reprep_n=0
 
-mp_pins_moved=false
-defaults_synced=false
-
 # ---------------------------------------------------------------- helpers
 
 pick_pr() {
@@ -202,78 +199,40 @@ base_already_failed() {
     return 0
 }
 
-changed_lines() {
-    git diff --unified=0 "$1" "$2" -- "$3" \
-        | grep -E '^[+-]' \
-        | grep -vE '^(\+\+\+|---)' || true
-}
+# Guard against a broken version.sh. Only the version line may move, plus the
+# myplanet pins when this run was asked to set them.
+verify_version_only_diff() {
+    local from=$1 to=$2 files bad allowed='"version"'
 
-# Guard against a broken version.sh. In $PKG_FILE only the version line may
-# move, plus the myplanet pins when this bump actually moved them; in the
-# workflow file only the two prefilled dispatch defaults.
-verify_bump_diff() {
-    local from=$1 to=$2 file bad ok keys='"version"'
+    [ -z "$MYPLANET_LATEST" ] || allowed="$allowed|\"latest\""
+    [ -z "$MYPLANET_MIN" ]    || allowed="$allowed|\"min\""
 
-    if [ "$mp_pins_moved" = 'true' ]; then
-        keys='"version"|"latest"|"min"'
-    fi
-
-    while IFS= read -r file; do
-        [ -n "$file" ] || continue
-        ok=false
-        [ "$file" = "$PKG_FILE" ] && ok=true
-        if [ "$defaults_synced" = 'true' ] && [ "$file" = "$SELF_WORKFLOW_PATH" ]; then
-            ok=true
-        fi
-        if [ "$ok" != 'true' ]; then
-            log "  bump touched an unexpected file: $file"
-            return 1
-        fi
-    done < <(git diff --name-only "$from" "$to")
-
-    bad=$(changed_lines "$from" "$to" "$PKG_FILE" \
-          | grep -vcE "^[+-][[:space:]]*($keys)[[:space:]]*:" || true)
-    if [ "${bad:-0}" -ne 0 ]; then
-        log "  bump changed $bad unexpected line(s) in $PKG_FILE"
+    files=$(git diff --name-only "$from" "$to")
+    if [ "$files" != "$PKG_FILE" ]; then
+        log "  bump touched unexpected files: ${files//$'\n'/, }"
         return 1
     fi
 
-    if [ "$defaults_synced" = 'true' ]; then
-        bad=$(changed_lines "$from" "$to" "$SELF_WORKFLOW_PATH" \
-              | grep -vcE "^[+-][[:space:]]*default: 'v?[0-9.]*'$" || true)
-        if [ "${bad:-0}" -ne 0 ]; then
-            log "  defaults sync changed $bad unexpected line(s) in $SELF_WORKFLOW_PATH"
-            return 1
-        fi
+    bad=$(git diff --unified=0 "$from" "$to" -- "$PKG_FILE" \
+          | grep -E '^[+-]' \
+          | grep -vE '^(\+\+\+|---)' \
+          | grep -vcE "^[+-][[:space:]]*($allowed)[[:space:]]*:" || true)
+    if [ "${bad:-0}" -ne 0 ]; then
+        log "  bump changed $bad non-version line(s)"
+        return 1
     fi
-
     log "  bump is version-only ($from -> $to)"
 }
 
-push_out=''
 push_with_retry() {
     local ref=$1
-    push_out=''
     for delay in 0 2 4 8 16; do
         [ "$delay" -eq 0 ] || sleep "$delay"
-        if push_out=$(git push origin "$ref" 2>&1); then
+        if git push origin "$ref"; then
             return 0
         fi
-        # Retrying a refusal only wastes the wait.
-        if workflow_scope_refusal "$push_out"; then
-            break
-        fi
     done
-    printf '%s\n' "$push_out" | sed 's/^/    /'
-    log "  push of $ref failed"
-    return 1
-}
-
-# A token without the workflow scope may push anything but .github/workflows.
-workflow_scope_refusal() {
-    case "$1" in
-        *'workflow` scope'*|*'workflows` permission'*|*'refusing to allow'*) return 0 ;;
-    esac
+    log "  push of $ref failed after retries"
     return 1
 }
 
@@ -284,10 +243,10 @@ summary "### automerge: draining \`$LABEL\` into \`$BASE\`"
 summary ""
 
 # The pins ride along in the first merge's bump commit, so an empty queue
-# leaves them alone -- there is no merge to carry them.
+# leaves them unset -- there is no merge to carry them.
 if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
-    log "myplanet pins asked for: latest=${MYPLANET_LATEST:-unchanged}, min=${MYPLANET_MIN:-unchanged}"
-    summary "myplanet pins: latest \`${MYPLANET_LATEST:-unchanged}\`, min \`${MYPLANET_MIN:-unchanged}\`"
+    log "myplanet pins: latest -> ${MYPLANET_LATEST:-unchanged}, min -> ${MYPLANET_MIN:-unchanged}"
+    summary "myplanet pins: latest → \`${MYPLANET_LATEST:-unchanged}\`, min → \`${MYPLANET_MIN:-unchanged}\` (set by the first merge)"
     summary ""
 fi
 
@@ -367,8 +326,7 @@ while :; do
         if git merge --quiet --no-edit "origin/$BASE"; then
             log "  dry run: merges cleanly with $BASE, would bump to $new_name,"
             if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
-                log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged}"
-                log "           (and copy those into this workflow's dispatch defaults),"
+                log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged},"
             fi
             log "           wait for ${REQUIRED_WORKFLOWS:-the triggered workflows}, then squash merge #$NUMBER"
             summary "| #$NUMBER | → \`$new_name\` | dry run: would merge |"
@@ -401,13 +359,11 @@ while :; do
     # a no-op after the first one has landed them on $BASE, so this needs no
     # memory of which PR carried them.
     bump_msg="version: bump to $new_name"
-    mp_pins_moved=false
     if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
         mp_before=$(git show "HEAD:$PKG_FILE" | jq -r '[.myplanet.latest, .myplanet.min] | join(" ")')
         "$VERSION_SH" myplanet "$PKG_FILE" "$MYPLANET_LATEST" "$MYPLANET_MIN"
         mp_after=$(jq -r '[.myplanet.latest, .myplanet.min] | join(" ")' "$PKG_FILE")
         if [ "$mp_before" != "$mp_after" ]; then
-            mp_pins_moved=true
             log "  myplanet pins: $mp_before -> $mp_after"
             bump_msg="$bump_msg, myplanet ${mp_after% *} (min ${mp_after#* })"
         else
@@ -415,54 +371,21 @@ while :; do
         fi
     fi
 
-    # Copy whatever package.json now pins into this workflow's own dispatch
-    # defaults, so the next manual start opens with the base's numbers already
-    # in the form instead of asking for them blind.
-    defaults_synced=false
-    if [ -f "$SELF_WORKFLOW_PATH" ]; then
-        "$VERSION_SH" myplanet-defaults "$SELF_WORKFLOW_PATH" "$PKG_FILE"
-        if ! git diff --quiet -- "$SELF_WORKFLOW_PATH"; then
-            defaults_synced=true
-            log "  dispatch form defaults re-synced in $SELF_WORKFLOW_PATH"
-        fi
-    fi
-
     merge_sha="$pre_bump_sha"
-    if git diff --quiet -- "$PKG_FILE" "$SELF_WORKFLOW_PATH"; then
+    if git diff --quiet -- "$PKG_FILE"; then
         log "  $PKG_FILE already at $new_name, nothing to commit"
     else
         git add "$PKG_FILE"
-        if [ "$defaults_synced" = 'true' ]; then
-            git add "$SELF_WORKFLOW_PATH"
-        fi
         git commit --quiet -m "$bump_msg"
         merge_sha=$(git rev-parse HEAD)
-        verify_bump_diff "$pre_bump_sha" "$merge_sha" \
+        verify_version_only_diff "$pre_bump_sha" "$merge_sha" \
             || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: bump was not version-only |"; exit 1; }
     fi
 
     # 3. Push and let CI judge the prepared commit.
     if [ "$merge_sha" != "$SHA" ]; then
-        if ! push_with_retry "$HEAD"; then
-            # The version bump matters; the form prefill does not. Drop it and
-            # keep draining rather than stopping over a token scope.
-            if [ "$defaults_synced" = 'true' ] && workflow_scope_refusal "$push_out"; then
-                log "  this token may not push $SELF_WORKFLOW_PATH -- dropping the defaults sync"
-                log "  give AUTOMERGE_TOKEN the workflow scope to keep the dispatch form in step"
-                summary "| | | note: token cannot update \`$SELF_WORKFLOW_PATH\`, form defaults left alone |"
-                git checkout --quiet "$pre_bump_sha" -- "$SELF_WORKFLOW_PATH"
-                git commit --quiet --amend --no-edit
-                merge_sha=$(git rev-parse HEAD)
-                defaults_synced=false
-                verify_bump_diff "$pre_bump_sha" "$merge_sha" \
-                    || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: bump was not version-only |"; exit 1; }
-                push_with_retry "$HEAD" \
-                    || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: push failed |"; exit 1; }
-            else
-                summary "| #$NUMBER | → \`$new_name\` | **stopped**: push failed |"
-                exit 1
-            fi
-        fi
+        push_with_retry "$HEAD" \
+            || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: push failed |"; exit 1; }
     else
         log "  branch already merged and bumped, head unchanged at ${SHA:0:7}"
     fi

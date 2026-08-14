@@ -6,12 +6,7 @@ name: planet automerge
 #
 # The myplanet_* inputs re-pin package.json's myplanet block in the same bump
 # commit, so they land with the first merge -- an empty queue leaves them
-# alone, since there is no merge to carry them. Their defaults below are the
-# pins as of the last merge: a dispatch default cannot be computed (GitHub
-# does not evaluate expressions in `on:`), so each bump rewrites these two
-# lines from package.json instead. That needs a token allowed to push
-# .github/workflows; without one the drain says so, drops the sync, and
-# carries on with the version bump.
+# alone, since there is no merge to carry them.
 #
 # Needs AUTOMERGE_TOKEN. GITHUB_TOKEN cannot merge into a protected branch,
 # and its pushes do not trigger the workflow runs the drain waits for.
@@ -37,12 +32,12 @@ on:
       myplanet_latest:
         description: 'myplanet version planets offer as the latest apk (blank = leave as is)'
         required: false
-        default: 'v0.64.44'
+        default: ''
         type: string
       myplanet_min:
         description: 'oldest myplanet version planets still accept (blank = leave as is)'
         required: false
-        default: 'v0.61.54'
+        default: ''
         type: string
       require_checks:
         description: 'refuse to merge unless the prepared commit (base merged in + version bumped) is green'

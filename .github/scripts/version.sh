@@ -12,7 +12,6 @@
 #   version.sh apply <package-file> <name>
 #   version.sh myplanet <package-file> <latest> <min>   (blank = leave as is)
 #   version.sh check-myplanet <version>                 (prints it normalized)
-#   version.sh myplanet-defaults <workflow-file> <package-file>
 #
 # The myplanet subcommands need jq; the rest is sed only.
 #
@@ -114,50 +113,6 @@ apply_myplanet() {
     [ -z "$min" ]    || [ "$mp_min"    = "$min" ]    || die "failed to write myplanet.min $min into $file"
 }
 
-# A workflow_dispatch default has to be literal text -- GitHub does not
-# evaluate expressions in the `on:` block -- so the dispatch form can only
-# show the current pins if they are written into the file. Each bump re-syncs
-# them, which is what keeps the form honest.
-set_input_default() {
-    local wf=$1 input=$2 val=$3
-    # Scoped to one input block, which ends at its `type:` line.
-    sed -i -E \
-        "/^[[:space:]]*${input}:[[:space:]]*$/,/^[[:space:]]*type:/ s/^([[:space:]]*default:[[:space:]]*).*/\1'${val}'/" \
-        "$wf"
-}
-
-input_default() {
-    sed -nE \
-        "/^[[:space:]]*$2:[[:space:]]*$/,/^[[:space:]]*type:/ s/^[[:space:]]*default:[[:space:]]*'?([^']*)'?[[:space:]]*$/\1/p" \
-        "$1" | head -1
-}
-
-has_input() { grep -qE "^[[:space:]]*$2:[[:space:]]*$" "$1"; }
-
-sync_myplanet_defaults() {
-    local wf=$1 file=$2 got_latest got_min
-    [ -f "$wf" ] || die "no such file: $wf"
-
-    read_myplanet "$file"
-    [ -n "$mp_latest" ] && [ -n "$mp_min" ] || die "no myplanet pins to copy out of $file"
-
-    # A branch whose copy of the workflow predates these inputs has nothing to
-    # fill in. Prefilling the form is a convenience; never fail a merge over
-    # it -- the pins in package.json are what actually ship.
-    if ! has_input "$wf" myplanet_latest || ! has_input "$wf" myplanet_min; then
-        echo "version.sh: $wf has no myplanet_* dispatch inputs, leaving it alone" >&2
-        return 0
-    fi
-
-    set_input_default "$wf" myplanet_latest "$mp_latest"
-    set_input_default "$wf" myplanet_min    "$mp_min"
-
-    got_latest=$(input_default "$wf" myplanet_latest)
-    got_min=$(input_default "$wf" myplanet_min)
-    [ "$got_latest" = "$mp_latest" ] || die "failed to write the myplanet_latest default into $wf (got '$got_latest')"
-    [ "$got_min" = "$mp_min" ]       || die "failed to write the myplanet_min default into $wf (got '$got_min')"
-}
-
 case "${1:-}" in
     read)
         read_version "${2:?package file required}"
@@ -177,10 +132,7 @@ case "${1:-}" in
         normalize_myplanet "${2:?version required}"
         echo
         ;;
-    myplanet-defaults)
-        sync_myplanet_defaults "${2:?workflow file required}" "${3:?package file required}"
-        ;;
     *)
-        die "usage: version.sh {read|next|apply|myplanet|check-myplanet|myplanet-defaults} <package-file|version|workflow-file> [args]"
+        die "usage: version.sh {read|next|apply|myplanet|check-myplanet} <package-file|version> [args]"
         ;;
 esac
