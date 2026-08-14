@@ -1,7 +1,7 @@
 import { Express, Request, Response } from 'express';
 
 import { requireSession, SessionInfo } from './middleware/auth';
-import { consumeWork, rateLimit } from './middleware/rate-limit';
+import { rateLimit } from './middleware/rate-limit';
 import { PROVIDER_NAMES } from './models/chat.model';
 import { providerCapabilities } from './providers';
 import { analyze } from './services/analyze.service';
@@ -15,8 +15,9 @@ import {
 import { HttpError, httpErrorName, toHttpError } from './utils/http-error';
 
 const MAX_RESOURCE_CLEANUP_BATCH = 500;
-const MAX_RESOURCE_CLEANUP_IDS_PER_MINUTE = 500;
+const MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE = 5;
 const RESOURCE_CLEANUP_BUDGET_MS = 10000;
+const resourceCleanupRateLimit = rateLimit(MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE, 'resource-index-cleanup');
 
 const isValidData = (data: any): boolean =>
   data && typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length > 0;
@@ -120,7 +121,7 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.post('/resources/indexes/cleanup', requireSession, async (req: Request, res: Response) => {
+  app.post('/resources/indexes/cleanup', requireSession, resourceCleanupRateLimit, async (req: Request, res: Response) => {
     const resourceIds = req.body?.resourceIds;
     if (!Array.isArray(resourceIds) || resourceIds.length === 0 ||
       resourceIds.some((id) => typeof id !== 'string' || id.trim().length === 0)) {
@@ -134,16 +135,6 @@ export function registerChatApiRoutes(app: Express) {
       return res.status(413).json({
         'error': 'Payload Too Large',
         'message': `At most ${MAX_RESOURCE_CLEANUP_BATCH} resource indexes can be cleaned in one request`
-      });
-    }
-    if (!consumeWork(
-      `${res.locals.user || req.ip}:resource-index-cleanup`,
-      uniqueResourceIds.length,
-      MAX_RESOURCE_CLEANUP_IDS_PER_MINUTE
-    )) {
-      return res.status(429).json({
-        'error': 'Too Many Requests',
-        'message': 'Resource index cleanup limit exceeded — try again in a minute'
       });
     }
     const requester: SessionInfo | undefined = res.locals.user

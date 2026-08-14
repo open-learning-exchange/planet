@@ -48,6 +48,9 @@ const registeredApp = () => {
 const routeHandler = (app: any, method: 'post' | 'get', path: string) =>
   app[method].mock.calls.find((call: any[]) => call[0] === path).at(-1);
 
+const routeMiddleware = (app: any, method: 'post' | 'get', path: string) =>
+  app[method].mock.calls.find((call: any[]) => call[0] === path).at(-2);
+
 describe('chatapi HTTP routes', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -151,16 +154,18 @@ describe('chatapi HTTP routes', () => {
     }
   });
 
-  it('rate-limits cleanup by resource count', async () => {
-    mocks.deleteResourceIndex.mockResolvedValue({ 'removed': false });
-    const handler = routeHandler(registeredApp(), 'post', '/resources/indexes/cleanup');
-    const first = routeContext({ 'resourceIds': Array.from(Array(300).keys(), (index) => `first-${index}`) });
-    const rejected = routeContext({ 'resourceIds': Array.from(Array(201).keys(), (index) => `second-${index}`) });
+  it('rate-limits cleanup batches', async () => {
+    const limiter = routeMiddleware(registeredApp(), 'post', '/resources/indexes/cleanup');
+    const next = vi.fn();
 
-    await handler(first.req, first.res);
-    await handler(rejected.req, rejected.res);
+    for (let request = 0; request < 5; request++) {
+      const allowed = routeContext({ 'resourceIds': [ `res-${request}` ] });
+      await limiter(allowed.req, allowed.res, next);
+    }
+    const rejected = routeContext({ 'resourceIds': [ 'res-6' ] });
+    await limiter(rejected.req, rejected.res, next);
 
-    expect(mocks.deleteResourceIndex).toHaveBeenCalledTimes(300);
+    expect(next).toHaveBeenCalledTimes(5);
     expect(rejected.res.status).toHaveBeenCalledWith(429);
   });
 
