@@ -132,12 +132,22 @@ input_default() {
         "$1" | head -1
 }
 
+has_input() { grep -qE "^[[:space:]]*$2:[[:space:]]*$" "$1"; }
+
 sync_myplanet_defaults() {
     local wf=$1 file=$2 got_latest got_min
     [ -f "$wf" ] || die "no such file: $wf"
 
     read_myplanet "$file"
     [ -n "$mp_latest" ] && [ -n "$mp_min" ] || die "no myplanet pins to copy out of $file"
+
+    # A branch whose copy of the workflow predates these inputs has nothing to
+    # fill in. Prefilling the form is a convenience; never fail a merge over
+    # it -- the pins in package.json are what actually ship.
+    if ! has_input "$wf" myplanet_latest || ! has_input "$wf" myplanet_min; then
+        echo "version.sh: $wf has no myplanet_* dispatch inputs, leaving it alone" >&2
+        return 0
+    fi
 
     set_input_default "$wf" myplanet_latest "$mp_latest"
     set_input_default "$wf" myplanet_min    "$mp_min"
