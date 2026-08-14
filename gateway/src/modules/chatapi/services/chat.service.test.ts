@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   'chatDB': { 'get': vi.fn(), 'insert': vi.fn() },
   'getAIConfig': vi.fn(),
   'runProviderChat': vi.fn(),
+  'providerSupports': vi.fn(),
   'ensureResourceIndexed': vi.fn(),
   'markResourceIndexDirtyIfUnavailable': vi.fn(),
   'resourceHasSupportedAttachments': vi.fn()
@@ -16,7 +17,10 @@ vi.mock('./resource-index.service', () => ({
   'markResourceIndexDirtyIfUnavailable': mocks.markResourceIndexDirtyIfUnavailable,
   'resourceHasSupportedAttachments': mocks.resourceHasSupportedAttachments
 }));
-vi.mock('../providers', () => ({ 'runProviderChat': mocks.runProviderChat }));
+vi.mock('../providers', () => ({
+  'runProviderChat': mocks.runProviderChat,
+  'providerSupports': mocks.providerSupports
+}));
 
 import { chat } from './chat.service';
 import { HttpError } from '../utils/http-error';
@@ -44,6 +48,8 @@ describe('chat service', () => {
     vi.clearAllMocks();
     mocks.getAIConfig.mockResolvedValue(config());
     mocks.runProviderChat.mockResolvedValue({ 'text': 'the answer', 'citations': [] });
+    mocks.providerSupports.mockImplementation((name: string, capability: string) =>
+      name === 'openai' && capability === 'fileSearch');
     mocks.chatDB.insert.mockResolvedValue({ 'ok': true, 'id': 'doc1', 'rev': '1-a' });
     mocks.resourceHasSupportedAttachments.mockResolvedValue(false);
   });
@@ -277,7 +283,7 @@ describe('chat service', () => {
       { 'save': false, 'sessionUser': 'amara' }
     )).rejects.toMatchObject({
       'statusCode': 400,
-      'message': 'AI provider "perplexity" does not support resource attachment search; select OpenAI to use attachments',
+      'message': 'AI provider "perplexity" does not support resource attachment search; select a provider with file-search support',
       'code': 'resource_attachments_unsupported'
     });
     expect(mocks.resourceHasSupportedAttachments).toHaveBeenCalledWith('res1', 'amara', undefined);

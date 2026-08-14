@@ -12,7 +12,7 @@ import {
 } from '../models/chat.model';
 import { ChatDoc, ChatTurn } from '../models/db-doc.model';
 import { instructionsForLocale } from '../prompts/default-prompts';
-import { runProviderChat } from '../providers';
+import { providerSupports, runProviderChat } from '../providers';
 import { HttpError, toHttpError } from '../utils/http-error';
 import { resolveProviderName } from '../utils/provider-name';
 import { getAIConfig } from './config.service';
@@ -151,7 +151,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
 
   let vectorStoreIds: string[] | undefined;
   let fileNamesById: Record<string, string> = {};
-  if (context.resource?.id && providerName !== 'openai') {
+  if (context.resource?.id && !providerSupports(providerName, 'fileSearch')) {
     let hasAttachments: boolean;
     try {
       hasAttachments = await resourceHasSupportedAttachments(
@@ -168,7 +168,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     if (hasAttachments) {
       throw new HttpError(
         400,
-        `AI provider "${providerName}" does not support resource attachment search; select OpenAI to use attachments`,
+        `AI provider "${providerName}" does not support resource attachment search; select a provider with file-search support`,
         'resource_attachments_unsupported'
       );
     }

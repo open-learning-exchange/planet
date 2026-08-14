@@ -10,7 +10,10 @@ import {
   getSession,
   isAuthRequired,
   isTrustedOrigin,
-  requireSession
+  requestScheme,
+  requireSession,
+  SessionValidationBusyError,
+  validateSession
 } from './auth';
 
 const mockResponse = () => {
@@ -20,7 +23,7 @@ const mockResponse = () => {
   return res;
 };
 
-const corsHeaders = async (origin: string) => {
+const corsHeaders = async (origin: string, scheme = 'http') => {
   const headers = new Map<string, unknown>();
   const req: any = { 'method': 'GET', 'headers': { origin, 'host': 'planet.local:5000' } };
   const res: any = {
@@ -28,7 +31,7 @@ const corsHeaders = async (origin: string) => {
     'setHeader': (name: string, value: unknown) => headers.set(name.toLowerCase(), value)
   };
   const middleware = cors((request, callback) => {
-    callback(null, browserCorsOptions(request.headers.origin, request.headers.host));
+    callback(null, browserCorsOptions(request.headers.origin, request.headers.host, scheme));
   });
   await new Promise<void>((resolve, reject) => middleware(req, res, (error?: unknown) => error ? reject(error) : resolve()));
   return headers;
@@ -73,11 +76,21 @@ describe('authentication middleware', () => {
   });
 
   it('trusts exact request hosts and configured origins only', () => {
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example:8443')).toEqual(true);
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example')).toEqual(false);
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example:8443', 'https')).toEqual(true);
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(false);
     process.env.CORS_ORIGINS = 'https://planet.example:8443';
-    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example')).toEqual(true);
-    expect(isTrustedOrigin('not a URL', 'planet.example')).toEqual(false);
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example', 'https')).toEqual(true);
+    expect(isTrustedOrigin('not a URL', 'planet.example', 'https')).toEqual(false);
+  });
+
+  it('requires matching schemes for same-origin browser access', () => {
+    expect(isTrustedOrigin('https://planet.example:8443', 'planet.example:8443', 'https')).toEqual(true);
+    expect(isTrustedOrigin('http://planet.example:8443', 'planet.example:8443', 'https')).toEqual(false);
+  });
+
+  it('uses the original proxy scheme when supplied', () => {
+    expect(requestScheme({ 'x-forwarded-proto': 'https, http' })).toEqual('https');
+    expect(requestScheme({})).toEqual('http');
   });
 
   it('reflects trusted CORS origins and emits no wildcard for untrusted origins', async () => {
@@ -88,6 +101,11 @@ describe('authentication middleware', () => {
     expect(trusted.get('access-control-allow-origin')).toEqual('http://localhost:3000');
     expect(trusted.get('access-control-allow-credentials')).toEqual('true');
     expect(untrusted.has('access-control-allow-origin')).toEqual(false);
+  });
+
+  it('does not reflect a same-host origin with the wrong scheme', async () => {
+    const headers = await corsHeaders('http://planet.local:5000', 'https');
+    expect(headers.has('access-control-allow-origin')).toEqual(false);
   });
 
   it('bypasses validation when disabled', async () => {
@@ -142,6 +160,22 @@ describe('authentication middleware', () => {
     await requireSession({ 'headers': { 'cookie': 'AuthSession=deadbeef' } } as any, res, next);
     expect(res.status).toHaveBeenCalledWith(503);
     expect(next).not.toHaveBeenCalled();
+  });
+
+  it('bounds concurrent CouchDB session validation for HTTP and WebSocket callers', async () => {
+    const resolvers: Array<(response: any) => void> = [];
+    fetchMock.mockImplementation(() => new Promise((resolve) => resolvers.push(resolve)));
+    const validations = Array.from({ 'length': 8 }, (unused, index) => {
+      void unused;
+      return validateSession(`AuthSession=${index}`);
+    });
+    await vi.waitFor(() => expect(resolvers).toHaveLength(8));
+    await expect(validateSession('AuthSession=overflow')).rejects.toBeInstanceOf(SessionValidationBusyError);
+    resolvers.forEach((resolve) => resolve({
+      'ok': true,
+      'json': async () => ({ 'userCtx': { 'name': 'amara', 'roles': [] } })
+    }));
+    await Promise.all(validations);
   });
 
   it.each([ 408, 429 ])('returns 503 when CouchDB session validation responds with %s', async (status) => {

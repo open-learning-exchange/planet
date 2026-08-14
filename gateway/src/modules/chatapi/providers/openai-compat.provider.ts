@@ -3,8 +3,9 @@ import OpenAI from 'openai';
 import { ProviderChatRequest, ProviderChatResult } from '../models/chat.model';
 import { ProviderError } from '../utils/http-error';
 
-const isUsableTextCompletion = (finishReason: string | null): boolean =>
-  finishReason === 'stop' || finishReason === 'length';
+const isUsableTextCompletion = (text: string, finishReason: string | null): boolean =>
+  !!text && (finishReason === null || finishReason === 'stop' || finishReason === 'length' ||
+    finishReason === 'content_filter' || finishReason === 'tool_calls');
 
 /** Run chat through providers exposing an OpenAI-compatible Chat Completions API. */
 export async function compatChat(client: OpenAI, request: ProviderChatRequest): Promise<ProviderChatResult> {
@@ -23,12 +24,9 @@ export async function compatChat(client: OpenAI, request: ProviderChatRequest): 
     if (!choice) {
       throw new ProviderError('Unexpected AI response');
     }
-    if (!isUsableTextCompletion(choice.finish_reason)) {
-      throw new ProviderError('AI response incomplete');
-    }
-    const text = choice.message?.content;
-    if (!text) {
-      throw new ProviderError('Unexpected AI response');
+    const text = choice.message?.content || '';
+    if (!isUsableTextCompletion(text, choice.finish_reason)) {
+      throw new ProviderError(text ? 'AI response incomplete' : 'Unexpected AI response');
     }
     return { text, 'citations': [] };
   }
@@ -48,11 +46,8 @@ export async function compatChat(client: OpenAI, request: ProviderChatRequest): 
       request.onDelta(delta);
     }
   }
-  if (!isUsableTextCompletion(finishReason)) {
-    throw new ProviderError('AI response incomplete');
-  }
-  if (!text) {
-    throw new ProviderError('Unexpected AI response');
+  if (!isUsableTextCompletion(text, finishReason)) {
+    throw new ProviderError(text ? 'AI response incomplete' : 'Unexpected AI response');
   }
   return { text, 'citations': [] };
 }

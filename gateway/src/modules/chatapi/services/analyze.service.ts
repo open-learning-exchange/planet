@@ -1,7 +1,7 @@
 import { AIProvider, ProviderName } from '../models/chat.model';
 import { instructionsForLocale } from '../prompts/default-prompts';
 import { analysisJsonSchema, AnalyzeExam, AnalyzeQuestion, buildSurveyAnalysisPrompt } from '../prompts/survey-analysis';
-import { runProviderChat } from '../providers';
+import { providerSupports, runProviderChat } from '../providers';
 import { HttpError, toHttpError } from '../utils/http-error';
 import { resolveProviderName } from '../utils/provider-name';
 import { getAIConfig } from './config.service';
@@ -60,11 +60,12 @@ export async function analyze(payload: AnalyzePayload, signal?: AbortSignal): Pr
   };
 
   try {
-    const result = await runProviderChat(runtime, providerName === 'openai'
+    const usesStructuredOutput = providerSupports(providerName, 'structuredOutput');
+    const result = await runProviderChat(runtime, usesStructuredOutput
       ? { ...request, 'jsonSchema': analysisJsonSchema }
       : request);
-    const sections = providerName === 'openai' ? parseSections(result.text) : null;
-    if (providerName === 'openai' && !sections) {
+    const sections = usesStructuredOutput ? parseSections(result.text) : null;
+    if (usesStructuredOutput && !sections) {
       throw new HttpError(502, 'AI analysis returned no usable sections');
     }
     return {

@@ -33,6 +33,9 @@ export interface ChatRequestPayload {
   _id?: string;
 }
 
+export const isNonEmptyObject = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length > 0;
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;

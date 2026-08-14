@@ -71,16 +71,16 @@ describe('OpenAI-compatible provider', () => {
     })).resolves.toEqual({ 'text': 'partial', 'citations': [] });
   });
 
-  it('rejects non-text terminal reasons', async () => {
+  it('preserves non-empty content with a provider-specific terminal reason', async () => {
     const client: any = {
       'chat': { 'completions': { 'create': vi.fn().mockResolvedValue({
         'choices': [ { 'message': { 'content': 'blocked' }, 'finish_reason': 'content_filter' } ]
       }) } }
     };
-    await expect(compatChat(client, baseRequest())).rejects.toThrow('AI response incomplete');
+    await expect(compatChat(client, baseRequest())).resolves.toEqual({ 'text': 'blocked', 'citations': [] });
   });
 
-  it('rejects a stream that ends without a terminal reason', async () => {
+  it('preserves a non-empty stream that ends without a terminal reason', async () => {
     const client: any = {
       'chat': {
         'completions': {
@@ -91,6 +91,6 @@ describe('OpenAI-compatible provider', () => {
       }
     };
     await expect(compatChat(client, { ...baseRequest(), 'onDelta': () => undefined }))
-      .rejects.toThrow('AI response incomplete');
+      .resolves.toEqual({ 'text': 'partial', 'citations': [] });
   });
 });

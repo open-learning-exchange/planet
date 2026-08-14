@@ -20,6 +20,9 @@ export const providerCapabilities = (name: string): ProviderCapability[] => {
   return [ ...CAPABILITIES[name as ProviderName] ];
 };
 
+export const providerSupports = (name: ProviderName, capability: ProviderCapability): boolean =>
+  CAPABILITIES[name].includes(capability);
+
 export async function runProviderChat(runtime: ProviderRuntime, request: ProviderChatRequest): Promise<ProviderChatResult> {
   if (!runtime.enabled || !runtime.client) {
     throw new HttpError(503, `AI provider "${runtime.name}" is not configured`);
@@ -27,14 +30,12 @@ export async function runProviderChat(runtime: ProviderRuntime, request: Provide
   if (!request.model) {
     throw new HttpError(400, `No model configured for AI provider "${runtime.name}"`);
   }
-  if (runtime.name !== 'openai') {
-    const unsupported = [
-      request.vectorStoreIds?.length ? 'file search' : undefined,
-      request.jsonSchema ? 'structured output' : undefined
-    ].filter(Boolean);
-    if (unsupported.length) {
-      throw new HttpError(400, `AI provider "${runtime.name}" does not support: ${unsupported.join(', ')}`);
-    }
+  const unsupported = [
+    request.vectorStoreIds?.length && !providerSupports(runtime.name, 'fileSearch') ? 'file search' : undefined,
+    request.jsonSchema && !providerSupports(runtime.name, 'structuredOutput') ? 'structured output' : undefined
+  ].filter(Boolean);
+  if (unsupported.length) {
+    throw new HttpError(400, `AI provider "${runtime.name}" does not support: ${unsupported.join(', ')}`);
   }
   const controller = new AbortController();
   const abortFromCaller = () => controller.abort(request.signal?.reason);
