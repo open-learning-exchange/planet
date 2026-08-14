@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   'resourceDB': { 'get': vi.fn(), 'insert': vi.fn(), 'destroy': vi.fn(), 'attachment': { 'get': vi.fn() } },
-  'resourceRequest': vi.fn(),
+  'requestResourceDatabase': vi.fn(),
   'listResourceLocalDocs': vi.fn(),
   'getAIConfig': vi.fn()
 }));
 
 vi.mock('../../../config/couch.config', () => ({
   'listResourceLocalDocs': mocks.listResourceLocalDocs,
-  'resourceRequest': mocks.resourceRequest,
+  'requestResourceDatabase': mocks.requestResourceDatabase,
   'resourceDB': mocks.resourceDB
 }));
 vi.mock('./config.service', () => ({ 'getAIConfig': mocks.getAIConfig }));
@@ -56,7 +56,7 @@ const fakeClient = () => ({
 describe('resource index service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.resourceRequest.mockImplementation((options: any) => {
+    mocks.requestResourceDatabase.mockImplementation((options: any) => {
       if (options.att) {
         return mocks.resourceDB.attachment.get(options.doc, options.att);
       }
@@ -305,7 +305,7 @@ describe('resource index service', () => {
 
   it('cancels a stalled CouchDB read at the indexing deadline', async () => {
     process.env.RESOURCE_INDEX_TIMEOUT_MS = '20';
-    mocks.resourceRequest.mockImplementation((options: { signal: AbortSignal }) => new Promise((resolve, reject) => {
+    mocks.requestResourceDatabase.mockImplementation((options: { signal: AbortSignal }) => new Promise((resolve, reject) => {
       void resolve;
       options.signal.addEventListener('abort', () => reject(options.signal.reason), { 'once': true });
     }));
@@ -314,7 +314,7 @@ describe('resource index service', () => {
       'statusCode': 504,
       'message': 'Resource indexing timed out'
     });
-    expect(mocks.resourceRequest.mock.calls[0][0].signal).toBeInstanceOf(AbortSignal);
+    expect(mocks.requestResourceDatabase.mock.calls[0][0].signal).toBeInstanceOf(AbortSignal);
   });
 
   it('cleans up local and remote state when eligible attachments are gone', async () => {
@@ -390,7 +390,7 @@ describe('resource index service', () => {
     expect(mocks.resourceDB.destroy).not.toHaveBeenCalled();
   });
 
-  it('allows only managers to clean retained state after the resource document is gone', async () => {
+  it('allows only resource-index administrators to clean retained state after the resource document is gone', async () => {
     mocks.resourceDB.get.mockImplementation((id: string) => id.startsWith('_local/')
       ? Promise.resolve(localState())
       : Promise.reject(notFound()));
@@ -399,6 +399,8 @@ describe('resource index service', () => {
     await expect(deleteResourceIndex(async () => client, 'res1', { 'name': 'amara', 'roles': [ 'learner' ] }))
       .rejects.toMatchObject({ 'statusCode': 403 });
     await expect(deleteResourceIndex(async () => client, 'res1', { 'name': 'manager', 'roles': [ 'manager' ] }))
+      .resolves.toEqual({ 'removed': true });
+    await expect(deleteResourceIndex(async () => client, 'res1', { 'name': 'admin', 'roles': [ '_admin' ] }))
       .resolves.toEqual({ 'removed': true });
   });
 

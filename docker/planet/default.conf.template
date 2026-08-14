@@ -146,8 +146,7 @@ server {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
-    proxy_read_timeout 3600s;
-    proxy_send_timeout 130s;
+    proxy_read_timeout 900s;
     client_max_body_size 1024M;
   }
 
@@ -155,8 +154,6 @@ server {
     proxy_pass       http://chatapi:5000/;
     proxy_set_header Host      $http_host;
     proxy_set_header X-Real-IP $remote_addr;
-    proxy_read_timeout 130s;
-    proxy_send_timeout 130s;
     client_max_body_size 1024M;
   }
 

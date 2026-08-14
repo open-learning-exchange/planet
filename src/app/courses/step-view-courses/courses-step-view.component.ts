@@ -12,7 +12,6 @@ import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submis
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
@@ -79,6 +78,37 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
+  get localizedStepInfo(): string {
+    const title = this.stepDetail?.stepTitle;
+    const description = this.stepDetail?.description;
+    return $localize`The following information is a course step from the "${title}" course with a description "${description}".
+  Be sure to assist the learner in the best way you can. `;
+  }
+
+  get chatContext(): ChatContext {
+    return {
+      'type': 'coursestep',
+      'data': this.localizedStepInfo,
+      ...(!this.parent && this.resource?._id ? {
+        'resource': { 'id': this.resource._id, 'attachments': this.resource._attachments }
+      } : {})
+    };
+  }
+
+  get isMobile(): boolean {
+    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  get hasActionButtons(): boolean {
+    const hasExam = !!this.stepDetail?.exam?.questions.length;
+    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
+    return (this.isChatEnabled && !!this.stepDetail?.description) ||
+      this.attempts > 0 ||
+      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
+      (this.canManage && (hasExam || hasSurvey)) ||
+      (this.stepDetail?.resources?.length || 0) !== 0;
+  }
+
   constructor(
     private chatService: ChatService,
     private coursesService: CoursesService,
@@ -97,20 +127,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize') onResize() {
     this.deviceType = this.deviceInfoService.getDeviceType();
-  }
-
-  get isMobile(): boolean {
-    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
-
-  get hasActionButtons(): boolean {
-    const hasExam = !!this.stepDetail?.exam?.questions.length;
-    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isChatEnabled && !!this.stepDetail?.description) ||
-      this.attempts > 0 ||
-      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
-      (this.canManage && (hasExam || hasSurvey)) ||
-      (this.stepDetail?.resources?.length || 0) !== 0;
   }
 
   ngOnInit() {
@@ -291,20 +307,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
-  }
-
-  get localizedStepInfo(): string {
-    return coursesStepPrompt(this.stepDetail?.stepTitle, this.stepDetail?.description);
-  }
-
-  get chatContext(): ChatContext {
-    return {
-      'type': 'coursestep',
-      'data': this.localizedStepInfo,
-      ...(!this.parent && this.resource?._id ? {
-        'resource': { 'id': this.resource._id, 'attachments': this.resource._attachments }
-      } : {})
-    };
   }
 
 }

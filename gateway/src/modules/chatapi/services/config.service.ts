@@ -27,19 +27,11 @@ const PROVIDER_BASE_URLS: Record<ProviderName, string | undefined> = {
   'gemini': 'https://generativelanguage.googleapis.com/v1beta/openai/'
 };
 
-const DEFAULT_CONFIG_TTL_MS = 30000;
-const MAX_CONFIG_ERROR_RETRY_MS = 5000;
+const CONFIG_CACHE_TTL_MS = 30000;
+const CONFIG_ERROR_RETRY_TTL_MS = 5000;
 
 let cache: { expires: number; value: AIConfig } | undefined;
 let refreshInFlight: Promise<AIConfig> | undefined;
-
-const positiveNumberOr = (value: string | undefined, fallback: number): number => {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-};
-
-const configTtl = (): number => positiveNumberOr(process.env.CONFIG_TTL_MS, DEFAULT_CONFIG_TTL_MS);
-const configErrorRetryTtl = (): number => Math.min(configTtl(), MAX_CONFIG_ERROR_RETRY_MS);
 
 const isRecord = (value: any): boolean => typeof value === 'object' && value !== null;
 
@@ -98,11 +90,11 @@ const buildConfig = (doc: AIConfigDoc): AIConfig => ({
 const refreshAIConfig = async (): Promise<AIConfig> => {
   try {
     const doc = await loadConfigDoc();
-    cache = { 'expires': Date.now() + configTtl(), 'value': buildConfig(doc) };
+    cache = { 'expires': Date.now() + CONFIG_CACHE_TTL_MS, 'value': buildConfig(doc) };
   } catch (error) {
     console.error(`chatapi: error loading AI configuration: ${error}`);
     cache = {
-      'expires': Date.now() + configErrorRetryTtl(),
+      'expires': Date.now() + CONFIG_ERROR_RETRY_TTL_MS,
       'value': cache?.value || buildConfig({})
     };
   }

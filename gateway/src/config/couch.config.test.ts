@@ -41,9 +41,9 @@ describe('CouchDB configuration', () => {
 
   it('passes cancellation through resource database requests', async () => {
     const controller = new AbortController();
-    const { resourceRequest } = await import('./couch.config');
+    const { requestResourceDatabase } = await import('./couch.config');
 
-    resourceRequest({ 'doc': 'resource-1', 'signal': controller.signal });
+    requestResourceDatabase({ 'doc': 'resource-1', 'signal': controller.signal });
 
     expect(mocks.request).toHaveBeenCalledWith({
       'db': 'resources',

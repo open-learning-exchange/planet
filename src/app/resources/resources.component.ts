@@ -352,7 +352,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Immediate cleanup is best-effort; the gateway retains failed index state for reconciliation.
+  // Do not block resource deletion when AI index cleanup is unavailable.
+  // The gateway retries retained index state after the resource document is deleted.
   private cleanupResourceIndexes(resources: any[]): Observable<boolean> {
     if (resources.length === 0 || !this.chatService.hasFileSearchProvider()) {
       return of(false);

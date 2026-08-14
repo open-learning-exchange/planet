@@ -15,12 +15,9 @@ export class SessionValidationError extends Error {
   }
 }
 
-const MANAGE_ROLES = [ '_admin', 'manager' ];
 const UNAVAILABLE_SESSION_STATUSES = new Set([ 408, 429 ]);
 const DEFAULT_SESSION_TIMEOUT_MS = 10000;
 const MAX_TIMER_DURATION_MS = 2147483647;
-
-export const canManageResources = (roles: string[]): boolean => roles.some((role) => MANAGE_ROLES.includes(role));
 
 const authDisabled = () => (process.env.CHATAPI_AUTH || '').toLowerCase() === 'none';
 const sessionTimeout = (): number => {

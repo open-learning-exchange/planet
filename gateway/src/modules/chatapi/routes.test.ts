@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 const mocks = vi.hoisted(() => ({
   'chat': vi.fn(),
   'deleteResourceIndex': vi.fn(),
+  'fileSearchContentTypes': [ 'application/pdf', 'text/plain' ],
   'getOpenAIIndexClient': vi.fn(),
   'getAIConfig': vi.fn()
 }));
@@ -13,6 +14,7 @@ vi.mock('./services/analyze.service', () => ({ 'analyze': vi.fn() }));
 vi.mock('./services/config.service', () => ({ 'getAIConfig': mocks.getAIConfig }));
 vi.mock('./services/resource-index.service', () => ({
   'deleteResourceIndex': mocks.deleteResourceIndex,
+  'FILE_SEARCH_CONTENT_TYPES': mocks.fileSearchContentTypes,
   'getOpenAIIndexClient': mocks.getOpenAIIndexClient
 }));
 
@@ -162,7 +164,7 @@ describe('chatapi HTTP routes', () => {
     expect(rejected.res.status).toHaveBeenCalledWith(429);
   });
 
-  it('reloads provider configuration during discovery', async () => {
+  it('returns current provider capabilities and file-search content types', async () => {
     mocks.getAIConfig.mockResolvedValue({
       'providers': {
         'openai': { 'enabled': true },
@@ -177,6 +179,17 @@ describe('chatapi HTTP routes', () => {
     await handler(req, res);
 
     expect(mocks.getAIConfig).toHaveBeenCalledWith(true);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+      'openai': {
+        'enabled': true,
+        'capabilities': expect.arrayContaining([ 'chat', 'fileSearch' ]),
+        'fileSearchContentTypes': mocks.fileSearchContentTypes
+      },
+      'perplexity': expect.objectContaining({
+        'enabled': false,
+        'fileSearchContentTypes': []
+      })
+    }));
   });
 
   it('aborts provider work after the request disconnects', async () => {

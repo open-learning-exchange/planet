@@ -1,127 +1,156 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { of, throwError } from 'rxjs';
+import { vi } from 'vitest';
+
 import { ResourcesComponent } from './resources.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MaterialModule } from '../shared/material.module';
-import { RouterModule } from '@angular/router';
-import { CouchService } from '../shared/couchdb.service';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+
+const createComponent = (
+  couchService: object,
+  chatService: object,
+  planetMessageService: object = { 'showAlert': vi.fn(), 'showMessage': vi.fn() },
+  resourcesService: object = { 'requestResourcesUpdate': vi.fn() }
+) => new ResourcesComponent(
+  couchService as any,
+  {} as any,
+  {} as any,
+  { 'snapshot': { 'data': { 'parent': false } } } as any,
+  planetMessageService as any,
+  { 'get': () => ({ 'name': 'amara' }) } as any,
+  resourcesService as any,
+  {} as any,
+  {} as any,
+  { 'configuration': { 'planetType': 'community', 'code': 'planet-a' } } as any,
+  {} as any,
+  {} as any,
+  {} as any,
+  { 'watchDeviceType': () => of(0) } as any,
+  {} as any,
+  { 'hasFileSearchProvider': () => true, ...chatService } as any
+);
 
 describe('ResourcesComponent', () => {
-  /*
-  let component: ResourcesComponent;
-  let fixture: ComponentFixture<ResourcesComponent>;
-  // let putSpy: any;
-  let getSpy: any;
-  let couchService;
-  let statusElement;
-  let de;
-  let motoristshandbook;
-  let blob;
-  let fakeF;
+  describe('AI index cleanup', () => {
+    it('requests immediate index cleanup before deleting a resource', async () => {
+      const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
+      const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(of({ 'results': [] })) };
+      const component = createComponent(couchService, chatService);
+      const resource = { '_id': 'res1', '_rev': '1-a', 'doc': { 'title': 'Guide' } };
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterModule, HttpClientModule, RouterTestingModule, MaterialModule, BrowserAnimationsModule ],
-      declarations: [ ResourcesComponent ],
-      providers: [ CouchService ]
+      await component.deleteResource(resource).request.toPromise();
+
+      expect(chatService.removeResourceIndexes).toHaveBeenCalledWith([ 'res1' ]);
+      expect(couchService.delete).toHaveBeenCalledWith('resources/res1?rev=1-a');
     });
-    fixture = TestBed.createComponent(ResourcesComponent);
-    component = fixture.componentInstance;
-    de = fixture.debugElement;
-    couchService = fixture.debugElement.injector.get(CouchService);
-    statusElement = de.nativeElement.querySelector('.km-resources-title');
-    motoristshandbook = { filename: 'motorists-handbook.pdf', id: 'motorists-handbook.pdf', mediaType: 'pdf',
-                          attachments: { 'motorists-handbook.pdf': { content_type: 'application/pdf' } }, sum: 16, timesRated: 4 };
-    motoristshandbook.Event = ({
-       type : 'change',
-       target: {
-         files: FileList
-       }
+
+    it('still deletes and warns when the gateway cannot clean the index immediately', async () => {
+      const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
+      const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(throwError({ 'status': 502 })) };
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent(couchService, chatService, planetMessageService);
+
+      await expect(component.deleteResource({ '_id': 'res1', '_rev': '1-a' }).request.toPromise())
+        .resolves.toEqual({ 'id': 'res1' });
+
+      expect(couchService.delete).toHaveBeenCalled();
+      expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
     });
-    blob = new Blob([ '' ], { type: 'text/html' });
-    blob['lastModifiedDate'] = '11/14/2017';
-    blob['name'] = 'motoristshandbook';
-    fakeF = <File>blob;
 
-  });
+    it('warns for structured deferred cleanup without displaying gateway text', async () => {
+      const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
+      const chatService = {
+        'removeResourceIndexes': vi.fn().mockReturnValue(of({
+          'results': [ { 'resourceId': 'res1', 'removed': false, 'deferred': true } ]
+        }))
+      };
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent(couchService, chatService, planetMessageService);
 
-  it('should be created', () => {
-    expect(component).toBeTruthy();
-  });
+      await component.deleteResource({ '_id': 'res1', '_rev': '1-a' }).request.toPromise();
 
-  /*
-  it('should getRating', () => {
-    component.getRating(motoristshandbook.sum, motoristshandbook.timesRated);
-    expect(component.rating).toEqual(4.0);
-  });
-  */
+      expect(planetMessageService.showAlert).toHaveBeenCalledWith(
+        'The resource was deleted, but its AI search index could not be cleaned up now. Cleanup will be retried.'
+      );
+    });
 
-  /*
-  it('should bindFile', () => {
-    component.bindFile(motoristshandbook.Event);
-    expect(component.file).toEqual(motoristshandbook.Event.target.files[0]);
-  });
-  */
+    it('uses one cleanup request before bulk deletion regardless of selection size', async () => {
+      const couchService = { 'post': vi.fn().mockReturnValue(of([])) };
+      const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(of({ 'results': [] })) };
+      const component = createComponent(couchService, chatService);
+      const resources = Array.from({ length: 40 }, (_, index) => ({ '_id': `res${index}`, '_rev': '1-a' }));
 
-  /*
-  it('should make a put request to couchService', () =>{
-    putSpy =spyOn(couchService, 'put').and.returnValue(Promise.resolve({filename:fakeF.name, motoristshandbook}));
-        component.file=fakeF;
-        component.submitResource();
-        fixture.whenStable().then(() =>{
-          fixture.detectChanges();
-          expect(putSpy).toHaveBeenCalled();
-        });
-  }));
+      await component.deleteResources(resources).request.toPromise();
 
-  it('should submitResources successfully', ()=>{
-      putSpy =spyOn(couchService, 'put').and.returnValue(Promise.resolve(motoristshandbook));
-        component.file = fakeF;
-        component.submitResource();
-      fixture.whenStable().then(() =>{
-        fixture.detectChanges();
-        expect(component.message).toBe('Success');
-      });
-  });
+      expect(chatService.removeResourceIndexes).toHaveBeenCalledTimes(1);
+      expect(chatService.removeResourceIndexes).toHaveBeenCalledWith(resources.map((resource) => resource._id));
+      expect(couchService.post).toHaveBeenCalledTimes(1);
+    });
 
-  it('should There was a error submitResource',()=>{
-      putSpy =spyOn(couchService, 'put').and.returnValue(Promise.reject({}));
-        component.file = fakeF;
-        component.submitResource;
-        fixture.whenStable().then(() =>{
-          fixture.detectChanges();
-          expect(component.message).toBe('Error');
-        });
-  });
+    it('cleans one immediate batch without reporting planned reconciliation as a failure', async () => {
+      const couchService = { 'post': vi.fn().mockReturnValue(of([])) };
+      const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(of({ 'results': [] })) };
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent(couchService, chatService, planetMessageService);
+      const resources = Array.from({ length: 501 }, (_, index) => ({ '_id': `res${index}`, '_rev': '1-a' }));
 
-  // test getResources()
-  it('should make a get request to couchService', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(of().map).and.callThrough();
-    component.getResources();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(getSpy).toHaveBeenCalledWith('resources/_all_docs?include_docs=true');
+      await component.deleteResources(resources).request.toPromise();
+
+      expect(chatService.removeResourceIndexes).toHaveBeenCalledTimes(1);
+      expect(chatService.removeResourceIndexes.mock.calls[0][0]).toHaveLength(500);
+      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+    });
+
+    it('skips index cleanup when no file-search provider is enabled', async () => {
+      const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
+      const chatService = {
+        'hasFileSearchProvider': () => false,
+        'removeResourceIndexes': vi.fn()
+      };
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent(couchService, chatService, planetMessageService);
+
+      await component.deleteResource({ '_id': 'res1', '_rev': '1-a' }).request.toPromise();
+
+      expect(chatService.removeResourceIndexes).not.toHaveBeenCalled();
+      expect(couchService.delete).toHaveBeenCalled();
+      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
     });
   });
 
-  it('should getResources', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(of(motoristshandbook).map).and.callThrough();
-    component.getResources();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(statusElement.textContent).toBe(motoristshandbook.filename);
-    });
-  });
+  describe('deletion results', () => {
+    it('removes a successfully deleted resource from the current table', () => {
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent({}, { 'hasFileSearchProvider': () => false }, planetMessageService);
+      const resource = { '_id': 'res1', '_rev': '1-a', 'doc': { 'title': 'Guide' } };
+      component.resources.data = [ resource, { '_id': 'res2' } ];
+      component.selection.select(resource._id);
+      component.deleteDialog = { 'close': vi.fn() };
 
-  it('should There was a problem getResource', () => {
-    getSpy = spyOn(couchService, 'get').and.returnValue(Rx.Observable.throw({ Error }));
-    component.getResources();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(component.message).toBe('Error');
+      component.deleteResource(resource).onNext({ 'id': resource._id });
+
+      expect(component.resources.data).toEqual([ { '_id': 'res2' } ]);
+      expect(component.selection.isSelected(resource._id)).toEqual(false);
+      expect(component.deleteDialog.close).toHaveBeenCalled();
+      expect(planetMessageService.showMessage).toHaveBeenCalledWith('You have deleted resource: Guide');
+    });
+
+    it('refreshes the resource list after a successful bulk deletion', () => {
+      const resourcesService = { 'requestResourcesUpdate': vi.fn() };
+      const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
+      const component = createComponent(
+        {},
+        { 'hasFileSearchProvider': () => false },
+        planetMessageService,
+        resourcesService
+      );
+      const resources = [ { '_id': 'res1' }, { '_id': 'res2' } ];
+      component.selection.select(...resources.map((resource) => resource._id));
+      component.deleteDialog = { 'close': vi.fn() };
+
+      component.deleteResources(resources).onNext([]);
+
+      expect(resourcesService.requestResourcesUpdate).toHaveBeenCalledWith(false);
+      expect(component.selection.isEmpty()).toEqual(true);
+      expect(component.deleteDialog.close).toHaveBeenCalled();
+      expect(planetMessageService.showMessage).toHaveBeenCalledWith('You have deleted 2 resources');
     });
   });
-  */
 });

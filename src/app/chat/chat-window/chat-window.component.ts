@@ -48,20 +48,17 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   private pendingStreamingTurnId?: string;
   spinnerOn = true;
   streaming: boolean;
-  streamingPending = false;
   clearChat = true;
   provider: AIProvider;
   readonly attachedResourceLabel = $localize`Attached resource`;
   selectedConversationId: any;
   promptForm: PromptFormGroup;
-  data: ConversationForm = {
-    user: this.userService.get().name,
-    content: '',
-    mode: 'general_chat',
-    context: '',
-  };
   providers: AIProvider[] = [];
   trackByFn = trackByIdVal;
+
+  get streamingPending(): boolean {
+    return this.pendingStreamingTurnId !== undefined;
+  }
 
   constructor(
     private chatService: ChatService,
@@ -78,7 +75,7 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscribeToNewChatSelected();
     this.subscribeToSelectedConversation();
     this.subscribeToAIService();
-    this.checkStreamingStatusAndInitialize();
+    this.initializeStreaming();
     this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
       this.providers = providers;
     });
@@ -149,12 +146,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private cancelPendingStreamingTurn() {
-    if (!this.streamingPending) {
+    if (!this.pendingStreamingTurnId) {
       return;
     }
     this.chatService.closeWebSocket();
     this.pendingStreamingTurnId = undefined;
-    this.streamingPending = false;
   }
 
   createForm() {
@@ -186,30 +182,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setSelectedConversation(): void {
-    if (this.selectedConversationId) {
-      this.data = {
-        ...this.data,
-        _id: this.selectedConversationId._id,
-        _rev: this.selectedConversationId._rev,
-      };
-    } else {
-      delete this.data._id;
-      delete this.data._rev;
-    }
-  }
-
-  checkStreamingStatusAndInitialize() {
-    this.isStreamingEnabled();
+  initializeStreaming() {
+    this.streaming = !!this.stateService.configuration.streaming;
     if (this.streaming) {
       this.initializeChatStream();
       this.initializeErrorStream();
     }
-  }
-
-  isStreamingEnabled() {
-    const configuration = this.stateService.configuration;
-    this.streaming = configuration.streaming;
   }
 
   initializeErrorStream() {
@@ -230,15 +208,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         this.promptForm.controls.prompt.setValue('');
       }
       this.pendingStreamingTurnId = undefined;
-      this.streamingPending = false;
       this.spinnerOn = true;
     });
   }
 
   initializeChatStream() {
-    // Subscribe to WebSocket messages
     this.chatService.getChatStream().pipe(takeUntil(this.onDestroy$)).subscribe((message) => {
-      // Handle incoming messages from the chat stream
       this.handleIncomingMessage(JSON.parse(message));
     });
   }
@@ -259,7 +234,6 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         pendingConversation.citations = message.citations;
       }
       this.pendingStreamingTurnId = undefined;
-      this.streamingPending = false;
       this.postSubmit();
     } else {
       this.spinnerOn = false;
@@ -284,61 +258,74 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
 
   submitPrompt() {
     const content = this.promptForm.controls.prompt.value;
-    const contextHasAttachments = hasSearchableAttachments(this.context?.resource?.attachments);
-    const attachmentProvider = contextHasAttachments
-      ? this.providers.find((provider) => provider.capabilities?.includes('fileSearch'))
-      : undefined;
-    const selectedProvider = attachmentProvider || this.provider || this.chatService.getChatAIProvider() || this.providers[0];
+    const selectedProvider = this.selectProvider();
     if (!selectedProvider) {
       return;
     }
-    this.data = {
-      ...this.data,
-      content,
-      aiProvider: selectedProvider,
-      mode: this.context?.type === 'coursestep' ? 'course_help' : 'general_chat'
-    };
-
-    // Attachment capability is a turn-level course requirement, not a change to
-    // the learner's provider preference for general chat.
-    if (!attachmentProvider) {
-      this.chatService.setChatAIProvider(selectedProvider);
-    }
-    this.setSelectedConversation();
-
-    if (this.context) {
-      this.data.context = this.context;
-    } else {
-      // this.data is reused across turns; don't let an old course/resource context leak
-      this.data.context = '';
-    }
+    const request = this.buildRequest(content, selectedProvider);
 
     if (this.streaming) {
-      const turnId = Date.now().toString();
-      this.pendingStreamingTurnId = turnId;
-      this.streamingPending = true;
-      this.conversations.push({ id: turnId, role: 'user', query: content, response: '' });
-      this.chatService.sendUserInput(this.data);
+      this.submitStreaming(request);
     } else {
-      this.chatService.getPrompt(this.data, true).subscribe(
-        (completion: any) => {
-          this.conversations.push({
-            id: Date.now().toString(), query: content, response: completion?.chat, citations: completion?.citations
-          });
-          this.selectedConversationId = {
-            _id: completion.couchDBResponse?.id,
-            _rev: completion.couchDBResponse?.rev
-          };
-          this.postSubmit();
-        },
-        (error: any) => {
-          const errorMessage = this.chatService.chatErrorMessage(error.error, error.message);
-          this.conversations.push({ id: Date.now().toString(), query: content, response: 'Error: ' + errorMessage, error: true });
-          this.spinnerOn = true;
-          this.promptForm.controls.prompt.setValue('');
-        }
-      );
+      this.submitNonStreaming(request);
     }
+  }
+
+  private selectProvider(): AIProvider | undefined {
+    const attachmentProvider = this.providers.find((provider) =>
+      provider.capabilities?.includes('fileSearch') &&
+      hasSearchableAttachments(this.context?.resource?.attachments, provider.fileSearchContentTypes)
+    );
+    const selectedProvider = attachmentProvider || this.provider || this.chatService.getChatAIProvider() || this.providers[0];
+    // A file-search override applies only to this course turn; preserve the general-chat preference.
+    if (selectedProvider && !attachmentProvider) {
+      this.chatService.setChatAIProvider(selectedProvider);
+    }
+    return selectedProvider;
+  }
+
+  private buildRequest(content: string, provider: AIProvider): ConversationForm {
+    return {
+      user: this.userService.get().name,
+      content,
+      'aiProvider': provider,
+      'mode': this.context?.type === 'coursestep' ? 'course_help' : 'general_chat',
+      'context': this.context || '',
+      ...(this.selectedConversationId ? {
+        '_id': this.selectedConversationId._id,
+        '_rev': this.selectedConversationId._rev
+      } : {})
+    };
+  }
+
+  private submitStreaming(request: ConversationForm) {
+    const turnId = Date.now().toString();
+    this.pendingStreamingTurnId = turnId;
+    this.conversations.push({ id: turnId, role: 'user', query: request.content, response: '' });
+    this.chatService.sendUserInput(request);
+  }
+
+  private submitNonStreaming(request: ConversationForm) {
+    this.chatService.getPrompt(request, true).subscribe(
+      (completion: any) => {
+        this.conversations.push({
+          id: Date.now().toString(), query: request.content, response: completion?.chat, citations: completion?.citations
+        });
+        this.selectedConversationId = {
+          '_id': completion.couchDBResponse?.id,
+          '_rev': completion.couchDBResponse?.rev
+        };
+        this.postSubmit();
+      },
+      (error: any) => {
+        const errorMessage = this.chatService.chatErrorMessage(error.error, error.message);
+        this.conversations.push({
+          id: Date.now().toString(), query: request.content, response: 'Error: ' + errorMessage, error: true
+        });
+        this.spinnerOn = true;
+        this.promptForm.controls.prompt.setValue('');
+      }
+    );
   }
 
   focusInput() {

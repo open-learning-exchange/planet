@@ -61,7 +61,7 @@ import {
     return this.baseUrl.replace(/^http/, 'ws').replace(/\/?$/, '/');
   }
 
-  initializeWebSocket() {
+  private initializeWebSocket() {
     if (!this.socket || this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING) {
       const socket = new WebSocket(this.webSocketUrl());
       this.socket = socket;
@@ -126,7 +126,11 @@ import {
           if (services) {
             return (Object.entries(services) as [ ProviderName, AIServices[ProviderName] ][])
               .filter(([ _, service ]) => service?.enabled === true)
-              .map(([ key, service ]) => ({ 'name': key, 'capabilities': service.capabilities || [] }));
+              .map(([ key, service ]) => ({
+                'name': key,
+                'capabilities': service.capabilities || [],
+                'fileSearchContentTypes': service.fileSearchContentTypes || []
+              }));
           }
           return null;
         })

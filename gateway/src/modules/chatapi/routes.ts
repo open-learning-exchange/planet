@@ -7,7 +7,11 @@ import { providerCapabilities } from './providers';
 import { analyze } from './services/analyze.service';
 import { chat } from './services/chat.service';
 import { getAIConfig } from './services/config.service';
-import { deleteResourceIndex, getOpenAIIndexClient } from './services/resource-index.service';
+import {
+  deleteResourceIndex,
+  FILE_SEARCH_CONTENT_TYPES,
+  getOpenAIIndexClient
+} from './services/resource-index.service';
 import { HttpError, httpErrorName, toHttpError } from './utils/http-error';
 
 const MAX_RESOURCE_CLEANUP_BATCH = 500;
@@ -86,12 +90,14 @@ export function registerChatApiRoutes(app: Express) {
     try {
       const config = await getAIConfig(true);
       const providers = PROVIDER_NAMES.reduce((result, name) => {
+        const capabilities = providerCapabilities(name);
         result[name] = {
           'enabled': config.providers[name].enabled,
-          'capabilities': providerCapabilities(name)
+          capabilities,
+          'fileSearchContentTypes': capabilities.includes('fileSearch') ? [ ...FILE_SEARCH_CONTENT_TYPES ] : []
         };
         return result;
-      }, {} as Record<string, { enabled: boolean; capabilities: string[] }>);
+      }, {} as Record<string, { enabled: boolean; capabilities: string[]; fileSearchContentTypes: string[] }>);
       res.status(200).json(providers);
     } catch (error) {
       handleError(res, error);

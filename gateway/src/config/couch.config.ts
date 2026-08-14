@@ -15,7 +15,7 @@ const withCredentials = (url: string, user: string, pass: string) => {
   return parsedUrl.toString().replace(/\/$/, '');
 };
 
-const withoutCredentials = (url: string) => {
+const stripUrlCredentials = (url: string) => {
   const parsedUrl = new URL(url);
   parsedUrl.username = '';
   parsedUrl.password = '';
@@ -23,7 +23,7 @@ const withoutCredentials = (url: string) => {
 };
 
 /** CouchDB base URL without embedded credentials for session validation. */
-const couchBaseUrl = withoutCredentials(couchUrl || defaultCouchUrl);
+const couchBaseUrl = stripUrlCredentials(couchUrl || defaultCouchUrl);
 
 const couchHost = couchUser && couchPass
   ? withCredentials(couchUrl || defaultCouchUrl, couchUser, couchPass)
@@ -37,13 +37,14 @@ const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
 const resourceIndexStatePrefix = '_local/chatapi-resource-index-';
 
-type CancellableRequestOptions = nano.RequestOptions & {
+/** Options supported by Nano at runtime but missing from its v10 RequestOptions type. */
+type ResourceRequestOptions = nano.RequestOptions & {
   signal?: AbortSignal;
   dontParse?: boolean;
 };
 
 /** Run a resource-database request that can be cancelled with its owning operation. */
-const resourceRequest = (options: CancellableRequestOptions) => db.request({
+const requestResourceDatabase = (options: ResourceRequestOptions) => db.request({
   ...options,
   'db': 'resources'
 } as nano.RequestOptions);
@@ -65,7 +66,7 @@ export {
   couchBaseUrl,
   examsDB,
   listResourceLocalDocs,
-  resourceRequest,
+  requestResourceDatabase,
   submissionsDB,
   teamsDB
 };

@@ -16,12 +16,10 @@ describe('AI configuration service', () => {
     vi.clearAllMocks();
     resetAIConfigCache();
     delete process.env.AI_REQUEST_TIMEOUT_MS;
-    delete process.env.CONFIG_TTL_MS;
   });
 
   afterEach(() => {
     delete process.env.AI_REQUEST_TIMEOUT_MS;
-    delete process.env.CONFIG_TTL_MS;
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -82,7 +80,6 @@ describe('AI configuration service', () => {
 
   it('caches a Planet configuration document with no AI fields as a stable empty config', async () => {
     vi.useFakeTimers();
-    process.env.CONFIG_TTL_MS = '30000';
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     mocks.configurationDB.list.mockResolvedValue(docRows({
       '_id': 'configuration',
@@ -179,7 +176,6 @@ describe('AI configuration service', () => {
 
   it('backs off failures briefly and recovers without waiting for the full config TTL', async () => {
     vi.useFakeTimers();
-    process.env.CONFIG_TTL_MS = '30000';
     mocks.configurationDB.list.mockRejectedValueOnce(new Error('connection refused'));
     let config = await getAIConfig();
     expect(config.providers.openai.enabled).toEqual(false);
@@ -198,14 +194,13 @@ describe('AI configuration service', () => {
 
   it('retains the last good config during a failed refresh', async () => {
     vi.useFakeTimers();
-    process.env.CONFIG_TTL_MS = '1';
     mocks.configurationDB.list.mockResolvedValueOnce(docRows({
       'keys': { 'openai': 'sk-1' },
       'models': { 'openai': 'gpt-test' }
     }));
     expect((await getAIConfig()).providers.openai.enabled).toEqual(true);
 
-    vi.advanceTimersByTime(2);
+    vi.advanceTimersByTime(30001);
     mocks.configurationDB.list.mockRejectedValueOnce(new Error('connection refused'));
     const config = await getAIConfig();
     expect(config.providers.openai.enabled).toEqual(true);
