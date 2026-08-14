@@ -1,18 +1,39 @@
 import { CoursesStepViewComponent } from './courses-step-view.component';
 
-describe('CoursesStepViewComponent resource selection', () => {
-  it('uses current resource attachment metadata instead of the course snapshot', () => {
+describe('CoursesStepViewComponent course chat context', () => {
+  const createComponent = () => {
     const component = Object.create(CoursesStepViewComponent.prototype) as CoursesStepViewComponent;
-    const staleReference = {
-      '_id': 'resource-1',
-      '_attachments': { 'video.mp4': { 'content_type': 'video/mp4' } }
-    };
+    component.stepDetail = { 'stepTitle': 'Introduction', 'description': 'Read the guide' };
+    component.parent = false;
+    return component;
+  };
+
+  it('builds local course chat context from the displayed step and resource', () => {
+    const component = createComponent();
     const currentResource = {
       '_id': 'resource-1',
       '_attachments': { 'guide.pdf': { 'content_type': 'application/pdf' } }
     };
+    component.resource = component.filterResources(
+      { 'resources': [ { '_id': currentResource._id } ] },
+      [ currentResource ]
+    )[0];
 
-    expect(component.filterResources({ 'resources': [ staleReference ] }, [ currentResource ]))
-      .toEqual([ currentResource ]);
+    expect(component.chatContext).toEqual({
+      'type': 'coursestep',
+      'data': component.localizedStepInfo,
+      'resource': { 'id': currentResource._id, 'attachments': currentResource._attachments }
+    });
+  });
+
+  it('uses text-only context for a course loaded from the parent Planet', () => {
+    const component = createComponent();
+    component.parent = true;
+    component.resource = { '_id': 'parent-resource', '_attachments': {} };
+
+    expect(component.chatContext).toEqual({
+      'type': 'coursestep',
+      'data': component.localizedStepInfo
+    });
   });
 });

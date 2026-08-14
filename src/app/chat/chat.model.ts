@@ -3,24 +3,16 @@ export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
 export interface AIProvider {
   name: ProviderName;
   capabilities?: string[];
+  fileSearchContentTypes?: string[];
 }
 
-// Keep aligned with SUPPORTED_CONTENT_TYPES in the gateway resource-index service.
-const SEARCHABLE_ATTACHMENT_TYPES = new Set([
-  'application/pdf',
-  'text/plain',
-  'text/markdown',
-  'text/html',
-  'application/json',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-]);
-
-export const hasSearchableAttachments = (attachments?: Record<string, unknown>): boolean =>
+export const hasSearchableAttachments = (
+  attachments?: Record<string, unknown>,
+  supportedContentTypes: string[] = []
+): boolean =>
   Object.values(attachments || {}).some((attachment: any) =>
     typeof attachment?.content_type === 'string' &&
-    SEARCHABLE_ATTACHMENT_TYPES.has(attachment.content_type.split(';', 1)[0].trim().toLowerCase())
+    supportedContentTypes.includes(attachment.content_type.split(';', 1)[0].trim().toLowerCase())
   );
 
 export type ChatMode = 'general_chat' | 'course_help' | 'survey_analysis';
@@ -84,6 +76,7 @@ export interface Message {
 export interface AIServiceStatus {
   enabled: boolean;
   capabilities: string[];
+  fileSearchContentTypes: string[];
 }
 
 export type AIServices = Record<ProviderName, AIServiceStatus>;

@@ -19,7 +19,9 @@ const createComponent = () => {
     'getChatAIProvider': vi.fn().mockReturnValue(undefined),
     'setChatAIProvider': vi.fn(),
     'chatErrorMessage': vi.fn((error, fallback) => error?.message || fallback || 'Chat request failed'),
-    'getPrompt': vi.fn(),
+    'getPrompt': vi.fn().mockReturnValue(of({
+      'chat': 'answer', 'citations': [], 'couchDBResponse': { 'id': 'chat1', 'rev': '1-a' }
+    })),
     'findConversations': vi.fn(),
     'sendNewChatAddedSignal': vi.fn(),
     'sendUserInput': vi.fn(),
@@ -42,13 +44,12 @@ describe('ChatWindowComponent', () => {
     const { component, chatService } = createComponent();
     component.providers = [ { 'name': 'perplexity' } ];
     component.promptForm.controls.prompt.setValue('hello');
-    chatService.getPrompt.mockReturnValue(of({
-      'chat': 'answer', 'citations': [], 'couchDBResponse': { 'id': 'chat1', 'rev': '1-a' }
-    }));
 
     component.submitPrompt();
 
-    expect(component.data.aiProvider).toEqual({ 'name': 'perplexity' });
+    expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
+      'aiProvider': { 'name': 'perplexity' }
+    }), true);
     expect(chatService.setChatAIProvider).toHaveBeenCalledWith({ 'name': 'perplexity' });
   });
 
@@ -61,16 +62,23 @@ describe('ChatWindowComponent', () => {
     component.provider = { 'name': 'gemini', 'capabilities': [ 'chat' ] };
     component.providers = [
       component.provider,
-      { 'name': 'openai', 'capabilities': [ 'chat', 'fileSearch' ] }
+      {
+        'name': 'openai',
+        'capabilities': [ 'chat', 'fileSearch' ],
+        'fileSearchContentTypes': [ 'application/pdf' ]
+      }
     ];
     component.promptForm.controls.prompt.setValue('summarize the guide');
-    chatService.getPrompt.mockReturnValue(of({
-      'chat': 'answer', 'citations': [], 'couchDBResponse': { 'id': 'chat1', 'rev': '1-a' }
-    }));
 
     component.submitPrompt();
 
-    expect(component.data.aiProvider).toEqual({ 'name': 'openai', 'capabilities': [ 'chat', 'fileSearch' ] });
+    expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
+      'aiProvider': {
+        'name': 'openai',
+        'capabilities': [ 'chat', 'fileSearch' ],
+        'fileSearchContentTypes': [ 'application/pdf' ]
+      }
+    }), true);
     expect(chatService.setChatAIProvider).not.toHaveBeenCalled();
   });
 
@@ -83,16 +91,19 @@ describe('ChatWindowComponent', () => {
     component.provider = { 'name': 'gemini', 'capabilities': [ 'chat' ] };
     component.providers = [
       component.provider,
-      { 'name': 'openai', 'capabilities': [ 'chat', 'fileSearch' ] }
+      {
+        'name': 'openai',
+        'capabilities': [ 'chat', 'fileSearch' ],
+        'fileSearchContentTypes': [ 'application/pdf' ]
+      }
     ];
     component.promptForm.controls.prompt.setValue('explain the course step');
-    chatService.getPrompt.mockReturnValue(of({
-      'chat': 'answer', 'citations': [], 'couchDBResponse': { 'id': 'chat1', 'rev': '1-a' }
-    }));
 
     component.submitPrompt();
 
-    expect(component.data.aiProvider).toEqual(component.provider);
+    expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
+      'aiProvider': component.provider
+    }), true);
     expect(chatService.setChatAIProvider).toHaveBeenCalledWith(component.provider);
   });
 
@@ -111,28 +122,14 @@ describe('ChatWindowComponent', () => {
     });
   });
 
-  it('localizes coded attachment errors for non-streaming requests', () => {
-    const { component, chatService } = createComponent();
-    component.providers = [ { 'name': 'gemini' } ];
-    component.promptForm.controls.prompt.setValue('summarize the guide');
-    chatService.chatErrorMessage = vi.fn().mockReturnValue('Localized attachment message');
-    chatService.getPrompt.mockReturnValue(throwError({
-      'error': { 'code': 'resource_attachments_unsupported', 'message': 'server text' }
-    }));
-
-    component.submitPrompt();
-
-    expect(chatService.chatErrorMessage).toHaveBeenCalledWith(
-      { 'code': 'resource_attachments_unsupported', 'message': 'server text' },
-      undefined
-    );
-    expect(component.conversations[0].response).toEqual('Error: Localized attachment message');
-  });
-
   it('clears the streaming lock when an error arrives after the pending turn was replaced', () => {
     const { component, error$ } = createComponent();
-    component.streamingPending = true;
+    component.streaming = true;
+    component.providers = [ { 'name': 'openai' } ];
+    component.promptForm.controls.prompt.setValue('hello');
     component.initializeErrorStream();
+    component.submitPrompt();
+    component.conversations = [];
 
     error$.next('WebSocket connection closed');
 

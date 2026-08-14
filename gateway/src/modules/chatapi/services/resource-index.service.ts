@@ -3,15 +3,14 @@ import { createHash } from 'crypto';
 import { setTimeout as wait } from 'timers/promises';
 import OpenAI, { toFile } from 'openai';
 
-import { listResourceLocalDocs, resourceRequest } from '../../../config/couch.config';
-import { canManageResources, SessionInfo } from '../middleware/auth';
+import { listResourceLocalDocs, requestResourceDatabase } from '../../../config/couch.config';
+import { SessionInfo } from '../middleware/auth';
 import { Attachment, ResourceVectorStore } from '../models/db-doc.model';
 import { HttpError } from '../utils/http-error';
 import { getResourceIndexTimeoutMs } from '../utils/timeout.utils';
 import { getAIConfig } from './config.service';
 
-// Keep aligned with SEARCHABLE_ATTACHMENT_TYPES in the Angular chat model.
-const SUPPORTED_CONTENT_TYPES = new Set([
+export const FILE_SEARCH_CONTENT_TYPES = [
   'application/pdf',
   'text/plain',
   'text/markdown',
@@ -20,14 +19,16 @@ const SUPPORTED_CONTENT_TYPES = new Set([
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-]);
+] as const;
+const SUPPORTED_CONTENT_TYPES = new Set<string>(FILE_SEARCH_CONTENT_TYPES);
 const DEFAULT_MAX_FILE_BYTES = 25 * 1024 * 1024;
 const DEFAULT_MAX_TOTAL_BYTES = 50 * 1024 * 1024;
 const MAX_RESOURCE_INDEX_FILES = 500;
 const FILE_BATCH_POLL_INTERVAL_MS = 5000;
 const REMOTE_MAINTENANCE_TIMEOUT_MS = 5000;
+const RESOURCE_INDEX_ADMIN_ROLES = new Set([ '_admin', 'manager' ]);
 const INDEX_STATE_PREFIX = '_local/chatapi-resource-index-';
-const RECONCILIATION_INTERVAL_MS = 15 * 60 * 1000;
+const RECONCILIATION_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const resourceOperationTails = new Map<string, Promise<void>>();
 let reconciliationTimer: NodeJS.Timeout | undefined;
 let reconciliationInFlight: Promise<void> | undefined;
@@ -53,6 +54,8 @@ export interface ResourceIndex {
 }
 
 const isNotFound = (error: any): boolean => error?.status === 404 || error?.statusCode === 404;
+const canManageAnyResourceIndex = (roles: string[]): boolean =>
+  roles.some((role) => RESOURCE_INDEX_ADMIN_ROLES.has(role));
 const positiveIntegerOr = (value: string | undefined, fallback: number): number => {
   const parsed = Number(value);
   return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
@@ -123,7 +126,7 @@ const eligibleAttachments = (doc: ResourceDoc): Array<[string, Attachment]> =>
 
 const loadResource = async (resourceId: string, forUser?: string, signal?: AbortSignal): Promise<ResourceDoc> => {
   throwIfAborted(signal);
-  const doc = await resourceRequest({ 'doc': resourceId, signal }) as ResourceDoc;
+  const doc = await requestResourceDatabase({ 'doc': resourceId, signal }) as ResourceDoc;
   throwIfAborted(signal);
   if (forUser && doc.private && doc.privateFor?.users !== `org.couchdb.user:${forUser}`) {
     throw new HttpError(403, 'This resource is private');
@@ -173,7 +176,7 @@ const asResourceIndex = (store: ResourceVectorStore): ResourceIndex => ({
 
 const loadIndexState = async (resourceId: string, signal?: AbortSignal): Promise<ResourceIndexState | undefined> => {
   try {
-    return await resourceRequest({ 'doc': indexStateId(resourceId), signal }) as ResourceIndexState;
+    return await requestResourceDatabase({ 'doc': indexStateId(resourceId), signal }) as ResourceIndexState;
   } catch (error: any) {
     if (isNotFound(error)) {
       return undefined;
@@ -184,7 +187,7 @@ const loadIndexState = async (resourceId: string, signal?: AbortSignal): Promise
 
 const saveIndexState = async (resourceId: string, store: ResourceVectorStore, signal?: AbortSignal) => {
   const localId = indexStateId(resourceId);
-  return resourceRequest({
+  return requestResourceDatabase({
     'method': 'PUT',
     'doc': localId,
     'body': { '_id': localId, resourceId, store },
@@ -197,7 +200,7 @@ const markIndexStateDirty = async (state: ResourceIndexState, signal?: AbortSign
     return state;
   }
   const dirtyState = { ...state, 'store': { ...state.store, 'dirty': true } };
-  const response = await resourceRequest({
+  const response = await requestResourceDatabase({
     'method': 'PUT', 'doc': state._id, 'body': dirtyState, signal
   });
   return { ...dirtyState, '_rev': response.rev };
@@ -249,7 +252,7 @@ const removeIndexState = async (client: OpenAI, state?: ResourceIndexState, sign
     console.error(`chatapi: OpenAI index cleanup failed${remoteCleanupErrorContext(error)}`);
     throw new HttpError(502, 'Could not delete the OpenAI-side index; try again later');
   }
-  await resourceRequest({
+  await requestResourceDatabase({
     'method': 'DELETE', 'doc': dirtyState._id, 'qs': { 'rev': dirtyState._rev }, signal
   });
   return true;
@@ -285,7 +288,7 @@ async function ensureResourceIndexedUnlocked(
   try {
     for (const [ name, attachment ] of eligible) {
       throwIfAborted(signal);
-      const buffer = await resourceRequest({
+      const buffer = await requestResourceDatabase({
         'doc': resourceId, 'att': name, 'dontParse': true, signal
       }) as Buffer;
       if (buffer.length > maxFileBytes()) {
@@ -407,13 +410,13 @@ export async function deleteResourceIndex(
     }
     let doc: ResourceDoc | undefined;
     try {
-      doc = await resourceRequest({ 'doc': resourceId, signal }) as ResourceDoc;
+      doc = await requestResourceDatabase({ 'doc': resourceId, signal }) as ResourceDoc;
     } catch (error) {
       if (!isNotFound(error)) {
         throw error;
       }
     }
-    if (requester && !canManageResources(requester.roles)) {
+    if (requester && !canManageAnyResourceIndex(requester.roles)) {
       if (!doc) {
         throw new HttpError(403, 'Only managers can remove an index after its resource has been deleted');
       }
@@ -449,7 +452,7 @@ export async function reconcileOrphanedResourceIndexes(
         }
         if (!state.store.dirty) {
           try {
-            await resourceRequest({ 'doc': candidate.resourceId });
+            await requestResourceDatabase({ 'doc': candidate.resourceId });
             return;
           } catch (error) {
             if (!isNotFound(error)) {
@@ -466,7 +469,7 @@ export async function reconcileOrphanedResourceIndexes(
   }
 }
 
-/** Reconcile orphaned index state at startup and periodically without keeping Node alive. */
+/** Reconcile orphaned index state at startup and daily without keeping Node alive. */
 export function startResourceIndexReconciliation(): () => void {
   const run = () => {
     if (reconciliationInFlight) {
