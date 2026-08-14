@@ -1,0 +1,139 @@
+/* eslint-disable no-console */
+import OpenAI from 'openai';
+
+import { configurationDB } from '../../../config/couch.config';
+import { AIConfigDoc, ChatMode, ProviderName, PROVIDER_NAMES } from '../models/chat.model';
+import { buildDefaultPromptProfiles, defaultPromptProfiles } from '../prompts/default-prompts';
+import { getAIRequestTimeoutMs } from '../utils/timeout.utils';
+
+export interface ProviderRuntime {
+  name: ProviderName;
+  enabled: boolean;
+  client?: OpenAI;
+  defaultModel: string;
+  requestTimeoutMs: number;
+}
+
+export interface AIConfig {
+  providers: Record<ProviderName, ProviderRuntime>;
+  promptProfiles: Record<ChatMode, string>;
+  planetCode: string;
+}
+
+const PROVIDER_BASE_URLS: Record<ProviderName, string | undefined> = {
+  'openai': undefined,
+  'perplexity': 'https://api.perplexity.ai',
+  'deepseek': 'https://api.deepseek.com',
+  'gemini': 'https://generativelanguage.googleapis.com/v1beta/openai/'
+};
+
+const DEFAULT_CONFIG_TTL_MS = 30000;
+const MAX_CONFIG_ERROR_RETRY_MS = 5000;
+
+let cache: { expires: number; value: AIConfig } | undefined;
+let refreshInFlight: Promise<AIConfig> | undefined;
+
+const positiveNumberOr = (value: string | undefined, fallback: number): number => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const configTtl = (): number => positiveNumberOr(process.env.CONFIG_TTL_MS, DEFAULT_CONFIG_TTL_MS);
+const configErrorRetryTtl = (): number => Math.min(configTtl(), MAX_CONFIG_ERROR_RETRY_MS);
+
+const isRecord = (value: any): boolean => typeof value === 'object' && value !== null;
+
+const looksLikePlanetConfig = (doc: any): boolean => isRecord(doc) &&
+  typeof doc.planetType === 'string' && typeof doc.code === 'string';
+
+const loadConfigDoc = async (): Promise<AIConfigDoc> => {
+  const allDocs = await configurationDB.list({ 'include_docs': true });
+  const documents = allDocs.rows.map((item) => item.doc).filter(isRecord);
+  const doc = documents.find(looksLikePlanetConfig) || documents[0];
+  if (!doc) {
+    throw new Error('No configuration document found in the configurations database');
+  }
+  return doc as unknown as AIConfigDoc;
+};
+
+const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime => {
+  const apiKey = doc.keys?.[name] || '';
+  const defaultModel = doc.models?.[name] || '';
+  const requestTimeoutMs = getAIRequestTimeoutMs();
+  const client = apiKey ? new OpenAI({
+    apiKey,
+    'baseURL': PROVIDER_BASE_URLS[name],
+    'timeout': requestTimeoutMs,
+    'maxRetries': 0
+  }) : undefined;
+  return {
+    name,
+    'enabled': !!apiKey && !!defaultModel,
+    // Retain a key-only client so resource-index cleanup works even without a configured chat model.
+    client,
+    defaultModel,
+    requestTimeoutMs
+  };
+};
+
+const buildPromptProfiles = (doc: AIConfigDoc): Record<ChatMode, string> => {
+  const generalChat = doc.promptProfiles?.general_chat || doc.assistant?.instructions || defaultPromptProfiles.general_chat;
+  const defaults = buildDefaultPromptProfiles(generalChat);
+  return {
+    'general_chat': generalChat,
+    'course_help': doc.promptProfiles?.course_help || defaults.course_help,
+    'survey_analysis': doc.promptProfiles?.survey_analysis || defaults.survey_analysis
+  };
+};
+
+const buildConfig = (doc: AIConfigDoc): AIConfig => ({
+  'providers': PROVIDER_NAMES.reduce((providers, name) => {
+    providers[name] = buildProvider(name, doc);
+    return providers;
+  }, {} as Record<ProviderName, ProviderRuntime>),
+  'promptProfiles': buildPromptProfiles(doc),
+  'planetCode': doc.code || ''
+});
+
+const refreshAIConfig = async (): Promise<AIConfig> => {
+  try {
+    const doc = await loadConfigDoc();
+    cache = { 'expires': Date.now() + configTtl(), 'value': buildConfig(doc) };
+  } catch (error) {
+    console.error(`chatapi: error loading AI configuration: ${error}`);
+    cache = {
+      'expires': Date.now() + configErrorRetryTtl(),
+      'value': cache?.value || buildConfig({})
+    };
+  }
+  return cache.value;
+};
+
+/** Read and briefly cache AI provider and prompt-profile configuration from CouchDB. */
+export async function getAIConfig(forceReload = false): Promise<AIConfig> {
+  // Discovery after login must read after any earlier unauthenticated refresh.
+  if (forceReload && refreshInFlight) {
+    await refreshInFlight;
+  }
+  if (!forceReload && cache && cache.expires > Date.now()) {
+    return cache.value;
+  }
+  if (!forceReload && refreshInFlight) {
+    return refreshInFlight;
+  }
+  const refresh = refreshAIConfig();
+  refreshInFlight = refresh;
+  try {
+    return await refresh;
+  } finally {
+    if (refreshInFlight === refresh) {
+      refreshInFlight = undefined;
+    }
+  }
+}
+
+/** Clear cached configuration between tests or explicit configuration reloads. */
+export function resetAIConfigCache() {
+  cache = undefined;
+  refreshInFlight = undefined;
+}

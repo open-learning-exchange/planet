@@ -1,12 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
+import {
+  AIServices,
+  AIProvider,
+  ProviderName,
+  ResourceIndexCleanupResponse,
+  SurveyAnalysisPayload,
+  SurveyAnalysisResponse
+} from '../chat/chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +21,14 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
   readonly dbName = 'chat_history';
 
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
-  private socket: WebSocket;
+  private socket?: WebSocket;
+  private pendingSocket?: WebSocket;
 
   private chatStreamSubject: Subject<string> = new Subject<string>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<ProviderName>();
+  private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
@@ -36,50 +44,97 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
     private httpClient: HttpClient,
     private couchService: CouchService
   ) {
-    this.fetchAIProviders();
+    this.refreshAIProviders();
+  }
+
+  chatErrorMessage(error: { code?: string; message?: string } | undefined, fallback = $localize`Chat request failed`): string {
+    if (error?.code === 'resource_attachments_unsupported') {
+      return $localize`This AI provider does not support resource attachments. Use OpenAI for attachment questions.`;
+    }
+    if (error?.code === 'resource_context_unavailable') {
+      return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
+    }
+    return error?.message || fallback;
+  }
+
+  private webSocketUrl(): string {
+    return this.baseUrl.replace(/^http/, 'ws').replace(/\/?$/, '/');
   }
 
   initializeWebSocket() {
-    if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-      this.socket = new WebSocket(this.baseUrl.replace(/^http/, 'ws'));
-      this.socket.onerror = (error) => {
-        this.errorSubject.next('WebSocket connection error');
+    if (!this.socket || this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING) {
+      const socket = new WebSocket(this.webSocketUrl());
+      this.socket = socket;
+      let errorReported = false;
+      const reportConnectionError = (message: string, suppressDuplicate = false) => {
+        if (socket === this.socket && (!suppressDuplicate || !errorReported)) {
+          errorReported = true;
+          this.errorSubject.next(message);
+        }
       };
-      this.socket.addEventListener('message', (event) => {
+      socket.onerror = () => reportConnectionError('WebSocket connection error', true);
+      socket.onclose = () => {
+        if (socket === this.socket) {
+          const requestWasPending = this.pendingSocket === socket;
+          if (requestWasPending) {
+            this.pendingSocket = undefined;
+          }
+          this.socket = undefined;
+          if (requestWasPending && !errorReported) {
+            this.errorSubject.next('WebSocket connection closed');
+          }
+        }
+      };
+      socket.addEventListener('message', (event) => {
+        if (socket !== this.socket) {
+          return;
+        }
         try {
           const message = JSON.parse(event.data);
           if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+            if (this.pendingSocket === socket) {
+              this.pendingSocket = undefined;
+            }
+            reportConnectionError(this.chatErrorMessage(message, message.error));
+            socket.close();
           } else {
+            errorReported = false;
+            if (message.type === 'final' && this.pendingSocket === socket) {
+              this.pendingSocket = undefined;
+            }
             this.chatStreamSubject.next(event.data);
+            if (message.type === 'final') {
+              socket.close();
+            }
           }
         } catch (error) {
-          this.errorSubject.next('Invalid message format');
+          reportConnectionError('Invalid message format');
         }
       });
     }
   }
 
-  private fetchAIProviders() {
+  refreshAIProviders(): void {
     this.httpClient
-      .get<AIServices>(`${this.baseUrl}/checkproviders`)
+      .get<AIServices>(`${this.baseUrl}/checkproviders`, { withCredentials: true })
       .pipe(
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
+          return of(null);
         }),
-        map((services: AIServices) => {
+        map((services: AIServices | null) => {
           if (services) {
-            return (Object.entries(services) as [ ProviderName, boolean ][])
-              .filter(([ _, model ]) => model === true)
-              .map(([ key ]) => ({ name: key, model: key }));
-          } else {
-            return [];
+            return (Object.entries(services) as [ ProviderName, AIServices[ProviderName] ][])
+              .filter(([ _, service ]) => service?.enabled === true)
+              .map(([ key, service ]) => ({ 'name': key, 'capabilities': service.capabilities || [] }));
           }
+          return null;
         })
       )
       .subscribe((providers) => {
-        this.aiProvidersSubject.next(providers);
+        if (providers) {
+          this.aiProvidersSubject.next(providers);
+        }
       });
   }
 
@@ -91,7 +146,31 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
     return this.httpClient.post(`${this.baseUrl}/`, {
       data,
       save,
-    });
+    }, { withCredentials: true });
+  }
+
+  analyzeSurvey(payload: SurveyAnalysisPayload): Observable<SurveyAnalysisResponse> {
+    const provider = payload.aiProvider || this.getPreferredAnalysisProvider();
+    const body = provider ? { ...payload, aiProvider: { name: provider.name } } : payload;
+    return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, body, { withCredentials: true });
+  }
+
+  getPreferredAnalysisProvider(): AIProvider | undefined {
+    const providers = this.aiProvidersSubject.value;
+    return providers.find((provider) => provider.capabilities?.includes('structuredOutput')) || providers[0];
+  }
+
+  hasFileSearchProvider(): boolean {
+    return this.aiProvidersSubject.value.some((provider) => provider.capabilities?.includes('fileSearch'));
+  }
+
+  // Attempts immediate cleanup; retained local state lets the gateway retry after resource deletion.
+  removeResourceIndexes(resourceIds: string[]): Observable<ResourceIndexCleanupResponse> {
+    return this.httpClient.post<ResourceIndexCleanupResponse>(
+      `${this.baseUrl}/resources/indexes/cleanup`,
+      { resourceIds },
+      { withCredentials: true }
+    );
   }
 
   // Subscribe to stream updates
@@ -105,15 +184,36 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(data));
+    let socket = this.socket;
+    if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+      this.initializeWebSocket();
+      socket = this.socket;
+    }
+    if (!socket) {
+      this.errorSubject.next('WebSocket connection error');
+      return;
+    }
+    const send = () => {
+      if (socket === this.socket && socket.readyState === WebSocket.OPEN) {
+        this.pendingSocket = socket;
+        socket.send(JSON.stringify(data));
+      }
+    };
+    if (socket.readyState === WebSocket.OPEN) {
+      send();
+    } else if (socket.readyState === WebSocket.CONNECTING) {
+      socket.addEventListener('open', send, { once: true });
     }
   }
 
   // Function to close ws connection
   closeWebSocket(): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.close();
+    const socket = this.socket;
+    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+      if (this.pendingSocket === socket) {
+        this.pendingSocket = undefined;
+      }
+      socket.close();
     }
   }
 

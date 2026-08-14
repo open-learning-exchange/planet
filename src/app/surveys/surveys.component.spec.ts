@@ -1,4 +1,4 @@
-import { NonNullableFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -12,6 +12,8 @@ describe('SurveysComponent', () => {
   let dialogsLoadingService: any;
   let router: any;
   let route: any;
+  let dialogsFormService: any;
+  let chatService: any;
   let component: SurveysComponent;
 
   const createComponent = () => new SurveysComponent(
@@ -24,10 +26,10 @@ describe('SurveysComponent', () => {
     { configuration: {} } as any,
     dialogsLoadingService,
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
+    dialogsFormService,
+    chatService,
     {} as any,
-    { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
-    {} as any,
-    new NonNullableFormBuilder(),
+    new FormBuilder().nonNullable,
     { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any
   );
 
@@ -36,7 +38,8 @@ describe('SurveysComponent', () => {
       get: vi.fn((path: string) => of({ _id: path.replace('teams/', ''), name: path, type: 'team' }))
     };
     submissionsService = {
-      createSubmission: vi.fn().mockReturnValue(of({ id: 'submission-1' }))
+      createSubmission: vi.fn().mockReturnValue(of({ id: 'submission-1' })),
+      exportSubmissionsPdf: vi.fn()
     };
     planetMessageService = {
       showAlert: vi.fn()
@@ -52,6 +55,14 @@ describe('SurveysComponent', () => {
     route = {
       parent: null,
       snapshot: { url: [ 'surveys' ] }
+    };
+    dialogsFormService = {
+      openDialogsForm: vi.fn(),
+      closeDialogsForm: vi.fn()
+    };
+    chatService = {
+      listAIProviders: vi.fn().mockReturnValue(of([])),
+      getPreferredAnalysisProvider: vi.fn()
     };
     component = createComponent();
   });
@@ -95,5 +106,37 @@ describe('SurveysComponent', () => {
 
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('offers enabled analysis providers and defaults to structured output', () => {
+    component.availableAIProviders = [
+      { 'name': 'openai', 'capabilities': [ 'chat', 'structuredOutput' ] },
+      { 'name': 'gemini', 'capabilities': [ 'chat' ] }
+    ];
+    chatService.getPreferredAnalysisProvider.mockReturnValue(component.availableAIProviders[0]);
+
+    component.exportPdf({ 'questions': [] });
+
+    const [ , fields, formGroup, options ] = dialogsFormService.openDialogsForm.mock.calls[0];
+    const providerField = fields.find((field) => field.name === 'analysisProvider');
+    expect(providerField.options).toEqual([
+      { 'value': 'openai', 'name': 'OpenAI — structured sections' },
+      { 'value': 'gemini', 'name': 'Gemini — formatting may vary' }
+    ]);
+    expect(formGroup.controls.analysisProvider.value).toEqual('openai');
+
+    options.onSubmit({
+      'includeQuestions': true,
+      'includeAnswers': true,
+      'includeCharts': false,
+      'includeAnalysis': true,
+      'analysisProvider': 'gemini'
+    });
+    expect(submissionsService.exportSubmissionsPdf).toHaveBeenCalledWith(
+      { 'questions': [] },
+      'survey',
+      expect.objectContaining({ 'includeAnalysis': true, 'analysisProvider': 'gemini' }),
+      ''
+    );
   });
 });

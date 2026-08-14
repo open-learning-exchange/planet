@@ -15,7 +15,6 @@ RUN npm run build
 FROM ${BASE_IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-RUN apk add --no-cache poppler-utils
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
 RUN npm ci --omit=dev

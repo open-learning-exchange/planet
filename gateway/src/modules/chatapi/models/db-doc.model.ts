@@ -1,19 +1,39 @@
-import { ChatItem, ProviderName } from './chat.model';
+import { ChatMode, Citation, ProviderName } from './chat.model';
 
-export interface DbDoc {
-  _id: string;
-  _rev: string;
-  user: any;
+export interface ChatTurn {
+  id: string;
+  query: string;
+  response: string;
+  citations?: Citation[];
+  hasAttachments?: boolean;
+}
+
+export interface ChatDoc {
+  _id?: string;
+  _rev?: string;
+  user: unknown;
   title: string;
   createdDate: number;
-  aiProvider?: ProviderName;
-  conversations: ChatItem[];
+  updatedDate?: number;
+  aiProvider: ProviderName;
+  mode?: ChatMode;
+  conversations: ChatTurn[];
+  shared?: boolean;
 }
 
 export interface Attachment {
   content_type: string;
-  revpos: number;
   digest: string;
-  length: number;
-  stub: boolean;
+  length?: number;
+}
+
+export interface ResourceVectorStoreFile {
+  fileId: string;
+  digest: string;
+}
+
+export interface ResourceVectorStore {
+  id: string;
+  files: Record<string, ResourceVectorStoreFile>;
+  dirty?: boolean;
 }

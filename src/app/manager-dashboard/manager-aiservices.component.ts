@@ -18,11 +18,13 @@ import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { SubmitDirective } from '../shared/submit.directive';
+import { ChatService } from '../shared/chat.service';
 
 interface FixedConfigFormControls {
   streaming: FormControl<boolean>;
-  assistantName: FormControl<string>;
-  assistantInstructions: FormControl<string>;
+  promptGeneralChat: FormControl<string>;
+  promptCourseHelp: FormControl<string>;
+  promptSurveyAnalysis: FormControl<string>;
 }
 
 type DynamicConfigControlKey = `keys_${string}` | `models_${string}`;
@@ -31,11 +33,14 @@ type ConfigFormControls = FixedConfigFormControls & DynamicConfigFormControls;
 
 interface AIConfiguration {
   streaming?: boolean;
+  /** Legacy single-assistant config, superseded by promptProfiles; deleted on save. */
+  assistant?: { instructions?: string };
   keys?: Record<string, unknown>;
   models?: Record<string, unknown>;
-  assistant?: {
-    name?: string;
-    instructions?: string;
+  promptProfiles?: {
+    general_chat?: string;
+    course_help?: string;
+    survey_analysis?: string;
   };
   [key: string]: unknown;
 }
@@ -79,6 +84,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   constructor(
     private fb: NonNullableFormBuilder,
     private clipboard: Clipboard,
+    private chatService: ChatService,
     private configurationService: ConfigurationService,
     private planetMessageService: PlanetMessageService,
     private router: Router,
@@ -86,8 +92,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   ) {
     this.configForm = this.fb.group<ConfigFormControls>({
       streaming: this.fb.control(false),
-      assistantName: this.fb.control(''),
-      assistantInstructions: this.fb.control('')
+      promptGeneralChat: this.fb.control(''),
+      promptCourseHelp: this.fb.control(''),
+      promptSurveyAnalysis: this.fb.control('')
     });
   }
 
@@ -107,8 +114,13 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       streaming: this.fb.control(!!this.configuration.streaming),
       ...this.mapConfigToFormControls(this.configuration.keys, 'keys_'),
       ...this.mapConfigToFormControls(this.configuration.models, 'models_'),
-      assistantName: this.fb.control(this.configuration.assistant?.name || ''),
-      assistantInstructions: this.fb.control(this.configuration.assistant?.instructions || '')
+      // Surface the legacy assistant instructions (still served as general_chat by the
+      // gateway) so they aren't silently lost when the save deletes `assistant`
+      promptGeneralChat: this.fb.control(
+        this.configuration.promptProfiles?.general_chat || this.configuration.assistant?.instructions || ''
+      ),
+      promptCourseHelp: this.fb.control(this.configuration.promptProfiles?.course_help || ''),
+      promptSurveyAnalysis: this.fb.control(this.configuration.promptProfiles?.survey_analysis || '')
     });
 
     if (this.configuration.keys) {
@@ -135,21 +147,25 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       return;
     }
     this.spinnerOn = true;
-    const updatedConfig = {
+    const updatedConfig: AIConfiguration = {
       ...this.configuration,
       streaming: this.configForm.controls.streaming.value,
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
-      assistant: {
-        name: this.getStringControlValue('assistantName'),
-        instructions: this.getStringControlValue('assistantInstructions')
+      promptProfiles: {
+        general_chat: this.getStringControlValue('promptGeneralChat'),
+        course_help: this.getStringControlValue('promptCourseHelp'),
+        survey_analysis: this.getStringControlValue('promptSurveyAnalysis')
       }
     };
+    // The legacy single-assistant config is superseded by prompt profiles
+    delete updatedConfig.assistant;
     this.configurationService.updateConfiguration(updatedConfig).pipe(finalize(spinnerOff)).subscribe(
       () => this.stateService.requestData('configurations', 'local'),
       err => {
         this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
       }, () => {
+        this.chatService.refreshAIProviders();
         this.router.navigate([ '/manager' ]);
         this.planetMessageService.showMessage($localize`Configuration Updated Successfully`);
       }
