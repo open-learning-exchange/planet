@@ -56,7 +56,7 @@
             }
             <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
               @if (isUserAdmin) {
-                <button mat-stroked-button [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
+                <button mat-stroked-button color="warn" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
               }
             </span>
           </ng-container>
@@ -74,7 +74,7 @@
                   <button mat-stroked-button (click)="editTagClick($event, subTag)" i18n class="button-spacing">Edit</button>
                 }
                 @if (isUserAdmin) {
-                  <button mat-stroked-button (click)="deleteTag($event, subTag)" i18n>Delete</button>
+                  <button mat-stroked-button color="warn" (click)="deleteTag($event, subTag)" i18n>Delete</button>
                 }
               </ng-container>
             </mat-list-item>
@@ -104,7 +104,7 @@
             }
             <span i18n-matTooltip matTooltip="You may only delete a collection with no subcollections" [matTooltipDisabled]="tag.subTags.length === 0">
               @if (isUserAdmin) {
-                <button mat-stroked-button [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
+                <button mat-stroked-button color="warn" [disabled]="tag.subTags.length > 0" (click)="deleteTag($event, tag)" i18n>Delete</button>
               }
             </span>
           </ng-container>
@@ -124,7 +124,7 @@
                   <button mat-stroked-button (click)="editTagClick($event,subTag)" i18n>Edit</button>
                 }
                 @if (isUserAdmin) {
-                  <button mat-stroked-button (click)="deleteTag($event,subTag)" i18n>Delete</button>
+                  <button mat-stroked-button color="warn" (click)="deleteTag($event,subTag)" i18n>Delete</button>
                 }
               </ng-container>
             </mat-list-item>

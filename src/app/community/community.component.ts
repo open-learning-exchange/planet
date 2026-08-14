@@ -144,6 +144,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
+  get voicesToolbarPinTooltip(): string {
+    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
+  }
+
   localLinkTooltip(link: any): string {
     return link.teamType === 'sync' || !this.planetCode
       ? ''

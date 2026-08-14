@@ -1,4 +1,5 @@
-<planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" (stepClicked)="stepClick($event)">
+<planet-step-list [steps]="steps" (stepsChange)="stepsMoved($event)" [nameProp]="'stepTitle'" [confirmDelete]="true"
+  (stepClicked)="stepClick($event)">
   @for (step of steps; track step; let i = $index) {
     <planet-step-list-item>
       <span matListItemTitle>
