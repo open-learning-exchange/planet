@@ -29,6 +29,7 @@ import { ChangePasswordDirective } from '../shared/dialogs/change-password.direc
 import { MatDivider } from '@angular/material/list';
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from '@angular/material/sidenav';
 import { PulsateIconDirective } from './pulsate-icon.directive';
+import { ANDROID_APPS } from '../shared/android-apps';
 
 @Component({
   templateUrl: './home.component.html',
@@ -70,6 +71,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   isAndroid: boolean;
   isMobile: boolean;
   showBanner = true;
+  readonly androidApps = ANDROID_APPS;
   isLoggedIn = false;
 
   // Sets the margin for the main content to match the sidenav width

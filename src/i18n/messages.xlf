@@ -1865,11 +1865,11 @@ Other Notes</source>
       <trans-unit id="6404477247085751415" datatype="html">
         <source>See All</source>
       </trans-unit>
-      <trans-unit id="3335034047405167528" datatype="html">
-        <source>Check out our Android app</source>
+      <trans-unit id="3534984212959071163" datatype="html">
+        <source>Check out our Android apps</source>
       </trans-unit>
-      <trans-unit id="3947932744068086415" datatype="html">
-        <source>myPlanet on playstore</source>
+      <trans-unit id="9065868234082693767" datatype="html">
+        <source>Close Android app banner</source>
       </trans-unit>
       <trans-unit id="6570363013146073520" datatype="html">
         <source>Dashboard</source>
@@ -3546,6 +3546,21 @@ Other Notes</source>
         <source>The following information is a course step from the &quot;<x id="PH" equiv-text="stepTitle"/>&quot; course with a description &quot;<x id="PH_1" equiv-text="stepDescription"/>&quot;.
   Be sure to assist the learner in the best way you can. </source>
       </trans-unit>
+      <trans-unit id="2866055652148348809" datatype="html">
+        <source>Full-featured offline learning app</source>
+      </trans-unit>
+      <trans-unit id="4159803850116371687" datatype="html">
+        <source>Install myPlanet</source>
+      </trans-unit>
+      <trans-unit id="7608345630430529300" datatype="html">
+        <source>myPlanet Lite</source>
+      </trans-unit>
+      <trans-unit id="5853502135183082395" datatype="html">
+        <source>Lightweight version that uses less storage</source>
+      </trans-unit>
+      <trans-unit id="689883195141523023" datatype="html">
+        <source>Install myPlanet Lite</source>
+      </trans-unit>
       <trans-unit id="6048892649018070225" datatype="html">
         <source>Today</source>
       </trans-unit>
@@ -3648,6 +3663,18 @@ Other Notes</source>
       </trans-unit>
       <trans-unit id="5099513225683382398" datatype="html">
         <source>Send to team or enterprise</source>
+      </trans-unit>
+      <trans-unit id="3158554629807420909" datatype="html">
+        <source>Get the Planet mobile app</source>
+      </trans-unit>
+      <trans-unit id="4684839318250929517" datatype="html">
+        <source>You&apos;re browsing on an Android device. Install one of our apps for a faster, offline-capable experience.</source>
+      </trans-unit>
+      <trans-unit id="6082171864197428613" datatype="html">
+        <source>Install</source>
+      </trans-unit>
+      <trans-unit id="5161411570094992408" datatype="html">
+        <source>Not now</source>
       </trans-unit>
       <trans-unit id="4070918274702026114" datatype="html">
         <source>Announcement</source>
