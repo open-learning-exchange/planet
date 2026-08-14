@@ -14,8 +14,23 @@
         <mat-icon>{{isGridView ? 'view_list' : 'view_column'}}</mat-icon>
       </button>
     }
-    @if (attempts && !parent) {
-      <span class="margin-lr-10" i18n>Past attempts: {{attempts}}</span>
+    @if (!parent && (attempts || retakePolicy?.effectiveMaxAttempts || retakePolicy?.isCooloffActive)) {
+      <div class="retake-status-stack km-retake-status-stack">
+        @if (attempts && !retakePolicy?.effectiveMaxAttempts) {
+          <span class="retake-attempt-count km-retake-attempt-count" i18n>Past attempts: {{attempts}}</span>
+        }
+        @if (retakePolicy?.effectiveMaxAttempts) {
+          @if (retakePolicy?.isMaxAttemptsReached) {
+            <span class="retake-attempt-count km-retake-attempt-count" i18n>{{attempts}} of {{retakePolicy?.effectiveMaxAttempts}} attempts used</span>
+            <span class="retake-cooloff-time km-retake-cooloff-time" i18n>No retakes remaining</span>
+          } @else {
+            <span class="retake-attempt-count km-retake-attempt-count" i18n>Attempt {{ attempts + 1 }} of {{ retakePolicy?.effectiveMaxAttempts }}</span>
+          }
+        }
+        @if (!retakePolicy?.isMaxAttemptsReached && retakePolicy?.isCooloffActive) {
+          <span class="retake-cooloff-time km-retake-cooloff-time" i18n>Available in: {{ retakePolicy?.cooloffRemainingFormatted }}</span>
+        }
+      </div>
     }
     @if (!isMobile) {
       <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
@@ -63,13 +78,14 @@
     </a>
   }
   @if (stepDetail?.exam?.questions.length && isUserEnrolled) {
-    <a
+    <button
       mat-raised-button
       color="accent"
+      [disabled]="retakePolicy && !retakePolicy.canStartExam"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       (click)="goToExam()" i18n>
-      {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
-    </a>
+      {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test} other {Take Test}}
+    </button>
   }
   @if (stepDetail?.survey?.questions.length && isUserEnrolled) {
     <a

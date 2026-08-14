@@ -3,10 +3,10 @@ import { CoursesService } from '../courses.service';
 import { Router, ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject, combineLatest } from 'rxjs';
+import { Subject, combineLatest, Subscription, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
-import { SubmissionsService } from '../../submissions/submissions.service';
+import { SubmissionsService, RetakePolicyStatus, formatCooloffDuration } from '../../submissions/submissions.service';
 import { ResourcesService } from '../../resources/resources.service';
 import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submissions.component';
 import { StateService } from '../../shared/state.service';
@@ -65,6 +65,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   examStart = 1;
   examText: 'continue' | 'retake' | 'take' = 'take';
   attempts = 0;
+  retakePolicy: RetakePolicyStatus | null = null;
   isUserEnrolled = false;
   resource: any;
   progress: any;
@@ -143,12 +144,23 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  private cooloffEndTimestamp = 0;
+  private cooloffSub?: Subscription;
+
   getSubmission() {
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$))
-      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 } }) => {
+      .subscribe(({ submission, attempts, bestAttempt = { grade: 0 }, retakePolicy }) => {
         this.examStart = (this.submissionsService.nextQuestion(submission, submission.answers.length - 1, 'passed') + 1) || 1;
         this.examText = submission.answers.length > 0 ? 'continue' : attempts === 0 ? 'take' : 'retake';
         this.attempts = attempts;
+        this.retakePolicy = retakePolicy || null;
+        if (this.retakePolicy?.isCooloffActive && this.retakePolicy.cooloffRemainingMs > 0) {
+          this.cooloffEndTimestamp = Date.now() + this.retakePolicy.cooloffRemainingMs;
+          this.startCooloffTicker();
+        } else {
+          this.cooloffEndTimestamp = 0;
+          this.cooloffSub?.unsubscribe();
+        }
         const examPercent = (bestAttempt.grade / this.stepDetail.exam.totalMarks) * 100;
         this.examPassed = examPercent >= this.stepDetail.exam.passingPercentage;
         if (!this.parent && this.progress.passed !== this.examPassed) {
@@ -159,7 +171,32 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  private startCooloffTicker() {
+    this.cooloffSub?.unsubscribe();
+    if (!this.retakePolicy?.isCooloffActive || !this.cooloffEndTimestamp) {
+      return;
+    }
+    this.cooloffSub = interval(1000).pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      if (!this.retakePolicy || !this.retakePolicy.isCooloffActive) {
+        this.cooloffSub?.unsubscribe();
+        return;
+      }
+      const remainingMs = this.cooloffEndTimestamp - Date.now();
+      if (remainingMs <= 0) {
+        this.retakePolicy.isCooloffActive = false;
+        this.retakePolicy.cooloffRemainingMs = 0;
+        this.retakePolicy.cooloffRemainingFormatted = '';
+        this.retakePolicy.canStartExam = !this.retakePolicy.isMaxAttemptsReached;
+        this.cooloffSub?.unsubscribe();
+      } else {
+        this.retakePolicy.cooloffRemainingMs = remainingMs;
+        this.retakePolicy.cooloffRemainingFormatted = formatCooloffDuration(remainingMs);
+      }
+    });
+  }
+
   ngOnDestroy() {
+    this.cooloffSub?.unsubscribe();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -252,6 +289,9 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   goToExam(type = 'exam', preview = false) {
+    if (!preview && type === 'exam' && this.retakePolicy && !this.retakePolicy.canStartExam) {
+      return;
+    }
     this.router.navigate(
       [
         'exam',

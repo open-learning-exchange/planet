@@ -1,0 +1,58 @@
+@use '../variables' as v;
+
+.retake-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 360px;
+  padding-top: 8px;
+
+  @media (max-width: v.$screen-xs) {
+    min-width: 100%;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.time-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: inherit;
+}
+
+.time-row {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: v.$screen-xs) {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.time-col {
+  flex: 1;
+}
+
+.cooloff-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: v.$grey-text;
+  margin-top: 4px;
+}
+
+.summary-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}

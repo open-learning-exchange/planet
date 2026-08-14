@@ -17,6 +17,9 @@
           <button mat-raised-button color="primary" type="button" [planetSubmit]="examForm.valid" [disabled]="questions.length === 0" (click)="onSubmit(true)" i18n>Save & Return</button>
           <div class="menu-button"><button mat-raised-button color="accent" type="button" [matMenuTriggerFor]="questionMenu" i18n>Add Question</button></div>
           <button mat-raised-button color="accent" type="button" (click)="showPreviewDialog()" i18n>Preview {examType, select, exam {Test} survey {Survey}}</button>
+          @if (examType === 'exam') {
+            <button mat-raised-button color="accent" type="button" (click)="openRetakePolicyDialog()" i18n>Retake Policy</button>
+          }
         </div>
         @if (isManagerRoute) {
           <mat-checkbox formControlName="teamShareAllowed"><span style="font-size: small; font-style: italic;" i18n>Allow team view</span></mat-checkbox>
