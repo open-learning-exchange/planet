@@ -259,7 +259,7 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
     attachments[imgKey] = {
       'content_type': contentType,
-      'data': data
+      data
     };
 
     return { '_attachments': attachments };
