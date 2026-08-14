@@ -6,6 +6,7 @@
 #   2. bump the version on the PR branch
 #   3. push, and wait for the builders on that prepared commit
 #   4. wait for $BASE to be settled and green, then squash merge
+#   5. tag the merge and publish its release
 #
 # Stop on the first failure. Both waits sit in front of step 4 so they
 # overlap: $BASE releases the previous merge while this PR builds.
@@ -23,6 +24,7 @@ COAUTHORS_SH="${COAUTHORS_SH:?}"
 REQUIRE_CHECKS="${REQUIRE_CHECKS:-true}"
 REQUIRED_WORKFLOWS="${REQUIRED_WORKFLOWS:-}"
 DELETE_BRANCH="${DELETE_BRANCH:-true}"
+CREATE_RELEASE="${CREATE_RELEASE:-true}"
 DRY_RUN="${DRY_RUN:-true}"
 MAX_MERGES="${MAX_MERGES:-0}"
 WAIT_TIMEOUT_MIN="${WAIT_TIMEOUT_MIN:-45}"
@@ -329,6 +331,9 @@ while :; do
                 log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged},"
             fi
             log "           wait for ${REQUIRED_WORKFLOWS:-the triggered workflows}, then squash merge #$NUMBER"
+            if [ "$CREATE_RELEASE" = 'true' ]; then
+                log "           and cut v$new_name from the merge"
+            fi
             summary "| #$NUMBER | → \`$new_name\` | dry run: would merge |"
         else
             git merge --abort || true
@@ -473,10 +478,37 @@ while :; do
     git fetch --quiet origin "$BASE"
     last_base_sha=$(git rev-parse "origin/$BASE")
 
+    # 5. Tag the merge and publish the release. The bumped version only means
+    #    something once it is tagged, and it is the release event -- not the
+    #    push -- that builds the versioned images. Lightweight tag and
+    #    generated notes, the way every earlier version on $BASE was cut.
+    #    Those builder runs sit on $BASE's head, so the next PR's green-base
+    #    wait covers them without any extra plumbing here.
+    release_note=""
+    if [ "$CREATE_RELEASE" = 'true' ]; then
+        target=$(gh pr view "$NUMBER" --repo "$REPO" --json mergeCommit --jq '.mergeCommit.oid' 2>/dev/null || echo '')
+        target="${target:-$last_base_sha}"
+        if release_out=$(gh release create "v$new_name" \
+                            --repo "$REPO" \
+                            --target "$target" \
+                            --title "Version $new_name" \
+                            --generate-notes 2>&1); then
+            log "  released v$new_name at ${target:0:7}"
+            release_note=", released \`v$new_name\`"
+        else
+            printf '%s\n' "$release_out" | sed 's/^/    /'
+            log "  #$NUMBER merged, but cutting v$new_name failed"
+            log "  stopping here: an unreleased version builds no images, and every"
+            log "  later bump would inherit the gap without anyone noticing"
+            summary "| #$NUMBER | → \`$new_name\` | merged as \`${last_base_sha:0:7}\`, **release failed** |"
+            exit 1
+        fi
+    fi
+
     merged_count=$((merged_count + 1))
     merged_list="$merged_list #$NUMBER"
     skip_numbers="$skip_numbers $NUMBER"
-    summary "| #$NUMBER | → \`$new_name\` | merged as \`${last_base_sha:0:7}\` |"
+    summary "| #$NUMBER | → \`$new_name\` | merged as \`${last_base_sha:0:7}\`$release_note |"
 done
 
 log "done: merged $merged_count PR(s):${merged_list:- none}"

@@ -1,8 +1,9 @@
 name: planet automerge
 
 # Manually started queue drainer: for each PR labelled `automerge`, merge the
-# base in, bump the version, wait for the builders, squash merge. The label is
-# the safety rail. Logic in .github/scripts/automerge.sh.
+# base in, bump the version, wait for the builders, squash merge, then tag the
+# merge and publish its release. The label is the safety rail. Logic in
+# .github/scripts/automerge.sh.
 #
 # The myplanet_* inputs re-pin package.json's myplanet block in the same bump
 # commit, so they land with the first merge -- an empty queue leaves them
@@ -51,6 +52,11 @@ on:
         type: string
       delete_branch:
         description: 'delete each head branch after merging'
+        required: false
+        default: true
+        type: boolean
+      create_release:
+        description: 'tag each merge and publish its release (the event that builds the versioned images)'
         required: false
         default: true
         type: boolean
@@ -177,6 +183,7 @@ jobs:
           REQUIRE_CHECKS: ${{ inputs.require_checks }}
           REQUIRED_WORKFLOWS: ${{ inputs.required_workflows }}
           DELETE_BRANCH: ${{ inputs.delete_branch }}
+          CREATE_RELEASE: ${{ inputs.create_release }}
           DRY_RUN: ${{ inputs.dry_run }}
           MAX_MERGES: ${{ inputs.max_merges }}
           WAIT_TIMEOUT_MIN: ${{ inputs.wait_timeout_minutes }}
