@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidators } from '../../validators/custom-validators';
 import { CertificationsService } from './certifications.service';
@@ -56,7 +57,8 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
     private certificationsService: CertificationsService,
     private planetMessageService: PlanetMessageService,
     private validatorService: ValidatorService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private navigationService: NavigationService
   ) {
     this.certificateForm = this.fb.group({
       name: this.fb.control('', {
@@ -96,7 +98,7 @@ export class CertificationsAddComponent implements OnInit, AfterViewChecked {
 
   goBack() {
     const navigation = this.pageType === 'Update' ? '../..' : '..';
-    this.router.navigate([ navigation ], { relativeTo: this.route });
+    this.navigationService.back([ navigation ], { relativeTo: this.route });
   }
 
   submitCertificate(reroute: boolean) {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef,
@@ -77,7 +78,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private couchService: CouchService
+    private couchService: CouchService,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -126,11 +128,8 @@ export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   goBack() {
-    if (this.router.url.indexOf('profile') === -1) {
-      this.router.navigate([ '..' ], { relativeTo: this.route });
-    } else {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
-    }
+    const fallback = this.router.url.indexOf('profile') === -1 ? [ '..' ] : [ '../../' ];
+    this.navigationService.back(fallback, { relativeTo: this.route });
   }
 
   examClick(eventDate) {

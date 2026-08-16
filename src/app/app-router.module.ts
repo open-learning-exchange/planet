@@ -6,6 +6,7 @@ import { AuthService } from './shared/auth-guard.service';
 import { HomeComponent } from './home/home.component';
 import { UserGuard } from './shared/user-guard.service';
 import { UnsavedChangesGuard } from './shared/unsaved-changes.guard';
+import { navigationRouterOptions } from './shared/navigation.service';
 
 const routes: Routes = [
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes, {}) ],
+  imports: [ RouterModule.forRoot(routes, navigationRouterOptions) ],
   exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

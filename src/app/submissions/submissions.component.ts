@@ -7,6 +7,7 @@ import {
 } from '@angular/material/table';
 import { composeFilterFunctions, filterDropdowns, dropdownsFill, filterSpecificFieldsByWord } from '../shared/table-helpers';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { skip, takeUntil } from 'rxjs/operators';
 import { Subject, zip } from 'rxjs';
 import { SubmissionsService } from './submissions.service';
@@ -108,7 +109,8 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private userService: UserService,
     private coursesService: CoursesService,
     private dialogsLoadingService: DialogsLoadingService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private navigationService: NavigationService
   ) {
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(skip(1), takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -264,7 +266,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   goBack() {
-    this.router.navigate([ '../' ], { relativeTo: this.route.parent });
+    this.navigationService.back([ '../' ], { relativeTo: this.route.parent });
   }
 
   submissionAction(submission) {
