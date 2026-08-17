@@ -77,17 +77,17 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   isChatEnabled = false;
   isLoading = true;
   deviceType: DeviceType;
+  localizedStepInfo = '';
+  chatContext: ChatContext = { 'type': 'coursestep', 'data': '' };
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
-  get localizedStepInfo(): string {
+  private updateChatContext() {
     const title = this.stepDetail?.stepTitle;
     const description = this.stepDetail?.description;
-    return $localize`The following information is a course step from the "${title}" course with a description "${description}".
+    // eslint-disable-next-line max-len -- Keep the localized message as one template literal.
+    this.localizedStepInfo = $localize`The following information is a course step from the "${title}" course with a description "${description}".
   Be sure to assist the learner in the best way you can. `;
-  }
-
-  get chatContext(): ChatContext {
-    return {
+    this.chatContext = {
       'type': 'coursestep',
       'data': this.localizedStepInfo,
       ...(!this.parent && this.resource?._id ? {
@@ -149,6 +149,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
+      this.updateChatContext();
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.courseId = params.get('id');
       this.attempts = 0;
@@ -209,6 +210,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
+    this.updateChatContext();
   }
 
   // direction = -1 for previous, 1 for next
@@ -233,6 +235,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   resetCourseStep() {
     this.resource = undefined;
     this.stepDetail = { stepTitle: '', description: '', resources: [] };
+    this.updateChatContext();
     this.attempts = 0;
   }
 
@@ -266,6 +269,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   onResourceChange(value) {
     this.resource = value;
+    this.updateChatContext();
   }
 
   goToExam(type = 'exam', preview = false) {
