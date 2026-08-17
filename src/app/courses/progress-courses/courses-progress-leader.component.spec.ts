@@ -224,6 +224,22 @@ describe('CoursesProgressLeaderComponent', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith([ '/courses' ]);
   });
 
+  it('should set passPercentage to null when a step has 0 submissions', () => {
+    component.ngOnInit();
+    courseUpdated$.next({
+      course: {
+        _id: 'course_123',
+        courseTitle: 'Algebra 101',
+        steps: [ { stepTitle: 'Step 1', exam: { _id: 'exam_1' } } ]
+      }
+    });
+
+    submissionsUpdated$.next([]);
+
+    expect(component.stepDifficultyList[0].passPercentage).toBeNull();
+    expect(component.stepDifficultyList[0].submissionCount).toBe(0);
+  });
+
   it('should navigate to full profile page on memberClick', () => {
     component.memberClick({ name: 'Student 1' });
     expect(routerMock.navigate).toHaveBeenCalledWith([ '/users/profile', 'Student 1' ]);

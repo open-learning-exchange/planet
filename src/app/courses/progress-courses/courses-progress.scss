@@ -25,6 +25,10 @@
     align-items: center;
     gap: 16px;
     padding: 16px 20px;
+
+    button {
+      margin-left: auto;
+    }
   }
 
   .kpi-icon-box {
@@ -41,7 +45,7 @@
     &.primary-bg { background-color: v.$primary; }
     &.accent-bg { background-color: v.$accent; }
     &.warn-bg { background-color: v.$warn; }
-    &.error-bg { background-color: #e53935; }
+    &.error-bg { background-color: v.$warn-dark; }
 
     mat-icon {
       font-size: 24px;
@@ -73,11 +77,11 @@
   gap: 20px;
   align-items: stretch;
 
-  @media (max-width: 1200px) {
+  @media (max-width: v.$screen-md) {
     grid-template-columns: minmax(0, 1fr) 360px;
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: v.$screen-sm) {
     grid-template-columns: 1fr;
   }
 }
@@ -191,15 +195,20 @@
       justify-content: center;
       width: 22px;
       height: 22px;
+      min-width: 22px;
       border-radius: 50%;
       font-size: 11px;
       font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      box-sizing: border-box;
+      flex-shrink: 0;
 
-      &.step-success { background-color: #e8f5e9; color: #2e7d32; }
-      &.step-warning { background-color: #fff3e0; color: #ef6c00; }
-      &.step-danger  { background-color: #ffebee; color: #c62828; }
-      &.step-active  { background-color: #e3f2fd; color: #1565c0; }
-      &.step-muted   { background-color: #f5f5f5; color: #9e9e9e; }
+      &.step-success { background-color: v.$planet-green-lighter; color: v.$planet-green-dark; }
+      &.step-warning { background-color: v.$accent-lighter;       color: v.$warn-dark; }
+      &.step-danger  { background-color: v.$warn-lighter;         color: v.$warn-dark; }
+      &.step-active  { background-color: v.$primary-lighter;      color: v.$primary-dark; }
+      &.step-muted   { background-color: v.$light-grey;           color: v.$grey; }
     }
   }
 }
@@ -215,7 +224,7 @@
 
     .step-difficulty-item {
       padding-bottom: 12px;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid v.$light-grey;
 
       &:last-child {
         border-bottom: none;
@@ -233,7 +242,7 @@
         font-size: 14px;
         font-weight: 600;
         line-height: 1.3;
-        word-break: break-word;
+        overflow-wrap: anywhere;
       }
 
       .step-errors-badge {
@@ -253,7 +262,7 @@
       font-size: 12px;
 
       .ungraded-tag {
-        color: #ef6c00;
+        color: v.$warn-dark;
         font-weight: 500;
       }
     }

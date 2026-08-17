@@ -393,7 +393,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
           }
         });
 
-        const passPercentage = usersWithSubs.length ? Math.round((passCount / usersWithSubs.length) * 100) : 0;
+        const passPercentage = usersWithSubs.length ? Math.round((passCount / usersWithSubs.length) * 100) : null;
         return {
           stepIndex: index + 1,
           stepTitle: sanitizedTitle,
@@ -414,7 +414,7 @@ export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked,
         submissionCount: 0,
         totalErrors: 0,
         pendingCount: 0,
-        passPercentage: 100
+        passPercentage: null
       };
     });
   }
