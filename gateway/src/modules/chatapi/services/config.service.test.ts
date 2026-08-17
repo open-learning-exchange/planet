@@ -40,13 +40,14 @@ describe('AI configuration service', () => {
 
   it('constructs compatible provider clients with their expected base URLs', async () => {
     mocks.configurationDB.list.mockResolvedValue(docRows({
-      'keys': { 'perplexity': 'pplx-key', 'deepseek': 'ds-key', 'gemini': 'gemini-key' },
-      'models': { 'perplexity': 'sonar', 'deepseek': 'deepseek-chat', 'gemini': 'gemini-test' }
+      'keys': { 'perplexity': 'pplx-key', 'deepseek': 'ds-key', 'gemini': 'gemini-key', 'anthropic': 'claude-key' },
+      'models': { 'perplexity': 'sonar', 'deepseek': 'deepseek-chat', 'gemini': 'gemini-test', 'anthropic': 'claude-sonnet-4-6' }
     }));
     const config = await getAIConfig();
     expect((config.providers.perplexity.client as any).baseURL).toEqual('https://api.perplexity.ai');
     expect((config.providers.deepseek.client as any).baseURL).toEqual('https://api.deepseek.com');
     expect((config.providers.gemini.client as any).baseURL).toEqual('https://generativelanguage.googleapis.com/v1beta/openai/');
+    expect((config.providers.anthropic.client as any).baseURL).toEqual('https://api.anthropic.com/v1/');
   });
 
   it('uses prompt-profile overrides and built-ins for empty modes', async () => {
@@ -133,6 +134,19 @@ describe('AI configuration service', () => {
     expect((await forced).promptProfiles.general_chat).toEqual('new');
     expect((await getAIConfig()).promptProfiles.general_chat).toEqual('new');
     expect(mocks.configurationDB.list).toHaveBeenCalledTimes(2);
+  });
+
+  it('deduplicates concurrent forced configuration reloads', async () => {
+    let release: ((value: ReturnType<typeof docRows>) => void) | undefined;
+    mocks.configurationDB.list.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }));
+
+    const first = getAIConfig(true);
+    const second = getAIConfig(true);
+    release?.(docRows({ 'promptProfiles': { 'general_chat': 'fresh' } }));
+
+    expect((await first).promptProfiles.general_chat).toEqual('fresh');
+    expect((await second).promptProfiles.general_chat).toEqual('fresh');
+    expect(mocks.configurationDB.list).toHaveBeenCalledTimes(1);
   });
 
   it('deduplicates concurrent configuration reloads', async () => {

@@ -173,7 +173,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
       );
     }
   }
-  if (context.resource?.id && providerName === 'openai') {
+  if (context.resource?.id && providerSupports(providerName, 'fileSearch')) {
     try {
       const index = await ensureResourceIndexed(runtime.client, context.resource.id, options.sessionUser, options.signal);
       if (index) {
@@ -202,7 +202,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     if (options.signal?.aborted) {
       throw cancellationError();
     }
-    if (context.resource?.id && providerName === 'openai' && vectorStoreIds?.[0]) {
+    if (context.resource?.id && providerSupports(providerName, 'fileSearch') && vectorStoreIds?.[0]) {
       void markResourceIndexDirtyIfUnavailable(
         runtime.client,
         context.resource.id,

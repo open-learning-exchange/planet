@@ -1,6 +1,7 @@
-export const PROVIDER_NAMES = [ 'openai', 'perplexity', 'deepseek', 'gemini' ] as const;
+import type { ProviderName } from '../providers/registry';
 
-export type ProviderName = typeof PROVIDER_NAMES[number];
+// Re-exported so model consumers keep importing provider types from one place.
+export type { ProviderName };
 
 export interface AIProvider {
   name: ProviderName;

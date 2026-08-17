@@ -1,10 +1,10 @@
 import { Express, Request, Response } from 'express';
 
 import { requireSession, SessionInfo } from './middleware/auth';
-import { rateLimit } from './middleware/rate-limit';
-import { ChatRequestPayload, isNonEmptyObject, PROVIDER_NAMES } from './models/chat.model';
+import { preAuthRateLimit, rateLimit } from './middleware/rate-limit';
+import { ChatRequestPayload, isNonEmptyObject } from './models/chat.model';
 import { defaultPromptProfiles } from './prompts/default-prompts';
-import { providerCapabilities } from './providers';
+import { PROVIDER_NAMES, providerCapabilities, providerDefinition } from './providers/registry';
 import { analyze } from './services/analyze.service';
 import { chat } from './services/chat.service';
 import { getAIConfig } from './services/config.service';
@@ -55,7 +55,7 @@ const requestCancellation = (req: Request, res: Response) => {
 };
 
 export function registerChatApiRoutes(app: Express) {
-  app.post('/', requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
+  app.post('/', preAuthRateLimit(), requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
     const { data, save } = req.body;
     if (!isNonEmptyObject(data)) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
@@ -85,26 +85,27 @@ export function registerChatApiRoutes(app: Express) {
     }
   });
 
-  app.get('/checkproviders', requireSession, rateLimit(), async (req: Request, res: Response) => {
+  app.get('/checkproviders', preAuthRateLimit(), requireSession, rateLimit(), async (req: Request, res: Response) => {
     void req;
     try {
       const config = await getAIConfig(true);
       const providers = PROVIDER_NAMES.reduce((result, name) => {
         const capabilities = providerCapabilities(name);
         result[name] = {
+          'label': providerDefinition(name).label,
           'enabled': config.providers[name].enabled,
           capabilities,
           'fileSearchContentTypes': capabilities.includes('fileSearch') ? [ ...FILE_SEARCH_CONTENT_TYPES ] : []
         };
         return result;
-      }, {} as Record<string, { enabled: boolean; capabilities: string[]; fileSearchContentTypes: string[] }>);
+      }, {} as Record<string, { label: string; enabled: boolean; capabilities: string[]; fileSearchContentTypes: string[] }>);
       res.status(200).json({ providers, 'promptDefaults': defaultPromptProfiles });
     } catch (error) {
       handleError(res, error);
     }
   });
 
-  app.post('/analyze', requireSession, rateLimit(), async (req: Request, res: Response) => {
+  app.post('/analyze', preAuthRateLimit(), requireSession, rateLimit(), async (req: Request, res: Response) => {
     const cancellation = requestCancellation(req, res);
     try {
       const result = await analyze(req.body, cancellation.controller.signal);
@@ -121,7 +122,7 @@ export function registerChatApiRoutes(app: Express) {
   });
 
   // eslint-disable-next-line max-len
-  app.post(RESOURCE_CLEANUP_ROUTE, requireSession, rateLimit(MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE, RESOURCE_CLEANUP_RATE_LABEL), async (req: Request, res: Response) => {
+  app.post(RESOURCE_CLEANUP_ROUTE, preAuthRateLimit(), requireSession, rateLimit(MAX_RESOURCE_CLEANUP_REQUESTS_PER_MINUTE, RESOURCE_CLEANUP_RATE_LABEL), async (req: Request, res: Response) => {
     const resourceIds = req.body?.resourceIds;
     if (!Array.isArray(resourceIds) || resourceIds.length === 0 ||
       resourceIds.some((id) => typeof id !== 'string' || id.trim().length === 0)) {
