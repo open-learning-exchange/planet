@@ -4,13 +4,15 @@ const mocks = vi.hoisted(() => ({
   'resourceDB': { 'get': vi.fn(), 'insert': vi.fn(), 'destroy': vi.fn(), 'attachment': { 'get': vi.fn() } },
   'requestResourceDatabase': vi.fn(),
   'listResourceLocalDocs': vi.fn(),
-  'getAIConfig': vi.fn()
+  'getAIConfig': vi.fn(),
+  'resourceIndexStatePrefix': '_local/chatapi-resource-index-'
 }));
 
 vi.mock('../../../config/couch.config', () => ({
   'listResourceLocalDocs': mocks.listResourceLocalDocs,
   'requestResourceDatabase': mocks.requestResourceDatabase,
-  'resourceDB': mocks.resourceDB
+  'resourceDB': mocks.resourceDB,
+  'RESOURCE_INDEX_STATE_PREFIX': mocks.resourceIndexStatePrefix
 }));
 vi.mock('./config.service', () => ({ 'getAIConfig': mocks.getAIConfig }));
 

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   consumeRequest,
+  preAuthRateLimit,
   rateLimit,
   resetRateLimiter
 } from './rate-limit';
@@ -24,10 +25,12 @@ describe('rate-limit middleware', () => {
   beforeEach(() => {
     resetRateLimiter();
     delete process.env.RATE_LIMIT_PER_MINUTE;
+    delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
   });
 
   afterEach(() => {
     delete process.env.RATE_LIMIT_PER_MINUTE;
+    delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
   });
 
   it('allows requests through the limit and rejects requests beyond it', async () => {
@@ -79,6 +82,29 @@ describe('rate-limit middleware', () => {
     const rejected = mockResponse();
     await limiter(mockRequest('10.0.0.1'), rejected, next);
     expect(rejected.status).toHaveBeenCalledWith(429);
+  });
+
+  it('limits unauthenticated requests by IP before a session is available', async () => {
+    process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE = '1';
+    const limiter = preAuthRateLimit();
+    const next = vi.fn();
+
+    await limiter(mockRequest('10.0.0.1'), mockResponse(), next);
+    const rejected = mockResponse();
+    await limiter(mockRequest('10.0.0.1'), rejected, next);
+    await limiter(mockRequest('10.0.0.2'), mockResponse(), next);
+
+    expect(next).toHaveBeenCalledTimes(2);
+    expect(rejected.status).toHaveBeenCalledWith(429);
+  });
+
+  it('uses the default pre-auth limit when its environment variable is empty', async () => {
+    process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE = '';
+    const next = vi.fn();
+
+    await preAuthRateLimit()(mockRequest(), mockResponse(), next);
+
+    expect(next).toHaveBeenCalledOnce();
   });
 
   it('shares a labeled window between HTTP middleware and WebSocket turns', async () => {

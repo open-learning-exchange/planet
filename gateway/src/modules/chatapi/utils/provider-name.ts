@@ -1,4 +1,4 @@
-import { ProviderName, PROVIDER_NAMES } from '../models/chat.model';
+import { ProviderName, PROVIDER_NAMES } from '../providers/registry';
 import { HttpError } from './http-error';
 
 /** Default an omitted provider, but reject malformed or unsupported explicit values. */

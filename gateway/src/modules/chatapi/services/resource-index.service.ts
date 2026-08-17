@@ -3,7 +3,7 @@ import { createHash } from 'crypto';
 import { setTimeout as wait } from 'timers/promises';
 import OpenAI, { toFile } from 'openai';
 
-import { listResourceLocalDocs, requestResourceDatabase } from '../../../config/couch.config';
+import { listResourceLocalDocs, requestResourceDatabase, RESOURCE_INDEX_STATE_PREFIX } from '../../../config/couch.config';
 import { SessionInfo } from '../middleware/auth';
 import { Attachment, ResourceVectorStore } from '../models/db-doc.model';
 import { HttpError } from '../utils/http-error';
@@ -27,7 +27,6 @@ const MAX_RESOURCE_INDEX_FILES = 500;
 const FILE_BATCH_POLL_INTERVAL_MS = 5000;
 const REMOTE_MAINTENANCE_TIMEOUT_MS = 5000;
 const RESOURCE_INDEX_ADMIN_ROLES = new Set([ '_admin', 'manager' ]);
-const INDEX_STATE_PREFIX = '_local/chatapi-resource-index-';
 const RECONCILIATION_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const resourceOperationTails = new Map<string, Promise<void>>();
 let reconciliationTimer: NodeJS.Timeout | undefined;
@@ -63,7 +62,7 @@ const positiveIntegerOr = (value: string | undefined, fallback: number): number 
 const maxFileBytes = (): number => positiveIntegerOr(process.env.RESOURCE_INDEX_MAX_FILE_BYTES, DEFAULT_MAX_FILE_BYTES);
 const maxTotalBytes = (): number => positiveIntegerOr(process.env.RESOURCE_INDEX_MAX_TOTAL_BYTES, DEFAULT_MAX_TOTAL_BYTES);
 const indexStateId = (resourceId: string): string =>
-  `${INDEX_STATE_PREFIX}${createHash('sha256').update(resourceId).digest('hex')}`;
+  `${RESOURCE_INDEX_STATE_PREFIX}${createHash('sha256').update(resourceId).digest('hex')}`;
 const throwIfAborted = (signal?: AbortSignal) => {
   if (signal?.aborted) {
     throw signal.reason || new Error('Resource indexing cancelled');
@@ -441,7 +440,7 @@ export async function reconcileOrphanedResourceIndexes(
   const states = (response.rows || [])
     .map((row) => row.doc)
     .filter((state): state is ResourceIndexState =>
-      !!state?._id?.startsWith(INDEX_STATE_PREFIX) && typeof state.resourceId === 'string' && !!state.store?.id);
+      !!state?._id?.startsWith(RESOURCE_INDEX_STATE_PREFIX) && typeof state.resourceId === 'string' && !!state.store?.id);
   let clientPromise: Promise<OpenAI> | undefined;
   for (const candidate of states) {
     try {
@@ -464,7 +463,7 @@ export async function reconcileOrphanedResourceIndexes(
         await removeIndexState(await clientPromise, state);
       });
     } catch (error) {
-      console.error(`chatapi: deferred index cleanup failed for resource ${candidate.resourceId}`);
+      console.error(`chatapi: deferred index cleanup failed for resource ${candidate.resourceId}: ${error}`);
     }
   }
 }

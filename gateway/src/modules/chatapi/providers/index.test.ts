@@ -66,7 +66,7 @@ describe('provider dispatch', () => {
     expect(providerSignal?.aborted).toEqual(true);
   });
 
-  it.each([ 'anthropic', 'constructor' ])('rejects unsupported capability lookup %s', (name) => {
+  it.each([ 'mistral', 'constructor' ])('rejects unsupported capability lookup %s', (name) => {
     expect(() => providerCapabilities(name)).toThrow(`Unsupported AI provider "${name}"`);
   });
 
@@ -79,6 +79,8 @@ describe('provider dispatch', () => {
   it('uses the capability table for feature support checks', () => {
     expect(providerSupports('openai', 'structuredOutput')).toEqual(true);
     expect(providerSupports('gemini', 'structuredOutput')).toEqual(false);
+    expect(providerSupports('anthropic', 'chat')).toEqual(true);
+    expect(providerSupports('anthropic', 'structuredOutput')).toEqual(false);
   });
 
   it('rejects disabled or model-less providers before dispatch', async () => {

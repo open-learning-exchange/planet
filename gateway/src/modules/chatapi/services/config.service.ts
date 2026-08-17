@@ -2,8 +2,9 @@
 import OpenAI from 'openai';
 
 import { configurationDB } from '../../../config/couch.config';
-import { AIConfigDoc, ChatMode, ProviderName, PROVIDER_NAMES } from '../models/chat.model';
+import { AIConfigDoc, ChatMode } from '../models/chat.model';
 import { defaultPromptProfiles } from '../prompts/default-prompts';
+import { ProviderName, PROVIDER_NAMES, providerDefinition } from '../providers/registry';
 import { getAIRequestTimeoutMs } from '../utils/timeout.utils';
 
 export interface ProviderRuntime {
@@ -20,18 +21,12 @@ export interface AIConfig {
   planetCode: string;
 }
 
-const PROVIDER_BASE_URLS: Record<ProviderName, string | undefined> = {
-  'openai': undefined,
-  'perplexity': 'https://api.perplexity.ai',
-  'deepseek': 'https://api.deepseek.com',
-  'gemini': 'https://generativelanguage.googleapis.com/v1beta/openai/'
-};
-
 const CONFIG_CACHE_TTL_MS = 30000;
 const CONFIG_ERROR_RETRY_TTL_MS = 5000;
 
 let cache: { expires: number; value: AIConfig } | undefined;
 let refreshInFlight: Promise<AIConfig> | undefined;
+let refreshInFlightIsForced = false;
 
 const isRecord = (value: any): boolean => typeof value === 'object' && value !== null;
 
@@ -54,7 +49,7 @@ const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime =>
   const requestTimeoutMs = getAIRequestTimeoutMs();
   const client = apiKey ? new OpenAI({
     apiKey,
-    'baseURL': PROVIDER_BASE_URLS[name],
+    'baseURL': providerDefinition(name).baseURL,
     'timeout': requestTimeoutMs,
     'maxRetries': 0
   }) : undefined;
@@ -101,7 +96,11 @@ const refreshAIConfig = async (): Promise<AIConfig> => {
 export async function getAIConfig(forceReload = false): Promise<AIConfig> {
   // Discovery after login must read after any earlier unauthenticated refresh.
   if (forceReload && refreshInFlight) {
+    if (refreshInFlightIsForced) {
+      return refreshInFlight;
+    }
     await refreshInFlight;
+    return getAIConfig(true);
   }
   if (!forceReload && cache && cache.expires > Date.now()) {
     return cache.value;
@@ -111,11 +110,13 @@ export async function getAIConfig(forceReload = false): Promise<AIConfig> {
   }
   const refresh = refreshAIConfig();
   refreshInFlight = refresh;
+  refreshInFlightIsForced = forceReload;
   try {
     return await refresh;
   } finally {
     if (refreshInFlight === refresh) {
       refreshInFlight = undefined;
+      refreshInFlightIsForced = false;
     }
   }
 }
@@ -124,4 +125,5 @@ export async function getAIConfig(forceReload = false): Promise<AIConfig> {
 export function resetAIConfigCache() {
   cache = undefined;
   refreshInFlight = undefined;
+  refreshInFlightIsForced = false;
 }

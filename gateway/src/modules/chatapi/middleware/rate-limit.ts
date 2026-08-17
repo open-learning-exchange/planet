@@ -3,6 +3,7 @@ import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 const WINDOW_SECONDS = 60;
 const DEFAULT_MAX_PER_MINUTE = 30;
+const DEFAULT_PRE_AUTH_MAX_PER_MINUTE = 120;
 
 const limiters = new Map<number, RateLimiterMemory>();
 
@@ -12,6 +13,13 @@ const nonNegativeIntegerOr = (value: number, fallback: number): number =>
 const configuredMax = (): number | undefined => {
   const configured = process.env.RATE_LIMIT_PER_MINUTE;
   return configured?.trim() ? nonNegativeIntegerOr(Number(configured), DEFAULT_MAX_PER_MINUTE) : undefined;
+};
+
+const configuredPreAuthMax = (): number => {
+  const configured = process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
+  return configured?.trim()
+    ? nonNegativeIntegerOr(Number(configured), DEFAULT_PRE_AUTH_MAX_PER_MINUTE)
+    : DEFAULT_PRE_AUTH_MAX_PER_MINUTE;
 };
 
 const limiterFor = (points: number): RateLimiterMemory => {
@@ -61,6 +69,24 @@ export function rateLimit(maxPerMinute?: number, label?: string) {
     }
     try {
       await limiterFor(max).consume(key);
+      next();
+    } catch {
+      rejectRequest(res);
+    }
+  };
+}
+
+/** Limit unauthenticated requests by IP before session validation reaches CouchDB. */
+export function preAuthRateLimit() {
+  return async function preAuthRateLimiter(req: Request, res: Response, next: NextFunction) {
+    const route = `${req.method} ${req.route?.path || req.path}`;
+    const max = configuredPreAuthMax();
+    if (max === 0) {
+      rejectRequest(res);
+      return;
+    }
+    try {
+      await limiterFor(max).consume(`preauth:${req.ip}:${route}`);
       next();
     } catch {
       rejectRequest(res);

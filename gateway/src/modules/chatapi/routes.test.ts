@@ -57,15 +57,17 @@ describe('chatapi HTTP routes', () => {
     vi.clearAllMocks();
     resetRateLimiter();
     delete process.env.RATE_LIMIT_PER_MINUTE;
+    delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
   });
 
-  it('protects every route with session validation', () => {
+  it('throttles every route before session validation', () => {
     const app = registeredApp();
     const routes = [ ...app.post.mock.calls, ...app.get.mock.calls ];
     expect(routes.map((route: any[]) => route[0])).toEqual([
       '/', '/analyze', '/resources/indexes/cleanup', '/checkproviders'
     ]);
-    expect(routes.every((route: any[]) => route[1] === requireSession)).toEqual(true);
+    expect(routes.every((route: any[]) => route[1].name === 'preAuthRateLimiter')).toEqual(true);
+    expect(routes.every((route: any[]) => route[2] === requireSession)).toEqual(true);
   });
 
   it('returns stable application error codes', async () => {
@@ -176,7 +178,8 @@ describe('chatapi HTTP routes', () => {
         'openai': { 'enabled': true },
         'perplexity': { 'enabled': false },
         'deepseek': { 'enabled': false },
-        'gemini': { 'enabled': false }
+        'gemini': { 'enabled': false },
+        'anthropic': { 'enabled': false }
       }
     });
     const handler = routeHandler(registeredApp(), 'get', '/checkproviders');
@@ -188,13 +191,20 @@ describe('chatapi HTTP routes', () => {
     expect(res.json).toHaveBeenCalledWith({
       'providers': expect.objectContaining({
         'openai': {
+          'label': 'OpenAI',
           'enabled': true,
           'capabilities': expect.arrayContaining([ 'chat', 'fileSearch' ]),
           'fileSearchContentTypes': mocks.fileSearchContentTypes
         },
         'perplexity': expect.objectContaining({
+          'label': 'Perplexity',
           'enabled': false,
           'fileSearchContentTypes': []
+        }),
+        'anthropic': expect.objectContaining({
+          'label': 'Anthropic (Claude)',
+          'enabled': false,
+          'capabilities': [ 'chat' ]
         })
       }),
       'promptDefaults': defaultPromptProfiles

@@ -35,7 +35,7 @@ const configurationDB = db.use('configurations');
 const examsDB = db.use('exams');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
-const resourceIndexStatePrefix = '_local/chatapi-resource-index-';
+export const RESOURCE_INDEX_STATE_PREFIX = '_local/chatapi-resource-index-';
 
 /** Options supported by Nano at runtime but missing from its v10 RequestOptions type. */
 type ResourceRequestOptions = nano.RequestOptions & {
@@ -55,8 +55,8 @@ const listResourceLocalDocs = () => db.request({
   'path': '_local_docs',
   'qs': {
     'include_docs': true,
-    'startkey': resourceIndexStatePrefix,
-    'endkey': `${resourceIndexStatePrefix}\ufff0`
+    'startkey': RESOURCE_INDEX_STATE_PREFIX,
+    'endkey': `${RESOURCE_INDEX_STATE_PREFIX}\ufff0`
   }
 });
 

@@ -1,27 +1,11 @@
-import { ProviderChatRequest, ProviderChatResult, ProviderName } from '../models/chat.model';
+import { ProviderChatRequest, ProviderChatResult } from '../models/chat.model';
 import { ProviderRuntime } from '../services/config.service';
 import { HttpError } from '../utils/http-error';
 import { compatChat } from './openai-compat.provider';
 import { openaiChat } from './openai.provider';
+import { providerSupports } from './registry';
 
-export type ProviderCapability = 'chat' | 'fileSearch' | 'structuredOutput';
-
-const CAPABILITIES: Record<ProviderName, readonly ProviderCapability[]> = {
-  'openai': [ 'chat', 'fileSearch', 'structuredOutput' ],
-  'perplexity': [ 'chat' ],
-  'deepseek': [ 'chat' ],
-  'gemini': [ 'chat' ]
-};
-
-export const providerCapabilities = (name: string): ProviderCapability[] => {
-  if (!Object.prototype.hasOwnProperty.call(CAPABILITIES, name)) {
-    throw new HttpError(400, `Unsupported AI provider "${name}"`);
-  }
-  return [ ...CAPABILITIES[name as ProviderName] ];
-};
-
-export const providerSupports = (name: ProviderName, capability: ProviderCapability): boolean =>
-  CAPABILITIES[name].includes(capability);
+export { providerCapabilities, providerSupports } from './registry';
 
 export async function runProviderChat(runtime: ProviderRuntime, request: ProviderChatRequest): Promise<ProviderChatResult> {
   if (!runtime.enabled || !runtime.client) {

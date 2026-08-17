@@ -33,7 +33,8 @@ const config = () => ({
     'openai': runtime('openai'),
     'perplexity': runtime('perplexity'),
     'deepseek': runtime('deepseek', false),
-    'gemini': runtime('gemini', false)
+    'gemini': runtime('gemini', false),
+    'anthropic': runtime('anthropic', false)
   },
   'promptProfiles': {
     'general_chat': 'GENERAL PROFILE',
