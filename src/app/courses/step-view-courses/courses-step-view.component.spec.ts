@@ -5,6 +5,7 @@ describe('CoursesStepViewComponent course chat context', () => {
     const component = Object.create(CoursesStepViewComponent.prototype) as CoursesStepViewComponent;
     component.stepDetail = { 'stepTitle': 'Introduction', 'description': 'Read the guide' };
     component.parent = false;
+    (component as any).updateChatContext();
     return component;
   };
 
@@ -18,6 +19,7 @@ describe('CoursesStepViewComponent course chat context', () => {
       { 'resources': [ { '_id': currentResource._id } ] },
       [ currentResource ]
     )[0];
+    (component as any).updateChatContext();
 
     expect(component.chatContext).toEqual({
       'type': 'coursestep',
@@ -30,6 +32,7 @@ describe('CoursesStepViewComponent course chat context', () => {
     const component = createComponent();
     component.parent = true;
     component.resource = { '_id': 'parent-resource', '_attachments': {} };
+    (component as any).updateChatContext();
 
     expect(component.chatContext).toEqual({
       'type': 'coursestep',
