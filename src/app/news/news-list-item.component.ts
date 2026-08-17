@@ -9,7 +9,7 @@ import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
-import { calculateMdAdjustedLimit } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -156,9 +156,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
     } else {
-      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const message = typeof this.item.doc.message === 'string' ? this.item.doc.message : '';
       const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
-      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
+      this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
+        hasMarkdownImages(message) || imagesLength > 0;
     }
   }
 
