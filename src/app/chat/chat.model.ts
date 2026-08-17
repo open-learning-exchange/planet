@@ -1,7 +1,10 @@
-export type ProviderName = 'openai' | 'perplexity' | 'deepseek' | 'gemini';
+/** Provider names are supplied by the ChatAPI registry. */
+export type ProviderName = string;
 
 export interface AIProvider {
   name: ProviderName;
+  /** Display name from the registry; falls back to the raw provider name. */
+  label?: string;
   capabilities?: string[];
   fileSearchContentTypes?: string[];
 }
@@ -86,12 +89,13 @@ export interface ChatStreamMessage {
 }
 
 export interface AIServiceStatus {
+  label?: string;
   enabled: boolean;
   capabilities: string[];
   fileSearchContentTypes: string[];
 }
 
-export type AIServices = Record<ProviderName, AIServiceStatus>;
+export type AIServices = Record<string, AIServiceStatus>;
 
 export interface PromptProfiles {
   general_chat: string;

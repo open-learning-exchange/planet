@@ -1,22 +1,23 @@
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
 import {
   AIServiceDiscovery,
-  AIServices,
+  AIServiceStatus,
   AIProvider,
   ChatStreamMessage,
-  PromptProfiles,
   ProviderName,
   ResourceIndexCleanupResponse,
   SurveyAnalysisPayload,
   SurveyAnalysisResponse
 } from '../chat/chat.model';
+
+const PROVIDER_DISCOVERY_RETRY_MS = 5000;
 
 @Injectable({
   providedIn: 'root'
@@ -34,18 +35,17 @@ import {
   private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
-  private promptDefaultsSubject = new BehaviorSubject<PromptProfiles>({
-    'general_chat': '',
-    'course_help': '',
-    'survey_analysis': ''
-  });
+  // undefined until the first attempt settles, null when it failed with nothing cached to keep.
+  private aiServiceDiscoverySubject = new BehaviorSubject<AIServiceDiscovery | null | undefined>(undefined);
+  private providerDiscoveryInFlight = false;
+  private providerDiscoveryQueued = false;
+  private providerDiscoveryRetryAt = 0;
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
   newChatSelected$ = this.newChatSelected.asObservable();
   toggleAIService$: Observable<ProviderName> = this.toggleAIService.asObservable();
   aiProviders$ = this.aiProvidersSubject.asObservable();
-  promptDefaults$ = this.promptDefaultsSubject.asObservable();
   selectedConversationId$: Observable<object | null> = this.selectedConversationIdSubject.asObservable();
   currentChatAIProvider$: Observable<AIProvider> = this.currentChatAIProvider.asObservable();
 
@@ -53,13 +53,11 @@ import {
     private httpClient: HttpClient,
     private couchService: CouchService,
     @Inject(LOCALE_ID) private localeId: string
-  ) {
-    this.refreshAIProviders();
-  }
+  ) {}
 
   chatErrorMessage(error: { code?: string; message?: string } | undefined, fallback = $localize`Chat request failed`): string {
     if (error?.code === 'resource_attachments_unsupported') {
-      return $localize`This AI provider does not support resource attachments. Use a provider that supports resource attachments for attachment questions.`;
+      return $localize`This AI provider does not support resource attachments. Select a provider that does.`;
     }
     if (error?.code === 'resource_context_unavailable') {
       return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
@@ -125,41 +123,67 @@ import {
   }
 
   refreshAIProviders(): void {
+    this.loadAIProviders(true);
+  }
+
+  private ensureAIProviders(): void {
+    this.loadAIProviders(false);
+  }
+
+  private loadAIProviders(force: boolean): void {
+    // Back off transient discovery failures without permanently disabling discovery for the session.
+    const cachedDiscovery = this.aiServiceDiscoverySubject.value;
+    if (!force && cachedDiscovery !== undefined &&
+      (cachedDiscovery !== null || Date.now() < this.providerDiscoveryRetryAt)) {
+      return;
+    }
+    if (this.providerDiscoveryInFlight) {
+      // An in-flight response predates a forced refresh, so run again once it settles.
+      this.providerDiscoveryQueued = this.providerDiscoveryQueued || force;
+      return;
+    }
+    this.providerDiscoveryInFlight = true;
     this.httpClient
       .get<AIServiceDiscovery>(`${this.baseUrl}/checkproviders`, { withCredentials: true })
       .pipe(
         catchError((err) => {
           console.error(err);
           return of(null);
-        }),
-        map((discovery: AIServiceDiscovery | null) => {
-          if (discovery) {
-            const providers = (Object.entries(discovery.providers) as [ ProviderName, AIServices[ProviderName] ][])
-              .filter(([ _, service ]) => service?.enabled === true)
-              .map(([ key, service ]) => ({
-                'name': key,
-                'capabilities': service.capabilities || [],
-                'fileSearchContentTypes': service.fileSearchContentTypes || []
-              }));
-            return { providers, 'promptDefaults': discovery.promptDefaults };
-          }
-          return null;
         })
       )
       .subscribe((discovery) => {
+        this.providerDiscoveryInFlight = false;
+        if (this.providerDiscoveryQueued) {
+          this.providerDiscoveryQueued = false;
+          this.loadAIProviders(true);
+          return;
+        }
         if (discovery) {
-          this.aiProvidersSubject.next(discovery.providers);
-          this.promptDefaultsSubject.next(discovery.promptDefaults);
+          const providers = (Object.entries(discovery.providers) as [ string, AIServiceStatus ][])
+            .filter(([ _, service ]) => service?.enabled === true)
+            .map(([ name, service ]) => ({
+              name,
+              'label': service.label || name,
+              'capabilities': service.capabilities || [],
+              'fileSearchContentTypes': service.fileSearchContentTypes || []
+            }));
+          this.aiServiceDiscoverySubject.next(discovery);
+          this.aiProvidersSubject.next(providers);
+        } else if (!this.aiServiceDiscoverySubject.value) {
+          this.aiServiceDiscoverySubject.next(null);
+          this.providerDiscoveryRetryAt = Date.now() + PROVIDER_DISCOVERY_RETRY_MS;
         }
       });
   }
 
   listAIProviders(): Observable<Array<AIProvider>> {
+    this.ensureAIProviders();
     return this.aiProviders$;
   }
 
-  getPromptDefaults(): Observable<PromptProfiles> {
-    return this.promptDefaults$;
+  getAIServiceDiscovery(): Observable<AIServiceDiscovery | null | undefined> {
+    this.ensureAIProviders();
+    return this.aiServiceDiscoverySubject.asObservable();
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {
