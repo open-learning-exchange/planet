@@ -124,6 +124,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
+  deactivateDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
   trackById = trackById;
@@ -248,6 +249,28 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
         type: 'user',
         displayName: user.name,
         extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
+      }
+    });
+  }
+
+  deactivateClick(user: any, event: Event) {
+    event.stopPropagation();
+    this.deactivateDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.usersService.setRoles(user, []),
+          onNext: () => {
+            this.usersService.requestUsers(true);
+            this.planetMessageService.showMessage($localize`User deactivated: ${user.name}`);
+            this.deactivateDialog.close();
+          },
+          onError: () => this.planetMessageService.showAlert($localize`There was an error deactivating user.`)
+        },
+        amount: 'single',
+        changeType: 'deactivate',
+        type: 'user',
+        displayName: user.name,
+        extraMessage: $localize`Deactivating will remove all active roles for this user.`
       }
     });
   }
