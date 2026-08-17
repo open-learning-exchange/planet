@@ -350,14 +350,15 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Do not block resource deletion when AI index cleanup is unavailable.
   // The gateway retries retained index state after the resource document is deleted.
   private cleanupResourceIndexes(resources: any[]): Observable<boolean> {
-    if (resources.length === 0 || !this.chatService.hasFileSearchProvider()) {
+    if (resources.length === 0) {
       return of(false);
     }
     const resourceIds = resources.map((resource) => resource._id);
     const immediateResourceIds = resourceIds.slice(0, 500);
     return this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
       timeout(this.resourceIndexCleanupTimeoutMs),
-      map((response) => response.results.some((result) => result.deferred || result.failed)),
+      map((response) => resourceIds.length > immediateResourceIds.length ||
+        response.results.some((result) => result.deferred || result.failed)),
       catchError(() => of(true))
     );
   }

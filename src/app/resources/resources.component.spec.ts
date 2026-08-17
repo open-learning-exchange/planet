@@ -24,7 +24,11 @@ const createComponent = (
   {} as any,
   { 'watchDeviceType': () => of(0) } as any,
   {} as any,
-  { 'hasFileSearchProvider': () => true, ...chatService } as any
+  {
+    'hasFileSearchProvider': () => true,
+    'removeResourceIndexes': () => of({ 'results': [] }),
+    ...chatService
+  } as any
 );
 
 describe('ResourcesComponent', () => {
@@ -103,7 +107,7 @@ describe('ResourcesComponent', () => {
       expect(couchService.post).toHaveBeenCalledTimes(1);
     });
 
-    it('cleans one immediate batch without reporting planned reconciliation as a failure', async () => {
+    it('warns when resources beyond the immediate cleanup batch are deferred', async () => {
       const couchService = { 'post': vi.fn().mockReturnValue(of([])) };
       const chatService = { 'removeResourceIndexes': vi.fn().mockReturnValue(of({ 'results': [] })) };
       const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
@@ -114,21 +118,21 @@ describe('ResourcesComponent', () => {
 
       expect(chatService.removeResourceIndexes).toHaveBeenCalledTimes(1);
       expect(chatService.removeResourceIndexes.mock.calls[0][0]).toHaveLength(500);
-      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+      expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
     });
 
-    it('skips index cleanup when no file-search provider is enabled', async () => {
+    it('requests cleanup even before provider discovery is available', async () => {
       const couchService = { 'delete': vi.fn().mockReturnValue(of({ 'id': 'res1' })) };
       const chatService = {
         'hasFileSearchProvider': () => false,
-        'removeResourceIndexes': vi.fn()
+        'removeResourceIndexes': vi.fn().mockReturnValue(of({ 'results': [] }))
       };
       const planetMessageService = { 'showAlert': vi.fn(), 'showMessage': vi.fn() };
       const component = createComponent(couchService, chatService, planetMessageService);
 
       await component.deleteResource({ '_id': 'res1', '_rev': '1-a' }).request.toPromise();
 
-      expect(chatService.removeResourceIndexes).not.toHaveBeenCalled();
+      expect(chatService.removeResourceIndexes).toHaveBeenCalledWith([ 'res1' ]);
       expect(couchService.delete).toHaveBeenCalled();
       expect(planetMessageService.showAlert).not.toHaveBeenCalled();
     });
