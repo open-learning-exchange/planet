@@ -61,4 +61,11 @@ describe('ConfigurationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('creates sparse AI configuration maps for a new community', () => {
+    const { configuration } = component.createConfigurationDocs();
+
+    expect(configuration.keys).toEqual({});
+    expect(configuration.models).toEqual({});
+  });
 });

@@ -1,4 +1,4 @@
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { afterEach, vi } from 'vitest';
 
 import { AIProvider, AIServices, AIServiceDiscovery, PromptProfiles } from '../chat/chat.model';
@@ -71,6 +71,83 @@ describe('ChatService', () => {
   };
 
   describe('provider discovery and selection', () => {
+    it('loads provider discovery only when an authenticated consumer needs it', () => {
+      const { service, httpClient } = createService();
+
+      expect(httpClient.get).not.toHaveBeenCalled();
+      service.getAIServiceDiscovery().subscribe();
+
+      expect(httpClient.get).toHaveBeenCalledTimes(1);
+    });
+
+    // A pending discovery must not look like a failed one, or the manager form flashes an error
+    // banner on every load.
+    it('separates a pending discovery from one that failed', () => {
+      const pending = new Subject<AIServiceDiscovery>();
+      const { service } = createService(pending);
+      const states: Array<AIServiceDiscovery | null | undefined> = [];
+      service.getAIServiceDiscovery().subscribe((value) => states.push(value));
+
+      expect(states).toEqual([ undefined ]);
+
+      pending.next(discovery({ 'perplexity': true }));
+
+      expect(states.at(-1)).toEqual(discovery({ 'perplexity': true }));
+    });
+
+    it('does not emit a stale discovery before a queued forced refresh', () => {
+      const pending = new Subject<AIServiceDiscovery>();
+      const httpClient = {
+        'get': vi.fn()
+          .mockReturnValueOnce(pending)
+          .mockReturnValueOnce(of(discovery({ 'openai': true })))
+      };
+      const service = new ChatService(httpClient as any, {} as CouchService, 'en');
+      const states: Array<AIServiceDiscovery | null | undefined> = [];
+      service.getAIServiceDiscovery().subscribe((value) => states.push(value));
+      expect(httpClient.get).toHaveBeenCalledTimes(1);
+
+      service.refreshAIProviders();
+
+      expect(httpClient.get).toHaveBeenCalledTimes(1);
+
+      pending.next(discovery({ 'perplexity': true }));
+
+      expect(httpClient.get).toHaveBeenCalledTimes(2);
+      expect(states).toEqual([ undefined, discovery({ 'openai': true }) ]);
+    });
+
+    it('reports a failed discovery instead of holding consumers at pending', () => {
+      const { service } = createService(throwError({ 'status': 503 }));
+      const states: Array<AIServiceDiscovery | null | undefined> = [];
+
+      service.getAIServiceDiscovery().subscribe((value) => states.push(value));
+
+      expect(states).toEqual([ null ]);
+    });
+
+    it('retries an initial failed discovery after a short backoff', () => {
+      vi.useFakeTimers();
+      try {
+        const httpClient = {
+          'get': vi.fn()
+            .mockReturnValueOnce(throwError({ 'status': 503 }))
+            .mockReturnValueOnce(of(discovery({ 'perplexity': true })))
+        };
+        const service = new ChatService(httpClient as any, {} as CouchService, 'en');
+
+        service.getAIServiceDiscovery().subscribe();
+        expect(httpClient.get).toHaveBeenCalledTimes(1);
+
+        vi.advanceTimersByTime(5000);
+        service.getAIServiceDiscovery().subscribe();
+
+        expect(httpClient.get).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
     it('retains the last provider list when a refresh fails', () => {
       const { service, httpClient } = createService();
       const providerLists: string[][] = [];
@@ -179,7 +256,7 @@ describe('ChatService', () => {
       }));
 
       expect(errors).toEqual([
-        'This AI provider does not support resource attachments. Use a provider that supports resource attachments for attachment questions.'
+        'This AI provider does not support resource attachments. Select a provider that does.'
       ]);
       expect(socket.close).toHaveBeenCalled();
     });
@@ -222,6 +299,7 @@ describe('ChatService', () => {
       });
       const { service, httpClient } = createService(providerResponse);
       httpClient.post.mockReturnValue(of({ 'provider': 'openai', 'sections': [] }));
+      service.listAIProviders().subscribe();
       service.setChatAIProvider({ 'name': 'perplexity' });
 
       service.analyzeSurvey({ 'exam': { 'name': 'Survey' }, 'questions': [] }).subscribe();
@@ -238,6 +316,7 @@ describe('ChatService', () => {
         'providers': {
           ...services({ 'openai': true }),
           'openai': {
+            'label': 'OpenAI',
             'enabled': true,
             'capabilities': [ 'chat', 'fileSearch' ],
             'fileSearchContentTypes': [ 'application/pdf' ]
@@ -249,11 +328,12 @@ describe('ChatService', () => {
       let providers: AIProvider[] = [];
       let defaults: PromptProfiles | undefined;
       service.listAIProviders().subscribe((value) => providers = value);
-      service.getPromptDefaults().subscribe((value) => defaults = value);
+      service.getAIServiceDiscovery().subscribe((value) => defaults = value?.promptDefaults);
 
       expect(service.hasFileSearchProvider()).toEqual(true);
       expect(providers).toEqual([ {
         'name': 'openai',
+        'label': 'OpenAI',
         'capabilities': [ 'chat', 'fileSearch' ],
         'fileSearchContentTypes': [ 'application/pdf' ]
       } ]);

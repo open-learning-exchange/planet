@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -35,9 +35,9 @@ export class LoginTasksService {
   ) {}
 
   postLoginTasks$(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
-    this.chatService.refreshAIProviders();
     return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
       switchMap(this.createSession(name, password)),
+      tap(() => this.chatService.refreshAIProviders()),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);

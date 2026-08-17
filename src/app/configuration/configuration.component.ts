@@ -312,18 +312,8 @@ export class ConfigurationComponent implements OnInit {
 
     const chatConfig = {
       streaming: false,
-      keys: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
-      models: {
-        openai: '',
-        perplexity: '',
-        deepseek: '',
-        gemini: ''
-      },
+      keys: {},
+      models: {},
       // Prompt instructions default to the gateway's built-in profiles; set per-mode overrides here
       promptProfiles: {}
     };
