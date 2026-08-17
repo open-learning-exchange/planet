@@ -139,7 +139,7 @@
                   <button mat-raised-button color="accent" class="margin-lr-10" [disabled]="stepNum > 0 && !step.isPreviousTestTaken" (click)="goToExam(step, stepNum)" i18n>{step.examText, select, continue {Continue Test} retake {Retake Test} other {Take Test}}</button>
                 }
                 @if (step?.survey?.questions.length && isUserEnrolled) {
-                  <a mat-raised-button color="accent" class="margin-lr-10" (click)="goToSurvey(stepNum)" i18n>Take Survey</a>
+                  <button mat-raised-button color="accent" class="margin-lr-10" (click)="goToSurvey(stepNum)" i18n>Take Survey</button>
                 }
                 @if (canManage && (step?.exam?.questions.length || step?.survey?.questions.length)) {
                   <button class="margin-lr-10" color="accent" mat-raised-button

@@ -54,31 +54,31 @@
     </button>
   }
   @if (attempts > 0) {
-    <a
+    <button
       mat-raised-button
       color="accent"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       (click)="openReviewDialog()" i18n>
       Review Attempts
-    </a>
+    </button>
   }
   @if (stepDetail?.exam?.questions.length && isUserEnrolled) {
-    <a
+    <button
       mat-raised-button
       color="accent"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       (click)="goToExam()" i18n>
       {examText, select, take {Take Test} continue {Continue Test} retake {Retake Test}}
-    </a>
+    </button>
   }
   @if (stepDetail?.survey?.questions.length && isUserEnrolled) {
-    <a
+    <button
       mat-raised-button
       color="accent"
       [ngClass]="{ 'margin-lr-10': !isMobile }"
       (click)="goToExam('survey')" i18n>
       Take Survey
-    </a>
+    </button>
   }
   @if (canManage && (stepDetail?.exam?.questions.length || stepDetail?.survey?.questions.length)) {
     <button
