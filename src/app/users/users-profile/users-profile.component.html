@@ -1,5 +1,10 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
+    @if (!isDialog) {
+      <button mat-icon-button (click)="goBack()" [attr.aria-label]="'Go back'" i18n-aria-label>
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
     <span>{{userDetail.name | truncateText:40}}</span>
     @if (userDetail.gender) {
       <mat-icon class="margin-lr-5" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>

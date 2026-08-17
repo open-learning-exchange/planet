@@ -11,7 +11,7 @@ import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgTemplateOutlet, DatePipe } from '@angular/common';
+import { NgTemplateOutlet, DatePipe, Location } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
@@ -81,7 +81,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     private usersAchievementsService: UsersAchievementsService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService,
-    private teamsService: TeamsService
+    private teamsService: TeamsService,
+    private location: Location
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -158,10 +159,8 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    const teamsUrl = this.router.url.split('/');
-    const currentUser = this.userService.get();
-    if (currentUser.isUserAdmin || teamsUrl[1] === 'teams') {
-      this.router.navigate([ '../../' ], { relativeTo: this.route });
+    if (window.history.length > 1) {
+      this.location.back();
     } else {
       this.router.navigate([ '/' ]);
     }
