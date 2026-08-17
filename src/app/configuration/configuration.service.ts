@@ -85,16 +85,17 @@ export class ConfigurationService {
   }
 
   addPlanetToParent(configuration, isNewConfig, userDetail?) {
+    const { keys, ...parentConfiguration } = configuration;
     if (isNewConfig) {
-      configuration.registrationRequest = 'pending';
+      parentConfiguration.registrationRequest = 'pending';
     }
-    return this.couchService.updateDocument('communityregistrationrequests', configuration, {
-      domain: configuration.parentDomain
+    return this.couchService.updateDocument('communityregistrationrequests', parentConfiguration, {
+      domain: parentConfiguration.parentDomain
     }).pipe(
       takeWhile(() => isNewConfig),
-      this.addUserToParentPlanet(userDetail, configuration.adminName, configuration),
-      this.addUserToShelf(configuration.adminName, configuration),
-      this.createRequestNotification(configuration)
+      this.addUserToParentPlanet(userDetail, parentConfiguration.adminName, parentConfiguration),
+      this.addUserToShelf(parentConfiguration.adminName, parentConfiguration),
+      this.createRequestNotification(parentConfiguration)
     );
   }
 

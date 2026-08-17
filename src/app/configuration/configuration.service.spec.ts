@@ -133,8 +133,12 @@ describe('ConfigurationService patches', () => {
     service.patchConfiguration({ name: 'Guate' }).subscribe(emitted);
 
     expect(writesTo('communityregistrationrequests')[0][1]).toEqual({
-      ...parentConfiguration,
-      name: 'Guate'
+      '_id': 'parent_id',
+      '_rev': '9-parent',
+      'code': 'guatemala',
+      'name': 'Guate',
+      'registrationRequest': 'accepted',
+      'models': { openai: 'parent-model' }
     });
     expect(securityWasTouched()).toBe(false);
     expect(emitted).toHaveBeenCalledTimes(1);
