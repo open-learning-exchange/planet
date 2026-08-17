@@ -110,8 +110,8 @@ describe('SurveysComponent', () => {
 
   it('offers enabled analysis providers and defaults to structured output', () => {
     component.availableAIProviders = [
-      { 'name': 'openai', 'capabilities': [ 'chat', 'structuredOutput' ] },
-      { 'name': 'gemini', 'capabilities': [ 'chat' ] }
+      { 'name': 'openai', 'label': 'OpenAI', 'capabilities': [ 'chat', 'structuredOutput' ] },
+      { 'name': 'gemini', 'label': 'Gemini', 'capabilities': [ 'chat' ] }
     ];
     chatService.getPreferredAnalysisProvider.mockReturnValue(component.availableAIProviders[0]);
 

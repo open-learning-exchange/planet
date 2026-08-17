@@ -605,9 +605,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         planetBeta: true,
         required: true,
         options: this.availableAIProviders.map((provider) => {
-          const displayName = provider.name === 'openai'
-            ? 'OpenAI'
-            : provider.name.charAt(0).toUpperCase() + provider.name.slice(1);
+          const displayName = provider.label || provider.name;
           return {
             value: provider.name,
             name: provider.capabilities?.includes('structuredOutput')
