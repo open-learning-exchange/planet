@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></a>
+  <button mat-icon-button type="button" (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
@@ -143,20 +143,25 @@
                 }
                 @if (canManage && (step?.exam?.questions.length || step?.survey?.questions.length)) {
                   <button class="margin-lr-10" color="accent" mat-raised-button
+                    #previewTrigger="matMenuTrigger"
                     [matMenuTriggerFor]="previewMenu"
-                    (click)="previewButtonClick(step, stepNum)" i18n>
+                    (click)="previewButtonClick(step, stepNum, previewTrigger)" i18n>
                 Preview
               </button>
                 }
                 <mat-menu #previewMenu="matMenu">
-                  <a mat-menu-item
-                    (click)="goToExam(step, stepNum, true)" i18n>
-                  Preview Test
-                </a>
-                  <a mat-menu-item
-                    (click)="goToSurvey(stepNum, true)" i18n>
-                  Preview Survey
-                </a>
+                  @if (step?.exam?.questions.length) {
+                    <button mat-menu-item type="button"
+                      (click)="goToExam(step, stepNum, true)" i18n>
+                    Preview Test
+                  </button>
+                  }
+                  @if (step?.survey?.questions.length) {
+                    <button mat-menu-item type="button"
+                      (click)="goToSurvey(stepNum, true)" i18n>
+                    Preview Survey
+                  </button>
+                  }
                 </mat-menu>
               </mat-action-row>
             }

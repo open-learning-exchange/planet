@@ -1,5 +1,5 @@
 <mat-toolbar>
-  <a mat-icon-button (click)="backToCourseDetail()"><mat-icon>arrow_back</mat-icon></a>
+  <button mat-icon-button type="button" (click)="backToCourseDetail()"><mat-icon>arrow_back</mat-icon></button>
   <span i18n>Course</span>
 </mat-toolbar>
 <div class="space-container">
@@ -90,16 +90,16 @@
   }
   <mat-menu #previewMenu="matMenu">
     @if (stepDetail?.exam?.questions.length) {
-      <a mat-menu-item
+      <button mat-menu-item type="button"
         (click)="goToExam('exam', true)" i18n>
         Preview Test
-      </a>
+      </button>
     }
     @if (stepDetail?.survey?.questions.length) {
-      <a mat-menu-item
+      <button mat-menu-item type="button"
         (click)="goToExam('survey', true)" i18n>
         Preview Survey
-      </a>
+      </button>
     }
   </mat-menu>
   @if (stepDetail.resources.length !== 0) {
