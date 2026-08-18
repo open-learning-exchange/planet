@@ -51,8 +51,6 @@ $top-row-height: calc(#{v.$dashboard-tile-width} + 0.5rem);
       h1 {
         display: flex;
         align-items: center;
-        word-break: break-word;
-        overflow-wrap: break-word;
       }
       .mat-subtitle-1 {
         margin: 0;

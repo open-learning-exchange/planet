@@ -14,12 +14,20 @@ $exam-table-col-width: 100px;
   grid-template-columns: repeat(auto-fill, 200px);
   grid-column-gap: 0.5rem;
 
-  div > div {
+  > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    mat-divider {
+      margin-top: auto;
+    }
+  }
+
+  > div > div {
     padding: 1rem;
     font-size: 0.875rem;
-    min-width: 0;
-    overflow-wrap: break-word;
-    word-break: break-word;
+    overflow-wrap: anywhere;
 
     h4 {
       font-size: 1rem;
@@ -28,8 +36,6 @@ $exam-table-col-width: 100px;
     h4, p {
       margin: 0;
       font-weight: 400;
-      overflow-wrap: break-word;
-      word-break: break-word;
     }
   }
 }
