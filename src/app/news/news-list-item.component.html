@@ -40,24 +40,24 @@
       <div>
         @if (item.sharedDate) {
           @if (isMobile) {
-            <mat-icon class="small-icon" matTooltip="shared" i18n-matTooltip>share</mat-icon>
+            <mat-icon class="small-icon" matTooltip="Shared" i18n-matTooltip>share</mat-icon>
           } @else {
-            <span i18n>shared: </span>
+            <span i18n>Shared: </span>
           }
           {{item.sharedDate | timeAgo}}
         } @else {
           @if (item.doc.updatedDate !== item.doc.time && item.doc.updatedDate) {
             @if (isMobile) {
-              <mat-icon class="small-icon" matTooltip="edited" i18n-matTooltip>update</mat-icon>
+              <mat-icon class="small-icon" matTooltip="Edited" i18n-matTooltip>update</mat-icon>
             } @else {
-              <span i18n>edited: </span>
+              <span i18n>Edited: </span>
             }
             {{item.doc.updatedDate | timeAgo}}
           } @else {
             @if (isMobile) {
-              <mat-icon class="small-icon" matTooltip="posted" i18n-matTooltip>schedule</mat-icon>
+              <mat-icon class="small-icon" matTooltip="Posted" i18n-matTooltip>schedule</mat-icon>
             } @else {
-              <span i18n>posted: </span>
+              <span i18n>Posted: </span>
             }
             {{item.doc.time | timeAgo}}
           }
