@@ -24,6 +24,7 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { MatTooltip } from '@angular/material/tooltip';
 import { LabelComponent } from '../shared/label.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { FullNamePipe } from '../shared/full-name.pipe';
 
 @Component({
   templateUrl: './health.component.html',
@@ -51,7 +52,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatRowDef,
     MatRow,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    FullNamePipe
   ]
 })
 export class HealthComponent implements OnInit, AfterViewChecked, OnDestroy {

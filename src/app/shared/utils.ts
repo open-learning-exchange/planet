@@ -274,6 +274,9 @@ export const markdownToPlainText = (markdown: any) => {
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
 
+export const fullName = (user: any) =>
+  [ user?.firstName, user?.middleName, user?.lastName ].filter(namePart => namePart).join(' ');
+
 export const truncateText = (text, length) => {
   if (!text) {
     return '';
