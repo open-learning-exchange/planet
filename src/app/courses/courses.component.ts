@@ -588,4 +588,8 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.previewOverflow.set(this.getPreviewKey(element), hasOverflow);
   }
 
+  getActiveStepInfo(element: any) {
+    return this.coursesService.getActiveStep(element?.doc, element?.progress);
+  }
+
 }

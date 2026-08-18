@@ -237,6 +237,18 @@
                 <span i18n>Edit Course</span>
               </a>
             }
+            @if (element.admission && element.doc.steps.length) {
+              <a mat-menu-item [routerLink]="['/courses/view', element._id, 'step', getActiveStepInfo(element).stepNum]">
+                <mat-icon>play_circle_outline</mat-icon>
+                @if (getActiveStepInfo(element).isCompleted) {
+                  <span i18n>Review Course</span>
+                } @else if (getActiveStepInfo(element).hasStarted) {
+                  <span i18n>Resume Course</span>
+                } @else {
+                  <span i18n>Start Course</span>
+                }
+              </a>
+            }
             <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
               <span i18n>View Course</span>

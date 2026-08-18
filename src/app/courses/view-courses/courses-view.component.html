@@ -55,7 +55,21 @@
         </button>
       }
     }
-    <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+    @if (!isUserEnrolled || !courseDetail?.steps?.length) {
+      <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n [disabled]="!courseDetail?.steps?.length">View Step</button>
+    } @else if (activeStepInfo?.isCompleted) {
+      <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" i18n>Review Course</button>
+    } @else if (activeStepInfo?.hasStarted) {
+      <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" [matTooltip]="activeStepInfo.stepTitle">
+        <span i18n>Resume (Step {{activeStepInfo.stepNum}})</span>
+        <mat-icon class="margin-lr-3">arrow_forward</mat-icon>
+      </button>
+    } @else {
+      <button class="view-step-button" mat-raised-button color="accent" (click)="viewStep()" [matTooltip]="activeStepInfo.stepTitle">
+        <span i18n>Start Course</span>
+        <mat-icon class="margin-lr-3">arrow_forward</mat-icon>
+      </button>
+    }
   </ng-template>
 
   <div class="view-container view-full-height">

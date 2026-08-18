@@ -35,8 +35,12 @@
     margin-left: 8px;
   }
 
-  .view-step-button{
+  .view-step-button {
     flex-shrink: 0;
+    max-width: 450px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   @media (max-width: v.$screen-sm) {
