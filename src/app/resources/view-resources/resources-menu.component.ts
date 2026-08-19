@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { environment } from '../../../environments/environment';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
+import { couchAttachmentUrl } from '../../shared/utils';
 import { MatButton } from '@angular/material/button';
 
 
@@ -37,7 +38,7 @@ export class ResourcesMenuComponent {
   resourceUrl(resource) {
     if (resource._attachments && Object.keys(resource._attachments)[0]) {
       const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-      return environment.couchAddress + '/resources/' + resource._id + '/' + filename;
+      return couchAttachmentUrl(environment.couchAddress, 'resources', resource._id, filename);
     }
   }
 

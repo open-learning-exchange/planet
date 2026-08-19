@@ -124,6 +124,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   mode: 'team' | 'enterprise' | 'services' = this.route.snapshot.data.mode || 'team';
   readonly dbName = 'teams';
   leaderDialog: any;
+  cancelDialog: any;
   finances: any[] = [];
   teamDataLoading = true;
   reports: any[] = [];
@@ -357,7 +358,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === user.planetCode);
+    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
   }
 
   toggleMembership(team, leaveTeam) {
@@ -365,6 +366,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
+      catchError(error => this.refreshMembersOnError(error)),
       switchMap((newTeam) => {
         this.team = newTeam;
         return this.getMembers();
@@ -423,11 +425,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateRole(member) {
     return ({ teamRole }) => {
       this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
+        catchError(error => this.refreshMembersOnError(error)),
         finalize(() => this.dialogsLoadingService.stop()),
         switchMap(() => this.getMembers())
-      ).subscribe(() => {
-        this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage($localize`Role has been updated.`);
+      ).subscribe({
+        next: () => {
+          this.dialogsFormService.closeDialogsForm();
+          this.planetMessageService.showMessage($localize`Role has been updated.`);
+        },
+        error: () => this.dialogsFormService.showErrorMessage($localize`There was a problem updating the role.`)
       });
     };
   }
@@ -448,12 +454,19 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   changeMembershipRequest(type, memberDoc?, stopLoading = true) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
+      let membershipWriteCompleted = false;
       return changeObject.obs.pipe(
+        catchError(error => this.refreshMembersOnError(error)),
+        tap(() => {
+          membershipWriteCompleted = true;
+        }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
+        catchError(error => membershipWriteCompleted ?
+          this.refreshMembersOnError(error) : throwError(error)),
         finalize(() => {
           if (stopLoading) {
             this.dialogsLoadingService.stop();
@@ -491,9 +504,48 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     this.dialogsLoadingService.start();
-    this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
-      this.setStatus(this.team, this.leader, this.userService.get());
-      this.planetMessageService.showMessage(message);
+    this.changeMembershipRequest(type, memberDoc)().subscribe({
+      next: (message) => {
+        this.setStatus(this.team, this.leader, this.userService.get());
+        this.planetMessageService.showMessage(message);
+      },
+      error: () => this.planetMessageService.showAlert($localize`There was a problem updating team membership.`)
+    });
+  }
+
+  cancelJoinRequest() {
+    return {
+      request: this.teamsService.cancelJoinRequest(this.team),
+      onNext: () => {
+        this.cancelDialog.close();
+        this.requests = this.requests.filter(request =>
+          request.userId !== this.user._id || request.userPlanetCode !== this.planetCode
+        );
+        this.setStatus(this.team, this.leader, this.userService.get());
+        const msg = this.mode === 'enterprise'
+          ? $localize`:@@enterprise-join-request-cancelled:Cancelled request to join enterprise` + ' ' + this.team.name
+          : $localize`:@@team-join-request-cancelled:Cancelled request to join team` + ' ' + this.team.name;
+        this.planetMessageService.showMessage(msg);
+      },
+      onError: () => {
+        const msg = this.mode === 'enterprise'
+          ? $localize`There was a problem cancelling your request to join this enterprise.`
+          : $localize`There was a problem cancelling your request to join this team.`;
+        this.planetMessageService.showAlert(msg);
+      }
+    };
+  }
+
+  openCancelJoinRequestDialog() {
+    this.cancelDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: this.cancelJoinRequest(),
+        showMainParagraph: false,
+        extraMessage: this.mode === 'enterprise'
+          ? $localize`Are you sure you want to cancel the request to join the following enterprise?`
+          : $localize`Are you sure you want to cancel the request to join the following team?`,
+        displayName: this.team.name
+      }
     });
   }
 
@@ -548,13 +600,17 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   addMembers(selected: any[]) {
+    let membershipWriteCompleted = false;
     this.dialogsLoadingService.start();
-    const newMembershipDocs = selected.map(
-      user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
-    );
-    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
-      .map(request => ({ ...request, _deleted: true }));
-    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
+    this.teamsService.addMembers(this.team, selected, this.requests).pipe(
+      catchError(error => {
+        this.dialogRef.close();
+        return this.refreshMembersOnError(error);
+      }),
+      tap(() => {
+        membershipWriteCompleted = true;
+        this.dialogRef.close();
+      }),
       switchMap(() => {
         return forkJoin([
           this.teamsService.sendNotifications('added', selected, {
@@ -564,10 +620,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         ]);
       }),
       switchMap(() => this.getMembers()),
+      catchError(error => membershipWriteCompleted ? this.refreshMembersOnError(error) : throwError(error)),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => {
-      this.dialogRef.close();
-      this.planetMessageService.showMessage($localize`Member${(selected.length > 1 ? 's' : '')} added successfully`);
+    ).subscribe({
+      next: () => {
+        this.planetMessageService.showMessage($localize`Member${(selected.length > 1 ? 's' : '')} added successfully`);
+      },
+      error: () => {
+        const message = membershipWriteCompleted
+          ? $localize`Members were added, but notifications or the member-list refresh failed.`
+          : $localize`There was a problem adding members.`;
+        this.planetMessageService.showAlert(message);
+      }
     });
   }
 
@@ -655,8 +719,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const { tasks, ...currentLeader } = this.members.find(mem => memberCompare(mem, this.leader));
-    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
+    const currentLeader = this.members.find(mem => memberCompare(mem, this.leader)) || {};
+    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(
+      catchError(error => this.refreshMembersOnError(error)),
+      switchMap(() => this.getMembers())
+    );
+  }
+
+  private refreshMembersOnError(error) {
+    return this.getMembers().pipe(
+      catchError(() => of([])),
+      switchMap(() => throwError(error))
+    );
   }
 
   removeCourse(course) {

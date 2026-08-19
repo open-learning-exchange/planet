@@ -1,22 +1,36 @@
 @use "../variables" as v;
+@use "../mixins" as m;
 
 :host {
-  .mat-column-doc-teamType {
-    max-width: 150px;
-    padding-right: 0.5rem;
+  .mat-column-doc-name {
+    @include m.table-column-grow;
+  }
+
+  .mat-column-visitLog-lastVisit {
+    @include m.table-column-fixed(14rem);
   }
 
   .mat-column-visitLog-visitCount {
+    @include m.table-column-fixed(18rem);
     justify-content: center;
-    max-width: 175px;
     padding-right: 1rem;
+  }
+
+  .mat-column-doc-teamType {
+    @include m.table-column-fixed(8rem);
+    padding-right: 0.5rem;
+  }
+
+  .mat-column-action {
+    @include m.table-column-fixed(18rem);
   }
 
   mat-row {
     cursor: pointer;
   }
 
-  .team-name{
+  // Keep joined/type metadata visible by allowing long names to wrap.
+  .team-name {
     max-width: 95%;
     overflow: hidden;
   }
