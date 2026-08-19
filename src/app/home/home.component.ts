@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
+import {
+  Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
+} from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
@@ -56,6 +58,7 @@ import { ANDROID_APPS } from '../shared/android-apps';
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
   @ViewChild('content') private mainContent;
+  @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
   private onDestroy$ = new Subject<void>();
@@ -128,11 +131,14 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
     });
     this.subscribeToLogoutClick();
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
+      filter(event =>
+        event instanceof NavigationEnd ||
+        (event instanceof NavigationSkipped && event.code === NavigationSkippedCode.IgnoredSameUrlNavigation)
+      ),
       takeUntil(this.onDestroy$)
     ).subscribe(() => {
       if (this.isMobile) {
-        this.sidenavState = 'closed';
+        this.mobileSidenav?.close();
       }
     });
   }
@@ -140,6 +146,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   ngDoCheck() {
     this.syncToolbarLayout();
   }
+
   ngAfterViewChecked() {
     const toolbarElement = this.toolbar.nativeElement;
     if (!toolbarElement) {
@@ -159,6 +166,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnDestroy() {
+    this.endAnimation();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -269,7 +277,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
+    if (this.isMobile) {
+      this.mobileSidenav?.toggle();
+      return;
+    }
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
+    this.endAnimation();
     this.animDisp = this.animObs.subscribe();
   }
 
