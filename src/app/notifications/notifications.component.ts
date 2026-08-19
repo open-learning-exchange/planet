@@ -135,7 +135,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   openDeleteNotificationDialog(notification: any) {
-    const plainMessage = notification.message ? notification.message.replace(/<[^>]*>/g, '').trim() : '';
+    const doc = new DOMParser().parseFromString(notification.message || '', 'text/html');
+    const plainMessage = (doc.body.textContent || '').trim();
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
