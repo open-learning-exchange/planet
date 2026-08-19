@@ -23,7 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
+import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -445,7 +445,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  changeMembershipRequest(type, memberDoc?) {
+  changeMembershipRequest(type, memberDoc?, stopLoading = true) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
       return changeObject.obs.pipe(
@@ -454,29 +454,37 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
-        finalize(() => this.dialogsLoadingService.stop())
+        finalize(() => {
+          if (stopLoading) {
+            this.dialogsLoadingService.stop();
+          }
+        })
       );
     };
   }
 
   changeMembership(type, memberDoc?) {
-    if (type === 'request' && this.mode === 'enterprise') {
+    if (type === 'request' && this.team.type === 'enterprise') {
       this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
         data: {
           okClick: {
-            request: this.changeMembershipRequest(type, memberDoc)(),
+            request: this.changeMembershipRequest(type, memberDoc, false)(),
             onNext: (message) => {
               this.dialogPrompt.close();
               this.setStatus(this.team, this.leader, this.userService.get());
               this.planetMessageService.showMessage(message);
+            },
+            onError: () => {
+              this.planetMessageService.showAlert(
+                $localize`There was a problem requesting to join this enterprise.`
+              );
             }
           },
           changeType: 'request',
           type: 'enterprise',
           displayName: this.team.name,
-          rules: this.team?.rules,
-          message: $localize`:@@enterprise-join-request-message:By requesting to join this enterprise, ` +
-            'you agree to abide by the rules and guidelines set forth by the enterprise administrators.'
+          rules: this.team.rules,
+          extraMessage: enterpriseJoinAgreement()
         }
       });
       return;
@@ -495,7 +503,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'request':
         return ({
           obs: this.teamsService.requestToJoinTeam(this.team, this.user),
-          message: $localize`Request to join team sent`
+          message: this.team.type === 'enterprise'
+            ? $localize`Request to join enterprise sent`
+            : $localize`Request to join team sent`
         });
       case 'removed':
         return ({

@@ -51,9 +51,6 @@
   @if (data.extraMessage) {
     <p [innerHTML]="data.extraMessage"></p>
   }
-  @if (data.message) {
-    <p [innerHTML]="data.message"></p>
-  }
   @if (data.displayDates) {
     <b>{{data.displayDates.startDate | date : 'mediumDate' : isDateUtc ? '+0000' : undefined }} - {{data.displayDates.endDate | date: 'mediumDate' : isDateUtc ? '+0000' : undefined }}</b>
   }
