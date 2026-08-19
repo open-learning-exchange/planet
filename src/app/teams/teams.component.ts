@@ -103,7 +103,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   @Input() isDialog = false;
   @Input() excludeIds = [];
   @Output() rowClick = new EventEmitter<{ mode: 'team' | 'enterprise', teamId: string, teamType: 'local' | 'sync' }>();
-  displayedColumns = ['doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType'];
+  displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
   childPlanets = [];
   filter: string;
   deviceType: DeviceType;
@@ -139,14 +139,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.getTeams();
     this.teams.filterPredicate = composeFilterFunctions([
-      filterSpecificFieldsByWord(['doc.name']),
-      (data, filter) => filterSpecificFields(['userStatus'])(data, this.myTeamsFilter === 'on' ? 'member' : '')
+      filterSpecificFieldsByWord([ 'doc.name' ]),
+      (data, filter) => filterSpecificFields([ 'userStatus' ])(data, this.myTeamsFilter === 'on' ? 'member' : '')
     ]);
     this.teams.sortingDataAccessor = deepSortingDataAccessor;
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
     this.displayedColumns = this.isDialog ?
-      ['doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType'] :
-      ['doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action'];
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
+      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
   }
 
   getTeams() {
@@ -163,7 +163,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
         this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
         this.couchService.findAll('communityregistrationrequests')
       ])
-    )).subscribe(([teams, requests, activities, planets]: any[]) => {
+    )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
       this.childPlanets = attachNamesToPlanets(planets);
       this.teamActivities = activities;
       this.teams.filter = this.myTeamsFilter ? ' ' : '';
@@ -174,17 +174,17 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       if (this.teams.data.some(
         ({ doc, userStatus }) => doc.teamType === 'sync' && (userStatus === 'member' || userStatus === 'requesting')
       )) {
-        this.userService.addImageForReplication(true).subscribe(() => { });
+        this.userService.addImageForReplication(true).subscribe(() => {});
       }
       this.dialogsLoadingService.stop();
       this.isLoading = false;
     }, (error) => {
       if (this.userNotInShelf) {
-        this.displayedColumns = ['doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType'];
+        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
         this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
           this.teams.data = this.teamList(teams.filter((team: any) => {
             return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
-              && this.excludeIds.indexOf(team._id) === -1;
+            && this.excludeIds.indexOf(team._id) === -1;
           }));
         });
       }
@@ -199,7 +199,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.user.planetCode } }),
       this.couchService.get('shelf/' + this.user._id)
     ]).pipe(
-      map(([membershipDocs, shelf]) => this.userMembership = [
+      map(([ membershipDocs, shelf ]) => this.userMembership = [
         ...membershipDocs,
         ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
       ]),
@@ -225,7 +225,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       const visitLog = this.teamActivities.filter(activity => activity.teamId === doc._id).reduce(({ visitCount, lastVisit }, activity) =>
         ({ visitCount: visitCount + 1, lastVisit: lastVisit && activity.time < lastVisit ? lastVisit : activity.time }), noVisit)
         || noVisit;
-      const teamPlanetName = codeToPlanetName(doc.teamPlanetCode, this.stateService.configuration, this.childPlanets);
+      const teamPlanetName = codeToPlanetName(doc.teamPlanetCode, this.stateService.configuration, this.childPlanets );
       const team = { doc, membershipDoc, visitLog, teamPlanetName };
       switch (membershipDoc.docType) {
         case 'membership':
@@ -261,7 +261,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.rowClick.emit({ mode: this.mode, teamId, teamType });
       return;
     }
-    this.router.navigate(['view', teamId], { relativeTo: this.route });
+    this.router.navigate([ 'view', teamId ], { relativeTo: this.route });
   }
 
   addTeam(team: any = {}) {
