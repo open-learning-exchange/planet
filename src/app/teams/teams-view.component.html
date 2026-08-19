@@ -137,7 +137,9 @@
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
-        <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length + requests.length}})
+        <span [matBadge]="requests.length" [matBadgeHidden]="requests.length === 0 || userStatus !== 'member'" matBadgeColor="accent" matBadgeOverlap="false">
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
+        </span>
       </ng-template>
       @if (!teamDataLoading && requests.length > 0) {
         <div class="join-requests-section" style="margin-top: 32px;">
