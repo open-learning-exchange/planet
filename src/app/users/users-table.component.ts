@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
@@ -123,8 +123,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
-  deactivateDialog: MatDialogRef<DialogsPromptComponent>;
+  promptDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
   trackById = trackById;
@@ -233,44 +232,56 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   deleteClick(user, event) {
     event.stopPropagation();
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
-      data: {
-        okClick: {
-          request: this.usersService.deleteUser(user),
-          onNext: () => {
-            this.selection.deselect(user);
-            this.planetMessageService.showMessage($localize`User deleted: ${user.name}`);
-            this.deleteDialog.close();
-          },
-          onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this user.`)
-        },
-        amount: 'single',
-        changeType: 'delete',
-        type: 'user',
-        displayName: user.name,
-        extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
-      }
+    this.openUserPrompt({
+      user,
+      changeType: 'delete',
+      extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : '',
+      request: () => this.usersService.deleteUser(user),
+      onSuccess: () => this.planetMessageService.showMessage($localize`User deleted: ${user.name}`),
+      errorMessage: $localize`There was a problem deleting this user.`
     });
   }
 
   deactivateClick(user: any, event: Event) {
     event.stopPropagation();
-    this.deactivateDialog = this.dialog.open(DialogsPromptComponent, {
+    this.openUserPrompt({
+      user,
+      changeType: 'deactivate',
+      extraMessage: $localize`Deactivating will remove all active roles for this user.`,
+      request: () => this.usersService.setRoles(user, []),
+      onSuccess: () => {
+        this.usersService.requestUsers(true);
+        this.planetMessageService.showMessage($localize`User deactivated: ${user.name}`);
+      },
+      errorMessage: $localize`There was an error deactivating user.`
+    });
+  }
+
+  private openUserPrompt({ user, changeType, extraMessage, request, onSuccess, errorMessage }: {
+    user: any,
+    changeType: string,
+    extraMessage: string,
+    request: () => Observable<any>,
+    onSuccess: () => void,
+    errorMessage: string
+  }) {
+    this.promptDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.usersService.setRoles(user, []),
+          // Deferred so the request reads the user doc when OK is clicked rather than when the dialog opens
+          request: defer(request),
           onNext: () => {
-            this.usersService.requestUsers(true);
-            this.planetMessageService.showMessage($localize`User deactivated: ${user.name}`);
-            this.deactivateDialog.close();
+            this.selection.deselect(user);
+            onSuccess();
+            this.promptDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert($localize`There was an error deactivating user.`)
+          onError: () => this.planetMessageService.showAlert(errorMessage)
         },
         amount: 'single',
-        changeType: 'deactivate',
+        changeType,
         type: 'user',
         displayName: user.name,
-        extraMessage: $localize`Deactivating will remove all active roles for this user.`
+        extraMessage
       }
     });
   }

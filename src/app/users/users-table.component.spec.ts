@@ -1,15 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { UsersTableComponent } from './users-table.component';
-import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { UsersService } from './users.service';
-import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 
@@ -20,6 +19,20 @@ describe('UsersTableComponent', () => {
   let userService: UserService;
   let usersService: UsersService;
   let planetMessageService: PlanetMessageService;
+  const mockUser = { _id: 'org.couchdb.user:johndoe', name: 'johndoe', planetCode: 'planet', roles: [ 'learner' ] };
+
+  const openDeactivateDialog = () => {
+    const event = { stopPropagation: vi.fn() } as unknown as Event;
+    let dialogData: any;
+    const dialogOpenSpy = vi.spyOn(dialog, 'open').mockImplementation((_, config) => {
+      dialogData = config?.data;
+      return { close: vi.fn() } as any;
+    });
+
+    component.deactivateClick(mockUser, event);
+
+    return { dialogData, event, dialogOpenSpy };
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -29,12 +42,8 @@ describe('UsersTableComponent', () => {
         UsersTableComponent
       ],
       providers: [
-        CouchService,
-        UserService,
-        UsersService,
-        StateService,
-        PlanetMessageService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     });
 
@@ -44,10 +53,17 @@ describe('UsersTableComponent', () => {
     planetMessageService = TestBed.inject(PlanetMessageService);
 
     vi.spyOn(userService, 'get').mockReturnValue({ isUserAdmin: true, name: 'admin' } as any);
+    vi.spyOn(usersService, 'requestUsers').mockImplementation(() => {});
+    vi.spyOn(planetMessageService, 'showMessage').mockImplementation(() => {});
+    vi.spyOn(planetMessageService, 'showAlert').mockImplementation(() => {});
 
     fixture = TestBed.createComponent(UsersTableComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should create UsersTableComponent', () => {
@@ -55,15 +71,9 @@ describe('UsersTableComponent', () => {
   });
 
   it('should open DialogsPromptComponent with deactivate configuration when deactivateClick is called', () => {
-    const mockUser = { name: 'johndoe', roles: [ 'learner' ] };
-    const mockEvent = { stopPropagation: vi.fn() } as unknown as Event;
-    const dialogOpenSpy = vi.spyOn(dialog, 'open').mockReturnValue({
-      close: vi.fn()
-    } as any);
+    const { event, dialogOpenSpy } = openDeactivateDialog();
 
-    component.deactivateClick(mockUser, mockEvent);
-
-    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+    expect(event.stopPropagation).toHaveBeenCalled();
     expect(dialogOpenSpy).toHaveBeenCalledWith(DialogsPromptComponent, {
       data: expect.objectContaining({
         amount: 'single',
@@ -74,25 +84,35 @@ describe('UsersTableComponent', () => {
     });
   });
 
+  it('should not call setRoles while the deactivation is unconfirmed', () => {
+    const setRolesSpy = vi.spyOn(usersService, 'setRoles').mockReturnValue(of({ ok: true } as any));
+
+    openDeactivateDialog();
+
+    expect(setRolesSpy).not.toHaveBeenCalled();
+  });
+
   it('should call setRoles with empty array when deactivation is confirmed', () => {
-    const mockUser = { name: 'johndoe', roles: [ 'learner' ] };
-    const mockEvent = { stopPropagation: vi.fn() } as unknown as Event;
-    vi.spyOn(usersService, 'setRoles').mockReturnValue(of({ ok: true } as any));
-    const showMessageSpy = vi.spyOn(planetMessageService, 'showMessage');
-    const requestUsersSpy = vi.spyOn(usersService, 'requestUsers');
+    const setRolesSpy = vi.spyOn(usersService, 'setRoles').mockReturnValue(of({ ok: true } as any));
+    const { dialogData } = openDeactivateDialog();
 
-    let dialogData: any;
-    vi.spyOn(dialog, 'open').mockImplementation((_, config) => {
-      dialogData = config?.data;
-      return { close: vi.fn() } as any;
+    dialogData.okClick.request.subscribe(dialogData.okClick.onNext);
+
+    expect(setRolesSpy).toHaveBeenCalledWith(mockUser, []);
+    expect(usersService.requestUsers).toHaveBeenCalledWith(true);
+    expect(planetMessageService.showMessage).toHaveBeenCalledWith('User deactivated: johndoe');
+  });
+
+  it('should alert without refreshing users when the deactivation request fails', () => {
+    vi.spyOn(usersService, 'setRoles').mockImplementation(() => {
+      throw new Error('offline');
     });
+    const { dialogData } = openDeactivateDialog();
 
-    component.deactivateClick(mockUser, mockEvent);
+    dialogData.okClick.request.subscribe({ error: dialogData.okClick.onError });
 
-    expect(dialogData).toBeDefined();
-    dialogData.okClick.onNext();
-
-    expect(requestUsersSpy).toHaveBeenCalledWith(true);
-    expect(showMessageSpy).toHaveBeenCalledWith('User deactivated: johndoe');
+    expect(planetMessageService.showAlert).toHaveBeenCalledWith('There was an error deactivating user.');
+    expect(usersService.requestUsers).not.toHaveBeenCalled();
+    expect(planetMessageService.showMessage).not.toHaveBeenCalled();
   });
 });
