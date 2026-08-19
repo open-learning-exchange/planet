@@ -137,7 +137,14 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'sales', placeholder: $localize`Sales (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'otherIncome', placeholder: $localize`Other (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
           { name: 'wages', placeholder: $localize`Personnel (Expenses)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: $localize`Non-Personnel (Expenses)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          {
+            name: 'otherExpenses',
+            placeholder: $localize`Non-Personnel (Expenses)`,
+            type: 'textbox',
+            inputType: 'number',
+            required: true,
+            min: 0
+          },
           {
             name: 'receiptImages',
             placeholder: $localize`Attached Images`,
