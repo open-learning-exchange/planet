@@ -99,16 +99,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.loadUnreadReplyIds();
       });
 
-    const deepLinkReplyTo = this.route.snapshot.paramMap.get('replyTo') || this.route.snapshot.queryParamMap.get('replyTo');
-    if (deepLinkReplyTo) {
-      this.pendingReplyTo = deepLinkReplyTo;
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { replyTo: null },
-        replaceUrl: true
-      });
-    }
-
     this.loadUnreadReplyIds();
     this.initNews();
   }
@@ -190,10 +180,20 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   initNews() {
     const childPath = this.route.firstChild?.routeConfig?.path;
     const voiceId = (childPath === 'voices/:id') ? this.route.firstChild?.snapshot.paramMap.get('id') : null;
+    const deepLinkReplyTo = this.route.snapshot.paramMap.get('replyTo') || this.route.snapshot.queryParamMap.get('replyTo');
 
     if (voiceId) {
       this.filterNewsToShow(voiceId);
-    } else {
+    } else if (deepLinkReplyTo) {
+      this.pendingReplyTo = deepLinkReplyTo;
+      if (this.items.length > 0) {
+        const target = this.items.find(item => item._id === deepLinkReplyTo || item.doc?._id === deepLinkReplyTo);
+        if (target) {
+          this.showReplies(target);
+          this.pendingReplyTo = undefined;
+        }
+      }
+    } else if (this.replyViewing._id === 'root') {
       this.filterNewsToShow('root');
     }
   }
@@ -207,6 +207,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.unreadReplyIds.delete(newsId);
         this.notificationsService.markReplyNotificationsAsRead(newsId);
       }
+    } else {
+      this.pendingReplyTo = undefined;
     }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
