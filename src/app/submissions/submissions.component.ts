@@ -14,6 +14,7 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
+import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -107,6 +108,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
+    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -305,34 +307,27 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       return submission;
     }
     const [ examId, courseId ] = submission.parentId.split('@');
-    if (!courseId) {
-      return {
-        ...submission,
-        courseTitle: $localize`Course not available`,
-        stepNum: '--',
-        hasValidCourse: false,
-        hasValidStep: false
-      };
+    const submissionCourse = courseId ? courses.find(course => course._id === courseId) : undefined;
+    if (!submissionCourse) {
+      return this.unresolvedCourseInfo(submission);
     }
-    const submissionCourse = courses.find(course => course._id === courseId);
-    if (!submissionCourse || !submissionCourse.doc || !submissionCourse.doc.steps) {
-      return {
-        ...submission,
-        courseTitle: $localize`Course not available`,
-        stepNum: '--',
-        hasValidCourse: false,
-        hasValidStep: false
-      };
-    }
-    const stepNum = submissionCourse.doc.steps
+    const stepNum = (submissionCourse.doc.steps || [])
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
-    const hasValidStep = stepNum > 0;
     return {
       ...submission,
       courseTitle: submissionCourse.doc.courseTitle,
-      stepNum: hasValidStep ? stepNum : $localize`Step not available`,
-      hasValidCourse: true,
-      hasValidStep
+      stepNum,
+      stepLabel: stepNum === 0 ? $localize`Step not available` : undefined
+    };
+  }
+
+  private unresolvedCourseInfo(submission) {
+    const isLocalSubmission = !submission.source || submission.source === this.stateService.configuration.code;
+    return {
+      ...submission,
+      courseTitle: isLocalSubmission ? $localize`Course not available` : undefined,
+      stepNum: 0,
+      stepLabel: isLocalSubmission ? $localize`Step not available` : undefined
     };
   }
 
