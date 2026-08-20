@@ -167,7 +167,7 @@
               </button>
             }
             @if (!element.doc.isUserAdmin || element.doc.roles.length > 0) {
-              <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)">
+              <button mat-raised-button color="warn" (click)="deleteClick(element.doc, $event)">
                 <mat-icon>delete</mat-icon>
                 @if (!isMobile) {
                   <label i18n> Delete </label>

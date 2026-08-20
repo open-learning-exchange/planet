@@ -163,7 +163,7 @@
                 <label i18n> Feedback </label>
               }
             </button>
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" (click)="archiveClick(element.doc); $event.stopPropagation()">
+            <button *planetAuthorizedRoles="''" mat-raised-button color="warn" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               @if (!isMobile) {
                 <label i18n> Delete </label>

@@ -51,6 +51,96 @@ planet-markdown-textbox {
 // EasyMDE fullscreen surfaces need an explicit background after the MDC form migration;
 // otherwise the app chrome shows through the fixed preview/editor layer.
 .EasyMDEContainer .CodeMirror-fullscreen,
+.planet-markdown-fullscreen-host .editor-preview-side,
 .editor-preview-full, .editor-toolbar.fullscreen {
-  background: white !important;
+  background: v.$white !important;
+}
+
+// The component marks only the nearest owner/action pair and measures the row's rendered
+// height, so wrapped button rows still fit; when no action row is found it adds no classes
+// and fullscreen behaves as before.
+.planet-markdown-fullscreen-owner {
+  .planet-markdown-fullscreen-actions {
+    position: fixed;
+    inset: auto 0 0;
+
+    // Rows styled `width: 100%` would over-constrain the fixed box and drop `right`.
+    width: auto;
+    margin: 0;
+    padding: 8px 16px;
+
+    // EasyMDE uses z-index 7-9 for its fullscreen surfaces.
+    z-index: 10;
+    background: v.$white;
+    border-top: 1px solid v.$medium-grey;
+  }
+
+  &:has(.planet-markdown-fullscreen-host .CodeMirror-sided) .planet-markdown-fullscreen-actions {
+    right: 50%;
+  }
+}
+
+.planet-markdown-fullscreen-host {
+  position: relative;
+  z-index: 2;
+
+  .EasyMDEContainer {
+    .CodeMirror-fullscreen,
+    .editor-preview-full,
+    .editor-preview-side {
+      bottom: var(--fullscreen-actions-height, 0px) !important;
+    }
+  }
+
+  // In side-by-side the preview keeps its full half; only the editor column and the
+  // rows pinned below it shift up for the action bar.
+  &:has(.CodeMirror-sided) {
+    // Covalent's side preview paints no background of its own until EasyMDE renders
+    // into it; keep an opaque canvas behind the right half so the page never shows
+    // through. The fullscreen toolbar and preview sit at z-index 9 and stay above it.
+    &::after {
+      content: '';
+      position: fixed;
+      inset: 0 0 0 50%;
+      z-index: 8;
+      background: v.$white;
+    }
+
+    .EasyMDEContainer .editor-preview-side {
+      bottom: 0 !important;
+    }
+  }
+}
+
+.planet-markdown-fullscreen-field {
+  // Sibling Material form fields create their own paint layers that would otherwise
+  // sit above the fullscreen editor; lift the field that contains it.
+  position: relative;
+  z-index: 2;
+
+  // This component only reports an error while the editor is empty (see setErrorState),
+  // so the pinned message can overlay the editor's bottom edge without reserving space.
+  &:has(planet-markdown-textbox.is-invalid) .mat-mdc-form-field-subscript-wrapper {
+    position: fixed;
+    inset: auto 0 var(--fullscreen-actions-height, 0px);
+
+    // Material sets width: 100%; with left and right set it must yield or `right` is ignored.
+    width: auto;
+    padding: 4px 0;
+    z-index: 10;
+    background: v.$white;
+
+    &::before {
+      display: none;
+    }
+
+    .mat-mdc-form-field-error-wrapper {
+      // Grow the strip with wrapped or localized messages instead of overflowing it.
+      position: static;
+    }
+  }
+
+  &:has(.CodeMirror-sided):has(planet-markdown-textbox.is-invalid) .mat-mdc-form-field-subscript-wrapper {
+    right: 50%;
+  }
 }

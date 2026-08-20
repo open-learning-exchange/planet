@@ -82,7 +82,7 @@
     }
   }
   @if (mode!=='services') {
-    <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+    <button *planetAuthorizedRoles="''" mat-raised-button color="warn" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
   }
 </ng-template>
 

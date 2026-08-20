@@ -1,7 +1,7 @@
 import { Component, Input, EventEmitter, Output, Directive, ContentChildren, ViewChild,
   TemplateRef, Injectable, OnDestroy, AfterContentChecked, ViewEncapsulation, HostBinding, QueryList
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { uniqueId } from '../utils';
@@ -9,6 +9,9 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatNavList, MatListItem, MatListItemMeta } from '@angular/material/list';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
+import { DialogsPromptComponent } from '../dialogs/dialogs-prompt.component';
 
 export type PlanetStepControl = AbstractControl<any, any>;
 export type PlanetStepControls = Record<string, PlanetStepControl>;
@@ -52,11 +55,14 @@ export class PlanetStepListService {
         @if (!isLast) {
           <button mat-icon-button type="button" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
         }
-        <button mat-icon-button type="button" (click)="moveStep($event,i)"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button type="button" (click)="moveStep($event,0)"
+          matTooltip="Delete" i18n-matTooltip>
+          <mat-icon>delete</mat-icon>
+        </button>
       </ng-container>
     </ng-template>
     `,
-  imports: [MatListItemMeta, MatIconButton, MatIcon]
+  imports: [MatListItemMeta, MatIconButton, MatIcon, MatTooltip]
 })
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
@@ -87,6 +93,7 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   @Input() nameProp: string;
   @Input() defaultName = 'Step';
   @Input() ignoreClick = false;
+  @Input() confirmDelete = false;
   @Output() stepClicked = new EventEmitter<number>();
   @Output() stepsChange = new EventEmitter<unknown[]>();
 
@@ -97,7 +104,10 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
   private onDestroy$ = new Subject<void>();
   listId = uniqueId();
 
-  constructor(private planetStepListService: PlanetStepListService) {
+  constructor(
+    private planetStepListService: PlanetStepListService,
+    private dialog: MatDialog
+  ) {
     this.planetStepListService.stepMoveClick$.pipe(takeUntil(this.onDestroy$)).subscribe(this.moveStep.bind(this));
     this.planetStepListService.stepAdded$.pipe(takeUntil(this.onDestroy$)).subscribe(this.stepClick.bind(this));
   }
@@ -134,6 +144,49 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
     if (listId !== this.listId) {
       return;
     }
+    if (direction === 0 && this.confirmDelete) {
+      this.promptDeleteStep(index);
+      return;
+    }
+    this.performStepMove(index, direction);
+  }
+
+  promptDeleteStep(index: number) {
+    const { steps } = this;
+    const stepItem = Array.isArray(steps)
+      ? steps[index]
+      : (steps instanceof FormArray ? steps.at(index)?.value : null);
+
+    const titleVal = stepItem && this.nameProp && typeof stepItem[this.nameProp] === 'string' && stepItem[this.nameProp].trim()
+      ? stepItem[this.nameProp].trim()
+      : null;
+    const stepTitle = titleVal || `${this.defaultName} ${index + 1}`;
+
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            dialogRef.close();
+            this.performStepMove(index, 0);
+            if (!this.listMode) {
+              if (this.openIndex === index) {
+                this.toList();
+              } else if (this.openIndex > index) {
+                this.openIndex--;
+              }
+            }
+          },
+          onError: () => {}
+        },
+        showMainParagraph: false,
+        extraMessage: $localize`Are you sure you want to delete the following step?`,
+        displayName: stepTitle
+      }
+    });
+  }
+
+  performStepMove(index: number, direction: number) {
     const { steps } = this;
     if (Array.isArray(steps)) {
       this.moveArrayStep(index, direction, steps);
@@ -169,7 +222,9 @@ export class PlanetStepListComponent implements AfterContentChecked, OnDestroy {
 
   removeStep() {
     this.moveStep({ index: this.openIndex, direction: 0, listId: this.listId });
-    this.toList();
+    if (!this.confirmDelete) {
+      this.toList();
+    }
   }
 
 }
