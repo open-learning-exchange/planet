@@ -24,6 +24,7 @@ import { ChatOutputDirective } from '../shared/chat-output.directive';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
+import { FullNamePipe } from '../shared/full-name.pipe';
 
 @Component({
   selector: 'planet-news-list-item',
@@ -51,7 +52,8 @@ import { TimeAgoPipe } from '../shared/time-ago.pipe';
     NgTemplateOutlet,
     MatMenuItem,
     SlicePipe,
-    TimeAgoPipe
+    TimeAgoPipe,
+    FullNamePipe
   ]
 })
 export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {

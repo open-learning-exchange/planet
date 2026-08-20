@@ -8,7 +8,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { SubmissionsService } from '../submissions/submissions.service';
 import { StateService } from '../shared/state.service';
-import { dedupeShelfReduce, dedupeObjectArray } from '../shared/utils';
+import { dedupeShelfReduce, dedupeObjectArray, fullName } from '../shared/utils';
 import { CoursesService } from '../courses/courses.service';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { foundations, foundationIcons } from '../courses/constants';
@@ -100,7 +100,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.displayName = this.user.firstName !== undefined ? `${this.user.firstName} ${this.user.lastName}` : this.user.name;
+    this.displayName = fullName(this.user) || this.user.name;
     this.planetName = this.stateService.configuration.name;
     this.getSurveys();
     this.getExams();

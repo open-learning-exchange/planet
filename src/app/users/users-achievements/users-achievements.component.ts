@@ -23,6 +23,8 @@ import { TdMarkdownComponent } from '@covalent/markdown';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
+import { fullName } from '../../shared/utils';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -47,7 +49,8 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatListItemLine,
     DatePipe,
     TruncateTextPipe,
-    AvatarComponent
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
@@ -196,7 +199,7 @@ export class UsersAchievementsComponent implements OnInit {
       },
       {
         text: `
-          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${fullName(this.user) || this.user.name}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
