@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -42,7 +42,7 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     DatePipe
   ]
 })
-export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NotificationsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
@@ -61,12 +61,8 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     private couchService: CouchService,
     private userService: UserService,
     private challengesService: ChallengesService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.getNotifications();
-    });
-    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
     });
   }
@@ -80,11 +76,6 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.notifications.paginator = this.paginator;
   }
 
-  ngOnDestroy() {
-    this.onDestroy$.next();
-    this.onDestroy$.complete();
-  }
-
   getNotifications() {
     const user = this.userService.get();
     if (!user || !user.name) {
@@ -96,25 +87,17 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     if (user.isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
-    this.couchService.findAll('notifications', findDocuments(
+    this.couchService.post('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 }
       },
       0,
       [ { 'time': 'desc' } ]))
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(notifications => {
-        this.notifications.data = notifications || [];
-        if (this.paginator) {
-          this.notifications.paginator = this.paginator;
-        }
+      .subscribe((res: any) => {
+        this.notifications.data = res.docs || [];
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-        this.cdr.detectChanges();
-      }, (err) => {
-        console.log(err?.error?.reason || err);
-        this.cdr.detectChanges();
-      });
+      }, (err) => console.log(err?.error?.reason || err));
   }
 
   onFilterChange(filterValue: string) {
