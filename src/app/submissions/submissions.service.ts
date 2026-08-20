@@ -152,16 +152,68 @@ export class SubmissionsService {
   }
 
   updateStatus(submission: any) {
-    if (submission.type === 'exam' && submission.answers.findIndex(ans => ans.grade === undefined) > -1) {
+    if (submission.type === 'exam' && submission.answers.findIndex((ans: any) => ans.grade === undefined) > -1) {
       return 'requires grading';
     }
-    const [ examId, getCourseId ] = this.submission.parentId.split('@');
+    const [ assessmentId, getCourseId ] = (submission.parentId || '').split('@');
+    if (!getCourseId) {
+      return 'complete';
+    }
     this.couchService.get('courses/' + getCourseId).subscribe((res: any) => {
-      this.courseService.updateProgress({
-        courseId: res._id,
-        stepNum: res.steps.findIndex((step: any) => step.exam && (step.exam._id === examId)) + 1,
-        passed: this.submission.answers.every(eachAnswer => eachAnswer.grade === 1)
-      }, submission.user._id);
+      const stepIndex = res.steps.findIndex((step: any) =>
+        (step.exam && step.exam._id === assessmentId) || (step.survey && step.survey._id === assessmentId)
+      );
+      if (stepIndex > -1) {
+        const targetStep = res.steps[stepIndex];
+        const isExamPart = targetStep.exam && targetStep.exam._id === assessmentId;
+        const isSurveyPart = targetStep.survey && targetStep.survey._id === assessmentId;
+
+        const hasExam = !!targetStep.exam;
+        const hasSurvey = !!targetStep.survey;
+
+        if (hasExam && hasSurvey) {
+          const otherAssessmentId = isExamPart ? targetStep.survey._id : targetStep.exam._id;
+          const otherParentId = otherAssessmentId + '@' + getCourseId;
+          const currentPassed = isExamPart
+            ? submission.answers.every((ans: any) => ans.grade === 1)
+            : true;
+
+          if (currentPassed) {
+            this.couchService.get('submissions', {
+              query: {
+                selector: {
+                  'parentId': otherParentId,
+                  'user.name': submission.user?.name || submission.user
+                }
+              }
+            }).subscribe((otherRes: any) => {
+              const otherDocs = otherRes.docs || otherRes.rows?.map((r: any) => r.doc) || [];
+              const otherPassed = isExamPart
+                ? otherDocs.some((s: any) => s.status === 'complete')
+                : otherDocs.some((s: any) => s.status === 'complete' && s.answers?.every((a: any) => a.grade === 1));
+
+              if (otherPassed) {
+                this.courseService.updateProgress({
+                  courseId: res._id,
+                  stepNum: stepIndex + 1,
+                  passed: true
+                }, submission.user._id || submission.user);
+              }
+            }, () => {});
+          }
+        } else {
+          const isExamSatisfied = !hasExam || (isExamPart && submission.answers.every((ans: any) => ans.grade === 1));
+          const isSurveySatisfied = !hasSurvey || isSurveyPart;
+
+          if (isExamSatisfied && isSurveySatisfied) {
+            this.courseService.updateProgress({
+              courseId: res._id,
+              stepNum: stepIndex + 1,
+              passed: true
+            }, submission.user._id || submission.user);
+          }
+        }
+      }
     }, error => console.log(error));
     return 'complete';
   }
