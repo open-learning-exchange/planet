@@ -26,9 +26,18 @@ export class NotificationsService {
   }
 
   sendNotificationToUser(notifications: any): Observable<any> {
+    const selector: any = {
+      link: notifications.link,
+      type: notifications.type,
+      status: notifications.status,
+      user: notifications.user
+    };
+    if (notifications.replyTo) {
+      selector.replyTo = notifications.replyTo;
+    }
     return this.couchService.findAll(
       'notifications',
-      findDocuments({ link: notifications.link, type: notifications.type , status: notifications.status, user: notifications.user })
+      findDocuments(selector)
     ).pipe(
       switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notifications) : of({}))
     );

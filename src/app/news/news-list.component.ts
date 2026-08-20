@@ -1,8 +1,8 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { forkJoin, of, Subscription, Subject } from 'rxjs';
-import { takeUntil, filter } from 'rxjs/operators';
+import { forkJoin, of, Subscription, Subject, merge } from 'rxjs';
+import { takeUntil, filter, switchMap, tap } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
@@ -88,16 +88,14 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.initNews();
       });
 
-    this.userService.notificationStateChange$
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.loadUnreadReplyIds();
-      });
-
-    this.userService.userChange$
-      .pipe(takeUntil(this.onDestroy$))
-      .subscribe(() => {
-        this.loadUnreadReplyIds();
+    merge(this.userService.notificationStateChange$, this.userService.userChange$)
+      .pipe(
+        tap(() => this.unreadReplyIds.clear()),
+        switchMap(() => this.notificationsService.getUnreadReplyIds$()),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe(ids => {
+        this.unreadReplyIds = new Set(ids || []);
       });
 
     this.loadUnreadReplyIds();

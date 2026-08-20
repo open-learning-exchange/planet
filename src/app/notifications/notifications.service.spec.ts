@@ -61,4 +61,44 @@ describe('NotificationsService reply notifications', () => {
     ]);
     expect(userService.setNotificationStateChange).toHaveBeenCalled();
   });
+
+  it('stores notifications for distinct replyTo targets even with the same link', () => {
+    const updateDocumentSpy = vi.fn().mockReturnValue(of({ ok: true }));
+    const { service, couchService } = createService({
+      findAll: vi.fn().mockReturnValue(of([])),
+      updateDocument: updateDocumentSpy
+    });
+
+    const notif1 = {
+      user: 'org.couchdb.user:learner1',
+      link: '/',
+      type: 'replyMessage',
+      replyTo: 'voice-1',
+      status: 'unread'
+    };
+    const notif2 = {
+      user: 'org.couchdb.user:learner1',
+      link: '/',
+      type: 'replyMessage',
+      replyTo: 'voice-2',
+      status: 'unread'
+    };
+
+    service.sendNotificationToUser(notif1).subscribe();
+    service.sendNotificationToUser(notif2).subscribe();
+
+    expect(couchService.findAll).toHaveBeenCalledWith(
+      'notifications',
+      expect.objectContaining({
+        selector: expect.objectContaining({ replyTo: 'voice-1' })
+      })
+    );
+    expect(couchService.findAll).toHaveBeenCalledWith(
+      'notifications',
+      expect.objectContaining({
+        selector: expect.objectContaining({ replyTo: 'voice-2' })
+      })
+    );
+    expect(updateDocumentSpy).toHaveBeenCalledTimes(2);
+  });
 });
