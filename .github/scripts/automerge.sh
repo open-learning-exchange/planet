@@ -11,8 +11,6 @@
 # Stop on the first failure. Both waits sit in front of step 4 so they
 # overlap: $BASE releases the previous merge while this PR builds.
 #
-# Runs from a copy outside the work tree -- it checks out PR branches.
-#
 set -euo pipefail
 
 REPO="${REPO:?}"
@@ -29,7 +27,6 @@ DRY_RUN="${DRY_RUN:-true}"
 MAX_MERGES="${MAX_MERGES:-0}"
 WAIT_TIMEOUT_MIN="${WAIT_TIMEOUT_MIN:-45}"
 USING_PAT="${USING_PAT:-false}"
-# Already normalized and checked against myplanet's releases by the workflow.
 MYPLANET_LATEST="${MYPLANET_LATEST:-}"
 MYPLANET_MIN="${MYPLANET_MIN:-}"
 
@@ -54,8 +51,6 @@ last_base_sha=""
 MAX_REPREPARES=2
 reprep_pr=""
 reprep_n=0
-
-# ---------------------------------------------------------------- helpers
 
 pick_pr() {
     gh pr list \
@@ -116,7 +111,6 @@ runs_for() {
 runs_failed()  { jq '[.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral")] | length' <<<"$1"; }
 runs_pending() { jq '[.[] | select(.status != "completed")] | length' <<<"$1"; }
 
-# Names in $2 with no successful run yet; blank $2 = none.
 runs_missing() {
     jq -r --arg req "$2" '
         [ ($req | split(",")[] | gsub("^\\s+|\\s+$"; "")) | select(length > 0) ] as $need
@@ -126,8 +120,6 @@ runs_missing() {
     ' <<<"$1"
 }
 
-# Green: nothing failed, nothing running, every workflow in $need passed.
-# $absent = what no runs at all means: 'fail' (we pushed it), 'pass' ($BASE).
 wait_for_runs() {
     local sha=$1 need=$2 absent=$3
     local deadline=$(( SECONDS + WAIT_TIMEOUT_MIN * 60 ))
@@ -190,7 +182,6 @@ wait_for_runs() {
     done
 }
 
-# Non-blocking peek; step 4 does the blocking version.
 base_already_failed() {
     local sha=$1 runs bad
     runs=$(runs_for "$sha")
@@ -201,8 +192,6 @@ base_already_failed() {
     return 0
 }
 
-# Guard against a broken version.sh. Only the version line may move, plus the
-# myplanet pins when this run was asked to set them.
 verify_version_only_diff() {
     local from=$1 to=$2 files bad allowed='"version"'
 
@@ -238,14 +227,10 @@ push_with_retry() {
     return 1
 }
 
-# ------------------------------------------------------------------- main
-
 log "draining '$LABEL' into $BASE (dry_run=$DRY_RUN)"
 summary "### automerge: draining \`$LABEL\` into \`$BASE\`"
 summary ""
 
-# The pins ride along in the first merge's bump commit, so an empty queue
-# leaves them unset -- there is no merge to carry them.
 if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
     log "myplanet pins: latest -> ${MYPLANET_LATEST:-unchanged}, min -> ${MYPLANET_MIN:-unchanged}"
     summary "myplanet pins: latest → \`${MYPLANET_LATEST:-unchanged}\`, min → \`${MYPLANET_MIN:-unchanged}\` (set by the first merge)"
@@ -302,8 +287,6 @@ while :; do
         continue
     fi
 
-    # A branch policy needing an approval refuses the merge in step 4, after a
-    # full build. Skip rather than stop, so approved PRs behind it still drain.
     review=$(pr_review "$NUMBER")
     case "$review" in
         REVIEW_REQUIRED|CHANGES_REQUIRED|CHANGES_REQUESTED)
@@ -315,7 +298,6 @@ while :; do
 
     check_mergeable "$NUMBER" || { summary "| #$NUMBER | | **stopped**: conflicts with \`$BASE\` |"; exit 1; }
 
-    # "Next" comes off the base -- it is what the merge lands on.
     base_pkg="${RUNNER_TEMP:-/tmp}/base-package.json"
     git show "origin/$BASE:$PKG_FILE" > "$base_pkg"
     eval "$("$VERSION_SH" next "$base_pkg" | sed 's/^/new_/')"
@@ -346,8 +328,6 @@ while :; do
 
     git checkout --quiet -B "$HEAD" "origin/$HEAD"
 
-    # 1. Base first: a branch cut earlier collides on the exact version line
-    #    step 2 rewrites, and this makes step 3 test what actually lands.
     if ! git merge --quiet --no-edit "origin/$BASE"; then
         git merge --abort || true
         log "  #$NUMBER conflicts with $BASE -- needs a human"
@@ -355,14 +335,9 @@ while :; do
         exit 1
     fi
 
-    # 2. Bump. Every merge is tagged v<version> for a release, so each needs
-    #    its own number; writing it here puts it in the squash.
     pre_bump_sha=$(git rev-parse HEAD)
     "$VERSION_SH" apply "$PKG_FILE" "$new_name"
 
-    # The myplanet pins go in the same commit. Rewriting them for every PR is
-    # a no-op after the first one has landed them on $BASE, so this needs no
-    # memory of which PR carried them.
     bump_msg="version: bump to $new_name"
     if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
         mp_before=$(git show "HEAD:$PKG_FILE" | jq -r '[.myplanet.latest, .myplanet.min] | join(" ")')
@@ -386,8 +361,6 @@ while :; do
         verify_version_only_diff "$pre_bump_sha" "$merge_sha" \
             || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: bump was not version-only |"; exit 1; }
     fi
-
-    # 3. Push and let CI judge the prepared commit.
     if [ "$merge_sha" != "$SHA" ]; then
         push_with_retry "$HEAD" \
             || { summary "| #$NUMBER | → \`$new_name\` | **stopped**: push failed |"; exit 1; }
@@ -402,7 +375,6 @@ while :; do
         log "  require_checks is off -- merging ${merge_sha:0:7} unverified"
     fi
 
-    # 4. Merge, but only onto a settled green base.
     if [ "$REQUIRE_CHECKS" = 'true' ]; then
         git fetch --quiet origin "$BASE"
         wait_for_runs "$(git rev-parse "origin/$BASE")" '' pass \
@@ -478,12 +450,6 @@ while :; do
     git fetch --quiet origin "$BASE"
     last_base_sha=$(git rev-parse "origin/$BASE")
 
-    # 5. Tag the merge and publish the release. The bumped version only means
-    #    something once it is tagged, and it is the release event -- not the
-    #    push -- that builds the versioned images. Lightweight tag and
-    #    generated notes, the way every earlier version on $BASE was cut.
-    #    Those builder runs sit on $BASE's head, so the next PR's green-base
-    #    wait covers them without any extra plumbing here.
     release_note=""
     if [ "$CREATE_RELEASE" = 'true' ]; then
         target=$(gh pr view "$NUMBER" --repo "$REPO" --json mergeCommit --jq '.mergeCommit.oid' 2>/dev/null || echo '')
