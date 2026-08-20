@@ -16,7 +16,10 @@ export function resolveResourceIconInfo(resource: any): ResourceIconInfo {
   const doc = resource.doc || resource;
   const attachments = doc._attachments || {};
   const attachmentKeys = Object.keys(attachments);
-  const rawFilename = doc.filename || (attachmentKeys.length === 1 ? attachmentKeys[0] : (doc.name || ''));
+  const matchedKey = attachmentKeys.find(
+    key => key.toLowerCase() === (typeof doc.filename === 'string' ? doc.filename.toLowerCase().trim() : '')
+  ) || (attachmentKeys.length === 1 ? attachmentKeys[0] : '');
+  const rawFilename = matchedKey || doc.filename || (typeof doc.name === 'string' ? doc.name : '');
   const primaryFilename = (typeof rawFilename === 'string' ? rawFilename : '').toLowerCase().trim();
 
   const hasDirectFile = !!doc.file || (typeof File !== 'undefined' && doc instanceof File);
@@ -28,9 +31,8 @@ export function resolveResourceIconInfo(resource: any): ResourceIconInfo {
     return { icon: '', tooltip: '', category: 'none' };
   }
 
-  const attachmentContentType = primaryFilename && attachments[primaryFilename]?.content_type
-    ? attachments[primaryFilename].content_type.toLowerCase()
-    : '';
+  const attachmentObj = matchedKey ? attachments[matchedKey] : (attachments[primaryFilename] || attachments[rawFilename]);
+  const attachmentContentType = attachmentObj?.content_type ? attachmentObj.content_type.toLowerCase() : '';
   const directContentType = (
     doc.contentType || doc.content_type || (doc.file && doc.file.type) || (typeof doc.type === 'string' ? doc.type : '') || ''
   ).toLowerCase();
@@ -168,7 +170,8 @@ export function resolveResourceIconInfo(resource: any): ResourceIconInfo {
       <mat-icon
         class="km-resource-icon resource-type-icon"
         [matTooltip]="iconInfo.tooltip"
-        aria-hidden="true">
+        [attr.aria-label]="iconInfo.tooltip"
+        role="img">
         {{ iconInfo.icon }}
       </mat-icon>
     }

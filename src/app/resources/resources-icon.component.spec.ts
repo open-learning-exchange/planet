@@ -46,6 +46,36 @@ describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
       expect(byOpenWith.icon).toBe('picture_as_pdf');
     });
 
+    it('should resolve resources with uppercase or mixed-case attachment keys', () => {
+      const upperPdf = resolveResourceIconInfo({
+        filename: 'HANDBOOK.PDF',
+        _attachments: { 'HANDBOOK.PDF': { content_type: 'application/pdf' } }
+      });
+      expect(upperPdf.icon).toBe('picture_as_pdf');
+      expect(upperPdf.category).toBe('pdf');
+
+      const upperCsv = resolveResourceIconInfo({
+        filename: 'DATA_TABLE.CSV',
+        _attachments: { 'DATA_TABLE.CSV': { content_type: 'text/csv' } }
+      });
+      expect(upperCsv.icon).toBe('grid_on');
+      expect(upperCsv.category).toBe('spreadsheet');
+    });
+
+    it('should resolve resources with extensionless attachment keys via MIME type', () => {
+      const mimeOnlyPdf = resolveResourceIconInfo({
+        _attachments: { 'DOCUMENT_ATTACHMENT': { content_type: 'application/pdf' } }
+      });
+      expect(mimeOnlyPdf.icon).toBe('picture_as_pdf');
+      expect(mimeOnlyPdf.category).toBe('pdf');
+
+      const mimeOnlyVideo = resolveResourceIconInfo({
+        _attachments: { 'STREAM_MEDIA': { content_type: 'video/mp4' } }
+      });
+      expect(mimeOnlyVideo.icon).toBe('videocam');
+      expect(mimeOnlyVideo.category).toBe('video');
+    });
+
     it('should resolve Video resources', () => {
       const byExtension = resolveResourceIconInfo({ filename: 'lesson.mp4' });
       expect(byExtension.icon).toBe('videocam');
@@ -220,6 +250,20 @@ describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
       const iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
       expect(iconEl).toBeTruthy();
       expect(iconEl.nativeElement.textContent.trim()).toBe('picture_as_pdf');
+    });
+
+    it('should render mat-icon with accessible aria-label and role="img"', () => {
+      component.resource = {
+        title: 'Biology Textbook',
+        filename: 'biology.pdf',
+        _attachments: { 'biology.pdf': { content_type: 'application/pdf' } }
+      };
+      component.ngOnChanges();
+      fixture.detectChanges();
+
+      const iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
+      expect(iconEl.attributes['aria-label']).toBe('PDF Document');
+      expect(iconEl.attributes['role']).toBe('img');
     });
 
     it('should not render icon when resource is null, empty, or without attached file', () => {
