@@ -1,10 +1,13 @@
 import { Component, Input, OnInit, OnChanges, EventEmitter, Output, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { forkJoin, of, Subscription, Subject } from 'rxjs';
+import { takeUntil, filter } from 'rxjs/operators';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { NewsService } from './news.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { UserService } from '../shared/user.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { CustomValidators } from '../validators/custom-validators';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -59,6 +62,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   pageIndex = 0;
   pageSizeOptions = [ 5, 10, 25, 50 ];
   totalItems = 0;
+  unreadReplyIds = new Set<string>();
+  private pendingReplyTo?: string;
+  private onDestroy$ = new Subject<void>();
   private routerEventsSubscription: Subscription;
 
   constructor(
@@ -66,6 +72,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     private dialogsFormService: DialogsFormService,
     private dialogsLoadingService: DialogsLoadingService,
     private newsService: NewsService,
+    private notificationsService: NotificationsService,
+    private userService: UserService,
     private planetMessageService: PlanetMessageService,
     private dialogGuard: DialogGuardService,
     private router: Router,
@@ -73,11 +81,44 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   ) {}
 
   ngOnInit() {
-    this.routerEventsSubscription = this.router.events.subscribe(() => {
-      this.initNews();
-    });
+    this.routerEventsSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.initNews();
+      });
 
+    this.userService.notificationStateChange$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.loadUnreadReplyIds();
+      });
+
+    this.userService.userChange$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(() => {
+        this.loadUnreadReplyIds();
+      });
+
+    const deepLinkReplyTo = this.route.snapshot.paramMap.get('replyTo') || this.route.snapshot.queryParamMap.get('replyTo');
+    if (deepLinkReplyTo) {
+      this.pendingReplyTo = deepLinkReplyTo;
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { replyTo: null },
+        replaceUrl: true
+      });
+    }
+
+    this.loadUnreadReplyIds();
     this.initNews();
+  }
+
+  loadUnreadReplyIds() {
+    this.notificationsService.getUnreadReplyIds$()
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(ids => {
+        this.unreadReplyIds = new Set(ids || []);
+      });
   }
 
   ngOnChanges() {
@@ -94,6 +135,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         isLatest = false;
       }
     });
+
+    if (this.pendingReplyTo) {
+      const target = this.items.find(item => item._id === this.pendingReplyTo || item.doc?._id === this.pendingReplyTo);
+      if (target) {
+        this.showReplies(target);
+        this.pendingReplyTo = undefined;
+        return;
+      }
+    }
+
     this.displayedItems = this.replyObject[this.replyViewing._id];
     this.loadPagedItems(true);
     if (this.replyViewing._id !== 'root') {
@@ -111,6 +162,8 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   ngOnDestroy() {
     this.routerEventsSubscription?.unsubscribe();
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
     if (this.observer) {
       this.observer.disconnect();
     }
@@ -135,14 +188,25 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   initNews() {
-    const newVoiceId = this.route.firstChild?.snapshot.paramMap.get('id') || 'root';
-    this.filterNewsToShow(newVoiceId);
+    const childPath = this.route.firstChild?.routeConfig?.path;
+    const voiceId = (childPath === 'voices/:id') ? this.route.firstChild?.snapshot.paramMap.get('id') : null;
+
+    if (voiceId) {
+      this.filterNewsToShow(voiceId);
+    } else {
+      this.filterNewsToShow('root');
+    }
   }
 
   showReplies(news) {
     // remember the conversation’s true root post, even from deep threads
     if (news._id !== 'root') {
       this.lastRootPostId = this.getThreadRootId(news);
+      const newsId = news.doc?._id || news._id;
+      if (this.unreadReplyIds.has(newsId)) {
+        this.unreadReplyIds.delete(newsId);
+        this.notificationsService.markReplyNotificationsAsRead(newsId);
+      }
     }
     if (this.useReplyRoutes) {
       this.navigateToReply(news._id);
