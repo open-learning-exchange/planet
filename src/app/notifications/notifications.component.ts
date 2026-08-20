@@ -66,6 +66,9 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
     });
+    this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.getNotifications();
+    });
   }
 
   ngOnInit() {
@@ -107,8 +110,11 @@ export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy 
           this.notifications.paginator = this.paginator;
         }
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-        this.cdr.markForCheck();
-      }, (err) => console.log(err?.error?.reason || err));
+        this.cdr.detectChanges();
+      }, (err) => {
+        console.log(err?.error?.reason || err);
+        this.cdr.detectChanges();
+      });
   }
 
   onFilterChange(filterValue: string) {
