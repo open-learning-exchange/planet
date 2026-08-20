@@ -9,7 +9,7 @@ import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '../../shared/csv.service';
-import { couchAttachmentPath } from '../../shared/utils';
+import { couchAttachmentPath, formatResourceAttachmentSize } from '../../shared/utils';
 import { NgClass } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -39,6 +39,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   mediaType: string;
   contentType: string;
   resourceSrc: string;
+  formattedFileSize = '';
   shownResourceId: string;
   resource: any;
   parent = this.route.snapshot.data.parent;
@@ -124,6 +125,7 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   setResource(resource: any) {
     this.cancelCsvLoad();
     this.resetCsvPreview();
+    this.formattedFileSize = formatResourceAttachmentSize(resource);
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
     const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];

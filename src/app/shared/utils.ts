@@ -329,3 +329,36 @@ export const extractMarkdownImageUrls = (content: string) => {
 
   return matches;
 };
+
+export const formatBytes = (bytes?: number, decimals = 1): string => {
+  if (bytes === undefined || bytes === null || isNaN(bytes) || bytes <= 0) {
+    return '';
+  }
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const clampedI = Math.min(i, sizes.length - 1);
+  const formattedVal = parseFloat((bytes / Math.pow(k, clampedI)).toFixed(dm));
+  return `${formattedVal} ${sizes[clampedI]}`;
+};
+
+export const getResourceAttachmentSize = (resource: any): number => {
+  if (!resource) {
+    return 0;
+  }
+  const doc = resource.doc || resource;
+  const attachments = doc._attachments;
+  if (!attachments || typeof attachments !== 'object') {
+    return 0;
+  }
+  return (Object.values(attachments) as any[]).reduce<number>((total, att) => {
+    return total + (att && typeof att.length === 'number' ? att.length : 0);
+  }, 0);
+};
+
+export const formatResourceAttachmentSize = (resource: any, decimals = 1): string => {
+  const size = getResourceAttachmentSize(resource);
+  return formatBytes(size, decimals);
+};
+

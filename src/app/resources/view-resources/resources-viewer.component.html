@@ -27,7 +27,7 @@
     @case ('csv') {
       <div class="csv-container">
         <div class="csv-actions">
-          <a mat-raised-button color="primary" i18n [href]="resourceSrc">Download/Open</a>
+          <a mat-raised-button color="primary" [href]="resourceSrc"><span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}</a>
         </div>
         @if (csvPreviewTooLarge) {
           <span i18n>CSV files larger than {{ csvPreviewMaxSizeMb }} MB cannot be previewed. Download the file to view it.</span>
@@ -59,7 +59,9 @@
       </div>
     }
     @case ('other') {
-      <div><a mat-raised-button color="primary" i18n href={{resourceSrc}}>Download/Open</a></div>
+      <div>
+        <a mat-raised-button color="primary" [href]="resourceSrc"><span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}</a>
+      </div>
     }
     @case ('HTML') {
       <iframe [src]="pdfSrc"></iframe>
