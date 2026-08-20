@@ -45,7 +45,7 @@
                   <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
                 </div>
               }
-              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
+              <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before" [matBadgeDescription]="badgeDescription(item)">
                 {{item.firstLine}}
               </p>
               <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': dashboardTextLines(item),'word-wrap': 'break-word' }">

@@ -138,6 +138,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
+  get requestBadgeDescription(): string {
+    return $localize`Pending join requests: ${this.requests.length}:count:`;
+  }
+
+  get taskBadgeDescription(): string {
+    return $localize`Incomplete tasks: ${this.taskCount}:count:`;
+  }
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
