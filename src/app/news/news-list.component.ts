@@ -64,6 +64,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalItems = 0;
   unreadReplyIds = new Set<string>();
   private pendingReplyTo?: string;
+  private deepLinkHandled = false;
   private onDestroy$ = new Subject<void>();
   private routerEventsSubscription: Subscription;
 
@@ -126,9 +127,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
     });
 
-    if (this.pendingReplyTo) {
+    if (this.pendingReplyTo && !this.deepLinkHandled) {
       const target = this.items.find(item => item._id === this.pendingReplyTo || item.doc?._id === this.pendingReplyTo);
       if (target) {
+        this.deepLinkHandled = true;
         this.showReplies(target);
         this.pendingReplyTo = undefined;
         return;
@@ -184,11 +186,12 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
     if (voiceId) {
       this.filterNewsToShow(voiceId);
-    } else if (deepLinkReplyTo) {
+    } else if (deepLinkReplyTo && !this.deepLinkHandled) {
       this.pendingReplyTo = deepLinkReplyTo;
       if (this.items.length > 0) {
         const target = this.items.find(item => item._id === deepLinkReplyTo || item.doc?._id === deepLinkReplyTo);
         if (target) {
+          this.deepLinkHandled = true;
           this.showReplies(target);
           this.pendingReplyTo = undefined;
         }
@@ -208,6 +211,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
         this.notificationsService.markReplyNotificationsAsRead(newsId);
       }
     } else {
+      this.deepLinkHandled = true;
       this.pendingReplyTo = undefined;
     }
     if (this.useReplyRoutes) {
