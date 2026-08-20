@@ -201,10 +201,21 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
+  openCreatorProfile(event?: Event) {
+    this.openProfile(this.meetupDetail?.createdBy, this.meetupDetail?.sourcePlanet || this.meetupDetail?.sync?.planetCode, event);
+  }
+
+  openAssigneeProfile(event?: Event) {
+    this.openProfile(this.meetupDetail?.assignee?.name, this.meetupDetail?.assignee?.userPlanetCode, event);
+  }
+
   openProfile(username, planetCode, event?: Event) {
     if (event) {
       event.stopPropagation();
       event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
     }
     this.dialog.open(
       UserProfileDialogComponent,

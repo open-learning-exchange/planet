@@ -922,6 +922,12 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     if (event) {
       event.stopPropagation();
       event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
+    if (!user) {
+      return;
     }
     this.dialog.open(UserProfileDialogComponent, {
       data: { member: { name: user.name, userPlanetCode: user.planetCode } },

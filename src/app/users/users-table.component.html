@@ -22,26 +22,10 @@
       <mat-cell *matCellDef="let element">
         @if (element.imageSrc) {
           <div>
-            <img class="profile-image cursor-pointer"
-                 [src]="element.imageSrc"
-                 tabindex="0"
-                 role="button"
-                 i18n-aria-label
-                 aria-label="View user profile"
-                 (keydown.enter)="gotoProfileView(element.doc.name, $event)"
-                 (keydown.space)="gotoProfileView(element.doc.name, $event)"
-                 (click)="gotoProfileView(element.doc.name, $event)">
+            <img class="profile-image" alt="" [src]="element.imageSrc">
           </div>
         } @else {
-          <img class="profile-image cursor-pointer"
-               src="assets/avatar.png"
-               tabindex="0"
-               role="button"
-               i18n-aria-label
-               aria-label="View user profile"
-               (keydown.enter)="gotoProfileView(element.doc.name, $event)"
-               (keydown.space)="gotoProfileView(element.doc.name, $event)"
-               (click)="gotoProfileView(element.doc.name, $event)">
+          <img class="profile-image" alt="" src="assets/avatar.png">
         }
       </mat-cell>
     </ng-container>

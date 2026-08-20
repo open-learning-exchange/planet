@@ -28,10 +28,6 @@
         }
         @if (taskView.assignee; as assignee) {
           <img matListItemAvatar
-            tabindex="0"
-            role="button"
-            (keydown.enter)="onAvatarKeydown($event, assignee)"
-            (keydown.space)="onAvatarKeydown($event, assignee)"
             (click)="openMemberDialog(assignee); $event.stopPropagation()"
             (error)="useDefaultAvatar(taskView)"
             alt="{{assignee | assigneeName}}"

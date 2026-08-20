@@ -92,6 +92,9 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     if (event) {
       event.stopPropagation();
       event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
     }
     this.dialog.open(UserProfileDialogComponent, {
       data: { member },
