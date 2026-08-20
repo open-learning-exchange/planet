@@ -6,8 +6,10 @@
   <mat-form-field class="font-size-1">
     <mat-label i18n>Search name...</mat-label>
     <input matInput [(ngModel)]="searchValue">
+    <button mat-icon-button matSuffix (click)="searchValue = ''; resetFilter()" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear Search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <button class="margin-lr-5" mat-raised-button color="primary" i18n (click)="resetFilter()">Clear</button>
 </mat-toolbar>
 
 <div class="space-container">
