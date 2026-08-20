@@ -196,7 +196,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
           this.pendingReplyTo = undefined;
         }
       }
-    } else if (this.replyViewing._id === 'root') {
+    } else {
       this.filterNewsToShow('root');
     }
   }
