@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { PlanetResourceIconComponent } from '../../resources/resources-icon.component';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -49,7 +50,8 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     MatButtonToggle,
     MatTooltip,
     ResourcesViewerComponent,
-    PlanetLoadingSpinnerComponent
+    PlanetLoadingSpinnerComponent,
+    PlanetResourceIconComponent
   ]
 })
 

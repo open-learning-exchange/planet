@@ -170,6 +170,7 @@
             }
             <ng-container *ngTemplateOutlet="headerText"></ng-container>
             <ng-template #headerText>
+              <planet-resource-icon [resource]="element"></planet-resource-icon>
               <a [routerLink]="isDialog ? ['resources/view', element._id] : ['view', element._id]" [target]="isDialog ? '_blank' : null">
                 {{ element.doc.title | truncateText:180 }}
               </a>
