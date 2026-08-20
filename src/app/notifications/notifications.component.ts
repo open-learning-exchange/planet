@@ -77,27 +77,23 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   getNotifications() {
-    const user = this.userService.get();
-    if (!user || !user.name) {
-      return;
-    }
     const userFilter = [ {
-      'user': 'org.couchdb.user:' + user.name
+      'user': 'org.couchdb.user:' + this.userService.get().name
     } ];
-    if (user.isUserAdmin) {
+    if (this.userService.get().isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
-    this.couchService.post('notifications/_find', findDocuments(
+    this.couchService.findAll('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
         'time': { '$gt': 0 }
       },
       0,
       [ { 'time': 'desc' } ]))
-      .subscribe((res: any) => {
-        this.notifications.data = res.docs || [];
+      .subscribe(notifications => {
+        this.notifications.data = notifications;
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-      }, (err) => console.log(err?.error?.reason || err));
+      }, (err) => console.log(err.error.reason));
   }
 
   onFilterChange(filterValue: string) {
