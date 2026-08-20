@@ -1,17 +1,5 @@
 name: planet automerge
 
-# Manually started queue drainer: for each PR labelled `automerge`, merge the
-# base in, bump the version, wait for the builders, squash merge, then tag the
-# merge and publish its release. The label is the safety rail. Logic in
-# .github/scripts/automerge.sh.
-#
-# The myplanet_* inputs re-pin package.json's myplanet block in the same bump
-# commit, so they land with the first merge -- an empty queue leaves them
-# alone, since there is no merge to carry them.
-#
-# Needs AUTOMERGE_TOKEN. GITHUB_TOKEN cannot merge into a protected branch,
-# and its pushes do not trigger the workflow runs the drain waits for.
-
 on:
   workflow_dispatch:
     inputs:
@@ -92,7 +80,6 @@ jobs:
   automerge:
     name: planet automerge
     runs-on: ubuntu-latest
-    # GitHub caps a job at 6h; stay under it and re-dispatch to continue.
     timeout-minutes: 350
     steps:
       - name: checkout repository code
