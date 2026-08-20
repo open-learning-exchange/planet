@@ -44,6 +44,7 @@
       <mat-chip-set class="tags-list" aria-label="Attached resources" i18n-aria-label>
         @for (resource of activeStep.resources; track resource; let i = $index) {
           <mat-chip>
+            <planet-resource-icon [resource]="resource"></planet-resource-icon>
             <a matChipAction type="button" target="_blank" [routerLink]="['/resources/view', resource._id]">{{resource.title}}</a>
             <button matChipRemove type="button" aria-label="Remove resource" i18n-aria-label (click)="removeResource(i)">
               <mat-icon>clear</mat-icon>
