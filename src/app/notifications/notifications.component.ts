@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { findDocuments } from '../shared/mangoQueries';
@@ -42,7 +42,7 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     DatePipe
   ]
 })
-export class NotificationsComponent implements OnInit, AfterViewInit {
+export class NotificationsComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   notifications = new MatTableDataSource<any>();
   displayedColumns = [ 'message', 'read' ];
@@ -61,6 +61,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     private couchService: CouchService,
     private userService: UserService,
     private challengesService: ChallengesService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.userService.notificationStateChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.getNotifications();
@@ -76,11 +77,20 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     this.notifications.paginator = this.paginator;
   }
 
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
   getNotifications() {
+    const user = this.userService.get();
+    if (!user || !user.name) {
+      return;
+    }
     const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
+      'user': 'org.couchdb.user:' + user.name
     } ];
-    if (this.userService.get().isUserAdmin) {
+    if (user.isUserAdmin) {
       userFilter.push({ 'user': 'SYSTEM' });
     }
     this.couchService.findAll('notifications', findDocuments(
@@ -90,10 +100,15 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
       },
       0,
       [ { 'time': 'desc' } ]))
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe(notifications => {
-        this.notifications.data = notifications;
+        this.notifications.data = notifications || [];
+        if (this.paginator) {
+          this.notifications.paginator = this.paginator;
+        }
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
-      }, (err) => console.log(err.error.reason));
+        this.cdr.markForCheck();
+      }, (err) => console.log(err?.error?.reason || err));
   }
 
   onFilterChange(filterValue: string) {
