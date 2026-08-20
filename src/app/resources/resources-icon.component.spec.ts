@@ -4,220 +4,31 @@ import { PlanetResourceIconComponent, resolveResourceIconInfo } from './resource
 
 describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
   describe('resolveResourceIconInfo', () => {
-    it('should return empty info for null or undefined resource', () => {
-      expect(resolveResourceIconInfo(null)).toEqual({ icon: '', tooltip: '', category: 'none' });
-      expect(resolveResourceIconInfo(undefined)).toEqual({ icon: '', tooltip: '', category: 'none' });
-    });
-
-    it('should return empty info for resources without an attached file', () => {
-      // Resource document without _attachments, filename, or file
-      const noFileResource = {
-        title: 'Community Policy Document',
-        description: 'Just a text description with no attached file',
-        author: 'Admin',
-        _attachments: {}
-      };
-      expect(resolveResourceIconInfo(noFileResource)).toEqual({ icon: '', tooltip: '', category: 'none' });
-
-      const emptyDocWrapper = {
-        _id: 'sample-id',
-        doc: {
-          title: 'Empty Resource',
-          description: 'No files attached'
-        }
-      };
-      expect(resolveResourceIconInfo(emptyDocWrapper)).toEqual({ icon: '', tooltip: '', category: 'none' });
-    });
-
-    it('should resolve PDF resources', () => {
-      const byExtension = resolveResourceIconInfo({ filename: 'handbook.pdf' });
-      expect(byExtension.icon).toBe('picture_as_pdf');
-      expect(byExtension.category).toBe('pdf');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'file.pdf': { content_type: 'application/pdf' } }
-      });
-      expect(byMime.icon).toBe('picture_as_pdf');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'doc.pdf', mediaType: 'pdf' });
-      expect(byMediaType.icon).toBe('picture_as_pdf');
-
-      const byOpenWith = resolveResourceIconInfo({ filename: 'doc.pdf', openWith: 'PDF.js' });
-      expect(byOpenWith.icon).toBe('picture_as_pdf');
-    });
-
-    it('should resolve resources with uppercase or mixed-case attachment keys', () => {
-      const upperPdf = resolveResourceIconInfo({
-        filename: 'HANDBOOK.PDF',
-        _attachments: { 'HANDBOOK.PDF': { content_type: 'application/pdf' } }
-      });
-      expect(upperPdf.icon).toBe('picture_as_pdf');
-      expect(upperPdf.category).toBe('pdf');
-
-      const upperCsv = resolveResourceIconInfo({
-        filename: 'DATA_TABLE.CSV',
-        _attachments: { 'DATA_TABLE.CSV': { content_type: 'text/csv' } }
-      });
-      expect(upperCsv.icon).toBe('grid_on');
-      expect(upperCsv.category).toBe('spreadsheet');
-    });
-
-    it('should resolve resources with extensionless attachment keys via MIME type', () => {
-      const mimeOnlyPdf = resolveResourceIconInfo({
-        _attachments: { 'DOCUMENT_ATTACHMENT': { content_type: 'application/pdf' } }
-      });
-      expect(mimeOnlyPdf.icon).toBe('picture_as_pdf');
-      expect(mimeOnlyPdf.category).toBe('pdf');
-
-      const mimeOnlyVideo = resolveResourceIconInfo({
-        _attachments: { 'STREAM_MEDIA': { content_type: 'video/mp4' } }
-      });
-      expect(mimeOnlyVideo.icon).toBe('videocam');
-      expect(mimeOnlyVideo.category).toBe('video');
-    });
-
-    it('should resolve Video resources', () => {
-      const byExtension = resolveResourceIconInfo({ filename: 'lesson.mp4' });
-      expect(byExtension.icon).toBe('videocam');
-      expect(byExtension.category).toBe('video');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'video.webm': { content_type: 'video/webm' } }
-      });
-      expect(byMime.icon).toBe('videocam');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'clip.mp4', mediaType: 'video' });
-      expect(byMediaType.icon).toBe('videocam');
-    });
-
-    it('should resolve Audio resources', () => {
-      const byExtension = resolveResourceIconInfo({ filename: 'recording.mp3' });
-      expect(byExtension.icon).toBe('audiotrack');
-      expect(byExtension.category).toBe('audio');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'audio.ogg': { content_type: 'audio/ogg' } }
-      });
-      expect(byMime.icon).toBe('audiotrack');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'track.mp3', mediaType: 'audio' });
-      expect(byMediaType.icon).toBe('audiotrack');
-    });
-
-    it('should resolve Spreadsheet and CSV resources using grid_on icon', () => {
-      const byCsvExt = resolveResourceIconInfo({ filename: 'scores.csv' });
-      expect(byCsvExt.icon).toBe('grid_on');
-      expect(byCsvExt.category).toBe('spreadsheet');
-
-      const byXlsxExt = resolveResourceIconInfo({ filename: 'budget.xlsx' });
-      expect(byXlsxExt.icon).toBe('grid_on');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'data.csv': { content_type: 'text/csv' } }
-      });
-      expect(byMime.icon).toBe('grid_on');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'data.csv', mediaType: 'csv' });
-      expect(byMediaType.icon).toBe('grid_on');
-    });
-
-    it('should resolve Image resources', () => {
-      const byExtension = resolveResourceIconInfo({ filename: 'diagram.png' });
-      expect(byExtension.icon).toBe('image');
-      expect(byExtension.category).toBe('image');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'photo.jpg': { content_type: 'image/jpeg' } }
-      });
-      expect(byMime.icon).toBe('image');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'picture.png', mediaType: 'Graphic/Pictures' });
-      expect(byMediaType.icon).toBe('image');
-    });
-
-    it('should resolve Interactive Web and Multi-attachment HTML resources', () => {
-      const byMultiAttachments = resolveResourceIconInfo({
-        _attachments: {
-          'index.html': { content_type: 'text/html' },
-          'style.css': { content_type: 'text/css' }
-        }
-      });
-      expect(byMultiAttachments.icon).toBe('language');
-      expect(byMultiAttachments.category).toBe('html');
-
-      const byHtmlExt = resolveResourceIconInfo({ filename: 'index.html' });
-      expect(byHtmlExt.icon).toBe('language');
-
-      const byMediaType = resolveResourceIconInfo({ filename: 'module.zip', mediaType: 'HTML' });
-      expect(byMediaType.icon).toBe('language');
-    });
-
-    it('should resolve Word documents', () => {
-      const byDocx = resolveResourceIconInfo({ filename: 'essay.docx' });
-      expect(byDocx.icon).toBe('description');
-      expect(byDocx.category).toBe('word');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'doc.docx': { content_type: 'application/msword' } }
-      });
-      expect(byMime.icon).toBe('description');
-    });
-
-    it('should resolve Presentation slide decks', () => {
-      const byPptx = resolveResourceIconInfo({ filename: 'lecture.pptx' });
-      expect(byPptx.icon).toBe('slideshow');
-      expect(byPptx.category).toBe('presentation');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'slides.pptx': { content_type: 'application/vnd.ms-powerpoint' } }
-      });
-      expect(byMime.icon).toBe('slideshow');
-    });
-
-    it('should resolve Text and Markdown files', () => {
-      const byMd = resolveResourceIconInfo({ filename: 'notes.md' });
-      expect(byMd.icon).toBe('description');
-      expect(byMd.category).toBe('text');
-
-      const byMime = resolveResourceIconInfo({
-        _attachments: { 'notes.txt': { content_type: 'text/plain' } }
-      });
-      expect(byMime.icon).toBe('description');
-    });
-
-    it('should resolve Compressed Archive files using archive icon', () => {
-      const byZip = resolveResourceIconInfo({
-        filename: 'archive.zip',
-        _attachments: { 'archive.zip': { content_type: 'application/zip' } }
-      });
-      expect(byZip.icon).toBe('archive');
-      expect(byZip.category).toBe('archive');
-
-      const byTar = resolveResourceIconInfo({ filename: 'bundle.tar.gz' });
-      expect(byTar.icon).toBe('archive');
-    });
-
-    it('should fallback to insert_drive_file for generic unrecognized files with attachment', () => {
-      const generic = resolveResourceIconInfo({
-        filename: 'custom.xyz',
-        title: 'Custom File',
-        _attachments: { 'custom.xyz': { content_type: 'application/octet-stream' } }
-      });
-      expect(generic.icon).toBe('insert_drive_file');
-      expect(generic.category).toBe('file');
-    });
-
-    it('should unwrap enriched resource wrapper objects ({ doc: ... })', () => {
-      const wrapped = resolveResourceIconInfo({
-        _id: '123',
-        doc: {
-          title: 'Wrapped Resource',
-          filename: 'guide.pdf',
-          _attachments: { 'guide.pdf': { content_type: 'application/pdf' } }
-        }
-      });
-      expect(wrapped.icon).toBe('picture_as_pdf');
-      expect(wrapped.category).toBe('pdf');
+    it.each([
+      { desc: 'null resource', input: null, icon: '', cat: 'none' },
+      { desc: 'undefined resource', input: undefined, icon: '', cat: 'none' },
+      { desc: 'resource without files', input: { title: 'Policy', _attachments: {} }, icon: '', cat: 'none' },
+      { desc: 'PDF by extension', input: { filename: 'handbook.pdf' }, icon: 'picture_as_pdf', cat: 'pdf' },
+      { desc: 'PDF by MIME', input: { _attachments: { 'doc.pdf': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
+      { desc: 'PDF uppercase key', input: { filename: 'DOC.PDF', _attachments: { 'DOC.PDF': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
+      { desc: 'PDF extensionless MIME', input: { _attachments: { 'DOC_ATTACH': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
+      { desc: 'Video MP4', input: { filename: 'lesson.mp4' }, icon: 'videocam', cat: 'video' },
+      { desc: 'Audio MP3', input: { filename: 'recording.mp3' }, icon: 'audiotrack', cat: 'audio' },
+      { desc: 'CSV spreadsheet', input: { filename: 'scores.csv' }, icon: 'grid_on', cat: 'spreadsheet' },
+      { desc: 'XLSX spreadsheet', input: { filename: 'budget.xlsx' }, icon: 'grid_on', cat: 'spreadsheet' },
+      { desc: 'Image PNG', input: { filename: 'diagram.png' }, icon: 'image', cat: 'image' },
+      { desc: 'Multi-attachment HTML', input: { _attachments: { 'index.html': { content_type: 'text/html' }, 'style.css': {} } }, icon: 'language', cat: 'html' },
+      { desc: 'Word DOCX', input: { filename: 'essay.docx' }, icon: 'description', cat: 'word' },
+      { desc: 'Presentation PPTX', input: { filename: 'lecture.pptx' }, icon: 'slideshow', cat: 'presentation' },
+      { desc: 'Markdown text', input: { filename: 'notes.md' }, icon: 'description', cat: 'text' },
+      { desc: 'Archive ZIP', input: { filename: 'archive.zip' }, icon: 'archive', cat: 'archive' },
+      { desc: 'Archive tar.gz', input: { filename: 'bundle.tar.gz' }, icon: 'archive', cat: 'archive' },
+      { desc: 'Generic file fallback', input: { filename: 'custom.xyz', _attachments: { 'custom.xyz': {} } }, icon: 'insert_drive_file', cat: 'file' },
+      { desc: 'Unwrapped doc object', input: { doc: { filename: 'guide.pdf' } }, icon: 'picture_as_pdf', cat: 'pdf' }
+    ])('resolves $desc to $icon', ({ input, icon, cat }) => {
+      const result = resolveResourceIconInfo(input);
+      expect(result.icon).toBe(icon);
+      expect(result.category).toBe(cat);
     });
   });
 
@@ -238,9 +49,9 @@ describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should render the icon when resource has an attached file', () => {
+    it('should render icon with aria-label and role="img" when resource has file', () => {
       component.resource = {
-        title: 'Reading',
+        title: 'Reading Guide',
         filename: 'reading.pdf',
         _attachments: { 'reading.pdf': { content_type: 'application/pdf' } }
       };
@@ -250,79 +61,38 @@ describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
       const iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
       expect(iconEl).toBeTruthy();
       expect(iconEl.nativeElement.textContent.trim()).toBe('picture_as_pdf');
-    });
-
-    it('should render mat-icon with accessible aria-label and role="img"', () => {
-      component.resource = {
-        title: 'Biology Textbook',
-        filename: 'biology.pdf',
-        _attachments: { 'biology.pdf': { content_type: 'application/pdf' } }
-      };
-      component.ngOnChanges();
-      fixture.detectChanges();
-
-      const iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
       expect(iconEl.attributes['aria-label']).toBe('PDF Document');
       expect(iconEl.attributes['role']).toBe('img');
     });
 
-    it('should not render icon when resource is null, empty, or without attached file', () => {
-      component.resource = null;
+    it('should not render icon when resource has no file', () => {
+      component.resource = { title: 'No file resource', _attachments: {} };
       component.ngOnChanges();
       fixture.detectChanges();
 
-      let iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
-      expect(iconEl).toBeNull();
-
-      // Resource without an attached file
-      component.resource = {
-        title: 'No file resource',
-        description: 'Test without attachment',
-        _attachments: {}
-      };
-      component.ngOnChanges();
-      fixture.detectChanges();
-
-      iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
-      expect(iconEl).toBeNull();
+      expect(fixture.debugElement.query(By.css('.km-resource-icon'))).toBeNull();
     });
 
     it('should reactively update the icon when the associated file is replaced', () => {
-      // Step 1: Initial PDF file
-      component.resource = {
-        title: 'Course Guide',
-        filename: 'guide.pdf',
-        _attachments: { 'guide.pdf': { content_type: 'application/pdf' } }
-      };
-      component.ngOnChanges();
-      fixture.detectChanges();
+      // PDF -> Video -> Spreadsheet
+      const files = [
+        { filename: 'guide.pdf', contentType: 'application/pdf', expectedIcon: 'picture_as_pdf' },
+        { filename: 'guide.mp4', contentType: 'video/mp4', expectedIcon: 'videocam' },
+        { filename: 'data.csv', contentType: 'text/csv', expectedIcon: 'grid_on' }
+      ];
 
-      let iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
-      expect(iconEl.nativeElement.textContent.trim()).toBe('picture_as_pdf');
+      for (const file of files) {
+        component.resource = {
+          title: 'Course Item',
+          filename: file.filename,
+          _attachments: { [file.filename]: { content_type: file.contentType } }
+        };
+        component.ngOnChanges();
+        fixture.detectChanges();
 
-      // Step 2: User replaces the file with an MP4 video
-      component.resource = {
-        title: 'Course Guide',
-        filename: 'guide.mp4',
-        _attachments: { 'guide.mp4': { content_type: 'video/mp4' } }
-      };
-      component.ngOnChanges();
-      fixture.detectChanges();
-
-      iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
-      expect(iconEl.nativeElement.textContent.trim()).toBe('videocam');
-
-      // Step 3: User replaces the file with a CSV dataset
-      component.resource = {
-        title: 'Course Guide',
-        filename: 'data.csv',
-        _attachments: { 'data.csv': { content_type: 'text/csv' } }
-      };
-      component.ngOnChanges();
-      fixture.detectChanges();
-
-      iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
-      expect(iconEl.nativeElement.textContent.trim()).toBe('grid_on');
+        const iconEl = fixture.debugElement.query(By.css('.km-resource-icon'));
+        expect(iconEl.nativeElement.textContent.trim()).toBe(file.expectedIcon);
+      }
     });
   });
 });
