@@ -43,6 +43,11 @@
   </ng-template>
 
   <ng-template #actionButtons>
+    @if (canManage) {
+      <a mat-raised-button color="primary" [routerLink]="['/courses/submissions', courseDetail._id]" class="margin-lr-3 km-course-submissions-btn" i18n>
+        Submissions & Grading
+      </a>
+    }
     @if (!parent) {
       @if (!isUserEnrolled && courseDetail.steps.length) {
         <button mat-raised-button color="accent" (click)="courseToggle(courseDetail._id, 'admission')" i18n class="margin-lr-3">

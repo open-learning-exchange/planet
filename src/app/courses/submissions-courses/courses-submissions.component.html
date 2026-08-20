@@ -1,0 +1,11 @@
+@if (isLoading) {
+  <planet-loading-spinner text="Loading submissions..." i18n-text></planet-loading-spinner>
+}
+@if (!isLoading && courseId) {
+  <planet-submissions
+    [courseId]="courseId"
+    [courseTitle]="headingStart"
+    (backClick)="navigateBack()"
+    class="km-courses-submissions">
+  </planet-submissions>
+}
