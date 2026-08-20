@@ -9,21 +9,46 @@ describe('PlanetResourceIconComponent & resolveResourceIconInfo', () => {
       { desc: 'undefined resource', input: undefined, icon: '', cat: 'none' },
       { desc: 'resource without files', input: { title: 'Policy', _attachments: {} }, icon: '', cat: 'none' },
       { desc: 'PDF by extension', input: { filename: 'handbook.pdf' }, icon: 'picture_as_pdf', cat: 'pdf' },
-      { desc: 'PDF by MIME', input: { _attachments: { 'doc.pdf': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
-      { desc: 'PDF uppercase key', input: { filename: 'DOC.PDF', _attachments: { 'DOC.PDF': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
-      { desc: 'PDF extensionless MIME', input: { _attachments: { 'DOC_ATTACH': { content_type: 'application/pdf' } } }, icon: 'picture_as_pdf', cat: 'pdf' },
+      {
+        desc: 'PDF by MIME',
+        input: { _attachments: { 'doc.pdf': { content_type: 'application/pdf' } } },
+        icon: 'picture_as_pdf',
+        cat: 'pdf'
+      },
+      {
+        desc: 'PDF uppercase key',
+        input: { filename: 'DOC.PDF', _attachments: { 'DOC.PDF': { content_type: 'application/pdf' } } },
+        icon: 'picture_as_pdf',
+        cat: 'pdf'
+      },
+      {
+        desc: 'PDF extensionless MIME',
+        input: { _attachments: { 'DOC_ATTACH': { content_type: 'application/pdf' } } },
+        icon: 'picture_as_pdf',
+        cat: 'pdf'
+      },
       { desc: 'Video MP4', input: { filename: 'lesson.mp4' }, icon: 'videocam', cat: 'video' },
       { desc: 'Audio MP3', input: { filename: 'recording.mp3' }, icon: 'audiotrack', cat: 'audio' },
       { desc: 'CSV spreadsheet', input: { filename: 'scores.csv' }, icon: 'grid_on', cat: 'spreadsheet' },
       { desc: 'XLSX spreadsheet', input: { filename: 'budget.xlsx' }, icon: 'grid_on', cat: 'spreadsheet' },
       { desc: 'Image PNG', input: { filename: 'diagram.png' }, icon: 'image', cat: 'image' },
-      { desc: 'Multi-attachment HTML', input: { _attachments: { 'index.html': { content_type: 'text/html' }, 'style.css': {} } }, icon: 'language', cat: 'html' },
+      {
+        desc: 'Multi-attachment HTML',
+        input: { _attachments: { 'index.html': { content_type: 'text/html' }, 'style.css': {} } },
+        icon: 'language',
+        cat: 'html'
+      },
       { desc: 'Word DOCX', input: { filename: 'essay.docx' }, icon: 'description', cat: 'word' },
       { desc: 'Presentation PPTX', input: { filename: 'lecture.pptx' }, icon: 'slideshow', cat: 'presentation' },
       { desc: 'Markdown text', input: { filename: 'notes.md' }, icon: 'description', cat: 'text' },
       { desc: 'Archive ZIP', input: { filename: 'archive.zip' }, icon: 'archive', cat: 'archive' },
       { desc: 'Archive tar.gz', input: { filename: 'bundle.tar.gz' }, icon: 'archive', cat: 'archive' },
-      { desc: 'Generic file fallback', input: { filename: 'custom.xyz', _attachments: { 'custom.xyz': {} } }, icon: 'insert_drive_file', cat: 'file' },
+      {
+        desc: 'Generic file fallback',
+        input: { filename: 'custom.xyz', _attachments: { 'custom.xyz': {} } },
+        icon: 'insert_drive_file',
+        cat: 'file'
+      },
       { desc: 'Unwrapped doc object', input: { doc: { filename: 'guide.pdf' } }, icon: 'picture_as_pdf', cat: 'pdf' }
     ])('resolves $desc to $icon', ({ input, icon, cat }) => {
       const result = resolveResourceIconInfo(input);
