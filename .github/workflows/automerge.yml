@@ -1,4 +1,4 @@
-name: planet automerge
+name: Planet automerge
 
 on:
   workflow_dispatch:
