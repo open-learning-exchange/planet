@@ -20,7 +20,7 @@
         <mat-cell *matCellDef="let element" (click)="readNotification(element)">
           <p [ngClass]="{'primary-text-color':element.status==='unread'}">
             @if (element.link) {
-              <a [routerLink]="element.linkParams ? [ element.link || '/', element.linkParams ] : (element.link || '/')">
+              <a [routerLink]="element.link || '/'" [queryParams]="element.linkParams">
                 <span [innerHTML]="element.message"></span>
                 @if (element.time > 0) {
                   <span class="mat-caption margin-lr-8">{{element.time | date: 'medium'}}</span>
