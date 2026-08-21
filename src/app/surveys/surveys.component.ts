@@ -50,6 +50,9 @@ interface SurveyFilterForm {
   selector: 'planet-surveys',
   templateUrl: './surveys.component.html',
   styleUrls: ['./surveys.component.scss'],
+  host: {
+    '[class.embedded]': 'teamId'
+  },
   imports: [
     MatToolbar,
     MatIconButton,

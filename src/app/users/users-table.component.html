@@ -22,10 +22,10 @@
       <mat-cell *matCellDef="let element">
         @if (element.imageSrc) {
           <div>
-            <img class="profile-image" [src]="element.imageSrc">
+            <img class="profile-image" alt="" [src]="element.imageSrc">
           </div>
         } @else {
-          <img class="profile-image" src="assets/avatar.png">
+          <img class="profile-image" alt="" src="assets/avatar.png">
         }
       </mat-cell>
     </ng-container>
@@ -151,7 +151,7 @@
               </button>
             }
             @if (!element.doc.isUserAdmin || element.doc.roles.length > 0) {
-              <button mat-raised-button color="primary" (click)="deleteClick(element.doc, $event)">
+              <button mat-raised-button color="warn" (click)="deleteClick(element.doc, $event)">
                 <mat-icon>delete</mat-icon>
                 @if (!isMobile) {
                   <label i18n> Delete </label>
@@ -176,7 +176,7 @@
               </button>
             }
           }
-          <button (click)="gotoProfileView(element.doc.name)" mat-raised-button color="primary">
+          <button (click)="gotoProfileView(element.doc.name, $event)" mat-raised-button color="primary">
             <mat-icon>visibility</mat-icon>
             @if (!isMobile) {
               <label i18n>View Profile</label>
