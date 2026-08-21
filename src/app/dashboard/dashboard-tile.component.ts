@@ -126,7 +126,8 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (!dashboardItem) {
       return;
     }
-    const itemStyle = window.getComputedStyle(dashboardItem);
+    const dashboardItemContent = dashboardItem.querySelector('.dashboard-item-link') || dashboardItem;
+    const itemStyle = window.getComputedStyle(dashboardItemContent);
     const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
     const fontSize = +(itemStyle.fontSize.replace('px', ''));
     const tileHeight = divHeight - tilePadding;
