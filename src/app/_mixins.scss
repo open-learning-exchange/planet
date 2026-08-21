@@ -7,3 +7,14 @@
     grid-area: rt;
   }
 }
+
+// One column absorbs leftover width; the rest shrink from a content-sized basis.
+@mixin table-column-grow($min-width: 10rem) {
+  flex: 1 1 0;
+  min-width: $min-width;
+}
+
+@mixin table-column-fixed($basis) {
+  flex: 0 1 $basis;
+  min-width: 0;
+}

@@ -91,7 +91,14 @@ export class CoursesProgressChartComponent implements OnChanges, AfterViewInit, 
     }
   }
 
-  labelClick(set) {
+  labelClick(set, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
     this.clickAction.emit(set);
   }
 
