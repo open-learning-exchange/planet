@@ -51,7 +51,7 @@
           <p><b i18n>Category:</b> {{meetupDetail?.category}}</p>
         }
         @if (meetupDetail?.startDate || meetupDetail?.endDate) {
-          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && (meetupDetail?.endDate | date: 'fullDate') !== (meetupDetail?.startDate | date: 'fullDate') ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
         }
         @if (meetupDetail?.deadline) {
           <p><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
