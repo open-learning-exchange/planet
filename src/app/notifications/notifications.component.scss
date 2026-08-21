@@ -18,73 +18,32 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 8px 0;
 
   .unread-indicator-container {
-    display: inline-flex;
-    align-items: center;
+    display: flex;
     justify-content: center;
-    width: 12px;
-    min-width: 12px;
-    height: 12px;
-    flex-shrink: 0;
+    flex: 0 0 12px;
 
     .unread-dot {
-      display: inline-block;
+      display: block;
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background-color: v.$primary;
-      box-shadow: 0 0 0 2px rgba(v.$primary, 0.2);
     }
   }
 
   .notification-text-content {
     flex: 1 1 auto;
     min-width: 0;
-
-    a {
-      display: inline;
-      text-decoration: none;
-      color: inherit;
-      cursor: pointer;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
   }
 
   &.unread {
+    color: v.$primary;
+
     .notification-message {
       font-weight: 600;
-      color: v.$primary;
     }
-
-    .notification-time {
-      font-weight: 500;
-      color: v.$grey-text;
-    }
-  }
-
-  &.read {
-    .notification-message {
-      font-weight: 400;
-      color: inherit;
-    }
-
-    .notification-time {
-      font-weight: 400;
-      color: v.$grey-text;
-    }
-  }
-}
-
-mat-row.unread-row {
-  background-color: rgba(v.$primary, 0.03);
-
-  &:hover {
-    background-color: rgba(v.$primary, 0.06) !important;
   }
 }
 
