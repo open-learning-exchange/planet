@@ -32,6 +32,7 @@
         [replyObject]="replyObject"
         [editable]="editable"
         [shareTarget]="shareTarget"
+        [hasUnreadReplies]="unreadReplyIds.has(item.doc?._id || item._id)"
         (changeReplyViewing)="showReplies($event)"
         (updateNews)="openUpdateDialog($event)"
         (deleteNews)="openDeleteDialog($event)"
