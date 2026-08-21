@@ -33,6 +33,7 @@ MYPLANET_MIN="${MYPLANET_MIN:-}"
 RUN_APPEAR_TIMEOUT_SEC=300
 POLL_INTERVAL_SEC=20
 PR_SETTLE_TIMEOUT_SEC=120
+CANCEL_GRACE_SEC=120
 
 self_ref="${GITHUB_WORKFLOW_REF:-}"
 self_ref="${self_ref%@*}"
@@ -108,8 +109,14 @@ runs_for() {
           | {name, status, conclusion} ]' <<<"$raw" 2>/dev/null || echo '[]'
 }
 
-runs_failed()  { jq '[.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral")] | length' <<<"$1"; }
-runs_pending() { jq '[.[] | select(.status != "completed")] | length' <<<"$1"; }
+# A cancelled run is not a verdict on the commit: it is a run that got
+# superseded, re-run, or stopped by hand. Counted apart from real failures so
+# the waits can give it a moment instead of ending the drain over it.
+runs_failed()    { jq '[.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral" and .conclusion != "cancelled")] | length' <<<"$1"; }
+runs_cancelled() { jq '[.[] | select(.status == "completed" and .conclusion == "cancelled")] | length' <<<"$1"; }
+runs_pending()   { jq '[.[] | select(.status != "completed")] | length' <<<"$1"; }
+
+list_not_green() { jq -r '.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral") | "    \(.conclusion)\t\(.name)"' <<<"$1"; }
 
 runs_missing() {
     jq -r --arg req "$2" '
@@ -124,21 +131,46 @@ wait_for_runs() {
     local sha=$1 need=$2 absent=$3
     local deadline=$(( SECONDS + WAIT_TIMEOUT_MIN * 60 ))
     local appear_deadline=$(( SECONDS + RUN_APPEAR_TIMEOUT_SEC ))
-    local runs total pending failed missing announced=0
+    local runs total pending failed cancelled missing announced=0
+    local cancel_deadline='' holding=''
 
     log "  waiting for workflows on ${sha:0:7} (timeout ${WAIT_TIMEOUT_MIN}m)"
     while :; do
         runs=$(runs_for "$sha")
         total=$(jq 'length' <<<"$runs")
+        holding=''
 
         if [ "$total" -gt 0 ]; then
             failed=$(runs_failed "$runs")
             if [ "$failed" -ne 0 ]; then
-                jq -r '.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral") | "    \(.conclusion)\t\(.name)"' <<<"$runs"
+                list_not_green "$runs"
                 log "  $failed workflow(s) failed on ${sha:0:7}"
                 return 1
             fi
 
+            # Cancelled is nearly always a run on its way back: a re-run flips
+            # the same run to in_progress again, and the release event that
+            # follows a merge tends to supersede the push run on the same
+            # commit. Hold instead of ending the drain, and only judge it if
+            # nothing has picked it up by the end of the grace.
+            cancelled=$(runs_cancelled "$runs")
+            if [ "$cancelled" -ne 0 ]; then
+                if [ -z "$cancel_deadline" ]; then
+                    cancel_deadline=$(( SECONDS + CANCEL_GRACE_SEC ))
+                    log "  $cancelled workflow(s) cancelled on ${sha:0:7} -- waiting ${CANCEL_GRACE_SEC}s for a re-run"
+                fi
+                if [ "$SECONDS" -ge "$cancel_deadline" ]; then
+                    list_not_green "$runs"
+                    log "  $cancelled workflow(s) stayed cancelled on ${sha:0:7} after ${CANCEL_GRACE_SEC}s"
+                    return 1
+                fi
+                holding=cancelled
+            else
+                cancel_deadline=''
+            fi
+        fi
+
+        if [ "$total" -gt 0 ] && [ -z "$holding" ]; then
             pending=$(runs_pending "$runs")
             missing=$(runs_missing "$runs" "$need")
 
@@ -154,7 +186,7 @@ wait_for_runs() {
             fi
         fi
 
-        if [ "$total" -eq 0 ] || { [ "${pending:-0}" -eq 0 ] && [ -n "${missing:-}" ]; }; then
+        if [ -z "$holding" ] && { [ "$total" -eq 0 ] || { [ "${pending:-0}" -eq 0 ] && [ -n "${missing:-}" ]; }; }; then
             if [ "$SECONDS" -ge "$appear_deadline" ]; then
                 if [ "$total" -eq 0 ]; then
                     if [ "$absent" = 'pass' ]; then
@@ -183,11 +215,12 @@ wait_for_runs() {
 }
 
 base_already_failed() {
-    local sha=$1 runs bad
+    local sha=$1 runs
     runs=$(runs_for "$sha")
-    bad=$(jq -r '.[] | select(.status == "completed" and .conclusion != "success" and .conclusion != "skipped" and .conclusion != "neutral") | "\(.conclusion)\t\(.name)"' <<<"$runs")
-    [ -n "$bad" ] || return 1
-    printf '%s\n' "$bad" | sed 's/^/    /'
+    # Only real failures stop the drain here; a cancelled run on the base gets
+    # its grace period in the wait that comes before the next merge.
+    [ "$(runs_failed "$runs")" -ne 0 ] || return 1
+    list_not_green "$runs"
     log "the last merge has already failed on $BASE (${sha:0:7})"
     return 0
 }
