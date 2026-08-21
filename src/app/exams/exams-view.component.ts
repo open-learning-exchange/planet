@@ -4,8 +4,8 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { EMPTY, Subject, forkJoin, of } from 'rxjs';
-import { takeUntil, switchMap, catchError, finalize } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap, catchError, finalize, map } from 'rxjs/operators';
 import { CoursesService } from '../courses/courses.service';
 import { UserService } from '../shared/user.service';
 import { SubmissionsService } from '../submissions/submissions.service';
@@ -28,6 +28,8 @@ import { ExamsTakeWidgetComponent } from './exams-take/exams-take-widget.compone
 import {
   ExamAnswerOption, ExamAnswerValue, isExamAnswerOption, examAnswerValidator
 } from './exams-take/exam-answer.helpers';
+import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
+import { UnsavedChangesPromptComponent } from '../shared/unsaved-changes.component';
 
 interface ExamViewForm {
   answer: FormControl<ExamAnswerValue>;
@@ -58,7 +60,7 @@ interface ExamViewForm {
     ExamsTakeWidgetComponent
   ]
 })
-export class ExamsViewComponent implements OnInit, OnDestroy {
+export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   @ViewChild(ExamsQuestionFrameComponent) questionFrame?: ExamsQuestionFrameComponent;
 
@@ -92,10 +94,15 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
   currentAnswer: ExamAnswerValue | null = null;
   slideDirection: 'right' | 'left' = 'right';
   slideAnimationVariant: 'a' | 'b' = 'a';
+  isInternalNavigation = false;
+  isFinished = false;
 
   readonly examForm: FormGroup<ExamViewForm>;
   get answer(): FormControl<ExamAnswerValue> {
     return this.examForm.controls.answer;
+  }
+  get isScoredQuestion(): boolean {
+    return (this.question?.correctChoice || '').length > 0;
   }
   get disableFrameNext(): boolean {
     return this.isLoading ||
@@ -151,6 +158,53 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     this.onDestroy$.complete();
   }
 
+  canDeactivate(): Observable<boolean> | boolean {
+    // The router re-runs this guard whenever questionNum changes, whether the component navigated
+    // itself or the learner used browser history.  Clearing the flag re-arms the next exit.
+    if (this.isInternalNavigation || this.isFinished || this.isSameExamDestination()) {
+      this.isInternalNavigation = false;
+      return true;
+    }
+    if (this.mode !== 'take' || this.previewMode) {
+      return true;
+    }
+    return UnsavedChangesPromptComponent.open(this.dialog, {
+      type: this.examType === 'survey' ? 'survey' : 'exam',
+      extraMessage: $localize`Your progress will be saved.`
+    }).pipe(
+      switchMap(confirmed => {
+        if (!confirmed) {
+          return of(false);
+        }
+        // Scored questions are only submitted from the next button, where a wrong answer shows
+        // feedback and lets the learner try again, so leaving must never grade one for them.
+        if (!this.answer.valid || !this.question || this.isScoredQuestion) {
+          return of(true);
+        }
+        this.dialogsLoadingService.start();
+        return this.createAnswerObservable().obs.pipe(
+          map(() => true),
+          catchError(() => {
+            this.planetMessageService.showAlert($localize`Your answer could not be saved`);
+            return of(false);
+          }),
+          finalize(() => this.dialogsLoadingService.stop())
+        );
+      })
+    );
+  }
+
+  // Only questionNum may differ between two views of one test, so any other change of destination
+  // -- a different submission, mode or test id -- still counts as leaving
+  isSameExamDestination(): boolean {
+    const destination = this.router.getCurrentNavigation()?.finalUrl;
+    const identity = (url: string) => {
+      const [ path, ...params ] = url.split(';');
+      return [ path, ...params.filter(param => !param.startsWith('questionNum=')).sort() ].join(';');
+    };
+    return !!destination && identity(this.router.serializeUrl(destination)) === identity(this.router.url);
+  }
+
   setExam(params) {
     this.stepNum = +params.get('stepNum');
     this.examType = params.get('type') || this.examType;
@@ -158,6 +212,11 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
     const submissionId = params.get('submissionId');
     const mode = params.get('mode');
     this.mode = mode || this.mode;
+    this.isFinished = false;
+    this.isInternalNavigation = false;
+    // Params only change by moving to a question, including via browser history, so the stored
+    // answer for the destination has to be restored again
+    this.isNewQuestion = true;
     this.answer.setValue(null);
     this.currentAnswer = null;
     if (courseId) {
@@ -256,11 +315,16 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
       this.setExamPreview();
       return;
     }
+    // A zero direction keeps the same url, which the router skips without running the guard, so
+    // flagging it would leave the next real exit unprompted
+    this.isInternalNavigation = direction !== 0;
     this.router.navigate([ { ...this.route.snapshot.params, questionNum: this.questionNum + direction } ], { relativeTo: this.route });
     this.isNewQuestion = true;
   }
 
   examComplete() {
+    this.isFinished = true;
+    this.isInternalNavigation = true;
     if (this.route.snapshot.data.newUser === true) {
       this.router.navigate(
         [ '/users/submission', { id: this.submissionId } ],
@@ -313,6 +377,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const step = course.steps[configuredStepIndex > -1 ? configuredStepIndex : this.stepNum - 1];
         if (!step?.[this.examType]?._id) {
           this.planetMessageService.showAlert($localize`This test is not available`);
+          this.isInternalNavigation = true;
           this.goBack();
           return EMPTY;
         }
@@ -348,6 +413,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy {
         const nextUnansweredQuestion = this.unansweredQuestions[0];
         if (this.questionNum !== nextUnansweredQuestion) {
           this.questionNum = nextUnansweredQuestion;
+          this.isInternalNavigation = true;
           this.router.navigate([ {
             ...this.route.snapshot.params,
             questionNum: this.questionNum
