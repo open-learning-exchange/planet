@@ -19,6 +19,7 @@ import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
@@ -48,6 +49,7 @@ interface NewReportForm {
     MatButton,
     MatIconButton,
     MatIcon,
+    MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatCard,
     MatCardContent,
