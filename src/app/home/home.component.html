@@ -151,7 +151,7 @@
     </mat-sidenav>
   }
   @if (isMobile && (layout === 'modern' || forceModern)) {
-    <mat-sidenav #sidenav mode="over" class="primary-color nav-shadow" [opened]="sidenavState === 'open'" (openedChange)="sidenavState = $event ? 'open' : 'closed'">
+    <mat-sidenav #mobileSidenav mode="over" class="primary-color nav-shadow">
       <ng-container *ngTemplateOutlet="sidenavContent"></ng-container>
     </mat-sidenav>
   }
