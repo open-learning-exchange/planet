@@ -1,13 +1,9 @@
 ARG BASE_IMAGE=treehouses/node:3.21
-# The builder stays on the native (amd64) image on every arch. npm and tsc produce
-# arch-independent output, and running them under QEMU is what wedges the arm64 builds.
 ARG BUILD_IMAGE=treehouses/node:3.21
 
 FROM ${BUILD_IMAGE} AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
-# Both stages state the directory the cross-stage COPY paths below depend on,
-# rather than inheriting it from the base image
 WORKDIR /
 
 COPY ./gateway/package.json ./gateway/package-lock.json ./
