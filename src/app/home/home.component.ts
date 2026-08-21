@@ -87,6 +87,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
 
+  get notificationsLabel(): string {
+    return $localize`Notifications: ${this.notifications.length}:count:`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private couchService: CouchService,
