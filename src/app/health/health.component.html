@@ -15,7 +15,7 @@
       <a mat-raised-button color="accent" i18n [routerLink]="['update']">Update Details</a>
     }
     <a mat-raised-button color="accent" i18n [routerLink]="['event', { id: userDetail._id }]">Add Examination</a>
-    @if (userDetail.firstName === undefined) {
+    @if (!(userDetail.firstName || userDetail.middleName || userDetail.lastName)) {
       <span><ng-container i18n>Member login:</ng-container> {{userDetail.name}}</span>
     }
   </mat-toolbar>
@@ -35,7 +35,7 @@
           <div>
             <div>
               <h4 class="primary-text-color" i18n>Full Name</h4>
-              <p><b>{{userDetail.firstName ? ((userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40) : 'N/A'}}</b></p>
+              <p><b>{{((userDetail.firstName ? userDetail.firstName + ' ' : '') + (userDetail.middleName ? userDetail.middleName + ' ' : '') + (userDetail.lastName || '') | truncateText:40) || 'N/A'}}</b></p>
             </div>
             <mat-divider></mat-divider>
           </div>
