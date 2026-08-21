@@ -739,7 +739,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 
-  openMemberDialog(member) {
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
     this.dialog.open(UserProfileDialogComponent, {
       data: { member },
       maxWidth: '90vw',
