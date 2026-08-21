@@ -1,6 +1,6 @@
 <mat-card-header>
-  <img mat-card-avatar [src]="member?.avatar" class="cursor-pointer avatar-spacing" (click)="openMemberDialog(member)">
-  <a mat-card-title class="cursor-pointer member-name" (click)="openMemberDialog(member)">{{member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name | truncateText:70}}</a>
+  <img mat-card-avatar [src]="member?.avatar" alt="" class="cursor-pointer avatar-spacing" (click)="openMemberDialog(member, $event)">
+  <a mat-card-title tabindex="0" role="button" class="cursor-pointer member-name" (keydown.enter)="openMemberDialog(member, $event)" (keydown.space)="openMemberDialog(member, $event)" (click)="openMemberDialog(member, $event)">{{member?.userDoc?.fullName || member?.userDoc?.firstName || member?.name | truncateText:70}}</a>
   <mat-card-subtitle>
     @if (member?.userPlanetCode !== planetCode) {
       <p class="primary-text-color"><ng-container i18n>Member of Planet</ng-container> {{member?.userPlanetCode}}</p>
