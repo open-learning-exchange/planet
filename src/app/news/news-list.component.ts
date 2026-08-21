@@ -64,7 +64,6 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   totalItems = 0;
   unreadReplyIds = new Set<string>();
   private pendingReplyTo?: string;
-  private deepLinkHandled = false;
   private onDestroy$ = new Subject<void>();
   private routerEventsSubscription: Subscription;
 
@@ -86,6 +85,16 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
         this.initNews();
+      });
+
+    this.route.queryParamMap
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe(params => {
+        const replyTo = params.get('replyTo');
+        if (replyTo) {
+          this.pendingReplyTo = replyTo;
+          this.checkAndNavigateToPendingReply();
+        }
       });
 
     merge(this.userService.notificationStateChange$, this.userService.userChange$)
@@ -125,25 +134,28 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       }
     });
 
-    if (this.pendingReplyTo && !this.deepLinkHandled) {
-      const target = this.items.find(item => item._id === this.pendingReplyTo || item.doc?._id === this.pendingReplyTo);
-      if (target) {
-        this.deepLinkHandled = true;
-        this.showReplies(target);
-        this.pendingReplyTo = undefined;
+    if (this.pendingReplyTo) {
+      this.checkAndNavigateToPendingReply();
+      return;
+    }
+
+    const childPath = this.route.firstChild?.routeConfig?.path;
+    const voiceId = (childPath === 'voices/:id') ? this.route.firstChild?.snapshot.paramMap.get('id') : null;
+    if (voiceId) {
+      this.filterNewsToShow(voiceId);
+      return;
+    }
+
+    if (this.replyViewing._id !== 'root') {
+      const current = this.items.find(item => item._id === this.replyViewing._id);
+      if (current) {
+        this.filterNewsToShow(current._id);
         return;
       }
     }
 
-    this.displayedItems = this.replyObject[this.replyViewing._id];
+    this.displayedItems = this.replyObject.root || [];
     this.loadPagedItems(true);
-    if (this.replyViewing._id !== 'root') {
-      this.replyViewing = this.items.find(item => item._id === this.replyViewing._id) || { _id: 'root' };
-      if (this.replyViewing._id === 'root') {
-        this.displayedItems = this.replyObject.root || [];
-        this.loadPagedItems(true);
-      }
-    }
   }
 
   ngAfterViewInit() {
@@ -183,40 +195,46 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
     const deepLinkReplyTo = this.route.snapshot.paramMap.get('replyTo') || this.route.snapshot.queryParamMap.get('replyTo');
 
     if (voiceId) {
+      this.pendingReplyTo = undefined;
       this.filterNewsToShow(voiceId);
-    } else if (deepLinkReplyTo && !this.deepLinkHandled) {
+    } else if (deepLinkReplyTo) {
       this.pendingReplyTo = deepLinkReplyTo;
-      if (this.items.length > 0) {
-        const target = this.items.find(item => item._id === deepLinkReplyTo || item.doc?._id === deepLinkReplyTo);
-        if (target) {
-          this.deepLinkHandled = true;
-          this.showReplies(target);
-          this.pendingReplyTo = undefined;
-        }
-      }
+      this.checkAndNavigateToPendingReply();
     } else {
+      this.pendingReplyTo = undefined;
       this.filterNewsToShow('root');
     }
   }
 
+  private checkAndNavigateToPendingReply() {
+    if (!this.pendingReplyTo || !this.items || this.items.length === 0) {
+      return;
+    }
+    const target = this.items.find(item => item._id === this.pendingReplyTo || item.doc?._id === this.pendingReplyTo);
+    if (target) {
+      this.pendingReplyTo = undefined;
+      this.showReplies(target);
+    }
+  }
+
   showReplies(news) {
+    let targetNewsId = news._id;
     // remember the conversation’s true root post, even from deep threads
     if (news._id !== 'root') {
       this.lastRootPostId = this.getThreadRootId(news);
+      targetNewsId = this.lastRootPostId || news._id;
       const newsId = news.doc?._id || news._id;
       if (this.unreadReplyIds.has(newsId)) {
         this.unreadReplyIds.delete(newsId);
         this.notificationsService.markReplyNotificationsAsRead(newsId);
       }
     } else {
-      this.deepLinkHandled = true;
       this.pendingReplyTo = undefined;
     }
+    this.filterNewsToShow(targetNewsId);
     if (this.useReplyRoutes) {
-      this.navigateToReply(news._id);
-      return;
+      this.navigateToReply(targetNewsId);
     }
-    this.filterNewsToShow(news._id);
   }
 
   // climb replies until you reach the top-level post (_id with no replyTo)
@@ -242,6 +260,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   filterNewsToShow(newsId) {
     if (newsId === this.replyViewing._id) {
+      return;
+    }
+    if (newsId !== 'root' && (!this.items || this.items.length === 0)) {
+      this.pendingReplyTo = newsId;
       return;
     }
     const news = this.items.find(item => item._id === newsId) || { _id: 'root' };
