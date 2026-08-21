@@ -130,7 +130,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Tag prebuild as latest
-        continue-on-error: true # no changes = no build error -> proceed
+        continue-on-error: true # no changes = no new build = error = proceed with old
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
