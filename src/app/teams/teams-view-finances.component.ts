@@ -17,6 +17,7 @@ import { CsvService } from '../shared/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { MatFormField, MatLabel, MatSuffix, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
@@ -65,6 +66,7 @@ interface TransactionForm {
     MatCell,
     NgClass,
     MatIconButton,
+    MatTooltip,
     MatHeaderRowDef,
     MatHeaderRow,
     MatRowDef,

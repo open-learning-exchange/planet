@@ -88,8 +88,8 @@
     }
   </mat-card-content>
   <mat-card-actions class="flex-vertical-center">
-    <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-    <button mat-button type="button" class="cursor-pointer user-name-truncate margin-lr-8" (click)="openMemberDialog(item.doc.user)">
+    <img [src]="item.avatar" alt="" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user, $event)">
+    <button mat-button type="button" class="cursor-pointer user-name-truncate margin-lr-8" (click)="openMemberDialog(item.doc.user, $event)">
       <span class="user-name-truncate-text ellipsis">
         {{item.doc.user.firstName ?
         item.doc.user.firstName + ((" " + item.doc.user.middleName) || '') + ' ' + item.doc.user.lastName :
@@ -117,8 +117,8 @@
         <mat-icon>link</mat-icon>
       </button>
       @if ((item.doc.user.name === currentUser.name || currentUser.isUserAdmin)) {
-        <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
-        <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
+        <button mat-icon-button type="button" matTooltip="Edit Voice" i18n-matTooltip (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button type="button" matTooltip="Delete Voice" i18n-matTooltip (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
         @if (editable && labels.listed.length > 0) {
           <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
         }
