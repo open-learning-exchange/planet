@@ -50,8 +50,8 @@
   <div class="view-container">
     <div class="profile-container">
       <div class="profile-image-section">
-        @if (userDetail._attachments) {
-          <img class="profile-image-large" [src]="imageSrc">
+        @if (userDetail.name) {
+          <planet-avatar [username]="userDetail.name" [planetCode]="userDetail.planetCode" imgClass="profile-image-large"></planet-avatar>
         } @else {
           <img class="profile-image-large" src="assets/image.png">
         }
