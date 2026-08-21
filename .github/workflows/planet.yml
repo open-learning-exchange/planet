@@ -130,8 +130,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKERUSERNAME }} -p ${{ secrets.DOCKERAPIKEY }}
 
       - name: Tag prebuild as latest
-        continue-on-error: true # If there are no package changes, the commit specific image will not be built so an error is expected here
-        run: |
+        continue-on-error: true # no changes = no build error -> proceed
           BRANCH="${GITHUB_REF_NAME//\//-}"
           BRANCH_HASH="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-8)"
           SAFE_BRANCH="${BRANCH:0:75}-$BRANCH_HASH"
@@ -160,8 +159,7 @@ jobs:
     needs: [build-prepare, deploy-single-language]
     if: ${{ (github.event.inputs.buildtype != 'deploy' || (github.event.inputs.buildtype == 'planet' && always())) }}
     runs-on: ubuntu-latest
-    # Emulated builds can wedge indefinitely; fail fast instead of burning the 6h default
-    timeout-minutes: 20
+    timeout-minutes: 8
     env:
       PLANET_VERSION: ${{ needs.build-prepare.outputs.planet_version }}
       BUILDX_NO_DEFAULT_ATTESTATIONS: 1
@@ -187,13 +185,11 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
 
-      # Only the docker-container driver can export a cache with --cache-to
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build image
-        # docker build would resolve to the default docker-driver builder
         env:
           BUILDX_BUILDER: ${{ steps.buildx.outputs.name }}
         run: |
@@ -223,7 +219,6 @@ jobs:
           done
           cacherepo="$DOCKER_ORG/$DOCKER_REPO_TAG:${{ matrix.arch }}-planet-cache"
           cacheargs=( --cache-from "type=registry,ref=$cacherepo" )
-          # Every branch reads the shared cache, only master and releases write it
           if [ "$GITHUB_REF_NAME" = 'master' ] || [ "$GITHUB_EVENT_NAME" = 'release' ]; then
             cacheargs+=( --cache-to "type=registry,ref=$cacherepo,mode=max,ignore-error=true" )
           fi
@@ -261,7 +256,6 @@ jobs:
           arm64tag="$DOCKER_ORG/$DOCKER_REPO_TAG:arm64-$PLANET_VERSION-$SAFE_BRANCH-${GITHUB_SHA::8}"
           docker manifest create $manifesttag $amd64tag $armtag $arm64tag
           docker manifest annotate $manifesttag $amd64tag --os linux --arch amd64
-          # arm image is ARMv6 (balena rpi base); pin it rather than relying on inheritance
           docker manifest annotate $manifesttag $armtag --os linux --arch arm --variant v6
           docker manifest annotate $manifesttag $arm64tag --os linux --arch arm64
           docker manifest push $manifesttag
