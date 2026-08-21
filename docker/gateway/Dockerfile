@@ -1,7 +1,6 @@
-ARG BASE_IMAGE=treehouses/node:3.21
-ARG BUILD_IMAGE=treehouses/node:3.21
+ARG IMAGE=treehouses/node:3.21
 
-FROM ${BUILD_IMAGE} AS builder
+FROM ${IMAGE} AS builder
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 WORKDIR /
@@ -16,7 +15,7 @@ COPY ./gateway/tsconfig.json ./
 RUN npm run build
 RUN --mount=type=cache,id=npm-builder,target=/root/.npm npm prune --omit=dev
 
-FROM ${BASE_IMAGE}
+FROM ${IMAGE}
 LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 WORKDIR /
