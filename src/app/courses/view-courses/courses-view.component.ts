@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject } from 'rxjs';
-import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, switchMap, take, filter, map, catchError } from 'rxjs/operators';
+import { findDocuments } from '../../shared/mangoQueries';
 import { UserService } from '../../shared/user.service';
-import { CoursesService } from '../courses.service';
+import { CoursesService, ActiveStepInfo } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
@@ -28,29 +29,30 @@ import { ResourcesMenuComponent } from '../../resources/view-resources/resources
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 
 @Component({
+  selector: 'planet-courses-view',
   templateUrl: './courses-view.component.html',
-  styleUrls: ['courses-view.scss'],
+  styleUrls: ['./courses-view.scss'],
   imports: [
     MatToolbar,
     MatIconAnchor,
+    MatIconButton,
     MatIcon,
     NgTemplateOutlet,
-    MatIconButton,
-    MatMenuTrigger,
-    MatMenu,
     MatButton,
     CoursesProgressBarComponent,
-    NgClass,
     CoursesViewDetailComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     MatExpansionPanelDescription,
     CoursesIconComponent,
+    NgClass,
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
     MatAnchor,
+    MatMenuTrigger,
+    MatMenu,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -62,6 +64,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   parent = this.route.snapshot.data.parent;
   isUserEnrolled = false;
   progress = [ { stepNum: 1 } ];
+  submissions: any[] = [];
+  activeStepInfo: ActiveStepInfo;
   fullView = 'on';
   currentView: string;
   courseId: string;
@@ -104,16 +108,38 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
         }));
         this.progress = progress;
         this.isUserEnrolled = this.checkMyCourses(course._id);
+        this.activeStepInfo = this.coursesService.getActiveStep(this.courseDetail, this.progress, this.submissions);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           this.courseDetail.creator !== undefined &&
           (this.currentUser.name === this.courseDetail.creator.slice(0, this.courseDetail.creator.indexOf('@')));
-        return this.stateService.getCouchState('exams', 'local');
+        return forkJoin([
+          this.stateService.getCouchState('exams', 'local'),
+          this.submissionsService.getSubmissions(findDocuments({
+            'user.name': this.currentUser.name,
+            parentId: { $regex: '@' + course._id }
+          })).pipe(catchError(() => of([])))
+        ]);
       }),
       takeUntil(this.onDestroy$)
-    ).subscribe((exams) => {
+    ).subscribe(([exams, submissions]) => {
       const stepExam = (step) => step.exam && exams.find(exam => exam._id === step.exam._id) || step.exam;
       this.courseDetail.steps = this.courseDetail.steps.map(step => ({ ...step, exam: stepExam(step) }));
+      this.submissions = submissions || [];
+      this.activeStepInfo = this.coursesService.getActiveStep(this.courseDetail, this.progress, this.submissions);
     }, () => this.isLoading = false);
+    this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
+      if (submission) {
+        const existingIndex = this.submissions.findIndex(s =>
+          s._id === submission._id || (s.parentId === submission.parentId && s.parent?._id === submission.parent?._id)
+        );
+        if (existingIndex > -1) {
+          this.submissions[existingIndex] = submission;
+        } else {
+          this.submissions.push(submission);
+        }
+        this.activeStepInfo = this.coursesService.getActiveStep(this.courseDetail, this.progress, this.submissions);
+      }
+    });
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
@@ -163,10 +189,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   }
 
   viewStep() {
-    const latestStep = this.progress.reduce((stepNum, prog) => {
-      return prog.stepNum > stepNum ? prog.stepNum : stepNum;
-    }, 1);
-    this.router.navigate([ './step/' + latestStep ], { relativeTo: this.route });
+    const stepNum = this.activeStepInfo?.stepNum || 1;
+    this.router.navigate([ './step/' + stepNum ], { relativeTo: this.route });
   }
 
   goToSurvey(stepNum, preview = false) {
@@ -214,6 +238,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     const courseTitle = this.courseDetail.courseTitle;
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
+      this.activeStepInfo = this.coursesService.getActiveStep(this.courseDetail, this.progress, this.submissions);
     }, (error) => ((error)));
   }
 

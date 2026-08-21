@@ -12,6 +12,14 @@ import { dedupeObjectArray } from '../shared/utils';
 import { MarkdownService } from '../shared/markdown.service';
 import { UsersService } from '../users/users.service';
 
+export interface ActiveStepInfo {
+  stepNum: number;
+  stepIndex: number;
+  stepTitle: string;
+  isCompleted: boolean;
+  hasStarted: boolean;
+}
+
 // Service for updating and storing active course for single course views.
 @Injectable({
   providedIn: 'root'
@@ -270,6 +278,92 @@ export class CoursesService {
       description: markdownText(course),
       steps: course.steps.map(step => ({ ...step, description: markdownText(step), images: undefined })),
       images: this.markdownService.filterMissingImages([ markdownText(course), ...course.steps.map(step => markdownText(step)) ], images)
+    };
+  }
+
+  getActiveStep(course: any, progress: any[] = [], submissions: any[] = []): ActiveStepInfo {
+    const steps = course?.steps || [];
+    if (steps.length === 0) {
+      return {
+        stepNum: 1,
+        stepIndex: 0,
+        stepTitle: '',
+        isCompleted: false,
+        hasStarted: false
+      };
+    }
+    const safeProgress = Array.isArray(progress) ? progress : [];
+    const safeSubmissions = Array.isArray(submissions) ? submissions : [];
+    const hasStarted = safeProgress.some((p: any) => p && (p.stepNum > 0 || p.passed)) || safeSubmissions.length > 0;
+
+    const hasAnyAssessments = steps.some((step: any) =>
+      (step?.exam?.questions?.length > 0) || (step?.survey?.questions?.length > 0)
+    );
+
+    const isStepResolved = (step: any, index: number) => {
+      const stepProg = safeProgress.find((p: any) => p && p.stepNum === (index + 1));
+      if (stepProg?.passed) {
+        return true;
+      }
+      const hasExam = step?.exam?.questions?.length > 0;
+      const hasSurvey = step?.survey?.questions?.length > 0;
+
+      // If the course contains assessments, steps without tests or surveys are non-blocking
+      if (hasAnyAssessments && !hasExam && !hasSurvey) {
+        return true;
+      }
+
+      if (hasExam) {
+        const examId = step.exam._id;
+        const stepSubs = safeSubmissions.filter((s: any) =>
+          s && (s.parentId === `${examId}@${course?._id}` || s.parentId === examId || s.parent?._id === examId)
+        );
+        const hasAwaitingGrading = stepSubs.some((s: any) =>
+          s.status === 'requires grading' ||
+          s.status === 'complete' ||
+          (s.status === 'pending' && s.answers?.length > 0 && s.answers.every((a: any) => a.value !== undefined && a.value !== ''))
+        );
+        if (hasAwaitingGrading) {
+          return true;
+        }
+      }
+
+      if (hasSurvey) {
+        const surveyId = step.survey._id;
+        const stepSubs = safeSubmissions.filter((s: any) =>
+          s && (s.parentId === `${surveyId}@${course?._id}` || s.parentId === surveyId || s.parent?._id === surveyId)
+        );
+        const hasCompletedSurvey = stepSubs.some((s: any) => s.status === 'complete');
+        if (hasCompletedSurvey) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    const firstIncompleteIndex = steps.findIndex((step: any, index: number) => !isStepResolved(step, index));
+
+    if (firstIncompleteIndex === -1) {
+      return {
+        stepNum: 1,
+        stepIndex: 0,
+        stepTitle: steps[0]?.stepTitle || $localize`Step 1`,
+        isCompleted: true,
+        hasStarted: true
+      };
+    }
+
+    const stepNum = firstIncompleteIndex + 1;
+    const activeStep = steps[firstIncompleteIndex];
+    const stepTitle = activeStep?.stepTitle || $localize`Step ${stepNum}`;
+
+    return {
+      stepNum,
+      stepIndex: firstIncompleteIndex,
+      stepTitle,
+      isCompleted: false,
+      hasStarted
     };
   }
 
