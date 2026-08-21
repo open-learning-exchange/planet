@@ -6,7 +6,7 @@
   <mat-chip-set aria-label="Selected collections" i18n-aria-label>
     @for (tagId of value; track tagId) {
       <mat-chip [removable]="!disabled" (removed)="removeTag(tagId)">
-        {{ tagName(tagId) }}
+        <span class="tag-chip-label">{{ tagName(tagId) }}</span>
         @if (!disabled) {
           <button matChipRemove type="button" i18n-aria-label aria-label="Remove collection">
             <mat-icon>cancel</mat-icon>
