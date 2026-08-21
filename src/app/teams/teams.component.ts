@@ -31,6 +31,7 @@ import { FormsModule } from '@angular/forms';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { enterpriseJoinAgreement } from './teams.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -373,18 +374,51 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
+  joinRequest$(team: any) {
+    return this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
+      switchMap(() => this.teamsService.getTeamMembers(team)),
+      switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
+        team,
+        url: this.router.url + '/view/' + team._id
+      })),
+      switchMap(() => this.getMembershipStatus())
+    );
+  }
+
+  requestToJoinEnterprise(team: any) {
+    const displayName = team.name;
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.joinRequest$(team),
+          onNext: () => {
+            dialogRef.close();
+            this.teams.data = this.teamList(this.teams.data);
+            const msg = $localize`:@@enterprise-join-request:Sent request to join enterprise` + ' ' + displayName;
+            this.planetMessageService.showMessage(msg);
+          },
+          onError: () => {
+            this.planetMessageService.showAlert(
+              $localize`There was a problem requesting to join this enterprise.`
+            );
+          }
+        },
+        changeType: 'request',
+        type: 'enterprise',
+        displayName,
+        rules: team.rules,
+        extraMessage: enterpriseJoinAgreement()
+      }
+    });
+  }
+
   requestToJoin(team) {
     this.dialogsLoadingService.start();
-    this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
-      switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
-      switchMap(() => this.getMembershipStatus()),
+    this.joinRequest$(team).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      const msg = this.mode === 'enterprise'
-        ? $localize`:@@enterprise-join-request:Sent request to join enterprise` + ' ' + team.name
-        : $localize`:@@team-join-request:Sent request to join team` + ' ' + team.name;
+      const msg = $localize`:@@team-join-request:Sent request to join team` + ' ' + team.name;
       this.planetMessageService.showMessage(msg);
     });
   }
