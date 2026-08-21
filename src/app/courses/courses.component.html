@@ -216,26 +216,26 @@
           }
           <mat-menu #resourceMenu="matMenu">
             @if (!element.admission && element.doc.steps.length) {
-              <a mat-menu-item (click)="courseToggle(element._id, 'admission')">
+              <button mat-menu-item type="button" (click)="courseToggle(element._id, 'admission')">
                 <mat-icon>school</mat-icon>
                 <span i18n>Join</span>
-              </a>
+              </button>
             }
             @if (element.admission) {
-              <a mat-menu-item (click)="courseToggle(element._id, 'resign')">
+              <button mat-menu-item type="button" (click)="courseToggle(element._id, 'resign')">
                 <mat-icon>clear</mat-icon>
                 <span i18n>Leave</span>
-              </a>
+              </button>
             }
-            <a mat-menu-item planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id, name: element.doc.courseTitle}" i18n-title title="Feedback">
+            <button mat-menu-item type="button" planetFeedback [feedbackOf]="{'state': 'courses', 'item': element._id, name: element.doc.courseTitle}" i18n-title title="Feedback">
               <mat-icon>feedback</mat-icon>
               <span i18n>Feedback</span>
-            </a>
+            </button>
             @if (element.canManage) {
-              <a mat-menu-item (click)="updateCourse(element.doc)">
+              <button mat-menu-item type="button" (click)="updateCourse(element.doc)">
                 <mat-icon>edit</mat-icon>
                 <span i18n>Edit Course</span>
-              </a>
+              </button>
             }
             <a mat-menu-item [routerLink]="['/courses/view', element._id]">
               <mat-icon>visibility</mat-icon>
