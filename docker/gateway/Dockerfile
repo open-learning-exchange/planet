@@ -24,9 +24,6 @@ WORKDIR /
 RUN apk add --no-cache poppler-utils
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
-# node_modules is built on the native builder and copied in, so no npm runs under
-# emulation. This holds only while every dependency is pure JS — a package with a
-# native binary would need to be installed on the target arch instead.
 COPY --from=builder /node_modules ./node_modules/
 COPY --from=builder /dist ./dist/
 
