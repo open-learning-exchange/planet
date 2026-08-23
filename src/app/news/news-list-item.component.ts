@@ -63,6 +63,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showRepliesButton = true;
   @Input() editable = true;
   @Input() shareTarget: 'community' | 'nation' | 'center';
+  @Input() hasUnreadReplies = false;
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
   @Output() deleteNews = new EventEmitter<any>();
@@ -163,16 +164,18 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   sendNewsNotifications(news: any = '') {
-    const replyBy = this.currentUser.name;
-    const userId = news.user._id;
-    if (replyBy === news.user.name) {
+    const replyBy = this.userService.get()?.name || this.currentUser.name;
+    const targetName = news?.user?.name || (news?.user?._id ? news.user._id.replace('org.couchdb.user:', '') : '');
+    if (!targetName || replyBy === targetName) {
       return;
     }
-    const link = this.router.url;
+    const userId = 'org.couchdb.user:' + targetName;
+    const link = this.router.url.split(';')[0].split('?')[0] || '/';
     const notification = {
       user: userId,
       'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
+      linkParams: { replyTo: news._id },
       'priority': 1,
       'type': 'replyMessage',
       'replyTo': news._id,

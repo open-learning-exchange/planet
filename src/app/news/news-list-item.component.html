@@ -109,8 +109,12 @@
         <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
       }
       @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-        <button mat-button type="button" (click)="showReplies(item)">
-          <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+        <button mat-button type="button" class="reply-count-button" (click)="showReplies(item)">
+          <mat-icon>chat_bubble_outline</mat-icon>
+          <span> ({{replyObject[item.doc._id]?.length}})</span>
+          @if (hasUnreadReplies) {
+            <span class="unread-reply-dot" role="img" i18n-aria-label aria-label="Unread replies"></span>
+          }
         </button>
       }
       <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
@@ -142,8 +146,12 @@
     <button mat-button type="button" (click)="addReply(item.doc)" i18n>Reply</button>
   }
   @if (replyObject[item.doc._id]?.length > 0 && showRepliesButton) {
-    <button mat-button type="button" (click)="showReplies(item)">
-      <mat-icon>chat_bubble_outline</mat-icon> ({{replyObject[item.doc._id]?.length}})
+    <button mat-button type="button" class="reply-count-button" (click)="showReplies(item)">
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <span> ({{replyObject[item.doc._id]?.length}})</span>
+      @if (hasUnreadReplies) {
+        <span class="unread-reply-dot" role="img" i18n-aria-label aria-label="Unread replies"></span>
+      }
     </button>
   }
   <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
