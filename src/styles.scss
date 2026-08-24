@@ -704,11 +704,8 @@ body {
     min-height: 24px;
   }
 
-  // Set Material button/icon tokens at blue toolbar scope so uncolored controls inherit text color.
-  // Apply to both mat-toolbar and mat-toolbar-row since templates use both patterns.
-  mat-toolbar.primary-color,
+  // Set Material control tokens at blue toolbar scope so uncolored controls inherit text color.
   .mat-toolbar.primary-color,
-  mat-toolbar-row.primary-color,
   .mat-toolbar-row.primary-color {
     --mat-button-text-label-text-color: currentColor;
     --mat-button-filled-label-text-color: currentColor;
@@ -725,9 +722,27 @@ body {
     --mat-button-outlined-outline-color: rgba(0, 0, 0, 0.38);
     --mat-button-outlined-disabled-outline-color: rgba(0, 0, 0, 0.38);
 
-    // Keep form-field labels readable on the blue toolbar when focused.
+    --mat-form-field-leading-icon-color: currentColor;
+    --mat-form-field-trailing-icon-color: currentColor;
+    --mat-form-field-enabled-select-arrow-color: currentColor;
+    --mat-form-field-focus-select-arrow-color: currentColor;
+
+    --mat-form-field-filled-label-text-color: currentColor;
+    --mat-form-field-filled-hover-label-text-color: currentColor;
     --mat-form-field-filled-focus-label-text-color: currentColor;
+    --mat-form-field-filled-input-text-color: currentColor;
+    --mat-form-field-filled-input-text-placeholder-color: currentColor;
+    --mat-form-field-filled-caret-color: currentColor;
+    --mat-form-field-filled-active-indicator-color: currentColor;
+    --mat-form-field-filled-hover-active-indicator-color: currentColor;
+    --mat-form-field-filled-focus-active-indicator-color: currentColor;
+
     --mat-form-field-outlined-focus-label-text-color: currentColor;
+
+    --mat-select-enabled-trigger-text-color: currentColor;
+    --mat-select-placeholder-text-color: currentColor;
+    --mat-select-enabled-arrow-color: currentColor;
+    --mat-select-focused-arrow-color: currentColor;
 
     // Explicit fallback for unthemed toolbar buttons/icons after MDC migration.
     .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
@@ -736,24 +751,6 @@ body {
 
     .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn):disabled {
       color: rgba(0, 0, 0, 0.5) !important;
-    }
-
-    // Labels, values, and underlines inherit the toolbar text color instead of the
-    // theme's dark on-surface colors. Invalid and disabled fields keep their own
-    // colors so those states stay visible.
-    .mat-mdc-form-field:not(.mat-form-field-invalid):not(.mat-form-field-disabled) {
-      .mdc-floating-label,
-      .mat-mdc-select,
-      .mat-mdc-select-arrow,
-      .mdc-text-field__input {
-        color: inherit;
-        caret-color: currentColor;
-      }
-
-      .mdc-line-ripple::before,
-      .mdc-line-ripple::after {
-        border-bottom-color: currentColor;
-      }
     }
   }
 
