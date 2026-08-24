@@ -146,12 +146,22 @@
                   }
                 }
                 @case ('unrelated') {
-                  <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                    <mat-icon>add_circle</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request to Join </label>
-                    }
-                  </button>
+                  @if (element.doc.type === 'enterprise') {
+                    <button mat-raised-button color="primary"
+                      (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  } @else {
+                    <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  }
                 }
                 @case ('requesting') {
                   <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label

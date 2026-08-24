@@ -683,7 +683,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getActionTooltip(
     survey: any,
-    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke'
+    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt'
   ): string {
     if (survey.isArchived) {
       if (action === 'archive') {
@@ -705,12 +705,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`This survey was created on the parent planet and cannot be managed here`;
     }
 
-    if (this.currentFilter.viewMode === 'adopt') {
+    if (action === 'select' && this.currentFilter.viewMode === 'adopt') {
       return $localize`This is a community survey`;
     }
 
+    if (action === 'adopt') {
+      return $localize`Adopt Survey`;
+    }
+
     if (!survey.questions?.length) {
-      return $localize`Survey has no questions`;
+      if (action !== 'edit' && action !== 'archive') {
+        return $localize`Survey has no questions`;
+      }
     }
 
     if (action === 'record') {
@@ -725,6 +731,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (action === 'revoke') {
       return $localize`Revoke public access for this survey`;
+    }
+
+    if (action === 'edit') {
+      return $localize`Edit Survey`;
+    }
+
+    if (action === 'send') {
+      return $localize`Send Survey`;
+    }
+
+    if (action === 'archive') {
+      return $localize`Archive Survey`;
+    }
+
+    if (action === 'submissions') {
+      return $localize`View Submissions`;
+    }
+
+    if (action === 'export') {
+      return $localize`Export Survey Submissions`;
     }
 
     return '';
