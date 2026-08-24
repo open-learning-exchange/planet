@@ -737,6 +737,24 @@ body {
     .mat-mdc-button-base:not(.mat-primary):not(.mat-accent):not(.mat-warn):disabled {
       color: rgba(0, 0, 0, 0.5) !important;
     }
+
+    // Labels, values, and underlines inherit the toolbar text color instead of the
+    // theme's dark on-surface colors. Invalid and disabled fields keep their own
+    // colors so those states stay visible.
+    .mat-mdc-form-field:not(.mat-form-field-invalid):not(.mat-form-field-disabled) {
+      .mdc-floating-label,
+      .mat-mdc-select,
+      .mat-mdc-select-arrow,
+      .mdc-text-field__input {
+        color: inherit;
+        caret-color: currentColor;
+      }
+
+      .mdc-line-ripple::before,
+      .mdc-line-ripple::after {
+        border-bottom-color: currentColor;
+      }
+    }
   }
 
   // Material MDC form fields have a default background color which doesn't work with our designs, so we set it to transparent and add a border on hover instead
