@@ -13,7 +13,7 @@
                     <mat-label i18n>Search voice</mat-label>
                     <mat-icon matIconPrefix>search</mat-icon>
                     <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
-                    <button mat-icon-button matSuffix (click)="voiceSearch = ''; voiceSearch$.next('')" [style.visibility]="voiceSearch ? 'visible' : 'hidden'" matTooltip="Clear Voice Search" i18n-matTooltip i18n-aria-label aria-label="Clear voice search">
+                    <button type="button" mat-icon-button matSuffix (click)="voiceSearch = ''; voiceSearch$.next('')" [style.visibility]="voiceSearch ? 'visible' : 'hidden'" matTooltip="Clear voice search" i18n-matTooltip i18n-aria-label aria-label="Clear voice search">
                       <mat-icon>close</mat-icon>
                     </button>
                   </mat-form-field>
