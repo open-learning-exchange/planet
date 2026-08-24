@@ -1,24 +1,238 @@
-<mat-toolbar>
-  <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a><span i18n>myProgress</span>
+<mat-toolbar color="primary" class="dashboard-header-toolbar">
+  <button mat-icon-button (click)="navigateBack()" matTooltip="Back" i18n-matTooltip>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="header-title" i18n>My Learning Progress - {{ headingStart }}</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="refreshData()" matTooltip="Refresh" i18n-matTooltip>
+    <mat-icon>refresh</mat-icon>
+  </button>
 </mat-toolbar>
 
-<div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
-    <span i18n>Courses: myProgress</span>
-  </mat-toolbar>
-  <div class="view-container view-full-height">
-    @if (chartData?.length) {
-      <planet-courses-progress-chart [inputs]="chartData" [height]="yAxisLength" [showTotals]="false" (clickAction)="handleCourseClick($event)" (changeData)="changeData($event)">
-      </planet-courses-progress-chart>
-    } @else {
-      @if (isLoading) {
-        <planet-loading-spinner text="Loading progress..." i18n-text></planet-loading-spinner>
-      }
-      @if (!isLoading) {
-        <div class="view-container" i18n>
-        No Progress record available
-      </div>
-      }
-    }
+<div class="progress-dashboard-container">
+  <div class="kpi-summary-row">
+    <mat-card class="kpi-card km-enrolled-courses-kpi">
+      <mat-card-content class="kpi-content">
+        <div class="kpi-icon-wrapper icon-blue">
+          <mat-icon>school</mat-icon>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label" i18n>Enrolled Courses</span>
+          <span class="kpi-value">{{ totalCourses }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card km-avg-completion-kpi">
+      <mat-card-content class="kpi-content">
+        <div class="kpi-icon-wrapper icon-green">
+          <mat-icon>equalizer</mat-icon>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label" i18n>Average Course Completion</span>
+          <span class="kpi-value">{{ avgCompletionPercentage }}%</span>
+          <mat-progress-bar mode="determinate" [value]="avgCompletionPercentage" class="kpi-progress-bar"></mat-progress-bar>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card km-total-steps-kpi">
+      <mat-card-content class="kpi-content">
+        <div class="kpi-icon-wrapper icon-green">
+          <mat-icon>done_all</mat-icon>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label" i18n>Total Steps Completed</span>
+          <span class="kpi-value">{{ totalStepsCompleted }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card km-pending-grading-kpi">
+      <mat-card-content class="kpi-content">
+        <div class="kpi-icon-wrapper icon-amber">
+          <mat-icon>rate_review</mat-icon>
+        </div>
+        <div class="kpi-details">
+          <span class="kpi-label" i18n>Pending Grading</span>
+          <span class="kpi-value">{{ pendingGradingCount }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <planet-loading-spinner text="Loading progress..." i18n-text></planet-loading-spinner>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <mat-card class="table-card">
+      <mat-card-content class="table-card-content">
+        <div class="table-toolbar">
+          <div class="toolbar-title-group">
+            <h3 class="toolbar-title" i18n>Enrolled Courses</h3>
+            <p class="toolbar-subtitle" i18n>Track your progress and access course steps</p>
+          </div>
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label i18n>Search enrolled courses...</mat-label>
+            <input matInput (keyup)="applyFilter($any($event.target).value)" i18n-placeholder placeholder="Filter by course title">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+
+        @if (dataSource.data.length === 0) {
+          <div class="empty-state-box km-empty-state-box">
+            <mat-icon class="empty-icon">school</mat-icon>
+            <h3 i18n>No enrolled courses found</h3>
+            <p i18n>You are not currently enrolled in any courses.</p>
+          </div>
+        }
+
+        @if (dataSource.data.length > 0) {
+          <div class="table-scroll-wrapper">
+            <table mat-table [dataSource]="dataSource" matSort class="progress-table km-progress-table" multiTemplateDataRows>
+              <ng-container matColumnDef="courseTitle">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Course Title</th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="course-cell-wrapper">
+                    <span class="course-name-link"
+                      role="button"
+                      tabindex="0"
+                      (click)="navigateToCourse(element.courseId)"
+                      (keydown.enter)="navigateToCourse(element.courseId)">
+                      {{ element.courseTitle }}
+                    </span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="progress">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Progress</th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="progress-cell">
+                    <div class="progress-labels">
+                      <span>{{ element.passedStepsCount }}/{{ element.totalSteps }} Steps</span>
+                      <span>{{ element.completionPercentage }}%</span>
+                    </div>
+                    <mat-progress-bar mode="determinate" [value]="element.completionPercentage" class="table-progress-bar"></mat-progress-bar>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="stepStatuses">
+                <th mat-header-cell *matHeaderCellDef i18n>Step Statuses</th>
+                <td mat-cell *matCellDef="let element">
+                  <div class="steps-chip-grid">
+                    @for (step of element.stepStatuses; track step.stepIndex) {
+                      <span class="step-badge"
+                        [class.step-success]="step.status === 'complete'"
+                        [class.step-failed]="step.status === 'failed'"
+                        [class.step-pending]="step.status === 'requires grading'"
+                        [class.step-progress]="step.status === 'in_progress'"
+                        [class.step-notstarted]="step.status === 'not_started'"
+                        [matTooltip]="'Step ' + step.stepIndex + ' • ' + formatStatusLabel(step.status)">
+                        {{ step.stepIndex }}
+                      </span>
+                    }
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="errors">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Mistakes</th>
+                <td mat-cell *matCellDef="let element">
+                  <span class="error-badge" [class.has-errors]="element.totalErrors > 0">
+                    {{ element.totalErrors }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="lastActive">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header i18n>Last Active</th>
+                <td mat-cell *matCellDef="let element">
+                  <span class="last-active-text">
+                    {{ element.lastActive ? (element.lastActive | date:'short') : 'Never' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef i18n>Actions</th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-icon-button color="primary" (click)="navigateToCourse(element.courseId)" matTooltip="View Course" i18n-matTooltip>
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="toggleExpandCourse(element.courseId)"
+                    [matTooltip]="expandedCourseId === element.courseId ? 'Collapse' : 'Expand'" i18n-matTooltip>
+                    <mat-icon>{{ expandedCourseId === element.courseId ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="main-course-row"></tr>
+
+              <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"
+                [class.hidden-row]="expandedCourseId !== row.courseId"></tr>
+
+              <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="expanded-cell">
+                  @if (expandedCourseId === element.courseId) {
+                    <div class="step-detail-container">
+                      <h4 class="step-detail-heading" i18n>Step Details</h4>
+                      <div class="step-list-grid">
+                        @for (step of element.stepStatuses; track step.stepIndex) {
+                          <div class="step-detail-card"
+                            role="button"
+                            [attr.aria-disabled]="!canAccessStep(step, $index, element.stepStatuses)"
+                            [tabindex]="canAccessStep(step, $index, element.stepStatuses) ? 0 : -1"
+                            [class.clickable-step]="canAccessStep(step, $index, element.stepStatuses)"
+                            [class.locked-step]="!canAccessStep(step, $index, element.stepStatuses)"
+                            (click)="navigateToStep(element.courseId, step.stepIndex, canAccessStep(step, $index, element.stepStatuses))"
+                            (keydown.enter)="navigateToStep(element.courseId, step.stepIndex, canAccessStep(step, $index, element.stepStatuses))"
+                            [matTooltip]="canAccessStep(step, $index, element.stepStatuses) ? 'Open Step' : 'Locked'">
+                            <div class="step-card-header">
+                              <span class="step-card-title">{{ step.stepTitle }}</span>
+                              <span class="step-badge"
+                                [class.step-success]="step.status === 'complete'"
+                                [class.step-failed]="step.status === 'failed'"
+                                [class.step-pending]="step.status === 'requires grading'"
+                                [class.step-progress]="step.status === 'in_progress'"
+                                [class.step-notstarted]="step.status === 'not_started'">
+                                {{ formatStatusLabel(step.status) }}
+                              </span>
+                            </div>
+                            <div class="step-card-body">
+                              <p class="step-meta" i18n>Mistakes: {{ step.errors }}</p>
+                              @if (step.feedbackList && step.feedbackList.length > 0) {
+                                <div class="feedback-section">
+                                  <h5 i18n>Educator Feedback:</h5>
+                                  @for (fb of step.feedbackList; track $index) {
+                                    <div class="feedback-item">
+                                      <span class="feedback-q" *ngIf="fb.questionText">{{ fb.questionText }}: </span>
+                                      <span class="feedback-comment">"{{ fb.comment }}"</span>
+                                      <span class="feedback-date" *ngIf="fb.date"> ({{ fb.date | date:'shortDate' }})</span>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </td>
+              </ng-container>
+            </table>
+          </div>
+
+          <mat-paginator [pageSize]="25" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons class="pinned-paginator"></mat-paginator>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
 </div>
+
