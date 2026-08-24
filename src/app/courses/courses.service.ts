@@ -217,12 +217,14 @@ export class CoursesService {
   }
 
   getCourseNameFromId(courseId, parent = false) {
-    return (this[parent ? 'parent' : 'local'].courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
+    return this[parent ? 'parent' : 'local'].courses.find((course) => course._id === courseId)?.courseTitle;
   }
 
-  courseAdmissionMany(courseIds, type) {
+  courseAdmissionMany(courseIds, type, parent = false) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
-      const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
+      const prefix = countChanged > 1 ?
+        $localize`${countChanged} courses` :
+        this.getCourseNameFromId(courseIds[courseIds.length - 1], parent) || $localize`Selected course`;
       const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
         $localize`Added to myCourses: ${prefix} `;
       this.planetMessageService.showMessage(message);

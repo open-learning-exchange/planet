@@ -110,7 +110,7 @@
             <p>
               <span i18n>Date:</span>
               <span>{{ ' ' + (element.startDate | date: 'fullDate') + ' ' }}</span>
-              @if (element.endDate && element.endDate !== element.startDate) {
+              @if (element.endDate && (element.endDate | date: 'fullDate') !== (element.startDate | date: 'fullDate')) {
                 <span>{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
               }
               @if (element.startTime || element.endTime) {
