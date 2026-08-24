@@ -218,7 +218,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
-  openMemberDialog(member) {
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.dialog.open(UserProfileDialogComponent, {
         data: { member: { ...member, userPlanetCode: member.planetCode } },

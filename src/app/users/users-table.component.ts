@@ -208,7 +208,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
   }
 
-  gotoProfileView(userName: string) {
+  gotoProfileView(userName: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     if (this.isDialog) {
       return;
     }

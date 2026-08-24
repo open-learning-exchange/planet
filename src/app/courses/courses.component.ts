@@ -9,7 +9,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, of } from 'rxjs';
+import { Subject, defer, of } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
 import {
@@ -213,7 +213,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     this.userService.shelfChange$.pipe(takeUntil(this.onDestroy$))
       .subscribe((shelf: any) => {
         this.userShelf = this.userService.shelf;
-        this.setupList(this.courses.data, shelf.courseIds);
+        this.courses.data = this.setupList(this.courses.data, shelf.courseIds);
       });
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -376,7 +376,38 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   enrollLeaveToggle(courseIds, type) {
-    this.coursesService.courseAdmissionMany(courseIds.filter(id => this.hasSteps(id)), type).subscribe((res) => {
+    if (type === 'remove') {
+      const enrolledIds = courseIds.filter(id => this.userService.shelf.courseIds.includes(id));
+      if (enrolledIds.length === 0) {
+        this.planetMessageService.showMessage($localize`None of the selected courses are in myCourses.`);
+        return;
+      }
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          amount: enrolledIds.length === 1 ? 'single' : 'many',
+          count: enrolledIds.length,
+          displayName: enrolledIds.length === 1 ?
+            this.coursesService.getCourseNameFromId(enrolledIds[0], this.parent) || $localize`Selected course` : '',
+          okClick: {
+            request: defer(() => this.coursesService.courseAdmissionMany(enrolledIds, type, this.parent)),
+            onNext: () => {
+              this.userShelf = this.userService.shelf;
+              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.countSelectNotEnrolled(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
+    const validIds = courseIds.filter(id => this.hasSteps(id));
+    this.coursesService.courseAdmissionMany(validIds, type, this.parent).subscribe((res) => {
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
@@ -489,8 +520,30 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     if (this.isForm) {
       return;
     }
-    this.coursesService.courseResignAdmission(courseId, type).subscribe((res) => {
-      this.setupList(this.courses.data, this.userShelf.courseIds);
+    const courseTitle = this.coursesService.getCourseNameFromId(courseId, this.parent) || $localize`this course`;
+    if (type === 'resign') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          displayName: courseTitle,
+          okClick: {
+            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
+            onNext: () => {
+              this.userShelf = this.userService.shelf;
+              this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
+              this.countSelectNotEnrolled(this.selection.selected);
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
+    this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
+      this.userShelf = this.userService.shelf;
+      this.courses.data = this.setupList(this.courses.data, this.userShelf.courseIds);
       this.countSelectNotEnrolled(this.selection.selected);
     }, (error) => ((error)));
   }
