@@ -539,6 +539,8 @@ body {
   }
 
   // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
+  // Column widths live here (rather than per feature) so the courses and resources lists stay aligned
+  // with each other; adding a per-feature max-width to one of these columns will break that alignment.
   .card-table {
     .mat-mdc-row {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -555,6 +557,7 @@ body {
     }
 
     .mat-column-createdDate {
+      max-width: 125px;
       align-self: start;
       padding: 0;
     }
@@ -588,6 +591,10 @@ body {
     @media (max-width: v.$screen-md) {
       .mat-column-info {
         max-width: 120px;
+      }
+
+      .mat-column-createdDate {
+        max-width: 100px;
       }
     }
 
