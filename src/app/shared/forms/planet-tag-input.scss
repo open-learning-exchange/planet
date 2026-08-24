@@ -9,22 +9,7 @@
 
   mat-chip-set {
     max-width: 100%;
-
-    mat-chip {
-      max-width: 100%;
-      height: auto;
-      min-height: 32px;
-
-      .tag-chip-label {
-        white-space: normal;
-        word-break: break-word;
-      }
-
-      ::ng-deep .mdc-evolution-chip__text-label {
-        white-space: normal;
-        word-break: break-word;
-      }
-    }
+    min-width: 0;
   }
 
   > button {

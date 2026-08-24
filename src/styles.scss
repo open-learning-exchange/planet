@@ -938,6 +938,23 @@ body {
     }
   }
 
+  .tags-list-wrap .mat-mdc-chip {
+    height: auto;
+    max-width: 100%;
+    min-height: var(--mat-chip-container-height, 32px);
+  }
+
+  .tags-list-wrap .mat-mdc-chip .mat-mdc-chip-action-label {
+    overflow-wrap: anywhere;
+    padding: calc((var(--mat-chip-container-height, 32px) - var(--mat-chip-label-text-line-height, 20px)) / 2) 0;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .tags-list-wrap .mat-mdc-chip .mdc-evolution-chip__action--primary {
+    cursor: default;
+  }
+
   // Course/Resources Details ellipsis menu
   .actions-menu .mat-mdc-menu-content {
     display: flex;
