@@ -63,7 +63,7 @@ export const renderNoDataPlaceholder = (
   ctx.font = '16px sans-serif';
   ctx.fillText(message, canvas.width / 2, canvas.height / 2);
   return canvas.toDataURL('image/png');
-};;
+};
 
 export const CHART_COLORS = [
   '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
