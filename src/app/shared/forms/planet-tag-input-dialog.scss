@@ -57,7 +57,6 @@
 
 .tag-name-and-meta .ellipsis-text {
   min-width: 0;
-  max-width: 50%;
   flex: 0 1 auto;
 }
 
@@ -67,6 +66,14 @@
   gap: 0.25rem;
   min-width: 0;
   flex: 1 1 auto;
+}
+
+// Everything beside the name keeps its natural size, so a long collection name
+// is the part that gives way and truncates with an ellipsis.
+.tag-name-and-meta > mat-checkbox,
+.tag-name-and-meta > planet-tag-input-toggle-icon,
+.tag-name-and-meta > .count {
+  flex: 0 0 auto;
 }
 
 .count {
