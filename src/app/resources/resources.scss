@@ -2,6 +2,11 @@
 @use './resources-shared' as r;
 
 .resources-list {
+  .mat-column-select {
+    max-width: 68px;
+    padding: 0 0 0 24px;
+  }
+
   .mat-column-tags {
     max-width: 125px;
   }
@@ -12,6 +17,10 @@
 
   .my-personals-view .mat-column-title {
     padding-left: 24px;
+  }
+
+  .mat-column-createdDate {
+    max-width: 125px;
   }
 
   .mat-mdc-progress-bar {
@@ -58,4 +67,12 @@
 
 .ellipsis-menu {
   text-align: center;
+}
+
+planet-resources {
+  @media(max-width: v.$screen-md) {
+    .resources-list .mat-column-createdDate {
+      max-width: 100px;
+    }
+  }
 }

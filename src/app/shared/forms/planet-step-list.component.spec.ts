@@ -1,26 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatListItemTitle } from '@angular/material/list';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { PlanetStepListComponent, PlanetStepListItemComponent } from './planet-step-list.component';
-
-@Component({
-  template: `
-    <planet-step-list [steps]="steps">
-      @for (step of steps; track step) {
-        <planet-step-list-item>
-          <span matListItemTitle>{{ step.stepTitle }}</span>
-        </planet-step-list-item>
-      }
-    </planet-step-list>
-  `,
-  imports: [ PlanetStepListComponent, PlanetStepListItemComponent, MatListItemTitle ]
-})
-class StepListHostComponent {
-  steps = [ { stepTitle: 'Step 1' }, { stepTitle: 'Step 2' }, { stepTitle: 'Step 3' } ];
-}
+import { PlanetStepListComponent } from './planet-step-list.component';
 
 describe('PlanetStepListComponent', () => {
   let component: PlanetStepListComponent;
@@ -164,44 +146,5 @@ describe('PlanetStepListComponent', () => {
 
     expect(component.listMode).toBe(true);
     expect(stepClickedSpy).toHaveBeenCalledWith(-1);
-  });
-});
-
-describe('PlanetStepListComponent row actions', () => {
-  let fixture: ComponentFixture<StepListHostComponent>;
-
-  const rowButtons = () => Array.from(fixture.nativeElement.querySelectorAll('.mat-mdc-list-item'))
-    .map((row: Element) => Array.from(row.querySelectorAll('button')));
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [ StepListHostComponent ],
-      providers: [ { provide: MatDialog, useValue: { open: vi.fn() } } ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(StepListHostComponent);
-    fixture.detectChanges();
-    fixture.detectChanges();
-  });
-
-  it('should keep the move and delete controls in the same column on every row', () => {
-    // The buttons are laid out in source order, so an equal count per row is what keeps the
-    // trailing controls aligned when a row has no move up (first) or move down (last) action.
-    expect(rowButtons().map(buttons => buttons.length)).toEqual([ 3, 3, 3 ]);
-  });
-
-  it('should hide rather than drop the move actions that do not apply to a row', () => {
-    const [ first, middle, last ] = rowButtons();
-
-    expect(first[0].classList).toContain('step-list-action-empty');
-    expect(first[0].disabled).toBe(true);
-    expect(first[1].classList).not.toContain('step-list-action-empty');
-    expect(first[1].disabled).toBe(false);
-
-    expect(middle.some((button: HTMLButtonElement) => button.classList.contains('step-list-action-empty'))).toBe(false);
-
-    expect(last[1].classList).toContain('step-list-action-empty');
-    expect(last[1].disabled).toBe(true);
-    expect(last[0].disabled).toBe(false);
   });
 });

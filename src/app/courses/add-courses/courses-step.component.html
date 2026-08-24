@@ -11,9 +11,15 @@
       </span>
       <ng-container matListItemMeta>
         <span class="step-icons">
-          <planet-course-icon [icon]="step?.exam?.questions?.length ? courseIcons.assignment : ''"></planet-course-icon>
-          <planet-course-icon [icon]="step?.resources?.length ? courseIcons.attachFile : ''"></planet-course-icon>
-          <planet-course-icon [icon]="step?.survey?.questions?.length ? courseIcons.description : ''"></planet-course-icon>
+          @if (step?.exam?.questions.length) {
+            <planet-course-icon [icon]="courseIcons.assignment"></planet-course-icon>
+          }
+          @if (step?.resources?.length) {
+            <planet-course-icon [icon]="courseIcons.attachFile"></planet-course-icon>
+          }
+          @if (step?.survey?.questions.length) {
+            <planet-course-icon [icon]="courseIcons.description"></planet-course-icon>
+          }
         </span>
       </ng-container>
     </planet-step-list-item>

@@ -1,22 +1,22 @@
 @use '../../variables' as v;
 
-planet-courses-step planet-step-list .planet-step-list-form-container .planet-step-list-form {
+planet-courses-step .planet-step-list-form-container .planet-step-list-form {
   overflow: visible;
 }
 
-planet-courses-step {
-  // One fixed slot per attachment type so the same icon lands in the same column on every step row,
-  // whether or not the neighbouring slots are filled.
+planet-courses-step planet-step-list {
   .step-icons {
-    display: grid;
-    grid-template-columns: repeat(3, 24px);
+    display: flex;
     align-items: center;
-    justify-items: center;
+    gap: 8px;
 
     planet-course-icon,
-    planet-course-icon > div {
+    planet-course-icon > div,
+    planet-course-icon span,
+    planet-course-icon mat-icon {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
   }
 }

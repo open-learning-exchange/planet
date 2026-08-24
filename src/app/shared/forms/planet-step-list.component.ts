@@ -49,14 +49,12 @@ export class PlanetStepListService {
     <ng-template>
       <ng-content></ng-content>
       <ng-container matListItemMeta>
-        <button mat-icon-button type="button" [disabled]="isFirst" [class.step-list-action-empty]="isFirst"
-          (click)="moveStep($event,-1)">
-          <mat-icon>arrow_upward</mat-icon>
-        </button>
-        <button mat-icon-button type="button" [disabled]="isLast" [class.step-list-action-empty]="isLast"
-          (click)="moveStep($event,1)">
-          <mat-icon>arrow_downward</mat-icon>
-        </button>
+        @if (!isFirst) {
+          <button mat-icon-button type="button" (click)="moveStep($event,-1)"><mat-icon>arrow_upward</mat-icon></button>
+        }
+        @if (!isLast) {
+          <button mat-icon-button type="button" (click)="moveStep($event,1)"><mat-icon>arrow_downward</mat-icon></button>
+        }
         <button mat-icon-button type="button" (click)="moveStep($event,0)"
           matTooltip="Delete" i18n-matTooltip>
           <mat-icon>delete</mat-icon>
@@ -69,8 +67,8 @@ export class PlanetStepListService {
 export class PlanetStepListItemComponent {
   @ViewChild(TemplateRef) template: TemplateRef<any>;
   index: number;
-  isFirst = false;
-  isLast = false;
+  isFirst: boolean;
+  isLast: boolean;
   listId: string;
 
   constructor(private planetStepListService: PlanetStepListService) {}

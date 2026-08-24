@@ -1,60 +1,45 @@
-// These styles reach into Material's list internals, so the component is declared with
-// ViewEncapsulation.None. Everything therefore has to stay nested under `planet-step-list`:
-// unnested selectors (a bare `button`, or Material's own class names) apply to the whole app
-// and shift alignment on unrelated pages such as the courses and resources lists.
-planet-step-list {
-  .back-button {
-    padding: 0 0.5rem 0 0;
+.back-button {
+  padding: 0 0.5rem 0 0;
+}
+
+.mat-mdc-nav-list.no-pointer .mat-mdc-list-item {
+  cursor: auto;
+}
+
+.mat-mdc-list-item span, button {
+  vertical-align: middle;
+}
+
+.mat-mdc-list-item-unscoped-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0.5rem;
+
+  > span:first-child {
+    flex: 1 1 auto;
   }
 
-  .mat-mdc-nav-list.no-pointer .mat-mdc-list-item {
-    cursor: auto;
+  > span:not(:first-child), > button {
+    flex: 0 0 auto;
   }
+}
 
-  .mat-mdc-list-item span,
-  .mat-mdc-list-item button {
-    vertical-align: middle;
-  }
+.planet-step-list-form-container {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
 
-  // Step rows are stamped out through ngTemplateOutlet, so Material never projects them into its
-  // title/meta slots and this wrapper is the row's actual layout container.
-  .mat-mdc-list-item-unscoped-content {
+  .action-buttons,
+  .planet-step-list-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 0 0.5rem;
-
-    > span:first-child {
-      flex: 1 1 auto;
-    }
-
-    > span:not(:first-child), > button {
-      flex: 0 0 auto;
-    }
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
-  // The first row has no "move up" and the last has no "move down". Keep the button in place
-  // instead of dropping it so the remaining controls stay in the same column on every row.
-  .step-list-action-empty {
-    visibility: hidden;
-  }
-
-  .planet-step-list-form-container {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    height: 100%;
-
-    .action-buttons,
-    .planet-step-list-actions {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .planet-step-list-form {
-      overflow-y: auto;
-      min-height: 0;
-    }
+  .planet-step-list-form {
+    overflow-y: auto;
+    min-height: 0;
   }
 }
