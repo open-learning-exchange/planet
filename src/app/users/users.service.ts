@@ -3,6 +3,7 @@ import { forkJoin, Subject, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
+import { fullName } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
@@ -95,7 +96,7 @@ export class UsersService {
       _id: user._id,
       doc: user,
       imageSrc: '',
-      fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
+      fullName: fullName(user) || user.name,
       ...this.userLoginActivities(user, this.data.loginActivities)
     };
     if (user._attachments) {
