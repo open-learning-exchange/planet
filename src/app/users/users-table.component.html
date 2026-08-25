@@ -143,7 +143,7 @@
               </button>
             }
             @if (!element.doc.isUserAdmin && element.doc.roles.length > 0) {
-              <button mat-raised-button color="primary" (click)="setRoles(element.doc, [], $event)">
+              <button mat-raised-button color="primary" (click)="deactivateClick(element.doc, $event)">
                 <mat-icon>lock</mat-icon>
                 @if (!isMobile) {
                   <label i18n>Deactivate</label>
