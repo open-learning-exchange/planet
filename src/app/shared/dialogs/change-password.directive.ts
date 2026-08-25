@@ -165,14 +165,14 @@ export class ChangePasswordDirective implements OnChanges {
 
   passwordError(reason: string) {
     return () => {
-      return of({ error: { ok: false, reason: reason } });
+      return of({ error: { ok: false, reason } });
     };
   }
 
   reinitSession(username, password) {
     return forkJoin([
-      this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
-      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, 'password': password },
+      this.couchService.post('_session', { 'name': username, password }, { withCredentials: true }),
+      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, password },
         { withCredentials: true, domain: this.planetConfiguration.parentDomain })
     ]).pipe(
       // Silent error for now so other specific messages are shown
