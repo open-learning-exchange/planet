@@ -8,6 +8,7 @@ import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 
 describe('TasksComponent', () => {
   let component: TasksComponent;
@@ -20,6 +21,7 @@ describe('TasksComponent', () => {
   };
   let userService: { get: ReturnType<typeof vi.fn> };
   let dialog: { open: ReturnType<typeof vi.fn> };
+  let usersProfileDialogService: { open: ReturnType<typeof vi.fn> };
   let notificationsService: { sendNotificationToUser: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
@@ -37,6 +39,7 @@ describe('TasksComponent', () => {
       })
     };
     dialog = { open: vi.fn() };
+    usersProfileDialogService = { open: vi.fn() };
     notificationsService = { sendNotificationToUser: vi.fn().mockReturnValue(of({})) };
     component = new TasksComponent(
       tasksService as any as TasksService,
@@ -44,6 +47,7 @@ describe('TasksComponent', () => {
       userService as any as UserService,
       { datePlaceholder: 0 } as any as CouchService,
       dialog as any as MatDialog,
+      usersProfileDialogService as any as UsersProfileDialogService,
       {} as DialogsFormService,
       notificationsService as any as NotificationsService
     );
@@ -195,12 +199,9 @@ describe('TasksComponent', () => {
   it('opens the profile dialog with the assignee planet code', () => {
     component.openMemberDialog({ name: 'alex', userPlanetCode: 'planet-b', teamPlanetCode: 'planet-a' });
 
-    expect(dialog.open).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        data: { member: { name: 'alex', userPlanetCode: 'planet-b' } }
-      })
-    );
+    expect(usersProfileDialogService.open).toHaveBeenCalledWith({
+      member: { name: 'alex', userPlanetCode: 'planet-b' }
+    });
   });
 
   it('retains a failed avatar until the member source changes', () => {

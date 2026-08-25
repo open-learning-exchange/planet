@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@angular/cdk/clipboard';
-import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { AuthService } from '../shared/auth-guard.service';
 import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
@@ -88,7 +87,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     private newsService: NewsService,
     private notificationsService: NotificationsService,
     private stateService: StateService,
-    private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private authService: AuthService,
     private clipboard: Clipboard,
     private deviceInfoService: DeviceInfoService,
@@ -227,13 +226,10 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       event.preventDefault();
     }
     this.authService.checkAuthenticationStatus().subscribe(() => {
-      this.dialog.open(UserProfileDialogComponent, {
-        data: { member: { ...member, userPlanetCode: member.planetCode } },
-        maxWidth: '90vw',
-        autoFocus: false,
-        restoreFocus: false,
-        maxHeight: '90vh'
-      });
+      this.usersProfileDialogService.open(
+        { member: { ...member, userPlanetCode: member.planetCode } },
+        { restoreFocus: false }
+      );
     });
   }
 

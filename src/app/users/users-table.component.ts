@@ -21,7 +21,7 @@ import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { UserProfileDialogComponent } from './users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -130,6 +130,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   constructor(
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private userService: UserService,
     private usersService: UsersService,
     private router: Router,
@@ -218,7 +219,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
     if (this.shouldOpenProfileDialog) {
       const code = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : null;
-      this.dialog.open(UserProfileDialogComponent, { data: { member: { name: userName, userPlanetCode: code } }, autoFocus: false });
+      this.usersProfileDialogService.open({ member: { name: userName, userPlanetCode: code } });
       return;
     }
     const optParams = this.tableState.selectedChild.code ? { planet: this.tableState.selectedChild.code } : {};

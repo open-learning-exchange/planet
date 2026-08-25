@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoursesService } from '../courses.service';
@@ -8,7 +7,7 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { CsvService } from '../../shared/csv.service';
 import { dedupeObjectArray } from '../../shared/utils';
 import { findDocuments } from '../../shared/mangoQueries';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -76,7 +75,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private csvService: CsvService,
-    private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private stateService: StateService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -246,11 +245,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   memberClick({ label: name, planetCode: userPlanetCode }) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name, userPlanetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+    this.usersProfileDialogService.open({ member: { name, userPlanetCode } });
   }
 
   structureChartData(data) {
