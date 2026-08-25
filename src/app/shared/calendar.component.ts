@@ -68,7 +68,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() buttonText?: any = {
     today: $localize`Today`
   };
-  @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
   events: any[] = [ {} ];
   calendarPlugins = [ dayGridPlugin, interactionPlugin ];
@@ -138,7 +137,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -146,7 +145,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       this.calendar.getApi().updateSize();
       this.resizeCalendar = false;
     }
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   getMeetups() {

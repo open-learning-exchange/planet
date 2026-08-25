@@ -123,14 +123,14 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
-  private _question!: QuestionFormGroup;
+  #question!: QuestionFormGroup;
   get question(): QuestionFormGroup {
-    return this._question;
+    return this.#question;
   }
   set question(newQuestion: QuestionFormGroup) {
     const question = this.questions.at(this.activeQuestionIndex);
     this.examsService.updateQuestion(question, newQuestion);
-    this._question = newQuestion;
+    this.#question = newQuestion;
     this.examForm.controls.questions.updateValueAndValidity();
   }
   get questions(): FormArray<QuestionFormGroup> {
