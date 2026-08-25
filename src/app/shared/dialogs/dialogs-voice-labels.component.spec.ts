@@ -97,6 +97,18 @@ describe('DialogsVoiceLabelsComponent', () => {
     expect(dialogRef.close).toHaveBeenCalledWith([ 'Event' ]);
   });
 
+  it('persists a display-casing change', () => {
+    const component = createComponent({ target: 'community', customLabels: [ 'Announcement' ] });
+    component.ngOnInit();
+    component.customLabels = [ 'announcement' ];
+
+    component.save();
+
+    expect(couchService.updateDocument).toHaveBeenCalledWith('configurations', expect.objectContaining({
+      customVoiceLabels: [ 'announcement' ]
+    }));
+  });
+
   it('merges team labels into the latest team revision', () => {
     couchService.get.mockReturnValue(of({ _id: 'team', _rev: '2-current', name: 'Team' }));
     const component = createComponent({

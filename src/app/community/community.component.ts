@@ -640,6 +640,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
       : 'label_important';
   }
 
+  get canManageLabels(): boolean {
+    return !this.planetCode && (this.user.isUserAdmin ||
+      this.user?.roles?.some(role => [ '_admin', 'manager' ].includes(role)));
+  }
+
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
     this.selectedLabel = action === 'select' ?
       this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';

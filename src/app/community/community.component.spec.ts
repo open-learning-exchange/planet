@@ -4,6 +4,14 @@ import { CommunityComponent } from './community.component';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 
 describe('CommunityComponent custom labels', () => {
+  it('allows an administrator without manager roles to manage community labels', () => {
+    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    component.planetCode = null;
+    component.user = { isUserAdmin: true, roles: [] } as any;
+
+    expect(component.canManageLabels).toBe(true);
+  });
+
   it('passes current labels to the dialog and applies the saved vocabulary locally', () => {
     const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
     component.planetCode = null;

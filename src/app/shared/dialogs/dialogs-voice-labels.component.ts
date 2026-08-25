@@ -13,7 +13,7 @@ import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { LabelComponent } from '../label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../voice-labels';
+import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL } from '../voice-labels';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { Subject } from 'rxjs';
 import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -103,7 +103,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
 
   get labelsChanged(): boolean {
     return this.initialCustomLabels.length !== this.customLabels.length ||
-      this.initialCustomLabels.some((label, index) => !voiceLabelsEqual(label, this.customLabels[index]));
+      this.initialCustomLabels.some((label, index) => label !== this.customLabels[index]);
   }
 
   addLabel(): void {
