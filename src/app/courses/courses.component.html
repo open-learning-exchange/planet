@@ -48,6 +48,7 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear filters</span></button>
 </ng-template>
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
