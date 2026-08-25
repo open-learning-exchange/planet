@@ -104,8 +104,8 @@ describe('DashboardComponent', () => {
     expect(component.roles).toEqual([ 'learner', 'admin' ]);
   });
 
-  it('uses the username when firstName is undefined', () => {
-    createComponent({ firstName: undefined }).detectChanges();
+  it('uses the username when no name parts are available', () => {
+    createComponent({ firstName: undefined, lastName: undefined }).detectChanges();
 
     expect(component.displayName).toBe('johndoe');
   });
