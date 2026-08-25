@@ -3,13 +3,13 @@
     <mat-card-subtitle class="subtitle-row">
       <div class="label-panel">
         <mat-chip-set class="tags-list" aria-label="Labels" i18n-aria-label>
-          @for (label of activeItemLabels; track label) {
+          @for (label of item.doc.labels || []; track $index) {
             <mat-chip class="planet-chip-label chip-outline-primary">
               <a matChipAction type="button" (click)="labelClick(label, 'select')">
                 <mat-icon class="small-icon">label_important</mat-icon>
                 <planet-label [label]="label"></planet-label>
               </a>
-              @if ((item.doc.user.name === currentUser.name || currentUser.isUserAdmin ) && editable) {
+              @if (canEditLabels) {
                 <button matChipRemove type="button" aria-label="Remove label" i18n-aria-label (click)="labelClick(label, 'remove')">
                   <mat-icon>clear</mat-icon>
                 </button>
@@ -116,10 +116,10 @@
       <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
         <mat-icon>link</mat-icon>
       </button>
-      @if ((item.doc.user.name === currentUser.name || currentUser.isUserAdmin)) {
+      @if (canModifyNews) {
         <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
         <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-        @if (editable && labels.listed.length > 0) {
+        @if (canEditLabels && labels.listed.length > 0) {
           <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
         }
         <mat-menu #labelMenu="matMenu">
@@ -149,10 +149,10 @@
   <button mat-icon-button type="button" matTooltip="Copy Voice Link" i18n-matTooltip (click)="copyLink(item.doc)">
     <mat-icon>link</mat-icon>
   </button>
-  @if ((item.doc.user.name === currentUser.name || currentUser.isUserAdmin)) {
+  @if (canModifyNews) {
     <button mat-icon-button type="button" (click)="editNews(item.doc)"><mat-icon>edit</mat-icon></button>
     <button mat-icon-button type="button" (click)="openDeleteDialog(item.doc)"><mat-icon>delete</mat-icon></button>
-    @if (editable && labels.listed.length > 0) {
+    @if (canEditLabels && labels.listed.length > 0) {
       <button mat-button i18n [matMenuTriggerFor]="labelMenu">Add Label</button>
     }
     <mat-menu #labelMenu="matMenu">

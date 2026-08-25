@@ -49,7 +49,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
-import { CommunityVoiceLabelsDialogComponent } from '../community/community-voice-labels-dialog.component';
+import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -114,6 +114,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
   user = this.userService.get();
   news: any[] = [];
+  private readonly emptyVoiceLabels: string[] = [];
   newsLoading = true;
   resources: any[] = [];
   visibleCourses: any[] = [];
@@ -172,12 +173,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     ).subscribe(tasks => {
       this.tasks = tasks;
       this.setTasks(tasks);
-    });
-
-    this.stateService.couchStateListener('teams').pipe(takeUntil(this.onDestroy$)).subscribe((change: any) => {
-      if (change && change.id === this.teamId) {
-        this.getTeam(this.teamId).subscribe();
-      }
     });
   }
 
@@ -358,17 +353,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
     this.userStatus = this.isUserInMemberDocs(this.requests, user) ? 'requesting' : this.userStatus;
     this.userStatus = this.isUserInMemberDocs(this.members, user) ? 'member' : this.userStatus;
-    const userMembership = (this.members || []).find((m: any) => m.userId === user._id);
-    const isMemberLeader = !!(userMembership && userMembership.isLeader);
-    const isDocLeader = !!(leader && user._id === leader.userId);
-    this.isUserLeader = isMemberLeader || isDocLeader;
+    this.isUserLeader = !!leader && memberCompare(leader, { userId: user._id, userPlanetCode: user.planetCode });
     if (this.initTab === undefined && this.userStatus === 'member' && this.route.snapshot.params.activeTab) {
       this.initTab = this.route.snapshot.params.activeTab;
     }
   }
 
   get canManageLabels(): boolean {
-    return this.isUserLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]);
+    return this.isUserLeader || this.userService.get().isUserAdmin || this.userService.doesUserHaveRole([ '_admin', 'manager' ]);
+  }
+
+  get customVoiceLabels(): string[] {
+    return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
   isUserInMemberDocs(memberDocs, user) {
@@ -646,12 +642,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   openManageLabelsDialog() {
-    this.dialog.open(CommunityVoiceLabelsDialogComponent, {
+    this.dialog.open(DialogsVoiceLabelsComponent, {
       width: '500px',
       autoFocus: false,
-      data: { target: this.mode, team: this.team }
-    }).afterClosed().subscribe((updated) => {
-      if (updated) {
+      data: { target: this.mode, team: this.team, customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.team = { ...this.team, customVoiceLabels: updatedLabels };
         this.getTeam(this.teamId).subscribe();
       }
     });

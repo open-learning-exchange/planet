@@ -45,10 +45,11 @@ import {
 } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CommunityListComponent } from './community-list.component';
-import { CommunityVoiceLabelsDialogComponent } from './community-voice-labels-dialog.component';
+import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 import { TeamsViewFinancesComponent } from '../teams/teams-view-finances.component';
 import { TeamsReportsComponent } from '../teams/teams-reports.component';
 import { PlanetCalendarComponent } from '../shared/calendar.component';
+import { dedupeVoiceLabels, normalizeVoiceLabel, SHARED_CHAT_LABEL, voiceLabelsEqual } from '../shared/voice-labels';
 
 interface CommunityDescriptionForm {
   description: FormControl<string>;
@@ -100,6 +101,7 @@ interface CommunityDescriptionForm {
 export class CommunityComponent implements OnInit, OnDestroy {
 
   configuration: any = this.stateService.configuration || {};
+  customVoiceLabels: string[] = this.configuration.customVoiceLabels || [];
   teamId = planetAndParentId(this.stateService.configuration);
   team: any = { _id: this.teamId, teamType: 'sync', teamPlanetCode: this.stateService.configuration.code, type: 'services' };
   user = this.userService.get();
@@ -129,6 +131,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
   voiceSearch = '';
   voiceSearch$ = new Subject<string>();
   availableLabels: string[] = [];
+  private viewLabelNames = new Set<string>();
   selectedLabel = '';
   pinned = false;
   attachmentMap: Record<string, any> = {};
@@ -212,9 +215,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     ).subscribe(() => {
       this.getCommunityData();
     });
-    this.stateService.couchStateListener('configurations').pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      this.availableLabels = this.getAvailableLabels(this.news);
-    });
     this.userService.userChange$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
       this.user = this.userService.get();
       this.isLoggedIn = this.user._id !== undefined;
@@ -260,6 +260,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
       switchMap(configurations => {
         // Configuration is for planet that is being viewed, not planet the user is on
         this.configuration = configurations[0];
+        this.customVoiceLabels = this.configuration.customVoiceLabels || [];
         this.team = this.teamObject(this.planetCode);
         this.teamId = this.team._id;
         this.requestNewsAndUsers(this.planetCode);
@@ -597,9 +598,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
     let filtered = this.news;
     if (this.selectedLabel) {
       filtered = filtered.filter(item => {
-        return (item.doc.labels || []).includes(this.selectedLabel)
-          || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
-          || (this.selectedLabel === 'shared chat' && item.doc.chat === true);
+        return (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
+          || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
+          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true);
       });
     }
     if (this.voiceSearch) {
@@ -615,30 +616,33 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   getAvailableLabels(news: any[]): string[] {
-    const labelSet = new Set<string>();
+    const labels: string[] = [];
+    this.viewLabelNames = new Set<string>();
     news.forEach(item => {
-      (item.doc.labels || []).forEach(label => labelSet.add(label));
+      labels.push(...(item.doc.labels || []));
       (item.doc.viewIn || []).forEach(view => {
         if (view.name) {
-          labelSet.add(view.name);
+          labels.push(view.name);
+          this.viewLabelNames.add(normalizeVoiceLabel(view.name));
         }
       });
       if (item.doc.chat === true) {
-        labelSet.add('shared chat');
+        labels.push(SHARED_CHAT_LABEL);
       }
     });
 
-    return Array.from(labelSet);
+    return dedupeVoiceLabels(labels);
   }
 
   getLabelIcon(label: string): string {
-    return label === 'shared chat' ? 'question_answer'
-      : this.news.some(item => (item.doc.viewIn || []).some(view => view.name === label)) ? 'groups'
+    return voiceLabelsEqual(label, SHARED_CHAT_LABEL) ? 'question_answer'
+      : this.viewLabelNames.has(normalizeVoiceLabel(label)) ? 'groups'
       : 'label_important';
   }
 
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {
-    this.selectedLabel = action === 'select' ? label : '';
+    this.selectedLabel = action === 'select' ?
+      this.availableLabels.find(availableLabel => voiceLabelsEqual(availableLabel, label)) || label : '';
     this.applyFilters();
   }
 
@@ -646,12 +650,14 @@ export class CommunityComponent implements OnInit, OnDestroy {
     if (this.planetCode) {
       return;
     }
-    this.dialog.open(CommunityVoiceLabelsDialogComponent, {
+    this.dialog.open(DialogsVoiceLabelsComponent, {
       width: '500px',
-      autoFocus: false
-    }).afterClosed().subscribe((updated) => {
-      if (updated) {
-        this.requestNewsAndUsers(this.planetCode);
+      autoFocus: false,
+      data: { target: 'community', customLabels: this.customVoiceLabels }
+    }).afterClosed().subscribe((updatedLabels?: string[]) => {
+      if (updatedLabels) {
+        this.customVoiceLabels = updatedLabels;
+        this.configuration = { ...this.configuration, customVoiceLabels: updatedLabels };
       }
     });
   }

@@ -1,7 +1,5 @@
 <div class="news-list-content">
-  <div class="news-list-header-actions">
-    <ng-content></ng-content>
-  </div>
+  <ng-content></ng-content>
   @if (replyViewing._id!=='root') {
     <div class="action-buttons">
       <button mat-stroked-button type="button" (click)="showReplies({_id:'root'})" i18n>Show main conversation</button>

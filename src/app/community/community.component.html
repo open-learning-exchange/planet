@@ -6,7 +6,7 @@
           @if (newsLoading) {
             <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
           } @else {
-            <planet-news-list [items]="filteredNews" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
+            <planet-news-list [items]="filteredNews" [customLabels]="customVoiceLabels" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
               @if (!activeReplyId) {
                 <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
                   <mat-form-field class="search-form-field mdc-toolbar-input">
@@ -42,7 +42,7 @@
                   </ng-container>
                   <ng-container *planetAuthorizedRoles="'manager'">
                     @if (!planetCode) {
-                      <button class="manage-labels-btn margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                      <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
                         <mat-icon>label</mat-icon>
                       </button>
                     }
