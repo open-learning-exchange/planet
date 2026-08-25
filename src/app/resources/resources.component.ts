@@ -139,14 +139,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
   }
@@ -156,7 +156,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedSync = [];
   isAuthorized = false;
   showFilters = false;
-  searchSelection: any = { _empty: true };
+  searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
@@ -315,9 +315,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
-    let amount = 'many',
-      okClick = this.deleteResources(resources),
-      displayName = '';
+    let amount = 'many';
+    let okClick = this.deleteResources(resources);
+    let displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
@@ -412,8 +412,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   shareResource(type, resources) {
-    const msg = (type === 'pull' ? 'fetch' : 'send'),
-      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    const msg = (type === 'pull' ? 'fetch' : 'send');
+    const items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
       .subscribe((response: any) => {
         this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
@@ -429,7 +429,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+    this.searchSelection.isEmpty = Object.entries(this.searchSelection).every(
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
@@ -449,7 +449,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSearch(complete = false) {
     if (this.resources.filter !== '') {
       this.searchService.recordSearch({
-        text: this._titleSearch,
+        text: this.titleSearch,
         type: this.dbName,
         filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);

@@ -88,8 +88,8 @@
     }
   </mat-card-content>
   <mat-card-actions class="flex-vertical-center">
-    <img [src]="item.avatar" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user)">
-    <button mat-button type="button" class="cursor-pointer user-name-truncate margin-lr-8" (click)="openMemberDialog(item.doc.user)">
+    <img [src]="item.avatar" alt="" class="cursor-pointer profile-outline" (click)="openMemberDialog(item.doc.user, $event)">
+    <button mat-button type="button" class="cursor-pointer user-name-truncate margin-lr-8" (click)="openMemberDialog(item.doc.user, $event)">
       <span class="user-name-truncate-text ellipsis">
         {{(item.doc.user | fullName) || item.doc.user.name}}
       </span>

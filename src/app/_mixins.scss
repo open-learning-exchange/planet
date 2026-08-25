@@ -16,5 +16,6 @@
 
 @mixin table-column-fixed($basis) {
   flex: 0 1 $basis;
+  flex-shrink: var(--table-column-flex-shrink, 1);
   min-width: 0;
 }

@@ -4,12 +4,12 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 import { StateService } from '../shared/state.service';
 import { NewsService } from './news.service';
 import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { AuthService } from '../shared/auth-guard.service';
-import { calculateMdAdjustedLimit } from '../shared/utils';
+import { doesMarkdownPreviewTruncate, hasMarkdownImages } from '../shared/utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -158,21 +158,24 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     if (this.item.doc.news?.conversations?.length > 1) {
       this.showExpand = true;
     } else {
-      const messageLength = (this.item.doc.message && typeof this.item.doc.message === 'string') ? this.item.doc.message.length : 0;
+      const message = typeof this.item.doc.message === 'string' ? this.item.doc.message : '';
       const imagesLength = Array.isArray(this.item.doc.images) ? this.item.doc.images.length : 0;
-      this.showExpand = messageLength > calculateMdAdjustedLimit(this.item.doc.message, this.previewLimit) || imagesLength > 0;
+      this.showExpand = doesMarkdownPreviewTruncate(message, this.previewLimit) ||
+        hasMarkdownImages(message) || imagesLength > 0;
     }
   }
 
   sendNewsNotifications(news: any = '') {
     const replyBy = this.currentUser.name;
-    const userId = news.user._id;
-    if (replyBy === news.user.name) {
+    const legacyPlanetCode = news.createdOn || this.stateService.configuration.code;
+    const recipient = notificationRecipient(news.user, legacyPlanetCode);
+    const sender = notificationRecipient(this.currentUser, this.stateService.configuration.code);
+    if (recipient.user === sender.user && recipient.userPlanetCode === sender.userPlanetCode) {
       return;
     }
     const link = this.router.url;
     const notification = {
-      user: userId,
+      ...recipient,
       'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
       'priority': 1,
@@ -220,7 +223,11 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 
-  openMemberDialog(member) {
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.dialog.open(UserProfileDialogComponent, {
         data: { member: { ...member, userPlanetCode: member.planetCode } },

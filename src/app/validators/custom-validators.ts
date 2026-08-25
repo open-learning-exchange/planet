@@ -209,11 +209,11 @@ export class CustomValidators {
         return null;
       }
 
-      const matchControl = ac.parent.get(matchField),
-        val1 = ac.value,
-        val2 = matchControl?.value,
-        confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl,
-        errorType = match ? 'matchPassword' : 'unmatchPassword';
+      const matchControl = ac.parent.get(matchField);
+      const val1 = ac.value;
+      const val2 = matchControl?.value;
+      const confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl;
+      const errorType = match ? 'matchPassword' : 'unmatchPassword';
 
       if (!confirmControl || !matchControl) {
         return null;
