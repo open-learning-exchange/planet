@@ -11,7 +11,7 @@ import { UsersProfileDialogService } from '../../users/users-profile/users-profi
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
@@ -32,7 +32,6 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
   `],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
