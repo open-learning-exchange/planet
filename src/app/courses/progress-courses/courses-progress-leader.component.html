@@ -1,12 +1,7 @@
 <mat-toolbar>
   <a mat-icon-button (click)="navigateBack()"><mat-icon>arrow_back</mat-icon></a>
   <span>
-    @if (selectedStep === undefined) {
-      <ng-container i18n>Course Progress</ng-container>
-    }
-    @if (selectedStep !== undefined) {
-      <ng-container i18n>Test Progress</ng-container>
-    }
+    <ng-container i18n>Course Progress Dashboard</ng-container>
   </span>
 </mat-toolbar>
 
@@ -19,7 +14,7 @@
   }
   @if (deviceType !== deviceTypes.DESKTOP) {
     <span class="toolbar-fill"></span>
-    @if (chartData?.length) {
+    @if (dataSource.data?.length || chartData?.length) {
       <button class="menu" mat-icon-button [matMenuTriggerFor]="actionsMenu"><mat-icon>more_vert</mat-icon></button>
     }
     <mat-menu #actionsMenu="matMenu" class="actions-menu">
@@ -28,47 +23,213 @@
     </mat-menu>
   }
 </mat-toolbar>
+
 <ng-template #filterSelectors>
   @if (planetCodes.length > 1) {
     <planet-selector [planetCodes]="planetCodes" (selectionChange)="planetSelectionChange($event)"></planet-selector>
   }
-  @if (submittedExamSteps?.length > 1) {
-    <mat-form-field class="margin-lr-3">
-      <mat-label i18n>View Test Progress</mat-label>
-      <mat-select [value]="selectedStep" (selectionChange)="onStepChange($event.value)">
-        @for (step of submittedExamSteps; track step) {
-          <mat-option [value]="step">
-            @if (step.stepTitle) {
-              {{ step.stepTitle }}
-            } @else {
-              <ng-container i18n>Step</ng-container> {{ step.index + 1 }}
-            }
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  }
 </ng-template>
+
 <ng-template #actionButtons>
-  @if (selectedStep !== undefined) {
-    <button mat-raised-button color="accent" (click)="resetToFullCourse()" class="margin-lr-3" i18n>Show full course</button>
-  }
-  @if (chartData?.length) {
-    <button mat-raised-button color="accent" (click)="exportChartData()" class="margin-lr-3" i18n>Export</button>
+  <button mat-raised-button color="primary" (click)="navigateToGrading()" class="margin-lr-3" i18n>Submissions & Grading</button>
+  @if (dataSource.data?.length || chartData?.length) {
+    <button mat-raised-button color="accent" (click)="exportChartData()" class="margin-lr-3" i18n>Export CSV</button>
   }
 </ng-template>
-<div class="view-container view-full-height">
-  @if (chartData?.length) {
-    <planet-courses-progress-chart [label]="chartLabel" [inputs]="chartData" [height]="yAxisLength" [showAvatar]="true" (clickAction)="memberClick($event)" (changeData)="changeData($event)">
-    </planet-courses-progress-chart>
-  } @else {
-    @if (isLoading) {
-      <planet-loading-spinner text="Loading progress..." i18n-text></planet-loading-spinner>
-    }
-    @if (!isLoading) {
-      <div class="view-container" i18n>
-      No Progress record available
+
+<div class="view-container view-full-height dashboard-container padding-3">
+  @if (isLoading) {
+    <planet-loading-spinner text="Loading progress..." i18n-text></planet-loading-spinner>
+  } @else if (dataSource.data?.length) {
+    <!-- KPI Summary Row -->
+    <div class="kpi-grid margin-bottom-4">
+      <mat-card class="kpi-card">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box primary-bg"><mat-icon>groups</mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label" i18n>Enrolled Learners</span>
+            <h2 class="kpi-value">{{ totalLearners }}</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box accent-bg"><mat-icon>donut_large</mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label" i18n>Average Completion Rate</span>
+            <h2 class="kpi-value">{{ avgCompletionPercentage }}%</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box accent-bg"><mat-icon>assignment_late</mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label" i18n>Pending Submissions</span>
+            <h2 class="kpi-value">{{ pendingGradesCount }}</h2>
+          </div>
+          @if (pendingGradesCount > 0) {
+            <button mat-raised-button color="primary" (click)="navigateToGrading()" i18n>Grade Now →</button>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card">
+        <mat-card-content class="kpi-content">
+          <div class="kpi-icon-box error-bg"><mat-icon>error_outline</mat-icon></div>
+          <div class="kpi-info">
+            <span class="kpi-label" i18n>Total Mistakes</span>
+            <h2 class="kpi-value">{{ totalErrorsCount }}</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    }
+
+    <!-- Main 2-Column Section -->
+    <div class="dashboard-body-grid">
+      <!-- Left Column: Learner Performance Table -->
+      <mat-card class="table-card">
+        <mat-card-content>
+          <div class="table-header-bar margin-bottom-3">
+            <h3 i18n>Learner Progress & Performance</h3>
+            <span class="toolbar-fill"></span>
+            <mat-form-field class="search-field font-size-1">
+              <mat-label i18n>Search learner...</mat-label>
+              <input matInput (keyup)="applyFilter($event.target.value)">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <mat-table [dataSource]="dataSource" matSort class="responsive-table">
+            <ng-container matColumnDef="user">
+              <mat-header-cell *matHeaderCellDef mat-sort-header="user.name" i18n>Learner</mat-header-cell>
+              <mat-cell *matCellDef="let element" class="cursor-pointer" (click)="memberClick(element.user)">
+                <div class="user-cell">
+                  <planet-avatar [username]="element.user.name" [planetCode]="element.user.planetCode" imgClass="profile-image-small"></planet-avatar>
+                  <span class="user-name margin-left-2">{{ element.user.name }}</span>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="progress">
+              <mat-header-cell *matHeaderCellDef mat-sort-header="completionPercentage" i18n>Progress</mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <div class="progress-cell">
+                  <div class="progress-info">
+                    <span>{{ element.stepNum }} / {{ course?.steps?.length || 0 }} Steps</span>
+                    <span class="progress-pct">{{ element.completionPercentage }}%</span>
+                  </div>
+                  <mat-progress-bar mode="determinate" [value]="element.completionPercentage"></mat-progress-bar>
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="stepStatus">
+              <mat-header-cell *matHeaderCellDef i18n>Step Status</mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <div class="steps-chip-set">
+                  @for (step of element.stepStatuses; track step; let idx = $index) {
+                    @switch (step.status) {
+                      @case ('requires grading') {
+                        <span class="step-chip step-warning" [matTooltip]="'Step ' + (idx+1) + ': Requires Grading'">{{ idx+1 }}</span>
+                      }
+                      @case ('complete') {
+                        <span class="step-chip step-success" [matTooltip]="'Step ' + (idx+1) + ': Passed' + (step.errors > 0 ? ' (' + step.errors + ' mistakes)' : '')">{{ idx+1 }}</span>
+                      }
+                      @case ('failed') {
+                        <span class="step-chip step-danger" [matTooltip]="'Step ' + (idx+1) + ': Failed (' + step.errors + ' mistakes)'">{{ idx+1 }}</span>
+                      }
+                      @case ('in_progress') {
+                        <span class="step-chip step-active" [matTooltip]="'Step ' + (idx+1) + ': In Progress'">{{ idx+1 }}</span>
+                      }
+                      @default {
+                        <span class="step-chip step-muted" [matTooltip]="'Step ' + (idx+1) + ': Not Started'">{{ idx+1 }}</span>
+                      }
+                    }
+                  }
+                </div>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="totalErrors">
+              <mat-header-cell *matHeaderCellDef mat-sort-header="totalErrors" i18n>Mistakes</mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <mat-chip-set>
+                  <mat-chip [highlighted]="element.totalErrors > 0" [color]="element.totalErrors > 0 ? 'warn' : ''">
+                    {{ element.totalErrors }}
+                  </mat-chip>
+                </mat-chip-set>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="lastActive">
+              <mat-header-cell *matHeaderCellDef mat-sort-header="lastActive" i18n>Last Active</mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <span>{{ (element.lastActive | date:'short') || '--' }}</span>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="memberClick(element.user)" [matTooltip]="'View Profile'">
+                  <mat-icon>account_circle</mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <tr class="mat-row" *matNoDataRow>
+              <td colspan="6"><div class="padding-3 text-center" i18n>No matching learner records found</div></td>
+            </tr>
+          </mat-table>
+
+          <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Right Column: Step Difficulty Analytics -->
+      <mat-card class="analytics-card">
+        <mat-card-content>
+          <h3 i18n class="margin-bottom-3">Step Difficulty</h3>
+          <div class="step-difficulty-list">
+            @for (step of stepDifficultyList; track step; let idx = $index) {
+              <div class="step-difficulty-item">
+                <div class="step-title-row">
+                  <span class="step-name">{{ step.stepTitle }}</span>
+                  @if (step.totalErrors === 1) {
+                    <span class="step-errors-badge" i18n>1 mistake</span>
+                  } @else {
+                    <span class="step-errors-badge" i18n>{{ step.totalErrors }} mistakes</span>
+                  }
+                </div>
+                <div class="step-sub-row">
+                  @if (step.passPercentage !== null && step.passPercentage !== undefined) {
+                    <span class="text-secondary" i18n>Pass Rate: {{ step.passPercentage }}%</span>
+                  } @else {
+                    <span class="text-secondary" i18n>No submissions</span>
+                  }
+                  @if (step.pendingCount > 0) {
+                    <span class="ungraded-tag">({{ step.pendingCount }} ungraded)</span>
+                  }
+                </div>
+                @if (step.passPercentage !== null && step.passPercentage !== undefined) {
+                  <mat-progress-bar mode="determinate" [value]="step.passPercentage" [color]="step.passPercentage < 60 ? 'warn' : 'primary'"></mat-progress-bar>
+                } @else {
+                  <mat-progress-bar mode="determinate" [value]="0"></mat-progress-bar>
+                }
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <div class="padding-4 text-center font-size-2" i18n>
+      No progress records available for this course yet.
+    </div>
   }
 </div>

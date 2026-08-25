@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewChecked } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
@@ -8,32 +8,35 @@ import { SubmissionsService } from '../../submissions/submissions.service';
 import { CsvService } from '../../shared/csv.service';
 import { dedupeObjectArray } from '../../shared/utils';
 import { findDocuments } from '../../shared/mangoQueries';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
 import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetSelectorComponent } from '../../shared/forms/planet-selector.component';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { MatSelect } from '@angular/material/select';
-import { MatOption } from '@angular/material/autocomplete';
-import { CoursesProgressChartComponent } from './courses-progress-chart.component';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatChipSet, MatChip } from '@angular/material/chips';
+import {
+  MatTableDataSource, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+  MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow
+} from '@angular/material/table';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
+import { AvatarComponent } from '../../shared/avatar.component';
 
 @Component({
   templateUrl: 'courses-progress-leader.component.html',
-  styles: [`
-    mat-toolbar.primary-color {
-      padding-top: 8px;
-    }
-  `],
+  styleUrls: ['./courses-progress.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
@@ -42,15 +45,36 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     PlanetSelectorComponent,
     MatFormField,
     MatLabel,
-    MatSelect,
-    MatOption,
+    MatSuffix,
     MatButton,
-    CoursesProgressChartComponent,
     PlanetLoadingSpinnerComponent,
-    TruncateTextPipe
+    TruncateTextPipe,
+    MatCard,
+    MatCardContent,
+    MatProgressBar,
+    MatChipSet,
+    MatChip,
+    MatTable,
+    MatSort,
+    MatSortHeader,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatNoDataRow,
+    MatPaginator,
+    MatInput,
+    MatTooltip,
+    AvatarComponent,
+    DatePipe
   ]
 })
-export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
+export class CoursesProgressLeaderComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   course: any;
   headingStart = '';
@@ -58,7 +82,6 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   selectedStep: any;
   allChartData: any[] = [];
   chartData: any[];
-  csvChartData: any[];
   submissions: any[] = [];
   progress: any[] = [];
   onDestroy$ = new Subject<void>();
@@ -70,6 +93,17 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   isLoading = false;
+
+  totalLearners = 0;
+  avgCompletionPercentage = 0;
+  pendingGradesCount = 0;
+  totalErrorsCount = 0;
+  displayedColumns = [ 'user', 'progress', 'stepStatus', 'totalErrors', 'lastActive', 'actions' ];
+  dataSource = new MatTableDataSource<any>();
+  stepDifficultyList: any[] = [];
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private router: Router,
@@ -84,6 +118,12 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
     });
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const name = (data.user?.name || '').toLowerCase();
+      const planetCode = (data.user?.planetCode || '').toLowerCase();
+      return name.includes(filter) || planetCode.includes(filter);
+    };
   }
 
   ngOnInit() {
@@ -101,6 +141,15 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       this.filterSubmittedExamSteps(submissions);
       this.isLoading = false;
     });
+  }
+
+  ngAfterViewChecked() {
+    if (this.paginator && !this.dataSource.paginator) {
+      this.dataSource.paginator = this.paginator;
+    }
+    if (this.sort && !this.dataSource.sort) {
+      this.dataSource.sort = this.sort;
+    }
   }
 
   ngOnDestroy() {
@@ -128,13 +177,20 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSubmissions() {
     this.chartData = [];
     this.submissionsService.updateSubmissions({
-      query: findDocuments({ parentId: { '$regex': this.course._id } }),
-      onlyBest: true
+      query: findDocuments({ parentId: { '$regex': this.course._id } })
     });
   }
 
   navigateBack() {
     this.router.navigate([ '/courses' ]);
+  }
+
+  navigateToGrading() {
+    this.router.navigate([ '/myDashboard/submissions' ]);
+  }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   arraySubmissionAnswers(submission: any) {
@@ -153,28 +209,144 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     return answer?.grade === undefined ? '' : answer?.mistakes || (1 - answer?.grade);
   }
 
+  isSubmissionPassed(sub: any): boolean {
+    if (!sub || sub.status !== 'complete') {
+      return false;
+    }
+    const allAnswersPassed = sub.answers.every((a: any) => a.grade === 1 || a.grade === undefined);
+    return sub.passed !== false && allAnswersPassed;
+  }
+
   userCourseAnswers(user: any, step: any, index: number, submissions: any[]) {
     const userProgress = this.userProgress(user);
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission = submissions.find((sub: any) => {
+    const userSubs = submissions.filter((sub: any) => {
       return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
     });
-    if (submission) {
-      return this.totalSubmissionAnswers(submission);
+    if (userSubs.length > 0) {
+      const totalErrors = userSubs.reduce((sum, s) => sum + (this.totalSubmissionAnswers(s).number || 0), 0);
+      return { number: totalErrors || 0, fill: true, clickable: true };
     }
     return { number: '', fill: false, clickable: true };
   }
 
+  allSubmissions: any[] = [];
+
   setFullCourse(submissions: any[]) {
+    this.allSubmissions = submissions;
     this.selectedStep = undefined;
     this.headingStart = this.course.courseTitle;
     this.yAxisLength = this.course.steps.length;
-    const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+
+    const filteredSubmissions = this.selectedPlanetCode
+      ? submissions.filter((sub: any) => sub.source === this.selectedPlanetCode || sub.user?.planetCode === this.selectedPlanetCode)
+      : submissions;
+
+    const users = dedupeObjectArray(filteredSubmissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
+    this.totalLearners = users.length;
+
+    let totalPctSum = 0;
+    let pendingCount = 0;
+    let totalErrors = 0;
+
+    const learnerRows = users.map((user: any) => {
+      const userProgressDoc = this.userProgress(user);
+      const userSubmissions = filteredSubmissions.filter((sub: any) =>
+        sub.user.name === user.name && (sub.source === user.planetCode || sub.user.planetCode === user.planetCode)
+      );
+      let userErrorCount = 0;
+      let lastActiveTimestamp = 0;
+
+      const stepStatuses = this.course.steps.map((step: any, index: number) => {
+        let stepStatus = 'not_started';
+        let stepErrCount = 0;
+        const hasExam = !!step.exam;
+        const hasSurvey = !!step.survey;
+
+        if (hasExam || hasSurvey) {
+          const examSubs = hasExam ? userSubmissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : [];
+          const surveySubs = hasSurvey ? userSubmissions.filter((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : [];
+
+          examSubs.forEach((sub: any) => {
+            stepErrCount += this.totalSubmissionAnswers(sub).number || 0;
+            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = sub.lastUpdateTime;
+            }
+          });
+          surveySubs.forEach((sub: any) => {
+            stepErrCount += this.totalSubmissionAnswers(sub).number || 0;
+            if (sub.lastUpdateTime && sub.lastUpdateTime > lastActiveTimestamp) {
+              lastActiveTimestamp = sub.lastUpdateTime;
+            }
+          });
+          userErrorCount += stepErrCount;
+
+          const isExamGradingPending = hasExam && examSubs.some((s: any) => s.status === 'requires grading');
+          const isSurveyGradingPending = hasSurvey && surveySubs.some((s: any) => s.status === 'requires grading');
+
+          const isExamComplete = !hasExam || examSubs.some((s: any) => this.isSubmissionPassed(s));
+          const isSurveyComplete = !hasSurvey || surveySubs.some((s: any) => s.status === 'complete');
+
+          const isExamFailed = hasExam && !isExamComplete &&
+            examSubs.some((s: any) => s.status === 'complete' && !this.isSubmissionPassed(s));
+
+          if (isExamGradingPending || isSurveyGradingPending) {
+            stepStatus = 'requires grading';
+            pendingCount += (isExamGradingPending ? 1 : 0) + (isSurveyGradingPending ? 1 : 0);
+          } else if (isExamFailed) {
+            stepStatus = 'failed';
+          } else if (isExamComplete && isSurveyComplete) {
+            stepStatus = 'complete';
+          } else if (examSubs.length > 0 || surveySubs.length > 0) {
+            stepStatus = 'in_progress';
+          } else {
+            stepStatus = 'not_started';
+          }
+        } else {
+          if (userProgressDoc?.stepNum > index) {
+            stepStatus = 'complete';
+          } else if (userProgressDoc?.stepNum === index) {
+            stepStatus = 'in_progress';
+          }
+        }
+
+        return {
+          stepIndex: index + 1,
+          stepTitle: step.stepTitle || `Step ${index + 1}`,
+          status: stepStatus,
+          errors: stepErrCount
+        };
+      });
+
+      totalErrors += userErrorCount;
+
+      const passedStepsCount = stepStatuses.filter((s: any) => s.status === 'complete').length;
+      const totalSteps = Math.max(this.course.steps.length, 1);
+      const completionPercentage = Math.min(100, Math.round((passedStepsCount / totalSteps) * 100));
+      totalPctSum += completionPercentage;
+
+      return {
+        user,
+        stepNum: passedStepsCount,
+        completionPercentage,
+        stepStatuses,
+        totalErrors: userErrorCount,
+        lastActive: lastActiveTimestamp || null
+      };
+    });
+
+    this.avgCompletionPercentage = users.length ? Math.round(totalPctSum / users.length) : 0;
+    this.pendingGradesCount = pendingCount;
+    this.totalErrorsCount = totalErrors;
+
+    this.dataSource.data = learnerRows;
+    this.calculateStepDifficulty(filteredSubmissions);
+
     this.allChartData = users.map((user: any) => {
       const answers = this.course.steps.map((step: any, index: number) => {
-        return this.userCourseAnswers(user, step, index, submissions);
+        return this.userCourseAnswers(user, step, index, filteredSubmissions);
       }).reverse();
       return ({
         items: answers,
@@ -183,6 +355,68 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
       });
     });
     this.filterDataByPlanet();
+  }
+
+  calculateStepDifficulty(submissions: any[]) {
+    this.stepDifficultyList = this.course.steps.map((step: any, index: number) => {
+      let stepErrors = 0;
+      let stepPending = 0;
+      let passCount = 0;
+      const hasExam = !!step.exam;
+      const hasSurvey = !!step.survey;
+
+      const sanitizedTitle = step.stepTitle && !step.stepTitle.startsWith(`Step ${index + 1}`)
+        ? `Step ${index + 1}: ${step.stepTitle}`
+        : (step.stepTitle || `Step ${index + 1}`);
+
+      if (hasExam || hasSurvey) {
+        const examSubs = hasExam ? submissions.filter((s: any) => s.parentId === (step.exam._id + '@' + this.course._id)) : [];
+        const surveySubs = hasSurvey ? submissions.filter((s: any) => s.parentId === (step.survey._id + '@' + this.course._id)) : [];
+        const allSubs = dedupeObjectArray([...examSubs, ...surveySubs], ['_id']);
+
+        allSubs.forEach((sub: any) => {
+          stepErrors += this.totalSubmissionAnswers(sub).number || 0;
+          if (sub.status === 'requires grading') {
+            stepPending++;
+          }
+        });
+
+        const usersWithSubs = dedupeObjectArray(allSubs.map((s: any) => s.user), ['name', 'planetCode']);
+        usersWithSubs.forEach((user: any) => {
+          const userExamSubs = hasExam ? examSubs.filter((s: any) => s.user?.name === user.name && s.source === user.planetCode) : [];
+          const userSurveySubs = hasSurvey ? surveySubs.filter((s: any) => s.user?.name === user.name && s.source === user.planetCode) : [];
+
+          const isExamPass = !hasExam || userExamSubs.some((s: any) => this.isSubmissionPassed(s));
+          const isSurveyPass = !hasSurvey || userSurveySubs.some((s: any) => s.status === 'complete');
+          if (isExamPass && isSurveyPass) {
+            passCount++;
+          }
+        });
+
+        const passPercentage = usersWithSubs.length ? Math.round((passCount / usersWithSubs.length) * 100) : null;
+        return {
+          stepIndex: index + 1,
+          stepTitle: sanitizedTitle,
+          hasExam,
+          hasSurvey,
+          submissionCount: allSubs.length,
+          totalErrors: stepErrors,
+          pendingCount: stepPending,
+          passPercentage
+        };
+      }
+
+      return {
+        stepIndex: index + 1,
+        stepTitle: sanitizedTitle,
+        hasExam: false,
+        hasSurvey: false,
+        submissionCount: 0,
+        totalErrors: 0,
+        pendingCount: 0,
+        passPercentage: null
+      };
+    });
   }
 
   setSingleStep(submissions: any[]) {
@@ -228,8 +462,9 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   }
 
   filterSubmittedExamSteps(submissions: any[]) {
+    this.submittedExamSteps = [];
     this.course.steps
-      .filter((step: any, index: number) => {
+      .forEach((step: any, index: number) => {
         if (this.isSubmittedExam(submissions, step)) {
           step.index = index;
           this.submittedExamSteps.push(step);
@@ -246,12 +481,11 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.chartData = this.allChartData.filter(data => data.planetCode === this.selectedPlanetCode);
   }
 
-  memberClick({ label: name, planetCode: userPlanetCode }) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name, userPlanetCode } },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
-    });
+  memberClick(user: any) {
+    const name = user.name || user.label;
+    if (name) {
+      this.router.navigate([ '/users/profile', name ]);
+    }
   }
 
   structureChartData(data) {
