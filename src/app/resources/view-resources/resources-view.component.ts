@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, defer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
@@ -20,6 +20,8 @@ import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component'
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { ResourcesViewerComponent } from './resources-viewer.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -81,7 +83,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -131,6 +134,24 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
+    if (type === 'remove') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          displayName: this.resource?.doc?.title || '',
+          okClick: {
+            request: defer(() => this.resourcesService.libraryAddRemove([ resourceId ], type)),
+            onNext: () => {
+              this.isUserEnrolled = !this.isUserEnrolled;
+              dialogRef.close();
+            },
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing this resource from myLibrary.`)
+          }
+        }
+      });
+      return;
+    }
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
