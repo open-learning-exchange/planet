@@ -250,6 +250,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.submissions.filter = filterValue || this.dropdownsFill();
   }
 

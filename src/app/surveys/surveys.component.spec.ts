@@ -96,4 +96,11 @@ describe('SurveysComponent', () => {
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
+
+  it('keeps the search input synchronized with the table filter', () => {
+    component.applyFilter('survey title');
+
+    expect(component.searchValue).toBe('survey title');
+    expect(component.surveys.filter).toBe('survey title');
+  });
 });

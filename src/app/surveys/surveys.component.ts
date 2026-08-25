@@ -112,6 +112,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   parentCount = 0;
   useDialogLoading = true;
   isLoading = true;
+  searchValue = '';
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
@@ -294,6 +295,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.surveys.filter = filterValue;
     queueMicrotask(() => {
       const visibleSelection = new Set(this.renderedRows.map(row => row._id));
