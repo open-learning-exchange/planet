@@ -34,6 +34,8 @@ import { FileUploadComponent, AttachmentInputState, ExistingAttachment } from '.
 import { couchAttachmentUrl, normalizeImage, NormalizedImage } from '../../shared/utils';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 interface CourseFormModel {
   courseTitle: FormControl<string>;
@@ -69,12 +71,13 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
-  private _steps = [];
+  #steps = [];
   private preserveCoverStateUntilSubmit = false;
   existingCoverAttachments: ExistingAttachment[] = [];
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
   savedCourse: any = null;
   draftExists: boolean;
+  deleteDialog: MatDialogRef<DialogsPromptComponent> | null = null;
   courseForm: FormGroup<CourseFormModel>;
   documentInfo = { '_rev': undefined, '_id': undefined };
   courseId = this.route.snapshot.paramMap.get('id') || undefined;
@@ -92,15 +95,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
   get steps() {
-    return this._steps;
+    return this.#steps;
   }
   set steps(value: any[]) {
-    this._steps = value.map(step => ({
+    this.#steps = value.map(step => ({
       ...step,
       description: step.description?.text ?? step.description ?? '',
       images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
-    this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
+    this.coursesService.course = { form: this.courseForm.value, steps: this.#steps };
     this.stepsChange$.next(value);
   }
 
@@ -116,7 +119,8 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private planetStepListService: PlanetStepListService,
     private pouchService: PouchService,
-    private tagsService: TagsService
+    private tagsService: TagsService,
+    private dialog: MatDialog
   ) {
     this.createForm();
     this.onFormChanges();
@@ -439,6 +443,26 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
     if (!this.draftExists) {
       return;
     }
+    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: of(true),
+          onNext: () => {
+            this.executeDeleteDraft();
+            this.deleteDialog?.close();
+          }
+        },
+        changeType: 'delete',
+        type: 'courseDraft',
+        displayName: this.courseForm.value.courseTitle
+      }
+    });
+    this.deleteDialog.afterClosed().subscribe(() => {
+      this.deleteDialog = null;
+    });
+  }
+
+  private executeDeleteDraft() {
     this.coverUploadComponent?.clear();
     if (this.savedCourse) {
       this.setFormAndSteps({

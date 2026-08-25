@@ -284,7 +284,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     const structuredData = this.structureChartData(this.chartData);
     this.csvService.exportCSV({
       data: structuredData,
-      title: title
+      title
     });
   }
 

@@ -64,12 +64,12 @@ interface TitleForm {
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.filterConversations();
   }
@@ -165,7 +165,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.dbName, {
         ...conversation,
         title: title !== undefined && title !== null ? title : conversation.title,
-        shared: shared,
+        shared,
         updatedDate: this.couchService.datePlaceholder
       }
     ).subscribe((data) => {

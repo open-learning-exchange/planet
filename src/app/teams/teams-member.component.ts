@@ -87,7 +87,14 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     this.actionClick.emit(actionParams);
   }
 
-  openMemberDialog(member) {
+  openMemberDialog(member, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
     this.usersProfileDialogService.open({ member });
   }
 

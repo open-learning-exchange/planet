@@ -10,7 +10,7 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, defer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   filterSpecificFieldsByWord, composeFilterFunctions, filterFieldExists, sortNumberOrString, filterDropdowns, filterAdmin, trackById
@@ -83,26 +83,26 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   set search(newSearch: string) {
     this.usersTable.filter = newSearch || ' ';
   }
-  private _filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
+  #filter: { 'doc.roles': string, 'doc.planetCode': string } = { 'doc.roles' : '', 'doc.planetCode': '' };
   @Input()
   get filter() {
-    return this._filter;
+    return this.#filter;
   }
   set filter(newFilter) {
     // Trigger filter changes in the Material table
     this.usersTable.filter = this.usersTable.filter;
-    this._filter = newFilter;
+    this.#filter = newFilter;
   }
-  private _tableState: TableState;
+  #tableState: TableState;
   @Input()
   get tableState(): TableState {
-    return this._tableState;
+    return this.#tableState;
   }
   set tableState(newState: TableState) {
     this.filter['doc.planetCode'] = newState.selectedChild.code ||
       (newState.filterType === 'associated' ? undefined : this.configuration.code);
     this.filterType = newState.filterType;
-    this._tableState = newState;
+    this.#tableState = newState;
   }
   get tableData() {
     return this.usersTable;
@@ -123,7 +123,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   private onDestroy$ = new Subject<void>();
   isOnlyManagerSelected = false;
   configuration = this.stateService.configuration;
-  deleteDialog: MatDialogRef<DialogsPromptComponent>;
+  promptDialog: MatDialogRef<DialogsPromptComponent>;
   deviceType: DeviceType;
   isMobile: boolean;
   trackById = trackById;
@@ -209,7 +209,11 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
     }
   }
 
-  gotoProfileView(userName: string) {
+  gotoProfileView(userName: string, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
     if (this.isDialog) {
       return;
     }
@@ -233,22 +237,56 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
 
   deleteClick(user, event) {
     event.stopPropagation();
-    this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
+    this.openUserPrompt({
+      user,
+      changeType: 'delete',
+      extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : '',
+      request: () => this.usersService.deleteUser(user),
+      onSuccess: () => this.planetMessageService.showMessage($localize`User deleted: ${user.name}`),
+      errorMessage: $localize`There was a problem deleting this user.`
+    });
+  }
+
+  deactivateClick(user: any, event: Event) {
+    event.stopPropagation();
+    this.openUserPrompt({
+      user,
+      changeType: 'deactivate',
+      extraMessage: $localize`Deactivating will remove all active roles for this user.`,
+      request: () => this.usersService.setRoles(user, []),
+      onSuccess: () => {
+        this.usersService.requestUsers(true);
+        this.planetMessageService.showMessage($localize`User deactivated: ${user.name}`);
+      },
+      errorMessage: $localize`There was an error deactivating user.`
+    });
+  }
+
+  private openUserPrompt({ user, changeType, extraMessage, request, onSuccess, errorMessage }: {
+    user: any,
+    changeType: string,
+    extraMessage: string,
+    request: () => Observable<any>,
+    onSuccess: () => void,
+    errorMessage: string
+  }) {
+    this.promptDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {
-          request: this.usersService.deleteUser(user),
+          // Deferred so the request reads the user doc when OK is clicked rather than when the dialog opens
+          request: defer(request),
           onNext: () => {
             this.selection.deselect(user);
-            this.planetMessageService.showMessage($localize`User deleted: ${user.name}`);
-            this.deleteDialog.close();
+            onSuccess();
+            this.promptDialog.close();
           },
-          onError: () => this.planetMessageService.showAlert($localize`There was a problem deleting this user.`)
+          onError: () => this.planetMessageService.showAlert(errorMessage)
         },
         amount: 'single',
-        changeType: 'delete',
+        changeType,
         type: 'user',
         displayName: user.name,
-        extraMessage: user.requestId ? $localize`Planet associated with it will be disconnected.` : ''
+        extraMessage
       }
     });
   }
