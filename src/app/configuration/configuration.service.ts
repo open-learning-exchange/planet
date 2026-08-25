@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
-import { switchMap, mergeMap, takeWhile } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
+import { forkJoin, of, throwError } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
+import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce, stringToHex } from '../shared/utils';
+import { mergeConfiguration, parentConfiguration, patchesParentConfiguration } from './configuration.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,7 @@ export class ConfigurationService {
     private couchService: CouchService,
     private userService: UserService,
     private managerService: ManagerService,
+    private stateService: StateService,
     private syncService: SyncService
   ) {}
 
@@ -150,20 +153,50 @@ export class ConfigurationService {
     );
   }
 
-  updateConfiguration(configuration) {
-    return this.postConfiguration(configuration).pipe(switchMap(() => {
-      return this.couchService.post(
-        'communityregistrationrequests/_find',
-        findDocuments({ 'code': configuration.code }),
-        { domain: configuration.parentDomain }
-      );
-    }), switchMap((res) => {
-      // Remove local revision as it will have conflict with parent
-      const { _rev: localRev, ...localConfig } = configuration;
-      // if parent record not found set empty
+  /**
+   * Applies a partial configuration change. Callers submit only the fields they own, e.g. the
+   * currency screen submits `{ currency: { ...this.form.value } }`, and never have to reconstruct
+   * the whole doc or restore the secrets `StateService.configuration` hides from them. The patch is
+   * merged onto the latest local revision, so concurrent changes to other fields survive, and only
+   * the fields on the `parentConfigurationFields` allowlist are shared with the parent planet.
+   * Emits the updated local configuration once the write, and any parent sync it needs, is done.
+   */
+  patchConfiguration(patch: any) {
+    return this.patchLocalConfiguration(patch).pipe(switchMap((configuration) =>
+      patchesParentConfiguration(patch) ?
+        // The parent sync emits nothing of its own for a planet the parent already knows about
+        this.sendConfigurationToParent(configuration).pipe(toArray(), map(() => configuration)) :
+        of(configuration)
+    ));
+  }
+
+  /** Merges a patch onto the latest local revision and writes it back, retrying once on a conflict. */
+  patchLocalConfiguration(patch: any, retriesOnConflict = 1) {
+    return this.getConfiguration(patch._id).pipe(
+      switchMap((configuration) => this.postConfiguration(mergeConfiguration(configuration, patch)).pipe(
+        map(([ { doc } ]) => doc),
+        catchError((error) => error.status === 409 && retriesOnConflict > 0 ?
+          this.patchLocalConfiguration(patch, retriesOnConflict - 1) : throwError(error))
+      ))
+    );
+  }
+
+  getConfiguration(configurationId = this.stateService.configuration._id) {
+    return configurationId ?
+      this.couchService.get('configurations/' + configurationId) :
+      throwError(new Error('There is no local configuration to update'));
+  }
+
+  private sendConfigurationToParent(configuration: any) {
+    return this.couchService.post(
+      'communityregistrationrequests/_find',
+      findDocuments({ 'code': configuration.code }),
+      { domain: configuration.parentDomain }
+    ).pipe(switchMap((res) => {
+      // The parent keeps its own revision of the doc, so take its _id and _rev when it already has one
       const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
       const userDetail = { ...this.userService.get(), ...this.userService.credentials };
-      return this.addPlanetToParent({ ...localConfig, ...parentConfig }, res.docs.length === 0, userDetail);
+      return this.addPlanetToParent({ ...parentConfiguration(configuration), ...parentConfig }, res.docs.length === 0, userDetail);
     }));
   }
 

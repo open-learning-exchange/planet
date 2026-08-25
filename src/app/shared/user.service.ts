@@ -6,6 +6,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
 import { StateService } from './state.service';
+import { mergeConfiguration } from '../configuration/configuration.utils';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -250,13 +251,19 @@ export class UserService {
   }
 
   updateConfigurationContact(userInfo, planetConfiguration) {
-    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-    const newConfig = { ...planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
-    return this.couchService.put('configurations/' + planetConfiguration._id, newConfig)
-      .pipe(map((res) => {
+    const { firstName, lastName, middleName, email, phoneNumber } = userInfo;
+    const configurationUrl = 'configurations/' + planetConfiguration._id;
+    // Read the doc back rather than writing over StateService's copy of it, which has the secret keys removed
+    return this.couchService.get(configurationUrl).pipe(
+      switchMap((configuration) => this.couchService.put(
+        configurationUrl,
+        mergeConfiguration(configuration, { firstName, lastName, middleName, email, phoneNumber })
+      )),
+      map((res) => {
         this.stateService.requestData('configurations', 'local');
         return res;
-      }));
+      })
+    );
   }
 
   doesUserHaveRole(searchRoles: string[]) {
