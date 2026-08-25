@@ -11,13 +11,13 @@ import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
 import { DashboardTileComponent } from './dashboard-tile.component';
 
-function tileElement(
+const tileElement = (
   className: string,
   offsetHeight: number,
   padding = '0',
   lineHeight = 'normal',
   tagName = 'div'
-): HTMLElement {
+): HTMLElement => {
   const element = document.createElement(tagName);
   element.className = className;
   element.style.paddingTop = padding;
@@ -27,7 +27,7 @@ function tileElement(
   Object.defineProperty(element, 'offsetHeight', { value: offsetHeight, configurable: true });
   Object.defineProperty(element, 'clientHeight', { value: offsetHeight, configurable: true });
   return element;
-}
+};
 
 describe('DashboardTileComponent', () => {
   describe('title line measurement', () => {
