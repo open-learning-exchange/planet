@@ -3,7 +3,6 @@ import { ActivatedRoute, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CouchService } from '../../shared/couchdb.service';
-import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { UsersAchievementsService } from '../users-achievements/users-achievements.service';
 import { findDocuments } from '../../shared/mangoQueries';
@@ -22,6 +21,7 @@ import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/avatar.component';
 
 @Component({
   selector: 'planet-users-profile',
@@ -50,15 +50,14 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatCardContent,
     MatDialogClose,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {
   private dbName = '_users';
   user: any = {};
   userDetail: any = {};
-  imageSrc = '';
-  urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
   urlName = '';
   editable = false;
   hasAchievement = false;
@@ -144,10 +143,6 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
         userDetail.name === this.userService.get().name ||
         (this.userService.doesUserHaveRole([ '_admin' ]) && this.stateService.configuration.adminName.split('@')[0] !== this.urlName)
       );
-      if (response['_attachments']) {
-        const filename = Object.keys(response._attachments)[0];
-        this.imageSrc = this.urlPrefix + '/org.couchdb.user:' + this.urlName + '/' + filename;
-      }
       this.checkHasAchievments();
     }, (error) => {
       console.log(error);
