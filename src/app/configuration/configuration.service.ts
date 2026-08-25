@@ -3,12 +3,12 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { catchError, map, switchMap, mergeMap, takeWhile, toArray } from 'rxjs/operators';
-import { forkJoin, of, throwError } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce, stringToHex } from '../shared/utils';
-import { mergeConfiguration, parentConfiguration, patchesParentConfiguration } from './configuration.utils';
+import { mergeConfiguration, parentConfiguration, patchOwns, patchesParentConfiguration } from './configuration.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -154,30 +154,45 @@ export class ConfigurationService {
   }
 
   /**
-   * Applies a partial configuration change. Callers submit only the fields they own, e.g. the
-   * currency screen submits `{ currency: { ...this.form.value } }`, and never have to reconstruct
-   * the whole doc or restore the secrets `StateService.configuration` hides from them. The patch is
-   * merged onto the latest local revision, so concurrent changes to other fields survive, and only
-   * the fields on the `parentConfigurationFields` allowlist are shared with the parent planet.
-   * Emits the updated local configuration once the write, and any parent sync it needs, is done.
+   * Applies a partial configuration change and runs the side effects the submitted fields call for.
+   * Callers submit only the fields they own, e.g. the currency screen submits
+   * `{ currency: { ...this.form.value } }`, and never have to reconstruct the whole doc or restore
+   * the secrets `StateService.configuration` hides from them. The patch is merged onto the latest
+   * local revision, so concurrent changes to other fields survive.
+   *
+   * Side effects are keyed off the patch rather than applied to every write: `_users/_security` is
+   * only touched when the patch owns `autoAccept`, which needs CouchDB administrator permissions,
+   * and the parent planet only hears about a patch which changes a `parentConfigurationFields`
+   * field. A patch of purely local fields — `currency`, `keys`, `customVoiceLabels` — therefore
+   * writes nothing but the local doc. Emits the updated local configuration exactly once, after
+   * every side effect it needed has finished.
    */
   patchConfiguration(patch: any) {
-    return this.patchLocalConfiguration(patch).pipe(switchMap((configuration) =>
-      patchesParentConfiguration(patch) ?
+    return this.patchLocalConfiguration(patch).pipe(switchMap((configuration) => {
+      const sideEffects = [
+        ...(patchOwns(patch, 'autoAccept') ? [ this.updateAutoAccept(configuration.autoAccept) ] : []),
         // The parent sync emits nothing of its own for a planet the parent already knows about
-        this.sendConfigurationToParent(configuration).pipe(toArray(), map(() => configuration)) :
-        of(configuration)
-    ));
+        ...(patchesParentConfiguration(patch) ? [ this.sendConfigurationToParent(configuration).pipe(toArray()) ] : [])
+      ];
+      return sideEffects.length === 0 ? of(configuration) : forkJoin(sideEffects).pipe(map(() => configuration));
+    }));
   }
 
-  /** Merges a patch onto the latest local revision and writes it back, retrying once on a conflict. */
-  patchLocalConfiguration(patch: any, retriesOnConflict = 1) {
+  /**
+   * Merges a patch onto the latest local revision and writes it back, retrying once on a conflict.
+   * Writes the doc and nothing else, so callers with no permission to touch `_users/_security` — or
+   * no reason to — can use it directly. Any `_rev` the caller supplies is dropped, since it is only
+   * as fresh as the copy the caller was holding.
+   */
+  patchLocalConfiguration(patch: any, retriesOnConflict = 1): Observable<any> {
+    const { _rev: callerRev, ...fields } = patch;
     return this.getConfiguration(patch._id).pipe(
-      switchMap((configuration) => this.postConfiguration(mergeConfiguration(configuration, patch)).pipe(
-        map(([ { doc } ]) => doc),
-        catchError((error) => error.status === 409 && retriesOnConflict > 0 ?
-          this.patchLocalConfiguration(patch, retriesOnConflict - 1) : throwError(error))
-      ))
+      switchMap((configuration) =>
+        this.couchService.updateDocument('configurations', mergeConfiguration(configuration, fields)).pipe(
+          map(({ doc }) => doc),
+          catchError((error) => error.status === 409 && retriesOnConflict > 0 ?
+            this.patchLocalConfiguration(patch, retriesOnConflict - 1) : throwError(error))
+        ))
     );
   }
 

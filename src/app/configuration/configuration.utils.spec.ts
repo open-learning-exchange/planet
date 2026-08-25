@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { mergeConfiguration, parentConfiguration, patchesParentConfiguration } from './configuration.utils';
+import { mergeConfiguration, parentConfiguration, patchOwns, patchesParentConfiguration } from './configuration.utils';
 
 describe('configuration utils', () => {
   const configuration = {
@@ -12,6 +12,7 @@ describe('configuration utils', () => {
     planetType: 'community',
     autoAccept: true,
     currency: { code: 'GTQ', symbol: 'Q' },
+    customVoiceLabels: [ 'Abuela' ],
     streaming: false,
     keys: { openai: 'sk-openai', gemini: 'sk-gemini' },
     models: { openai: 'gpt-5' }
@@ -58,6 +59,7 @@ describe('configuration utils', () => {
 
     it('leaves out local only fields', () => {
       expect(publicConfiguration.currency).toBeUndefined();
+      expect(publicConfiguration.customVoiceLabels).toBeUndefined();
       expect(publicConfiguration.models).toBeUndefined();
       expect(publicConfiguration.streaming).toBeUndefined();
     });
@@ -91,7 +93,27 @@ describe('configuration utils', () => {
     it('is false for a purely local patch', () => {
       expect(patchesParentConfiguration({ keys: {}, models: {}, streaming: true })).toBe(false);
       expect(patchesParentConfiguration({ currency: { code: 'USD', symbol: '$' } })).toBe(false);
+      expect(patchesParentConfiguration({ customVoiceLabels: [ 'Maestro' ] })).toBe(false);
       expect(patchesParentConfiguration({})).toBe(false);
+    });
+
+    it('ignores the fields which only address the doc', () => {
+      expect(patchesParentConfiguration({ _id: 'config_id', _rev: '3-local' })).toBe(false);
+      expect(patchesParentConfiguration({ _id: 'config_id', customVoiceLabels: [ 'Maestro' ] })).toBe(false);
+    });
+  });
+
+  describe('patchOwns', () => {
+    it('is true only when the patch sets the field itself', () => {
+      expect(patchOwns({ autoAccept: false }, 'autoAccept')).toBe(true);
+      expect(patchOwns({ autoAccept: undefined }, 'autoAccept')).toBe(true);
+      expect(patchOwns({ currency: {} }, 'autoAccept')).toBe(false);
+      expect(patchOwns({}, 'autoAccept')).toBe(false);
+      expect(patchOwns(undefined, 'autoAccept')).toBe(false);
+    });
+
+    it('does not mistake an inherited property for one the patch owns', () => {
+      expect(patchOwns({ currency: {} }, 'constructor')).toBe(false);
     });
   });
 });

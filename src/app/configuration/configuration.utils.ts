@@ -47,6 +47,13 @@ export const parentConfiguration = (configuration: any = {}) =>
   parentConfigurationFields.reduce((publicConfiguration: any, field) =>
     configuration[field] === undefined ? publicConfiguration : { ...publicConfiguration, [field]: configuration[field] }, {});
 
+/** Fields which address the doc rather than change it, so a patch carrying them changes nothing. */
+const configurationAddressFields = [ '_id', '_rev' ];
+
+/** True when the patch itself sets `field`, as opposed to inheriting it or leaving it out. */
+export const patchOwns = (patch: any = {}, field: string) => Object.prototype.hasOwnProperty.call(patch, field);
+
 /** True when a patch changes at least one field the parent planet keeps a copy of. */
 export const patchesParentConfiguration = (patch: any = {}) =>
-  Object.keys(patch).some(field => parentConfigurationFields.indexOf(field) > -1);
+  Object.keys(patch).some(field =>
+    configurationAddressFields.indexOf(field) === -1 && parentConfigurationFields.indexOf(field) > -1);
