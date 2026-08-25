@@ -87,7 +87,7 @@
                 <mat-icon>feedback</mat-icon>
                 <span i18n>Feedback</span>
               </a>
-              @if (currentUser.name === element.createdBy) {
+              @if (currentUser.name === element.createdBy || currentUser.isUserAdmin) {
                 <a mat-menu-item [routerLink]="['/meetups/update', element._id]">
                   <mat-icon>folder</mat-icon>
                   <span i18n>Manage</span>

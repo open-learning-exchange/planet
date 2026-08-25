@@ -52,7 +52,10 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   @Input() editable = true;
   @Output() switchView = new EventEmitter<'close' | 'add'>();
   private onDestroy$ = new Subject<void>();
-  canManage = false;
+  get canManage(): boolean {
+    const user = this.userService.get();
+    return !!user?._id && (user.isUserAdmin || user.name === this.meetupDetail?.createdBy);
+  }
   members = [];
   parent = this.route.snapshot.data.parent;
   listDialogRef: MatDialogRef<DialogsListComponent>;
@@ -78,7 +81,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.canManage = this.userService.get()?._id;
     this.getEnrolledUsers();
     this.meetupService.meetupUpdated$.pipe(takeUntil(this.onDestroy$))
       .subscribe((meetupArray) => {
