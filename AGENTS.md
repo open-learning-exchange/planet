@@ -34,7 +34,7 @@ Independent Node service; requires its own `.env` (see `gateway/README.md`) with
 
 ## Architecture
 
-Planet Learning is an Angular 19 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
+Planet Learning is an Angular 20 + CouchDB learning platform. There are two tiers of deployment — a **Nation** (cloud aggregator) server and a **Community** (local LAN) server — and most "sync" / "parent" / "manager" concepts in the code exist to bridge the two. `environment.ts` captures this: `couchAddress` is the local DB, `parentProtocol` + `centerAddress` point at the upstream Nation, and `chatAddress` points at the local gateway chat namespace.
 
 ### Repository layout
 
@@ -65,3 +65,9 @@ From `Style-Guide.md` (read it before making UI changes):
 ### Git workflow
 
 Develop on feature branches off `master`; the project asks for two positive reviews before merging. Install hooks (`npm run install-hooks`) so `pre-push` enforces lint in both `./` and `gateway/`.
+
+PR titles follow the house style `scope: smoother thing doing (fixes #N)` (see the log; the `merge-prepping` skill below automates this). `(fixes #N)` goes in the **title** — the squash commit message is the PR title, so that's what auto-closes the issue on merge.
+
+## The Agent Spellbook
+
+`docs/AGENT_SPELLBOOK.md` is the reference for working with the other AI agents on PRs (coderabbitai, codex, copilot, devin, openhands, the `jules` label, dependabot): the Grid of who answers how, the **Laws of Summoning** — read them before mentioning any agent handle — and "The Skill Sync", which covers how the shared agent skills under `.agents/skills/` are wired up and maintained. Skill repos are git submodules, **not** initialized on a default clone or `actions/checkout` — run `git submodule update --init --recursive` before reading anything under `.agents/skills/`. Current skills: **merge-prepping** (PR titles into the house style above; source: https://github.com/dogi/merge-prepping), a submodule under `.agents/skills/`; and **branch-overtaking** (taking over an existing branch and its PR; source: https://github.com/dogi/branch-overtaking), registered for Claude Code only in `.claude/settings.json` with no submodule, so nothing under `.agents/skills/` carries it.

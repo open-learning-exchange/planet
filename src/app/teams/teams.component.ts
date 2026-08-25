@@ -12,8 +12,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
-import { switchMap, map, finalize, catchError } from 'rxjs/operators';
-import { forkJoin, throwError } from 'rxjs';
+import { switchMap, map, finalize, catchError, tap } from 'rxjs/operators';
+import { forkJoin, of, throwError } from 'rxjs';
 import { filterSpecificFieldsByWord, composeFilterFunctions, filterSpecificFields, deepSortingDataAccessor } from '../shared/table-helpers';
 import { TeamsService } from './teams.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
@@ -31,6 +31,7 @@ import { FormsModule } from '@angular/forms';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { enterpriseJoinAgreement } from './teams.utils';
 
 @Component({
   templateUrl: './teams.component.html',
@@ -89,14 +90,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   cancelDialog: any;
   isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
-  private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  #mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
   get mode(): 'team' | 'enterprise' {
-    return this._mode;
+    return this.#mode;
   }
   set mode(newMode: 'team' | 'enterprise') {
-    if (newMode !== this._mode) {
-      this._mode = newMode;
+    if (newMode !== this.#mode) {
+      this.#mode = newMode;
       this.getTeams();
     }
   }
@@ -266,16 +267,22 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   addTeam(team: any = {}) {
     const teamType = this.mode === 'enterprise' ? 'sync' : team.teamType;
-    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe(() => {
-      this.getTeams();
-      const msg = team._id
-        ? (this.mode === 'enterprise'
-          ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
-          : $localize`:@@team-updated-success:Team updated successfully`)
-        : (this.mode === 'enterprise'
-          ? $localize`:@@enterprise-created-success:Enterprise created successfully`
-          : $localize`:@@team-created-success:Team created successfully`);
-      this.planetMessageService.showMessage(msg);
+    this.teamsService.addTeamDialog(this.user._id, this.mode, { ...team, teamType }).subscribe({
+      next: () => {
+        this.getTeams();
+        const msg = team._id
+          ? (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-updated-success:Enterprise updated successfully`
+            : $localize`:@@team-updated-success:Team updated successfully`)
+          : (this.mode === 'enterprise'
+            ? $localize`:@@enterprise-created-success:Enterprise created successfully`
+            : $localize`:@@team-created-success:Team created successfully`);
+        this.planetMessageService.showMessage(msg);
+      },
+      error: () => {
+        this.getTeams();
+        this.planetMessageService.showAlert($localize`There was a problem saving your changes.`);
+      }
     });
   }
 
@@ -283,11 +290,21 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     return this.teamsService.toggleTeamMembership(
       team, true, membershipDoc
     ).pipe(
+      catchError(error => this.getMembershipStatus().pipe(
+        catchError(() => of(this.userMembership)),
+        tap(() => {
+          this.teams.data = this.teamList(this.teams.data);
+        }),
+        switchMap(() => throwError(error))
+      )),
       switchMap((newTeam: any) => {
         if (newTeam.status === 'archived') {
           this.removeTeamFromTable(team);
         }
-        return this.getMembershipStatus();
+        return this.getMembershipStatus().pipe(
+          map(() => true),
+          catchError(() => of(false))
+        );
       }));
   }
 
@@ -296,14 +313,24 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       data: {
         okClick: {
           request: this.leaveTeam(team, membershipDoc),
-          onNext: () => {
+          onNext: (membershipStatusRefreshed) => {
             this.leaveDialog.close();
             this.teams.data = this.teamList(this.teams.data);
+            if (!membershipStatusRefreshed) {
+              this.planetMessageService.showAlert($localize`You left successfully, but the list could not be refreshed.`);
+              return;
+            }
             const msg = this.mode === 'enterprise'
               ? $localize`:@@enterprise-left:You have left enterprise` + ' ' + team.name
               : $localize`:@@team-left:You have left team` + ' ' + team.name;
             this.planetMessageService.showMessage(msg);
           },
+          onError: () => {
+            const msg = this.mode === 'enterprise'
+              ? $localize`There was a problem leaving this enterprise.`
+              : $localize`There was a problem leaving this team.`;
+            this.planetMessageService.showAlert(msg);
+          }
         },
         changeType: 'leave',
         type: this.mode === 'enterprise' ? 'enterprise' : 'team',
@@ -347,18 +374,51 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.teams.data = this.teams.data.filter((t: any) => t.doc._id !== newTeam._id);
   }
 
+  joinRequest$(team: any) {
+    return this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
+      switchMap(() => this.teamsService.getTeamMembers(team)),
+      switchMap((docs) => this.teamsService.sendNotifications('request', docs, {
+        team,
+        url: this.router.url + '/view/' + team._id
+      })),
+      switchMap(() => this.getMembershipStatus())
+    );
+  }
+
+  requestToJoinEnterprise(team: any) {
+    const displayName = team.name;
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        okClick: {
+          request: this.joinRequest$(team),
+          onNext: () => {
+            dialogRef.close();
+            this.teams.data = this.teamList(this.teams.data);
+            const msg = $localize`:@@enterprise-join-request:Sent request to join enterprise` + ' ' + displayName;
+            this.planetMessageService.showMessage(msg);
+          },
+          onError: () => {
+            this.planetMessageService.showAlert(
+              $localize`There was a problem requesting to join this enterprise.`
+            );
+          }
+        },
+        changeType: 'request',
+        type: 'enterprise',
+        displayName,
+        rules: team.rules,
+        extraMessage: enterpriseJoinAgreement()
+      }
+    });
+  }
+
   requestToJoin(team) {
     this.dialogsLoadingService.start();
-    this.teamsService.requestToJoinTeam(team, this.userService.get()).pipe(
-      switchMap(() => this.teamsService.getTeamMembers(team)),
-      switchMap((docs) => this.teamsService.sendNotifications('request', docs, { team, url: this.router.url + '/view/' + team._id })),
-      switchMap(() => this.getMembershipStatus()),
+    this.joinRequest$(team).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe(() => {
       this.teams.data = this.teamList(this.teams.data);
-      const msg = this.mode === 'enterprise'
-        ? $localize`:@@enterprise-join-request:Sent request to join enterprise` + ' ' + team.name
-        : $localize`:@@team-join-request:Sent request to join team` + ' ' + team.name;
+      const msg = $localize`:@@team-join-request:Sent request to join team` + ' ' + team.name;
       this.planetMessageService.showMessage(msg);
     });
   }
