@@ -2,15 +2,6 @@
 @use './courses-shared' as c;
 
 planet-courses {
-  .mat-column-select {
-    max-width: 44px;
-    padding: 0 0 0 24px;
-  }
-
-  .mat-column-createdDate {
-    max-width: 100px;
-  }
-
   .column {
     display: flex;
     flex-direction: column;
@@ -38,11 +29,5 @@ planet-courses {
 
   .view-full-height.view-with-search {
     height: calc(#{v.$view-container-height} - #{c.$toolbar-height});
-  }
-
-  @media(max-width: v.$screen-md) {
-    .mat-column-createdDate {
-      max-width: 70px;
-    }
   }
 }

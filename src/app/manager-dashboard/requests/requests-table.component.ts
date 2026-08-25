@@ -36,6 +36,7 @@ interface EditChildNameFormControls {
 @Component({
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
+  styleUrls: ['./requests-table.component.scss'],
   imports: [
     MatTable,
     MatSort,
@@ -275,7 +276,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     return ({ name }: { name: string }) => {
       this.couchService.updateDocument(
         this.dbName,
-        { ...nameDoc, 'name': name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
+        { ...nameDoc, name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
       ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {

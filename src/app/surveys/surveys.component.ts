@@ -183,7 +183,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadSurveys() {
     this.isLoading = true;
-    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ type }));
     forkJoin([
       receiveData('exams', 'surveys'),
       this.couchService.get('submissions/_design/surveyData/_view/submissionsByParent'),
@@ -262,8 +262,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
-        // community surveys that can be adopted & team hasn't adopted yet
-        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+        // active, shareable community surveys the team has not already adopted
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
+          !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
       // manager view: no team adopted/sent survey
       return !survey.teamId && !survey.sourceSurveyId;
@@ -454,7 +455,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialogsLoadingService.stop();
           });
         },
-        excludeIds: excludeIds,
+        excludeIds,
         mode: 'teams'
       }
     });

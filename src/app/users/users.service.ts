@@ -162,7 +162,7 @@ export class UsersService {
   setRoles(user, roles) {
     const tempUser = {
       ...user,
-      roles: roles,
+      roles,
       oldRoles: user.roles?.length ? [ ...user.roles ] : [ 'learner' ],
     };
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
