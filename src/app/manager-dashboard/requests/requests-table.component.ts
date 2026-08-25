@@ -36,6 +36,7 @@ interface EditChildNameFormControls {
 @Component({
   selector: 'planet-requests-table',
   templateUrl: './requests-table.component.html',
+  styleUrls: ['./requests-table.component.scss'],
   imports: [
     MatTable,
     MatSort,
