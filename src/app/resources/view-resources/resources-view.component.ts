@@ -10,9 +10,11 @@ import { PlanetMessageService } from '../../shared/planet-message.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { languages } from '../../shared/languages';
 import * as constants from '../resources-constants';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
@@ -30,6 +32,7 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     MatToolbar,
     MatIconAnchor,
     MatIcon,
+    MatTooltip,
     NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
@@ -84,7 +87,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
     private deviceInfoService: DeviceInfoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private clipboard: Clipboard
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -155,6 +159,12 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
+  }
+
+  copyLink() {
+    const link = `${window.location.origin}/resources/view/${this.resourceId}`;
+    this.clipboard.copy(link);
+    this.planetMessageService.showMessage($localize`Resource link copied to clipboard`);
   }
 
   updateResource() {
