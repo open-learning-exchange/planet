@@ -89,12 +89,12 @@ describe('DashboardComponent', () => {
     vi.restoreAllMocks();
   });
 
-  function createComponent(userOverrides: any = {}) {
+  const createComponent = (userOverrides: any = {}) => {
     userServiceMock.get.mockReturnValue({ ...mockUser, ...userOverrides });
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     return fixture;
-  }
+  };
 
   it('initializes user information and roles', () => {
     createComponent().detectChanges();
