@@ -45,7 +45,7 @@
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
+  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="courses.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear</span></button>
 </ng-template>
 
 <div [ngClass]="{ 'space-container': !isForm }" class="primary-link-hover">
