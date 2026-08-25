@@ -169,6 +169,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         }],
 
         "@typescript-eslint/unified-signatures": "error",
+        "one-var": ["error", "never"],
         complexity: "off",
         "constructor-super": "error",
         "eqeqeq": ["error", "smart"],
