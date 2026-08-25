@@ -133,15 +133,19 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (!dashboardItem) {
       return;
     }
-    const tileLines = this.textLinesForItem(dashboardItem, itemDiv.clientHeight);
+    const tileLines = this.textLinesForItem(this.itemContent(dashboardItem), itemDiv.clientHeight);
     const courseItem = itemDiv.querySelector('.dashboard-item.has-course-cover');
     const courseTileLines = courseItem ?
-      this.textLinesForItem(courseItem, itemDiv.clientHeight) : this.courseTileLines;
+      this.textLinesForItem(this.itemContent(courseItem), itemDiv.clientHeight) : this.courseTileLines;
     if (tileLines !== this.tileLines || courseTileLines !== this.courseTileLines) {
       this.tileLines = tileLines;
       this.courseTileLines = courseTileLines;
       this.cd.detectChanges();
     }
+  }
+
+  private itemContent(item: HTMLElement): HTMLElement {
+    return item.querySelector<HTMLElement>('.dashboard-item-link') ?? item;
   }
 
   private textLinesForItem(item: HTMLElement, availableHeight: number): number {

@@ -283,7 +283,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType,
+      mediaType,
       _attachments: {}
     };
     return of({ resource, file });
@@ -386,7 +386,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
           zipFile.file(fileName).async('base64').then(function success(data) {
-            observer.next({ name: fileName, data: data });
+            observer.next({ name: fileName, data });
             observer.complete();
           }, function error(e) {
             observer.error(e);

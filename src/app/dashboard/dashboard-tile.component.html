@@ -1,22 +1,29 @@
 <mat-card class="dashboard-card">
-  <div class="left-tile accent-color" [class.accordion-toggle]="isAccordionMode"
-    [class.expanded]="isExpanded" (click)="isAccordionMode && toggleAccordion($event)">
-    @if (link || emptyLink) {
-      <a [routerLink]="isAccordionMode ? null : [link || emptyLink]">
-        <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
-      </a>
-    } @else {
-      @if (cardType==='myLife') {
+  @if (isAccordionMode) {
+    <button type="button" class="left-tile accent-color accordion-toggle"
+      [class.expanded]="isExpanded"
+      [attr.aria-expanded]="isExpanded"
+      [attr.aria-controls]="cardType + '-dashboard-items'"
+      (click)="toggleAccordion($event)">
+      <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
+      <mat-icon aria-hidden="true" class="toggle-icon">{{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+    </button>
+  } @else {
+    <div class="left-tile accent-color">
+      @if (link || emptyLink) {
+        <a [routerLink]="[link || emptyLink]">
+          <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
+        </a>
+      } @else if (cardType === 'myLife') {
         <span>
           <planet-dashboard-tile-title [cardTitle]="cardTitle" [cardType]="cardType"></planet-dashboard-tile-title>
         </span>
       }
-    }
-    @if (isAccordionMode) {
-      <mat-icon class="toggle-icon">{{ isExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
-    }
-  </div>
-  <div class="right-tile" #items>
+    </div>
+  }
+  <div class="right-tile" #items
+    [id]="cardType + '-dashboard-items'"
+    [attr.inert]="isAccordionMode && !isExpanded ? '' : null">
     <div class="dashboard-items"
       [ngClass]="{'dashboard-empty': itemData.length === 0, 'accordion-list': isAccordionMode}"
       cdkDropList
@@ -29,42 +36,47 @@
               class="dashboard-item"
               [ngClass]="{
                 'bg-grey': even,
-                'cursor-pointer': item.link && !recentlyDragged,
                 'accordion-item': isAccordionMode,
                 'has-course-cover': cardType === 'myCourses' && item.coverFileName
               }"
-              [routerLink]="recentlyDragged ? null : item.link"
-              [state]="item.returnState ? { returnState: item.returnState } : undefined"
-              [matTooltip]="item.tooltip"
               cdkDrag
               [cdkDragDisabled]="cardType==='myLife' || isAccordionMode"
               #dashboardTile
               >
-              @if (cardType === 'myCourses' && item.coverFileName) {
-                <div class="dashboard-course-cover">
-                  <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
-                </div>
-              }
-              @if (item.firstLine || item.badge) {
-                <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
-                  {{item.firstLine}}
+              <a class="dashboard-item-link"
+                [class.cursor-pointer]="item.link && !recentlyDragged"
+                [routerLink]="recentlyDragged ? null : item.link"
+                [state]="item.returnState ? { returnState: item.returnState } : undefined"
+                [matTooltip]="item.tooltip">
+                @if (cardType === 'myCourses' && item.coverFileName) {
+                  <div class="dashboard-course-cover">
+                    <img [src]="coverImageUrl(item)" alt="Course cover" i18n-alt>
+                  </div>
+                }
+                @if (item.firstLine || item.badge) {
+                  <p [matBadge]="item.badge" [matBadgeHidden]="item.badge===0" matBadgeOverlap="false" matBadgePosition="before">
+                    {{item.firstLine}}
+                  </p>
+                }
+                <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': dashboardTextLines(item),'word-wrap': 'break-word' }">
+                  {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
                 </p>
-              }
-              <p class="dashboard-text" [ngStyle]="{ '-webkit-line-clamp': dashboardTextLines(item),'word-wrap': 'break-word' }">
-                {{(cardType === 'myLife' && isAccordionMode) ? '' : (item.title | truncateText:50)}}
-              </p>
+              </a>
               @if (cardType!=='myLife' && !item?.canRemove) {
-                <button mat-icon-button class="delete-item" (click)="removeFromShelf($event, item)">
-                  <mat-icon i18n-matTooltip [matTooltip]="getRemoveTooltip(cardTitle)" [inline]="true">clear</mat-icon>
+                <button mat-icon-button class="delete-item"
+                  [attr.aria-label]="getRemoveTooltip(cardTitle)"
+                  [matTooltip]="getRemoveTooltip(cardTitle)"
+                  (click)="removeFromShelf($event, item)">
+                  <mat-icon [inline]="true">clear</mat-icon>
                 </button>
               }
             </div>
           </ng-container>
         }
         @if (itemData.length === 0) {
-          <span class="dashboard-item cursor-pointer" [routerLink]="[emptyLink]" i18n>
-          Add item to {{cardTitle}}
-        </span>
+          <a class="dashboard-item dashboard-empty-link cursor-pointer" [routerLink]="[emptyLink]" i18n>
+            Add item to {{cardTitle}}
+          </a>
         }
       } @else {
         <planet-loading-spinner text="Loading..." i18n-text></planet-loading-spinner>

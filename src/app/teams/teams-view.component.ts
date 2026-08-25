@@ -751,7 +751,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',

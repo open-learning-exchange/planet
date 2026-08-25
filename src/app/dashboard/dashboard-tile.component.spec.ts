@@ -56,11 +56,14 @@ describe('DashboardTileComponent', () => {
     it('measures regular and course title lines independently', () => {
       const itemDiv = tileElement('', 115);
       Object.defineProperty(itemDiv, 'clientHeight', { value: 100 });
-      const courseItem = tileElement('dashboard-item has-course-cover', 200, '8px');
+      const courseItem = tileElement('dashboard-item has-course-cover', 200);
+      const courseItemLink = tileElement('dashboard-item-link', 200, '8px', 'normal', 'a');
       const courseCover = tileElement('dashboard-course-cover', 48);
       courseCover.style.marginBottom = '4px';
-      courseItem.append(courseCover);
-      const regularItem = tileElement('dashboard-item', 200, '16px');
+      courseItemLink.append(courseCover);
+      courseItem.append(courseItemLink);
+      const regularItem = tileElement('dashboard-item', 200);
+      regularItem.append(tileElement('dashboard-item-link', 200, '16px', 'normal', 'a'));
       itemDiv.append(courseItem, regularItem);
       component.itemDiv = new ElementRef(itemDiv);
       component.cardType = 'myCourses';
@@ -76,8 +79,10 @@ describe('DashboardTileComponent', () => {
 
     it('reserves first-line height and uses an explicit line height', () => {
       const itemDiv = tileElement('', 100);
-      const item = tileElement('dashboard-item', 200, '16px', '24px');
-      item.append(tileElement('', 24, '0', 'normal', 'p'));
+      const item = tileElement('dashboard-item', 200);
+      const itemLink = tileElement('dashboard-item-link', 200, '16px', '24px', 'a');
+      itemLink.append(tileElement('', 24, '0', 'normal', 'p'));
+      item.append(itemLink);
       itemDiv.append(item);
       component.itemDiv = new ElementRef(itemDiv);
 
