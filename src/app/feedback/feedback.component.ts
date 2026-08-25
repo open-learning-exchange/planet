@@ -113,14 +113,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     'type': '',
     'status': ''
   };
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch;
+    return this.#titleSearch;
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
   }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
