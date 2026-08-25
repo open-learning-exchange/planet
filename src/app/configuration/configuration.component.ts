@@ -352,7 +352,6 @@ export class ConfigurationComponent implements OnInit {
     }
     this.spinnerOn = true;
     if (this.configurationType === 'update') {
-      // Only the fields these forms own are submitted, the service merges them onto the latest revision
       const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
       this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),

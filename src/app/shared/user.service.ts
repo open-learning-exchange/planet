@@ -252,7 +252,6 @@ export class UserService {
   updateConfigurationContact(userInfo, planetConfiguration) {
     const { firstName, lastName, middleName, email, phoneNumber } = userInfo;
     const configurationUrl = 'configurations/' + planetConfiguration._id;
-    // Read the doc back rather than writing over StateService's copy of it, which has the secret keys removed
     return this.couchService.get(configurationUrl).pipe(
       switchMap((configuration) => this.couchService.put(
         configurationUrl,

@@ -164,7 +164,6 @@ export class ConfigurationService {
     }));
   }
 
-  /** Applies a patch only to the latest local configuration, retrying one conflict. */
   patchLocalConfiguration(patch: any): Observable<any> {
     return this.patchLocalConfigurationWithRetry(patch, 1);
   }
