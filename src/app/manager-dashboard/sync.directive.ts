@@ -145,7 +145,7 @@ export class SyncDirective {
         ...userProps,
         _id: user.name + '@' + planetCode,
         couchId: user._id,
-        planetCode: planetCode
+        planetCode
       };
     });
   }

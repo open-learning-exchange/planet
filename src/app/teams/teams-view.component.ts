@@ -35,7 +35,6 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
 import {
   MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
 } from '@angular/material/card';
@@ -73,7 +72,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatTabLabel,
-    TdMarkdownComponent,
     MatCard,
     MatCardHeader,
     MatCardAvatar,
@@ -753,7 +751,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
