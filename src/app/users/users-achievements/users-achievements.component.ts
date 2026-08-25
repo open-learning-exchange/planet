@@ -19,9 +19,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/avatar.component';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -36,7 +37,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     PlanetBetaDirective,
     MatList,
     MatListItem,
@@ -45,17 +46,19 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     NgClass,
     MatListItemLine,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
+  userName: string;
+  userPlanetCode: string;
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
@@ -83,11 +86,15 @@ export class UsersAchievementsComponent implements OnInit {
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
+        this.userName = currentUser.name;
+        this.userPlanetCode = currentUser.planetCode;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
         name = name.split('@')[0];
-        this.initUser(name, params.get('planet'));
-        id = 'org.couchdb.user:' + name + '@' + params.get('planet');
+        this.userName = name;
+        this.userPlanetCode = params.get('planet');
+        this.initUser(name, this.userPlanetCode);
+        id = 'org.couchdb.user:' + name + '@' + this.userPlanetCode;
       }
       if (id === (currentUser._id + '@' + currentUser.planetCode)) {
         this.ownAchievements = true;
@@ -164,14 +171,6 @@ export class UsersAchievementsComponent implements OnInit {
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
-  get profileImg() {
-    const attachments = this.userService.get()._attachments;
-    if (attachments) {
-      return this.urlPrefix + Object.keys(attachments)[0];
-    }
-    return 'assets/image.png';
-  }
-
   setCertifications(courses = [], progress = [], certifications = []) {
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
@@ -188,6 +187,7 @@ export class UsersAchievementsComponent implements OnInit {
 
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
+    const formattedMemberSince = this.user.joinDate ? formatDate(this.user.joinDate, 'mediumDate', this.localeId) : '';
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -199,6 +199,7 @@ export class UsersAchievementsComponent implements OnInit {
           ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
+          ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
           `,
         alignment: 'center',
       },

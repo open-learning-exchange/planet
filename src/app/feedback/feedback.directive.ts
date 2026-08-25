@@ -165,7 +165,7 @@ export class FeedbackDirective {
       message: [ this.message, CustomValidators.required ]
     };
     this.dialogsFormService
-      .confirm(title, fields, formGroup)
+      .confirm(title, fields, formGroup, false, true)
       .subscribe((response) => {
         if (response !== undefined) {
           this.addFeedback(response);
