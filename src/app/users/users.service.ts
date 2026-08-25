@@ -6,7 +6,7 @@ import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,8 @@ export class UsersService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private notificationsService: NotificationsService
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
@@ -219,21 +220,15 @@ export class UsersService {
 
   sendNotifications(user) {
     const notificationDoc = {
-      user: user._id,
+      ...notificationRecipient(user),
       'message': $localize`You were assigned a new role`,
       link: '/myDashboard',
       'type': 'newRole',
       'priority': 1,
       'status': 'unread',
-      'time': this.couchService.datePlaceholder,
-      userPlanetCode: user.userPlanetCode
+      'time': this.couchService.datePlaceholder
     };
-    return this.couchService.findAll(
-      'notifications/_find',
-      findDocuments({ 'user': user._id, 'status': 'unread', 'type': 'newRole' })
-    ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    );
+    return this.notificationsService.sendNotificationToUser(notificationDoc);
   }
 
 }
