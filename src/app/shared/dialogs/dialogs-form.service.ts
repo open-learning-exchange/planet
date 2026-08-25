@@ -60,6 +60,7 @@ export interface DialogsFormOptions<T extends DialogFormValueMap = DialogFormVal
   onSubmit?: (value: T, form: FormGroup<any>) => void;
   formOptions?: AbstractControlOptions;
   closeOnSubmit?: boolean;
+  confirmUnsavedChanges?: boolean;
   [key: string]: unknown;
 }
 
@@ -81,12 +82,14 @@ export class DialogsFormService {
     title: string,
     fields: DialogField[],
     formGroup: DialogFormGroupInput<T>,
-    autoFocus = false
+    autoFocus = false,
+    confirmUnsavedChanges = false
   ): Observable<T | undefined> {
     const dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus,
-      data: { title, fields, formGroup, closeOnSubmit: true }
+      disableClose: confirmUnsavedChanges,
+      data: { title, fields, formGroup, closeOnSubmit: true, confirmUnsavedChanges }
     });
     return dialogRef.afterClosed() as Observable<T | undefined>;
   }
@@ -100,6 +103,7 @@ export class DialogsFormService {
     this.dialogRef = this.dialog.open<DialogsFormComponent, DialogsFormData<T>>(DialogsFormComponent, {
       width: '600px',
       autoFocus: options.autoFocus,
+      disableClose: options.confirmUnsavedChanges,
       data: { title, formGroup, fields, ...options }
     });
   }
