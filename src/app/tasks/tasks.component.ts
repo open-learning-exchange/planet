@@ -12,7 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -109,6 +109,7 @@ export class TasksComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsFormService: DialogsFormService,
     private notificationsService: NotificationsService
   ) {}
@@ -270,11 +271,7 @@ export class TasksComponent implements OnInit {
   }
 
   openMemberDialog(assignee) {
-    this.dialog.open(UserProfileDialogComponent,
-      {
-        data: { member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode } },
-        autoFocus: false
-      });
+    this.usersProfileDialogService.open({ member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode } });
   }
 
   getAssignTooltip(task: any): string {
