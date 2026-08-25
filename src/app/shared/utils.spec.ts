@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import {
-  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, hasMarkdownImages, normalizeImage,
+  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, fullName, hasMarkdownImages, normalizeImage,
   normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
@@ -15,6 +15,22 @@ describe('utils', () => {
       expect(couchAttachmentUrl('http://localhost:2200/', '/resources/', 'doc/id', 'site/index.html')).toBe(
         'http://localhost:2200/resources/doc%2Fid/site/index.html'
       );
+    });
+
+  });
+
+  describe('fullName', () => {
+
+    it('joins only the name parts that are present', () => {
+      expect(fullName({ firstName: 'John', middleName: 'Michael', lastName: 'Doe' })).toBe('John Michael Doe');
+      expect(fullName({ firstName: 'John', lastName: 'Doe' })).toBe('John Doe');
+      expect(fullName({ firstName: 'John', middleName: '', lastName: undefined })).toBe('John');
+      expect(fullName({ lastName: 'Doe' })).toBe('Doe');
+    });
+
+    it('returns an empty string when no name parts exist so callers can fall back', () => {
+      expect(fullName({ name: 'jdoe' })).toBe('');
+      expect(fullName(undefined)).toBe('');
     });
 
   });
