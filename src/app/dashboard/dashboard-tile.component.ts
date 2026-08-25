@@ -3,10 +3,12 @@ import {
   ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
+import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -65,15 +67,15 @@ export class DashboardTileTitleComponent {
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
-  private _cardType: string;
+  #cardType: string;
   @Input() set cardType(value: string) {
-    this._cardType = value;
+    this.#cardType = value;
     if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
       this.isExpanded = true;
     }
   }
   get cardType(): string {
-    return this._cardType;
+    return this.#cardType;
   }
   @Input() color: string;
   @Input() itemData;
@@ -99,6 +101,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
+    private coursesService: CoursesService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
@@ -157,10 +160,53 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
       this.removeTeam(item, userId, userPlanetCode);
+    } else if (this.shelfName === 'resourceIds') {
+      this.removeResource(item);
+    } else if (this.shelfName === 'courseIds') {
+      this.removeCourse(item);
     } else {
       const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
       this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
+  }
+
+  removeResource(item: any) {
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'remove',
+        type: 'resource',
+        displayName: item.title,
+        okClick: {
+          request: defer(() => this.userService.updateShelf(
+            this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
+            'resourceIds'
+          )),
+          onNext: () => {
+            dialogRef.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
+  }
+
+  removeCourse(item: any) {
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'leave',
+        type: 'course',
+        displayName: item.title,
+        okClick: {
+          request: defer(() => this.coursesService.courseResignAdmission(item._id, 'resign', item.title)),
+          onNext: () => {
+            this.dialogPrompt.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
   }
 
   removeTeam(item, userId, userPlanetCode) {

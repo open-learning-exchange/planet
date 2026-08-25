@@ -9,12 +9,12 @@ export interface ReportDetailFilter {
 
 export class ReportsDetailData {
 
-  _data: any[] = [];
+  #data: any[] = [];
   get data() {
-    return this._data;
+    return this.#data;
   }
   set data(newData: any[]) {
-    this._data = newData;
+    this.#data = newData;
     this.filteredData = newData;
   }
   filteredData: any[] = [];

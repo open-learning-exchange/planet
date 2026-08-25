@@ -1,0 +1,4 @@
+[submodule ".agents/skills/merge-prepping"]
+	path = .agents/skills/merge-prepping
+	url = https://github.com/dogi/merge-prepping.git
+	branch = main
