@@ -16,14 +16,12 @@
     padding-right: 16px;
   }
 
-  .mat-mdc-list-item-meta {
+  .mat-mdc-list-item .mat-mdc-list-item-meta {
+    display: flex;
     align-items: center;
-    gap: 0.25rem;
-    margin-left: auto;
-  }
-
-  .mat-mdc-nav-list .mat-mdc-list-item-meta {
     flex-shrink: 0;
+    gap: 0.25rem;
+    margin: 0;
   }
 
   mat-dialog-actions {
@@ -45,16 +43,6 @@
   }
 }
 
-.icon-spacing,
-.checkbox-spacing {
-  margin-right: 4px;
-}
-
-.button-spacing {
-  margin-right: 4px;
-  margin-left: 8px;
-}
-
 .tag-name-and-meta .ellipsis-text {
   min-width: 0;
   flex: 0 1 auto;
@@ -64,20 +52,13 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  min-width: 0;
-  flex: 1 1 auto;
-}
-
-// Everything beside the name keeps its natural size, so a long collection name
-// is the part that gives way and truncates with an ellipsis.
-.tag-name-and-meta > mat-checkbox,
-.tag-name-and-meta > planet-tag-input-toggle-icon,
-.tag-name-and-meta > .count {
-  flex: 0 0 auto;
 }
 
 .count {
   white-space: nowrap;
+}
+
+mat-option .count {
   margin-left: 0.25rem;
 }
 
