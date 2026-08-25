@@ -113,7 +113,8 @@ export class MeetupService {
         type: 'event',
         amount: isMany ? 'many' : 'single',
         displayName,
-        extraMessage: recurringInfo
+        extraMessage: recurringInfo,
+        extraMessageType: 'supplementary'
       }
     });
   }

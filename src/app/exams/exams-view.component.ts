@@ -170,7 +170,8 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     }
     return UnsavedChangesPromptComponent.open(this.dialog, {
       type: this.examType === 'survey' ? 'survey' : 'exam',
-      extraMessage: $localize`Your progress will be saved.`
+      extraMessage: $localize`Your progress will be saved.`,
+      extraMessageType: 'supplementary'
     }).pipe(
       switchMap(confirmed => {
         if (!confirmed) {

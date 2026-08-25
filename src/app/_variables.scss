@@ -50,6 +50,9 @@ $disabled-button: map.get(mat.$m2-light-theme-background-palette, 'disabled-butt
 $disabled-button-text: map.get(mat.$m2-light-theme-foreground-palette, 'disabled-button');
 
 $font-family: Roboto, sans-serif;
+// Supplementary text (notes, consequences, agreements, metadata) sits one step below the
+// body copy it accompanies.  Relative so it stays proportional wherever it is used.
+$font-size-supplementary: 0.875em;
 
 // Our default screen sizes
 $screen-md: 1000px;

@@ -52,6 +52,8 @@ describe('PlanetStepListComponent', () => {
     const dialogConfig = dialogMock.open.mock.calls[0][1];
     expect(dialogConfig.data.showMainParagraph).toBe(false);
     expect(dialogConfig.data.extraMessage).toBe('Are you sure you want to delete the following step?');
+    // The extra message replaces the main paragraph here, so it keeps body styling
+    expect(dialogConfig.data.extraMessageType).toBeUndefined();
     expect(dialogConfig.data.displayName).toBe('Step 1');
   });
 
