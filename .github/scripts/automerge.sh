@@ -237,6 +237,30 @@ if [ -n "$MYPLANET_LATEST$MYPLANET_MIN" ]; then
     summary ""
 fi
 
+# create_release=false merges on regardless, so a run with it off leaves the
+# bumps on $BASE with no tags and no images, and every later bump inherits the
+# gap. Say so at the top of the run that would widen it, and again for a gap
+# that is already there, since only .github/workflows/backfill-releases.yml
+# closes one.
+git fetch --quiet origin "$BASE"
+gap_pkg="${RUNNER_TEMP:-/tmp}/gap-package.json"
+git show "origin/$BASE:$PKG_FILE" > "$gap_pkg"
+eval "$("$VERSION_SH" read "$gap_pkg" | sed 's/^/base_/')"
+if [ -n "${base_name:-}" ] && ! gh api "repos/$REPO/releases/tags/v$base_name" >/dev/null 2>&1; then
+    log "warning: $BASE is at $base_name with no v$base_name release -- earlier merges went untagged"
+    summary "> **Note**: \`$BASE\` is at \`$base_name\`, which has no release. Earlier"
+    summary "> merges were drained with \`create_release\` off. Run **Planet backfill"
+    summary "> releases** to cut the missing ones."
+    summary ""
+fi
+
+if [ "$CREATE_RELEASE" != 'true' ]; then
+    log "warning: create_release is off -- these merges will bump the version but cut no release"
+    summary "> **Note**: \`create_release\` is off, so these merges bump the version"
+    summary "> without tagging it or building its images."
+    summary ""
+fi
+
 summary "| PR | version | result |"
 summary "|---|---|---|"
 

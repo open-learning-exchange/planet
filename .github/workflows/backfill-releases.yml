@@ -1,0 +1,66 @@
+name: Planet backfill releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'branch whose versions should be released (blank = workflow default)'
+        required: false
+        default: ''
+        type: string
+      since:
+        description: 'only release versions above this one (blank = the newest release there is)'
+        required: false
+        default: ''
+        type: string
+      max_releases:
+        description: 'stop after this many releases (0 = until the tail is filled)'
+        required: false
+        default: '0'
+        type: string
+      dry_run:
+        description: 'report what would happen, change nothing'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+env:
+  DEFAULT_BASE: master
+  PKG_FILE: package.json
+
+jobs:
+  backfill:
+    name: planet backfill releases
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: stage helper scripts outside the work tree
+        id: stage
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/scripts"
+          cp .github/scripts/backfill-releases.sh \
+             .github/scripts/version.sh "$RUNNER_TEMP/scripts/"
+          chmod +x "$RUNNER_TEMP/scripts/"*.sh
+          echo "dir=$RUNNER_TEMP/scripts" >> "$GITHUB_OUTPUT"
+
+      - name: cut the missing releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+          USING_PAT: ${{ secrets.AUTOMERGE_TOKEN != '' }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ inputs.base || env.DEFAULT_BASE }}
+          SINCE: ${{ inputs.since }}
+          MAX_RELEASES: ${{ inputs.max_releases }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          VERSION_SH: ${{ steps.stage.outputs.dir }}/version.sh
+        run: '${{ steps.stage.outputs.dir }}/backfill-releases.sh'
