@@ -109,12 +109,12 @@ export class PlanetTagInputDialogComponent {
   indeterminate: Map<string, boolean> = new Map(this.data.tags.map((value: any) => [ value._id, false ] as [ string, boolean ]));
   filterValue = '';
   mode = 'filter';
-  _selectMany = true;
+  #selectMany = true;
   get selectMany() {
-    return this._selectMany;
+    return this.#selectMany;
   }
   set selectMany(value: boolean) {
-    this._selectMany = value;
+    this.#selectMany = value;
     this.data.reset(value);
   }
   addTagForm: TagFormGroup;
@@ -180,7 +180,7 @@ export class PlanetTagInputDialogComponent {
   resetSelection() {
     this.data.tagUpdate('', false, true);
     this.selected.clear();
-    this.data.reset(this._selectMany);
+    this.data.reset(this.selectMany);
   }
 
   tagChange(tagId, { tagOne = false, parentTag }: { tagOne?, parentTag? } = {}) {
@@ -270,9 +270,9 @@ export class PlanetTagInputDialogComponent {
 
   deleteTag(event, tag) {
     event.stopPropagation();
-    const amount = 'single',
-      okClick = this.deleteSelectedTag(tag),
-      displayName = tag.name;
+    const amount = 'single';
+    const okClick = this.deleteSelectedTag(tag);
+    const displayName = tag.name;
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,

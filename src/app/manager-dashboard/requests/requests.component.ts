@@ -16,7 +16,7 @@ import { DeviceInfoService, DeviceType } from '../../shared/device-info.service'
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { NgTemplateOutlet, NgClass } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -42,7 +42,6 @@ import { MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } fr
     MatTooltip,
     MatToolbarRow,
     MatButton,
-    NgClass,
     RequestsTableComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,

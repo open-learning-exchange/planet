@@ -11,6 +11,7 @@ describe('SubmissionsComponent', () => {
     {} as any,
     {} as any,
     {} as any,
+    { configuration: {} } as any,
     { start: vi.fn() } as any,
     {
       watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)),

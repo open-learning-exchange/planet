@@ -145,6 +145,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
   }
 
+  get voicesToolbarPinTooltip(): string {
+    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
+  }
+
   localLinkTooltip(link: any): string {
     return link.teamType === 'sync' || !this.planetCode
       ? ''
@@ -347,7 +351,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   sendNotifications(user, currentUser) {
     return {
-      'user': user,
+      user,
       'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',

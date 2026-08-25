@@ -65,7 +65,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
-            {{element.doc.name | truncateText:150}}
+            <a (click)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.space)="$event.preventDefault(); $event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.enter)="$event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               tabindex="0" role="button"
+               [attr.aria-label]="element.doc.name"
+               [attr.aria-pressed]="isDialog ? selectedIds.includes(element.doc._id) : null">
+              {{element.doc.name | truncateText:150}}
+            </a>
             @if (element.userStatus === 'member' && mode === 'enterprise') {
               <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
             }
@@ -141,12 +148,22 @@
                   }
                 }
                 @case ('unrelated') {
-                  <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                    <mat-icon>add_circle</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request to Join </label>
-                    }
-                  </button>
+                  @if (element.doc.type === 'enterprise') {
+                    <button mat-raised-button color="primary"
+                      (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  } @else {
+                    <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  }
                 }
                 @case ('requesting') {
                   <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label
@@ -165,7 +182,7 @@
                 <label i18n> Feedback </label>
               }
             </button>
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" (click)="archiveClick(element.doc); $event.stopPropagation()">
+            <button *planetAuthorizedRoles="''" mat-raised-button color="warn" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               @if (!isMobile) {
                 <label i18n> Delete </label>

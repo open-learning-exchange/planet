@@ -71,7 +71,7 @@ export class SyncService {
     return forkJoin([
       this.couchService.post('_session', { name: this.userService.get().name, password }),
       this.couchService.post('_session',
-        { 'name': this.userService.get().name + '@' + this.stateService.configuration.code, 'password': password },
+        { 'name': this.userService.get().name + '@' + this.stateService.configuration.code, password },
         { withCredentials: true, domain: this.stateService.configuration.parentDomain })
     ]).pipe(switchMap(([ localSession, parentSession ]) => {
       if (!localSession.ok || !parentSession.ok) {

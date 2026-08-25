@@ -12,7 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -24,10 +24,16 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
+const assigneeKey = (assignee) => {
+  const userId = assignee?.userId;
+  const planetCode = assignee?.userPlanetCode;
+  return userId && planetCode ? `${userId}\u0000${planetCode}` : undefined;
+};
+
 @Pipe({ name: 'filterAssignee' })
 export class FilterAssigneePipe implements PipeTransform {
   transform(assignees: any[], assignee: any) {
-    return assignees.filter(a => a.userId !== assignee.userId);
+    return (assignees || []).filter(item => item.userId !== assignee?.userId);
   }
 }
 
@@ -74,19 +80,25 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private _assigness: any[];
+  #assignees: any[] = [];
+  private currentAssignees = new Map<string, any>();
+  private failedAvatarSources = new Map<string, string>();
   @Input()
   get assignees() {
-    return this._assigness;
+    return this.#assignees;
   }
   set assignees(newAssignees: any[]) {
-    this._assigness = [ ...newAssignees ].sort((a, b) => a.name.localeCompare(b.name));
+    this.#assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    this.setCurrentAssignees();
+    this.setTaskViews();
+    this.filterTasks();
   }
   dbName = 'tasks';
   deleteDialog: any;
   tasks: any[] = [];
   myTasks: any[] = [];
-  filteredTasks: any[] = [];
+  taskViews: any[] = [];
+  filteredTaskViews: any[] = [];
   imgUrlPrefix = environment.couchAddress;
   filter: 'self' | 'all' = 'self';
   trackById = trackById;
@@ -97,6 +109,7 @@ export class TasksComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsFormService: DialogsFormService,
     private notificationsService: NotificationsService
   ) {}
@@ -104,11 +117,18 @@ export class TasksComponent implements OnInit {
   ngOnInit() {
     this.tasksService.tasksListener(this.link).subscribe((tasks) => {
       this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
-      this.myTasks = this.tasks.filter(task => task.assignee && task.assignee.userId === this.userService.get()._id);
+      this.setTaskViews();
+      this.myTasks = this.tasks.filter(task => task.assignee?.userId === this.userService.get()._id);
       this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
       this.filterTasks();
     });
     this.tasksService.getTasks();
+  }
+
+  private setCurrentAssignees() {
+    this.currentAssignees = new Map(this.#assignees
+      .filter(assignee => assigneeKey(assignee))
+      .map(assignee => [ assigneeKey(assignee), assignee ]));
   }
 
   addTask(task?) {
@@ -194,13 +214,18 @@ export class TasksComponent implements OnInit {
   }
 
   addAssignee(task, assignee: any = '') {
-    const hasAssignee = assignee !== '' && assignee.userDoc;
-    if (hasAssignee) {
-      const filename = assignee.userDoc._attachments && Object.keys(assignee.userDoc._attachments)[0];
-      assignee = { ...assignee, avatar: filename ? `/_users/${assignee.userDoc._id}/${filename}` : undefined };
-    }
-    this.tasksService.addTask({ ...task, assignee }).pipe(
-      switchMap(() => hasAssignee && assignee.userId !== this.userService.get()._id ? this.sendNotifications(assignee) : of({}))
+    const hasAssignee = assignee !== '';
+    const storedAssignee = hasAssignee ? {
+      userId: assignee.userId,
+      userPlanetCode: assignee.userPlanetCode,
+      name: assignee.name,
+      attachmentDoc: assignee.attachmentDoc,
+      userDoc: assignee.userDoc?.fullName ? { fullName: assignee.userDoc.fullName } : undefined
+    } : '';
+    this.tasksService.addTask({ ...task, assignee: storedAssignee }).pipe(
+      switchMap(() => hasAssignee && assignee.userDoc && assignee.userId !== this.userService.get()._id ?
+        this.sendNotifications(storedAssignee) :
+        of({}))
     ).subscribe((res) => {
       this.tasksService.getTasks();
     });
@@ -212,7 +237,9 @@ export class TasksComponent implements OnInit {
   }
 
   filterTasks() {
-    this.filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
+    const filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
+    const filteredTaskIds = new Set(filteredTasks.map(task => task._id));
+    this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
   }
 
   sendNotifications(assignee: any = '') {
@@ -244,12 +271,57 @@ export class TasksComponent implements OnInit {
   }
 
   openMemberDialog(assignee) {
-    this.dialog.open(UserProfileDialogComponent,
-      { data: { member: { name: assignee.name, userPlanetCode: assignee.teamPlanetCode } }, autoFocus: false });
+    this.usersProfileDialogService.open({ member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode } });
   }
 
   getAssignTooltip(task: any): string {
     return task.assignee ? $localize`Reassign Task` : $localize`Assign Task`;
+  }
+
+  avatarSrc(assignee) {
+    const attachmentName = Object.keys(assignee?.attachmentDoc?._attachments || {})[0];
+    if (attachmentName) {
+      return `${this.imgUrlPrefix}/attachments/${assignee.attachmentDoc._id}/${attachmentName}`;
+    }
+    if (!assignee?.avatar) {
+      return 'assets/image.png';
+    }
+    return assignee.avatar.startsWith('/') ? this.imgUrlPrefix + assignee.avatar : assignee.avatar;
+  }
+
+  useDefaultAvatar(taskView) {
+    const failureKey = this.avatarFailureKey(taskView.task, taskView.assignee);
+    if (failureKey && taskView.avatarSrc && taskView.avatarSrc !== 'assets/image.png') {
+      this.failedAvatarSources.set(failureKey, taskView.avatarSrc);
+    }
+    taskView.avatarSrc = 'assets/image.png';
+  }
+
+  private setTaskViews() {
+    this.taskViews = this.tasks.map(task => {
+      const key = assigneeKey(task.assignee);
+      const currentAssignee = key && this.currentAssignees.get(key);
+      const hasResolvedMetadata = currentAssignee && (
+        currentAssignee.userDoc ||
+        currentAssignee.attachmentDoc
+      );
+      const assignee = hasResolvedMetadata ? currentAssignee : task.assignee || currentAssignee;
+      const avatarSrc = assignee ? this.avatarSrc(assignee) : undefined;
+      const failureKey = this.avatarFailureKey(task, assignee);
+      const failedAvatarSrc = failureKey && this.failedAvatarSources.get(failureKey);
+      if (failureKey && failedAvatarSrc && failedAvatarSrc !== avatarSrc) {
+        this.failedAvatarSources.delete(failureKey);
+      }
+      return {
+        task,
+        assignee,
+        avatarSrc: failedAvatarSrc === avatarSrc ? 'assets/image.png' : avatarSrc
+      };
+    });
+  }
+
+  private avatarFailureKey(task, assignee) {
+    return assigneeKey(assignee) || task?._id;
   }
 
 }
