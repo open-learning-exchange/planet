@@ -57,12 +57,18 @@ export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
   return (data: any, filter: string) => {
     // Normalize each word
     const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+
+    // Pre-calculate normalized field values to avoid O(N*M) lookups and normalizations
+    const normalizedFields: string[] = [];
+    for (let i = 0; i < filterFields.length; i++) {
+      const fieldValue = getProperty(data, filterFields[i]);
+      if (typeof fieldValue === 'string') {
+        normalizedFields.push(fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      }
+    }
+
     return words.every(word => {
-      return filterFields.some(field => {
-        const fieldValue = getProperty(data, field);
-        return typeof fieldValue === 'string' &&
-               fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
-      });
+      return normalizedFields.some(normalizedFieldValue => normalizedFieldValue.includes(word));
     });
   };
 };
