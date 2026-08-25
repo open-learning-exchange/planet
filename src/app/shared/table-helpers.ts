@@ -130,7 +130,9 @@ export const filterTags = (filterControl: FormControl) => {
 export const filterAdvancedSearch = (searchObj: any) => {
   return (data: any, filter: string) => {
     return Object.entries(searchObj).reduce(
-      (isMatch, [ field, val ]: any[]) => isMatch && (field.indexOf('_') > -1 || filterArrayField(field, val)(data.doc, filter)),
+      (isMatch, [ field, val ]: any[]) => (
+        isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+      ),
       true
     );
   };

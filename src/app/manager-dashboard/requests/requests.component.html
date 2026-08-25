@@ -56,7 +56,7 @@
       }
     </mat-toolbar-row>
   </mat-toolbar>
-  <div class="view-container view-full-height" [ngClass]="{'view-table':shownStatus==='pending'}">
+  <div class="view-container view-full-height" [class.view-table]="shownStatus==='pending'">
     @if (shownStatus==='pending') {
       <planet-requests-table [data]="filteredData" (requestUpdate)="getCommunityList()"></planet-requests-table>
     }
@@ -72,14 +72,18 @@
             <mat-icon>delete</mat-icon>Delete Network
           </a>
           </mat-expansion-panel-header>
-          <planet-requests-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-requests-table>
+          <div class="panel-table-scroll">
+            <planet-requests-table [hubs]="hubs" [hub]="hub" [data]="hub.children" (requestUpdate)="getCommunityList()"></planet-requests-table>
+          </div>
         </mat-expansion-panel>
       }
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title i18n>Sandbox</mat-panel-title>
         </mat-expansion-panel-header>
-        <planet-requests-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-requests-table>
+        <div class="panel-table-scroll">
+          <planet-requests-table [hubs]="hubs" [data]="sandboxPlanets" (requestUpdate)="getCommunityList()"></planet-requests-table>
+        </div>
       </mat-expansion-panel>
     }
   </div>

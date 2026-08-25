@@ -115,12 +115,12 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control<string[]>([]);
-  _existingResource: any = {};
+  #existingResource: any = {};
   get existingResource(): any {
-    return this._existingResource;
+    return this.#existingResource;
   }
   @Input() set existingResource(resource) {
-    this._existingResource = resource;
+    this.#existingResource = resource;
     if (this.resourceForm) {
       this.setFormValues(resource);
     }
@@ -283,7 +283,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType,
+      mediaType,
       _attachments: {}
     };
     return of({ resource, file });
@@ -386,7 +386,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
           zipFile.file(fileName).async('base64').then((data) => {
-            observer.next({ name: fileName, data: data });
+            observer.next({ name: fileName, data });
             observer.complete();
           }, (e) => {
             observer.error(e);

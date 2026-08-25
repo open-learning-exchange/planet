@@ -183,7 +183,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadSurveys() {
     this.isLoading = true;
-    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ type }));
     forkJoin([
       receiveData('exams', 'surveys'),
       this.couchService.get('submissions/_design/surveyData/_view/submissionsByParent'),
@@ -262,8 +262,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
-        // community surveys that can be adopted & team hasn't adopted yet
-        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+        // active, shareable community surveys the team has not already adopted
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
+          !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
       // manager view: no team adopted/sent survey
       return !survey.teamId && !survey.sourceSurveyId;
@@ -454,7 +455,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialogsLoadingService.stop();
           });
         },
-        excludeIds: excludeIds,
+        excludeIds,
         mode: 'teams'
       }
     });
@@ -683,7 +684,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getActionTooltip(
     survey: any,
-    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke'
+    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt'
   ): string {
     if (survey.isArchived) {
       if (action === 'archive') {
@@ -705,12 +706,18 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`This survey was created on the parent planet and cannot be managed here`;
     }
 
-    if (this.currentFilter.viewMode === 'adopt') {
+    if (action === 'select' && this.currentFilter.viewMode === 'adopt') {
       return $localize`This is a community survey`;
     }
 
+    if (action === 'adopt') {
+      return $localize`Adopt Survey`;
+    }
+
     if (!survey.questions?.length) {
-      return $localize`Survey has no questions`;
+      if (action !== 'edit' && action !== 'archive') {
+        return $localize`Survey has no questions`;
+      }
     }
 
     if (action === 'record') {
@@ -725,6 +732,26 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (action === 'revoke') {
       return $localize`Revoke public access for this survey`;
+    }
+
+    if (action === 'edit') {
+      return $localize`Edit Survey`;
+    }
+
+    if (action === 'send') {
+      return $localize`Send Survey`;
+    }
+
+    if (action === 'archive') {
+      return $localize`Archive Survey`;
+    }
+
+    if (action === 'submissions') {
+      return $localize`View Submissions`;
+    }
+
+    if (action === 'export') {
+      return $localize`Export Survey Submissions`;
     }
 
     return '';
