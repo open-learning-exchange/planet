@@ -6,7 +6,6 @@ import { findDocuments } from '../shared/mangoQueries';
 import { environment } from '../../environments/environment';
 import { addToArray, removeFromArray, dedupeShelfReduce } from './utils';
 import { StateService } from './state.service';
-import { mergeConfiguration } from '../configuration/configuration.utils';
 
 // Holds the currently logged in user information
 // If available full profile from _users db, if not object in userCtx property of response from a GET _session
@@ -257,7 +256,7 @@ export class UserService {
     return this.couchService.get(configurationUrl).pipe(
       switchMap((configuration) => this.couchService.put(
         configurationUrl,
-        mergeConfiguration(configuration, { firstName, lastName, middleName, email, phoneNumber })
+        { ...configuration, firstName, lastName, middleName, email, phoneNumber }
       )),
       map((res) => {
         this.stateService.requestData('configurations', 'local');

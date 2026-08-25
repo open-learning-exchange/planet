@@ -56,7 +56,7 @@ export class ManagerCurrencyComponent implements OnInit {
       return;
     }
     this.spinnerOn = true;
-    this.configurationService.patchConfiguration({ currency: { ...this.form.value } })
+    this.configurationService.patchLocalConfiguration({ currency: { ...this.form.value } })
       .pipe(finalize(spinnerOff))
       .subscribe(
         () => {

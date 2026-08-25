@@ -8,15 +8,11 @@ import { findDocuments } from '../shared/mangoQueries';
 import { StateService } from '../shared/state.service';
 import { SyncService } from '../shared/sync.service';
 import { dedupeShelfReduce, stringToHex } from '../shared/utils';
-import { mergeConfiguration, parentConfiguration, patchOwns, patchesParentConfiguration } from './configuration.utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigurationService {
-
-  configuration: any;
-  lastSeq: string;
 
   constructor(
     private couchService: CouchService,
@@ -154,64 +150,63 @@ export class ConfigurationService {
   }
 
   /**
-   * Applies a partial configuration change and runs the side effects the submitted fields call for.
-   * Callers submit only the fields they own, e.g. the currency screen submits
-   * `{ currency: { ...this.form.value } }`, and never have to reconstruct the whole doc or restore
-   * the secrets `StateService.configuration` hides from them. The patch is merged onto the latest
-   * local revision, so concurrent changes to other fields survive.
-   *
-   * Side effects are keyed off the patch rather than applied to every write: `_users/_security` is
-   * only touched when the patch owns `autoAccept`, which needs CouchDB administrator permissions,
-   * and the parent planet only hears about a patch which changes a `parentConfigurationFields`
-   * field. A patch of purely local fields — `currency`, `keys`, `customVoiceLabels` — therefore
-   * writes nothing but the local doc. Emits the updated local configuration exactly once, after
-   * every side effect it needed has finished.
+   * Applies a configuration patch locally and forwards it to the parent without keys.
+   * Use patchLocalConfiguration for settings which must remain on this planet.
    */
   patchConfiguration(patch: any) {
     return this.patchLocalConfiguration(patch).pipe(switchMap((configuration) => {
       const sideEffects = [
-        ...(patchOwns(patch, 'autoAccept') ? [ this.updateAutoAccept(configuration.autoAccept) ] : []),
-        // The parent sync emits nothing of its own for a planet the parent already knows about
-        ...(patchesParentConfiguration(patch) ? [ this.sendConfigurationToParent(configuration).pipe(toArray()) ] : [])
+        // addPlanetToParent emits nothing for an existing registration, so collect its completion
+        this.sendConfigurationPatchToParent(configuration, patch).pipe(toArray()),
+        ...(Object.prototype.hasOwnProperty.call(patch, 'autoAccept') ? [ this.updateAutoAccept(configuration.autoAccept) ] : [])
       ];
-      return sideEffects.length === 0 ? of(configuration) : forkJoin(sideEffects).pipe(map(() => configuration));
+      return forkJoin(sideEffects).pipe(map(() => configuration));
     }));
   }
 
-  /**
-   * Merges a patch onto the latest local revision and writes it back, retrying once on a conflict.
-   * Writes the doc and nothing else, so callers with no permission to touch `_users/_security` — or
-   * no reason to — can use it directly. Any `_rev` the caller supplies is dropped, since it is only
-   * as fresh as the copy the caller was holding.
-   */
-  patchLocalConfiguration(patch: any, retriesOnConflict = 1): Observable<any> {
-    const { _rev: callerRev, ...fields } = patch;
-    return this.getConfiguration(patch._id).pipe(
+  /** Applies a patch only to the latest local configuration, retrying one conflict. */
+  patchLocalConfiguration(patch: any): Observable<any> {
+    return this.patchLocalConfigurationWithRetry(patch, 1);
+  }
+
+  private patchLocalConfigurationWithRetry(patch: any, retriesOnConflict: number): Observable<any> {
+    const fields = { ...patch };
+    delete fields._rev;
+    return this.getConfiguration(fields._id).pipe(
       switchMap((configuration) =>
-        this.couchService.updateDocument('configurations', mergeConfiguration(configuration, fields)).pipe(
+        this.couchService.updateDocument('configurations', { ...configuration, ...fields }).pipe(
           map(({ doc }) => doc),
-          catchError((error) => error.status === 409 && retriesOnConflict > 0 ?
-            this.patchLocalConfiguration(patch, retriesOnConflict - 1) : throwError(error))
+          catchError((error) => error?.status === 409 && retriesOnConflict > 0 ?
+            this.patchLocalConfigurationWithRetry(patch, retriesOnConflict - 1) : throwError(error))
         ))
     );
   }
 
-  getConfiguration(configurationId = this.stateService.configuration._id) {
+  private getConfiguration(configurationId?: string) {
+    configurationId = configurationId ?? this.stateService.configuration?._id;
     return configurationId ?
       this.couchService.get('configurations/' + configurationId) :
       throwError(new Error('There is no local configuration to update'));
   }
 
-  private sendConfigurationToParent(configuration: any) {
+  private sendConfigurationPatchToParent(configuration: any, patch: any) {
     return this.couchService.post(
       'communityregistrationrequests/_find',
       findDocuments({ 'code': configuration.code }),
       { domain: configuration.parentDomain }
     ).pipe(switchMap((res) => {
-      // The parent keeps its own revision of the doc, so take its _id and _rev when it already has one
-      const parentConfig = res.docs.length ? { _id: res.docs[0]._id, _rev: res.docs[0]._rev } : {};
+      const parentPatch = { ...patch };
+      delete parentPatch._id;
+      delete parentPatch._rev;
+      delete parentPatch.keys;
+      const parentConfiguration = res.docs.length ? { ...res.docs[0], ...parentPatch } : { ...configuration };
+      if (res.docs.length === 0) {
+        // A new parent registration cannot use the local CouchDB revision
+        delete parentConfiguration._rev;
+        delete parentConfiguration.keys;
+      }
       const userDetail = { ...this.userService.get(), ...this.userService.credentials };
-      return this.addPlanetToParent({ ...parentConfiguration(configuration), ...parentConfig }, res.docs.length === 0, userDetail);
+      return this.addPlanetToParent(parentConfiguration, res.docs.length === 0, userDetail);
     }));
   }
 

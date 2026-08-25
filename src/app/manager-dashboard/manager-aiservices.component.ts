@@ -130,7 +130,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   saveConfig() {
     const spinnerOff = () => this.spinnerOn = false;
-    if (!this.configForm.valid) {
+    if (!this.configuration?._id || !this.configForm.valid) {
       spinnerOff();
       return;
     }
@@ -144,7 +144,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
         instructions: this.getStringControlValue('assistantInstructions')
       }
     };
-    this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
+    this.configurationService.patchLocalConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
       () => this.stateService.requestData('configurations', 'local'),
       err => {
         this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
