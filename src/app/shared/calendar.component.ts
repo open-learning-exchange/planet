@@ -132,6 +132,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         addEventButton: {
           text: $localize`Add Event`,
           click: (arg) => {
+            if (!this.editable) {
+              return;
+            }
             this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }

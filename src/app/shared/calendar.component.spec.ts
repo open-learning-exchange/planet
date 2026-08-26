@@ -44,6 +44,20 @@ describe('PlanetCalendarComponent read-only behavior', () => {
     expect(authService.checkAuthenticationStatus).toHaveBeenCalledOnce();
     expect(dialog.open).toHaveBeenCalledOnce();
   });
+
+  it('does not authenticate from a stale add-event button after becoming read-only', () => {
+    const { authService, component, dialog } = createComponent();
+    component.editable = true;
+    vi.spyOn(component, 'getMeetups').mockImplementation(() => undefined);
+    vi.spyOn(component, 'getTasks').mockImplementation(() => undefined);
+    component.ngOnInit();
+
+    component.editable = false;
+    (component.buttons as any).addEventButton.click({ start: new Date() });
+
+    expect(authService.checkAuthenticationStatus).not.toHaveBeenCalled();
+    expect(dialog.open).not.toHaveBeenCalled();
+  });
 });
 
 describe('PlanetCalendarComponent', () => {
