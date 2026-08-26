@@ -31,7 +31,12 @@ export const formatResourceAttachmentSize = (
 };
 
 export const formatResourceAttachmentsSize = (doc?: ResourceDocumentWithAttachments | null): string => {
-  const totalSize = Object.values(attachmentsFor(doc))
-    .reduce((total, attachment) => total + (attachment.length ?? 0), 0);
+  const attachmentLengths = Object.values(attachmentsFor(doc))
+    .map(attachment => attachment.length)
+    .filter((length): length is number => length !== undefined);
+  if (attachmentLengths.length === 0) {
+    return '';
+  }
+  const totalSize = attachmentLengths.reduce((total, length) => total + length, 0);
   return formatBytes(totalSize);
 };

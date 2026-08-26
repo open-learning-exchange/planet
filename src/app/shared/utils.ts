@@ -331,8 +331,11 @@ export const extractMarkdownImageUrls = (content: string) => {
 };
 
 export const formatBytes = (bytes?: number): string => {
-  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes <= 0) {
+  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes < 0) {
     return '';
+  }
+  if (bytes === 0) {
+    return '0 B';
   }
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];

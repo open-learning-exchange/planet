@@ -8,6 +8,14 @@ describe('resource attachment utilities', () => {
     expect(formatResourceAttachmentSize(null)).toBe('');
     expect(formatResourceAttachmentSize({})).toBe('');
     expect(formatResourceAttachmentsSize({ _attachments: {} })).toBe('');
+    expect(formatResourceAttachmentSize({ _attachments: { 'unknown.bin': {} } })).toBe('');
+    expect(formatResourceAttachmentsSize({ _attachments: { 'unknown.bin': {} } })).toBe('');
+  });
+
+  it('formats an explicit zero-length attachment as 0 B', () => {
+    const emptyDoc = { _attachments: { 'empty.txt': { length: 0 } } };
+    expect(formatResourceAttachmentSize(emptyDoc)).toBe('0 B');
+    expect(formatResourceAttachmentsSize(emptyDoc)).toBe('0 B');
   });
 
   it('formats a single attachment', () => {

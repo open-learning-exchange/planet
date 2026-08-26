@@ -77,15 +77,15 @@ describe('utils', () => {
 
   describe('formatBytes', () => {
 
-    it('returns empty string for invalid, missing, or zero bytes', () => {
+    it('returns an empty string for invalid or missing bytes', () => {
       expect(formatBytes(undefined)).toBe('');
       expect(formatBytes(null as any)).toBe('');
-      expect(formatBytes(0)).toBe('');
       expect(formatBytes(-100)).toBe('');
       expect(formatBytes(NaN)).toBe('');
     });
 
     it('formats bytes, kilobytes, megabytes, and gigabytes correctly', () => {
+      expect(formatBytes(0)).toBe('0 B');
       expect(formatBytes(500)).toBe('500 B');
       expect(formatBytes(0.5)).toBe('0.5 B');
       expect(formatBytes(1024)).toBe('1 KB');
