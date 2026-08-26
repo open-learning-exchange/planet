@@ -23,11 +23,13 @@ describe('UsersAchievementsComponent', () => {
     get: vi.fn().mockReturnValue(of({}))
   };
 
-  const stateServiceMock = {
+  const defaultConfiguration = { code: 'local_code', parentCode: 'parent_code' };
+  const stateServiceMock: { configuration: { code: string, parentCode?: string } } = {
     configuration: { code: 'local_code', parentCode: 'parent_code' }
   };
 
   beforeEach(() => {
+    stateServiceMock.configuration = { ...defaultConfiguration };
     couchServiceMock.get.mockClear();
     TestBed.configureTestingModule({
       imports: [ UsersAchievementsComponent ],
@@ -107,7 +109,6 @@ describe('UsersAchievementsComponent', () => {
     it('should return local for a missing planet code even when the parent code is also missing', () => {
       stateServiceMock.configuration = { code: 'local_code', parentCode: undefined };
       expect(component.userRelationship(undefined)).toBe('local');
-      stateServiceMock.configuration = { code: 'local_code', parentCode: 'parent_code' };
     });
   });
 });
