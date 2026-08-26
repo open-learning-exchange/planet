@@ -22,7 +22,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../../shared/utils';
+import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
 
 @Component({
   templateUrl: './resources-view.component.html',

@@ -344,36 +344,3 @@ export const formatBytes = (bytes?: number): string => {
   }
   return `${formattedValue} ${sizes[unitIndex]}`;
 };
-
-const attachmentLength = (attachment: any): number =>
-  attachment && typeof attachment.length === 'number' ? attachment.length : 0;
-
-export const resourceAttachmentFilename = (doc: any): string => {
-  const attachments = doc?._attachments;
-  if (!attachments || typeof attachments !== 'object') {
-    return '';
-  }
-  if (doc.openWhichFile && attachments[doc.openWhichFile]) {
-    return doc.openWhichFile;
-  }
-  return Object.keys(attachments)[0] ?? '';
-};
-
-export const formatResourceAttachmentSize = (doc: any, filename?: string): string => {
-  const attachments = doc?._attachments;
-  if (!attachments || typeof attachments !== 'object') {
-    return '';
-  }
-  const selectedFilename = filename || resourceAttachmentFilename(doc);
-  return formatBytes(attachmentLength(attachments[selectedFilename]));
-};
-
-export const formatResourceAttachmentsSize = (doc: any): string => {
-  const attachments = doc?._attachments;
-  if (!attachments || typeof attachments !== 'object') {
-    return '';
-  }
-  const totalSize = (Object.values(attachments) as any[])
-    .reduce<number>((total, attachment) => total + attachmentLength(attachment), 0);
-  return formatBytes(totalSize);
-};

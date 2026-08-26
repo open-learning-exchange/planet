@@ -26,10 +26,8 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import {
-  couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, formatResourceAttachmentSize,
-  hasMarkdownImages, resourceAttachmentFilename
-} from '../shared/utils';
+import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
