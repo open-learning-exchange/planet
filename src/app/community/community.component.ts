@@ -407,7 +407,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   sendNotifications(user, currentUser) {
     return {
-      'user': user,
+      user,
       'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',
