@@ -1,4 +1,8 @@
 reviews:
+  # The gate posts a "Review skipped" notice on every unlabelled PR
+  # otherwise -- one comment per PR to say nothing happened.
+  review_status: false
+
   auto_review:
     enabled: false
     labels: ["review"]
