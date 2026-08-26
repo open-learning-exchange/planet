@@ -237,7 +237,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.grade = 0;
     this.statusMessage = '';
     const exam = this.submission ? this.submission.parent : this.exam;
-    this.setQuestion(exam.questions);
+    if (!this.setQuestion(exam?.questions)) {
+      this.leaveUnavailableExam();
+      return;
+    }
     if (this.submission) {
       this.submittedBy = this.submission.user.name;
       this.updatedOn = this.submission.lastUpdateTime;
@@ -348,7 +351,10 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
 
   setTakingExam(exam, parentId, type) {
     const user = this.route.snapshot.data.newUser === true ? {} : this.userService.get();
-    this.setQuestion(exam.questions);
+    if (!this.setQuestion(exam?.questions)) {
+      this.leaveUnavailableExam();
+      return;
+    }
     this.submissionsService.openSubmission({
       parentId,
       parent: exam,
@@ -356,10 +362,31 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       type });
   }
 
-  setQuestion(questions: any[]) {
+  setQuestion(questions: any[]): boolean {
+    if (!Array.isArray(questions) || questions.length === 0) {
+      this.question = undefined;
+      this.maxQuestions = 0;
+      this.answer.markAsUntouched();
+      return false;
+    }
     this.question = questions[this.questionNum - 1];
     this.maxQuestions = questions.length;
     this.answer.markAsUntouched();
+    return true;
+  }
+
+  private leaveUnavailableExam() {
+    this.planetMessageService.showAlert(
+      this.examType === 'survey' ? $localize`This survey has no questions and is not available` :
+      $localize`This test has no questions and is not available`
+    );
+    if (this.isDialog) {
+      this.isLoading = false;
+      this.dialog.closeAll();
+      return;
+    }
+    this.isInternalNavigation = true;
+    this.goBack();
   }
 
   setCourseListener() {
@@ -396,16 +423,19 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
     this.submissionsService.submissionUpdated$.pipe(takeUntil(this.onDestroy$)).subscribe(({ submission }) => {
       this.submittedBy = this.submissionsService.submissionName(submission.user);
       this.updatedOn = submission.lastUpdateTime;
-      const questions = submission.parent.questions || [];
+      const questions = Array.isArray(submission.parent?.questions) ? submission.parent.questions : [];
       this.unansweredQuestions = questions.reduce((unanswered, q, index) => [
         ...unanswered, ...((submission.answers[index] && submission.answers[index].passed) ? [] : [ index + 1 ])
       ], []);
       this.submissionId = submission._id;
       const ans = submission.answers[this.questionNum - 1] || {};
       if (this.fromSubmission === true) {
-        this.examType = submission.parent.type === 'surveys' ? 'survey' : 'exam';
+        this.examType = submission.parent?.type === 'surveys' ? 'survey' : 'exam';
+        if (!this.setQuestion(questions)) {
+          this.leaveUnavailableExam();
+          return;
+        }
         this.title = submission.parent.name;
-        this.setQuestion(questions);
         this.grade = (ans && ans.grade !== undefined) ? ans.grade : this.grade;
         this.comment = ans && ans.gradeComment;
       }
