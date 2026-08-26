@@ -198,4 +198,17 @@ describe('SurveysComponent', () => {
     expect(component.getActionTooltip(survey, 'record'))
       .toBe('Record survey information from a person who is not a member of Local Planet');
   });
+  it('lists team surveys in the manager view so they stay administrable', () => {
+    const teamSurvey = { _id: 'survey-1', teamId: 'team-1' };
+    const adoptedSurvey = { _id: 'survey-2', teamId: 'team-1', sourceSurveyId: 'survey-1' };
+    const managerSurvey = { _id: 'survey-3' };
+    component.teamId = undefined;
+    component.routeTeamId = undefined;
+    component.allSurveys = [ teamSurvey, adoptedSurvey, managerSurvey ];
+    component.currentFilter.viewMode = 'team';
+
+    component.toggleSurveysView();
+
+    expect(component.surveys.data).toEqual([ teamSurvey, managerSurvey ]);
+  });
 });

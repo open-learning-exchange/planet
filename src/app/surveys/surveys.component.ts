@@ -113,7 +113,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
   readonly dbName = 'exams';
   isAuthorized = false;
-  currentFilter = { viewMode: 'team' };
+  currentFilter: { viewMode: 'team' | 'adopt' } = { viewMode: 'team' };
   allSurveys: any[] = [];
   deleteDialog: MatDialogRef<DialogsPromptComponent>;
   configuration = this.stateService.configuration;
@@ -264,16 +264,14 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   private applyViewModeFilter() {
     const targetTeamId = this.routeTeamId || this.teamId;
     this.surveys.data = this.allSurveys.filter(survey => {
-      if (this.currentFilter.viewMode === 'team') {
-        // team surveys: created by team, sent or adopted
-        return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
-      } else if (this.currentFilter.viewMode === 'adopt') {
+      if (this.currentFilter.viewMode === 'adopt') {
         // active, shareable community surveys the team has not already adopted
         return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
           !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
-      // manager view: no team adopted/sent survey
-      return !survey.teamId && !survey.sourceSurveyId;
+      // team surveys: created by team, sent or adopted. Without a team, the manager view lists every survey no
+      // team has adopted, team surveys included, so managers can still edit, archive, export and delete them.
+      return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
   }
 
