@@ -62,6 +62,7 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isMainPostShared = true;
   @Input() showRepliesButton = true;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Output() changeReplyViewing = new EventEmitter<any>();
   @Output() updateNews = new EventEmitter<any>();
@@ -129,6 +130,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   addReply(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
     this.authService.checkAuthenticationStatus().subscribe(() => {
       this.updateNews.emit({
@@ -183,6 +187,9 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   editNews(news) {
+    if (this.readOnly) {
+      return;
+    }
     const label = this.formLabel(news);
     const initialValue = news.message === '</br>' ? '' : news.message;
     this.updateNews.emit({
@@ -202,19 +209,28 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteNews.emit(news);
   }
 
   shareStory(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.shareNews.emit({ news, local: this.targetLocalPlanet });
   }
 
   labelClick(label, action) {
+    if (this.readOnly && action !== 'select') {
+      return;
+    }
     this.changeLabels.emit({ label, action, news: this.item.doc });
   }
 
   shouldShowShare() {
-    return this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
+    return !this.readOnly && this.shareTarget && (this.editable || this.item.doc.user._id === this.currentUser._id) &&
       (!this.targetLocalPlanet || (!this.newsService.postSharedWithCommunity(this.item) && this.isMainPostShared));
   }
 

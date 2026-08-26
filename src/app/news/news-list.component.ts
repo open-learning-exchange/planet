@@ -32,6 +32,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   @Input() viewableBy = 'community';
   @Input() viewableId: string;
   @Input() editable = true;
+  @Input() readOnly = false;
   @Input() shareTarget: 'community' | 'nation' | 'center';
   @Input() useReplyRoutes = false;
   @Output() viewChange = new EventEmitter<any>();
@@ -209,6 +210,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   openUpdateDialog(
     { title, placeholder, initialValue = '', news = {} }: { title: string, placeholder: string, initialValue?: string, news?: any }
   ) {
+    if (this.readOnly) {
+      return;
+    }
     const fields = [ {
       'type': 'markdown',
       'name': 'message',
@@ -231,6 +235,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   postNews(oldNews, newNews) {
+    if (this.readOnly) {
+      return;
+    }
     this.newsService.postNews(
       { ...oldNews, ...newNews },
       oldNews._id ? this.editSuccessMessage : $localize`Reply has been posted successfully.`
@@ -241,6 +248,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   openDeleteDialog(news) {
+    if (this.readOnly) {
+      return;
+    }
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: this.deleteNews(news),
@@ -277,6 +287,9 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
   }
 
   shareNews({ news, local }: { news: any, local: boolean }) {
+    if (this.readOnly) {
+      return;
+    }
     if (local) {
       this.newsService.shareNews(news).subscribe(() => {
         this.isMainPostShared = news._id === this.replyViewing._id ? true : this.isMainPostShared;
@@ -295,7 +308,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
 
   changeLabels({ news, label, action }: { news: any, label: string, action: 'remove' | 'add' | 'select' }) {
     this.changeLabelsFilter.emit({ label, action });
-    if (action === 'select') {
+    if (action === 'select' || this.readOnly) {
       return;
     }
     const labels = action === 'remove' ?
