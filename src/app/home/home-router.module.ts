@@ -14,9 +14,9 @@ import { NewsListComponent } from '../news/news-list.component';
 import { AuthService } from '../shared/auth-guard.service';
 import { UnsavedChangesGuard } from '../shared/unsaved-changes.guard';
 
-function dashboardPath(route): string {
+const dashboardPath = (route): string => {
   return `${myDashboardRoute}/${route}`;
-}
+};
 
 const alwaysGuardedRoutes = [
   { path: 'community/:code', component: CommunityComponent },

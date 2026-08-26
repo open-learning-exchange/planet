@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck, AfterViewChecked, OnDestroy } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import {
+  Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd, NavigationSkipped, NavigationSkippedCode
+} from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, of } from 'rxjs';
-import { switchMap, takeUntil, tap, catchError } from 'rxjs/operators';
+import { switchMap, takeUntil, tap, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserService } from '../shared/user.service';
 import { CouchService } from '../shared/couchdb.service';
@@ -11,7 +13,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { PouchAuthService } from '../shared/database/pouch-auth.service';
 import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationsService, notificationUserFilter } from '../notifications/notifications.service';
 import { LoginDialogComponent } from '../login/login-dialog.component';
 import { PlanetLanguageComponent } from '../shared/planet-language.component';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -56,6 +58,7 @@ import { ANDROID_APPS } from '../shared/android-apps';
 export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestroy {
 
   @ViewChild('content') private mainContent;
+  @ViewChild('mobileSidenav') mobileSidenav: MatSidenav;
   @ViewChild('toolbar', { read: ElementRef }) private toolbar: ElementRef;
   @ViewChild(PlanetLanguageComponent) languageComponent: PlanetLanguageComponent;
   private onDestroy$ = new Subject<void>();
@@ -127,6 +130,17 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
       }
     });
     this.subscribeToLogoutClick();
+    this.router.events.pipe(
+      filter(event =>
+        event instanceof NavigationEnd ||
+        (event instanceof NavigationSkipped && event.code === NavigationSkippedCode.IgnoredSameUrlNavigation)
+      ),
+      takeUntil(this.onDestroy$)
+    ).subscribe(() => {
+      if (this.isMobile) {
+        this.mobileSidenav?.close();
+      }
+    });
   }
 
   ngDoCheck() {
@@ -152,6 +166,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   ngOnDestroy() {
+    this.endAnimation();
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
@@ -224,12 +239,7 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   getNotification() {
-    const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
-    if (this.userService.get().isUserAdmin) {
-      userFilter.push({ 'user': 'SYSTEM' });
-    }
+    const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work
@@ -262,7 +272,12 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   }
 
   toggleNav() {
+    if (this.isMobile) {
+      this.mobileSidenav?.toggle();
+      return;
+    }
     this.sidenavState = this.sidenavState === 'open' ? 'closed' : 'open';
+    this.endAnimation();
     this.animDisp = this.animObs.subscribe();
   }
 

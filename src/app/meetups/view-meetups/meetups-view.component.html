@@ -44,14 +44,14 @@
       <div class="meetup-detail" [ngClass]="{'left-tile':!isDialog}">
         @if (meetupDetail?.createdBy) {
           <p>
-            <b i18n>Created By:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.createdBy, meetupDetail?.sourcePlanet || meetupDetail.sync.planetCode)">{{' ' + meetupDetail?.createdBy}}</a>
+            <b i18n>Created By:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openCreatorProfile($event)" (keydown.space)="openCreatorProfile($event)" (click)="openCreatorProfile($event)">{{' ' + meetupDetail?.createdBy}}</a>
           </p>
         }
         @if (meetupDetail?.category) {
           <p><b i18n>Category:</b> {{meetupDetail?.category}}</p>
         }
         @if (meetupDetail?.startDate || meetupDetail?.endDate) {
-          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && (meetupDetail?.endDate | date: 'fullDate') !== (meetupDetail?.startDate | date: 'fullDate') ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
         }
         @if (meetupDetail?.deadline) {
           <p><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
@@ -77,11 +77,15 @@
         <p><b i18n>Link: </b> <a [href]="meetupDetail?.meetupLink" target="_blank" rel="noopener noreferrer">{{meetupDetail?.meetupLink}}</a></p>
       }
       @if (meetupDetail?.assignee) {
-        <p><b i18n>Assigned to:</b><a class="cursor-pointer" (click)="openProfile(meetupDetail?.assignee?.name, meetupDetail?.assignee?.userPlanetCode)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
+        <p><b i18n>Assigned to:</b><a tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openAssigneeProfile($event)" (keydown.space)="openAssigneeProfile($event)" (click)="openAssigneeProfile($event)">{{' ' + meetupDetail?.assignee?.name}}</a></p>
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>
-        }<td-markdown [content]="meetupDetail?.description"></td-markdown>
+        <planet-markdown
+          [content]="meetupDetail?.description"
+          [imageSource]="parent ? 'parent' : 'local'">
+        </planet-markdown>
+      }
       </div>
       @if (!isDialog) {
         <div class="right-tile">

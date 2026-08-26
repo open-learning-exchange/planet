@@ -19,12 +19,12 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  private _course: any = {};
+  #course: any = {};
   get course() {
-    return this._course;
+    return this.#course;
   }
   set course(newCourse: any) {
-    this._course = { ...this._course, ...newCourse };
+    this.#course = { ...this.#course, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -127,13 +127,13 @@ export class CoursesService {
     forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
     this.usersService.requestUserData();
   }
 
   reset() {
-    this._course = {};
+    this.#course = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }
@@ -217,12 +217,14 @@ export class CoursesService {
   }
 
   getCourseNameFromId(courseId, parent = false) {
-    return (this[parent ? 'parent' : 'local'].courses.find( (mCourse) => mCourse._id === courseId )).courseTitle;
+    return this[parent ? 'parent' : 'local'].courses.find((course) => course._id === courseId)?.courseTitle;
   }
 
-  courseAdmissionMany(courseIds, type) {
+  courseAdmissionMany(courseIds, type, parent = false) {
     return this.userService.changeShelf(courseIds, 'courseIds', type).pipe(map(({ shelf, countChanged }) => {
-      const prefix = countChanged > 1 ? $localize`${countChanged} courses` : this.getCourseNameFromId(courseIds[courseIds.length - 1]);
+      const prefix = countChanged > 1 ?
+        $localize`${countChanged} courses` :
+        this.getCourseNameFromId(courseIds[courseIds.length - 1], parent) || $localize`Selected course`;
       const message = type === 'remove' ? $localize`Removed from myCourses: ${prefix}` :
         $localize`Added to myCourses: ${prefix} `;
       this.planetMessageService.showMessage(message);

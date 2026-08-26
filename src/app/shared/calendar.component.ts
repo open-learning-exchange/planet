@@ -10,13 +10,26 @@ import { DialogsPromptComponent } from './dialogs/dialogs-prompt.component';
 import { days, millisecondsToDay } from '../meetups/constants';
 import { CouchService } from './couchdb.service';
 import { findDocuments } from './mangoQueries';
-import { addDateAndTime, styleVariables } from './utils';
+import { styleVariables } from './utils';
 import { AuthService } from './auth-guard.service';
 import { TasksService } from '../tasks/tasks.service';
 import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
+
+const taskEventColors = {
+  completed: {
+    backgroundColor: styleVariables.grey,
+    borderColor: styleVariables.grey,
+    textColor: styleVariables.accentText
+  },
+  uncompleted: {
+    backgroundColor: styleVariables.accent,
+    borderColor: styleVariables.accent,
+    textColor: styleVariables.accentText
+  }
+};
 
 @Component({
   selector: 'planet-calendar',
@@ -55,7 +68,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() buttonText?: any = {
     today: $localize`Today`
   };
-  @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
   events: any[] = [ {} ];
   calendarPlugins = [ dayGridPlugin, interactionPlugin ];
@@ -71,8 +83,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   showLegend = true;
   eventLegend = [
     { color: styleVariables.primary, label: $localize`Event` },
-    { color: 'orange', label: $localize`Uncompleted Task`, type: 'team' },
-    { color: 'grey', label: $localize`Completed Task`, type: 'team' }
+    { color: taskEventColors.uncompleted.backgroundColor, label: $localize`Uncompleted Task`, type: 'team' },
+    { color: taskEventColors.completed.backgroundColor, label: $localize`Completed Task`, type: 'team' }
   ];
 
   calendarOptions: CalendarOptions = {
@@ -81,6 +93,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       interactionPlugin
     ],
     initialView: 'dayGridMonth',
+    eventDisplay: 'block',
     contentHeight: 'auto',
     locales: allLocales,
     locale: this.document.documentElement.lang,
@@ -124,7 +137,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -132,7 +145,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       this.calendar.getApi().updateSize();
       this.resizeCalendar = false;
     }
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   getMeetups() {
@@ -156,11 +169,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   getTasks() {
     this.couchService.findAll('tasks', findDocuments({ link: this.link })).subscribe((tasks: any[]) => {
       this.tasks = tasks.filter(task => task.status !== 'archived').map(task => {
-        const taskColors = task.completed ? {
-          backgroundColor: styleVariables.grey, borderColor: styleVariables.grey, textColor: styleVariables.greyText
-        } : {
-          backgroundColor: styleVariables.accent, borderColor: styleVariables.accent, textColor: styleVariables.accentText
-        };
+        const taskColors = task.completed ? taskEventColors.completed : taskEventColors.uncompleted;
         return this.eventObject({ ...task, isTask: true }, task.deadline, task.deadline, taskColors);
       });
       this.events = [ ...this.meetups, ...this.tasks ];
@@ -176,16 +185,37 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       backgroundColor: styleVariables.primary, borderColor: styleVariables.primary, textColor: styleVariables.primaryText
     }
   ) {
-    const allDay = !meetup.isTask && meetup.startTime === undefined || meetup.startTime === '';
+    const allDay = !meetup.isTask && (meetup.startTime === undefined || meetup.startTime === '' || meetup.startTime === null);
+    const start = meetup.isTask ? new Date(startDate) : this.dateAtTime(startDate, meetup.startTime);
+    let end: Date | undefined;
+
+    if (allDay) {
+      end = this.dateAtTime(endDate);
+      end.setDate(end.getDate() + 1);
+    } else if (!meetup.isTask) {
+      const timedEnd = this.dateAtTime(endDate, meetup.endTime);
+      end = timedEnd > start ? timedEnd : undefined;
+    }
+
     return {
       title: meetup.title,
-      start: addDateAndTime(startDate, meetup.startTime),
-      end: addDateAndTime(endDate, allDay && endDate > startDate ? '24:00' : meetup.endTime),
+      start,
+      ...(end ? { end } : {}),
       allDay,
       editable: true,
       extendedProps: { meetup },
       ...otherProps
     };
+  }
+
+  private dateAtTime(dateValue, time?: string): Date {
+    const date = new Date(dateValue);
+    date.setHours(0, 0, 0, 0);
+    if (time) {
+      const [ hours, minutes ] = time.split(':').map(Number);
+      date.setHours(hours, minutes, 0, 0);
+    }
+    return date;
   }
 
   dailyEvents(meetup) {
@@ -224,7 +254,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         endDate: today,
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
     });
@@ -266,6 +296,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         sync: this.sync,
         editable: this.editable,
         isTask: true,
+        onMeetupsChange: () => this.getTasks(),
         onEditTask: () => this.openTaskEditDialog(task),
         onDeleteTask: () => this.openTaskDeleteDialog(task)
       }
