@@ -123,4 +123,12 @@ describe('DialogsAddMeetupsComponent', () => {
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalled();
   });
+
+  it('closes gracefully when onMeetupsChange is omitted in dialog data', () => {
+    delete data.onMeetupsChange;
+
+    expect(() => component.meetupsChange()).not.toThrow();
+    expect(dialogsLoadingService.stop).toHaveBeenCalled();
+    expect(dialogRef.close).toHaveBeenCalled();
+  });
 });
