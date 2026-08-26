@@ -39,6 +39,12 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
+type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
+
+// Actions the template disables on element.isArchived. Select, submissions, export and adopt stay enabled on
+// archived surveys, so they must not claim to be blocked by the archive.
+const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
+
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
   includeAnswers: FormControl<boolean>;
@@ -682,15 +688,23 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
   }
 
-  getActionTooltip(
-    survey: any,
-    action: 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt'
-  ): string {
+  getActionTooltip(survey: any, action: SurveyAction): string {
     if (survey.isArchived) {
       if (action === 'archive') {
         return $localize`Survey is already archived`;
       }
-      return $localize`Survey is archived and cannot accept new actions`;
+      if (archiveBlockedActions.includes(action)) {
+        return $localize`Survey is archived and cannot accept new actions`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      if (action === 'send') {
+        return $localize`Team surveys cannot be sent from here`;
+      }
+      if (action === 'record') {
+        return $localize`Team surveys cannot be recorded from here`;
+      }
     }
 
     if (!survey.taken) {
@@ -712,12 +726,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (action === 'adopt') {
       return $localize`Adopt Survey`;
-    }
-
-    if (!survey.questions?.length) {
-      if (action !== 'edit' && action !== 'archive') {
-        return $localize`Survey has no questions`;
-      }
     }
 
     if (action === 'record') {

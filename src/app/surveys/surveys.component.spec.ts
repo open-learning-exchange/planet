@@ -12,6 +12,7 @@ describe('SurveysComponent', () => {
   let dialogsLoadingService: any;
   let router: any;
   let route: any;
+  let stateService: any;
   let component: SurveysComponent;
 
   const createComponent = () => new SurveysComponent(
@@ -21,7 +22,7 @@ describe('SurveysComponent', () => {
     {} as any,
     router,
     route,
-    { configuration: {} } as any,
+    stateService,
     dialogsLoadingService,
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
     {} as any,
@@ -53,6 +54,7 @@ describe('SurveysComponent', () => {
       parent: null,
       snapshot: { url: [ 'surveys' ] }
     };
+    stateService = { configuration: { name: 'Local Planet' } };
     component = createComponent();
   });
 
@@ -134,5 +136,66 @@ describe('SurveysComponent', () => {
     component.toggleSurveysView();
 
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
+  });
+
+  it('does not fall back to an empty question tooltip for actions whose buttons stay enabled', () => {
+    const survey = { _id: 'survey-1', questions: [], taken: 1 };
+
+    expect(component.getActionTooltip(survey, 'send')).toBe('Send Survey');
+    expect(component.getActionTooltip(survey, 'record')).toBe('Record Survey');
+    expect(component.getActionTooltip(survey, 'public')).toBe('Generate a public survey link');
+    expect(component.getActionTooltip(survey, 'submissions')).toBe('View Submissions');
+  });
+
+  it('keeps the archived and no submissions tooltips for surveys without questions', () => {
+    expect(component.getActionTooltip({ _id: 'survey-1', questions: [], isArchived: true }, 'send'))
+      .toBe('Survey is archived and cannot accept new actions');
+    expect(component.getActionTooltip({ _id: 'survey-2', questions: [], taken: 0 }, 'submissions'))
+      .toBe('There are no submissions to view');
+  });
+  it('does not claim the archive blocks actions the archive leaves enabled', () => {
+    const survey = { _id: 'survey-1', isArchived: true, taken: 2 };
+
+    expect(component.getActionTooltip(survey, 'select')).toBe('');
+    expect(component.getActionTooltip(survey, 'submissions')).toBe('View Submissions');
+    expect(component.getActionTooltip(survey, 'export')).toBe('Export Survey Submissions');
+  });
+
+  it('still explains the actions the archive does block', () => {
+    const survey = { _id: 'survey-1', isArchived: true, taken: 2 };
+    const archived = 'Survey is archived and cannot accept new actions';
+
+    expect(component.getActionTooltip(survey, 'edit')).toBe(archived);
+    expect(component.getActionTooltip(survey, 'send')).toBe(archived);
+    expect(component.getActionTooltip(survey, 'record')).toBe(archived);
+    expect(component.getActionTooltip(survey, 'public')).toBe(archived);
+    expect(component.getActionTooltip(survey, 'revoke')).toBe(archived);
+    expect(component.getActionTooltip(survey, 'archive')).toBe('Survey is already archived');
+  });
+
+  it('gives the missing data reason rather than the archive reason for archived surveys without submissions', () => {
+    const survey = { _id: 'survey-1', isArchived: true, taken: 0 };
+
+    expect(component.getActionTooltip(survey, 'submissions')).toBe('There are no submissions to view');
+    expect(component.getActionTooltip(survey, 'export')).toBe('There is no data to export');
+  });
+
+  it('explains why team surveys cannot be sent or recorded from the manager route', () => {
+    router.url = '/manager/surveys';
+    component = createComponent();
+    const teamSurvey = { _id: 'survey-1', teamId: 'team-1', taken: 2 };
+
+    expect(component.getActionTooltip(teamSurvey, 'send')).toBe('Team surveys cannot be sent from here');
+    expect(component.getActionTooltip(teamSurvey, 'record')).toBe('Team surveys cannot be recorded from here');
+  });
+
+  it('keeps the manager route action tooltips for surveys that belong to no team', () => {
+    router.url = '/manager/surveys';
+    component = createComponent();
+    const survey = { _id: 'survey-1', taken: 2 };
+
+    expect(component.getActionTooltip(survey, 'send')).toBe('Send Survey');
+    expect(component.getActionTooltip(survey, 'record'))
+      .toBe('Record survey information from a person who is not a member of Local Planet');
   });
 });

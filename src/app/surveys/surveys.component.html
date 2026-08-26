@@ -95,7 +95,7 @@
             }
             @if (!teamId && !routeTeamId) {
               <div [matTooltip]="getActionTooltip(element, 'send')">
-                <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
+                <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="element.isArchived || (element.teamId && isManagerRoute)">
                   <mat-icon>send</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Send</label>
@@ -108,7 +108,7 @@
               </mat-menu>
             }
             <div [matTooltip]="getActionTooltip(element, 'record')">
-              <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
+              <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="element.isArchived || (element.teamId && isManagerRoute)">
                 <mat-icon>fiber_manual_record</mat-icon>
                 @if (!isMobile) {
                   <label i18n> Record</label>
@@ -117,7 +117,7 @@
             </div>
             @if (element.teamId && (teamId || routeTeamId)) {
               <div [matTooltip]="getActionTooltip(element, 'public')">
-                <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || element.isArchived">
+                <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="element.isArchived">
                   <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
                   @if (!isMobile) {
                     @if (element.publicAccess === true) {
@@ -154,7 +154,7 @@
             }
             @if (!teamId && !routeTeamId) {
               <div [matTooltip]="getActionTooltip(element, 'submissions')">
-                <button mat-raised-button color="primary" (click)="viewSurveySubmissions(element)" [disabled]="!element.questions?.length || !element.taken">
+                <button mat-raised-button color="primary" (click)="viewSurveySubmissions(element)" [disabled]="!element.taken">
                   <mat-icon>insert_drive_file</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Submissions</label>
