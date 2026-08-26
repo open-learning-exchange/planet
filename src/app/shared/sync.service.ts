@@ -82,9 +82,9 @@ export class SyncService {
   }
 
   confirmPasswordAndRunReplicators(replicators) {
-    return this.openPasswordConfirmation().pipe(switchMap((credentials) => {
-      return forkJoin(replicators.map((replicator) => this.sync(replicator, credentials)));
-    }));
+    return this.openPasswordConfirmation().pipe(
+      switchMap((credentials) => forkJoin(replicators.map((replicator) => this.sync(replicator, credentials))))
+    );
   }
 
   sync(replicator, credentials) {

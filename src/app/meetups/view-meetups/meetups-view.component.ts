@@ -112,9 +112,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     return this.couchService.post('shelf/_find', findDocuments({
       'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
     }, 0)). subscribe((data) => {
-      this.members = data.docs.map((res) => {
-        return res._id.split(':')[1];
-      });
+      this.members = data.docs.map((res) => res._id.split(':')[1]);
     });
   }
 
@@ -159,9 +157,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   sendInvitations(selected: string[]) {
-    const invites = selected.map((user: any) => {
-      return this.inviteNotification(user._id, this.meetupDetail);
-    });
+    const invites = selected.map((user: any) => this.inviteNotification(user._id, this.meetupDetail));
     this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.listDialogRef.close();
       this.planetMessageService.showMessage($localize`Invitation${(invites.length > 1 ? 's' : '')} sent successfully`);

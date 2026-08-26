@@ -65,9 +65,7 @@ export class SubmissionsService {
   }
 
   setSubmission(id: string) {
-    this.submission = this.submissions.find((submission) => {
-      return submission._id === id;
-    });
+    this.submission = this.submissions.find((submission) => submission._id === id);
   }
 
   private newSubmission({ parentId, parent, user, type }) {

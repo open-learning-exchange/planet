@@ -380,24 +380,20 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
-  private processZip = (zipFile) => {
-    return (fileName) => {
-      return new Observable((observer) => {
-        // When file was not read error block wasn't called from async so added try...catch block
-        try {
-          zipFile.file(fileName).async('base64').then((data) => {
-            observer.next({ name: fileName, data });
-            observer.complete();
-          }, (e) => {
-            observer.error(e);
-          });
-        } catch (e) {
-          console.log(fileName + ' has caused error.');
-          observer.error(e);
-        }
+  private processZip = (zipFile) => (fileName) => new Observable((observer) => {
+    // When file was not read error block wasn't called from async so added try...catch block
+    try {
+      zipFile.file(fileName).async('base64').then((data) => {
+        observer.next({ name: fileName, data });
+        observer.complete();
+      }, (e) => {
+        observer.error(e);
       });
-    };
-  };
+    } catch (e) {
+      console.log(fileName + ' has caused error.');
+      observer.error(e);
+    }
+  });
 
   private getFileNames(data) {
     const files = data.files;

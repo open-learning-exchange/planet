@@ -318,11 +318,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
       ])),
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const docs = users.filter(user => {
-          return this.user._id !== user._id &&
-            user._id !== 'satellite' &&
-            notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, this.user._id));
+        const docs = users.filter(user => (
+          this.user._id !== user._id &&
+          user._id !== 'satellite' &&
+          notifications.every(notification => notification.user !== user._id)
+        )).map(user => this.sendNotifications(user._id, this.user._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
@@ -596,11 +596,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = this.news;
     if (this.selectedLabel) {
-      filtered = filtered.filter(item => {
-        return (item.doc.labels || []).includes(this.selectedLabel)
+      filtered = filtered.filter(item => (item.doc.labels || []).includes(this.selectedLabel)
           || (item.doc.viewIn || []).some(view => view.name === this.selectedLabel)
-          || (this.selectedLabel === 'shared chat' && item.doc.chat === true);
-      });
+          || (this.selectedLabel === 'shared chat' && item.doc.chat === true));
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();

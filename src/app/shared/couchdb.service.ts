@@ -82,22 +82,18 @@ export class CouchService {
         docWithDate = this.fillInDateFields(doc, date, opts && opts.utcKeys);
         return this.post(db, docWithDate, opts);
       }),
-      map((res: any) => {
-        return ({ ...res, res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } });
-      })
+      map((res: any) => ({ ...res, res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } }))
     );
   }
 
   localComparison(db: string, parentDocs: any[]) {
-    return this.findAll(db, findDocuments({ '_id': { '$gt': null } }, 0, 0, 1000)).pipe(map((localDocs) => {
-      return parentDocs.map((parentDoc) => {
-        const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
-        return {
-          ...parentDoc,
-          localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
-        };
-      });
-    }));
+    return this.findAll(db, findDocuments({ '_id': { '$gt': null } }, 0, 0, 1000)).pipe(map((localDocs) => parentDocs.map((parentDoc) => {
+      const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
+      return {
+        ...parentDoc,
+        localStatus: localDoc !== undefined ? this.compareRev(parentDoc._rev, localDoc._rev) : 0
+      };
+    })));
   }
 
   findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
@@ -128,12 +124,8 @@ export class CouchService {
 
   private findAllRequest(db: string, query: any, opts: any) {
     return this.post(db + '/_find', query, opts).pipe(
-      catchError(() => {
-        return of({ docs: [], rows: [] });
-      }),
-      expand((res) => {
-        return res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty();
-      })
+      catchError(() => of({ docs: [], rows: [] })),
+      expand((res) => res.docs.length > 0 ? this.post(db + '/_find', { ...query, bookmark: res.bookmark }, opts) : empty())
     );
   }
 
@@ -142,9 +134,7 @@ export class CouchService {
     const revNum = doc => +(doc._rev.split('-')[0]);
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
       map((response: any) => response.results
-        .map((result: any) => {
-          return result.docs.reduce((maxDoc, { ok: doc }) => revNum(maxDoc) > revNum(doc) ? maxDoc : doc, { _rev: '0-0' });
-        })
+        .map((result: any) => result.docs.reduce((maxDoc, { ok: doc }) => revNum(maxDoc) > revNum(doc) ? maxDoc : doc, { _rev: '0-0' }))
         .filter((doc: any) => doc !== undefined && doc._deleted !== true)
       )
     );
@@ -163,9 +153,9 @@ export class CouchService {
   }
 
   getTags(db: string, opts?: any) {
-    return this.couchDBReq('get', db + '/_design/' + db + '/_view/count_tags?group=true', this.setOpts(opts)).pipe(map((res: any) => {
-      return res.rows.sort((a, b) => b.value - a.value);
-    }));
+    return this.couchDBReq('get', db + '/_design/' + db + '/_view/count_tags?group=true', this.setOpts(opts)).pipe(
+      map((res: any) => res.rows.sort((a, b) => b.value - a.value))
+    );
   }
 
   getUrl(url: string, reqOpts?: any) {
@@ -194,9 +184,7 @@ export class CouchService {
   }
 
   currentTime() {
-    return this.getUrl('time').pipe(catchError(() => {
-      return of(Date.now());
-    }));
+    return this.getUrl('time').pipe(catchError(() => of(Date.now())));
   }
 
   fillInDateFields(data, date, utcKeys: string[] = [], propertyKey = '') {

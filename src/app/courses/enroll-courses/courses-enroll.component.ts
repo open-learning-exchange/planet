@@ -94,17 +94,15 @@ export class CoursesEnrollComponent {
   }
 
   exportCSV() {
-    const csvData = this.members.map((user: any) => {
-      return {
-        [$localize`username`]: user.doc.name,
-        [$localize`Date Started`]: user.activityDates.createdDate
-          ? formatDate(user.activityDates.createdDate, 'mediumDate', this.localeId)
-          : $localize`N/A`,
-        [$localize`Most Recent Activity`]: user.activityDates.updatedDate
-          ? formatDate(user.activityDates.updatedDate, 'mediumDate', this.localeId)
-          : $localize`N/A`,
-      };
-    });
+    const csvData = this.members.map((user: any) => ({
+      [$localize`username`]: user.doc.name,
+      [$localize`Date Started`]: user.activityDates.createdDate
+        ? formatDate(user.activityDates.createdDate, 'mediumDate', this.localeId)
+        : $localize`N/A`,
+      [$localize`Most Recent Activity`]: user.activityDates.updatedDate
+        ? formatDate(user.activityDates.updatedDate, 'mediumDate', this.localeId)
+        : $localize`N/A`,
+    }));
     this.csvService.exportCSV({
       data: csvData,
       title: $localize`Course Enrollment Data - ${this.course}`,

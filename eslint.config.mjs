@@ -246,9 +246,16 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
+        "no-var": "error",
         radix: "error",
         "use-isnan": "error",
         "valid-typeof": "off",
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
+
+        // From ng-cli-compat-formatting-add-on
+
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         curly: "error",
@@ -262,7 +269,6 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
-        "no-var": "error",
         "object-shorthand": ["error", "always"],
         quotes: "off",
 
@@ -272,8 +278,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
-        "prefer-arrow/prefer-arrow-functions": "error",
-        "prefer-const": "error",
+        
     },
 }, {
     files: ["**/*.html"],

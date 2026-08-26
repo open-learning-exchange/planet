@@ -440,12 +440,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         okClick: (selection: any[]) => {
           this.dialogsLoadingService.start();
-          forkJoin(selection.map(item => {
-            return this.createTeamSurveyFromSource(survey, {
-              _id: item.doc._id,
-              name: item.doc.name
-            });
-          })).subscribe(() => {
+          forkJoin(selection.map(item => this.createTeamSurveyFromSource(survey, {
+            _id: item.doc._id,
+            name: item.doc.name
+          }))).subscribe(() => {
             this.planetMessageService.showMessage($localize`Survey sent to teams`);
             this.dialogsLoadingService.stop();
             this.dialogRef.close();

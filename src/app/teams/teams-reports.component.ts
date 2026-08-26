@@ -242,12 +242,10 @@ export class TeamsReportsComponent implements OnChanges {
         value;
     const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
     const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
-      (obj, [ key, value ]: [ string, string | Date | number ]) => {
-        return {
-          ...obj,
-          [key]: transformFields(key, value)
-        };
-      },
+      (obj, [ key, value ]: [ string, string | Date | number ]) => ({
+        ...obj,
+        [key]: transformFields(key, value)
+      }),
       {}
     ) as any;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);

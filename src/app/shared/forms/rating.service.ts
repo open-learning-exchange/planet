@@ -27,11 +27,11 @@ export class RatingService {
     const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
     this.couchService.findAll(
       this.dbName, findDocuments({ '_id': { '$gt': null } }, [], [ { 'item': 'desc' } ]), opts
-    ).pipe(catchError(err => {
+    ).pipe(catchError(err =>
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
-      return of([]);
-    })).subscribe((res: any) => {
+      of([])
+    )).subscribe((res: any) => {
       this.ratings = res;
       this.ratingsUpdated.next({ ratings: res, parent });
     });
@@ -51,9 +51,7 @@ export class RatingService {
   createItemList(itemsRes, ratings) {
     return itemsRes.map((res: any) => {
       const item = res;
-      const ratingIndex = ratings.findIndex(rating => {
-        return item._id === rating.item;
-      });
+      const ratingIndex = ratings.findIndex(rating => item._id === rating.item);
       if (ratingIndex > -1) {
         const ratingInfo = this.addRatingToItem(item._id, ratingIndex, ratings, Object.assign({}, startingRating));
         return { ...item, rating: ratingInfo };

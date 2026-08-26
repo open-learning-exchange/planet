@@ -40,13 +40,11 @@ export class ManagerService {
         this.activityService.getActivities('resource_activities', 'byPlanetRecent'),
         this.activityService.getRatingInfo({ planetCode: configuration.code, tillDate, filterAdmin: true }),
       ])
-    )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => {
-      return ({
-        resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
-        ratings: ratings.length,
-        ...this.activityService.mostRecentAdminActivities(configuration, [], adminActivities)
-      });
-    }));
+    )).pipe(map(([ adminActivities, resourceVisits, ratings ]) => ({
+      resourceVisits: (resourceVisits.rows.find(row => row.key === configuration.code) || { value: 0 }).value,
+      ratings: ratings.length,
+      ...this.activityService.mostRecentAdminActivities(configuration, [], adminActivities)
+    })));
   }
 
   getPushedList() {

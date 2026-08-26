@@ -170,21 +170,22 @@ export class UserService {
   }
 
   newSessionLog() {
-    return this.getNewLogObj().pipe(switchMap(logObj => {
-      return this.couchService.updateDocument(this.logsDb, logObj);
-    }),
-    map((res: any) => {
-      this.currentSession = res.doc;
-    }));
+    return this.getNewLogObj().pipe(switchMap(logObj => this.couchService.updateDocument(this.logsDb, logObj)),
+      map((res: any) => {
+        this.currentSession = res.doc;
+      }));
   }
 
   endSessionLog() {
-    return this.getCurrentSession().pipe(switchMap(() => {
-      return this.couchService.updateDocument(this.logsDb, this.logObj(this.currentSession.loginTime, this.couchService.datePlaceholder));
-    }), map((res: any) => {
-      this.currentSession = res.doc;
-      return res;
-    }));
+    return this.getCurrentSession().pipe(
+      switchMap(() => (
+        this.couchService.updateDocument(this.logsDb, this.logObj(this.currentSession.loginTime, this.couchService.datePlaceholder))
+      )),
+      map((res: any) => {
+        this.currentSession = res.doc;
+        return res;
+      })
+    );
   }
 
   changeShelf(ids: string[], shelfName: string, type: string) {

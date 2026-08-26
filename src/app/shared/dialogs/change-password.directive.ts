@@ -164,9 +164,7 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   passwordError(reason: string) {
-    return () => {
-      return of({ error: { ok: false, reason } });
-    };
+    return () => of({ error: { ok: false, reason } });
   }
 
   reinitSession(username, password) {
@@ -202,9 +200,7 @@ export class ChangePasswordDirective implements OnChanges {
     return this.couchService.put('_node/nonode@nohost/_config/admins/' + userData.name, userData.password)
       .pipe(
         catchError(this.passwordError('Error changing admin password')),
-        switchMap((response) => {
-          return of(response);
-        })
+        switchMap((response) => of(response))
       );
   }
 

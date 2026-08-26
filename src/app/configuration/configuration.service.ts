@@ -52,11 +52,9 @@ export class ConfigurationService {
   }
 
   addUserToShelf(adminName, configuration) {
-    return mergeMap(data => {
-      return this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
-        domain: configuration.parentDomain
-      });
-    });
+    return mergeMap(data => this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
+      domain: configuration.parentDomain
+    }));
   }
 
   createReplicators(configuration, credentials) {
@@ -151,13 +149,11 @@ export class ConfigurationService {
   }
 
   updateConfiguration(configuration) {
-    return this.postConfiguration(configuration).pipe(switchMap(() => {
-      return this.couchService.post(
-        'communityregistrationrequests/_find',
-        findDocuments({ 'code': configuration.code }),
-        { domain: configuration.parentDomain }
-      );
-    }), switchMap((res) => {
+    return this.postConfiguration(configuration).pipe(switchMap(() => this.couchService.post(
+      'communityregistrationrequests/_find',
+      findDocuments({ 'code': configuration.code }),
+      { domain: configuration.parentDomain }
+    )), switchMap((res) => {
       // Remove local revision as it will have conflict with parent
       const { _rev: localRev, ...localConfig } = configuration;
       // if parent record not found set empty

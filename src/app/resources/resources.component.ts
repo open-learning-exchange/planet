@@ -244,9 +244,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupList(resourcesRes, myLibrarys) {
     return resourcesRes.map((resource: any) => {
-      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-        return resource._id === resourceId;
-      });
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => resource._id === resourceId);
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
       return { ...resource, libraryInfo: myLibraryIndex > -1 };

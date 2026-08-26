@@ -30,11 +30,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../shared/submit.directive';
 
-const removeProtocol = (str: string) => {
+const removeProtocol = (str: string) =>
   // RegEx grabs the fragment of the string between '//' and last character
   // First match includes characters, second does not (so we use second)
-  return /\/\/(.*?)$/.exec(str)[1];
-};
+  /\/\/(.*?)$/.exec(str)[1]
+;
 
 interface LoginForm {
   name: FormControl<string>;

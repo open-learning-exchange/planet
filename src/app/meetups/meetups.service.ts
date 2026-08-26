@@ -53,9 +53,7 @@ export class MeetupService {
   meetupList(meetupRes, userMeetupRes) {
     return meetupRes.map((res: any) => {
       const meetup = res.doc || res;
-      const meetupIndex = userMeetupRes.findIndex(meetupIds => {
-        return meetup._id === meetupIds;
-      });
+      const meetupIndex = userMeetupRes.findIndex(meetupIds => meetup._id === meetupIds);
       if (meetupIndex > -1) {
         return { ...meetup, participate: true };
       }

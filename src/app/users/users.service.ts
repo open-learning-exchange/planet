@@ -47,13 +47,15 @@ export class UsersService {
           of(parentUsers.newData)
         ]);
       })
-    ).subscribe(([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
-      if (childUsers === undefined) {
-        return;
+    ).subscribe(
+      ([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
+        if (childUsers === undefined) {
+          return;
+        }
+        this.data = { users, loginActivities, childUsers, parentUsers };
+        this.updateUsers();
       }
-      this.data = { users, loginActivities, childUsers, parentUsers };
-      this.updateUsers();
-    });
+    );
   }
 
   getAllUsers(withPrivateDocs = false) {
@@ -187,14 +189,12 @@ export class UsersService {
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
     return this.couchService.get('shelf/' + userId).pipe(
-      switchMap(shelfUser => {
-        return forkJoin([
-          this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
-          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
-          this.deleteUserFromTeams(user),
-          this.tasksService.removeAssigneeFromTasks(user._id)
-        ]);
-      }),
+      switchMap(shelfUser => forkJoin([
+        this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+        this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
+        this.deleteUserFromTeams(user),
+        this.tasksService.removeAssigneeFromTasks(user._id)
+      ])),
       map(() => this.requestUsers(true))
     );
   }
