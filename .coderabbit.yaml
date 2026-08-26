@@ -1,5 +1,5 @@
 reviews:
   auto_review:
     enabled: false
-    labels: ["review requested"]
+    labels: ["review"]
     auto_incremental_review: true
