@@ -85,18 +85,32 @@ describe('ResourcesViewerComponent CSV preview', () => {
     expect(component.dataSource.data).toEqual([ { Name: 'current' } ]);
   });
 
-  it('formats attachment file size when loading a resource', () => {
+  it('formats the selected attachment size when loading a resource', () => {
     component.setResource({
       _id: 'doc-id',
       title: 'PDF resource',
       private: false,
       mediaType: 'pdf',
+      openWhichFile: 'manual.pdf',
       _attachments: {
-        'manual.pdf': { content_type: 'application/pdf', length: 2516582 }
+        'manual.pdf': { content_type: 'application/pdf', length: 2516582 },
+        'notes.txt': { content_type: 'text/plain', length: 100000 }
       }
     });
 
     expect(component.formattedFileSize).toBe('2.4 MB');
+  });
+
+  it('clears viewer state when a resource has no attachments', () => {
+    component.resourceSrc = 'stale-url';
+    component.mediaType = 'pdf';
+    component.formattedFileSize = '2.4 MB';
+
+    component.setResource({ _id: 'doc-id', title: 'Empty resource', private: false, _attachments: {} });
+
+    expect(component.resourceSrc).toBe('');
+    expect(component.mediaType).toBe('');
+    expect(component.formattedFileSize).toBe('');
   });
 
 });

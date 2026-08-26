@@ -27,7 +27,7 @@
     @case ('csv') {
       <div class="csv-container">
         <div class="csv-actions">
-          <a mat-raised-button color="primary" [href]="resourceSrc"><span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}</a>
+          <ng-container *ngTemplateOutlet="downloadButton"></ng-container>
         </div>
         @if (csvPreviewTooLarge) {
           <span i18n>CSV files larger than {{ csvPreviewMaxSizeMb }} MB cannot be previewed. Download the file to view it.</span>
@@ -60,7 +60,7 @@
     }
     @case ('other') {
       <div>
-        <a mat-raised-button color="primary" [href]="resourceSrc"><span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}</a>
+        <ng-container *ngTemplateOutlet="downloadButton"></ng-container>
       </div>
     }
     @case ('HTML') {
@@ -68,3 +68,9 @@
     }
   }
 </div>
+
+<ng-template #downloadButton>
+  <a mat-raised-button color="primary" [href]="resourceSrc">
+    <span i18n>Download/Open</span>@if (formattedFileSize) {<span> ({{ formattedFileSize }})</span>}
+  </a>
+</ng-template>

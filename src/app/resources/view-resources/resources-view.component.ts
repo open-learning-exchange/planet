@@ -13,7 +13,6 @@ import * as constants from '../resources-constants';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
@@ -23,7 +22,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 import { ResourcesViewerComponent } from './resources-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
-import { formatResourceAttachmentSize } from '../../shared/utils';
+import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../../shared/utils';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -32,7 +31,6 @@ import { formatResourceAttachmentSize } from '../../shared/utils';
     MatToolbar,
     MatIconAnchor,
     MatIcon,
-    MatTooltip,
     NgTemplateOutlet,
     MatIconButton,
     MatMenuTrigger,
@@ -58,7 +56,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   mediaType = '';
   resourceSrc = '';
   formattedFileSize = '';
-  downloadTooltip = $localize`:@@download:Download`;
+  downloadFileSize = '';
   pdfSrc: any;
   contentType = '';
   isUserEnrolled = false;
@@ -113,17 +111,16 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           }
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
+          this.isLoading = false;
+          return;
         }
         this.isLoading = false;
-        if (this.resource) {
-          this.formattedFileSize = formatResourceAttachmentSize(this.resource);
-          this.downloadTooltip = this.formattedFileSize
-            ? $localize`:@@download-with-size:Download (${this.formattedFileSize})`
-            : $localize`:@@download:Download`;
-        }
-        this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource?._id);
+        const attachmentCount = Object.keys(this.resource.doc?._attachments || {}).length;
+        this.formattedFileSize = attachmentCount > 1 ? formatResourceAttachmentsSize(this.resource.doc) : '';
+        this.downloadFileSize = formatResourceAttachmentSize(this.resource.doc);
+        this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
-          (this.currentUser.name === this.resource?.doc?.addedBy && this.resource?.doc?.sourcePlanet === this.planetConfiguration.code);
+          (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
       }, () => this.isLoading = false);
   }
 

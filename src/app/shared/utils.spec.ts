@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
-  couchAttachmentPath, couchAttachmentUrl, formatBytes, formatResourceAttachmentSize,
-  getResourceAttachmentSize, normalizeImage, scaledDimensions
+  couchAttachmentPath, couchAttachmentUrl, formatBytes, formatResourceAttachmentSize, formatResourceAttachmentsSize,
+  normalizeImage, resourceAttachmentFilename, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -88,49 +88,56 @@ describe('utils', () => {
 
     it('formats bytes, kilobytes, megabytes, and gigabytes correctly', () => {
       expect(formatBytes(500)).toBe('500 B');
+      expect(formatBytes(0.5)).toBe('0.5 B');
       expect(formatBytes(1024)).toBe('1 KB');
       expect(formatBytes(1536)).toBe('1.5 KB');
       expect(formatBytes(1048576)).toBe('1 MB');
       expect(formatBytes(2516582)).toBe('2.4 MB');
       expect(formatBytes(1073741824)).toBe('1 GB');
+      expect(formatBytes(1048575)).toBe('1 MB');
     });
 
   });
 
-  describe('formatResourceAttachmentSize & getResourceAttachmentSize', () => {
+  describe('resource attachment sizes', () => {
 
-    it('returns 0 and empty string for resources without attachments', () => {
-      expect(getResourceAttachmentSize(null)).toBe(0);
-      expect(getResourceAttachmentSize({})).toBe(0);
-      expect(getResourceAttachmentSize({ _attachments: {} })).toBe(0);
+    it('returns an empty string for resources without attachments', () => {
       expect(formatResourceAttachmentSize(null)).toBe('');
       expect(formatResourceAttachmentSize({})).toBe('');
+      expect(formatResourceAttachmentsSize({ _attachments: {} })).toBe('');
     });
 
-    it('calculates single attachment size from unwrapped or doc-wrapped resources', () => {
+    it('formats a single attachment', () => {
       const singleDoc = {
         _attachments: {
           'report.pdf': { length: 2516582, content_type: 'application/pdf' }
         }
       };
-      expect(getResourceAttachmentSize(singleDoc)).toBe(2516582);
       expect(formatResourceAttachmentSize(singleDoc)).toBe('2.4 MB');
-
-      const wrappedDoc = { doc: singleDoc };
-      expect(getResourceAttachmentSize(wrappedDoc)).toBe(2516582);
-      expect(formatResourceAttachmentSize(wrappedDoc)).toBe('2.4 MB');
     });
 
-    it('sums multiple attachments for composite web/html bundles', () => {
+    it('formats the selected attachment separately from a composite bundle total', () => {
       const multiDoc = {
+        openWhichFile: 'index.html',
         _attachments: {
           'index.html': { length: 50000 },
           'bundle.js': { length: 200000 },
           'style.css': { length: 50000 }
         }
       };
-      expect(getResourceAttachmentSize(multiDoc)).toBe(300000);
-      expect(formatResourceAttachmentSize(multiDoc)).toBe('293 KB');
+      expect(formatResourceAttachmentSize(multiDoc)).toBe('48.8 KB');
+      expect(formatResourceAttachmentSize(multiDoc, 'bundle.js')).toBe('195.3 KB');
+      expect(formatResourceAttachmentsSize(multiDoc)).toBe('293 KB');
+    });
+
+    it('uses the first attachment when the preferred filename is empty or missing', () => {
+      const attachments = {
+        'index.html': { length: 50000 },
+        'style.css': { length: 10000 }
+      };
+      expect(resourceAttachmentFilename({ openWhichFile: '', _attachments: attachments })).toBe('index.html');
+      expect(resourceAttachmentFilename({ openWhichFile: 'missing.html', _attachments: attachments })).toBe('index.html');
+      expect(formatResourceAttachmentSize({ openWhichFile: '', _attachments: attachments })).toBe('48.8 KB');
     });
 
   });

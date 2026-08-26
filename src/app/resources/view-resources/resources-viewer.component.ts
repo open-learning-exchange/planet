@@ -9,8 +9,8 @@ import { StateService } from '../../shared/state.service';
 import { UserService } from '../../shared/user.service';
 import { CouchService } from '../../shared/couchdb.service';
 import { CSV_PREVIEW_MAX_BYTES, CSV_PREVIEW_MAX_ROWS, CsvService } from '../../shared/csv.service';
-import { couchAttachmentPath, formatResourceAttachmentSize } from '../../shared/utils';
-import { NgClass } from '@angular/common';
+import { couchAttachmentPath, formatResourceAttachmentSize, resourceAttachmentFilename } from '../../shared/utils';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatIconButton, MatAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import {
@@ -25,7 +25,7 @@ import { MatPaginator } from '@angular/material/paginator';
   templateUrl: './resources-viewer.component.html',
   styleUrls: ['./resources-viewer.scss'],
   imports: [
-    NgClass, MatIconButton, MatIcon, MatAnchor, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
+    NgClass, NgTemplateOutlet, MatIconButton, MatIcon, MatAnchor, MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell,
     MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow, MatNoDataRow, MatSort,
     MatSortHeader, MatPaginator
   ]
@@ -82,6 +82,8 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
           this.resource = resources.find((r: any) => r._id === this.resourceId);
           if (this.resource) {
             this.setResource(this.resource.doc);
+          } else {
+            this.formattedFileSize = '';
           }
         }
       });
@@ -125,11 +127,20 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
   setResource(resource: any) {
     this.cancelCsvLoad();
     this.resetCsvPreview();
-    this.formattedFileSize = formatResourceAttachmentSize(resource);
     this.resourceActivity(resource, 'visit');
     // openWhichFile is used to label which file to start with for HTML resources
-    const filename = resource.openWhichFile || Object.keys(resource._attachments)[0];
-    const attachment = resource._attachments[filename];
+    const filename = resourceAttachmentFilename(resource);
+    const attachment = resource._attachments?.[filename];
+    if (!attachment) {
+      this.formattedFileSize = '';
+      this.mediaType = '';
+      this.contentType = '';
+      this.resourceSrc = '';
+      this.pdfSrc = undefined;
+      this.resourceUrl.emit('');
+      return;
+    }
+    this.formattedFileSize = formatResourceAttachmentSize(resource, filename);
     this.mediaType = resource.mediaType;
     this.contentType = attachment.content_type;
     this.resourceSrc = this.urlPrefix + couchAttachmentPath(resource._id, filename);

@@ -250,10 +250,12 @@
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
-              <mat-icon>file_download</mat-icon>
-              <span i18n>Download file</span>
-            </a>
+            @if (element.downloadUrl) {
+              <a [href]="element.downloadUrl" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
+                <mat-icon>file_download</mat-icon>
+                <span i18n>Download file</span>@if (element.downloadFileSize) {<span> ({{ element.downloadFileSize }})</span>}
+              </a>
+            }
           </mat-menu>
         </mat-cell>
       </ng-container>

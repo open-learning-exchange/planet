@@ -330,35 +330,50 @@ export const extractMarkdownImageUrls = (content: string) => {
   return matches;
 };
 
-export const formatBytes = (bytes?: number, decimals = 1): string => {
-  if (bytes === undefined || bytes === null || isNaN(bytes) || bytes <= 0) {
+export const formatBytes = (bytes?: number): string => {
+  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes <= 0) {
     return '';
   }
   const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  const clampedI = Math.min(i, sizes.length - 1);
-  const formattedVal = parseFloat((bytes / Math.pow(k, clampedI)).toFixed(dm));
-  return `${formattedVal} ${sizes[clampedI]}`;
+  let unitIndex = Math.max(0, Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1));
+  let formattedValue = parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(1));
+  if (formattedValue === k && unitIndex < sizes.length - 1) {
+    unitIndex++;
+    formattedValue = 1;
+  }
+  return `${formattedValue} ${sizes[unitIndex]}`;
 };
 
-export const getResourceAttachmentSize = (resource: any): number => {
-  if (!resource) {
-    return 0;
-  }
-  const doc = resource.doc || resource;
-  const attachments = doc._attachments;
+const attachmentLength = (attachment: any): number =>
+  attachment && typeof attachment.length === 'number' ? attachment.length : 0;
+
+export const resourceAttachmentFilename = (doc: any): string => {
+  const attachments = doc?._attachments;
   if (!attachments || typeof attachments !== 'object') {
-    return 0;
+    return '';
   }
-  return (Object.values(attachments) as any[]).reduce<number>((total, att) => {
-    return total + (att && typeof att.length === 'number' ? att.length : 0);
-  }, 0);
+  if (doc.openWhichFile && attachments[doc.openWhichFile]) {
+    return doc.openWhichFile;
+  }
+  return Object.keys(attachments)[0] ?? '';
 };
 
-export const formatResourceAttachmentSize = (resource: any, decimals = 1): string => {
-  const size = getResourceAttachmentSize(resource);
-  return formatBytes(size, decimals);
+export const formatResourceAttachmentSize = (doc: any, filename?: string): string => {
+  const attachments = doc?._attachments;
+  if (!attachments || typeof attachments !== 'object') {
+    return '';
+  }
+  const selectedFilename = filename || resourceAttachmentFilename(doc);
+  return formatBytes(attachmentLength(attachments[selectedFilename]));
 };
 
+export const formatResourceAttachmentsSize = (doc: any): string => {
+  const attachments = doc?._attachments;
+  if (!attachments || typeof attachments !== 'object') {
+    return '';
+  }
+  const totalSize = (Object.values(attachments) as any[])
+    .reduce<number>((total, attachment) => total + attachmentLength(attachment), 0);
+  return formatBytes(totalSize);
+};

@@ -26,7 +26,10 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import {
+  couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, formatResourceAttachmentSize,
+  hasMarkdownImages, resourceAttachmentFilename
+} from '../shared/utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -249,7 +252,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
-      return { ...resource, libraryInfo: myLibraryIndex > -1 };
+      const downloadFilename = resourceAttachmentFilename(resource.doc);
+      return {
+        ...resource,
+        libraryInfo: myLibraryIndex > -1,
+        downloadUrl: downloadFilename ? this.urlPrefix + couchAttachmentPath(resource._id, downloadFilename) : '',
+        downloadFileSize: formatResourceAttachmentSize(resource.doc, downloadFilename)
+      };
     });
   }
 
