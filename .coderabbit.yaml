@@ -1,11 +1,8 @@
-# CodeRabbit configuration for Planet
-# Reviews are opt-in: add the `review` label and CodeRabbit picks the PR up,
-# then re-reviews each push. An unlabelled PR is never reviewed.
-#
-# Because a review only happens when somebody asks for one, ceremony and
-# substance point opposite ways here: every decorative section is off, and the
-# review itself is turned up. A labelled PR answered with "LGTM" wasted the ask.
-# Reference: https://docs.coderabbit.ai/reference/configuration
+# CodeRabbit for Planet. Reviews are opt-in: label a PR `review` and it gets
+# reviewed, then re-reviewed on each push. Unlabelled PRs are never reviewed.
+# Since a review only runs when asked for, ceremony is off and substance is up
+# -- a labelled PR answered "LGTM" wasted the ask.
+# https://docs.coderabbit.ai/reference/configuration
 language: "en-US"
 
 tone_instructions: >-
@@ -14,10 +11,9 @@ tone_instructions: >-
   already report. No compliments, no restating the diff.
 
 reviews:
-  # Somebody asked for this one, so hand over the findings, nitpicks included.
   profile: assertive
 
-  # Ceremony off. None of it is why anyone reaches for the label.
+  # Each defaults on; none is why anyone labels a PR.
   sequence_diagrams: false
   changed_files_summary: false
   estimate_code_review_effort: false
@@ -26,12 +22,24 @@ reviews:
   suggested_labels: false
   suggested_reviewers: false
   in_progress_fortune: false
-  # ...including the "Review skipped" notice the gate posts on every other PR.
-  review_status: false
+  review_status: false  # else a "Review skipped" notice on every unlabelled PR
 
-  # Keep the collapsible "Prompt for AI agents" block: it is how a Claude or
-  # Codex session applies a finding without a human retyping it.
+  # How a Claude or Codex session applies a finding without a human retyping it.
   enable_prompt_for_ai_agents: true
+
+  # The pre-merge table, all four rows. The key is `docstrings`, not
+  # `docstring_coverage` -- unknown keys here validate silently and do nothing.
+  pre_merge_checks:
+    docstrings: { mode: "off" }
+    title: { mode: "off" }
+    description: { mode: "off" }
+    issue_assessment: { mode: "off" }
+
+  # Drops the "Finishing Touches" checkbox block. autofix, fix_ci and
+  # resolve_merge_conflict stay on: those only render when they apply.
+  finishing_touches:
+    docstrings: { enabled: false }
+    unit_tests: { enabled: false }
 
   path_filters:
     - "!package-lock.json"
@@ -66,20 +74,12 @@ reviews:
         couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
 
   auto_review:
-    # `review` is myplanet's trigger word too. enabled false plus a positive
-    # label is CodeRabbit's documented opt-in idiom: the label starts the
-    # review, auto_incremental_review keeps it following each push after that.
+    # enabled false + a positive label is CodeRabbit's opt-in idiom: the label
+    # starts the review, auto_incremental_review follows each push after that.
     enabled: false
     labels: ["review"]
     auto_incremental_review: true
-    # Labelling a draft is a deliberate act, so honour it: open a draft, ask
-    # for a review, fix, then mark ready.
     drafts: true
-
-  pre_merge_checks:
-    # No docstring convention here; a standing coverage warning is pure noise.
-    docstring_coverage:
-      mode: "off"
 
 knowledge_base:
   code_guidelines:
@@ -87,11 +87,3 @@ knowledge_base:
     filePatterns:
       - "AGENTS.md"
       - "Style-Guide.md"
-
-code_generation:
-  unit_tests:
-    path_instructions:
-      - path: "src/**/*.spec.ts"
-        instructions: >-
-          Karma + Jasmine over TestBed. Query elements by their km- test-hook
-          classes rather than by tag or DOM structure.
