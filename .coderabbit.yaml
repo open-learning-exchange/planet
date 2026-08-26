@@ -1,9 +1,97 @@
+# CodeRabbit configuration for Planet
+# Reviews are opt-in: add the `review` label and CodeRabbit picks the PR up,
+# then re-reviews each push. An unlabelled PR is never reviewed.
+#
+# Because a review only happens when somebody asks for one, ceremony and
+# substance point opposite ways here: every decorative section is off, and the
+# review itself is turned up. A labelled PR answered with "LGTM" wasted the ask.
+# Reference: https://docs.coderabbit.ai/reference/configuration
+language: "en-US"
+
+tone_instructions: >-
+  Correctness first: bugs, security, data loss. Then the conventions in
+  AGENTS.md and Style-Guide.md. Skip whatever eslint, sass-lint and htmlhint
+  already report. No compliments, no restating the diff.
+
 reviews:
-  # The gate posts a "Review skipped" notice on every unlabelled PR
-  # otherwise -- one comment per PR to say nothing happened.
+  # Somebody asked for this one, so hand over the findings, nitpicks included.
+  profile: assertive
+
+  # Ceremony off. None of it is why anyone reaches for the label.
+  sequence_diagrams: false
+  changed_files_summary: false
+  estimate_code_review_effort: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  in_progress_fortune: false
+  # ...including the "Review skipped" notice the gate posts on every other PR.
   review_status: false
 
+  # Keep the collapsible "Prompt for AI agents" block: it is how a Claude or
+  # Codex session applies a finding without a human retyping it.
+  enable_prompt_for_ai_agents: true
+
+  path_filters:
+    - "!package-lock.json"
+    - "!src/i18n/messages*.xlf"
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.svg"
+
+  path_instructions:
+    - path: "src/app/**"
+      instructions: >-
+        Database access goes through CouchDbService (setOpts / couchDBReq) or
+        the PouchDB services -- flag raw HttpClient calls at CouchDB.
+        Validators belong in src/app/validators/. Flag hard-coded colors and
+        breakpoints (use _variables.scss, mat-color(), the screen-sizes mixin)
+        and the reserved names planet-db-host and planet-db-port. Features are
+        lazy-loaded per directory: flag imports reaching into another feature.
+    - path: "src/app/**/*.html"
+      instructions: >-
+        Flag i18n on an element whose only content is an interpolation, real
+        text carrying no i18n, and attribute strings missing i18n-<attr>.
+        km- prefixed classes are unit-test hooks: flag any that surface in a
+        stylesheet, and flag removing one a spec still queries.
+    - path: "gateway/**"
+      instructions: >-
+        A separate service on the legacy eslint config; credentials and models
+        come from the CouchDB configurations doc -- flag keys read from env
+        vars or hard-coded.
+    - path: "design/**"
+      instructions: >-
+        CouchDB map/reduce views. A changed view only takes effect once
+        couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
+
   auto_review:
+    # `review` is myplanet's trigger word too. enabled false plus a positive
+    # label is CodeRabbit's documented opt-in idiom: the label starts the
+    # review, auto_incremental_review keeps it following each push after that.
     enabled: false
     labels: ["review"]
     auto_incremental_review: true
+    # Labelling a draft is a deliberate act, so honour it: open a draft, ask
+    # for a review, fix, then mark ready.
+    drafts: true
+
+  pre_merge_checks:
+    # No docstring convention here; a standing coverage warning is pure noise.
+    docstring_coverage:
+      mode: "off"
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "AGENTS.md"
+      - "Style-Guide.md"
+
+code_generation:
+  unit_tests:
+    path_instructions:
+      - path: "src/**/*.spec.ts"
+        instructions: >-
+          Karma + Jasmine over TestBed. Query elements by their km- test-hook
+          classes rather than by tag or DOM structure.
