@@ -290,10 +290,6 @@ export class CustomValidators {
     });
   }
 
-  static atLeastOneQuestion(ac: AbstractControl<unknown[] | null>): ValidationErrors | null {
-    return ac.value?.length ? null : { noQuestions: true };
-  }
-
   static atLeastOneDaySelected(): ValidatorFn {
     // Control value should be the array of selected weekday identifiers.
     return (control: AbstractControl<string[] | null>): ValidationErrors | null => {
