@@ -1,14 +1,14 @@
 import { vi } from 'vitest';
 import { SimpleChange, SimpleChanges } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { TeamsMemberComponent } from './teams-member.component';
 
 describe('TeamsMemberComponent', () => {
   let component: TeamsMemberComponent;
-  let dialog: { open: ReturnType<typeof vi.fn> };
+  let usersProfileDialogService: { open: ReturnType<typeof vi.fn> };
 
   const currentUser = { _id: 'org.couchdb.user:ann', isUserAdmin: false };
   const planetCode = 'kal';
@@ -16,12 +16,12 @@ describe('TeamsMemberComponent', () => {
   const memberChange = (member): SimpleChanges => ({ member: new SimpleChange(undefined, member, true) });
 
   beforeEach(() => {
-    dialog = { open: vi.fn() };
+    usersProfileDialogService = { open: vi.fn() };
     component = new TeamsMemberComponent(
       { get: () => currentUser } as any as UserService,
       { configuration: { code: planetCode } } as any as StateService,
       {} as any as TasksService,
-      dialog as any as MatDialog
+      usersProfileDialogService as any as UsersProfileDialogService
     );
   });
 
@@ -196,15 +196,12 @@ describe('TeamsMemberComponent', () => {
   });
 
   describe('profile dialog', () => {
-    it('opens without autofocusing past the header', () => {
+    it('opens through the shared profile dialog service', () => {
       const member = { name: 'ann' };
 
       component.openMemberDialog(member);
 
-      expect(dialog.open).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ data: { member }, autoFocus: 'dialog' })
-      );
+      expect(usersProfileDialogService.open).toHaveBeenCalledWith({ member });
     });
   });
 });

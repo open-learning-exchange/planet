@@ -6,7 +6,7 @@ import { CoursesService } from '../courses.service';
 import { SubmissionsService } from '../../submissions/submissions.service';
 import { UserService } from '../../shared/user.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
 import { CoursesProgressChartComponent } from './courses-progress-chart.component';
@@ -15,7 +15,7 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
 @Component({
   templateUrl: 'courses-progress-learner.component.html',
   styleUrls: ['courses-progress.scss'],
-  imports: [MatToolbar, MatIconAnchor, MatIcon, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
+  imports: [MatToolbar, MatIconButton, MatIcon, CoursesProgressChartComponent, PlanetLoadingSpinnerComponent]
 })
 export class CoursesProgressLearnerComponent implements OnInit, OnDestroy {
 

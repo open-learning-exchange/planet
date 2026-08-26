@@ -210,7 +210,9 @@
 
 .banner {
   background-color: v.$primary;
+  box-sizing: border-box;
   color: white;
+  gap: 16px;
   padding: 10px;
   text-align: center;
   position: fixed;
@@ -222,9 +224,25 @@
   align-items: center;
 }
 
+.banner p {
+  margin: 0;
+}
+
 .banner .playstore-logo {
-  margin: 8px;
   height: 30px;
+}
+
+.banner-apps {
+  display: flex;
+  gap: 16px;
+}
+
+.banner-app {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
 }
 
 .spacer {
@@ -238,6 +256,33 @@
   font-size: 20px;
   margin-right: 20px;
   cursor: pointer;
+}
+
+@media (max-width: #{v.$screen-xs}) {
+  .banner {
+    flex-wrap: wrap;
+    padding-right: 48px;
+  }
+
+  .banner p {
+    flex-basis: 100%;
+  }
+
+  .banner-apps {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .spacer {
+    display: none;
+  }
+
+  .close-btn {
+    margin: 0;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+  }
 }
 
 .profile-image-large {

@@ -2,8 +2,7 @@ import { Component, Input, EventEmitter, Output, OnInit, OnChanges, SimpleChange
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { MatDialog } from '@angular/material/dialog';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -63,7 +62,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
     private userService: UserService,
     private stateService: StateService,
     private tasksService: TasksService,
-    private dialog: MatDialog
+    private usersProfileDialogService: UsersProfileDialogService
   ) {}
 
   get isTeamLeader() {
@@ -109,14 +108,7 @@ export class TeamsMemberComponent implements OnInit, OnChanges {
   }
 
   openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      // The profile is taller than the dialog, so focusing the first tabbable element
-      // scrolls the content past the header on open. Focus the dialog container instead.
-      autoFocus: 'dialog',
-      maxHeight: '90vh'
-    });
+    this.usersProfileDialogService.open({ member });
   }
 
   toggleTask(event: MatSelectionListChange) {

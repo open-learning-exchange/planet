@@ -60,7 +60,7 @@
       'list-lt list-rt';
     }
 
-    .profile-image-large {
+    ::ng-deep .profile-image-large {
       width: 50%;
     }
 

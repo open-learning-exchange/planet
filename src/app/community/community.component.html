@@ -40,7 +40,7 @@
                       <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
                     }
                   </ng-container>
-                  <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
+                  <button mat-icon-button [matTooltip]="voicesToolbarPinTooltip" [attr.aria-label]="voicesToolbarPinTooltip" (click)="pinned = !pinned" class="pin-btn">
                     <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
                   </button>
                 </mat-toolbar>
