@@ -11,7 +11,7 @@ import { educationLevel } from '../user-constants';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { TeamsService } from '../../teams/teams.service';
 import { MatToolbar } from '@angular/material/toolbar';
-import { NgTemplateOutlet, DatePipe, NgClass } from '@angular/common';
+import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
@@ -34,7 +34,6 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatMenuTrigger,
     MatMenu,
     NgTemplateOutlet,
-    NgClass,
     MatButton,
     RouterLink,
     MatAnchor,
@@ -159,12 +158,13 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    const returnState = history.state?.returnState;
-    if (returnState) {
-      this.router.navigate([ `${returnState.route}` ]);
-      return;
+    const teamsUrl = this.router.url.split('/');
+    const currentUser = this.userService.get();
+    if (currentUser.isUserAdmin || teamsUrl[1] === 'teams') {
+      this.router.navigate([ '../../' ], { relativeTo: this.route });
+    } else {
+      this.router.navigate([ '/' ]);
     }
-    this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
   getUserRoles(): string[] {

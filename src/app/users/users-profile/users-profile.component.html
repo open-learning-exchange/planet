@@ -1,13 +1,13 @@
 @if (!isDialog) {
   <mat-toolbar>
-    <button mat-icon-button (click)="goBack()" [attr.aria-label]="'Go back'" i18n-aria-label>
+    <button mat-icon-button class="km-profile-back-button" (click)="goBack()" aria-label="Go back" i18n-aria-label>
       <mat-icon>arrow_back</mat-icon>
     </button>
     <span i18n>Profile</span>
   </mat-toolbar>
 }
 
-<div [ngClass]="{'space-container': !isDialog}">
+<div class="space-container">
   <mat-toolbar class="primary-color font-size-1">
     <span>{{userDetail.name | truncateText:40}}</span>
     @if (userDetail.gender) {
