@@ -155,7 +155,7 @@
         "@typescript-eslint/unified-signatures": "error",
         "complexity": "off",
         "constructor-super": "error",
-        // "eqeqeq": ["error", "smart"],
+        "eqeqeq": ["error", "smart"],
         "guard-for-in": "error",
         "id-match": "error",
         "import/no-deprecated": "warn",
@@ -211,30 +211,30 @@
         ],
         "no-throw-literal": "error",
         "no-undef-init": "error",
-        // "no-underscore-dangle": [
-        //   "error",
-        //   {
-        //     "allow": [
-        //       "_attachments",
-        //       "_filter",
-        //       "_id",
-        //       "_placeholder",
-        //       "_required",
-        //       "_rev",
-        //       "_tableState",
-        //       "_textValue",
-        //       "_value",
-        //       "__karma__"
-        //     ]
-        //   }
-        // ],
+        "no-underscore-dangle": [
+          "error",
+          {
+            "allow": [
+              "_attachments",
+              "_filter",
+              "_id",
+              "_placeholder",
+              "_required",
+              "_rev",
+              "_tableState",
+              "_textValue",
+              "_value",
+              "__karma__"
+            ]
+          }
+        ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
         // "no-var": "error",
         // "object-shorthand": "error",
-        // "one-var": ["error", "never"],
-        // "prefer-arrow/prefer-arrow-functions": "error",
-        // "prefer-const": "error",
+        "one-var": ["error", "never"],
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
         "radix": "error",
         "use-isnan": "error",
         "valid-typeof": "off",

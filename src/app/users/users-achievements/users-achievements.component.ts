@@ -19,10 +19,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
+import { fullName } from '../../shared/utils';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -37,7 +39,7 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     PlanetBetaDirective,
     MatList,
     MatListItem,
@@ -47,7 +49,8 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatListItemLine,
     DatePipe,
     TruncateTextPipe,
-    AvatarComponent
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
@@ -196,7 +199,7 @@ export class UsersAchievementsComponent implements OnInit {
       },
       {
         text: `
-          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${fullName(this.user) || this.user.name}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
