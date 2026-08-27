@@ -393,6 +393,50 @@ describe('TasksComponent', () => {
     component.setFilter('self');
     expect(component.filteredTaskViews.map(({ task }) => task._id)).toEqual([ 'owned' ]);
   });
+
+  it('partitions tasks into activeTaskViews and completedTaskViews', () => {
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'task-active', completed: false, assignee: { userId: 'org.couchdb.user:alex' } },
+      { _id: 'task-done', completed: true, assignee: { userId: 'org.couchdb.user:alex' } },
+      { _id: 'task-pending', assignee: { userId: 'org.couchdb.user:alex' } }
+    ]);
+
+    expect(component.activeTaskViews.map(({ task }) => task._id)).toEqual([ 'task-active', 'task-pending' ]);
+    expect(component.completedTaskViews.map(({ task }) => task._id)).toEqual([ 'task-done' ]);
+  });
+
+  it('toggles completed section expansion state', () => {
+    expect(component.isCompletedExpanded).toBe(true);
+    component.toggleCompletedSection();
+    expect(component.isCompletedExpanded).toBe(false);
+    component.toggleCompletedSection();
+    expect(component.isCompletedExpanded).toBe(true);
+  });
+
+  it('maintains active and completed partitioning when switching filter between self and all', () => {
+    component.ngOnInit();
+    taskUpdates.next([
+      { _id: 'my-active', completed: false, assignee: { userId: 'org.couchdb.user:alex' } },
+      { _id: 'my-done', completed: true, assignee: { userId: 'org.couchdb.user:alex' } },
+      { _id: 'other-active', completed: false, assignee: { userId: 'org.couchdb.user:other' } },
+      { _id: 'other-done', completed: true, assignee: { userId: 'org.couchdb.user:other' } }
+    ]);
+
+    // Default 'self' filter
+    expect(component.activeTaskViews.map(({ task }) => task._id)).toEqual([ 'my-active' ]);
+    expect(component.completedTaskViews.map(({ task }) => task._id)).toEqual([ 'my-done' ]);
+
+    // 'all' filter
+    component.setFilter('all');
+    expect(component.activeTaskViews.map(({ task }) => task._id)).toEqual([ 'my-active', 'other-active' ]);
+    expect(component.completedTaskViews.map(({ task }) => task._id)).toEqual([ 'my-done', 'other-done' ]);
+  });
+
+  it('unsubscribes and completes onDestroy$ on ngOnDestroy', () => {
+    component.ngOnInit();
+    expect(() => component.ngOnDestroy()).not.toThrow();
+  });
 });
 
 describe('FilterAssigneePipe', () => {

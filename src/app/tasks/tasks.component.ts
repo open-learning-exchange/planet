@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, Pipe, PipeTransform, ViewEncapsulation, forwardRef } from '@angular/core';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Component, Input, OnInit, OnDestroy, Pipe, PipeTransform, ViewEncapsulation, forwardRef } from '@angular/core';
+import { of, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { TasksService } from './tasks.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { environment } from '../../environments/environment';
@@ -74,7 +74,7 @@ export class AssigneeNamePipe implements PipeTransform {
     forwardRef(() => AssigneeNamePipe)
   ]
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, OnDestroy {
 
   @Input() mode: any;
   @Input() link: any;
@@ -99,9 +99,13 @@ export class TasksComponent implements OnInit {
   myTasks: any[] = [];
   taskViews: any[] = [];
   filteredTaskViews: any[] = [];
+  activeTaskViews: any[] = [];
+  completedTaskViews: any[] = [];
+  isCompletedExpanded = true;
   imgUrlPrefix = environment.couchAddress;
   filter: 'self' | 'all' = 'self';
   trackById = trackById;
+  private onDestroy$ = new Subject<void>();
 
   constructor(
     private tasksService: TasksService,
@@ -115,14 +119,21 @@ export class TasksComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.tasksService.tasksListener(this.link).subscribe((tasks) => {
-      this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
-      this.setTaskViews();
-      this.myTasks = this.tasks.filter(task => task.assignee?.userId === this.userService.get()._id);
-      this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
-      this.filterTasks();
-    });
+    this.tasksService.tasksListener(this.link)
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((tasks) => {
+        this.tasks = this.tasksService.sortedTasks(tasks, this.tasks);
+        this.setTaskViews();
+        this.myTasks = this.tasks.filter(task => task.assignee?.userId === this.userService.get()._id);
+        this.filter = this.myTasks.length === 0 ? 'all' : this.filter;
+        this.filterTasks();
+      });
     this.tasksService.getTasks();
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   private setCurrentAssignees() {
@@ -236,10 +247,16 @@ export class TasksComponent implements OnInit {
     this.filterTasks();
   }
 
+  toggleCompletedSection() {
+    this.isCompletedExpanded = !this.isCompletedExpanded;
+  }
+
   filterTasks() {
     const filteredTasks = this.filter === 'self' ? this.myTasks : this.tasks;
     const filteredTaskIds = new Set(filteredTasks.map(task => task._id));
     this.filteredTaskViews = this.taskViews.filter(({ task }) => filteredTaskIds.has(task._id));
+    this.activeTaskViews = this.filteredTaskViews.filter(({ task }) => !task.completed);
+    this.completedTaskViews = this.filteredTaskViews.filter(({ task }) => task.completed);
   }
 
   sendNotifications(assignee: any = '') {
