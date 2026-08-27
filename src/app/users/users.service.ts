@@ -8,6 +8,7 @@ import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
 import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
+import { assigneeIdentityCandidates } from '../tasks/tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -186,13 +187,19 @@ export class UsersService {
 
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
+    const taskIdentities = assigneeIdentityCandidates(user, this.stateService.configuration.code);
+    const taskPlanetCodes = taskIdentities.map(({ userPlanetCode }) => userPlanetCode)
+      .filter((code): code is string => !!code);
     return this.couchService.get('shelf/' + userId).pipe(
       switchMap(shelfUser => {
         return forkJoin([
           this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
           this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
           this.deleteUserFromTeams(user),
-          this.tasksService.removeAssigneeFromTasks(user._id)
+          this.tasksService.removeAssigneeFromTasks(
+            taskIdentities[0]?.userId || user._id,
+            taskPlanetCodes.length > 0 ? taskPlanetCodes : undefined
+          )
         ]);
       }),
       map(() => this.requestUsers(true))

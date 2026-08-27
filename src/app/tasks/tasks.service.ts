@@ -5,9 +5,10 @@ import { CustomValidators } from '../validators/custom-validators';
 import { ValidatorService } from '../validators/validator.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { StateService } from '../shared/state.service';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { addDateAndTime, getClockTime } from '../shared/utils';
 import { findDocuments } from '../shared/mangoQueries';
+import { assigneeMatches, effectiveAssignees, storedAssignee } from './tasks.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -51,7 +52,18 @@ export class TasksService {
 
   addDialogSubmit(additionalFields, task: any, newTask: any, onSuccess) {
     const deadline = new Date(addDateAndTime(new Date(newTask.deadline).getTime(), newTask.deadlineTime)).getTime();
-    this.addTask({ assignee: '', assignees: [], ...task, ...newTask, deadline, ...additionalFields, deadlineTime: undefined }).pipe(
+    const assignees = effectiveAssignees(task).map(assignee => storedAssignee(
+      assignee, this.stateService.configuration?.code
+    ));
+    this.addTask({
+      ...task,
+      ...newTask,
+      deadline,
+      ...additionalFields,
+      assignee: assignees[0] || '',
+      assignees,
+      deadlineTime: undefined
+    }).pipe(
       finalize(() => this.dialogsLoadingService.stop())
     ).subscribe((res) => {
       onSuccess(res.doc);
@@ -112,12 +124,22 @@ export class TasksService {
     );
   }
 
-  removeAssigneeFromTasks(userId: any, link?: any) {
+  removeAssigneeFromTasks(userId: string, userPlanetCode?: string | string[], link?: any) {
+    const localPlanetCode = this.stateService.configuration?.code;
+    const planetCodes = [ ...new Set(Array.isArray(userPlanetCode) ? userPlanetCode : [ userPlanetCode ]) ];
+    const identities = planetCodes.map(code => ({ userId, userPlanetCode: code }));
+    const legacySelectors: any[] = planetCodes.map(code =>
+      code ? { 'assignee.userId': userId, 'assignee.userPlanetCode': code } : { 'assignee.userId': userId }
+    );
+    const arraySelectors: any[] = planetCodes.map(code => ({
+      assignees: { '$elemMatch': code ? { userId, userPlanetCode: code } : { userId } }
+    }));
+    if (planetCodes.includes(localPlanetCode)) {
+      legacySelectors.push({ 'assignee.userId': userId, 'assignee.userPlanetCode': { '$exists': false } });
+      arraySelectors.push({ assignees: { '$elemMatch': { userId, userPlanetCode: { '$exists': false } } } });
+    }
     const selector: any = {
-      $or: [
-        { 'assignee.userId': userId },
-        { 'assignees.userId': userId }
-      ]
+      $or: [ ...legacySelectors, ...arraySelectors ]
     };
     if (link) {
       selector.link = link;
@@ -125,30 +147,19 @@ export class TasksService {
     return this.couchService.findAll(this.dbName, findDocuments(selector)).pipe(
       switchMap((docs: any[]) => {
         const updatedDocs = docs.map(doc => {
-          let modified = false;
-          let currentAssignees = doc.assignees ? [...doc.assignees] : [];
-          if (doc.assignee && doc.assignee.userId && currentAssignees.length === 0) {
-            currentAssignees.push(doc.assignee);
-          }
-
-          const initialLength = currentAssignees.length;
-          currentAssignees = currentAssignees.filter(a => a.userId !== userId);
-
-          if (currentAssignees.length !== initialLength) {
-            modified = true;
-          }
-
-          if (doc.assignee && doc.assignee.userId === userId) {
-            modified = true;
-          }
-
-          if (modified) {
-            doc.assignees = currentAssignees;
-            doc.assignee = currentAssignees.length > 0 ? currentAssignees[0] : '';
-          }
-          return doc;
-        });
-        return this.couchService.bulkDocs(this.dbName, updatedDocs);
+          const currentAssignees = effectiveAssignees(doc);
+          const matchesIdentity = assignee => identities.some(identity =>
+            assigneeMatches(assignee, identity, localPlanetCode)
+          );
+          const assignees = currentAssignees.filter(assignee => !matchesIdentity(assignee));
+          const legacyMatches = doc.assignee && matchesIdentity(doc.assignee);
+          return assignees.length === currentAssignees.length && !legacyMatches ? undefined : {
+            ...doc,
+            assignee: assignees[0] || '',
+            assignees
+          };
+        }).filter(Boolean);
+        return updatedDocs.length > 0 ? this.couchService.bulkDocs(this.dbName, updatedDocs) : of([]);
       }),
       map(() => this.getTasks())
     );
