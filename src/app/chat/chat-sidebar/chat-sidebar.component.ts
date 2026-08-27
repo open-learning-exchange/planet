@@ -16,7 +16,7 @@ import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -43,6 +43,7 @@ interface TitleForm {
     MatMiniFabButton,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatIconButton,
@@ -64,12 +65,12 @@ interface TitleForm {
 export class ChatSidebarComponent implements OnInit, OnDestroy {
   readonly dbName = 'chat_history';
   private onDestroy$ = new Subject<void>();
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.filterConversations();
   }
@@ -165,7 +166,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
       this.dbName, {
         ...conversation,
         title: title !== undefined && title !== null ? title : conversation.title,
-        shared: shared,
+        shared,
         updatedDate: this.couchService.datePlaceholder
       }
     ).subscribe((data) => {
