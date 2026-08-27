@@ -1,80 +1,54 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
+import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
 import { MatButton } from '@angular/material/button';
-import { MatActionList, MatListItem, MatListItemAvatar, MatListItemTitle } from '@angular/material/list';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import { environment } from '../../environments/environment';
+import { MatActionList, MatListItem } from '@angular/material/list';
+import { AvatarComponent } from '../shared/avatar.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
+import { assigneeName } from './tasks.utils';
 
 @Component({
   selector: 'planet-tasks-assignees-dialog',
   template: `
-    <h2 mat-dialog-title i18n class="dialog-title">Task Assignees</h2>
-    <mat-dialog-content>
+    <h2 mat-dialog-title i18n>Task Assignees</h2>
+    <mat-dialog-content class="task-assignees-dialog-content">
       <mat-action-list>
-        @for (assignee of data.assignees; track assignee.userId) {
+        @for (assignee of data.assignees; track $index) {
           <button mat-list-item (click)="openMemberDialog(assignee)">
-            <img matListItemAvatar [src]="getAvatarUrl(assignee)" alt="{{ assignee.fullName || assignee.name }}">
-            <span matListItemTitle>{{ assignee.fullName || assignee.name }}</span>
+            <span class="task-assignee-row-content">
+              <planet-avatar class="task-assignee-avatar" aria-hidden="true" [username]="assignee.name"
+                [planetCode]="assignee.userPlanetCode"></planet-avatar>
+              <span class="task-assignee-name">{{assigneeName(assignee)}}</span>
+            </span>
           </button>
         }
       </mat-action-list>
     </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close i18n>Close</button>
-    </mat-dialog-actions>
+    <mat-dialog-actions align="end"><button mat-raised-button color="primary" mat-dialog-close i18n>OK</button></mat-dialog-actions>
   `,
-  styles: [`
-    .dialog-title {
-      margin: 16px 24px 0;
-      font-size: 20px;
-      font-weight: 500;
-    }
-    mat-dialog-content {
-      min-width: 280px;
-      max-width: 400px;
-    }
-  `],
+  styleUrls: ['./tasks.scss'],
+  encapsulation: ViewEncapsulation.None,
   imports: [
+    MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     MatDialogClose,
     MatButton,
     MatActionList,
     MatListItem,
-    MatListItemAvatar,
-    MatListItemTitle
+    AvatarComponent
   ]
 })
 export class TasksAssigneesDialogComponent {
-  imgUrlPrefix = environment.couchAddress;
+  assigneeName = assigneeName;
 
   constructor(
-    public dialogRef: MatDialogRef<TasksAssigneesDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { assignees: any[] },
-    private dialog: MatDialog
+    private usersProfileDialogService: UsersProfileDialogService
   ) {}
 
   openMemberDialog(assignee) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: {
-        member: {
-          name: assignee.name,
-          userPlanetCode: assignee.teamPlanetCode || assignee.userPlanetCode
-        }
-      },
-      autoFocus: false
+    this.usersProfileDialogService.open({
+      member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode }
     });
-  }
-
-  getAvatarUrl(assignee: any): string {
-    if (assignee.attachmentDoc) {
-      const imgType = assignee.attachmentDoc._attachments.img ? 'img' : 'img_';
-      return `${this.imgUrlPrefix}/attachments/${assignee.attachmentDoc._id}/${imgType}`;
-    }
-    if (assignee.avatar) {
-      return this.imgUrlPrefix + assignee.avatar;
-    }
-    return 'assets/image.png';
   }
 }
