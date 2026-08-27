@@ -19,12 +19,12 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  private _course: any = {};
+  #course: any = {};
   get course() {
-    return this._course;
+    return this.#course;
   }
   set course(newCourse: any) {
-    this._course = { ...this._course, ...newCourse };
+    this.#course = { ...this.#course, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -127,13 +127,13 @@ export class CoursesService {
     forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
     this.usersService.requestUserData();
   }
 
   reset() {
-    this._course = {};
+    this.#course = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }

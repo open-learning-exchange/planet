@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Subject, defer } from 'rxjs';
@@ -10,7 +10,7 @@ import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
@@ -34,7 +34,6 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
   styleUrls: ['courses-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
@@ -52,7 +51,6 @@ import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.comp
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
-    MatAnchor,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -76,8 +74,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
-
   constructor(
     private router: Router,
     private userService: UserService,
@@ -191,12 +187,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  previewButtonClick(step: any, stepNum: any): void {
+  previewButtonClick(step: any, stepNum: any, previewTrigger: MatMenuTrigger): void {
     const stepType = this.coursesService.stepHasExamSurveyBoth(step);
     if (stepType === 'both' || stepType === undefined) {
       return;
     }
-    this.previewButton.closeMenu();
+    previewTrigger.closeMenu();
     if (stepType === 'exam') {
       this.goToExam(step, stepNum, true);
     }

@@ -22,6 +22,7 @@ import { MatCard, MatCardHeader, MatCardTitle, MatCardContent } from '@angular/m
 import { MatDialogClose } from '@angular/material/dialog';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 @Component({
   selector: 'planet-users-profile',
@@ -51,7 +52,8 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatDialogClose,
     DatePipe,
     TruncateTextPipe,
-    AvatarComponent
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersProfileComponent implements OnInit, OnDestroy {

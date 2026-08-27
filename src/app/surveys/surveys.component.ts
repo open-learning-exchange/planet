@@ -30,7 +30,7 @@ import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconButton, MatMiniFabButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
@@ -58,6 +58,7 @@ interface SurveyFilterForm {
     MatIconButton,
     MatIcon,
     MatFormField,
+    MatSuffix,
     MatLabel,
     MatInput,
     MatMiniFabButton,
@@ -114,6 +115,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   parentCount = 0;
   useDialogLoading = true;
   isLoading = true;
+  searchValue = '';
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
@@ -183,7 +185,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadSurveys() {
     this.isLoading = true;
-    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ 'type': type }));
+    const receiveData = (dbName: string, type: string) => this.couchService.findAll(dbName, findDocuments({ type }));
     forkJoin([
       receiveData('exams', 'surveys'),
       this.couchService.get('submissions/_design/surveyData/_view/submissionsByParent'),
@@ -262,8 +264,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         // team surveys: created by team, sent or adopted
         return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
       } else if (this.currentFilter.viewMode === 'adopt') {
-        // community surveys that can be adopted & team hasn't adopted yet
-        return !survey.sourceSurveyId && survey.teamShareAllowed === true && !survey.teamIds?.includes(targetTeamId);
+        // active, shareable community surveys the team has not already adopted
+        return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
+          !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
       // manager view: no team adopted/sent survey
       return !survey.teamId && !survey.sourceSurveyId;
@@ -296,6 +299,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.surveys.filter = filterValue;
     queueMicrotask(() => {
       const visibleSelection = new Set(this.renderedRows.map(row => row._id));
@@ -454,7 +458,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dialogsLoadingService.stop();
           });
         },
-        excludeIds: excludeIds,
+        excludeIds,
         mode: 'teams'
       }
     });
