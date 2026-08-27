@@ -37,7 +37,6 @@ import { LabelComponent } from '../shared/label.component';
 import { MatOption } from '@angular/material/autocomplete';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import {
@@ -79,7 +78,6 @@ interface CommunityDescriptionForm {
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
-    MatCard,
     TeamsMemberComponent,
     PlanetMarkdownComponent,
     MatNavList,
@@ -142,6 +140,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
+
+  get voicesToolbarPinTooltip(): string {
+    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
   }
 
   localLinkTooltip(link: any): string {
@@ -346,7 +348,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   sendNotifications(user, currentUser) {
     return {
-      'user': user,
+      user,
       'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',

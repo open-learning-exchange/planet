@@ -13,13 +13,13 @@ import { DialogsListComponent } from '../../shared/dialogs/dialogs-list.componen
 import { filterSpecificFields } from '../../shared/table-helpers';
 import { findDocuments } from '../../shared/mangoQueries';
 import { StateService } from '../../shared/state.service';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { NgClass, NgTemplateOutlet, TitleCasePipe, DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
 @Component({
@@ -34,7 +34,7 @@ import { CdkScrollable } from '@angular/cdk/scrolling';
     MatButton,
     MatTooltip,
     NgClass,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     CdkScrollable,
     MatDialogContent,
     NgTemplateOutlet,
@@ -61,6 +61,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     @Optional() public dialogRef: MatDialogRef<MeetupsViewComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private couchService: CouchService,
@@ -201,20 +202,26 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.meetupService.openDeleteDialog(this.meetupDetail, callback);
   }
 
-  openProfile(username, planetCode) {
-    this.dialog.open(
-      UserProfileDialogComponent,
-      {
-        data: {
-          member: {
-            name: username,
-            userPlanetCode: planetCode
-          },
-          dialogRef: this.dialogRef
-        },
-        autoFocus: false
+  openCreatorProfile(event?: Event) {
+    this.openProfile(this.meetupDetail?.createdBy, this.meetupDetail?.sourcePlanet || this.meetupDetail?.sync?.planetCode, event);
+  }
+
+  openAssigneeProfile(event?: Event) {
+    this.openProfile(this.meetupDetail?.assignee?.name, this.meetupDetail?.assignee?.userPlanetCode, event);
+  }
+
+  openProfile(username, planetCode, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
       }
-    );
+    }
+    this.usersProfileDialogService.open({
+      member: { name: username, userPlanetCode: planetCode },
+      dialogRef: this.dialogRef
+    });
   }
 
   editTask() {

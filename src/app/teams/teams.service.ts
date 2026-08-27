@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, empty, forkJoin } from 'rxjs';
+import { of, empty, forkJoin, throwError } from 'rxjs';
 import { switchMap, map, take } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -10,7 +10,7 @@ import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { truncateText } from '../shared/utils';
+import { fullName, truncateText } from '../shared/utils';
 
 const nameField = {
   'type': 'textbox',
@@ -179,14 +179,40 @@ export class TeamsService {
   }
 
   updateMembershipDoc(team, leaveTeam, memberInfo) {
+    if (!memberInfo?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
     const deleted = leaveTeam ? { _deleted: true } : {};
     const membershipProps = this.membershipProps(team, memberInfo, 'membership');
     return this.couchService.findAll(this.dbName, findDocuments(membershipProps)).pipe(
       map((docs) => docs.length === 0 ? [ membershipProps ] : docs),
-      switchMap((membershipDocs: any[]) => this.couchService.bulkDocs(
-        this.dbName, membershipDocs.map(membershipDoc => ({ ...membershipDoc, ...memberInfo, ...deleted }))
+      switchMap((membershipDocs: any[]) => this.writeMembershipDocs(
+        membershipDocs.map(membershipDoc => this.membershipWriteDoc(
+          {
+            ...membershipDoc,
+            ...memberInfo,
+            ...membershipProps,
+            ...(membershipProps.userPlanetCode === undefined && membershipDoc.userPlanetCode !== undefined ?
+              { userPlanetCode: membershipDoc.userPlanetCode } : {}),
+            ...(membershipDoc._rev ? { _id: membershipDoc._id, _rev: membershipDoc._rev } : {})
+          },
+          deleted
+        ))
       ))
     );
+  }
+
+  addMembers(team, selected, requests) {
+    if (selected.some(user => !user?._id)) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    const selectedUserIds = new Set(selected.map(user => user._id));
+    const newMembershipDocs = selected.map(user =>
+      this.membershipProps(team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
+    );
+    const requestsToDelete = requests.filter(request => selectedUserIds.has(request.userId))
+      .map(({ _id, _rev }) => ({ _id, _rev, _deleted: true }));
+    return this.writeMembershipDocs([ ...newMembershipDocs, ...requestsToDelete ], newMembershipDocs.length);
   }
 
   updateAdditionalDocs(newDocs: any[], team, docType: 'transaction' | 'report', opts?: any) {
@@ -205,7 +231,21 @@ export class TeamsService {
   }
 
   changeTeamLeadership(oldLeader, newLeader) {
-    return this.couchService.bulkDocs(this.dbName, [ { ...newLeader, isLeader: true }, { ...oldLeader, isLeader: false } ]);
+    const shouldDemoteOldLeader = Boolean(oldLeader?._id) && oldLeader._id !== newLeader?._id && oldLeader.fromShelf !== true;
+    return this.freshMembershipDoc(newLeader).pipe(
+      // Shelf revisions belong to another database, so preserving them makes unsupported promotions fail closed with a conflict.
+      switchMap(freshNewLeader => this.writeMembershipDocs([
+        this.membershipWriteDoc(freshNewLeader, { isLeader: true })
+      ])),
+      switchMap(promotionResponse => shouldDemoteOldLeader ?
+        this.freshMembershipDoc(oldLeader).pipe(
+          switchMap(freshOldLeader => this.writeMembershipDocs([
+            this.membershipWriteDoc(freshOldLeader, { isLeader: false })
+          ])),
+          map(() => promotionResponse)
+        ) : of(promotionResponse)
+      )
+    );
   }
 
   // Included for backwards compatibility for older teams where membership was stored in shelf.  Only for member leaving a team.
@@ -216,11 +256,84 @@ export class TeamsService {
     ));
   }
 
+  // Membership documents contain exactly this persisted schema; other member fields are enriched view data.
+  private membershipWriteDoc(member, overrides: any = {}) {
+    const {
+      _id,
+      _rev,
+      createdDate,
+      updatedDate,
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType,
+      isLeader,
+      role,
+      _deleted
+    } = { ...member, ...overrides };
+    return {
+      ...(_id ? { _id } : {}),
+      ...(_rev ? { _rev } : {}),
+      ...(createdDate !== undefined ? { createdDate } : {}),
+      ...(updatedDate !== undefined ? { updatedDate } : {}),
+      teamId,
+      teamPlanetCode,
+      teamType,
+      userId,
+      userPlanetCode,
+      docType: docType || 'membership',
+      ...(isLeader !== undefined ? { isLeader } : {}),
+      ...(role !== undefined ? { role } : {}),
+      ...(_deleted === true ? { _deleted: true } : {})
+    };
+  }
+
+  private writeMembershipDocs(docs: any[], requiredResultCount = docs.length) {
+    return this.couchService.bulkDocs(this.dbName, docs).pipe(
+      switchMap(response => this.validateBulkDocsResponse(response, docs.length, requiredResultCount))
+    );
+  }
+
+  private freshMembershipDoc(member) {
+    if (!member?.userId) {
+      return throwError(new Error('Membership user ID is required.'));
+    }
+    return member._id && member.fromShelf !== true ?
+      this.couchService.get(`${this.dbName}/${member._id}`).pipe(map(doc => ({ ...member, ...doc }))) :
+      of(member);
+  }
+
+  private validateBulkDocsResponse(response: any, expectedCount: number, requiredResultCount = expectedCount) {
+    const results = Array.isArray(response) ? response : response?.res;
+    if (!Array.isArray(results)) {
+      return throwError(new Error('Unexpected bulk document response.'));
+    }
+    const requiredResults = results.slice(0, requiredResultCount);
+    const error = requiredResults.find(result => result?.error);
+    if (error) {
+      return throwError(error);
+    }
+    const hasUnexpectedResult = requiredResultCount > expectedCount || requiredResults.length !== requiredResultCount ||
+      (requiredResultCount === expectedCount && results.length !== expectedCount) || requiredResults.some(result =>
+      typeof result?.id !== 'string' || result.id.length === 0 ||
+      typeof result?.rev !== 'string' || result.rev.length === 0
+    );
+    return hasUnexpectedResult ? throwError(new Error('Unexpected bulk document response.')) : of(response);
+  }
+
   membershipProps(team, memberInfo, docType) {
     const { userId, userPlanetCode, isLeader } = memberInfo;
     const { _id: teamId, teamPlanetCode, teamType } = team;
     return {
-      teamId, userId, teamPlanetCode, teamType, userPlanetCode, docType, isLeader
+      teamId,
+      userId,
+      teamPlanetCode,
+      teamType,
+      ...(userPlanetCode !== undefined ? { userPlanetCode } : {}),
+      docType,
+      ...(isLeader !== undefined ? { isLeader } : {})
     };
   }
 
@@ -274,8 +387,8 @@ export class TeamsService {
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
     const user = this.userService.get();
-    const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
-    const truncatedFullName = truncateText(fullName, 22);
+    const memberName = fullName(user) || user.name;
+    const truncatedFullName = truncateText(memberName, 22);
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ?
       'the <b>Community Services Directory</b>' :

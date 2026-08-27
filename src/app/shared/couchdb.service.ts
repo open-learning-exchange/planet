@@ -83,7 +83,7 @@ export class CouchService {
         return this.post(db, docWithDate, opts);
       }),
       map((res: any) => {
-        return ({ ...res, res: res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } });
+        return ({ ...res, res, doc: { ...docWithDate, _rev: res.rev, _id: res.id } });
       })
     );
   }

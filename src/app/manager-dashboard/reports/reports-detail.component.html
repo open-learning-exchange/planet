@@ -210,7 +210,7 @@
               @for (visit of reports?.visits; track visit) {
                 <mat-grid-tile class="label">
                   <mat-icon>subdirectory_arrow_right</mat-icon>
-                  <span class="cursor-pointer" (click)="openMemberView(visit.userDoc?.doc)">{{visit.userDoc?.fullName || visit.user }}</span>
+                  <span [attr.tabindex]="visit.userDoc ? 0 : null" [attr.role]="visit.userDoc ? 'button' : null" [class.cursor-pointer]="visit.userDoc" (keydown.enter)="openMemberView(visit.userDoc?.doc, $event)" (keydown.space)="openMemberView(visit.userDoc?.doc, $event)" (click)="openMemberView(visit.userDoc?.doc, $event)">{{visit.userDoc?.fullName || visit.user }}</span>
                 </mat-grid-tile>
                 <mat-grid-tile>{{visit.count}}</mat-grid-tile>
               }
