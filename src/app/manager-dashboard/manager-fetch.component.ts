@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { of, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { CouchService } from '../shared/couchdb.service';
@@ -82,7 +83,8 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
     private stateService: StateService,
     private managerService: ManagerService,
     private syncService: SyncService,
-    private planetMessageService: PlanetMessageService
+    private planetMessageService: PlanetMessageService,
+    private navigationService: NavigationService
   ) {}
 
   ngOnInit() {
@@ -130,7 +132,7 @@ export class ManagerFetchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate([ '/manager' ]);
+    this.navigationService.back([ '/manager' ]);
   }
 
   getPushedItem() {

@@ -1,6 +1,7 @@
 import { Component, Inject, LOCALE_ID, OnInit, OnDestroy, ViewEncapsulation, HostBinding, ViewChild } from '@angular/core';
 import { formatDate as formatLocaleDate } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { NavigationService } from '../../shared/navigation.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl, FormGroup, NonNullableFormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Location, NgTemplateOutlet, NgClass } from '@angular/common';
@@ -182,6 +183,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
+    private navigationService: NavigationService,
     @Inject(LOCALE_ID) private localeId: string
   ) {
     this.initDateFilterForm();
@@ -294,7 +296,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           },
           queryParamsHandling: 'merge'
         });
-        this.location.replaceState(urlTree.toString());
+        this.location.replaceState(urlTree.toString(), '', this.location.getState());
       }
       this.filterData();
     });
@@ -912,7 +914,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   goBack() {
     const route = this.codeParam === null ? '../../' : '../';
-    this.router.navigate([ route ], { relativeTo: this.route });
+    this.navigationService.back([ route ], { relativeTo: this.route });
   }
 
   openResourceView(resourceId) {

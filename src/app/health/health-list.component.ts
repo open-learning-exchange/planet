@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavigationService } from '../shared/navigation.service';
 import { Subject, concat } from 'rxjs';
 import { UsersService } from '../users/users.service';
 import { takeUntil } from 'rxjs/operators';
@@ -29,6 +30,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private navigationService: NavigationService,
     private usersService: UsersService,
     private healthService: HealthService
   ) {}
@@ -46,7 +48,7 @@ export class HealthListComponent implements OnInit, OnDestroy {
   }
 
   back() {
-    this.router.navigate([ '..' ], { relativeTo: this.route });
+    this.navigationService.back([ '..' ], { relativeTo: this.route });
   }
 
   resetFilter() {
