@@ -260,7 +260,7 @@
                   </button>
                 }
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'document' })">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: mode === 'team' ? 'resource' : 'document' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>
