@@ -13,13 +13,15 @@
         @if (editable === true) {
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? editTask() : routeToEdit()" class="planet-icon-button"
+              i18n-aria-label aria-label="Edit" matTooltip="Edit" i18n-matTooltip>
               <mat-icon>edit</mat-icon>
             </button>
           }
           @if ((canManage && !meetupDetail.isTask) || meetupDetail.isTask) {
             <button mat-stroked-button
-              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button">
+              (click)="meetupDetail.isTask ? deleteTask() : deleteMeetup()" class="planet-icon-button"
+              i18n-aria-label aria-label="Delete" matTooltip="Delete" i18n-matTooltip>
               <mat-icon>delete</mat-icon>
             </button>
           }
@@ -51,7 +53,7 @@
           <p><b i18n>Category:</b> {{meetupDetail?.category}}</p>
         }
         @if (meetupDetail?.startDate || meetupDetail?.endDate) {
-          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && meetupDetail?.endDate !== meetupDetail?.startDate ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
+          <p><b i18n>Date:</b> {{meetupDetail?.startDate | date: 'fullDate'}} {{ meetupDetail?.endDate && (meetupDetail?.endDate | date: 'fullDate') !== (meetupDetail?.startDate | date: 'fullDate') ? '- ' + (meetupDetail?.endDate | date: 'fullDate') : '' }}</p>
         }
         @if (meetupDetail?.deadline) {
           <p><b i18n>Deadline:</b> {{meetupDetail?.deadline | date: 'fullDate'}} {{meetupDetail?.deadline | date: 'shortTime'}}</p>
@@ -81,7 +83,11 @@
       }
       @if (meetupDetail?.description) {
         <b i18n>Description:</b>
-        }<td-markdown [content]="meetupDetail?.description"></td-markdown>
+        <planet-markdown
+          [content]="meetupDetail?.description"
+          [imageSource]="parent ? 'parent' : 'local'">
+        </planet-markdown>
+      }
       </div>
       @if (!isDialog) {
         <div class="right-tile">

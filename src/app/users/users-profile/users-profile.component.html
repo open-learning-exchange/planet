@@ -1,5 +1,14 @@
+@if (!isDialog) {
+  <mat-toolbar>
+    <button mat-icon-button class="km-profile-back-button" (click)="goBack()" aria-label="Go back" i18n-aria-label>
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span i18n>Profile</span>
+  </mat-toolbar>
+}
+
 <div class="space-container">
-  <mat-toolbar class="primary-color font-size-1">
+  <mat-toolbar class="font-size-1" [class.primary-color]="!isDialog" [class.dialog-toolbar]="isDialog">
     <span>{{userDetail.name | truncateText:40}}</span>
     @if (userDetail.gender) {
       <mat-icon class="margin-lr-5" svgIcon="{{userDetail.gender.toLowerCase()}}"></mat-icon>
@@ -59,8 +68,8 @@
       <mat-list class="profile-list-lt">
         <mat-list-item>
           <h4 class="primary-text-color" matListItemTitle i18n>Full Name</h4>
-          <p matListItemLine>@if (userDetail.firstName) {
-            <b>{{(userDetail.firstName + ' ' + userDetail.middleName + ' ' + userDetail.lastName) | truncateText:40}}</b>
+          <p matListItemLine>@if (userDetail | fullName) {
+            <b>{{userDetail | fullName | truncateText:40}}</b>
           } @else {
             <b>N/A</b>
           }</p>
