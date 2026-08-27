@@ -144,27 +144,13 @@
           <h4 i18n>{ mode, select, team {Join Requests} enterprise {Applicants} services {Join Requests} } ({{requests.length}})</h4>
           <div class="card-grid member-cards">
             @for (request of requests; track request) {
-              <mat-card>
-                <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" alt="" class="cursor-pointer" (click)="openMemberDialog(request, $event)">
-                  <a mat-card-title tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openMemberDialog(request, $event)" (keydown.space)="openMemberDialog(request, $event)" (click)="openMemberDialog(request, $event)">
-                    {{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name | truncateText:20}}
-                  </a>
-                  <mat-card-subtitle>
-                    @if (request.userPlanetCode !== planetCode) {
-                      <p class="primary-text-color">
-                        <ng-container i18n>Member of Planet</ng-container> {{request.userPlanetCode}}
-                      </p>
-                    }
-                  </mat-card-subtitle>
-                </mat-card-header>
-                @if (userStatus === 'member') {
-                  <mat-card-actions>
-                    <button mat-raised-button color="primary" i18n (click)="changeMembership('added', request)" [disabled]="disableAddingMembers">Accept</button>
-                    <button mat-raised-button color="warn" i18n (click)="changeMembership('rejected', request)">Reject</button>
-                  </mat-card-actions>
-                }
-              </mat-card>
+              <planet-teams-member
+                [member]="request"
+                [isRequest]="true"
+                [canManageRequests]="userStatus === 'member'"
+                [disableAccept]="disableAddingMembers"
+                (requestAction)="changeMembership($event, request)">
+              </planet-teams-member>
             }
           </div>
         </div>
@@ -179,20 +165,18 @@
           <h4 i18n>Members ({{members.length}})</h4>
           <div class="card-grid member-cards">
             @for (member of members; track member) {
-              <mat-card>
-                <planet-teams-member
-                  [member]="member"
-                  [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
-                  [actionMenu]="[]
-                    .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
-                    .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
-                    .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
-                  [visits]="visits[member?.name]"
-                  [userStatus]="userStatus"
-                  [teamLeader]="leader"
-                  (actionClick)="memberActionClick($event)">
-                </planet-teams-member>
-              </mat-card>
+              <planet-teams-member
+                [member]="member"
+                [leadershipTitle]="member.userDoc?.doc?.leadershipTitle"
+                [actionMenu]="[]
+                  .concat(member.userId !== currentUserId && isUserLeader ? [ 'remove' ] : [])
+                  .concat((member.userId !== leader.userId || member.userPlanetCode !== leader.userPlanetCode) && ((user.isUserAdmin && team.teamPlanetCode === user.planetCode) || isUserLeader) ? [ 'leader' ] : [])
+                  .concat(member.userId === currentUserId || isUserLeader ? [ 'title' ] : [])"
+                [visits]="visits[member?.name]"
+                [userStatus]="userStatus"
+                [teamLeader]="leader"
+                (actionClick)="memberActionClick($event)">
+              </planet-teams-member>
             }
           </div>
         }

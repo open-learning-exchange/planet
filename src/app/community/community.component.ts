@@ -37,7 +37,6 @@ import { LabelComponent } from '../shared/label.component';
 import { MatOption } from '@angular/material/autocomplete';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import {
@@ -80,7 +79,6 @@ interface CommunityDescriptionForm {
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
-    MatCard,
     TeamsMemberComponent,
     PlanetMarkdownComponent,
     MatNavList,
