@@ -180,15 +180,6 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.dialogsLoadingService.stop();
       this.isLoading = false;
     }, (error) => {
-      if (this.userNotInShelf) {
-        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
-          this.teams.data = this.teamList(teams.filter((team: any) => {
-            return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
-            && this.excludeIds.indexOf(team._id) === -1;
-          }));
-        });
-      }
       this.dialogsLoadingService.stop();
       console.log(error);
       this.isLoading = false;
@@ -198,18 +189,21 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   getMembershipStatus() {
     return forkJoin([
       this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.planetCode } }),
-      this.couchService.get('shelf/' + this.user._id)
+      this.couchService.get('shelf/' + this.user._id).pipe(
+        catchError(error => {
+          if (error.status !== 404) {
+            return throwError(error);
+          }
+          // A user without a shelf doc still has membership docs in the teams database, so continue with an empty shelf
+          this.userNotInShelf = true;
+          return of({});
+        })
+      )
     ]).pipe(
       map(([ membershipDocs, shelf ]) => this.userMembership = [
         ...membershipDocs,
         ...(shelf.myTeamIds || []).map(id => ({ teamId: id, fromShelf: true, docType: 'membership', userId: this.user._id }))
-      ]),
-      catchError(error => {
-        if (error.status === 404) {
-          this.userNotInShelf = true;
-        }
-        return throwError(error);
-      })
+      ])
     );
   }
 
