@@ -54,16 +54,8 @@ export class SubmissionsService {
       ? this.getSubmissionsIncludingDerived(surveyId, type, 'complete')
       : this.getSubmissions(query, opts);
 
-    forkJoin([
-      submissionsObs,
-      this.courseService.findCourses([], opts)
-    ]).subscribe(([ submissions, courses ]: [any, any]) => {
-      this.submissions = (onlyBest ? this.filterBestSubmissions(submissions) : submissions).filter(sub => {
-        if (sub.status !== 'pending' || sub.type !== 'exam') {
-          return true;
-        }
-        return courses.find((c: any) => sub.parentId.split('@')[1] === c._id) !== undefined;
-      });
+    submissionsObs.subscribe((submissions: any) => {
+      this.submissions = onlyBest ? this.filterBestSubmissions(submissions) : submissions;
       this.submissionsUpdated.next(this.submissions);
     }, (err) => console.log(err));
   }

@@ -9,12 +9,12 @@ import { Subject } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTable, MatColumnDef, MatCellDef, MatCell, MatRowDef, MatRow, MatNoDataRow } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { NotificationsService } from './notifications.service';
+import { NotificationsService, notificationUserFilter } from './notifications.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -33,7 +33,6 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     MatColumnDef,
     MatCellDef,
     MatCell,
-    NgClass,
     RouterLink,
     MatRowDef,
     MatRow,
@@ -77,12 +76,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   getNotifications() {
-    const userFilter = [ {
-      'user': 'org.couchdb.user:' + this.userService.get().name
-    } ];
-    if (this.userService.get().isUserAdmin) {
-      userFilter.push({ 'user': 'SYSTEM' });
-    }
+    const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications/_find', findDocuments(
       { '$or': userFilter,
       // The sorted item must be included in the selector for sort to work

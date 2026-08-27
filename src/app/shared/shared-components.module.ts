@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { RouterModule } from '@angular/router';
-import { CovalentMarkdownModule } from '@covalent/markdown';
 
 import { PlanetLocalStatusComponent } from './planet-local-status.component';
 import { MaterialModule } from './material.module';
@@ -24,13 +23,14 @@ import { LanguageLabelComponent } from './language-label.component';
 import { RestrictDiacriticsDirective } from './restrict-diacritics.directives';
 import { ChatOutputDirective } from './chat-output.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { FullNamePipe } from '../shared/full-name.pipe';
 import { TimeAgoPipe } from '../shared/time-ago.pipe';
 import { PlanetLoadingSpinnerComponent } from './planet-loading-spinner.component';
 import { PreviewOverflowDirective } from './preview-overflow.directive';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, CovalentMarkdownModule, RouterModule,
+    CommonModule, MaterialModule, RouterModule,
     PlanetLoadingSpinnerComponent,
     PlanetLocalStatusComponent,
     SubmitDirective,
@@ -53,6 +53,7 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     RestrictDiacriticsDirective,
     ChatOutputDirective,
     TruncateTextPipe,
+    FullNamePipe,
     TimeAgoPipe,
     PreviewOverflowDirective
   ],
@@ -80,6 +81,7 @@ import { PreviewOverflowDirective } from './preview-overflow.directive';
     ChatOutputDirective,
     OverlayModule,
     TruncateTextPipe,
+    FullNamePipe,
     TimeAgoPipe,
     PreviewOverflowDirective
   ],

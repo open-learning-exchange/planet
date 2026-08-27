@@ -138,14 +138,14 @@ export class SyncDirective {
   createReplicatorUserDoc(users: any[], repUsers: any[]) {
     const planetCode = this.planetConfiguration.code;
     return users.map((user: any) => {
-      const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
-        { _id, _rev, ...userProps } = user;
+      const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {};
+      const { _id, _rev, ...userProps } = user;
       return {
         ...repUser,
         ...userProps,
         _id: user.name + '@' + planetCode,
         couchId: user._id,
-        planetCode: planetCode
+        planetCode
       };
     });
   }
