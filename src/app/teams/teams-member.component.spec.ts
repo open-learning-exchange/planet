@@ -88,7 +88,7 @@ describe('TeamsMemberComponent', () => {
     // re-render. They must also stay in range: $initials-palette in _variables.scss
     // defines exactly twelve, emitted as .initials-0 .. .initials-11.
     it('maps a name to a stable palette entry', () => {
-      const expected = { '': 0, 'a': 1, 'Ann Njeri': 6, '\u4e2d\u6587\u540d\u5b57': 7, 'Bob Otieno': 8, 'Zzz': 10 };
+      const expected = { '': 0, a: 1, 'Ann Njeri': 6, \u4e2d\u6587\u540d\u5b57: 7, 'Bob Otieno': 8, Zzz: 10 };
 
       for (const [ name, index ] of Object.entries(expected)) {
         component.setInitials(name);

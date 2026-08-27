@@ -567,7 +567,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   openSendCourseDialog() {
     this.dialogGuard.open('send-course', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendCourse().bind(this),

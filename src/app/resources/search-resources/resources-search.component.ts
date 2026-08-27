@@ -84,10 +84,10 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'subject', 'options': constants.subjectList },
-    { 'label': 'language', 'options': languages },
-    { 'label': 'medium', 'options': constants.media },
-    { 'label': 'level', 'options': constants.levelList }
+    { label: 'subject', options: constants.subjectList },
+    { label: 'language', options: languages },
+    { label: 'medium', options: constants.media },
+    { label: 'level', options: constants.levelList }
   ];
 
   searchLists = [];

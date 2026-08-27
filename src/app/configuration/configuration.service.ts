@@ -25,14 +25,14 @@ export class ConfigurationService {
   createRequestNotification(configuration) {
     return mergeMap(data => {
       const requestNotification = {
-        'user': 'SYSTEM',
-        'message': $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
-        'link': '/manager/requests/',
-        'linkParams': { 'search': configuration.code },
-        'type': 'request',
-        'priority': 1,
-        'status': 'unread',
-        'time': this.couchService.datePlaceholder
+        user: 'SYSTEM',
+        message: $localize`New ${configuration.planetType} <b>"${configuration.name}"</b> has requested to connect.`,
+        link: '/manager/requests/',
+        linkParams: { search: configuration.code },
+        type: 'request',
+        priority: 1,
+        status: 'unread',
+        time: this.couchService.datePlaceholder
       };
       // Send notification to parent
       return this.couchService.updateDocument('notifications', requestNotification, {
@@ -63,16 +63,16 @@ export class ConfigurationService {
       type: 'pull',
       parentDomain: configuration.parentDomain,
       code: configuration.code,
-      selector: { 'sendOnAccept': true }
+      selector: { sendOnAccept: true }
     };
     const userReplicator = {
       dbSource: '_users', db: 'tablet_users',
-      selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } },
+      selector: { isUserAdmin: false, requestId: { $exists: false } },
       continuous: true, type: 'internal'
     };
     const meetupReplicator = {
       dbSource: 'meetups', db: 'community_meetups',
-      selector: { 'link': { 'teams': { '$eq': `${configuration.code}@${configuration.parentCode}` } } },
+      selector: { link: { teams: { $eq: `${configuration.code}@${configuration.parentCode}` } } },
       continuous: true, type: 'internal'
     };
     return forkJoin([
@@ -120,15 +120,15 @@ export class ConfigurationService {
   createPlanet(admin, configuration, credentials) {
     const userDetail: any = {
       ...admin,
-      'roles': [],
-      'type': 'user',
-      'isUserAdmin': true,
-      'joinDate': this.couchService.datePlaceholder,
-      'planetCode': configuration.code
+      roles: [],
+      type: 'user',
+      isUserAdmin: true,
+      joinDate: this.couchService.datePlaceholder,
+      planetCode: configuration.code
     };
     const pin = this.managerService.createPin();
     return forkJoin([
-      this.createUser('satellite', { 'name': 'satellite', 'password': pin, roles: [ 'learner' ], 'type': 'user' }),
+      this.createUser('satellite', { name: 'satellite', password: pin, roles: [ 'learner' ], type: 'user' }),
       this.couchService.put('_node/nonode@nohost/_config/satellite/pin', pin)
     ]).pipe(
       switchMap(() => this.createReplicators(configuration, credentials)),
@@ -191,7 +191,7 @@ export class ConfigurationService {
   private sendConfigurationPatchToParent(configuration: any, patch: any) {
     return this.couchService.post(
       'communityregistrationrequests/_find',
-      findDocuments({ 'code': configuration.code }),
+      findDocuments({ code: configuration.code }),
       { domain: configuration.parentDomain }
     ).pipe(switchMap((res) => {
       const parentPatch = { ...patch };
@@ -210,7 +210,7 @@ export class ConfigurationService {
   }
 
   createUser(name, details, opts?) {
-    return this.couchService.updateDocument('_users', { '_id': 'org.couchdb.user:' + name, ...details }, opts);
+    return this.couchService.updateDocument('_users', { _id: 'org.couchdb.user:' + name, ...details }, opts);
   }
 
   setCouchPerUser({ doc: configuration }) {

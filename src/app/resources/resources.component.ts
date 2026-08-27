@@ -481,7 +481,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogGuard.open('send-resource', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),

@@ -130,7 +130,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
 
   checkHub() {
     this.couchService.findAll('hubs',
-      findDocuments({ 'planetId': this.planetConfiguration._id }, [ '_id' ], [], 1),
+      findDocuments({ planetId: this.planetConfiguration._id }, [ '_id' ], [], 1),
       { domain: this.planetConfiguration.parentDomain }
     ).subscribe(hub => this.isHub = hub.length > 0);
   }
@@ -144,7 +144,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   checkRequestStatus() {
     this.couchService.post('communityregistrationrequests/_find',
       findDocuments(
-        { 'code': this.planetConfiguration.code },
+        { code: this.planetConfiguration.code },
         [ 'registrationRequest' ]
       ),
       { domain: this.planetConfiguration.parentDomain }
@@ -161,7 +161,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   // Find on the user or shelf db (which have matching ids)
   findOnParent(db: string, user: any) {
     return this.couchService.post(`${db}/_find`,
-      { 'selector': { '_id': user._id }, 'fields': [ '_id', '_rev' ] },
+      { selector: { _id: user._id }, fields: [ '_id', '_rev' ] },
       { domain: this.planetConfiguration.parentDomain });
   }
 
@@ -182,7 +182,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
           this.couchService.delete('configurations/' + configuration._id + '?rev=' + configuration._rev ),
           this.couchService.delete('_users/' + this.userService.get()._id + '?rev=' + this.userService.get()._rev ),
           this.couchService.delete('_node/nonode@nohost/_config/admins/' + this.userService.get().name, { withCredentials: true }),
-          this.couchService.post('_replicator/_bulk_docs', { 'docs': replicators })
+          this.couchService.post('_replicator/_bulk_docs', { docs: replicators })
         ]);
       })),
       onNext: (res: any) => {
@@ -272,7 +272,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   handleResourceAttachments(resources) {
     const tagIds = [].concat.apply([], resources.map((resource: any) => resource.tags || []));
     if (tagIds.length > 0) {
-      this.couchService.findAll('tags', findDocuments({ '_id': { '$in': tagIds } })).subscribe((tags) => {
+      this.couchService.findAll('tags', findDocuments({ _id: { $in: tagIds } })).subscribe((tags) => {
         this.sendOnAcceptOkClick('tags', [])(tags);
       });
     }

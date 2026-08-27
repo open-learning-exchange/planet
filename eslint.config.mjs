@@ -262,6 +262,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "quote-props": ["error", "as-needed"],
         "no-var": "error",
         "object-shorthand": ["error", "always"],
         quotes: "off",

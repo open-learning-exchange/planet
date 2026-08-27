@@ -98,7 +98,7 @@ export class UserService {
         }
         // Get configuration information next if not in testing environment
         if (!environment.test) {
-          return this.couchService.findAll('shelf', { 'selector': { '_id': this.user._id } });
+          return this.couchService.findAll('shelf', { selector: { _id: this.user._id } });
         }
         return of([ [] ]);
       }),
@@ -117,7 +117,7 @@ export class UserService {
     return this.currentSession ? of(this.currentSession) :
       this.couchService.post(
         this.logsDb + '/_find',
-        findDocuments({ 'user': this.get().name }, [ '_id', '_rev', 'loginTime' ], [ { 'loginTime': 'desc' } ], 1)
+        findDocuments({ user: this.get().name }, [ '_id', '_rev', 'loginTime' ], [ { loginTime: 'desc' } ], 1)
       ).pipe(map(data => {
         this.currentSession = data.docs[0];
         return this.currentSession;
@@ -197,7 +197,7 @@ export class UserService {
     const countChanged = Math.abs(this.shelf[shelfName].length - ids.length);
     const newShelf = { ...this.shelf, [shelfName]: ids };
     return this.couchService.put('shelf/' + this.user._id, newShelf).pipe(map((res) => {
-      this.shelf = { ...newShelf, '_rev': res.rev };
+      this.shelf = { ...newShelf, _rev: res.rev };
       return { shelf: this.shelf, countChanged };
     }));
   }
@@ -275,7 +275,7 @@ export class UserService {
   }
 
   addImageForReplication(addNew = false, users: any[] = [ this.user ]) {
-    const query = findDocuments({ '_id': { '$in': users.map(user => `${user._id}@${user.planetCode}`) } });
+    const query = findDocuments({ _id: { $in: users.map(user => `${user._id}@${user.planetCode}`) } });
     return this.couchService.findAll('attachments', query).pipe(
       switchMap((attachmentDocs: any[]) => {
         const obs = users.reduce((obsArr, user) => {
@@ -294,7 +294,7 @@ export class UserService {
   }
 
   private getProfileImage(user, attachmentDoc = {}) {
-    return this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { 'Accept': 'application/json' } }).pipe(
+    return this.couchService.get(`${this.usersDb}/${user._id}?attachments=true`, { headers: { Accept: 'application/json' } }).pipe(
       map(u => ({ ...u, attachmentDoc }))
     );
   }

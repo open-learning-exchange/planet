@@ -184,8 +184,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab': this.taskTab,
-      'applicantTab': this.applicantTab
+      taskTab: this.taskTab,
+      applicantTab: this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -213,7 +213,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     return this.couchService.post('courses/_find', findDocuments(
-      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+      { _id: { $in: courseIds } }, [ '_id' ], 0, courseIds.length
     )).pipe(
       map(({ docs }) => {
         const existingIds = new Set(docs.map(course => course._id));
@@ -278,11 +278,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            viewIn: { $elemMatch: {
+              _id: teamId, section: 'teams', ...(showAll ? {} : { public: true })
             } }
           }
         ],
@@ -676,7 +676,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
+      viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message

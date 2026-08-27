@@ -246,13 +246,13 @@ export class TasksComponent implements OnInit {
     const link = this.mode === 'services' ? 'community' : `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
-      'message': $localize`You were assigned a new task`,
+      message: $localize`You were assigned a new task`,
       link,
       linkParams: { activeTab: 'taskTab' },
-      'type': 'newTask',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      type: 'newTask',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode: assignee.userPlanetCode
     };
     return this.notificationsService.sendNotificationToUser(notificationDoc);

@@ -52,7 +52,7 @@ export class CoursesEnrollComponent {
       switchMap((paramMap: ParamMap) => {
         this.courseId = paramMap.get('id');
         return zip(
-          this.couchService.findAll('shelf', { 'selector': { 'courseIds': { '$elemMatch': { '$eq': this.courseId } } } }),
+          this.couchService.findAll('shelf', { selector: { courseIds: { $elemMatch: { $eq: this.courseId } } } }),
           this.coursesService.findProgress([ this.courseId ], { allUsers : true }),
           this.usersService.usersListener(true),
           this.managerService.getChildPlanets(),
