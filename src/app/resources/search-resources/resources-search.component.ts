@@ -14,9 +14,11 @@ import { trackByCategory } from '../../shared/table-helpers';
       subject {Subject}
       language {Language}
       medium {Medium}
+      mediaType {File Type}
       level {Level}
     }
     </span>
+
     <mat-selection-list (selectionChange)="selectionChange($event)">
       @for (item of items; track item) {
         <mat-list-option [value]="item.value" [selected]="isSelected(item)" checkboxPosition="before">
@@ -87,6 +89,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
     { 'label': 'subject', 'options': constants.subjectList },
     { 'label': 'language', 'options': languages },
     { 'label': 'medium', 'options': constants.media },
+    { 'label': 'mediaType', 'options': constants.mediaTypeList },
     { 'label': 'level', 'options': constants.levelList }
   ];
 
@@ -112,13 +115,29 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   createSearchList(category, data) {
+    const rawItems = category.label === 'mediaType'
+      ? data.map(({ doc }) => constants.getResourceFileType(doc))
+      : data.reduce((list, { doc }) => list.concat(doc[category.label]), []);
+
     return ({
       category: category.label,
-      items: data.reduce((list, { doc }) => list.concat(doc[category.label]), []).reduce(dedupeShelfReduce, []).filter(item => item)
-        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).map(item => category.options.find(opt => opt.value === item))
+      items: rawItems
+        .reduce(dedupeShelfReduce, [])
         .filter(item => item)
+        .sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1)
+        .map(item => {
+          if (category.label === 'mediaType') {
+            return { label: String(item).toUpperCase(), value: item };
+          }
+          const found = category.options?.find(
+            opt => opt.value.toLowerCase() === String(item).toLowerCase()
+          );
+          return found || { label: String(item), value: item };
+        })
     });
   }
+
+
 
   selectChange({ items, category }) {
     this.selected[category] = items;
