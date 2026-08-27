@@ -29,6 +29,8 @@ import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdo
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../../shared/submit.directive';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -104,7 +106,9 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatButton,
     MatCheckbox,
     SubmitDirective,
-    FileUploadComponent
+    FileUploadComponent,
+    TruncateTextPipe,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
