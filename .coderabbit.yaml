@@ -1,0 +1,76 @@
+# https://docs.coderabbit.ai/reference/configuration
+language: "en-US"
+
+tone_instructions: >-
+  Correctness first: bugs, security, data loss. Then the conventions in
+  AGENTS.md and Style-Guide.md. Skip whatever eslint, sass-lint and htmlhint
+  already report. No compliments, no restating the diff.
+
+reviews:
+  profile: assertive
+
+  sequence_diagrams: false
+  changed_files_summary: false
+  estimate_code_review_effort: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  in_progress_fortune: false
+  review_status: false  # else a "Review skipped" notice on every unlabelled PR
+  enable_prompt_for_ai_agents: true
+
+  pre_merge_checks:
+    docstrings: { mode: "off" }
+    title: { mode: "off" }
+    description: { mode: "off" }
+    issue_assessment: { mode: "off" }
+
+  finishing_touches:
+    docstrings: { enabled: false }
+    unit_tests: { enabled: false }
+
+  path_filters:
+    - "!package-lock.json"
+    - "!src/i18n/messages*.xlf"
+    - "!**/*.png"
+    - "!**/*.jpg"
+    - "!**/*.svg"
+
+  path_instructions:
+    - path: "src/app/**"
+      instructions: >-
+        Database access goes through CouchDbService (setOpts / couchDBReq) or
+        the PouchDB services -- flag raw HttpClient calls at CouchDB.
+        Validators belong in src/app/validators/. Flag hard-coded colors and
+        breakpoints (use _variables.scss, mat-color(), the screen-sizes mixin)
+        and the reserved names planet-db-host and planet-db-port. Features are
+        lazy-loaded per directory: flag imports reaching into another feature.
+    - path: "src/app/**/*.html"
+      instructions: >-
+        Flag i18n on an element whose only content is an interpolation, real
+        text carrying no i18n, and attribute strings missing i18n-<attr>.
+        km- prefixed classes are unit-test hooks: flag any that surface in a
+        stylesheet, and flag removing one a spec still queries.
+    - path: "gateway/**"
+      instructions: >-
+        A separate service on the legacy eslint config; credentials and models
+        come from the CouchDB configurations doc -- flag keys read from env
+        vars or hard-coded.
+    - path: "design/**"
+      instructions: >-
+        CouchDB map/reduce views. A changed view only takes effect once
+        couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
+
+  auto_review:
+    enabled: false
+    labels: ["review"]
+    auto_incremental_review: true
+    drafts: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "AGENTS.md"
+      - "Style-Guide.md"

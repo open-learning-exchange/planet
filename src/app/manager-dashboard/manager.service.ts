@@ -75,7 +75,7 @@ export class ManagerService {
   getChildPlanets(onlyAccepted = false, parentCode = this.stateService.configuration.code, domain?) {
     const selector = onlyAccepted ?
       { '$or': [
-        { 'parentCode': parentCode, 'registrationRequest': 'accepted' },
+        { parentCode, 'registrationRequest': 'accepted' },
         { 'docType': 'parentName' }
       ] } :
       { '_id': { '$gt': null } };

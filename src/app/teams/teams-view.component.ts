@@ -23,8 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,10 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -73,13 +69,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatTabLabel,
-    TdMarkdownComponent,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -451,7 +441,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  changeMembershipRequest(type, memberDoc?) {
+  changeMembershipRequest(type, memberDoc?, stopLoading = true) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
       let membershipWriteCompleted = false;
@@ -467,12 +457,42 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         map(() => changeObject.message),
         catchError(error => membershipWriteCompleted ?
           this.refreshMembersOnError(error) : throwError(error)),
-        finalize(() => this.dialogsLoadingService.stop())
+        finalize(() => {
+          if (stopLoading) {
+            this.dialogsLoadingService.stop();
+          }
+        })
       );
     };
   }
 
   changeMembership(type, memberDoc?) {
+    if (type === 'request' && this.team.type === 'enterprise') {
+      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          okClick: {
+            request: this.changeMembershipRequest(type, memberDoc, false)(),
+            onNext: (message) => {
+              this.dialogPrompt.close();
+              this.setStatus(this.team, this.leader, this.userService.get());
+              this.planetMessageService.showMessage(message);
+            },
+            onError: () => {
+              this.planetMessageService.showAlert(
+                $localize`There was a problem requesting to join this enterprise.`
+              );
+            }
+          },
+          changeType: 'request',
+          type: 'enterprise',
+          displayName: this.team.name,
+          rules: this.team.rules,
+          extraMessage: enterpriseJoinAgreement()
+        }
+      });
+      return;
+    }
+
     this.dialogsLoadingService.start();
     this.changeMembershipRequest(type, memberDoc)().subscribe({
       next: (message) => {
@@ -525,7 +545,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'request':
         return ({
           obs: this.teamsService.requestToJoinTeam(this.team, this.user),
-          message: $localize`Request to join team sent`
+          message: this.team.type === 'enterprise'
+            ? $localize`Request to join enterprise sent`
+            : $localize`Request to join team sent`
         });
       case 'removed':
         return ({
@@ -721,7 +743,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -736,14 +758,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
-    });
-  }
-
-  openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
     });
   }
 

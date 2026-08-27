@@ -59,9 +59,9 @@
       </button>
       }
     }
-    @if (resource?.doc?.isDownloadable) {
-      <a mat-icon-button [href]="resourceSrc" download>
-        <mat-icon>file_download</mat-icon>
+    @if (resource?.doc?.isDownloadable && resourceSrc) {
+      <a mat-button [href]="resourceSrc" download>
+        <mat-icon>file_download</mat-icon><span i18n>Download</span>@if (downloadFileSize) {<span> ({{ downloadFileSize }})</span>}
       </a>
     }
   </ng-template>
@@ -69,7 +69,11 @@
   <div class="view-container view-full-height" [ngClass]="{'full-view-container':fullView==='on'}">
     <div class="resource-detail bg-light-grey" [ngClass]="{'invisible':fullView==='on'}">
       <planet-rating [rating]="resource?.rating" [item]="resource.doc" [parent]="parent" [ratingType]="'resource'"></planet-rating>
-      <p><b i18n>Description:</b><td-markdown [content]="resource?.doc?.description"></td-markdown></p>
+      @if (formattedFileSize) {
+        <p><b i18n>Total File Size:</b>{{' ' + formattedFileSize}}</p>
+      }
+      <p><b i18n>Description:</b><planet-markdown [content]="resource?.doc?.description"
+        [imageSource]="parent ? 'parent' : 'local'"></planet-markdown></p>
       @if (resource?.doc?.author) {
         <p><b i18n>Author:</b><i>{{' ' + resource?.doc?.author}}</i></p>
       }
