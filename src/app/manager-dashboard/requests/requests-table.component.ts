@@ -163,7 +163,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
       const doc = res.docs[0];
       return this.couchService.delete(db + doc._id + '?rev=' + doc._rev);
     }
-    return of({ 'ok': true });
+    return of({ ok: true });
   }
 
   deleteCommunity(community) {
@@ -187,8 +187,8 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
 
   removePlanetUser(community) {
     return forkJoin([
-      this.couchService.post('_users/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } }),
-      this.couchService.post('shelf/_find', { 'selector': { '_id': 'org.couchdb.user:' + community.adminName } })
+      this.couchService.post('_users/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } }),
+      this.couchService.post('shelf/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } })
     ]).pipe(switchMap(([ user, shelf ]) => forkJoin([
       this.addDeleteObservable(user, '_users/'),
       this.addDeleteObservable(shelf, 'shelf/')
@@ -197,7 +197,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)
   unlockUser(community) {
-    return this.couchService.findAll('_users', findDocuments({ 'requestId': community._id })).pipe(
+    return this.couchService.findAll('_users', findDocuments({ requestId: community._id })).pipe(
       switchMap((users: any[]) => this.couchService.bulkDocs('_users', users.map(user => ({ ...user, roles: [ 'learner' ] }))))
     );
   }
@@ -210,7 +210,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     this.dialogGuard.open(`child-planet:${url}`, () =>
       this.dialogsListService.getListAndColumns(
         this.dbName,
-        { 'registrationRequest': 'accepted' },
+        { registrationRequest: 'accepted' },
         url
       ).pipe(
         map(planets => this.dialog.open(DialogsListComponent, {
@@ -261,7 +261,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     });
     this.dialogsFormService.openDialogsForm(
       this.reportsService.editPlanetNameTitle(planet.doc.planetType),
-      [ { 'label': $localize`Name`, 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, 'required': true } ],
+      [ { label: $localize`Name`, type: 'textbox', name: 'name', placeholder: $localize`Name`, required: true } ],
       form,
       { onSubmit: this.editChildName(planet).bind(this) }
     );
@@ -272,7 +272,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     return ({ name }: { name: string }) => {
       this.couchService.updateDocument(
         this.dbName,
-        { ...nameDoc, name, 'docType': 'parentName', 'planetId': doc._id, createdDate: this.couchService.datePlaceholder }
+        { ...nameDoc, name, docType: 'parentName', planetId: doc._id, createdDate: this.couchService.datePlaceholder }
       ).pipe(
         finalize(() => this.dialogsLoadingService.stop())
       ).subscribe(() => {

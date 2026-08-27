@@ -129,7 +129,7 @@ export const generateWeeksArray = (dateRange: { startDate: Date, endDate: Date }
 };
 
 export const sortingOptionsMap = {
-  'logins': [
+  logins: [
     { name: $localize`Login Time Ascending`, value: 'loginTimeAsc' },
     { name: $localize`Login Time Descending`, value: 'loginTimeDesc' },
     { name: $localize`Logout Time Ascending`, value: 'logoutTimeAsc' },
@@ -137,7 +137,7 @@ export const sortingOptionsMap = {
     { name: $localize`User Ascending`, value: 'userAsc' },
     { name: $localize`User Descending`, value: 'userDesc' },
   ],
-  'resourceViews': [
+  resourceViews: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -145,7 +145,7 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'courseViews': [
+  courseViews: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -153,7 +153,7 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'stepCompletions': [
+  stepCompletions: [
     { name: $localize`Username Ascending`, value: 'userAsc' },
     { name: $localize`Username Descending`, value: 'userDesc' },
     { name: $localize`Time Ascending`, value: 'timeAsc' },
@@ -161,11 +161,11 @@ export const sortingOptionsMap = {
     { name: $localize`Title Ascending`, value: 'titleAsc' },
     { name: $localize`Title Descending`, value: 'titleDesc' },
   ],
-  'summary': [
+  summary: [
     { name: $localize`Month/Year Ascending`, value: 'monthYearAsc' },
     { name: $localize`Month/Year Descending`, value: 'monthYearDesc' },
   ],
-  'chat': [
+  chat: [
     { name: $localize`User (A-Z)`, value: 'userAsc' },
     { name: $localize`User (Z-A)`, value: 'userDesc' },
     { name: $localize`Date (Oldest first)`, value: 'createdDateAsc' },

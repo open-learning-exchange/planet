@@ -256,7 +256,7 @@
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
-        // "quote-props": ["error", "as-needed"],
+        "quote-props": ["error", "as-needed"],
         // "space-before-function-paren": [
         //   "error",
         //   {

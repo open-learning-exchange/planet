@@ -295,7 +295,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   routeToEditSurvey(route, id = '') {
-    this.router.navigate([ route + '/' + id, { 'type': 'survey' } ], { relativeTo: this.route });
+    this.router.navigate([ route + '/' + id, { type: 'survey' } ], { relativeTo: this.route });
   }
 
   applyFilter(filterValue: string) {
@@ -378,7 +378,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         this.couchService.findAll(
           'submissions',
           findDocuments(
-            { 'status': 'pending', 'parentId': { '$regex': `^${survey._id}(@|$)` } },
+            { status: 'pending', parentId: { $regex: `^${survey._id}(@|$)` } },
             0
           )
         ).pipe(switchMap((submissions) => {
@@ -483,8 +483,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
 
   sendSurvey(survey: any, users: any[]): Observable<void> {
     return this.submissionsService.sendSubmissionRequests(users, {
-      'parentId': survey._id,
-      'parent': survey
+      parentId: survey._id,
+      parent: survey
     }).pipe(
       tap(() => {
         this.planetMessageService.showMessage($localize`Survey requests sent`);

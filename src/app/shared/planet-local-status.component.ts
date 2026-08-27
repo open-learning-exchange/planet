@@ -3,8 +3,8 @@ import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
-  'selector': 'planet-local-status',
-  'template': `
+  selector: 'planet-local-status',
+  template: `
 @switch (status) {
   @case ('match') {
     <mat-icon i18n-title title="Up to date">done_all</mat-icon>

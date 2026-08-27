@@ -26,7 +26,7 @@ export class RatingService {
   newRatings(parent: boolean) {
     const opts = parent ? { domain: this.stateService.configuration.parentDomain } : {};
     this.couchService.findAll(
-      this.dbName, findDocuments({ '_id': { '$gt': null } }, [], [ { 'item': 'desc' } ]), opts
+      this.dbName, findDocuments({ _id: { $gt: null } }, [], [ { item: 'desc' } ]), opts
     ).pipe(catchError(err =>
       // If there's an error, return a fake couchDB empty response
       // so resources can be displayed.
@@ -39,13 +39,13 @@ export class RatingService {
 
   getRatings({ itemIds, type }: {itemIds: string[], type: string}, opts: any) {
     const itemSelector = itemIds.length > 0 ?
-      { '$in': itemIds } : { '$gt': null };
+      { $in: itemIds } : { $gt: null };
     return this.couchService.findAll(this.dbName, findDocuments({
       // Selector
       type,
       // Must have sorted property in selector to sort correctly
-      'item': itemSelector
-    }, 0, [ { 'item': 'desc' } ]), opts);
+      item: itemSelector
+    }, 0, [ { item: 'desc' } ]), opts);
   }
 
   createItemList(itemsRes, ratings) {

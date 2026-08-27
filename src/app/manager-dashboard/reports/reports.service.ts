@@ -94,7 +94,7 @@ export class ReportsService {
       findDocuments({
         ...{ [field]: planetCode },
         ...this.timeFilter(dateField, tillDate),
-        ...(fromMyPlanet !== undefined ? { androidId: { '$exists': fromMyPlanet } } : {})
+        ...(fromMyPlanet !== undefined ? { androidId: { $exists: fromMyPlanet } } : {})
       }) :
       undefined;
   }
@@ -117,7 +117,7 @@ export class ReportsService {
       byGender: users.reduce((usersByGender: any, user: any) => {
         usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
         return usersByGender;
-      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      }, { male: 0, female: 0, didNotSpecify: 0 }),
       byMonth: this.groupByMonth(users, 'joinDate')
     });
   }
@@ -211,7 +211,7 @@ export class ReportsService {
   }
 
   timeFilter(field, time) {
-    return time !== undefined ? { [field]: { '$gt': time } } : {};
+    return time !== undefined ? { [field]: { $gt: time } } : {};
   }
 
   filterAdmin(records, filter) {

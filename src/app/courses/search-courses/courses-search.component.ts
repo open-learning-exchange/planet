@@ -89,9 +89,9 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'languageOfInstruction', 'options': languages },
-    { 'label': 'gradeLevel', 'options': constants.gradeLevels },
-    { 'label': 'subjectLevel', 'options': constants.subjectLevels },
+    { label: 'languageOfInstruction', options: languages },
+    { label: 'gradeLevel', options: constants.gradeLevels },
+    { label: 'subjectLevel', options: constants.subjectLevels },
   ];
 
   searchLists = [];

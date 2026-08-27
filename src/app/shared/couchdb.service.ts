@@ -87,7 +87,7 @@ export class CouchService {
   }
 
   localComparison(db: string, parentDocs: any[]) {
-    return this.findAll(db, findDocuments({ '_id': { '$gt': null } }, 0, 0, 1000)).pipe(map((localDocs) => parentDocs.map((parentDoc) => {
+    return this.findAll(db, findDocuments({ _id: { $gt: null } }, 0, 0, 1000)).pipe(map((localDocs) => parentDocs.map((parentDoc) => {
       const localDoc: any = localDocs.find((doc: any) => doc._id === parentDoc._id);
       return {
         ...parentDoc,
@@ -96,11 +96,11 @@ export class CouchService {
     })));
   }
 
-  findAll(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
+  findAll(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(flatMap(({ docs }) => docs), toArray());
   }
 
-  findAllStream(db: string, query: any = { 'selector': { '_id': { '$gt': null } }, 'limit': 1000 }, opts?: any) {
+  findAllStream(db: string, query: any = { selector: { _id: { $gt: null } }, limit: 1000 }, opts?: any) {
     return this.findAllRequest(db, query, opts).pipe(map(({ docs }) => docs));
   }
 
@@ -114,7 +114,7 @@ export class CouchService {
     for (let i = 0; i < uniqueIds.length; i += chunkSize) {
       const chunk = uniqueIds.slice(i, i + chunkSize);
       queries.push(
-        this.findAll('attachments', findDocuments({ '_id': { '$in': chunk } }, 0, 0, chunk.length), opts)
+        this.findAll('attachments', findDocuments({ _id: { $in: chunk } }, 0, 0, chunk.length), opts)
       );
     }
     return forkJoin(queries).pipe(

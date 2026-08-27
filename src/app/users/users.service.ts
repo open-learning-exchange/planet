@@ -222,12 +222,12 @@ export class UsersService {
   sendNotifications(user) {
     const notificationDoc = {
       ...notificationRecipient(user),
-      'message': $localize`You were assigned a new role`,
+      message: $localize`You were assigned a new role`,
       link: '/myDashboard',
-      'type': 'newRole',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      type: 'newRole',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
     return this.notificationsService.sendNotificationToUser(notificationDoc);
   }
