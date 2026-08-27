@@ -339,7 +339,7 @@ export class ConfigurationComponent implements OnInit {
       this.configuration,
       this.configurationFormGroup.value,
       this.contactFormGroup.value,
-      this.configurationType === 'new' ? chatConfig : {}
+      chatConfig
     );
     return { credentials, configuration };
   }
@@ -351,9 +351,9 @@ export class ConfigurationComponent implements OnInit {
       return;
     }
     this.spinnerOn = true;
-    const { credentials, configuration } = this.createConfigurationDocs();
     if (this.configurationType === 'update') {
-      this.configurationService.updateConfiguration(configuration).pipe(finalize(spinnerOff)).subscribe(
+      const configPatch = { ...this.configurationFormGroup.value, ...this.contactFormGroup.value };
+      this.configurationService.patchConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(
         () => this.stateService.requestData('configurations', 'local'),
         err => {
           this.planetMessageService.showAlert($localize`There was an error updating the configuration`);
@@ -363,6 +363,7 @@ export class ConfigurationComponent implements OnInit {
         }
       );
     } else {
+      const { credentials, configuration } = this.createConfigurationDocs();
       const admin = Object.assign(credentials, this.contactFormGroup.value);
       this.configurationService.createPlanet(admin, configuration, credentials).pipe(finalize(spinnerOff)).subscribe((data) => {
         this.planetMessageService.showMessage($localize`Admin created: ${credentials.name}`);

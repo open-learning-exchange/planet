@@ -250,13 +250,18 @@ export class UserService {
   }
 
   updateConfigurationContact(userInfo, planetConfiguration) {
-    const { firstName, lastName, middleName, email, phoneNumber, ...otherInfo } = userInfo;
-    const newConfig = { ...planetConfiguration, firstName, lastName, middleName, email, phoneNumber };
-    return this.couchService.put('configurations/' + planetConfiguration._id, newConfig)
-      .pipe(map((res) => {
+    const { firstName, lastName, middleName, email, phoneNumber } = userInfo;
+    const configurationUrl = 'configurations/' + planetConfiguration._id;
+    return this.couchService.get(configurationUrl).pipe(
+      switchMap((configuration) => this.couchService.put(
+        configurationUrl,
+        { ...configuration, firstName, lastName, middleName, email, phoneNumber }
+      )),
+      map((res) => {
         this.stateService.requestData('configurations', 'local');
         return res;
-      }));
+      })
+    );
   }
 
   doesUserHaveRole(searchRoles: string[]) {
