@@ -1,7 +1,3 @@
-# CodeRabbit for Planet. Reviews are opt-in: label a PR `review` and it gets
-# reviewed, then re-reviewed on each push. Unlabelled PRs are never reviewed.
-# Since a review only runs when asked for, ceremony is off and substance is up
-# -- a labelled PR answered "LGTM" wasted the ask.
 # https://docs.coderabbit.ai/reference/configuration
 language: "en-US"
 
@@ -13,7 +9,6 @@ tone_instructions: >-
 reviews:
   profile: assertive
 
-  # Each defaults on; none is why anyone labels a PR.
   sequence_diagrams: false
   changed_files_summary: false
   estimate_code_review_effort: false
@@ -23,20 +18,14 @@ reviews:
   suggested_reviewers: false
   in_progress_fortune: false
   review_status: false  # else a "Review skipped" notice on every unlabelled PR
-
-  # How a Claude or Codex session applies a finding without a human retyping it.
   enable_prompt_for_ai_agents: true
 
-  # The pre-merge table, all four rows. The key is `docstrings`, not
-  # `docstring_coverage` -- unknown keys here validate silently and do nothing.
   pre_merge_checks:
     docstrings: { mode: "off" }
     title: { mode: "off" }
     description: { mode: "off" }
     issue_assessment: { mode: "off" }
 
-  # Drops the "Finishing Touches" checkbox block. autofix, fix_ci and
-  # resolve_merge_conflict stay on: those only render when they apply.
   finishing_touches:
     docstrings: { enabled: false }
     unit_tests: { enabled: false }
@@ -74,8 +63,6 @@ reviews:
         couchdb-setup.sh re-uploads it -- flag changes that assume otherwise.
 
   auto_review:
-    # enabled false + a positive label is CodeRabbit's opt-in idiom: the label
-    # starts the review, auto_incremental_review follows each push after that.
     enabled: false
     labels: ["review"]
     auto_incremental_review: true
