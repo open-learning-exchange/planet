@@ -49,9 +49,10 @@ const dialogFieldOptions = [
     'required': true
   },
   {
-    'type': 'textarea',
+    'type': 'markdown',
     'name': 'message',
     'placeholder': $localize`Your Feedback`,
+    'imageGroup': 'community',
     'required': true
   }
 ];
@@ -82,8 +83,13 @@ export class FeedbackDirective {
     const urlParts = navigationUrl.split('/');
     const firstPart = urlParts[1] || 'home';
     const lastPart = urlParts.length > 2 ? urlParts[urlParts.length - 1] : null;
+    const rawMessage = post.message;
+    const messageContent = typeof rawMessage === 'string' ? rawMessage : (rawMessage?.text || '');
+    const messageImages = typeof rawMessage === 'object' && Array.isArray(rawMessage?.images) ? rawMessage.images : [];
     const feedback: any = {
       ...post,
+      message: messageContent,
+      images: messageImages,
       routerLink: null,
       state: firstPart,
       titleContext: null,

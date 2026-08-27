@@ -67,7 +67,7 @@
             </div>
             <mat-card [ngClass]="{ 'primary-color': message.user !== user.name }">
               <mat-card-content>
-                {{message.message}}
+                <planet-markdown [content]="message.message"></planet-markdown>
               </mat-card-content>
             </mat-card>
           </div>
