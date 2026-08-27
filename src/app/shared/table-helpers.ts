@@ -83,8 +83,7 @@ export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchSe
 
 export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =>
 // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
-  Object.entries(filterObj).reduce(checkFilterItems(data), true)
-  ;
+  Object.entries(filterObj).reduce(checkFilterItems(data), true);
 
 // Takes array of field names and if trueIfExists is true, return true if field exists
 // if false return true if it does not exist
