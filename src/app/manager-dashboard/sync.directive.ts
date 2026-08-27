@@ -38,11 +38,9 @@ export class SyncDirective {
 
   syncPlanet() {
     const defaultList = this.replicatorList((type) => (val) => this.syncService.replicatorId(val, type));
-    const deleteArray = (replicators) => replicators.filter(rep => {
-      return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
-    }).map(rep => {
-      return { ...rep, _deleted: true };
-    });
+    const deleteArray = (replicators) => replicators.filter(
+      rep => rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1
+    ).map(rep => ({ ...rep, _deleted: true }));
     this.couchService.findAll('_replicator').pipe(
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),

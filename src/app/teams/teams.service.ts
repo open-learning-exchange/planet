@@ -128,9 +128,7 @@ export class TeamsService {
   }
 
   updateTeam(team: any) {
-    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => {
-      return of({ ...team, _rev: res.rev, _id: res.id });
-    }));
+    return this.couchService.updateDocument(this.dbName, team).pipe(switchMap((res: any) => of({ ...team, _rev: res.rev, _id: res.id })));
   }
 
   requestToJoinTeam(team, user) {
@@ -379,9 +377,7 @@ export class TeamsService {
     const notifications = members.filter((user: any) => {
       const userId = user.userId || user._id;
       return this.userService.get()._id !== userId && user.name !== 'satellite';
-    }).map((user: any) => {
-      return this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams);
-    });
+    }).map((user: any) => this.teamNotification(this.teamNotificationMessage(type, notificationParams), type, user, notificationParams));
     return this.couchService.updateDocument('notifications/_bulk_docs', { docs: notifications });
   }
 

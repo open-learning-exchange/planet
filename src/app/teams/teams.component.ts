@@ -186,10 +186,11 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
         this.couchService.findAll(this.dbName, { selector: { status: 'active' } }).subscribe((teams) => {
-          this.teams.data = this.teamList(teams.filter((team: any) => {
-            return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
-            && this.excludeIds.indexOf(team._id) === -1;
-          }));
+          this.teams.data = this.teamList(
+            teams.filter((team: any) => (
+              team.type === this.mode || (team.type === undefined && this.mode === 'team')
+            )
+            && this.excludeIds.indexOf(team._id) === -1));
         });
       }
       this.dialogsLoadingService.stop();

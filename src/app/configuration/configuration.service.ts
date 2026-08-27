@@ -51,11 +51,9 @@ export class ConfigurationService {
   }
 
   addUserToShelf(adminName, configuration) {
-    return mergeMap(data => {
-      return this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
-        domain: configuration.parentDomain
-      });
-    });
+    return mergeMap(data => this.couchService.put('shelf/org.couchdb.user:' + adminName, {}, {
+      domain: configuration.parentDomain
+    }));
   }
 
   createReplicators(configuration, credentials) {

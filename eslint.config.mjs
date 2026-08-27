@@ -249,6 +249,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         radix: "error",
         "use-isnan": "error",
         "valid-typeof": "off",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         curly: "error",

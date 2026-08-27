@@ -102,9 +102,7 @@ export class CoursesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

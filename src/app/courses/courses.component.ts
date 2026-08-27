@@ -508,9 +508,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   addToCourse(courses) {
     const currentShelf = this.userService.shelf;
-    const courseIds = courses.map((data) => {
-      return data._id;
-    }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
+    const courseIds = courses.map((data) => data._id).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
     const message = courses.length === 1 ?
       $localize`${courses[0].courseTitle} have been added to` :
       $localize`${courses.length} courses have been added to`;

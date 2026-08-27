@@ -609,14 +609,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         membershipWriteCompleted = true;
         this.dialogRef.close();
       }),
-      switchMap(() => {
-        return forkJoin([
-          this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...this.team }
-          }),
-          this.sendNotifications('addMember', { newMembersLength: selected.length })
-        ]);
-      }),
+      switchMap(() => forkJoin([
+        this.teamsService.sendNotifications('added', selected, {
+          url: this.router.url, team: { ...this.team }
+        }),
+        this.sendNotifications('addMember', { newMembersLength: selected.length })
+      ])),
       switchMap(() => this.getMembers()),
       catchError(error => membershipWriteCompleted ? this.refreshMembersOnError(error) : throwError(error)),
       finalize(() => this.dialogsLoadingService.stop())

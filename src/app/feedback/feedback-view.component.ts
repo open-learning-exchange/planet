@@ -196,9 +196,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.stream('GET', this.dbName + '/_changes?feed=continuous&since=now')
       .pipe(
         takeUntil(this.onDestroy$),
-        switchMap(() => {
-          return this.getFeedback(id);
-        })
+        switchMap(() => this.getFeedback(id))
       )
       .subscribe(this.setFeedback.bind(this), error => console.log(error), () => {
         // Feed times out after one minute, so resubscribe until ngOnDestrpy runs.

@@ -181,9 +181,7 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
 
   pipeRemovePlanetUser(obs: any, community) {
     return obs.pipe(
-      switchMap(data => {
-        return forkJoin([ of(data), this.removePlanetUser(community) ]);
-      })
+      switchMap(data => forkJoin([ of(data), this.removePlanetUser(community) ]))
     );
   }
 
@@ -191,12 +189,10 @@ export class RequestsTableComponent implements OnChanges, AfterViewInit, OnDestr
     return forkJoin([
       this.couchService.post('_users/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } }),
       this.couchService.post('shelf/_find', { selector: { _id: 'org.couchdb.user:' + community.adminName } })
-    ]).pipe(switchMap(([ user, shelf ]) => {
-      return forkJoin([
-        this.addDeleteObservable(user, '_users/'),
-        this.addDeleteObservable(shelf, 'shelf/')
-      ]);
-    }));
+    ]).pipe(switchMap(([ user, shelf ]) => forkJoin([
+      this.addDeleteObservable(user, '_users/'),
+      this.addDeleteObservable(shelf, 'shelf/')
+    ])));
   }
 
   // Gives the requesting user the 'learner' role & access to all DBs (as of April 2018)

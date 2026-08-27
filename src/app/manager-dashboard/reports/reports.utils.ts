@@ -78,9 +78,7 @@ export const setMonths = (dateRange) => {
   return months;
 };
 
-export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => {
-  return { planetCode, filterAdmin: true };
-};
+export const activityParams = (planetCode): { planetCode, filterAdmin?, fromMyPlanet? } => ({ planetCode, filterAdmin: true });
 
 export const areNoChildren = (record: ({ children: any[] } & any)[]) => record.every(element => element.children.length === 0);
 

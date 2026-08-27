@@ -22,9 +22,7 @@ export class ValidatorService {
   public checkUnique$(db: string, selectors: any, opts = {}): Observable<boolean> {
     return this.couchService
       .post(`${db}/_find`, findDocuments(selectors, [ '_id' ], 0, 1), opts)
-      .pipe(map(data => {
-        return data.docs.length > 0;
-      }));
+      .pipe(map(data => data.docs.length > 0));
   }
 
   public isUnique$(
@@ -81,12 +79,8 @@ export class ValidatorService {
       { name: this.userService.get().name, password: ac.value },
       { withCredentials: false }
     ).pipe(
-      map(data => {
-        return null;
-      }),
-      catchError(err => {
-        return of({ invalidPassword: true });
-      }));
+      map(data => null),
+      catchError(err => of({ invalidPassword: true })));
   }
 
   private roundTimestamp(timestamp: number) {
