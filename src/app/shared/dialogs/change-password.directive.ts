@@ -41,9 +41,12 @@ const resetPasswordFields = [
 @Directive({ selector: '[planetChangePassword]' })
 export class ChangePasswordDirective implements OnChanges {
 
-  _userDetail: any = undefined;
+  #userDetail: any = undefined;
   @Input('planetChangePassword') set userDetail(value: any) {
-    this._userDetail = value._id === undefined ? undefined : value;
+    this.#userDetail = value._id === undefined ? undefined : value;
+  }
+  get userDetail() {
+    return this.#userDetail;
   }
   isLoggedInUser: boolean;
   dbName = '_users';
@@ -98,7 +101,7 @@ export class ChangePasswordDirective implements OnChanges {
   ) {}
 
   ngOnChanges() {
-    this.isLoggedInUser = this._userDetail === undefined || this._userDetail._id === this.userService.get()._id;
+    this.isLoggedInUser = this.userDetail === undefined || this.userDetail._id === this.userService.get()._id;
   }
 
   @HostListener('click')
@@ -114,7 +117,7 @@ export class ChangePasswordDirective implements OnChanges {
   }
 
   onPasswordSubmit(credentialData) {
-    const user = this._userDetail || this.userService.get();
+    const user = this.userDetail || this.userService.get();
     const obs = this.isLoggedInUser
       ? this.couchService.post('_session', { 'name': user.name, 'password': credentialData.oldPassword })
       : of(true);
@@ -162,14 +165,14 @@ export class ChangePasswordDirective implements OnChanges {
 
   passwordError(reason: string) {
     return () => {
-      return of({ error: { ok: false, reason: reason } });
+      return of({ error: { ok: false, reason } });
     };
   }
 
   reinitSession(username, password) {
     return forkJoin([
-      this.couchService.post('_session', { 'name': username, 'password': password }, { withCredentials: true }),
-      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, 'password': password },
+      this.couchService.post('_session', { 'name': username, password }, { withCredentials: true }),
+      this.couchService.post('_session', { 'name': this.planetConfiguration.adminName, password },
         { withCredentials: true, domain: this.planetConfiguration.parentDomain })
     ]).pipe(
       // Silent error for now so other specific messages are shown

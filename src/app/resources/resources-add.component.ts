@@ -43,7 +43,7 @@ type DatePlaceholderType = CouchService['datePlaceholder'];
 interface ResourceFormModel {
   title: FormControl<string>;
   author: FormControl<string>;
-  year: FormControl<string>;
+  year: FormControl<number | string | null>;
   description: FormControl<string>;
   language: FormControl<string>;
   publisher: FormControl<string>;
@@ -115,12 +115,12 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control<string[]>([]);
-  _existingResource: any = {};
+  #existingResource: any = {};
   get existingResource(): any {
-    return this._existingResource;
+    return this.#existingResource;
   }
   @Input() set existingResource(resource) {
-    this._existingResource = resource;
+    this.#existingResource = resource;
     if (this.resourceForm) {
       this.setFormValues(resource);
     }
@@ -136,7 +136,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
 
   get detailsInvalid(): boolean {
-    return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
+    return this.resourceForm.controls.title.invalid ||
+      this.resourceForm.controls.description.invalid ||
+      this.resourceForm.controls.year.invalid;
   }
 
   get fileInvalid(): boolean {
@@ -206,7 +208,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         ]
       }),
       author: this.fb.control(''),
-      year: this.fb.control(''),
+      year: this.fb.control<number | string | null>('', {
+        validators: [ CustomValidators.integerValidator, Validators.min(0) ]
+      }),
       description: this.fb.control('', { validators: CustomValidators.required }),
       language: this.fb.control(''),
       publisher: this.fb.control(''),
@@ -283,7 +287,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType,
+      mediaType,
       _attachments: {}
     };
     return of({ resource, file });
@@ -380,15 +384,15 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
-  private processZip(zipFile) {
-    return function(fileName) {
+  private processZip = (zipFile) => {
+    return (fileName) => {
       return new Observable((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
-          zipFile.file(fileName).async('base64').then(function success(data) {
-            observer.next({ name: fileName, data: data });
+          zipFile.file(fileName).async('base64').then((data) => {
+            observer.next({ name: fileName, data });
             observer.complete();
-          }, function error(e) {
+          }, (e) => {
             observer.error(e);
           });
         } catch (e) {
@@ -397,7 +401,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         }
       });
     };
-  }
+  };
 
   private getFileNames(data) {
     const files = data.files;
@@ -484,7 +488,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       medium: formValue.medium || '',
       resourceType: formValue.resourceType || '',
       author: formValue.author || '',
-      year: formValue.year || '',
+      year: formValue.year ?? '',
       tags: this.tags.value || [],
       attachment: this.file
         ? { name: this.file.name, size: this.file.size, type: this.file.type }

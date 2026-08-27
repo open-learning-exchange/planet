@@ -25,7 +25,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatInput } from '@angular/material/input';
@@ -62,6 +62,7 @@ import {
     MatToolbarRow,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatInput,
@@ -113,14 +114,14 @@ export class FeedbackComponent implements OnInit, AfterViewInit, OnDestroy {
     'type': '',
     'status': ''
   };
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch;
+    return this.#titleSearch;
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the feedback filter
     this.feedback.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
   }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

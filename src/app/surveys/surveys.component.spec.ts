@@ -96,4 +96,50 @@ describe('SurveysComponent', () => {
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
+
+  it('keeps the search input synchronized with the table filter', () => {
+    component.applyFilter('survey title');
+
+    expect(component.searchValue).toBe('survey title');
+    expect(component.surveys.filter).toBe('survey title');
+  });
+
+  it('excludes archived shareable surveys from the adopt view', () => {
+    const archivedSurvey = {
+      _id: 'survey-1',
+      isArchived: true,
+      teamId: 'team-1',
+      teamIds: [ 'team-1' ],
+      teamShareAllowed: true
+    };
+    const activeSurvey = {
+      ...archivedSurvey,
+      _id: 'survey-2',
+      isArchived: false
+    };
+    component.teamId = 'team-2';
+    component.allSurveys = [ archivedSurvey, activeSurvey ];
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.surveys.data).toEqual([ activeSurvey ]);
+  });
+
+  it('keeps archived shareable surveys visible in the team view', () => {
+    const archivedSurvey = {
+      _id: 'survey-1',
+      isArchived: true,
+      teamId: 'team-1',
+      teamIds: [ 'team-1' ],
+      teamShareAllowed: true
+    };
+    component.teamId = 'team-1';
+    component.allSurveys = [ archivedSurvey ];
+    component.currentFilter.viewMode = 'team';
+
+    component.toggleSurveysView();
+
+    expect(component.surveys.data).toEqual([ archivedSurvey ]);
+  });
 });
