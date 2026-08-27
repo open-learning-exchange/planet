@@ -48,6 +48,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -327,10 +328,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      tasks: this.tasksService.sortedTasks(tasks.filter(task => isTaskAssignedTo(task, member, this.planetCode)), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const currentMember = this.members.find(member => assigneeMatches(member, {
+        userId: this.user._id,
+        userPlanetCode: this.planetCode
+      }, this.planetCode));
+      const tasksForCount = this.isUserLeader ? tasks : currentMember?.tasks || [];
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
@@ -356,8 +361,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
+  // Requests are stamped with the local configuration code, so identity here stays local-planet and only
+  // gains the fallback that lets a legacy member doc without a code still match.
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
+    return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
+      userId: user._id,
+      userPlanetCode: this.planetCode
+    }, this.planetCode));
   }
 
   toggleMembership(team, leaveTeam) {
@@ -460,7 +470,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           membershipWriteCompleted = true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => type === 'removed' ?
+          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),

@@ -21,6 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { CdkScrollable } from '@angular/cdk/scrolling';
+import { assigneeKey, assigneeName, effectiveAssignees } from '../../tasks/tasks.utils';
 
 @Component({
   selector: 'planet-meetups-view',
@@ -206,10 +207,6 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
     this.openProfile(this.meetupDetail?.createdBy, this.meetupDetail?.sourcePlanet || this.meetupDetail?.sync?.planetCode, event);
   }
 
-  openAssigneeProfile(event?: Event) {
-    this.openProfile(this.meetupDetail?.assignee?.name, this.meetupDetail?.assignee?.userPlanetCode, event);
-  }
-
   openProfile(username, planetCode, event?: Event) {
     if (event) {
       event.stopPropagation();
@@ -222,6 +219,13 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
       member: { name: username, userPlanetCode: planetCode },
       dialogRef: this.dialogRef
     });
+  }
+
+  effectiveAssignees = effectiveAssignees;
+  assigneeName = assigneeName;
+
+  assigneeTrackKey(assignee): string {
+    return assigneeKey(assignee, this.stateService.configuration?.code);
   }
 
   editTask() {
