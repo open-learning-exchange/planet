@@ -928,6 +928,11 @@ body {
 
   .tab-scroll-layout {
     height: 100%;
+
+    .mat-mdc-tab-body-wrapper,
+    .mat-mdc-tab-body-content {
+      height: 100%;
+    }
   }
 
   .tags-list .mat-mdc-chip {
