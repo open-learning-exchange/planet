@@ -2,6 +2,14 @@
 
 :host {
 
+  // In a dialog the toolbar is a nested panel rather than a page header, so it takes the
+  // low-emphasis fill and the same corner radius as the cards below it.
+  .dialog-toolbar {
+    background-color: v.$primary-lighter;
+    color: v.$primary-lighter-text;
+    border-radius: 12px;
+  }
+
   .profile-container {
     max-width: 900px;
     display: grid;
