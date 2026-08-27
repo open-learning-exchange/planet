@@ -247,7 +247,7 @@ export class CustomValidators {
 
   static required(ac: AbstractControl<string | null>): ValidationErrors | null {
     const value = ac.value ?? '';
-    return /\S/.test(value) ? null : { 'required': true };
+    return /\S/.test(value) ? null : { required: true };
   }
 
   static requiredMarkdown(ac: AbstractControl<string | { text: string } | null>): ValidationErrors | null {
@@ -260,7 +260,7 @@ export class CustomValidators {
 
   static fileMatch(ac: AbstractControl<string | null>, fileList: string[]): ValidationErrors | null {
     if (fileList.length > 1 && ac.value !== '' && !fileList.includes(ac.value)) {
-      return { 'notFileMatch': true };
+      return { notFileMatch: true };
     }
     return null;
   }
@@ -272,17 +272,17 @@ export class CustomValidators {
       } else {
         const trimmedValue = ac.value.trim();
         if (/\s/.test(trimmedValue)) {
-          resolve({ 'invalidLink': true });
+          resolve({ invalidLink: true });
         } else {
           const domainRegex = /^(https?:\/\/)([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\.[a-zA-Z]{2,})*(\/.*)?$/;
           if (!domainRegex.test(trimmedValue)) {
-            resolve({ 'invalidLink': true });
+            resolve({ invalidLink: true });
           } else {
             try {
               const url = new URL(trimmedValue);
               resolve(null);
             } catch (_) {
-              resolve({ 'invalidLink': true });
+              resolve({ invalidLink: true });
             }
           }
         }

@@ -63,7 +63,7 @@ export class ResourcesService {
 
   requestResourcesUpdate(parent: boolean, fetchRating: boolean = true) {
     this.isActiveResourceFetch = true;
-    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local', { 'title': 'asc' });
+    this.stateService.requestData(this.dbName, parent ? 'parent' : 'local', { title: 'asc' });
     this.stateService.requestData('tags', parent ? 'parent' : 'local');
     if (fetchRating) {
       this.ratingService.newRatings(parent);
@@ -157,14 +157,14 @@ export class ResourcesService {
 
   newResourceNotification(user) {
     return {
-      'user': user._id,
-      'message': $localize`There are new resources in the Library. Click to see them!`,
-      'link' : '/resources',
-      'linkParams': { sort: 'createdDate' },
-      'type': 'newResource',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      user: user._id,
+      message: $localize`There are new resources in the Library. Click to see them!`,
+      link : '/resources',
+      linkParams: { sort: 'createdDate' },
+      type: 'newResource',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode: user.planetCode
     };
   }

@@ -168,7 +168,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     this.createForm();
     this.resourceForm.setValidators(() => {
       if (this.file && this.file.size / 1024 / 1024 > 512) {
-        return { 'fileTooBig': true };
+        return { fileTooBig: true };
       } else {
         return null;
       }

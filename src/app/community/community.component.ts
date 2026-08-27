@@ -283,9 +283,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   requestNewsAndUsers(planetCode?: string) {
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+          { viewIn: { $elemMatch: { _id: this.teamId, section: 'community' } } }
         ]
       },
       viewId: this.teamId
@@ -308,7 +308,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'community' } ],
+      viewIn: [ { _id: this.teamId, section: 'community' } ],
       messageType: 'sync',
       messagePlanetCode: this.configuration.code,
       ...message
@@ -351,12 +351,12 @@ export class CommunityComponent implements OnInit, OnDestroy {
   sendNotifications(user, currentUser) {
     return {
       user,
-      'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
-      'link': '/',
-      'type': 'communityMessage',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      message: $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
+      link: '/',
+      type: 'communityMessage',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       planetCode: user.userPlanetCode
     };
   }

@@ -36,7 +36,7 @@ export class ValidatorService {
     if (exceptions.findIndex(exception => ac.value === exception) > -1) {
       return of(null);
     }
-    selectors = { [fieldName]: { '$regex': `(?i)^\\s*${this.replaceSpecialChar(ac.value.trim())}\\s*$` }, ...selectors };
+    selectors = { [fieldName]: { $regex: `(?i)^\\s*${this.replaceSpecialChar(ac.value.trim())}\\s*$` }, ...selectors };
     // calls service every .5s for input change
     return timer(500).pipe(
       switchMap(() => this.checkUnique$(dbName, selectors, opts)),
@@ -78,7 +78,7 @@ export class ValidatorService {
   public checkPassword$(ac: AbstractControl): Observable<boolean> {
     return this.couchService.post(
       '_session',
-      { 'name': this.userService.get().name, 'password': ac.value },
+      { name: this.userService.get().name, password: ac.value },
       { withCredentials: false }
     ).pipe(
       map(data => {

@@ -105,13 +105,13 @@ export class LoginTasksService {
 
   private sendNotifications(userName: string, addedMember: string) {
     return this.couchService.updateDocument('notifications', {
-      'user': 'org.couchdb.user:' + userName,
-      'message': $localize`New member <b>${addedMember}</b> has joined.`,
-      'link': '/manager/users/profile/' + addedMember,
-      'type': 'new user',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: 'org.couchdb.user:' + userName,
+      message: $localize`New member <b>${addedMember}</b> has joined.`,
+      link: '/manager/users/profile/' + addedMember,
+      type: 'new user',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     });
   }
 

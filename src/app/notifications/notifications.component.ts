@@ -52,7 +52,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
     { value: 'read', label: $localize`Read` },
     { value: 'unread', label: $localize`Unread` }
   ];
-  filter = { 'status': '' };
+  filter = { status: '' };
   anyUnread = true;
 
   constructor(
@@ -79,12 +79,12 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   getNotifications() {
     const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications/_find', findDocuments(
-      { '$or': userFilter,
+      { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 }
+        time: { $gt: 0 }
       },
       0,
-      [ { 'time': 'desc' } ]))
+      [ { time: 'desc' } ]))
       .subscribe(notifications => {
         this.notifications.data = notifications;
         this.anyUnread = this.notifications.data.some(notification => notification.status === 'unread');
@@ -97,7 +97,7 @@ export class NotificationsComponent implements OnInit, AfterViewInit {
   }
 
   readNotification(notification) {
-    const updateNotificaton = { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, status: 'read' };
     if (notification.status === 'unread') {
       this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
         this.notifications.data = this.notifications.data.map((n: any) => {

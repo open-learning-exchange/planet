@@ -265,7 +265,7 @@ export class ConfigurationComponent implements OnInit {
 
   getNationList() {
     this.couchService.post('communityregistrationrequests/_find',
-      findDocuments({ 'planetType': 'nation', 'registrationRequest': 'accepted' }, 0 ),
+      findDocuments({ planetType: 'nation', registrationRequest: 'accepted' }, 0 ),
       { domain: environment.centerAddress, protocol: environment.centerProtocol })
       .subscribe((data) => {
         this.nations = data.docs;

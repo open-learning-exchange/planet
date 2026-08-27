@@ -52,7 +52,7 @@ export class ManagerService {
   getPushedList() {
     return this.couchService.findAll(
       'send_items',
-      findDocuments({ 'sendTo': this.configuration.code }),
+      findDocuments({ sendTo: this.configuration.code }),
       { domain: this.configuration.parentDomain }
     );
   }
@@ -74,13 +74,13 @@ export class ManagerService {
 
   getChildPlanets(onlyAccepted = false, parentCode = this.stateService.configuration.code, domain?) {
     const selector = onlyAccepted ?
-      { '$or': [
-        { parentCode, 'registrationRequest': 'accepted' },
-        { 'docType': 'parentName' }
+      { $or: [
+        { parentCode, registrationRequest: 'accepted' },
+        { docType: 'parentName' }
       ] } :
-      { '_id': { '$gt': null } };
+      { _id: { $gt: null } };
     return this.couchService.findAll('communityregistrationrequests',
-      findDocuments(selector, 0, [ { 'createdDate': 'desc' } ] ), domain ? { domain } : undefined);
+      findDocuments(selector, 0, [ { createdDate: 'desc' } ] ), domain ? { domain } : undefined);
   }
 
   updateCredentialsYml({ name, password }) {

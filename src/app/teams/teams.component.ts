@@ -159,9 +159,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().pipe(switchMap(time =>
       forkJoin([
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+        this.couchService.findAll(this.dbName, { selector: { status: 'active' } }),
         this.getMembershipStatus(),
-        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
+        this.couchService.findAll('team_activities', { selector: { type: 'teamVisit', time: { $gte: thirtyDaysAgo(time) } } }),
         this.couchService.findAll('communityregistrationrequests')
       ])
     )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
@@ -182,7 +182,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
+        this.couchService.findAll(this.dbName, { selector: { status: 'active' } }).subscribe((teams) => {
           this.teams.data = this.teamList(teams.filter((team: any) => {
             return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
             && this.excludeIds.indexOf(team._id) === -1;
@@ -197,7 +197,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getMembershipStatus() {
     return forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.planetCode } }),
+      this.couchService.findAll(this.dbName, { selector: { userId: this.user._id, userPlanetCode: this.planetCode } }),
       this.couchService.get('shelf/' + this.user._id)
     ]).pipe(
       map(([ membershipDocs, shelf ]) => this.userMembership = [

@@ -3,7 +3,7 @@ import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { DialogsLoadingComponent } from './dialogs-loading.component';
 
 @Injectable({
-  'providedIn': 'root'
+  providedIn: 'root'
 })
 export class DialogsLoadingService {
 

@@ -126,7 +126,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSubmissions() {
     this.chartData = [];
     this.submissionsService.updateSubmissions({
-      query: findDocuments({ parentId: { '$regex': this.course._id } }),
+      query: findDocuments({ parentId: { $regex: this.course._id } }),
       onlyBest: true
     });
   }

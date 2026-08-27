@@ -214,16 +214,16 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       case 'survey':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
-          '$or': [
+          $or: [
             { type: 'survey' },
-            { type: 'exam', status: { '$ne': 'pending' } }
+            { type: 'exam', status: { $ne: 'pending' } }
           ]
         }) };
       case 'review':
         return { query: findDocuments({
           'user.name': this.userService.get().name,
           parentId: this.parentId,
-          status: { '$ne': 'pending' }
+          status: { $ne: 'pending' }
         }) };
       default:
         return { query: undefined };

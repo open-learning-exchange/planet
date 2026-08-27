@@ -13,39 +13,39 @@ import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { fullName, truncateText } from '../shared/utils';
 
 const nameField = {
-  'type': 'textbox',
-  'name': 'name',
-  'placeholder': $localize`Name`,
-  'required': true
+  type: 'textbox',
+  name: 'name',
+  placeholder: $localize`Name`,
+  required: true
 };
 const descriptionField = {
-  'type': 'markdown',
-  'name': 'description',
-  'placeholder': $localize`What is your team\'s plan?`,
-  'required': false
+  type: 'markdown',
+  name: 'description',
+  placeholder: $localize`What is your team\'s plan?`,
+  required: false
 };
 const enterpriseDescField = [
   {
-    'type': 'markdown',
-    'name': 'description',
-    'placeholder': $localize`What is your enterprise\'s Mission?`,
-    'required': false
+    type: 'markdown',
+    name: 'description',
+    placeholder: $localize`What is your enterprise\'s Mission?`,
+    required: false
   }, {
-    'type': 'markdown',
-    'name': 'services',
-    'placeholder': $localize`What are the Services your enterprise provides?`,
-    'required': false
+    type: 'markdown',
+    name: 'services',
+    placeholder: $localize`What are the Services your enterprise provides?`,
+    required: false
   }, {
-    'type': 'markdown',
-    'name': 'rules',
-    'placeholder': $localize`What are the Rules of your enterprise?`,
-    'required': false
+    type: 'markdown',
+    name: 'rules',
+    placeholder: $localize`What are the Rules of your enterprise?`,
+    required: false
   }
 ];
 const publicField = {
-  'type': 'toggle',
-  'name': 'public',
-  'label': $localize`Public`
+  type: 'toggle',
+  name: 'public',
+  label: $localize`Public`
 };
 
 @Injectable({
@@ -108,15 +108,15 @@ export class TeamsService {
 
   addTeamFields(configuration, type) {
     const typeField = {
-      'type': 'selectbox',
-      'name': 'teamType',
-      'placeholder': $localize`Team Type`,
-      'options': [
+      type: 'selectbox',
+      name: 'teamType',
+      placeholder: $localize`Team Type`,
+      options: [
         {
-          'value': 'sync',
-          'name': configuration.planetType === 'community' ? $localize`Connect with nation` : $localize`Connect with earth`
+          value: 'sync',
+          name: configuration.planetType === 'community' ? $localize`Connect with nation` : $localize`Connect with earth`
         },
-        { 'value': 'local', 'name': $localize`Local team` }
+        { value: 'local', name: $localize`Local team` }
       ]
     };
     return [
@@ -341,13 +341,13 @@ export class TeamsService {
     const selector = {
       teamId: team._id,
       teamPlanetCode: team.teamPlanetCode,
-      status: { '$or': [ { '$exists': false }, { '$ne': 'archived' } ] },
+      status: { $or: [ { $exists: false }, { $ne: 'archived' } ] },
       ...(withAllLinks ? {} : { docType: 'membership' })
     };
     this.usersService.requestUserData();
     return forkJoin([
       this.couchService.findAll(this.dbName, findDocuments(selector)),
-      this.couchService.findAll('shelf', findDocuments({ 'myTeamIds': { '$in': [ team._id ] } }, 0)),
+      this.couchService.findAll('shelf', findDocuments({ myTeamIds: { $in: [ team._id ] } }, 0)),
       this.usersService.usersListener(true).pipe(take(1)),
       this.couchService.findAll('attachments')
     ]).pipe(map(([ membershipDocs, shelves, users, attachments ]: any[]) => [
@@ -421,30 +421,30 @@ export class TeamsService {
     const userId = user.userId || user._id;
     const linkParams = type === 'request' ? { activeTab: 'applicantTab' } : {};
     return {
-      'user': userId,
+      user: userId,
       message,
       link,
       linkParams,
-      'item': team._id,
-      'type': 'team',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      item: team._id,
+      type: 'team',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode: user.userPlanetCode
     };
   }
 
   teamActivity(team: any, activity = 'teamVisit') {
     const data = {
-      'teamId': team._id,
-      'title': team.title,
-      'user': this.userService.get().name,
-      'type': activity,
-      'teamType': team.teamType,
-      'teamPlanetCode': team.teamPlanetCode,
-      'time': this.couchService.datePlaceholder,
-      'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode
+      teamId: team._id,
+      title: team.title,
+      user: this.userService.get().name,
+      type: activity,
+      teamType: team.teamType,
+      teamPlanetCode: team.teamPlanetCode,
+      time: this.couchService.datePlaceholder,
+      createdOn: this.stateService.configuration.code,
+      parentCode: this.stateService.configuration.parentCode
     };
     return this.couchService.updateDocument('team_activities', data);
   }
@@ -470,14 +470,14 @@ export class TeamsService {
   createServicesDoc() {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      '_id': `${code}@${parentCode}`,
-      'createdDate': this.couchService.datePlaceholder,
-      'teamPlanetCode': `${code}`,
-      'parentCode': `${parentCode}`,
-      'description': '',
-      'requests': [],
-      'teamType': 'sync',
-      'type': 'services'
+      _id: `${code}@${parentCode}`,
+      createdDate: this.couchService.datePlaceholder,
+      teamPlanetCode: `${code}`,
+      parentCode: `${parentCode}`,
+      description: '',
+      requests: [],
+      teamType: 'sync',
+      type: 'services'
     };
     return this.updateTeam(newServicesDoc);
   }
@@ -489,11 +489,11 @@ export class TeamsService {
   createServicesLink({ title, route, teamType, icon }) {
     const { code, parentCode } = this.stateService.configuration;
     const newServicesDoc = {
-      'teamId': `${code}@${parentCode}`,
-      'createdDate': this.couchService.datePlaceholder,
-      'teamPlanetCode': `${code}`,
-      'parentCode': `${parentCode}`,
-      'docType': 'link',
+      teamId: `${code}@${parentCode}`,
+      createdDate: this.couchService.datePlaceholder,
+      teamPlanetCode: `${code}`,
+      parentCode: `${parentCode}`,
+      docType: 'link',
       teamType,
       icon,
       title,
@@ -504,16 +504,16 @@ export class TeamsService {
 
   getTeamsByUser(userName: string, userPlanetCode: string) {
     const selector = {
-      '$or': [
-        { 'userId': `org.couchdb.user:${userName}` },
-        { 'userId': `org.couchdb.user:${userName}@${userPlanetCode}` }
+      $or: [
+        { userId: `org.couchdb.user:${userName}` },
+        { userId: `org.couchdb.user:${userName}@${userPlanetCode}` }
       ],
-      'docType': 'membership'
+      docType: 'membership'
     };
     return this.couchService.findAll('teams', findDocuments(selector)).pipe(
       switchMap(memberships => {
         const teamIds = memberships.map((doc: any) => doc.teamId);
-        return this.couchService.findAll('teams', findDocuments({ '_id': { '$in': teamIds } }));
+        return this.couchService.findAll('teams', findDocuments({ _id: { $in: teamIds } }));
       }),
       map(teams => teams.filter((team: any) => team.status !== 'archived').map(team => ({ doc: team })))
     );

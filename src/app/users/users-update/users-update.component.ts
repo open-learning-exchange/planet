@@ -258,11 +258,11 @@ export class UsersUpdateComponent implements OnInit, CanComponentDeactivate {
     // Alter between two possible keys for image element to ensure database updates
     const imgKey: string = this.currentImgKey === 'img' ? 'img_' : 'img';
     attachments[imgKey] = {
-      'content_type': contentType,
+      content_type: contentType,
       data
     };
 
-    return { '_attachments': attachments };
+    return { _attachments: attachments };
   }
 
   goBack() {

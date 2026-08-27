@@ -106,15 +106,15 @@ export class ResourcesViewerComponent implements OnChanges, OnDestroy {
 
   resourceActivity(resource: any, activity) {
     const data = {
-      'resourceId': resource._id,
-      'title': resource.title,
-      'user': this.userService.get().name,
-      'type': activity,
-      'time': this.couchService.datePlaceholder,
-      'createdOn': this.stateService.configuration.code,
-      'parentCode': this.stateService.configuration.parentCode,
-      'url': this.router.url,
-      'private': resource.private
+      resourceId: resource._id,
+      title: resource.title,
+      user: this.userService.get().name,
+      type: activity,
+      time: this.couchService.datePlaceholder,
+      createdOn: this.stateService.configuration.code,
+      parentCode: this.stateService.configuration.parentCode,
+      url: this.router.url,
+      private: resource.private
     };
     this.couchService.updateDocument('resource_activities', data)
       .subscribe((response) => {
