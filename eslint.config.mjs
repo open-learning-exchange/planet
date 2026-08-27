@@ -169,6 +169,7 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         }],
 
         "@typescript-eslint/unified-signatures": "error",
+        "one-var": ["error", "never"],
         complexity: "off",
         "constructor-super": "error",
         "eqeqeq": ["error", "smart"],
@@ -261,6 +262,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "no-var": "error",
+        "object-shorthand": ["error", "always"],
         quotes: "off",
 
         "@stylistic/quotes": ["error", "single", {
@@ -269,6 +272,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
     },
 }, {
     files: ["**/*.html"],

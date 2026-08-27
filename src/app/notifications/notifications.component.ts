@@ -14,7 +14,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
-import { NgClass, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatOption } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 import { ChallengesService } from '../shared/challenges/challenges.service';
@@ -33,7 +33,6 @@ import { ChallengesService } from '../shared/challenges/challenges.service';
     MatColumnDef,
     MatCellDef,
     MatCell,
-    NgClass,
     RouterLink,
     MatRowDef,
     MatRow,

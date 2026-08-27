@@ -20,7 +20,7 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -56,7 +56,7 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, ReactiveFormsModule, MatFormField,
+    MatToolbar, MatIconButton, MatIcon, ReactiveFormsModule, MatFormField,
     MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
     MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
     CoursesStepComponent, MatButton, FileUploadComponent, SubmitDirective,

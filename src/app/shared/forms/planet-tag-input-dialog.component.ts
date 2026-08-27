@@ -63,7 +63,6 @@ export class PlanetTagInputToggleIconComponent {
 
 }
 
-
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styleUrls': ['planet-tag-input-dialog.scss'],
@@ -270,9 +269,9 @@ export class PlanetTagInputDialogComponent {
 
   deleteTag(event, tag) {
     event.stopPropagation();
-    const amount = 'single',
-      okClick = this.deleteSelectedTag(tag),
-      displayName = tag.name;
+    const amount = 'single';
+    const okClick = this.deleteSelectedTag(tag);
+    const displayName = tag.name;
     this.deleteDialog = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick,

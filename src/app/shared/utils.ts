@@ -275,6 +275,9 @@ export const markdownToPlainText = (markdown: any) => {
   return (html.textContent || html.innerText || '').replace(/^\n|\n$/g, '');
 };
 
+export const fullName = (user: any) =>
+  [ user?.firstName, user?.middleName, user?.lastName ].filter(namePart => namePart).join(' ');
+
 export const truncateText = (text, length) => {
   if (!text) {
     return '';
@@ -460,4 +463,22 @@ export const extractMarkdownImageUrls = (content: string) => {
   }
 
   return matches;
+};
+
+export const formatBytes = (bytes?: number): string => {
+  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes < 0) {
+    return '';
+  }
+  if (bytes === 0) {
+    return '0 B';
+  }
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let unitIndex = Math.max(0, Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1));
+  let formattedValue = parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(1));
+  if (formattedValue === k && unitIndex < sizes.length - 1) {
+    unitIndex++;
+    formattedValue = 1;
+  }
+  return `${formattedValue} ${sizes[unitIndex]}`;
 };

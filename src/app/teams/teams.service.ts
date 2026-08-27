@@ -10,7 +10,7 @@ import { StateService } from '../shared/state.service';
 import { ValidatorService } from '../validators/validator.service';
 import { UsersService } from '../users/users.service';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
-import { truncateText } from '../shared/utils';
+import { fullName, truncateText } from '../shared/utils';
 
 const nameField = {
   'type': 'textbox',
@@ -387,8 +387,8 @@ export class TeamsService {
 
   teamNotificationMessage(type, { team, newMembersLength = '' }) {
     const user = this.userService.get();
-    const fullName = user.firstName ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name;
-    const truncatedFullName = truncateText(fullName, 22);
+    const memberName = fullName(user) || user.name;
+    const truncatedFullName = truncateText(memberName, 22);
     const teamType = team.type || 'team';
     const teamMessage = team.type === 'services' ?
       'the <b>Community Services Directory</b>' :

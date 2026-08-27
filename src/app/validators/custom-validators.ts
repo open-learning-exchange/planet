@@ -10,6 +10,9 @@ export class CustomValidators {
 
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl<number | string | null>): ValidationErrors | null {
+    if (ac.value === null || ac.value === undefined || ac.value === '') {
+      return null;
+    }
     const error = { invalidInt: true };
     const isValidInt = (number: number) => Number.isInteger(number) ? null : error;
     // Handle edge cases like Number(' ') => 0 and Number('  10 ') => 10
@@ -209,11 +212,11 @@ export class CustomValidators {
         return null;
       }
 
-      const matchControl = ac.parent.get(matchField),
-        val1 = ac.value,
-        val2 = matchControl?.value,
-        confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl,
-        errorType = match ? 'matchPassword' : 'unmatchPassword';
+      const matchControl = ac.parent.get(matchField);
+      const val1 = ac.value;
+      const val2 = matchControl?.value;
+      const confirmControl: AbstractControl<string | null> | null = confirm ? ac : matchControl;
+      const errorType = match ? 'matchPassword' : 'unmatchPassword';
 
       if (!confirmControl || !matchControl) {
         return null;

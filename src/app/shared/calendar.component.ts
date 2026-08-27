@@ -254,7 +254,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         endDate: today,
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
     });

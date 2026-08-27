@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,9 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -73,11 +70,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     NewsListComponent,
     MatTabLabel,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -135,6 +127,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   configuration = this.stateService.configuration;
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
+
+  get requestBadgeDescription(): string {
+    return $localize`Pending join requests: ${this.requests.length}:count:`;
+  }
+
+  get taskBadgeDescription(): string {
+    return $localize`Incomplete tasks: ${this.taskCount}:count:`;
+  }
 
   constructor(
     private couchService: CouchService,
@@ -751,7 +751,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -766,21 +766,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
-    });
-  }
-
-  openMemberDialog(member, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      if ((event as KeyboardEvent).repeat) {
-        return;
-      }
-    }
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
     });
   }
 
