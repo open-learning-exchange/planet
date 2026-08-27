@@ -1,4 +1,4 @@
-import { NonNullableFormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -13,6 +13,7 @@ describe('SurveysComponent', () => {
   let router: any;
   let route: any;
   let stateService: any;
+  let dialogsFormService: any;
   let component: SurveysComponent;
 
   const createComponent = () => new SurveysComponent(
@@ -25,10 +26,10 @@ describe('SurveysComponent', () => {
     stateService,
     dialogsLoadingService,
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
-    {} as any,
+    dialogsFormService,
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
-    new NonNullableFormBuilder(),
+    new FormBuilder().nonNullable,
     { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any
   );
 
@@ -55,6 +56,10 @@ describe('SurveysComponent', () => {
       snapshot: { url: [ 'surveys' ] }
     };
     stateService = { configuration: { name: 'Local Planet' } };
+    dialogsFormService = {
+      openDialogsForm: vi.fn(),
+      closeDialogsForm: vi.fn()
+    };
     component = createComponent();
   });
 
@@ -219,5 +224,12 @@ describe('SurveysComponent', () => {
     component.toggleSurveysView();
 
     expect(component.surveys.data).toEqual([ teamSurvey, managerSurvey ]);
+  });
+  it('opens the export dialog for a survey whose questions property is missing', () => {
+    component.exportPdf({ _id: 'survey-1', taken: 1 });
+
+    expect(dialogsFormService.openDialogsForm).toHaveBeenCalled();
+    const fields = dialogsFormService.openDialogsForm.mock.calls[0][1];
+    expect(fields.find(field => field.name === 'includeCharts').disabled).toBe(true);
   });
 });

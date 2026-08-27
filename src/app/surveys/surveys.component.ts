@@ -572,7 +572,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const hasChartableData = survey.questions.some(
+    const questions = Array.isArray(survey.questions) ? survey.questions : [];
+    const hasChartableData = questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
