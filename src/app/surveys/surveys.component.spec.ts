@@ -97,6 +97,13 @@ describe('SurveysComponent', () => {
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
+  it('keeps the search input synchronized with the table filter', () => {
+    component.applyFilter('survey title');
+
+    expect(component.searchValue).toBe('survey title');
+    expect(component.surveys.filter).toBe('survey title');
+  });
+
   it('excludes archived shareable surveys from the adopt view', () => {
     const archivedSurvey = {
       _id: 'survey-1',

@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,9 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -73,11 +70,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     NewsListComponent,
     MatTabLabel,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -152,7 +144,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
@@ -776,17 +767,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
-  }
-
-  openMemberDialog(member, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      if ((event as KeyboardEvent).repeat) {
-        return;
-      }
-    }
-    this.usersProfileDialogService.open({ member });
   }
 
 }
