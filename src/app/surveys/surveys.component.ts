@@ -39,15 +39,11 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
-type SurveyAction = 'select' | 'edit' | 'send' | 'sendTeam' | 'record' | 'archive' | 'submissions' | 'export' |
-  'public' | 'revoke' | 'adopt';
-type SurveyActionDisabledReason = 'parentSurvey' | 'communitySurvey' | 'noQuestions' | 'archived' | 'managerTeam' |
-  'noSubmissions' | 'noExportData' | 'teamSharingUnavailable' | null;
+type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
-// Actions blocked by an archive. Select, submissions, export and adopt remain available when their other
-// requirements are met.
-const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'sendTeam', 'record', 'public', 'revoke', 'archive' ];
-const questionBlockedActions: SurveyAction[] = [ 'send', 'sendTeam', 'record', 'public', 'submissions' ];
+// Actions the template disables on element.isArchived. Select, submissions, export and adopt stay enabled on
+// archived surveys, so they must not claim to be blocked by the archive.
+const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
@@ -273,8 +269,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
           !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
-      // Team views include surveys created by, sent to or adopted by that team. The manager view includes original
-      // community and team-created surveys while excluding derived copies.
+      // team surveys: created by or adopted by the team. Without a team, the manager view lists every survey no
+      // team has adopted, team surveys included, so managers can still edit, archive, export and delete them.
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
   }
@@ -578,8 +574,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportPdf(survey) {
-    const questions = Array.isArray(survey.questions) ? survey.questions : [];
-    const hasChartableData = questions.some(
+    const hasChartableData = survey.questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
 
@@ -660,7 +655,6 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   toggleSurveysView(): void {
-    this.selection.clear();
     this.applyViewModeFilter();
     if (this.paginator) {
       this.paginator.firstPage();
@@ -692,64 +686,50 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
   }
 
-  isActionDisabled(survey: any, action: SurveyAction): boolean {
-    return this.getActionDisabledReason(survey, action) !== null;
-  }
-
-  private getActionDisabledReason(survey: any, action: SurveyAction): SurveyActionDisabledReason {
-    if (action === 'select') {
-      if (survey.parent === true) {
-        return 'parentSurvey';
-      }
-      return this.isRowSelectable(survey) ? null : 'communitySurvey';
-    }
-    if (archiveBlockedActions.includes(action) && survey.isArchived) {
-      return 'archived';
-    }
-    if ((action === 'send' || action === 'sendTeam' || action === 'record') && survey.teamId && this.isManagerRoute) {
-      return 'managerTeam';
-    }
-    if (questionBlockedActions.includes(action) && !(Array.isArray(survey.questions) && survey.questions.length > 0)) {
-      return 'noQuestions';
-    }
-    if (action === 'submissions' && !survey.taken) {
-      return 'noSubmissions';
-    }
-    if (action === 'export' && !survey.taken) {
-      return 'noExportData';
-    }
-    if (action === 'sendTeam' && !survey.teamShareAllowed) {
-      return 'teamSharingUnavailable';
-    }
-    return null;
-  }
-
   getActionTooltip(survey: any, action: SurveyAction): string {
-    switch (this.getActionDisabledReason(survey, action)) {
-      case 'parentSurvey':
-        return $localize`This survey was created on the parent planet and cannot be managed here`;
-      case 'communitySurvey':
-        return $localize`This is a community survey`;
-      case 'noQuestions':
-        return $localize`Survey has no questions`;
-      case 'archived':
-        return action === 'archive' ?
-          $localize`Survey is already archived` :
-          $localize`Survey is archived and cannot accept new actions`;
-      case 'managerTeam':
-        return action === 'record' ?
-          $localize`Team surveys cannot be recorded from here` :
-          $localize`Team surveys cannot be sent from here`;
-      case 'noSubmissions':
-        return $localize`There are no submissions to view`;
-      case 'noExportData':
+    if (survey.isArchived) {
+      if (action === 'archive') {
+        return $localize`Survey is already archived`;
+      }
+      if (archiveBlockedActions.includes(action)) {
+        return $localize`Survey is archived and cannot accept new actions`;
+      }
+    }
+
+    if (survey.teamId && this.isManagerRoute) {
+      if (action === 'send') {
+        return $localize`Team surveys cannot be sent from here`;
+      }
+      if (action === 'record') {
+        return $localize`Team surveys cannot be recorded from here`;
+      }
+    }
+
+    if (!survey.taken) {
+      if (action === 'export') {
         return $localize`There is no data to export`;
-      case 'teamSharingUnavailable':
-        return $localize`This survey is not available to teams`;
+      }
+      if (action === 'submissions') {
+        return $localize`There are no submissions to view`;
+      }
+    }
+
+    if (action === 'select' && survey.parent === true) {
+      return $localize`This survey was created on the parent planet and cannot be managed here`;
+    }
+
+    if (action === 'select' && this.currentFilter.viewMode === 'adopt') {
+      return $localize`This is a community survey`;
     }
 
     if (action === 'adopt') {
       return $localize`Adopt Survey`;
+    }
+
+    if (!survey.questions?.length) {
+      if (action !== 'edit' && action !== 'archive') {
+        return $localize`Survey has no questions`;
+      }
     }
 
     if (action === 'record') {

@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { of, Subject, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
@@ -10,7 +10,6 @@ describe('SurveysComponent', () => {
   let submissionsService: any;
   let planetMessageService: any;
   let dialogsLoadingService: any;
-  let dialogsFormService: any;
   let router: any;
   let route: any;
   let stateService: any;
@@ -26,10 +25,10 @@ describe('SurveysComponent', () => {
     stateService,
     dialogsLoadingService,
     { doesUserHaveRole: vi.fn().mockReturnValue(false), get: vi.fn() } as any,
-    dialogsFormService,
+    {} as any,
     { listAIProviders: vi.fn().mockReturnValue(of([])) } as any,
     {} as any,
-    new FormBuilder().nonNullable,
+    new NonNullableFormBuilder(),
     { watchDeviceType: vi.fn().mockReturnValue(of(DeviceType.DESKTOP)) } as any
   );
 
@@ -46,9 +45,6 @@ describe('SurveysComponent', () => {
     dialogsLoadingService = {
       start: vi.fn(),
       stop: vi.fn()
-    };
-    dialogsFormService = {
-      openDialogsForm: vi.fn()
     };
     router = {
       url: '/teams/view/team-1',
@@ -142,21 +138,21 @@ describe('SurveysComponent', () => {
     expect(component.surveys.data).toEqual([ archivedSurvey ]);
   });
 
-  it('disables question-dependent actions and explains when a survey has no questions', () => {
+  it('explains question-dependent actions when a survey has no questions', () => {
     const survey = { _id: 'survey-1', questions: [], taken: 1 };
 
     for (const action of [ 'send', 'record', 'public', 'submissions' ] as const) {
-      expect(component.isActionDisabled(survey, action)).toBe(true);
       expect(component.getActionTooltip(survey, action)).toBe('Survey has no questions');
     }
   });
 
-  it('prioritizes archive and missing-question reasons over missing submissions', () => {
+  it('keeps the archived and no submissions tooltips for surveys without questions', () => {
     expect(component.getActionTooltip({ _id: 'survey-1', questions: [], isArchived: true }, 'send'))
       .toBe('Survey is archived and cannot accept new actions');
     expect(component.getActionTooltip({ _id: 'survey-2', questions: [], taken: 0 }, 'submissions'))
-      .toBe('Survey has no questions');
+      .toBe('There are no submissions to view');
   });
+
   it('does not claim the archive blocks actions the archive leaves enabled', () => {
     const survey = { _id: 'survey-1', questions: [ {} ], isArchived: true, taken: 2 };
 
@@ -166,7 +162,7 @@ describe('SurveysComponent', () => {
   });
 
   it('still explains the actions the archive does block', () => {
-    const survey = { _id: 'survey-1', questions: [ {} ], isArchived: true, taken: 2 };
+    const survey = { _id: 'survey-1', isArchived: true, taken: 2 };
     const archived = 'Survey is archived and cannot accept new actions';
 
     expect(component.getActionTooltip(survey, 'edit')).toBe(archived);
@@ -178,7 +174,7 @@ describe('SurveysComponent', () => {
   });
 
   it('gives the missing data reason rather than the archive reason for archived surveys without submissions', () => {
-    const survey = { _id: 'survey-1', questions: [ {} ], isArchived: true, taken: 0 };
+    const survey = { _id: 'survey-1', isArchived: true, taken: 0 };
 
     expect(component.getActionTooltip(survey, 'submissions')).toBe('There are no submissions to view');
     expect(component.getActionTooltip(survey, 'export')).toBe('There is no data to export');
@@ -202,6 +198,7 @@ describe('SurveysComponent', () => {
     expect(component.getActionTooltip(survey, 'record'))
       .toBe('Record survey information from a person who is not a member of Local Planet');
   });
+
   it('lists team surveys in the manager view so they stay administrable', () => {
     const teamSurvey = { _id: 'survey-1', teamId: 'team-1' };
     const adoptedSurvey = { _id: 'survey-2', teamId: 'team-1', sourceSurveyId: 'survey-1' };
@@ -214,33 +211,5 @@ describe('SurveysComponent', () => {
     component.toggleSurveysView();
 
     expect(component.surveys.data).toEqual([ teamSurvey, managerSurvey ]);
-  });
-
-  it('clears selection when switching survey views', () => {
-    component.selection.select('survey-1');
-
-    component.toggleSurveysView();
-
-    expect(component.selection.isEmpty()).toBe(true);
-  });
-
-  it('explains when a survey cannot be shared with teams', () => {
-    const survey = { _id: 'survey-1', questions: [ {} ], teamShareAllowed: false };
-
-    expect(component.isActionDisabled(survey, 'sendTeam')).toBe(true);
-    expect(component.getActionTooltip(survey, 'sendTeam')).toBe('This survey is not available to teams');
-  });
-
-  it('treats malformed question data as unavailable', () => {
-    const survey = { _id: 'survey-1', questions: 'not-an-array', teamShareAllowed: true };
-
-    expect(component.isActionDisabled(survey, 'send')).toBe(true);
-    expect(component.isActionDisabled(survey, 'sendTeam')).toBe(true);
-    expect(component.getActionTooltip(survey, 'send')).toBe('Survey has no questions');
-  });
-
-  it('opens PDF export options when a legacy survey has no questions field', () => {
-    expect(() => component.exportPdf({ _id: 'survey-1', taken: 1 })).not.toThrow();
-    expect(dialogsFormService.openDialogsForm).toHaveBeenCalled();
   });
 });

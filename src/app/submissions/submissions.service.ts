@@ -159,9 +159,8 @@ export class SubmissionsService {
   }
 
   calcTotalGrade(submission: any) {
-    const questions = this.examQuestions(submission?.parent);
     return submission.answers.reduce((total: number, answer: any, index: number) =>
-      total + ((questions[index]?.marks || 0) * (answer && answer.grade || 0)), 0);
+      total + (submission.parent.questions[index].marks * (answer && answer.grade || 0)), 0);
   }
 
   updateSubmission(submission: any, takingExam: boolean, nextQuestion: number) {
@@ -233,16 +232,11 @@ export class SubmissionsService {
   }
 
   shouldCloseSubmission(submission, field) {
-    const questionCount = this.examQuestions(submission?.parent).length;
-    return submission.answers.filter(answer => answer && this.validAnswer(answer[field])).length >= questionCount;
+    return submission.answers.filter(answer => answer && this.validAnswer(answer[field])).length >= submission.parent.questions.length;
   }
 
   findNextQuestion(submission, index, field) {
-    const questionCount = this.examQuestions(submission?.parent).length;
-    if (questionCount === 0) {
-      return -1;
-    }
-    if (index >= questionCount) {
+    if (index >= submission.parent.questions.length) {
       return this.findNextQuestion(submission, 0, field);
     }
     return submission.answers[index] && this.validAnswer(submission.answers[index][field]) ?
@@ -287,12 +281,8 @@ export class SubmissionsService {
     return forkJoin([
       this.getSubmissionsIncludingDerived(exam._id, type, 'complete'),
       this.couchService.currentTime(),
-      of(this.examQuestions(exam).map(question => question.body))
+      of(exam.questions.map(question => question.body))
     ]);
-  }
-
-  private examQuestions(exam: any): any[] {
-    return Array.isArray(exam?.questions) ? exam.questions : [];
   }
 
   private localizedSubmissionType(type: 'exam' | 'survey') {
@@ -334,7 +324,7 @@ export class SubmissionsService {
           ...sub,
           parent: {
             ...sub.parent,
-            questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : this.examQuestions(exam)
+            questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
           }
         }));
         const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
@@ -406,9 +396,8 @@ export class SubmissionsService {
   async buildChartSection(exam, updatedSubmissions, docContent) {
     const htmlToPdfmake = await this.pdfService.getHtmlConverter();
     this.setHeader(docContent, $localize`Charts`);
-    const questions = this.examQuestions(exam);
-    for (let i = 0; i < questions.length; i++) {
-      const question = questions[i];
+    for (let i = 0; i < exam.questions.length; i++) {
+      const question = exam.questions[i];
       if (question.type !== 'select' && question.type !== 'selectMultiple' && question.type !== 'ratingScale') {
         continue;
       }
@@ -521,7 +510,7 @@ export class SubmissionsService {
             ...sub,
             parent: {
               ...sub.parent,
-              questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : this.examQuestions(exam)
+              questions: Array.isArray(sub.parent.questions) ? sub.parent.questions : exam.questions
             }
           }));
           const filteredSubmissions = team ? normalizedSubmissions.filter(s => s.team?._id === team) : normalizedSubmissions;
@@ -839,7 +828,7 @@ export class SubmissionsService {
       return result;
     };
 
-    const payload = this.examQuestions(exam).map((question, questionIndex) => {
+    const payload = exam.questions.map((question, questionIndex) => {
       const responses = userSubmissions.map(submission => {
         const answer = submission.answers[questionIndex];
         const responseItem = {

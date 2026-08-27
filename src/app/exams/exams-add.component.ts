@@ -166,7 +166,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       name: this.fb.control('', nameControlOptions),
       description: this.fb.control(''),
       passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
-      questions: this.fb.array<QuestionFormGroup>([], { validators: [ Validators.required ] }),
+      questions: this.fb.array<QuestionFormGroup>([]),
       type: this.fb.control<'courses' | 'surveys'>(examRecordType),
       teamShareAllowed: this.fb.control(false)
     });
