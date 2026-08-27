@@ -32,7 +32,7 @@
 }
 
 <ng-template #filterDropdown>
-  <mat-form-field class="font-size-1 margin-lr-3 status-dropdown">
+  <mat-form-field class="font-size-1 margin-lr-3 status-dropdown mdc-toolbar-input">
     <mat-label i18n>Status</mat-label>
     <mat-select [value]="filter.status || 'All'" (selectionChange)="onFilterChange($event.value, 'status')">
       <mat-option i18n value="All">All</mat-option>
@@ -59,7 +59,7 @@
 </ng-template>
 <ng-template #filterSearch>
   <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1">
+  <mat-form-field class="font-size-1 mdc-toolbar-input">
     <mat-label i18n>Type name to search...</mat-label>
     <input matInput (keyup)="applyFilter($event.target.value)">
   </mat-form-field>
@@ -67,18 +67,19 @@
 
 <div class="primary-link-hover" [ngClass]="{ 'space-container': !isDialog }">
   <div class="view-container view-table" [ngClass]="{ 'view-full-height no-toolbar': !isDialog }">
-    <mat-table #table class="responsive-table" [dataSource]="submissions" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog"
+      [class.no-name-column]="!displayedColumns.includes('name')" [dataSource]="submissions" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element" class="mat-cell-name"><div class="cell-content" style="cursor: pointer">{{element.parent.name}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="courseTitle">
         <mat-header-cell *matHeaderCellDef mat-sort-header="courseTitle" i18n>Course Name</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle"><div class="cell-content" style="cursor: pointer">{{element.courseTitle || element.parent.courseTitle}}</div></mat-cell>
+        <mat-cell *matCellDef="let element" class="mat-cell-courseTitle"><div class="cell-content" style="cursor: pointer">{{element.courseTitle}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="stepNum">
         <mat-header-cell *matHeaderCellDef mat-sort-header="stepNum" i18n>Course Step</mat-header-cell>
-        <mat-cell *matCellDef="let element" style="cursor: pointer">{{element.stepNum || ''}}</mat-cell>
+        <mat-cell *matCellDef="let element" style="cursor: pointer"><div class="cell-content">{{element.stepLabel || element.stepNum || ''}}</div></mat-cell>
       </ng-container>
       <ng-container matColumnDef="docSource">
         <mat-header-cell *matHeaderCellDef mat-sort-header="docSource" i18n>Source</mat-header-cell>

@@ -49,3 +49,7 @@ planet.yml
 
 # Dev environment
 environment.dev.ts
+
+# PouchDB test databases
+courses_new/
+local-*/

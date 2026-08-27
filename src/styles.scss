@@ -1,4 +1,5 @@
 @use 'app/variables' as v;
+@use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
 body {
@@ -58,6 +59,22 @@ body {
     flex: 1 1 auto;
   }
 
+  // Group search controls so the field grows without colliding with adjacent actions
+  .toolbar-search {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 26rem);
+    min-width: 0;
+
+    > .mat-mdc-form-field {
+      align-self: center;
+      min-width: 0;
+      padding-top: 0;
+    }
+  }
+
   // Add to forms within toolbars to display next to other content
   .toolbar-form {
     display: inline-block;
@@ -71,6 +88,14 @@ body {
 
   .full-width {
     width: 100%;
+  }
+
+  .half-width {
+    width: 50%;
+  }
+
+  .text-center {
+    text-align: center;
   }
 
   // Use to give elements horizontal space
@@ -335,10 +360,10 @@ body {
   // https://material.angular.io/components/table/overview#selection
   // Note checkbox column must be named "select" in table
   .mat-column-select {
+    @include m.table-column-fixed(4rem);
     overflow: visible;
     // Reduce padding for MDC checkbox cells
     padding-left: 12px !important;
-    max-width: 44px;
   }
 
   .planet-radio-section {
@@ -400,6 +425,11 @@ body {
     height: v.$view-container-height;
     overflow-y: auto;
     box-sizing: border-box;
+
+    // Use the parent's bounds when the view is inside an already-sized container.
+    &.fill-parent {
+      height: 100%;
+    }
   }
 
   .view-container.view-full-height.view-table {
@@ -427,6 +457,15 @@ body {
     margin: 0 8px;
   }
 
+  // Tables using an explicit min-width should scroll inside their view container
+  // throughout the tablet range instead of overflowing the page.
+  @media (max-width: v.$screen-md) {
+    .view-container.view-table {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
   // Opt-in shared pattern for tables that can't reasonably collapse to a card layout.
   // Can be applied either directly to a mat-table element, or to a wrapper div around one (dialogs, tabs, inline tables).
   // Courses/resources use a separate pattern
@@ -449,8 +488,64 @@ body {
     }
   }
 
+  // Opt-in addition to .responsive-table for tables whose columns (e.g. stacked action buttons)
+  // should never squish: holds a usable min-width at all viewport widths so the surrounding
+  // view-table container scrolls horizontally instead. Override via --responsive-table-min-width.
+  mat-table.responsive-table.min-width-table,
+  table.mat-mdc-table.responsive-table.min-width-table {
+    min-width: var(--responsive-table-min-width, 1000px);
+    width: 100%;
+  }
+
+  // Shared opt-in styling for the button container in a table's action column.
+  // Apply to a div wrapping the buttons inside the action mat-cell; add .horizontal-align to center buttons.
+  .table-action-buttons {
+    display: inline-grid;
+    grid-template-columns: minmax(150px, max-content);
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 5px 0;
+    width: max-content;
+    max-width: 100%;
+
+    &.horizontal-align {
+      justify-items: center;
+    }
+
+    button[mat-raised-button] {
+      width: 100%;
+      text-align: center;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+
+    @media (max-width: v.$screen-md) {
+      gap: 0.75rem;
+    }
+
+    @media (max-width: v.$screen-sm) {
+      grid-template-columns: minmax(120px, max-content);
+
+      button[mat-raised-button] {
+        min-width: 0;
+        padding: 0 3px;
+      }
+    }
+
+    @media (max-width: v.$screen-xs) {
+      button[mat-raised-button] {
+        white-space: normal;
+      }
+    }
+  }
+
   // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
   .card-table {
+    .mat-column-courseTitle,
+    .mat-column-title {
+      @include m.table-column-grow;
+    }
+
     .mat-mdc-row {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
@@ -460,18 +555,19 @@ body {
     }
 
     .mat-column-info {
-      max-width: 200px;
+      @include m.table-column-fixed(13rem);
       align-self: start;
       padding: 0;
     }
 
     .mat-column-createdDate {
+      @include m.table-column-fixed(8rem);
       align-self: start;
       padding: 0;
     }
 
     .mat-column-rating {
-      max-width: 145px;
+      @include m.table-column-fixed(9rem);
       padding: 0;
     }
 
@@ -496,12 +592,6 @@ body {
       max-height: none;
     }
 
-    @media (max-width: v.$screen-md) {
-      .mat-column-info {
-        max-width: 120px;
-      }
-    }
-
     @media (max-width: v.$screen-sm) {
       .mat-mdc-header-row {
         display: none;
@@ -513,9 +603,24 @@ body {
         padding: 8px 24px;
       }
 
+      .mat-column-select,
+      .mat-column-courseTitle,
+      .mat-column-title,
+      .mat-column-info,
+      .mat-column-createdDate,
+      .mat-column-rating {
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+      }
+
       .mat-column-info,
       .mat-column-createdDate {
         max-width: fit-content;
+      }
+
+      .mat-column-rating {
+        max-width: 9rem;
       }
 
       .created-label {
@@ -546,11 +651,6 @@ body {
     flex-direction: column;
   }
 
-  // Add to a mat-option to remove the checkbox
-  .hide-checkbox > .mat-pseudo-checkbox {
-    display: none;
-  }
-
   .ole-logo {
     filter: brightness(0) invert(1);
   }
@@ -579,8 +679,8 @@ body {
     gap: 5px;
   }
 
-  .no-max-height-dialog .mat-mdc-dialog-content {
-    max-height: none;
+  .fit-screen-dialog .mat-mdc-dialog-content {
+    max-height: calc(90vh - 96px);
   }
 
   mat-row mat-cell {

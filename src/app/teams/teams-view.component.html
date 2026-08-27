@@ -77,11 +77,12 @@
       }
       @case ('requesting') {
         <mat-chip-set aria-label="Request status" i18n-aria-label><mat-chip color="accent" highlighted i18n>Request pending</mat-chip></mat-chip-set>
+        <button mat-raised-button color="warn" class="toolbar-button margin-lr-3" (click)="openCancelJoinRequestDialog()" i18n>Cancel Join Request</button>
       }
     }
   }
   @if (mode!=='services') {
-    <button *planetAuthorizedRoles="''" mat-raised-button color="accent" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
+    <button *planetAuthorizedRoles="''" mat-raised-button color="warn" class=" toolbar-button margin-lr-3" (click)="openDialogPrompt(team, 'archive', { changeType: 'delete', type: 'team' })" i18n>Delete</button>
   }
 </ng-template>
 
@@ -110,15 +111,15 @@
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>
         }
-        <td-markdown [content]="team.description"></td-markdown>
+        <planet-markdown [content]="team.description"></planet-markdown>
         @if (team?.services) {
           <div class="mat-headline-6" i18n>What are the Services your enterprise provides?</div>
         }
-        <td-markdown [content]="team.services"></td-markdown>
+        <planet-markdown [content]="team.services"></planet-markdown>
         @if (team?.rules) {
           <div class="mat-headline-6" i18n>What are the Rules of your enterprise?</div>
         }
-        <td-markdown [content]="team.rules"></td-markdown>
+        <planet-markdown [content]="team.rules"></planet-markdown>
       } @else {
         <p i18n>The { mode, select, team {team} enterprise {enterprise} services {services directory} } has no { mode, select, team {plan} enterprise {mission & services} services {services} }.</p>
         @if (isUserLeader || mode === 'services') {
@@ -145,8 +146,8 @@
             @for (request of requests; track request) {
               <mat-card>
                 <mat-card-header>
-                  <img mat-card-avatar [src]="request.avatar" class="cursor-pointer" (click)="openMemberDialog(request)">
-                  <a mat-card-title class="cursor-pointer" (click)="openMemberDialog(request)">
+                  <img mat-card-avatar [src]="request.avatar" alt="" class="cursor-pointer" (click)="openMemberDialog(request, $event)">
+                  <a mat-card-title tabindex="0" role="button" class="cursor-pointer" (keydown.enter)="openMemberDialog(request, $event)" (keydown.space)="openMemberDialog(request, $event)" (click)="openMemberDialog(request, $event)">
                     {{request.userDoc?.fullName || request.userDoc?.doc?.firstName || request.name | truncateText:20}}
                   </a>
                   <mat-card-subtitle>
@@ -293,13 +294,13 @@
       </mat-tab>
       <mat-tab i18n-label label="Courses">
         <ng-template mat-tab-label>
-          <ng-container i18n>Courses</ng-container> ({{team?.courses?.length || 0}})
+          <ng-container i18n>Courses</ng-container> ({{visibleCourses.length}})
         </ng-template>
-        @if (team?.courses?.length < 1) {
+        @if (visibleCourses.length < 1) {
           <p i18n>There are no courses associated with this team.</p>
         } @else {
           <div class="card-grid">
-            @for (course of team?.courses; track course) {
+            @for (course of visibleCourses; track course) {
               <mat-card (click)="openCourseView(course._id)" class="cursor-pointer">
                 <div class="mat-subtitle-1">
                   <b>{{course.courseTitle | truncateText:75}}</b>

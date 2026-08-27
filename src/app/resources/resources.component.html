@@ -49,7 +49,7 @@
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
+  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear</span></button>
 </ng-template>
 
 <div class="space-container primary-link-hover">
@@ -143,7 +143,7 @@
     </mat-menu>
   </ng-template>
 
-  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search':showFilters}">
+  <div class="view-container view-full-height view-table card-table" [ngClass]="{'view-with-search': showFilters, 'my-personals-view': myView === 'myPersonals'}">
     <mat-table #table [dataSource]="resources" [matSortActive]="initialSort" matSortDirection="desc" matSort [matSortDisableClear]="true" [trackBy]="trackById">
       <ng-container matColumnDef="select">
         <mat-header-cell *matHeaderCellDef>

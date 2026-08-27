@@ -85,13 +85,13 @@
         <div class="margin-lr-3">
           @if (isUserAdmin) {
             <form (ngSubmit)="roleSubmit(selectedRoles)" #rolesForm="ngForm" class="toolbar-form">
-              <mat-form-field style="width:256px" class="mdc-toolbar-input">
+              <mat-form-field class="mdc-toolbar-input role-set-select">
                 <mat-label i18n>Set roles of selected</mat-label>
                 <mat-select name="role" [(ngModel)]="selectedRoles" multiple>
-                  <mat-option disabled="disabled" class="hide-checkbox">
-                    <button mat-raised-button i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
-                    <button mat-raised-button class="margin-lr-3" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
-                  </mat-option>
+                  <div class="role-actions">
+                    <button type="button" mat-raised-button class="role-action-button" i18n color="primary" (click)="updateSelectedRoles(roleList)">Select All</button>
+                    <button type="button" mat-raised-button class="role-action-button" i18n color="accent" (click)="updateSelectedRoles([])">Deselect All</button>
+                  </div>
                   @for (role of roleList; track role) {
                     <mat-option [value]="role"><planet-role [role]="role"></planet-role></mat-option>
                   }

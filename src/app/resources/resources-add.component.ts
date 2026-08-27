@@ -4,7 +4,6 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable, of, forkJoin, combineLatest, race, interval } from 'rxjs';
 import { switchMap, first, debounce, map, startWith } from 'rxjs/operators';
 import mime from 'mime';
-import JSZip from 'jszip/dist/jszip.min';
 import * as constants from './resources-constants';
 import { FileUploadComponent } from '../shared/forms/file-upload.component';
 import { UserService } from '../shared/user.service';
@@ -20,6 +19,7 @@ import { showFormErrors } from '../shared/table-helpers';
 import { deepEqual, normalizedContentType } from '../shared/utils';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
+import { loadZipFile } from '../shared/zip-utils';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
@@ -115,12 +115,12 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   resourceFilename = '';
   languages = languages;
   tags = this.fb.control<string[]>([]);
-  _existingResource: any = {};
+  #existingResource: any = {};
   get existingResource(): any {
-    return this._existingResource;
+    return this.#existingResource;
   }
   @Input() set existingResource(resource) {
-    this._existingResource = resource;
+    this.#existingResource = resource;
     if (this.resourceForm) {
       this.setFormValues(resource);
     }
@@ -283,7 +283,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   private singleAttachment(file, mediaType) {
     const resource = {
       filename: file.name,
-      mediaType: mediaType,
+      mediaType,
       _attachments: {}
     };
     return of({ resource, file });
@@ -380,15 +380,15 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
 
   // Returns a function which takes a file name located in the zip file and returns an observer
   // which resolves with the file's data
-  private processZip(zipFile) {
-    return function(fileName) {
+  private processZip = (zipFile) => {
+    return (fileName) => {
       return new Observable((observer) => {
         // When file was not read error block wasn't called from async so added try...catch block
         try {
-          zipFile.file(fileName).async('base64').then(function success(data) {
-            observer.next({ name: fileName, data: data });
+          zipFile.file(fileName).async('base64').then((data) => {
+            observer.next({ name: fileName, data });
             observer.complete();
-          }, function error(e) {
+          }, (e) => {
             observer.error(e);
           });
         } catch (e) {
@@ -397,7 +397,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         }
       });
     };
-  }
+  };
 
   private getFileNames(data) {
     const files = data.files;
@@ -405,11 +405,10 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   }
 
   zipObs(zipFile) {
-    const zip = new JSZip();
     return new Observable((observer) => {
       // This loads an object with file information from the zip, but not the data of the files
-      zip.loadAsync(zipFile).then((data) => {
-        const fileNames = this.getFileNames(data);
+      loadZipFile(zipFile).then((zip) => {
+        const fileNames = this.getFileNames(zip);
 
         // Since files are loaded async, use forkJoin Observer to ensure all data from the files are loaded before attempting upload
         forkJoin(fileNames.map(this.processZip(zip))).subscribe((filesArray) => {
@@ -427,7 +426,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
           console.log(error);
           observer.error(error);
         });
-      });
+      }, (error) => observer.error(error));
     });
   }
 
@@ -461,14 +460,13 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
     }
 
     this.resourceForm.controls.openWhichFile.enable();
-    const zip = new JSZip();
-
-    zip.loadAsync(this.file).then((data) => {
-      this.attachedZipFiles = this.getFileNames(data);
-    },
-    err => {
-      console.log('error', err.message);
-    });
+    loadZipFile(this.file)
+      .then((data) => {
+        this.attachedZipFiles = this.getFileNames(data);
+      })
+      .catch(err => {
+        console.log('error', err.message);
+      });
   }
 
   private getNormalizedState(): any {

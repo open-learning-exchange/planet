@@ -17,7 +17,19 @@
 
     .left-tile {
       border-radius: 2px 0 0 2px;
-      color: #fff;
+      color: v.$white;
+
+      &.accordion-toggle {
+        width: 100%;
+        border: 0;
+        font: inherit;
+
+        &:focus-visible {
+          outline: 2px solid v.$primary;
+          outline-offset: -2px;
+        }
+      }
+
       &, & planet-dashboard-tile-title {
         display: flex;
         justify-content: center;
@@ -50,9 +62,26 @@
           justify-content: center;
           align-items: center;
           text-align: center;
-          padding: 1rem 0.5rem;
+          padding: 0;
           position: relative;
           word-break: break-word;
+
+          > .dashboard-item-link {
+            display: flex;
+            flex: 1 1 auto;
+            align-self: stretch;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-width: 0;
+            padding: 1rem 0.5rem;
+
+            &:focus-visible {
+              outline: 2px solid v.$primary;
+              outline-offset: -2px;
+            }
+          }
+
           &:nth-child(even):last-child {
             border-right: 1px solid rgba(0, 0, 0, 0.1);
           }
@@ -72,19 +101,19 @@
 
           .dashboard-text {
             display: -webkit-box;
-            width: calc(125px - 1rem);
+            width: calc(#{v.$dashboard-tile-width} - 1rem);
             -webkit-box-orient: vertical;
             overflow: hidden;
           }
 
           &.has-course-cover {
-            padding: 0.5rem;
+            > .dashboard-item-link {
+              padding: 0.5rem;
+            }
           }
 
           .dashboard-course-cover {
             display: flex;
-            justify-content: center;
-            width: 100%;
             margin-bottom: 0.25rem;
 
             img {
@@ -95,7 +124,15 @@
               border: 1px solid v.$grey;
             }
           }
+        }
 
+        .dashboard-empty-link {
+          padding: 1rem 0.5rem;
+        }
+
+        .dashboard-empty-link:focus-visible {
+          outline: 2px solid v.$primary;
+          outline-offset: -2px;
         }
       }
     }
@@ -152,14 +189,26 @@
             &.accordion-item {
               flex-direction: row;
               justify-content: flex-start;
-              text-align: left;
-              padding: 0.75rem 1rem;
+              text-align: start;
+              padding: 0;
+
+              > .dashboard-item-link {
+                flex-direction: row;
+                justify-content: flex-start;
+                text-align: start;
+                padding: 0.75rem 1rem;
+              }
+
+              .dashboard-course-cover {
+                margin-bottom: 0;
+                margin-inline-end: 0.5rem;
+              }
 
               p {
-                margin-right: 0.5rem;
+                margin-inline-end: 0.5rem;
 
                 &[matBadgePosition="before"] {
-                  margin-left: 8px;
+                  margin-inline-start: 8px;
                 }
               }
 

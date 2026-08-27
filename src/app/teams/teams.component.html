@@ -26,12 +26,14 @@
 
 <ng-template #searchView>
   <span class="toolbar-fill"></span>
-  <mat-icon>search</mat-icon>
-  <mat-form-field class="font-size-1  mdc-toolbar-input">
-    <mat-label i18n>Type name to search...</mat-label>
-    <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
-  </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
+  <div class="toolbar-search">
+    <mat-icon>search</mat-icon>
+    <mat-form-field subscriptSizing="dynamic" class="font-size-1">
+      <mat-label i18n>Type name to search...</mat-label>
+      <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
+  </div>
 </ng-template>
 
 <div [ngClass]="{'space-container':!isDialog}">
@@ -56,12 +58,19 @@
   }
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table class="responsive-table" [dataSource]="teams" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
-            {{element.doc.name | truncateText:150}}
+            <a (click)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.space)="$event.preventDefault(); $event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.enter)="$event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               tabindex="0" role="button"
+               [attr.aria-label]="element.doc.name"
+               [attr.aria-pressed]="isDialog ? selectedIds.includes(element.doc._id) : null">
+              {{element.doc.name | truncateText:150}}
+            </a>
             @if (element.userStatus === 'member' && mode === 'enterprise') {
               <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
             }
@@ -115,7 +124,7 @@
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <div class="button-container" [ngClass]="{'horizontal-align': isMobile}">
+          <div class="table-action-buttons" [ngClass]="{'horizontal-align': isMobile}">
             @if (user.isUserAdmin || user.roles.length) {
               @switch (element.userStatus) {
                 @case ('member') {
@@ -137,18 +146,29 @@
                   }
                 }
                 @case ('unrelated') {
-                  <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                    <mat-icon>add_circle</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request to Join </label>
-                    }
-                  </button>
+                  @if (element.doc.type === 'enterprise') {
+                    <button mat-raised-button color="primary"
+                      (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  } @else {
+                    <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  }
                 }
                 @case ('requesting') {
-                  <button mat-raised-button color="primary" disabled>
-                    <mat-icon>hourglass_empty</mat-icon>
+                  <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label
+                    (click)="openCancelJoinRequestDialog(element.doc); $event.stopPropagation()">
+                    <mat-icon>cancel</mat-icon>
                     @if (!isMobile) {
-                      <label i18n> Request pending </label>
+                      <label i18n> Cancel Join Request </label>
                     }
                   </button>
                 }
@@ -160,7 +180,7 @@
                 <label i18n> Feedback </label>
               }
             </button>
-            <button *planetAuthorizedRoles="''" mat-raised-button color="primary" (click)="archiveClick(element.doc); $event.stopPropagation()">
+            <button *planetAuthorizedRoles="''" mat-raised-button color="warn" (click)="archiveClick(element.doc); $event.stopPropagation()">
               <mat-icon>delete_forever</mat-icon>
               @if (!isMobile) {
                 <label i18n> Delete </label>

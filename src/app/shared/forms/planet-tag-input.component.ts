@@ -64,23 +64,23 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
   }
   @Output() valueChanges = new EventEmitter<string[]>();
 
-  private _placeholder: string;
+  #placeholder: string;
   @Input()
   get placeholder() {
-    return this._placeholder;
+    return this.#placeholder;
   }
   set placeholder(text: string) {
-    this._placeholder = text;
+    this.#placeholder = text;
     this.stateChanges.next();
   }
 
-  private _disabled = false;
+  #disabled = false;
   @Input()
   get disabled() {
-    return this._disabled;
+    return this.#disabled;
   }
   set disabled(dis) {
-    this._disabled = coerceBooleanProperty(dis);
+    this.#disabled = coerceBooleanProperty(dis);
     this.stateChanges.next();
   }
   @Input() mode: string;
@@ -194,7 +194,8 @@ export class PlanetTagInputComponent implements ControlValueAccessor, OnInit, On
     this.dialogRef = this.dialog.open(PlanetTagInputDialogComponent, {
       minWidth: '25vw',
       maxWidth: '90vw',
-      panelClass: 'no-max-height-dialog',
+      panelClass: 'fit-screen-dialog',
+      maxHeight: '90vh',
       autoFocus: false,
       data: this.dialogData(true)
     });
