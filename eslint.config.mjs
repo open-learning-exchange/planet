@@ -169,8 +169,10 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         }],
 
         "@typescript-eslint/unified-signatures": "error",
+        "one-var": ["error", "never"],
         complexity: "off",
         "constructor-super": "error",
+        "eqeqeq": ["error", "smart"],
         "guard-for-in": "error",
         "id-match": "error",
         "import/no-deprecated": "warn",
@@ -222,6 +224,26 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "no-throw-literal": "error",
         "no-undef-init": "error",
+        "no-underscore-dangle": [
+          "error",
+          {
+            "allow": [
+              "_attachments",
+              "_filter",
+              "_id",
+              "_placeholder",
+              "_required",
+              "_rev",
+              "_tableState",
+              "_textValue",
+              "_value",
+              "_deleted",
+              "_replication_state",
+              "_changeDetectorRef",
+              "__karma__"
+            ]
+          }
+        ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
         radix: "error",
@@ -240,6 +262,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
+        "no-var": "error",
+        "object-shorthand": ["error", "always"],
         quotes: "off",
 
         "@stylistic/quotes": ["error", "single", {
@@ -248,6 +272,8 @@ export default defineConfig([globalIgnores(["projects/**/*", "gateway/**/*"]), {
 
         "@stylistic/semi": ["error", "always"],
         "@stylistic/type-annotation-spacing": "error",
+        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-const": "error",
     },
 }, {
     files: ["**/*.html"],

@@ -1,14 +1,182 @@
-name: planet automerge
+name: Planet automerge
 
 on:
   workflow_dispatch:
+    inputs:
+      label:
+        description: 'label marking PRs as mergeable'
+        required: false
+        default: 'automerge'
+        type: string
+      base:
+        description: 'base branch to merge into (blank = workflow default)'
+        required: false
+        default: ''
+        type: string
+      owner_login:
+        description: 'credited as co-author on every PR they did not author'
+        required: false
+        default: 'dogi'
+        type: string
+      myplanet_latest:
+        description: 'myplanet version planets offer as the latest apk (blank = leave as is)'
+        required: false
+        default: ''
+        type: string
+      myplanet_min:
+        description: 'oldest myplanet version planets still accept (blank = leave as is)'
+        required: false
+        default: ''
+        type: string
+      require_checks:
+        description: 'refuse to merge unless the prepared commit (base merged in + version bumped) is green'
+        required: false
+        default: true
+        type: boolean
+      required_workflows:
+        description: 'comma-separated workflows that must have passed on the prepared commit (blank = judge whatever ran)'
+        required: false
+        default: 'Planet Builder'
+        type: string
+      delete_branch:
+        description: 'delete each head branch after merging'
+        required: false
+        default: true
+        type: boolean
+      create_release:
+        description: 'tag each merge and publish its release (the event that builds the versioned images)'
+        required: false
+        default: true
+        type: boolean
+      max_merges:
+        description: 'stop after this many merges (0 = until the queue is empty)'
+        required: false
+        default: '0'
+        type: string
+      wait_timeout_minutes:
+        description: 'how long to wait for workflows: the builders on the prepared commit, and whatever is in flight on the base'
+        required: false
+        default: '45'
+        type: string
+      dry_run:
+        description: 'report what would happen, change nothing'
+        required: false
+        default: true
+        type: boolean
+
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
+  checks: read
+  statuses: read
+  actions: read
+
+env:
+  DEFAULT_BASE: master
+  PKG_FILE: package.json
+  MYPLANET_REPO: open-learning-exchange/myplanet
 
 jobs:
   automerge:
-    name: automerge
+    name: planet automerge
     runs-on: ubuntu-latest
+    timeout-minutes: 350
     steps:
-      - name: init
-        run: echo "automerge"
+      - name: checkout repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+
+      - name: stage helper scripts outside the work tree
+        id: stage
+        shell: bash
+        run: |
+          # PR branches get checked out; run from a copy they cannot swap.
+          mkdir -p "$RUNNER_TEMP/scripts"
+          cp .github/scripts/automerge.sh \
+             .github/scripts/version.sh \
+             .github/scripts/coauthors.sh "$RUNNER_TEMP/scripts/"
+          chmod +x "$RUNNER_TEMP/scripts/"*.sh
+          echo "dir=$RUNNER_TEMP/scripts" >> "$GITHUB_OUTPUT"
+
+      - name: check the myplanet versions
+        id: myplanet
+        if: ${{ inputs.myplanet_latest != '' || inputs.myplanet_min != '' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+          BASE: ${{ inputs.base || env.DEFAULT_BASE }}
+          IN_LATEST: ${{ inputs.myplanet_latest }}
+          IN_MIN: ${{ inputs.myplanet_min }}
+          VERSION_SH: ${{ steps.stage.outputs.dir }}/version.sh
+        run: |
+          set -euo pipefail
+
+          # `latest` is pasted straight into the apk download URL every planet
+          # serves, so a typo here ships a 404 to all of them. Check the
+          # release exists before any PR gets touched.
+          check_release() {
+              local v=$1 want_apk=$2 out rc=0
+              out=$(gh api "repos/$MYPLANET_REPO/releases/tags/$v" 2>&1) || rc=$?
+              if [ "$rc" -ne 0 ]; then
+                  case "$out" in
+                      *'Not Found'*|*404*)
+                          echo "::error::no $MYPLANET_REPO release tagged $v -- the apk link would 404"
+                          return 1 ;;
+                  esac
+                  # Could not ask; do not fail the drain over an API hiccup.
+                  echo "::warning::could not verify myplanet $v: $out"
+                  return 0
+              fi
+              if [ "$want_apk" = 'true' ] \
+                 && ! jq -e '[.assets[]?.name] | index("myPlanet.apk")' >/dev/null <<<"$out"; then
+                  echo "::warning::myplanet $v has no myPlanet.apk asset attached"
+              fi
+              echo "  myplanet $v: release exists"
+          }
+
+          latest=''
+          min=''
+          [ -z "$IN_LATEST" ] || latest=$("$VERSION_SH" check-myplanet "$IN_LATEST")
+          [ -z "$IN_MIN" ]    || min=$("$VERSION_SH" check-myplanet "$IN_MIN")
+
+          [ -z "$latest" ] || check_release "$latest" true
+          [ -z "$min" ]    || check_release "$min" false
+
+          # Whichever half was left blank keeps the value already on the base.
+          git fetch --quiet origin "$BASE"
+          base_pkg=$(git show "origin/$BASE:$PKG_FILE")
+          eff_latest=${latest:-$(jq -r '.myplanet.latest' <<<"$base_pkg")}
+          eff_min=${min:-$(jq -r '.myplanet.min' <<<"$base_pkg")}
+
+          if [ "$(printf '%s\n%s\n' "$eff_latest" "$eff_min" | sort -V | head -1)" != "$eff_min" ]; then
+            echo "::error::myplanet min $eff_min is newer than latest $eff_latest"
+            exit 1
+          fi
+          echo "  pinning latest=$eff_latest min=$eff_min"
+
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "min=$min"       >> "$GITHUB_OUTPUT"
+
+      - name: drain the automerge queue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN || github.token }}
+          USING_PAT: ${{ secrets.AUTOMERGE_TOKEN != '' }}
+          REPO: ${{ github.repository }}
+          BASE: ${{ inputs.base || env.DEFAULT_BASE }}
+          LABEL: ${{ inputs.label }}
+          REQUIRE_CHECKS: ${{ inputs.require_checks }}
+          REQUIRED_WORKFLOWS: ${{ inputs.required_workflows }}
+          DELETE_BRANCH: ${{ inputs.delete_branch }}
+          CREATE_RELEASE: ${{ inputs.create_release }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          MAX_MERGES: ${{ inputs.max_merges }}
+          WAIT_TIMEOUT_MIN: ${{ inputs.wait_timeout_minutes }}
+          VERSION_SH: ${{ steps.stage.outputs.dir }}/version.sh
+          COAUTHORS_SH: ${{ steps.stage.outputs.dir }}/coauthors.sh
+          OWNER_LOGIN: ${{ inputs.owner_login }}
+          MYPLANET_LATEST: ${{ steps.myplanet.outputs.latest }}
+          MYPLANET_MIN: ${{ steps.myplanet.outputs.min }}
+        run: '${{ steps.stage.outputs.dir }}/automerge.sh'

@@ -21,6 +21,7 @@ import { MatOption } from '@angular/material/autocomplete';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
+import { fullName } from '../utils';
 
 @Component({
   templateUrl: './dialogs-list.component.html',
@@ -122,7 +123,7 @@ export class DialogsListComponent implements AfterViewInit {
 
   appendFullName(data: any[]) {
     return data.map(row => ({
-      ...row, 'Full Name': (row.firstName || '') && `${row.firstName} ${row.middleName || ''} ${row.lastName}`
+      ...row, 'Full Name': fullName(row)
     }));
   }
 

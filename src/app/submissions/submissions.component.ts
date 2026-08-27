@@ -14,17 +14,20 @@ import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { CoursesService } from '../courses/courses.service';
+import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/autocomplete';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatInput } from '@angular/material/input';
 import { MatChipSet, MatChip } from '@angular/material/chips';
+import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 
 const columnsByFilterAndMode = {
   exam: {
@@ -49,11 +52,14 @@ const columnsByFilterAndMode = {
     NgTemplateOutlet,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatSelect,
     MatOption,
     MatButtonToggleGroup,
     MatButtonToggle,
     MatInput,
+    FormsModule,
+    MatTooltip,
     NgClass,
     MatTable,
     MatSort,
@@ -100,6 +106,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   };
   surveyId: string | null = null;
   isManagerSurveysRoute = false;
+  searchValue = '';
 
   constructor(
     private router: Router,
@@ -107,6 +114,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
     private submissionsService: SubmissionsService,
     private userService: UserService,
     private coursesService: CoursesService,
+    private stateService: StateService,
     private dialogsLoadingService: DialogsLoadingService,
     private deviceInfoService: DeviceInfoService
   ) {
@@ -244,6 +252,7 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
   }
 
   applyFilter(filterValue: string) {
+    this.searchValue = filterValue;
     this.submissions.filter = filterValue || this.dropdownsFill();
   }
 
@@ -305,13 +314,28 @@ export class SubmissionsComponent implements OnInit, AfterViewChecked, OnDestroy
       return submission;
     }
     const [ examId, courseId ] = submission.parentId.split('@');
-    if (!courseId) {
-      return submission;
+    const submissionCourse = courseId ? courses.find(course => course._id === courseId) : undefined;
+    if (!submissionCourse) {
+      return this.unresolvedCourseInfo(submission);
     }
-    const submissionCourse = courses.find(course => course._id === courseId) || { doc: { steps: [] } };
-    const stepNum = submissionCourse.doc.steps
+    const stepNum = (submissionCourse.doc.steps || [])
       .findIndex(step => (step.exam && step.exam._id === examId) || (step.survey && step.survey._id === examId)) + 1;
-    return { ...submission, courseTitle: submissionCourse.doc.courseTitle, stepNum };
+    return {
+      ...submission,
+      courseTitle: submissionCourse.doc.courseTitle,
+      stepNum,
+      stepLabel: stepNum === 0 ? $localize`Step not available` : undefined
+    };
+  }
+
+  private unresolvedCourseInfo(submission) {
+    const isLocalSubmission = !submission.source || submission.source === this.stateService.configuration.code;
+    return {
+      ...submission,
+      courseTitle: isLocalSubmission ? $localize`Course not available` : undefined,
+      stepNum: 0,
+      stepLabel: isLocalSubmission ? $localize`Step not available` : undefined
+    };
   }
 
   getTeamTypeLabel(teamType: string): string {

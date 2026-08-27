@@ -20,7 +20,7 @@ import { PouchService } from '../../shared/database/pouch.service';
 import { TagsService } from '../../shared/forms/tags.service';
 import { showFormErrors } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -56,7 +56,7 @@ type DateValue = number | string | CouchService['datePlaceholder'];
   templateUrl: 'courses-add.component.html',
   styleUrls: ['./courses-add.scss'],
   imports: [
-    MatToolbar, MatIconAnchor, MatIcon, ReactiveFormsModule, MatFormField,
+    MatToolbar, MatIconButton, MatIcon, ReactiveFormsModule, MatFormField,
     MatLabel, MatInput, MatError, FormErrorMessagesComponent, PlanetMarkdownTextboxComponent,
     MatAutocompleteTrigger, MatAutocomplete, MatOption, MatSelect, PlanetTagInputComponent,
     CoursesStepComponent, MatButton, FileUploadComponent, SubmitDirective,
@@ -71,7 +71,7 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   private isSaved = false;
   private stepsChange$ = new Subject<any[]>();
   private initialState = '';
-  private _steps = [];
+  #steps = [];
   private preserveCoverStateUntilSubmit = false;
   existingCoverAttachments: ExistingAttachment[] = [];
   private coverState: AttachmentInputState = { retained: [], removed: [], added: [] };
@@ -95,15 +95,15 @@ export class CoursesAddComponent implements OnInit, OnDestroy {
   @ViewChild(CoursesStepComponent) coursesStepComponent: CoursesStepComponent;
   @ViewChild(FileUploadComponent) coverUploadComponent?: FileUploadComponent;
   get steps() {
-    return this._steps;
+    return this.#steps;
   }
   set steps(value: any[]) {
-    this._steps = value.map(step => ({
+    this.#steps = value.map(step => ({
       ...step,
       description: step.description?.text ?? step.description ?? '',
       images: [ ...(step.description?.images ?? []), ...(step.images || []) ]
     }));
-    this.coursesService.course = { form: this.courseForm.value, steps: this._steps };
+    this.coursesService.course = { form: this.courseForm.value, steps: this.#steps };
     this.stepsChange$.next(value);
   }
 

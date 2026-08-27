@@ -33,6 +33,11 @@
   .team-name {
     max-width: 95%;
     overflow: hidden;
+
+    a:focus-visible {
+      outline: 2px solid v.$primary;
+      outline-offset: -2px;
+    }
   }
 
   .highlighted {

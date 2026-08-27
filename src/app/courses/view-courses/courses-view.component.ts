@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { Subject } from 'rxjs';
+import { Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
 import { UserService } from '../../shared/user.service';
 import { CoursesService } from '../courses.service';
@@ -10,7 +10,7 @@ import { StateService } from '../../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { trackByIndex } from '../../shared/table-helpers';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
+import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { CoursesProgressBarComponent } from '../progress-courses/courses-progress-bar.component';
@@ -26,13 +26,14 @@ import { CoursesIconComponent, courseIcons } from '../courses-icon.component';
 import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { ResourcesMenuComponent } from '../../resources/view-resources/resources-menu.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
 
 @Component({
   templateUrl: './courses-view.component.html',
   styleUrls: ['courses-view.scss'],
   imports: [
     MatToolbar,
-    MatIconAnchor,
     MatIcon,
     NgTemplateOutlet,
     MatIconButton,
@@ -50,7 +51,6 @@ import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinn
     PlanetMarkdownComponent,
     MatExpansionPanelActionRow,
     ResourcesMenuComponent,
-    MatAnchor,
     MatMenuItem,
     PlanetLoadingSpinnerComponent
   ]
@@ -74,8 +74,6 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
   deviceTypes: typeof DeviceType = DeviceType;
   courseIcons = courseIcons;
   trackByFn = trackByIndex;
-  @ViewChild(MatMenuTrigger) previewButton: MatMenuTrigger;
-
   constructor(
     private router: Router,
     private userService: UserService,
@@ -83,7 +81,8 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     private coursesService: CoursesService,
     private submissionsService: SubmissionsService,
     private stateService: StateService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -188,12 +187,12 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  previewButtonClick(step: any, stepNum: any): void {
+  previewButtonClick(step: any, stepNum: any, previewTrigger: MatMenuTrigger): void {
     const stepType = this.coursesService.stepHasExamSurveyBoth(step);
     if (stepType === 'both' || stepType === undefined) {
       return;
     }
-    this.previewButton.closeMenu();
+    previewTrigger.closeMenu();
     if (stepType === 'exam') {
       this.goToExam(step, stepNum, true);
     }
@@ -212,6 +211,24 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
 
   courseToggle(courseId, type) {
     const courseTitle = this.courseDetail.courseTitle;
+    if (type === 'resign') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'leave',
+          type: 'course',
+          displayName: courseTitle,
+          okClick: {
+            request: defer(() => this.coursesService.courseResignAdmission(courseId, type, courseTitle)),
+            onNext: () => {
+              this.isUserEnrolled = false;
+              dialogRef.close();
+            },
+            onError: () => dialogRef.close()
+          }
+        }
+      });
+      return;
+    }
     this.coursesService.courseResignAdmission(courseId, type, courseTitle).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));
