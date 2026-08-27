@@ -41,12 +41,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
-// Actions the template disables on element.isArchived. Select, submissions, export and adopt stay enabled on
-// archived surveys, so they must not claim to be blocked by the archive.
 const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
-
-// Actions the template disables on an empty questions array. Select, export, revoke and adopt stay enabled, so
-// they must not claim to be blocked by missing questions.
 const questionBlockedActions: SurveyAction[] = [ 'send', 'record', 'public', 'submissions' ];
 
 interface SurveyFilterForm {
@@ -273,8 +268,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
         return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
           !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
       }
-      // team surveys: created by or adopted by the team. Without a team, the manager view lists every survey no
-      // team has adopted, team surveys included, so managers can still edit, archive, export and delete them.
+      // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
     });
   }
