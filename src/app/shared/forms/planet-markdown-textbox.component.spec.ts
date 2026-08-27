@@ -19,7 +19,7 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
     vi.unstubAllGlobals();
   });
 
-  function setupComponent(markup: string) {
+  const setupComponent = (markup: string) => {
     document.body.innerHTML = markup;
     document.querySelectorAll<HTMLElement>(
       '.mat-mdc-dialog-actions, .actions-container, .exam-buttons, .action-buttons, div.action-button'
@@ -36,7 +36,7 @@ describe('PlanetMarkdownTextboxComponent fullscreen layout', () => {
       {} as any,
       { runOutsideAngular: (callback: () => void) => callback() } as any
     );
-  }
+  };
 
   it('pins the owning action row without selecting nested controls', () => {
     component = setupComponent(`

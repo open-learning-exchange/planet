@@ -29,7 +29,7 @@ import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
@@ -37,7 +37,6 @@ import { LabelComponent } from '../shared/label.component';
 import { MatOption } from '@angular/material/autocomplete';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import {
@@ -70,6 +69,7 @@ interface CommunityDescriptionForm {
     MatLabel,
     MatIcon,
     MatPrefix,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatSelect,
@@ -79,7 +79,6 @@ interface CommunityDescriptionForm {
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
-    MatCard,
     TeamsMemberComponent,
     PlanetMarkdownComponent,
     MatNavList,
@@ -350,7 +349,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   sendNotifications(user, currentUser) {
     return {
-      'user': user,
+      user,
       'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
       'link': '/',
       'type': 'communityMessage',
