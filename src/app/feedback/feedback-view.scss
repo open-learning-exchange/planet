@@ -31,6 +31,35 @@
       color: v.$grey-text;
     }
   }
+
+  mat-card {
+    max-width: 90%;
+    margin-top: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    background-color: #fafafa;
+
+    &.primary-color {
+      background-color: v.$primary;
+      color: v.$primary-text;
+      border-color: v.$primary;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    p:first-child {
+      margin-top: 0;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   &:not(:last-child) {
     margin-bottom: 1.5rem;
   }

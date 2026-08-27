@@ -24,6 +24,7 @@ import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { getFeedbackDisplayTitle, getFeedbackTypeIcon, normalizeFeedbackStatus, normalizeFeedbackType } from './feedback.utils';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 
 @Component({
   templateUrl: './feedback-view.component.html',
@@ -45,6 +46,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatAnchor,
     MatCard,
     MatCardContent,
+    PlanetMarkdownComponent,
     NgClass,
     DatePipe,
     KeyValuePipe,

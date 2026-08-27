@@ -108,4 +108,24 @@ describe('FeedbackDirective', () => {
     expect(feedback.routerLink).toEqual([ '/home' ]);
     expect(feedback.titleContext).toEqual({ kind: 'home' });
   });
+
+  it('normalizes markdown object payloads with images correctly', () => {
+    router.url = '/';
+    const imageInfo = { resourceId: 'res-1', filename: 'screenshot.png', markdown: '![](resources/res-1/screenshot.png)' };
+    const markdownPost = {
+      priority: 'yes',
+      type: 'bug',
+      message: {
+        text: 'Found a bug with a screenshot',
+        images: [ imageInfo ]
+      }
+    };
+
+    directive.addFeedback(markdownPost);
+
+    const feedback = couchService.updateDocument.mock.calls.at(-1)[1];
+    expect(feedback.message).toBe('Found a bug with a screenshot');
+    expect(feedback.images).toEqual([ imageInfo ]);
+    expect(feedback.messages[0].message).toBe('Found a bug with a screenshot');
+  });
 });
