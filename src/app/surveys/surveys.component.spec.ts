@@ -146,6 +146,14 @@ describe('SurveysComponent', () => {
     }
   });
 
+  it('does not claim missing questions block the actions that stay enabled without them', () => {
+    const survey = { _id: 'survey-1', questions: [], taken: 1 };
+
+    expect(component.getActionTooltip(survey, 'select')).toBe('');
+    expect(component.getActionTooltip(survey, 'export')).toBe('Export Survey Submissions');
+    expect(component.getActionTooltip(survey, 'edit')).toBe('Edit Survey');
+  });
+
   it('keeps the archived and no submissions tooltips for surveys without questions', () => {
     expect(component.getActionTooltip({ _id: 'survey-1', questions: [], isArchived: true }, 'send'))
       .toBe('Survey is archived and cannot accept new actions');

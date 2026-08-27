@@ -45,6 +45,10 @@ type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submiss
 // archived surveys, so they must not claim to be blocked by the archive.
 const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
 
+// Actions the template disables on an empty questions array. Select, export, revoke and adopt stay enabled, so
+// they must not claim to be blocked by missing questions.
+const questionBlockedActions: SurveyAction[] = [ 'send', 'record', 'public', 'submissions' ];
+
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
   includeAnswers: FormControl<boolean>;
@@ -726,10 +730,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       return $localize`Adopt Survey`;
     }
 
-    if (!survey.questions?.length) {
-      if (action !== 'edit' && action !== 'archive') {
-        return $localize`Survey has no questions`;
-      }
+    if (questionBlockedActions.includes(action) && !survey.questions?.length) {
+      return $localize`Survey has no questions`;
     }
 
     if (action === 'record') {
