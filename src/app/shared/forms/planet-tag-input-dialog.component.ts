@@ -63,7 +63,6 @@ export class PlanetTagInputToggleIconComponent {
 
 }
 
-
 @Component({
   'templateUrl': 'planet-tag-input-dialog.component.html',
   'styleUrls': ['planet-tag-input-dialog.scss'],

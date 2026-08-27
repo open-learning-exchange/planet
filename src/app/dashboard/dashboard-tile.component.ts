@@ -289,6 +289,10 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     }, 300);
   }
 
+  badgeDescription(item: any): string {
+    return $localize`Pending: ${item.badge}:count:`;
+  }
+
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
   }
