@@ -119,8 +119,7 @@ export class ManagerDashboardComponent implements OnInit, OnDestroy {
   }
 
   resendConfig() {
-    const configuration = this.planetConfiguration;
-    this.configurationService.updateConfiguration({ ...configuration, registrationRequest: 'pending' }).subscribe(null,
+    this.configurationService.patchConfiguration({ registrationRequest: 'pending' }).subscribe(null,
       error => this.planetMessageService.showAlert($localize`An error occurred please try again.`),
       () => {
         this.planetMessageService.showMessage($localize`Registration request has been sent successfully.`);

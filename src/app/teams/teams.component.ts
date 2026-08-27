@@ -25,9 +25,10 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
@@ -46,9 +47,11 @@ import { enterpriseJoinAgreement } from './teams.utils';
     NgTemplateOutlet,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatButton,
+    MatTooltip,
     NgClass,
     MatMiniFabButton,
     MatTable,

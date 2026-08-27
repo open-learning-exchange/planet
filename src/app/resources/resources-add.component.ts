@@ -43,7 +43,7 @@ type DatePlaceholderType = CouchService['datePlaceholder'];
 interface ResourceFormModel {
   title: FormControl<string>;
   author: FormControl<string>;
-  year: FormControl<string>;
+  year: FormControl<number | string | null>;
   description: FormControl<string>;
   language: FormControl<string>;
   publisher: FormControl<string>;
@@ -136,7 +136,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
   @ViewChild('fileUpload') fileUpload!: FileUploadComponent;
 
   get detailsInvalid(): boolean {
-    return this.resourceForm.controls.title.invalid || this.resourceForm.controls.description.invalid;
+    return this.resourceForm.controls.title.invalid ||
+      this.resourceForm.controls.description.invalid ||
+      this.resourceForm.controls.year.invalid;
   }
 
   get fileInvalid(): boolean {
@@ -206,7 +208,9 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
         ]
       }),
       author: this.fb.control(''),
-      year: this.fb.control(''),
+      year: this.fb.control<number | string | null>('', {
+        validators: [ CustomValidators.integerValidator, Validators.min(0) ]
+      }),
       description: this.fb.control('', { validators: CustomValidators.required }),
       language: this.fb.control(''),
       publisher: this.fb.control(''),
@@ -484,7 +488,7 @@ export class ResourcesAddComponent implements OnInit, CanComponentDeactivate {
       medium: formValue.medium || '',
       resourceType: formValue.resourceType || '',
       author: formValue.author || '',
-      year: formValue.year || '',
+      year: formValue.year ?? '',
       tags: this.tags.value || [],
       attachment: this.file
         ? { name: this.file.name, size: this.file.size, type: this.file.type }
