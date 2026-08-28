@@ -26,7 +26,7 @@ Because we want to run our production Planet mostly in Raspberry Pi, the target 
 
 This docker compose can be use for your development environment and very handy, you can spawn the development environment in a matter of seconds and start your development. Your code changes in host folder are automatically reflected to docker and ready to test in your browser.
 
-`planet.yml` keeps the gateway internal to the Compose network so nginx can supply a trusted client address for rate limiting. For development that needs direct access on port 5000, add `planet.dev.yml`; it publishes the port and disables trust in client-supplied proxy headers.
+`planet.yml` keeps the gateway internal to the Compose network so nginx can supply a trusted client address for rate limiting. For development that needs direct access on port 5000, add `planet.dev.yml`; it publishes the port and disables trust in client-supplied proxy headers. If another reverse proxy sits in front of Planet, set `PLANET_TRUSTED_PROXY_CIDR` to that proxy's address or network and have it overwrite `X-Forwarded-For`. Planet's nginx ignores forwarded client addresses from all other peers; the default `127.0.0.1/32` trusts no remote proxy.
 
 ## How to use
 I will divide this how to use into two sections, for development and for production. It is interesting to run our development environment on top of isolated docker container.

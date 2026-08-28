@@ -53,6 +53,19 @@ describe('ChatWindowComponent', () => {
     expect(chatService.setChatAIProvider).toHaveBeenCalledWith({ name: 'perplexity' });
   });
 
+  it('falls back when the previously selected provider is no longer enabled', () => {
+    const { component, chatService } = createComponent();
+    component.provider = { name: 'deepseek' };
+    component.providers = [ { name: 'openai' } ];
+    component.promptForm.controls.prompt.setValue('hello');
+
+    component.submitPrompt();
+
+    expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
+      aiProvider: { name: 'openai' }
+    }), true);
+  });
+
   it('uses an attachment-capable provider for course resources instead of a replayed selection', () => {
     const { component, chatService } = createComponent();
     component.context = {

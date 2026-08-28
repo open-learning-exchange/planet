@@ -40,7 +40,9 @@ cd / && ./create_version_json.sh
 
 cd /usr/share/nginx/html && ./credentials.sh
 
-envsubst '$DEFAULT_LANGUAGE' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
+PLANET_TRUSTED_PROXY_CIDR=${PLANET_TRUSTED_PROXY_CIDR:-127.0.0.1/32}
+export PLANET_TRUSTED_PROXY_CIDR
+envsubst '$DEFAULT_LANGUAGE $PLANET_TRUSTED_PROXY_CIDR' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf
 
 spawn-fcgi -s /run/fcgi.sock -U nginx -G nginx /usr/bin/fcgiwrap
 

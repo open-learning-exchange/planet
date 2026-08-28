@@ -4,19 +4,7 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'gateway/**'
-      - 'docker/gateway/**'
-      - '.github/workflows/gateway-test.yml'
-      - 'package.json'
-      - 'package-lock.json'
   pull_request:
-    paths:
-      - 'gateway/**'
-      - 'docker/gateway/**'
-      - '.github/workflows/gateway-test.yml'
-      - 'package.json'
-      - 'package-lock.json'
   workflow_dispatch:
 
 concurrency:

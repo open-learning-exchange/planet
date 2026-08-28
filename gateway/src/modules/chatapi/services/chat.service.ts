@@ -182,9 +182,12 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
   let fileNamesById: Record<string, string> = {};
   const resourceId = context.resource?.id;
   const supportsFileSearch = providerSupports(providerName, 'fileSearch');
-  const fileSearchClient = runtime.fileSearchClient || runtime.client;
+  const fileSearchClient = supportsFileSearch ? runtime.fileSearchClient : undefined;
+  if (supportsFileSearch && !fileSearchClient) {
+    throw new HttpError(503, `AI provider "${providerName}" file search is not configured`);
+  }
   if (resourceId) {
-    if (supportsFileSearch) {
+    if (fileSearchClient) {
       try {
         const index = await ensureResourceIndexed(
           fileSearchClient,
@@ -236,7 +239,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     if (options.signal?.aborted) {
       throw cancellationError();
     }
-    if (resourceId && supportsFileSearch && vectorStoreIds?.[0]) {
+    if (resourceId && fileSearchClient && vectorStoreIds?.[0]) {
       void markResourceIndexDirtyIfUnavailable(
         fileSearchClient,
         resourceId,

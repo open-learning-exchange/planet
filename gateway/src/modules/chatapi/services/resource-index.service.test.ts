@@ -449,11 +449,11 @@ describe('resource index service', () => {
   it('retains dirty state after partial multi-file cleanup so it can be retried', async () => {
     const state = localState({
       'id': 'vs_old',
-        'files': {
-          'a.pdf': { 'fileId': 'file_a', 'digest': 'a' },
-          'b.pdf': { 'fileId': 'file_b', 'digest': 'b' },
-          'c.pdf': { 'fileId': 'file_c', 'digest': 'c' }
-        }
+      'files': {
+        'a.pdf': { 'fileId': 'file_a', 'digest': 'a' },
+        'b.pdf': { 'fileId': 'file_b', 'digest': 'b' },
+        'c.pdf': { 'fileId': 'file_c', 'digest': 'c' }
+      }
     });
     setDocs({ '_id': 'res1', '_rev': '4-d' }, state);
     const client: any = fakeClient();

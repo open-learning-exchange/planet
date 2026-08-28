@@ -348,5 +348,34 @@ describe('ChatService', () => {
       } ]);
       expect(defaults).toEqual(promptDefaults);
     });
+
+    it('requires an enabled file-search provider for searchable course attachments', () => {
+      const providerResponse = of({
+        providers: {
+          ...services({ perplexity: true }),
+          openai: {
+            label: 'OpenAI',
+            enabled: false,
+            capabilities: [ 'chat', 'fileSearch' ],
+            fileSearchContentTypes: [ 'application/pdf' ]
+          },
+          perplexity: {
+            enabled: true,
+            capabilities: [ 'chat' ],
+            fileSearchContentTypes: []
+          }
+        },
+        promptDefaults
+      });
+      const { service } = createService(providerResponse);
+      service.listAIProviders().subscribe();
+
+      expect(service.courseChatAvailable({
+        'guide.pdf': { content_type: 'application/pdf' }
+      })).toEqual(false);
+      expect(service.courseChatAvailable({
+        'lesson.mp4': { content_type: 'video/mp4' }
+      })).toEqual(true);
+    });
   });
 });

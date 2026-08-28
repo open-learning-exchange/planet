@@ -276,7 +276,11 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
       provider.capabilities?.includes('fileSearch') &&
       hasSearchableAttachments(this.context?.resource?.attachments, provider.fileSearchContentTypes)
     );
-    const selectedProvider = attachmentProvider || this.provider || this.chatService.getChatAIProvider() || this.providers[0];
+    const preferredNames = [ this.provider?.name, this.chatService.getChatAIProvider()?.name ];
+    const preferredProvider = preferredNames
+      .map((name) => this.providers.find((provider) => provider.name === name))
+      .find((provider) => provider !== undefined);
+    const selectedProvider = attachmentProvider || preferredProvider || this.providers[0];
     // A file-search override applies only to this course turn; preserve the general-chat preference.
     if (selectedProvider && !attachmentProvider) {
       this.chatService.setChatAIProvider(selectedProvider);

@@ -42,5 +42,6 @@ services:
       - DB_PORT=2200
       - CENTER_ADDRESS=planet.earth.ole.org/db
       - DEFAULT_LANGUAGE=eng
+      - PLANET_TRUSTED_PROXY_CIDR=${PLANET_TRUSTED_PROXY_CIDR:-127.0.0.1/32}
     depends_on:
       - couchdb

@@ -155,8 +155,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
-    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
-      this.isChatEnabled = providers.length > 0;
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.updateChatAvailability();
     });
   }
 
@@ -210,6 +210,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
     this.updateChatContext();
+    this.updateChatAvailability();
   }
 
   // direction = -1 for previous, 1 for next
@@ -235,6 +236,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.resource = undefined;
     this.stepDetail = { stepTitle: '', description: '', resources: [] };
     this.updateChatContext();
+    this.updateChatAvailability();
     this.attempts = 0;
   }
 
@@ -269,6 +271,14 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   onResourceChange(value) {
     this.resource = value;
     this.updateChatContext();
+    this.updateChatAvailability();
+  }
+
+  private updateChatAvailability() {
+    this.isChatEnabled = this.chatService.courseChatAvailable(this.chatContext.resource?.attachments);
+    if (!this.isChatEnabled) {
+      this.showChat = false;
+    }
   }
 
   goToExam(type = 'exam', preview = false) {

@@ -79,7 +79,7 @@ describe('chatapi WebSocket', () => {
       await vi.advanceTimersByTimeAsync(30000);
 
       expect(JSON.parse(ws.send.mock.calls.at(-1)[0])).toMatchObject({
-        'type': 'error', 'error': 'Unauthorized', 'message': 'Chat request was not received in time'
+        'type': 'error', 'error': 'Request Timeout', 'message': 'Chat request was not received in time'
       });
       expect(ws.close).toHaveBeenCalledWith(1008, 'Chat request timed out');
     } finally {

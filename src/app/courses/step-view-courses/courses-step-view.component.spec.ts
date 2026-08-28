@@ -39,4 +39,18 @@ describe('CoursesStepViewComponent course chat context', () => {
       data: component.localizedStepInfo
     });
   });
+
+  it('hides course chat when the selected resource has no usable provider', () => {
+    const component = createComponent();
+    (component as any).chatService = { courseChatAvailable: () => false };
+    component.showChat = true;
+
+    component.onResourceChange({
+      _id: 'resource-1',
+      _attachments: { 'guide.pdf': { content_type: 'application/pdf' } }
+    });
+
+    expect(component.isChatEnabled).toEqual(false);
+    expect(component.showChat).toEqual(false);
+  });
 });

@@ -153,7 +153,7 @@ describe('chat service', () => {
   });
 
   it('persists full history while replaying only the most recent configured turns', async () => {
-    const conversations = Array.from({ length: 25 }, (_, index) => ({
+    const conversations = Array.from(Array(25).keys(), (index) => ({
       'id': String(index + 1),
       'query': `q${index + 1}`,
       'response': `a${index + 1}`
@@ -336,6 +336,22 @@ describe('chat service', () => {
       'statusCode': 500,
       'message': 'Could not prepare resource attachments for AI search'
     });
+    expect(mocks.runProviderChat).not.toHaveBeenCalled();
+  });
+
+  it('fails closed when a file-search provider has no dedicated indexing client', async () => {
+    const invalidConfig = config();
+    invalidConfig.providers.openai.fileSearchClient = undefined;
+    mocks.getAIConfig.mockResolvedValue(invalidConfig);
+
+    await expect(chat(
+      { 'content': 'summarize the attachment', 'context': { 'resource': { 'id': 'res1' } } },
+      { 'save': false }
+    )).rejects.toMatchObject({
+      'statusCode': 503,
+      'message': 'AI provider "openai" file search is not configured'
+    });
+    expect(mocks.ensureResourceIndexed).not.toHaveBeenCalled();
     expect(mocks.runProviderChat).not.toHaveBeenCalled();
   });
 

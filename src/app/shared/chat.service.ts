@@ -11,6 +11,7 @@ import {
   AIServiceStatus,
   AIProvider,
   ChatStreamMessage,
+  hasSearchableAttachments,
   ProviderName,
   ResourceIndexCleanupResponse,
   SurveyAnalysisPayload,
@@ -209,6 +210,23 @@ const PROVIDER_DISCOVERY_RETRY_MS = 5000;
 
   hasFileSearchProvider(): boolean {
     return this.aiProvidersSubject.value.some((provider) => provider.capabilities?.includes('fileSearch'));
+  }
+
+  courseChatAvailable(attachments?: Record<string, unknown>): boolean {
+    const enabledProviders = this.aiProvidersSubject.value;
+    if (enabledProviders.length === 0) {
+      return false;
+    }
+    const discovery = this.aiServiceDiscoverySubject.value;
+    const knownProviders = discovery ? Object.values(discovery.providers) : [];
+    const resourceNeedsFileSearch = knownProviders.some((provider) =>
+      provider.capabilities?.includes('fileSearch') &&
+      hasSearchableAttachments(attachments, provider.fileSearchContentTypes)
+    );
+    return !resourceNeedsFileSearch || enabledProviders.some((provider) =>
+      provider.capabilities?.includes('fileSearch') &&
+      hasSearchableAttachments(attachments, provider.fileSearchContentTypes)
+    );
   }
 
   // Attempts immediate cleanup; retained local state lets the gateway retry after resource deletion.
