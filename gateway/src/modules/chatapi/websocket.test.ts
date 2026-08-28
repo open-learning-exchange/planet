@@ -226,6 +226,24 @@ describe('chatapi WebSocket', () => {
     expect(ws.close).toHaveBeenCalledWith(1000, 'Turn complete');
   });
 
+  it('batches adjacent provider deltas before the final frame', async () => {
+    mocks.chat.mockImplementation(async (payload, options) => {
+      void payload;
+      options.onDelta('small ');
+      options.onDelta('chunks');
+      return { 'completionText': 'small chunks', 'citations': [], 'couchSaveResponse': { 'ok': true } };
+    });
+    const ws = await connect({ 'host': 'planet.local:5000' });
+
+    await messageHandler(ws)(JSON.stringify({ 'content': 'hi' }));
+
+    const frames: Array<Record<string, any>> = ws.send.mock.calls.map(([ frame ]: [ string ]) => JSON.parse(frame));
+    expect(frames.filter((frame) => frame.type === 'partial')).toEqual([
+      { 'type': 'partial', 'response': 'small chunks' }
+    ]);
+    expect(frames.at(-1)).toMatchObject({ 'type': 'final', 'completionText': 'small chunks' });
+  });
+
   it('rejects a second frame instead of processing turns concurrently', async () => {
     const ws = await connect({ 'host': 'planet.local:5000', 'cookie': 'AuthSession=abc' });
 

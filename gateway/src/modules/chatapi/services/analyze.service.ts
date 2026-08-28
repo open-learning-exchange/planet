@@ -25,14 +25,24 @@ export interface AnalysisResult {
   sections: AnalysisSection[];
 }
 
-const isValidSection = (section: any): section is AnalysisSection =>
-  section && typeof section.title === 'string' && typeof section.content === 'string';
+const normalizeSection = (section: any): AnalysisSection | null => {
+  if (!section || typeof section.title !== 'string' || typeof section.content !== 'string') {
+    return null;
+  }
+  const title = section.title.trim();
+  const content = section.content.trim();
+  return title && content ? { title, content } : null;
+};
 
 const parseSections = (text: string): AnalysisSection[] | null => {
   try {
     const parsed = JSON.parse(text);
-    return Array.isArray(parsed?.sections) && parsed.sections.length > 0 && parsed.sections.every(isValidSection)
-      ? parsed.sections
+    if (!Array.isArray(parsed?.sections) || parsed.sections.length === 0) {
+      return null;
+    }
+    const sections: Array<AnalysisSection | null> = parsed.sections.map((section: any) => normalizeSection(section));
+    return sections.every((section: AnalysisSection | null): section is AnalysisSection => section !== null)
+      ? sections
       : null;
   } catch (error) {
     return null;

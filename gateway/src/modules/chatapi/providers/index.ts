@@ -3,7 +3,7 @@ import { ProviderRuntime } from '../services/config.service';
 import { HttpError } from '../utils/http-error';
 import { compatChat } from './openai-compat.provider';
 import { openaiChat } from './openai.provider';
-import { providerSupports } from './registry';
+import { providerDefinition, providerSupports } from './registry';
 
 export { providerCapabilities, providerSupports } from './registry';
 
@@ -37,7 +37,7 @@ export async function runProviderChat(runtime: ProviderRuntime, request: Provide
     }, runtime.requestTimeoutMs);
   });
   const providerRequest = { ...request, 'signal': controller.signal };
-  const providerCall = runtime.name === 'openai'
+  const providerCall = providerDefinition(runtime.name).api === 'responses'
     ? openaiChat(runtime.client, providerRequest)
     : compatChat(runtime.client, providerRequest);
   try {

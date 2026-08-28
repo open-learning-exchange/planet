@@ -100,4 +100,19 @@ describe('ManagerAIServicesComponent', () => {
       models: { 'legacy-provider': 'legacy-model', anthropic: 'claude-sonnet-4-6' }
     }));
   });
+
+  it('trims prompt overrides before saving', () => {
+    component.configForm.get('promptGeneralChat')?.setValue('  Community instructions  ');
+    component.configForm.get('promptCourseHelp')?.setValue('   ');
+
+    component.saveConfig();
+
+    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith(expect.objectContaining({
+      promptProfiles: {
+        general_chat: 'Community instructions',
+        course_help: '',
+        survey_analysis: ''
+      }
+    }));
+  });
 });

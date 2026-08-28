@@ -23,6 +23,8 @@ import {
 } from './resource-index.service';
 
 const TITLE_MAX_LENGTH = 60;
+const DEFAULT_MAX_CONVERSATION_TURNS = 40;
+const DEFAULT_HISTORY_REPLAY_TURNS = 20;
 
 export interface ChatOptions {
   save: boolean;
@@ -40,6 +42,19 @@ export interface ChatOutcome {
 const truncateTitle = (content: string): string =>
   content.length > TITLE_MAX_LENGTH ? `${content.slice(0, TITLE_MAX_LENGTH - 1)}…` : content;
 
+const positiveIntegerOr = (value: string | undefined, fallback: number): number => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const maxConversationTurns = (): number =>
+  positiveIntegerOr(process.env.CHAT_MAX_CONVERSATION_TURNS, DEFAULT_MAX_CONVERSATION_TURNS);
+
+const historyReplayTurns = (): number => Math.min(
+  positiveIntegerOr(process.env.CHAT_HISTORY_REPLAY_TURNS, DEFAULT_HISTORY_REPLAY_TURNS),
+  maxConversationTurns()
+);
+
 const normalizeContext = (context?: ChatContext | string): ChatContext =>
   typeof context === 'string' ? { 'data': context } : (context || {});
 
@@ -53,10 +68,22 @@ const resourceContextError = (error: unknown, fallbackMessage: string): HttpErro
 };
 
 const historyMessages = (doc: ChatDoc): ChatMessage[] =>
-  doc.conversations.filter((turn) => turn.query?.trim() && turn.response?.trim()).flatMap((turn) => [
+  doc.conversations.filter((turn) => turn.query?.trim() && turn.response?.trim()).slice(-historyReplayTurns()).flatMap((turn) => [
     { 'role': 'user' as const, 'content': turn.query },
     { 'role': 'assistant' as const, 'content': turn.response }
   ]);
+
+const turnLimitError = (): HttpError => new HttpError(
+  409,
+  `This conversation has reached its ${maxConversationTurns()}-turn limit. Start a new conversation to continue.`,
+  'conversation_turn_limit'
+);
+
+const enforceTurnLimit = (doc: ChatDoc) => {
+  if (doc.conversations.length >= maxConversationTurns()) {
+    throw turnLimitError();
+  }
+};
 
 const cancellationError = (): HttpError => new HttpError(499, 'AI provider request cancelled');
 
@@ -97,6 +124,7 @@ const saveExistingTurn = async (
   for (let attempt = 0; attempt < 2; attempt++) {
     throwIfAborted(signal);
     const latest = await loadConversation(id, sessionUser);
+    enforceTurnLimit(latest);
     const doc: ChatDoc = {
       ...latest,
       'conversations': [ ...latest.conversations, turn ],
@@ -141,6 +169,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
 
   if (options.save && payload._id) {
     existingDoc = await loadConversation(payload._id, options.sessionUser);
+    enforceTurnLimit(existingDoc);
     messages.push(...historyMessages(existingDoc));
   }
 
@@ -153,10 +182,16 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
   let fileNamesById: Record<string, string> = {};
   const resourceId = context.resource?.id;
   const supportsFileSearch = providerSupports(providerName, 'fileSearch');
+  const fileSearchClient = runtime.fileSearchClient || runtime.client;
   if (resourceId) {
     if (supportsFileSearch) {
       try {
-        const index = await ensureResourceIndexed(runtime.client, resourceId, options.sessionUser, options.signal);
+        const index = await ensureResourceIndexed(
+          fileSearchClient,
+          resourceId,
+          options.sessionUser,
+          options.signal
+        );
         if (index) {
           vectorStoreIds = [ index.vectorStoreId ];
           fileNamesById = index.fileNamesById;
@@ -203,7 +238,7 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     }
     if (resourceId && supportsFileSearch && vectorStoreIds?.[0]) {
       void markResourceIndexDirtyIfUnavailable(
-        runtime.client,
+        fileSearchClient,
         resourceId,
         vectorStoreIds[0]
       );

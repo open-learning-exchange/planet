@@ -18,6 +18,8 @@ import { chat } from './services/chat.service';
 import { httpErrorName, toHttpError } from './utils/http-error';
 
 const WEBSOCKET_TURN_START_TIMEOUT_MS = 30000;
+const DELTA_BATCH_INTERVAL_MS = 50;
+const DELTA_BATCH_MAX_CHARS = 256;
 
 const socketIsOpen = (ws: WebSocket): boolean => ws.readyState === WebSocket.OPEN;
 
@@ -51,7 +53,30 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
     let processMessage: ((data: WebSocket.RawData) => Promise<void>) | undefined;
     let pendingMessage: WebSocket.RawData | undefined;
     let turnStartDeadline: NodeJS.Timeout | undefined;
+    let deltaFlushTimer: NodeJS.Timeout | undefined;
+    let pendingDelta = '';
     let activeRequest: AbortController | undefined;
+
+    const flushDelta = () => {
+      if (deltaFlushTimer) {
+        clearTimeout(deltaFlushTimer);
+        deltaFlushTimer = undefined;
+      }
+      if (pendingDelta && !activeRequest?.signal.aborted) {
+        sendSocket(ws, { 'type': 'partial', 'response': pendingDelta });
+      }
+      pendingDelta = '';
+    };
+
+    const queueDelta = (delta: string) => {
+      pendingDelta += delta;
+      if (pendingDelta.length >= DELTA_BATCH_MAX_CHARS) {
+        flushDelta();
+      } else if (!deltaFlushTimer) {
+        deltaFlushTimer = setTimeout(flushDelta, DELTA_BATCH_INTERVAL_MS);
+        deltaFlushTimer.unref();
+      }
+    };
 
     ws.on('message', (data) => {
       if (processMessage) {
@@ -79,6 +104,10 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       if (turnStartDeadline) {
         clearTimeout(turnStartDeadline);
       }
+      if (deltaFlushTimer) {
+        clearTimeout(deltaFlushTimer);
+      }
+      pendingDelta = '';
       activeRequest?.abort(new Error('WebSocket closed'));
     });
 
@@ -172,11 +201,12 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           'signal': activeRequest.signal,
           'onDelta': (delta) => {
             if (!activeRequest?.signal.aborted) {
-              sendSocket(ws, { 'type': 'partial', 'response': delta });
+              queueDelta(delta);
             }
           }
         });
         if (!activeRequest.signal.aborted) {
+          flushDelta();
           sendSocket(ws, {
             'type': 'final',
             'completionText': outcome.completionText,
@@ -186,6 +216,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
         }
       } catch (error) {
         if (!activeRequest?.signal.aborted) {
+          flushDelta();
           const httpError = toHttpError(error, 'Unexpected error');
           sendSocket(ws, {
             'type': 'error',
@@ -195,6 +226,11 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
           });
         }
       } finally {
+        if (deltaFlushTimer) {
+          clearTimeout(deltaFlushTimer);
+          deltaFlushTimer = undefined;
+        }
+        pendingDelta = '';
         activeRequest = undefined;
         if (socketIsOpen(ws)) {
           ws.close(1000, 'Turn complete');

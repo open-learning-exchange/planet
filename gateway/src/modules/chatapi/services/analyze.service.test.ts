@@ -63,7 +63,7 @@ describe('analyze service', () => {
 
   it('requests structured output from openai and returns parsed sections', async () => {
     mocks.runProviderChat.mockResolvedValue({
-      'text': JSON.stringify({ 'sections': [ { 'title': 'Individual Question Analysis', 'content': 'details' } ] }),
+      'text': JSON.stringify({ 'sections': [ { 'title': '  Individual Question Analysis ', 'content': ' details  ' } ] }),
       'citations': []
     });
     const result = await analyze({ ...payload(), 'locale': 'es' });
@@ -79,7 +79,12 @@ describe('analyze service', () => {
     expect(result.sections).toEqual([ { 'title': 'Individual Question Analysis', 'content': 'details' } ]);
   });
 
-  it.each([ '{oops', JSON.stringify({ 'sections': [] }) ])(
+  it.each([
+    '{oops',
+    JSON.stringify({ 'sections': [] }),
+    JSON.stringify({ 'sections': [ { 'title': '   ', 'content': 'details' } ] }),
+    JSON.stringify({ 'sections': [ { 'title': 'Details', 'content': '\n\t' } ] })
+  ])(
     'rejects unusable openai structured output instead of rendering it as analysis: %s',
     async (text) => {
       mocks.runProviderChat.mockResolvedValue({ text, 'citations': [] });

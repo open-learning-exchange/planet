@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   'chatDB': { 'get': vi.fn(), 'insert': vi.fn() },
@@ -25,8 +25,13 @@ vi.mock('../providers', () => ({
 import { chat } from './chat.service';
 import { HttpError } from '../utils/http-error';
 
-const runtime = (name: string, enabled = true) =>
-  ({ name, enabled, 'client': enabled ? {} : undefined, 'defaultModel': `${name}-default-model` });
+const runtime = (name: string, enabled = true) => ({
+  name,
+  enabled,
+  'client': enabled ? { 'kind': 'chat' } : undefined,
+  'fileSearchClient': enabled && name === 'openai' ? { 'kind': 'file-search' } : undefined,
+  'defaultModel': `${name}-default-model`
+});
 
 const config = () => ({
   'providers': {
@@ -53,6 +58,11 @@ describe('chat service', () => {
       name === 'openai' && capability === 'fileSearch');
     mocks.chatDB.insert.mockResolvedValue({ 'ok': true, 'id': 'doc1', 'rev': '1-a' });
     mocks.resourceHasSupportedAttachments.mockResolvedValue(false);
+  });
+
+  afterEach(() => {
+    delete process.env.CHAT_MAX_CONVERSATION_TURNS;
+    delete process.env.CHAT_HISTORY_REPLAY_TURNS;
   });
 
   it('rejects a missing or empty content field', async () => {
@@ -142,6 +152,50 @@ describe('chat service', () => {
     expect(doc.conversations).toHaveLength(2);
   });
 
+  it('persists full history while replaying only the most recent configured turns', async () => {
+    const conversations = Array.from({ length: 25 }, (_, index) => ({
+      'id': String(index + 1),
+      'query': `q${index + 1}`,
+      'response': `a${index + 1}`
+    }));
+    mocks.chatDB.get.mockResolvedValue({
+      '_id': 'doc1', '_rev': '1-a', 'user': 'amara', 'title': 'long chat', 'createdDate': 1,
+      'aiProvider': 'openai', conversations
+    });
+
+    await chat({ 'content': 'q26', '_id': 'doc1' }, { 'save': true, 'sessionUser': 'amara' });
+
+    const request = mocks.runProviderChat.mock.calls[0][1];
+    expect(request.messages).toHaveLength(41);
+    expect(request.messages.slice(0, 2)).toEqual([
+      { 'role': 'user', 'content': 'q6' },
+      { 'role': 'assistant', 'content': 'a6' }
+    ]);
+    expect(request.messages.at(-1)).toEqual({ 'role': 'user', 'content': 'q26' });
+    expect(mocks.chatDB.insert.mock.calls[0][0].conversations).toHaveLength(26);
+  });
+
+  it('enforces a configurable persisted-turn limit before provider work', async () => {
+    process.env.CHAT_MAX_CONVERSATION_TURNS = '2';
+    mocks.chatDB.get.mockResolvedValue({
+      '_id': 'doc1', '_rev': '1-a', 'user': 'amara', 'title': 'full chat', 'createdDate': 1,
+      'aiProvider': 'openai',
+      'conversations': [
+        { 'id': '1', 'query': 'q1', 'response': 'a1' },
+        { 'id': '2', 'query': 'q2', 'response': 'a2' }
+      ]
+    });
+
+    await expect(chat({ 'content': 'q3', '_id': 'doc1' }, { 'save': true, 'sessionUser': 'amara' }))
+      .rejects.toMatchObject({
+        'statusCode': 409,
+        'code': 'conversation_turn_limit',
+        'message': 'This conversation has reached its 2-turn limit. Start a new conversation to continue.'
+      });
+    expect(mocks.runProviderChat).not.toHaveBeenCalled();
+    expect(mocks.chatDB.insert).not.toHaveBeenCalled();
+  });
+
   it('does not replay legacy failed turns with blank responses', async () => {
     mocks.chatDB.get.mockResolvedValue({
       '_id': 'doc1', '_rev': '1-a', 'user': 'amara', 'title': 'old title', 'createdDate': 1,
@@ -184,6 +238,26 @@ describe('chat service', () => {
     const saved = mocks.chatDB.insert.mock.calls[1][0];
     expect(saved._rev).toEqual('3-c');
     expect(saved.conversations.map((item: { query: string }) => item.query)).toEqual([ 'q1', 'other', 'q2' ]);
+  });
+
+  it('does not exceed the turn cap when another tab fills the conversation during provider work', async () => {
+    process.env.CHAT_MAX_CONVERSATION_TURNS = '2';
+    const initial = {
+      '_id': 'doc1', '_rev': '1-a', 'user': 'amara', 'title': 'chat', 'createdDate': 1,
+      'aiProvider': 'openai', 'conversations': [ { 'id': '1', 'query': 'q1', 'response': 'a1' } ]
+    };
+    mocks.chatDB.get
+      .mockResolvedValueOnce(initial)
+      .mockResolvedValueOnce({
+        ...initial,
+        '_rev': '2-b',
+        'conversations': [ ...initial.conversations, { 'id': '2', 'query': 'other', 'response': 'answer' } ]
+      });
+
+    await expect(chat({ 'content': 'q2', '_id': 'doc1' }, { 'save': true, 'sessionUser': 'amara' }))
+      .rejects.toMatchObject({ 'statusCode': 409, 'code': 'conversation_turn_limit' });
+    expect(mocks.runProviderChat).toHaveBeenCalledTimes(1);
+    expect(mocks.chatDB.insert).not.toHaveBeenCalled();
   });
 
   it('rejects continuing a conversation owned by another user', async () => {
@@ -247,6 +321,7 @@ describe('chat service', () => {
     );
     expect(mocks.runProviderChat.mock.calls[0][1].vectorStoreIds).toEqual([ 'vs_1' ]);
     expect(mocks.ensureResourceIndexed).toHaveBeenCalledWith(expect.anything(), 'res1', 'amara', undefined);
+    expect(mocks.ensureResourceIndexed.mock.calls[0][0]).toEqual({ 'kind': 'file-search' });
     const turn = mocks.chatDB.insert.mock.calls[0][0].conversations[0];
     expect(turn.hasAttachments).toEqual(true);
     expect(turn).not.toHaveProperty('citations');

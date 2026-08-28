@@ -6,8 +6,11 @@ export type ProviderCapability =
   | 'fileSearch'
   | 'structuredOutput';
 
+export type ProviderAPI = 'responses' | 'chat-completions';
+
 interface ProviderDefinition {
   label: string;
+  api: ProviderAPI;
   baseURL?: string;
   capabilities: readonly ProviderCapability[];
 }
@@ -15,25 +18,30 @@ interface ProviderDefinition {
 const providerRegistry = {
   'openai': {
     'label': 'OpenAI',
+    'api': 'responses',
     'capabilities': [ 'chat', 'fileSearch', 'structuredOutput' ]
   },
   'perplexity': {
     'label': 'Perplexity',
+    'api': 'chat-completions',
     'baseURL': 'https://api.perplexity.ai',
     'capabilities': [ 'chat' ]
   },
   'deepseek': {
     'label': 'DeepSeek',
+    'api': 'chat-completions',
     'baseURL': 'https://api.deepseek.com',
     'capabilities': [ 'chat' ]
   },
   'gemini': {
     'label': 'Gemini',
+    'api': 'chat-completions',
     'baseURL': 'https://generativelanguage.googleapis.com/v1beta/openai/',
     'capabilities': [ 'chat' ]
   },
   'anthropic': {
     'label': 'Anthropic (Claude)',
+    'api': 'chat-completions',
     'baseURL': 'https://api.anthropic.com/v1/',
     'capabilities': [ 'chat' ]
   }

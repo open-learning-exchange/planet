@@ -16,10 +16,12 @@ describe('AI configuration service', () => {
     vi.clearAllMocks();
     resetAIConfigCache();
     delete process.env.AI_REQUEST_TIMEOUT_MS;
+    delete process.env.RESOURCE_INDEX_TIMEOUT_MS;
   });
 
   afterEach(() => {
     delete process.env.AI_REQUEST_TIMEOUT_MS;
+    delete process.env.RESOURCE_INDEX_TIMEOUT_MS;
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -58,6 +60,20 @@ describe('AI configuration service', () => {
     expect(config.promptProfiles.course_help).toEqual('CUSTOM COURSE');
     expect(config.promptProfiles.general_chat).toEqual(defaultPromptProfiles.general_chat);
     expect(config.promptProfiles.survey_analysis).toEqual(defaultPromptProfiles.survey_analysis);
+  });
+
+  it('trims prompt-profile overrides and treats whitespace-only values as absent', async () => {
+    mocks.configurationDB.list.mockResolvedValue(docRows({
+      'promptProfiles': {
+        'general_chat': '  CUSTOM GENERAL  ',
+        'course_help': '   '
+      }
+    }));
+
+    const config = await getAIConfig();
+
+    expect(config.promptProfiles.general_chat).toEqual('CUSTOM GENERAL');
+    expect(config.promptProfiles.course_help).toEqual(defaultPromptProfiles.course_help);
   });
 
   it('keeps prompt modes independent', async () => {
@@ -161,6 +177,7 @@ describe('AI configuration service', () => {
 
   it('uses a configurable provider timeout with a safe fallback', async () => {
     process.env.AI_REQUEST_TIMEOUT_MS = '45000';
+    process.env.RESOURCE_INDEX_TIMEOUT_MS = '650000';
     mocks.configurationDB.list.mockResolvedValue(docRows({
       'keys': { 'openai': 'sk-1' },
       'models': { 'openai': 'gpt-test' }
@@ -168,6 +185,8 @@ describe('AI configuration service', () => {
     let config = await getAIConfig();
     expect((config.providers.openai.client as any).timeout).toEqual(45000);
     expect((config.providers.openai.client as any).maxRetries).toEqual(0);
+    expect((config.providers.openai.fileSearchClient as any).timeout).toEqual(650000);
+    expect((config.providers.openai.fileSearchClient as any).maxRetries).toEqual(0);
     expect(config.providers.openai.requestTimeoutMs).toEqual(45000);
 
     process.env.AI_REQUEST_TIMEOUT_MS = 'invalid';

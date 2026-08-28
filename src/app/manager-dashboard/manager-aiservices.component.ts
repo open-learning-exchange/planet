@@ -190,9 +190,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
       keys: this.extractFormValues(this.configuration.keys, 'keys_'),
       models: this.extractFormValues(this.configuration.models, 'models_'),
       promptProfiles: {
-        general_chat: this.getStringControlValue('promptGeneralChat'),
-        course_help: this.getStringControlValue('promptCourseHelp'),
-        survey_analysis: this.getStringControlValue('promptSurveyAnalysis')
+        general_chat: this.getStringControlValue('promptGeneralChat').trim(),
+        course_help: this.getStringControlValue('promptCourseHelp').trim(),
+        survey_analysis: this.getStringControlValue('promptSurveyAnalysis').trim()
       }
     };
     this.configurationService.patchLocalConfiguration(configPatch).pipe(finalize(spinnerOff)).subscribe(

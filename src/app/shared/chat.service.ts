@@ -62,6 +62,9 @@ const PROVIDER_DISCOVERY_RETRY_MS = 5000;
     if (error?.code === 'resource_context_unavailable') {
       return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
     }
+    if (error?.code === 'conversation_turn_limit') {
+      return $localize`This conversation is full. Start a new conversation to continue.`;
+    }
     return error?.message || fallback;
   }
 

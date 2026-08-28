@@ -5,12 +5,13 @@ import { configurationDB } from '../../../config/couch.config';
 import { AIConfigDoc, ChatMode } from '../models/chat.model';
 import { defaultPromptProfiles } from '../prompts/default-prompts';
 import { ProviderName, PROVIDER_NAMES, providerDefinition } from '../providers/registry';
-import { getAIRequestTimeoutMs } from '../utils/timeout.utils';
+import { getAIRequestTimeoutMs, getResourceIndexTimeoutMs } from '../utils/timeout.utils';
 
 export interface ProviderRuntime {
   name: ProviderName;
   enabled: boolean;
   client?: OpenAI;
+  fileSearchClient?: OpenAI;
   defaultModel: string;
   requestTimeoutMs: number;
 }
@@ -47,10 +48,17 @@ const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime =>
   const apiKey = doc.keys?.[name] || '';
   const defaultModel = doc.models?.[name] || '';
   const requestTimeoutMs = getAIRequestTimeoutMs();
+  const definition = providerDefinition(name);
   const client = apiKey ? new OpenAI({
     apiKey,
-    'baseURL': providerDefinition(name).baseURL,
+    'baseURL': definition.baseURL,
     'timeout': requestTimeoutMs,
+    'maxRetries': 0
+  }) : undefined;
+  const fileSearchClient = apiKey && definition.capabilities.includes('fileSearch') ? new OpenAI({
+    apiKey,
+    'baseURL': definition.baseURL,
+    'timeout': getResourceIndexTimeoutMs(),
     'maxRetries': 0
   }) : undefined;
   return {
@@ -58,15 +66,19 @@ const buildProvider = (name: ProviderName, doc: AIConfigDoc): ProviderRuntime =>
     'enabled': !!apiKey && !!defaultModel,
     // Retain a key-only client so resource-index cleanup works even without a configured chat model.
     client,
+    fileSearchClient,
     defaultModel,
     requestTimeoutMs
   };
 };
 
+const promptProfileOr = (value: string | undefined, fallback: string): string =>
+  typeof value === 'string' && value.trim() ? value.trim() : fallback;
+
 const buildPromptProfiles = (doc: AIConfigDoc): Record<ChatMode, string> => ({
-  'general_chat': doc.promptProfiles?.general_chat || defaultPromptProfiles.general_chat,
-  'course_help': doc.promptProfiles?.course_help || defaultPromptProfiles.course_help,
-  'survey_analysis': doc.promptProfiles?.survey_analysis || defaultPromptProfiles.survey_analysis
+  'general_chat': promptProfileOr(doc.promptProfiles?.general_chat, defaultPromptProfiles.general_chat),
+  'course_help': promptProfileOr(doc.promptProfiles?.course_help, defaultPromptProfiles.course_help),
+  'survey_analysis': promptProfileOr(doc.promptProfiles?.survey_analysis, defaultPromptProfiles.survey_analysis)
 });
 
 const buildConfig = (doc: AIConfigDoc): AIConfig => ({

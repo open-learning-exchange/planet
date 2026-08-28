@@ -285,6 +285,15 @@ describe('ChatService', () => {
         message: 'Resource context is unavailable'
       })).toEqual('This resource is unavailable for AI chat. Reload the course step or ask a manager for access.');
     });
+
+    it('localizes the conversation turn cap without exposing gateway text', () => {
+      const { service } = createService();
+
+      expect(service.chatErrorMessage({
+        code: 'conversation_turn_limit',
+        message: 'server-owned turn limit details'
+      })).toEqual('This conversation is full. Start a new conversation to continue.');
+    });
   });
 
   describe('provider-specific requests', () => {

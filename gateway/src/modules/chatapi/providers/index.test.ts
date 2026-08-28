@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 
 import { ProviderChatRequest } from '../models/chat.model';
 import { providerCapabilities, providerSupports, runProviderChat } from './index';
+import { providerDefinition } from './registry';
 
 const baseRequest = (): ProviderChatRequest => ({
   'model': 'gpt-test',
@@ -81,6 +82,12 @@ describe('provider dispatch', () => {
     expect(providerSupports('gemini', 'structuredOutput')).toEqual(false);
     expect(providerSupports('anthropic', 'chat')).toEqual(true);
     expect(providerSupports('anthropic', 'structuredOutput')).toEqual(false);
+  });
+
+  it('declares transport independently from capabilities', () => {
+    expect(providerDefinition('openai').api).toEqual('responses');
+    expect(providerDefinition('anthropic').api).toEqual('chat-completions');
+    expect(providerDefinition('anthropic').capabilities).toEqual([ 'chat' ]);
   });
 
   it('rejects disabled or model-less providers before dispatch', async () => {
