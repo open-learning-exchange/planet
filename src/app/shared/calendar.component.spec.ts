@@ -1,10 +1,12 @@
+import { vi } from 'vitest';
+import { ElementRef } from '@angular/core';
 import { of } from 'rxjs';
 
 import { PlanetCalendarComponent } from './calendar.component';
 import { styleVariables } from './utils';
 
 describe('PlanetCalendarComponent', () => {
-  const createComponent = (couchService: any = {}) => new PlanetCalendarComponent(
+  const createComponent = (couchService: any = {}, element = document.createElement('div')) => new PlanetCalendarComponent(
     document,
     'en',
     {} as any,
@@ -13,7 +15,9 @@ describe('PlanetCalendarComponent', () => {
     {} as any,
     {} as any,
     {} as any,
-    {} as any
+    {} as any,
+    new ElementRef(element),
+    { runOutsideAngular: (fn: () => void) => fn() } as any
   );
 
   it('preserves the time stored in a task deadline', () => {
@@ -62,6 +66,57 @@ describe('PlanetCalendarComponent', () => {
 
     expect(event.end?.getTime()).toBe(endDate.getTime());
     expect(event.end?.getHours()).toBe(0);
+  });
+
+  it('re-measures the calendar once its container reports a width', () => {
+    const updateSize = vi.fn();
+    let notify: (entries: any[]) => void;
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(callback: (entries: any[]) => void) {
+        notify = callback;
+      }
+      observe() {}
+      disconnect() {}
+    });
+    const component = createComponent();
+    component.calendar = { getApi: () => ({ updateSize }) };
+
+    component.ngAfterViewInit();
+    // ResizeObserver reports zero until the calendar has been laid out on screen
+    notify([ { contentRect: { width: 0 } } ]);
+    notify([ { contentRect: { width: 800 } } ]);
+
+    expect(updateSize).toHaveBeenCalledTimes(2);
+
+    // the calendar changes its own height, so an unchanged width should not re-measure
+    notify([ { contentRect: { width: 800 } } ]);
+
+    expect(updateSize).toHaveBeenCalledTimes(2);
+
+    notify([ { contentRect: { width: 400 } } ]);
+
+    expect(updateSize).toHaveBeenCalledTimes(3);
+    component.ngOnDestroy();
+    vi.unstubAllGlobals();
+  });
+
+  it('survives a resize reported before the calendar has an api', () => {
+    let notify: (entries: any[]) => void;
+    vi.stubGlobal('ResizeObserver', class {
+      constructor(callback: (entries: any[]) => void) {
+        notify = callback;
+      }
+      observe() {}
+      disconnect() {}
+    });
+    const component = createComponent();
+    component.calendar = { getApi: () => null };
+
+    component.ngAfterViewInit();
+
+    expect(() => notify([ { contentRect: { width: 800 } } ])).not.toThrow();
+    component.ngOnDestroy();
+    vi.unstubAllGlobals();
   });
 
   it('uses the task event colors for matching legend swatches', () => {

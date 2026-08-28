@@ -116,7 +116,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
   planetCode: string | null;
   shareTarget: string;
   servicesDescriptionLabel: 'Add' | 'Edit';
-  resizeCalendar: any = false;
   deviceType: DeviceType;
   deviceTypes = DeviceType;
   newsLoading = true;
@@ -583,7 +582,6 @@ export class CommunityComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate([ '' ]);
     }
-    this.resizeCalendar = (index === 5);
     this.currentTab = index;
   }
 

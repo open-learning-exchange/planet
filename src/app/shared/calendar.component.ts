@@ -1,4 +1,4 @@
-import { Component, Inject, Input, LOCALE_ID, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, Input, LOCALE_ID, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -51,10 +51,9 @@ const taskEventColors = {
     `,
   imports: [FullCalendarModule]
 })
-export class PlanetCalendarComponent implements OnInit, OnChanges {
+export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('calendar') calendar: any;
-  @Input() resizeCalendar: boolean;
   @Input() link: any = {};
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
@@ -108,6 +107,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     eventClick: this.eventClick.bind(this)
   };
 
+  private resizeObserver: ResizeObserver | null = null;
+  private calendarWidth: number;
+
   constructor(
     @Inject(DOCUMENT) private document: Document,
     @Inject(LOCALE_ID) private localeId: string,
@@ -117,7 +119,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     private tasksService: TasksService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private elementRef: ElementRef<HTMLElement>,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit() {
@@ -140,12 +144,31 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.events = [ ...this.events ];
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.resizeCalendar && changes.resizeCalendar.currentValue) {
-      this.calendar.getApi().updateSize();
-      this.resizeCalendar = false;
+  // FullCalendar measures its scroller once while rendering and caches the widths it finds. A
+  // calendar created inside a tab that is not on screen yet measures zero, which collapses every
+  // day column until something else triggers a resize. Watching our own element re-measures as
+  // soon as the browser has laid the calendar out, and again whenever its container changes width.
+  ngAfterViewInit() {
+    if (typeof ResizeObserver === 'undefined') {
+      return;
     }
-    this.calendarOptions.events = [ ...this.events ];
+    this.ngZone.runOutsideAngular(() => {
+      this.resizeObserver = new ResizeObserver(entries => this.onCalendarResize(entries[0]?.contentRect.width));
+      this.resizeObserver.observe(this.elementRef.nativeElement);
+    });
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
+  }
+
+  private onCalendarResize(width: number) {
+    // Height changes are the calendar's own doing, so only a new width is worth re-measuring for.
+    if (width === undefined || width === this.calendarWidth) {
+      return;
+    }
+    this.calendarWidth = width;
+    this.calendar?.getApi()?.updateSize();
   }
 
   getMeetups() {
