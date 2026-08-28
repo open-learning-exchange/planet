@@ -45,6 +45,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { PlanetResourceIconComponent } from '../resources/resources-icon.component';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -83,7 +84,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatMenuItem,
     SurveysComponent,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    PlanetResourceIconComponent
   ]
 })
 export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {

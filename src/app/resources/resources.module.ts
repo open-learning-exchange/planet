@@ -11,12 +11,14 @@ import { MaterialModule } from '../shared/material.module';
 import { PlanetDialogsModule } from '../shared/dialogs/planet-dialogs.module';
 import { SharedComponentsModule } from '../shared/shared-components.module';
 import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search-resources/resources-search.component';
+import { PlanetResourceIconComponent } from './resources-icon.component';
 
 @NgModule({
   exports: [
     ResourcesViewerComponent,
     ResourcesComponent,
-    ResourcesAddComponent
+    ResourcesAddComponent,
+    PlanetResourceIconComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +34,8 @@ import { ResourcesSearchComponent, ResourcesSearchListComponent } from './search
     ResourcesViewerComponent,
     ResourcesAddComponent,
     ResourcesSearchComponent,
-    ResourcesSearchListComponent
+    ResourcesSearchListComponent,
+    PlanetResourceIconComponent
   ]
 })
 export class ResourcesModule {}

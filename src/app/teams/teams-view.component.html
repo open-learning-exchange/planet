@@ -232,14 +232,14 @@
               <mat-card (click)="resource.resource && openResource(resource.resource._id)" i18n-matTooltip matTooltip="There is no content for this resource" [matTooltipDisabled]="resource.resource?._attachments" [ngClass]="{'cursor-pointer': resource.resource}">
                 <div class="mat-subtitle-1">
                   @if (resource.resource!==undefined) {
-                    <span>
-                      <b>{{resource.resource.title | truncateText:75}}</b>
+                    <span class="resource-title-wrapper">
+                      <planet-resource-icon [resource]="resource.resource"></planet-resource-icon><b>{{resource.resource.title | truncateText:75}}</b>
                     </span>
                   }
                   @if (resource.resource===undefined) {
-                    <span i18n-matTooltip
+                    <span class="resource-title-wrapper" i18n-matTooltip
                       matTooltip="Resource unavailable. Contact your administrator to add resource to this Planet.">
-                      {{resource.linkDoc.title | truncateText:75}}
+                      <planet-resource-icon [resource]="resource.linkDoc"></planet-resource-icon>{{resource.linkDoc.title | truncateText:75}}
                     </span>
                   }
                 </div>

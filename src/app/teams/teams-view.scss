@@ -34,12 +34,25 @@
   .mat-subtitle-1 {
     margin: 5px 25px 10px 15px;
 
+    .resource-title-wrapper {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      min-width: 0;
+      vertical-align: middle;
+
+      planet-resource-icon {
+        flex-shrink: 0;
+      }
+    }
+
     b {
       display: inline-block;
       max-width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      vertical-align: middle;
     }
   }
 
