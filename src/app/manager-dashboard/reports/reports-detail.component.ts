@@ -23,6 +23,7 @@ import {
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
+import { AppSourceFilter, appSourceLabel, appSources } from '../../shared/app-source';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
@@ -116,6 +117,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   users: any[] = [];
   onDestroy$ = new Subject<void>();
   filter: ReportDetailFilter = { app: '', members: [], startDate: new Date(0), endDate: new Date() };
+  appSources = appSources;
   codeParam = '';
   loginActivities = new ReportsDetailData('loginTime');
   resourceActivities = { byDoc: [], total: new ReportsDetailData('time') };
@@ -243,7 +245,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.charts = [];
   }
 
-  onFilterChange(filterValue: '' | 'planet' | 'myplanet') {
+  onFilterChange(filterValue: AppSourceFilter) {
     this.filter.app = filterValue;
     this.filterData();
   }
@@ -777,6 +779,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
           .map(activity => ({
             ...activity,
+            app: appSourceLabel(activity),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
@@ -898,6 +901,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         .map(activity => {
           const baseActivity = {
             ...activity,
+            app: appSourceLabel(activity),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || ''
           };

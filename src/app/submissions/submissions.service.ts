@@ -3,6 +3,7 @@ import { Observable, Subject, of, forkJoin, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import type { ChartConfiguration } from 'chart.js';
 import { findDocuments } from '../shared/mangoQueries';
+import { appSourceLabel } from '../shared/app-source';
 import { CouchService } from '../shared/couchdb.service';
 import { StateService } from '../shared/state.service';
 import { CoursesService } from '../courses/courses.service';
@@ -342,7 +343,7 @@ export class SubmissionsService {
               ageFromBirthDate(time, submission.user.birthDate) :
               submission.user.age || this.notAvailable(),
             [$localize`Planet`]: submission.source,
-            [$localize`Source`]: submission.androidId !== undefined ? 'myPlanet' : 'Planet',
+            [$localize`Source`]: appSourceLabel(submission),
             [$localize`Date`]: fullLabel(submission.lastUpdateTime, this.localeId),
             [$localize`Group`]: submission.teamInfo?.name || this.notAvailable(),
             [$localize`Group Type`]: this.localizedGroupType(submission.teamInfo?.type) || this.notAvailable(),
@@ -581,7 +582,7 @@ export class SubmissionsService {
         submission.user.age;
       const userGender = submission.user.gender ? this.localizedGender(submission.user.gender) : '';
       const communityOrNation = submission.planetName;
-      const planetSource = submission.androidId !== undefined ? 'myPlanet' : 'Planet';
+      const planetSource = appSourceLabel(submission);
       const teamType = this.localizedGroupType(submission.teamInfo?.type);
       const teamName = submission.teamInfo?.name || '';
       const teamInfo = teamType && teamName ? `<strong>${teamType}</strong>: ${teamName}` : '';
