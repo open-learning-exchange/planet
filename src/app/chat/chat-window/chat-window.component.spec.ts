@@ -10,29 +10,29 @@ import { ChatWindowComponent } from './chat-window.component';
 const createComponent = () => {
   const error$ = new Subject<string>();
   const chatService = {
-    'newChatSelected$': new Subject<void>(),
-    'selectedConversationId$': new BehaviorSubject<object | null>(null),
-    'toggleAIService$': new Subject<string>(),
-    'listAIProviders': vi.fn().mockReturnValue(of([])),
-    'getErrorStream': vi.fn().mockReturnValue(error$),
-    'getChatStream': vi.fn().mockReturnValue(new Subject<string>()),
-    'getChatAIProvider': vi.fn().mockReturnValue(undefined),
-    'setChatAIProvider': vi.fn(),
-    'chatErrorMessage': vi.fn((error, fallback) => error?.message || fallback || 'Chat request failed'),
-    'getPrompt': vi.fn().mockReturnValue(of({
-      'chat': 'answer', 'citations': [], 'couchDBResponse': { 'id': 'chat1', 'rev': '1-a' }
+    newChatSelected$: new Subject<void>(),
+    selectedConversationId$: new BehaviorSubject<object | null>(null),
+    toggleAIService$: new Subject<string>(),
+    listAIProviders: vi.fn().mockReturnValue(of([])),
+    getErrorStream: vi.fn().mockReturnValue(error$),
+    getChatStream: vi.fn().mockReturnValue(new Subject<string>()),
+    getChatAIProvider: vi.fn().mockReturnValue(undefined),
+    setChatAIProvider: vi.fn(),
+    chatErrorMessage: vi.fn((error, fallback) => error?.message || fallback || 'Chat request failed'),
+    getPrompt: vi.fn().mockReturnValue(of({
+      chat: 'answer', citations: [], couchDBResponse: { id: 'chat1', rev: '1-a' }
     })),
-    'findConversations': vi.fn(),
-    'sendNewChatAddedSignal': vi.fn(),
-    'sendUserInput': vi.fn(),
-    'initializeWebSocket': vi.fn(),
-    'closeWebSocket': vi.fn()
+    findConversations: vi.fn(),
+    sendNewChatAddedSignal: vi.fn(),
+    sendUserInput: vi.fn(),
+    initializeWebSocket: vi.fn(),
+    closeWebSocket: vi.fn()
   };
   const component = new ChatWindowComponent(
     chatService as unknown as ChatService,
     new FormBuilder().nonNullable,
-    { 'configuration': { 'streaming': false } } as StateService,
-    { 'get': () => ({ 'name': 'amara' }) } as unknown as UserService
+    { configuration: { streaming: false } } as StateService,
+    { get: () => ({ name: 'amara' }) } as unknown as UserService
   );
   component.conversations = [];
   component.createForm();
@@ -42,30 +42,30 @@ const createComponent = () => {
 describe('ChatWindowComponent', () => {
   it('uses the first enabled provider rather than a hidden OpenAI fallback', () => {
     const { component, chatService } = createComponent();
-    component.providers = [ { 'name': 'perplexity' } ];
+    component.providers = [ { name: 'perplexity' } ];
     component.promptForm.controls.prompt.setValue('hello');
 
     component.submitPrompt();
 
     expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
-      'aiProvider': { 'name': 'perplexity' }
+      aiProvider: { name: 'perplexity' }
     }), true);
-    expect(chatService.setChatAIProvider).toHaveBeenCalledWith({ 'name': 'perplexity' });
+    expect(chatService.setChatAIProvider).toHaveBeenCalledWith({ name: 'perplexity' });
   });
 
   it('uses an attachment-capable provider for course resources instead of a replayed selection', () => {
     const { component, chatService } = createComponent();
     component.context = {
-      'type': 'coursestep',
-      'resource': { 'id': 'resource-1', 'attachments': { 'guide.pdf': { 'content_type': 'application/pdf' } } }
+      type: 'coursestep',
+      resource: { id: 'resource-1', attachments: { 'guide.pdf': { content_type: 'application/pdf' } } }
     };
-    component.provider = { 'name': 'gemini', 'capabilities': [ 'chat' ] };
+    component.provider = { name: 'gemini', capabilities: [ 'chat' ] };
     component.providers = [
       component.provider,
       {
-        'name': 'openai',
-        'capabilities': [ 'chat', 'fileSearch' ],
-        'fileSearchContentTypes': [ 'application/pdf' ]
+        name: 'openai',
+        capabilities: [ 'chat', 'fileSearch' ],
+        fileSearchContentTypes: [ 'application/pdf' ]
       }
     ];
     component.promptForm.controls.prompt.setValue('summarize the guide');
@@ -73,10 +73,10 @@ describe('ChatWindowComponent', () => {
     component.submitPrompt();
 
     expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
-      'aiProvider': {
-        'name': 'openai',
-        'capabilities': [ 'chat', 'fileSearch' ],
-        'fileSearchContentTypes': [ 'application/pdf' ]
+      aiProvider: {
+        name: 'openai',
+        capabilities: [ 'chat', 'fileSearch' ],
+        fileSearchContentTypes: [ 'application/pdf' ]
       }
     }), true);
     expect(chatService.setChatAIProvider).not.toHaveBeenCalled();
@@ -85,16 +85,16 @@ describe('ChatWindowComponent', () => {
   it('does not switch providers for attachments that file search cannot use', () => {
     const { component, chatService } = createComponent();
     component.context = {
-      'type': 'coursestep',
-      'resource': { 'id': 'resource-1', 'attachments': { 'video.mp4': { 'content_type': 'video/mp4' } } }
+      type: 'coursestep',
+      resource: { id: 'resource-1', attachments: { 'video.mp4': { content_type: 'video/mp4' } } }
     };
-    component.provider = { 'name': 'gemini', 'capabilities': [ 'chat' ] };
+    component.provider = { name: 'gemini', capabilities: [ 'chat' ] };
     component.providers = [
       component.provider,
       {
-        'name': 'openai',
-        'capabilities': [ 'chat', 'fileSearch' ],
-        'fileSearchContentTypes': [ 'application/pdf' ]
+        name: 'openai',
+        capabilities: [ 'chat', 'fileSearch' ],
+        fileSearchContentTypes: [ 'application/pdf' ]
       }
     ];
     component.promptForm.controls.prompt.setValue('explain the course step');
@@ -102,30 +102,30 @@ describe('ChatWindowComponent', () => {
     component.submitPrompt();
 
     expect(chatService.getPrompt).toHaveBeenCalledWith(expect.objectContaining({
-      'aiProvider': component.provider
+      aiProvider: component.provider
     }), true);
     expect(chatService.setChatAIProvider).toHaveBeenCalledWith(component.provider);
   });
 
   it('renders the sanitized gateway reason for non-streaming failures', () => {
     const { component, chatService } = createComponent();
-    component.providers = [ { 'name': 'gemini' } ];
+    component.providers = [ { name: 'gemini' } ];
     component.promptForm.controls.prompt.setValue('hello');
     chatService.getPrompt.mockReturnValue(throwError({
-      'message': 'Http failure response', 'error': { 'message': 'AI provider "gemini" is not configured' }
+      message: 'Http failure response', error: { message: 'AI provider "gemini" is not configured' }
     }));
 
     component.submitPrompt();
 
     expect(component.conversations[0]).toMatchObject({
-      'query': 'hello', 'response': 'Error: AI provider "gemini" is not configured', 'error': true
+      query: 'hello', response: 'Error: AI provider "gemini" is not configured', error: true
     });
   });
 
   it('clears the streaming lock when an error arrives after the pending turn was replaced', () => {
     const { component, error$ } = createComponent();
     component.streaming = true;
-    component.providers = [ { 'name': 'openai' } ];
+    component.providers = [ { name: 'openai' } ];
     component.promptForm.controls.prompt.setValue('hello');
     component.initializeErrorStream();
     component.submitPrompt();
@@ -139,7 +139,7 @@ describe('ChatWindowComponent', () => {
   it('marks the pending turn failed without splitting off partial streaming output', () => {
     const { component, chatService, error$ } = createComponent();
     component.streaming = true;
-    component.providers = [ { 'name': 'openai' } ];
+    component.providers = [ { name: 'openai' } ];
     component.promptForm.controls.prompt.setValue('hello');
     component.initializeErrorStream();
 
@@ -150,9 +150,9 @@ describe('ChatWindowComponent', () => {
     expect(chatService.sendUserInput).toHaveBeenCalled();
     expect(component.conversations).toHaveLength(1);
     expect(component.conversations[0]).toMatchObject({
-      'query': 'hello',
-      'response': 'partial answer\n\nError: Provider stream failed',
-      'error': true
+      query: 'hello',
+      response: 'partial answer\n\nError: Provider stream failed',
+      error: true
     });
     expect(component.streamingPending).toEqual(false);
   });
@@ -160,7 +160,7 @@ describe('ChatWindowComponent', () => {
   it('cancels the active stream and ignores its late frames when changing chats', () => {
     const { component, chatService } = createComponent();
     component.streaming = true;
-    component.providers = [ { 'name': 'openai' } ];
+    component.providers = [ { name: 'openai' } ];
     component.promptForm.controls.prompt.setValue('hello');
     component.submitPrompt();
 
@@ -168,7 +168,7 @@ describe('ChatWindowComponent', () => {
 
     expect(chatService.closeWebSocket).toHaveBeenCalled();
     expect(chatService.initializeWebSocket).not.toHaveBeenCalled();
-    expect(() => component.handleIncomingMessage({ 'type': 'partial', 'response': 'late' })).not.toThrow();
+    expect(() => component.handleIncomingMessage({ type: 'partial', response: 'late' })).not.toThrow();
     expect(component.conversations).toEqual([]);
     expect(component.streamingPending).toEqual(false);
   });

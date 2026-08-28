@@ -75,9 +75,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   configForm: FormGroup<ConfigFormControls>;
   hideKey: { [key: string]: boolean } = {};
   promptDefaults: PromptProfiles = {
-    'general_chat': '',
-    'course_help': '',
-    'survey_analysis': ''
+    general_chat: '',
+    course_help: '',
+    survey_analysis: ''
   };
   providerNames: string[] = [];
   providerLabels: Record<string, string> = {};
@@ -237,9 +237,9 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
 
   useBuiltInPrompts() {
     this.configForm.patchValue({
-      'promptGeneralChat': '',
-      'promptCourseHelp': '',
-      'promptSurveyAnalysis': ''
+      promptGeneralChat: '',
+      promptCourseHelp: '',
+      promptSurveyAnalysis: ''
     });
   }
 

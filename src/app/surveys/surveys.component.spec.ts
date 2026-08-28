@@ -156,32 +156,32 @@ describe('SurveysComponent', () => {
 
   it('offers enabled analysis providers and defaults to structured output', () => {
     component.availableAIProviders = [
-      { 'name': 'openai', 'label': 'OpenAI', 'capabilities': [ 'chat', 'structuredOutput' ] },
-      { 'name': 'gemini', 'label': 'Gemini', 'capabilities': [ 'chat' ] }
+      { name: 'openai', label: 'OpenAI', capabilities: [ 'chat', 'structuredOutput' ] },
+      { name: 'gemini', label: 'Gemini', capabilities: [ 'chat' ] }
     ];
     chatService.getPreferredAnalysisProvider.mockReturnValue(component.availableAIProviders[0]);
 
-    component.exportPdf({ 'questions': [] });
+    component.exportPdf({ questions: [] });
 
     const [ , fields, formGroup, options ] = dialogsFormService.openDialogsForm.mock.calls[0];
     const providerField = fields.find((field) => field.name === 'analysisProvider');
     expect(providerField.options).toEqual([
-      { 'value': 'openai', 'name': 'OpenAI — structured sections' },
-      { 'value': 'gemini', 'name': 'Gemini — formatting may vary' }
+      { value: 'openai', name: 'OpenAI — structured sections' },
+      { value: 'gemini', name: 'Gemini — formatting may vary' }
     ]);
     expect(formGroup.controls.analysisProvider.value).toEqual('openai');
 
     options.onSubmit({
-      'includeQuestions': true,
-      'includeAnswers': true,
-      'includeCharts': false,
-      'includeAnalysis': true,
-      'analysisProvider': 'gemini'
+      includeQuestions: true,
+      includeAnswers: true,
+      includeCharts: false,
+      includeAnalysis: true,
+      analysisProvider: 'gemini'
     });
     expect(submissionsService.exportSubmissionsPdf).toHaveBeenCalledWith(
-      { 'questions': [] },
+      { questions: [] },
       'survey',
-      expect.objectContaining({ 'includeAnalysis': true, 'analysisProvider': 'gemini' }),
+      expect.objectContaining({ includeAnalysis: true, analysisProvider: 'gemini' }),
       ''
     );
   });

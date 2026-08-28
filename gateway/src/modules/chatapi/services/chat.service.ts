@@ -151,40 +151,39 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
 
   let vectorStoreIds: string[] | undefined;
   let fileNamesById: Record<string, string> = {};
-  if (context.resource?.id && !providerSupports(providerName, 'fileSearch')) {
-    let hasAttachments: boolean;
-    try {
-      hasAttachments = await resourceHasSupportedAttachments(
-        context.resource.id,
-        options.sessionUser,
-        options.signal
-      );
-    } catch (error) {
-      if (options.signal?.aborted) {
-        throw cancellationError();
+  const resourceId = context.resource?.id;
+  const supportsFileSearch = providerSupports(providerName, 'fileSearch');
+  if (resourceId) {
+    if (supportsFileSearch) {
+      try {
+        const index = await ensureResourceIndexed(runtime.client, resourceId, options.sessionUser, options.signal);
+        if (index) {
+          vectorStoreIds = [ index.vectorStoreId ];
+          fileNamesById = index.fileNamesById;
+        }
+      } catch (error) {
+        if (options.signal?.aborted) {
+          throw cancellationError();
+        }
+        throw resourceContextError(error, 'Could not prepare resource attachments for AI search');
       }
-      throw resourceContextError(error, 'Could not inspect resource attachments');
-    }
-    if (hasAttachments) {
-      throw new HttpError(
-        400,
-        `AI provider "${providerName}" does not support resource attachment search; select a provider with file-search support`,
-        'resource_attachments_unsupported'
-      );
-    }
-  }
-  if (context.resource?.id && providerSupports(providerName, 'fileSearch')) {
-    try {
-      const index = await ensureResourceIndexed(runtime.client, context.resource.id, options.sessionUser, options.signal);
-      if (index) {
-        vectorStoreIds = [ index.vectorStoreId ];
-        fileNamesById = index.fileNamesById;
+    } else {
+      let hasAttachments: boolean;
+      try {
+        hasAttachments = await resourceHasSupportedAttachments(resourceId, options.sessionUser, options.signal);
+      } catch (error) {
+        if (options.signal?.aborted) {
+          throw cancellationError();
+        }
+        throw resourceContextError(error, 'Could not inspect resource attachments');
       }
-    } catch (error) {
-      if (options.signal?.aborted) {
-        throw cancellationError();
+      if (hasAttachments) {
+        throw new HttpError(
+          400,
+          `AI provider "${providerName}" does not support resource attachment search; select a provider with file-search support`,
+          'resource_attachments_unsupported'
+        );
       }
-      throw resourceContextError(error, 'Could not prepare resource attachments for AI search');
     }
   }
 
@@ -202,10 +201,10 @@ export async function chat(payload: ChatRequestPayload, options: ChatOptions): P
     if (options.signal?.aborted) {
       throw cancellationError();
     }
-    if (context.resource?.id && providerSupports(providerName, 'fileSearch') && vectorStoreIds?.[0]) {
+    if (resourceId && supportsFileSearch && vectorStoreIds?.[0]) {
       void markResourceIndexDirtyIfUnavailable(
         runtime.client,
-        context.resource.id,
+        resourceId,
         vectorStoreIds[0]
       );
     }

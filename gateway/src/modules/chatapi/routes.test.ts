@@ -25,7 +25,7 @@ import { registerChatApiRoutes } from './routes';
 import { HttpError } from './utils/http-error';
 
 const routeContext = (
-  body: object,
+  body: object | undefined,
   locals: { user?: string; roles?: string[] } = { 'user': 'amara', 'roles': [ 'manager' ] }
 ) => {
   const req: any = new EventEmitter();
@@ -86,6 +86,20 @@ describe('chatapi HTTP routes', () => {
       'error': 'Bad Request',
       'message': 'AI provider "gemini" does not support resource attachment search',
       'code': 'resource_attachments_unsupported'
+    });
+  });
+
+  it('returns a bad request for a bodyless chat request', async () => {
+    const handler = routeHandler(registeredApp(), 'post', '/');
+    const { req, res } = routeContext(undefined);
+
+    await handler(req, res);
+
+    expect(mocks.chat).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      'error': 'Bad Request',
+      'message': 'The "data" field must be a non-empty object'
     });
   });
 

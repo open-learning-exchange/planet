@@ -56,7 +56,7 @@ const requestCancellation = (req: Request, res: Response) => {
 
 export function registerChatApiRoutes(app: Express) {
   app.post('/', preAuthRateLimit(), requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
-    const { data, save } = req.body;
+    const { data, save } = req.body ?? {};
     if (!isNonEmptyObject(data)) {
       return res.status(400).json({ 'error': 'Bad Request', 'message': 'The "data" field must be a non-empty object' });
     }

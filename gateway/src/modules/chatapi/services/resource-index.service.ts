@@ -407,15 +407,15 @@ export async function deleteResourceIndex(
     if (!state) {
       return { 'removed': false };
     }
-    let doc: ResourceDoc | undefined;
-    try {
-      doc = await requestResourceDatabase({ 'doc': resourceId, signal }) as ResourceDoc;
-    } catch (error) {
-      if (!isNotFound(error)) {
-        throw error;
-      }
-    }
     if (requester && !canManageAnyResourceIndex(requester.roles)) {
+      let doc: ResourceDoc | undefined;
+      try {
+        doc = await requestResourceDatabase({ 'doc': resourceId, signal }) as ResourceDoc;
+      } catch (error) {
+        if (!isNotFound(error)) {
+          throw error;
+        }
+      }
       if (!doc) {
         throw new HttpError(403, 'Only managers can remove an index after its resource has been deleted');
       }
@@ -463,7 +463,9 @@ export async function reconcileOrphanedResourceIndexes(
         await removeIndexState(await clientPromise, state);
       });
     } catch (error) {
-      console.error(`chatapi: deferred index cleanup failed for resource ${candidate.resourceId}: ${error}`);
+      console.error(
+        `chatapi: deferred index cleanup failed for resource ${candidate.resourceId}${remoteCleanupErrorContext(error)}`
+      );
     }
   }
 }

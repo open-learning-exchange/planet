@@ -11,50 +11,50 @@ import { StateService } from '../shared/state.service';
 import { ManagerAIServicesComponent } from './manager-aiservices.component';
 
 const discovery: AIServiceDiscovery = {
-  'providers': {
-    'openai': {
-      'label': 'OpenAI',
-      'enabled': false,
-      'capabilities': [ 'chat', 'fileSearch', 'structuredOutput' ],
-      'fileSearchContentTypes': [ 'application/pdf' ]
+  providers: {
+    openai: {
+      label: 'OpenAI',
+      enabled: false,
+      capabilities: [ 'chat', 'fileSearch', 'structuredOutput' ],
+      fileSearchContentTypes: [ 'application/pdf' ]
     },
-    'anthropic': {
-      'label': 'Anthropic (Claude)',
-      'enabled': false,
-      'capabilities': [ 'chat' ],
-      'fileSearchContentTypes': []
+    anthropic: {
+      label: 'Anthropic (Claude)',
+      enabled: false,
+      capabilities: [ 'chat' ],
+      fileSearchContentTypes: []
     }
   },
-  'promptDefaults': {
-    'general_chat': 'General default',
-    'course_help': 'Course default',
-    'survey_analysis': 'Survey default'
+  promptDefaults: {
+    general_chat: 'General default',
+    course_help: 'Course default',
+    survey_analysis: 'Survey default'
   }
 };
 
 describe('ManagerAIServicesComponent', () => {
   let component: ManagerAIServicesComponent;
   const chatService = {
-    'getAIServiceDiscovery': vi.fn().mockReturnValue(of(discovery)),
-    'refreshAIProviders': vi.fn()
+    getAIServiceDiscovery: vi.fn().mockReturnValue(of(discovery)),
+    refreshAIProviders: vi.fn()
   };
-  const configurationService = { 'updateConfiguration': vi.fn().mockReturnValue(of({})) };
+  const configurationService = { patchLocalConfiguration: vi.fn().mockReturnValue(of({})) };
   const stateService = {
-    'configuration': { 'streaming': false, 'models': { 'legacy-provider': 'legacy-model' } },
-    'keys': { 'legacy-provider': 'legacy-key' },
-    'requestData': vi.fn()
+    configuration: { _id: 'configuration-id', streaming: false, models: { 'legacy-provider': 'legacy-model' } },
+    keys: { 'legacy-provider': 'legacy-key' },
+    requestData: vi.fn()
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
     TestBed.configureTestingModule({
-      'imports': [ ManagerAIServicesComponent ],
-      'providers': [
-        provideRouter([ { 'path': 'manager', 'component': ManagerAIServicesComponent } ]),
-        { 'provide': ChatService, 'useValue': chatService },
-        { 'provide': ConfigurationService, 'useValue': configurationService },
-        { 'provide': StateService, 'useValue': stateService },
-        { 'provide': PlanetMessageService, 'useValue': { 'showAlert': vi.fn(), 'showMessage': vi.fn() } }
+      imports: [ ManagerAIServicesComponent ],
+      providers: [
+        provideRouter([ { path: 'manager', component: ManagerAIServicesComponent } ]),
+        { provide: ChatService, useValue: chatService },
+        { provide: ConfigurationService, useValue: configurationService },
+        { provide: StateService, useValue: stateService },
+        { provide: PlanetMessageService, useValue: { showAlert: vi.fn(), showMessage: vi.fn() } }
       ]
     });
     const fixture: ComponentFixture<ManagerAIServicesComponent> = TestBed.createComponent(ManagerAIServicesComponent);
@@ -95,9 +95,9 @@ describe('ManagerAIServicesComponent', () => {
     component.configForm.get('models_anthropic')?.setValue('claude-sonnet-4-6');
     component.saveConfig();
 
-    expect(configurationService.updateConfiguration).toHaveBeenCalledWith(expect.objectContaining({
-      'keys': { 'legacy-provider': 'legacy-key', 'anthropic': 'claude-key' },
-      'models': { 'legacy-provider': 'legacy-model', 'anthropic': 'claude-sonnet-4-6' }
+    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith(expect.objectContaining({
+      keys: { 'legacy-provider': 'legacy-key', anthropic: 'claude-key' },
+      models: { 'legacy-provider': 'legacy-model', anthropic: 'claude-sonnet-4-6' }
     }));
   });
 });

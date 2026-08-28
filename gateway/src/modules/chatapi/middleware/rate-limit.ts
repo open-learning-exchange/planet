@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { IncomingHttpHeaders } from 'http';
+import { isIP } from 'net';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 const WINDOW_SECONDS = 60;
@@ -6,6 +8,12 @@ const DEFAULT_MAX_PER_MINUTE = 30;
 const DEFAULT_PRE_AUTH_MAX_PER_MINUTE = 120;
 
 const limiters = new Map<number, RateLimiterMemory>();
+
+interface ClientAddressRequest {
+  headers?: IncomingHttpHeaders;
+  ip?: string;
+  socket?: { remoteAddress?: string | null };
+}
 
 const nonNegativeIntegerOr = (value: number, fallback: number): number =>
   Number.isInteger(value) && value >= 0 ? value : fallback;
@@ -39,6 +47,17 @@ const requestMax = (maxPerMinute?: number): number => {
     : operatorMax === undefined ? routeMax : Math.min(operatorMax, routeMax);
 };
 
+/** Use the proxy-provided address only in topologies where direct gateway access is disabled. */
+export const clientIp = (req: ClientAddressRequest): string => {
+  if (process.env.TRUST_PROXY_CLIENT_IP === 'true') {
+    const forwarded = req.headers?.['x-real-ip'];
+    if (typeof forwarded === 'string' && isIP(forwarded.trim())) {
+      return forwarded.trim();
+    }
+  }
+  return req.ip || req.socket?.remoteAddress || 'unknown';
+};
+
 /** Count one WebSocket turn using the same keys and limits as HTTP chat. */
 export const consumeRequest = async (key: string, maxPerMinute?: number): Promise<boolean> => {
   const max = requestMax(maxPerMinute);
@@ -53,6 +72,20 @@ export const consumeRequest = async (key: string, maxPerMinute?: number): Promis
   }
 };
 
+/** Count one request before session validation using the shared pre-auth quota. */
+export const consumePreAuthRequest = async (key: string): Promise<boolean> => {
+  const max = configuredPreAuthMax();
+  if (max === 0) {
+    return false;
+  }
+  try {
+    await limiterFor(max).consume(`preauth:${key}`);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const rejectRequest = (res: Response, message = 'Rate limit exceeded — try again in a minute') => {
   res.status(429).json({ 'error': 'Too Many Requests', message });
 };
@@ -61,7 +94,7 @@ const rejectRequest = (res: Response, message = 'Rate limit exceeded — try aga
 export function rateLimit(maxPerMinute?: number, label?: string) {
   return async (req: Request, res: Response, next: NextFunction) => {
     const route = label || `${req.method} ${req.route?.path || req.path}`;
-    const key = `${res.locals.user || req.ip}:${route}`;
+    const key = `${res.locals.user || clientIp(req)}:${route}`;
     const max = requestMax(maxPerMinute);
     if (max === 0) {
       rejectRequest(res);
@@ -80,15 +113,9 @@ export function rateLimit(maxPerMinute?: number, label?: string) {
 export function preAuthRateLimit() {
   return async function preAuthRateLimiter(req: Request, res: Response, next: NextFunction) {
     const route = `${req.method} ${req.route?.path || req.path}`;
-    const max = configuredPreAuthMax();
-    if (max === 0) {
-      rejectRequest(res);
-      return;
-    }
-    try {
-      await limiterFor(max).consume(`preauth:${req.ip}:${route}`);
+    if (await consumePreAuthRequest(`${clientIp(req)}:${route}`)) {
       next();
-    } catch {
+    } else {
       rejectRequest(res);
     }
   };

@@ -382,6 +382,7 @@ describe('resource index service', () => {
       expect.objectContaining({ 'store': expect.objectContaining({ 'dirty': true }) }),
       '_local/saved-index'
     );
+    expect(mocks.resourceDB.get).not.toHaveBeenCalledWith('res1');
   });
 
   it('reports nothing removed when there is no local index', async () => {
@@ -618,6 +619,31 @@ describe('resource index service', () => {
     expect(getClient).toHaveBeenCalledTimes(1);
     expect(client.vectorStores.del).toHaveBeenCalledWith('vs_old');
     expect(mocks.resourceDB.destroy).toHaveBeenCalled();
+  });
+
+  it('redacts deferred cleanup errors from reconciliation logs', async () => {
+    const state = {
+      ...localState(),
+      '_id': '_local/chatapi-resource-index-orphan'
+    };
+    mocks.listResourceLocalDocs.mockResolvedValue({ 'rows': [ { 'doc': state } ] });
+    mocks.resourceDB.get.mockImplementation((id: string) => id.startsWith('_local/')
+      ? Promise.resolve(state)
+      : Promise.reject(notFound()));
+    mocks.resourceDB.insert.mockRejectedValue(Object.assign(new Error('secret provider response'), {
+      'status': 503,
+      'request_id': 'req-safe-context'
+    }));
+    const log = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    await reconcileOrphanedResourceIndexes(async () => fakeClient() as any);
+
+    const messages = log.mock.calls.map(([ message ]) => String(message));
+    expect(messages.join('\n')).not.toContain('secret provider response');
+    expect(messages).toContain(
+      'chatapi: deferred index cleanup failed for resource res1 (status 503), request req-safe-context'
+    );
+    log.mockRestore();
   });
 
   it('skips the production reconciliation scan when OpenAI is not configured', async () => {

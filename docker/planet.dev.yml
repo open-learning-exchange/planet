@@ -1,0 +1,6 @@
+services:
+  chatapi:
+    ports:
+      - "5000:5000"
+    environment:
+      TRUST_PROXY_CLIENT_IP: "false"

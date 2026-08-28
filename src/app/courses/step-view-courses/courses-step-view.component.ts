@@ -77,7 +77,7 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   isLoading = true;
   deviceType: DeviceType;
   localizedStepInfo = '';
-  chatContext: ChatContext = { 'type': 'coursestep', 'data': '' };
+  chatContext: ChatContext = { type: 'coursestep', data: '' };
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
 
   private updateChatContext() {
@@ -87,10 +87,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.localizedStepInfo = $localize`The following information is a course step from the "${title}" course with a description "${description}".
   Be sure to assist the learner in the best way you can. `;
     this.chatContext = {
-      'type': 'coursestep',
-      'data': this.localizedStepInfo,
+      type: 'coursestep',
+      data: this.localizedStepInfo,
       ...(!this.parent && this.resource?._id ? {
-        'resource': { 'id': this.resource._id, 'attachments': this.resource._attachments }
+        resource: { id: this.resource._id, attachments: this.resource._attachments }
       } : {})
     };
   }

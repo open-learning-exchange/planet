@@ -6,6 +6,8 @@ import { HttpError, toHttpError } from '../utils/http-error';
 import { resolveProviderName } from '../utils/provider-name';
 import { getAIConfig } from './config.service';
 
+const MAX_ANALYSIS_PAYLOAD_BYTES = 512 * 1024;
+
 export interface AnalyzePayload {
   exam: AnalyzeExam;
   questions: AnalyzeQuestion[];
@@ -44,6 +46,9 @@ export async function analyze(payload: AnalyzePayload, signal?: AbortSignal): Pr
   }
   if (!Array.isArray(payload.questions) || payload.questions.length === 0) {
     throw new HttpError(400, '"questions" must be a non-empty array');
+  }
+  if (Buffer.byteLength(JSON.stringify(payload), 'utf8') > MAX_ANALYSIS_PAYLOAD_BYTES) {
+    throw new HttpError(413, 'Survey analysis input is too large');
   }
 
   const config = await getAIConfig();

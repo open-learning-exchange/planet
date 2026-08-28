@@ -288,12 +288,12 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
     return {
       user: this.userService.get().name,
       content,
-      'aiProvider': provider,
-      'mode': this.context?.type === 'coursestep' ? 'course_help' : 'general_chat',
-      'context': this.context || '',
+      aiProvider: provider,
+      mode: this.context?.type === 'coursestep' ? 'course_help' : 'general_chat',
+      context: this.context || '',
       ...(this.selectedConversationId ? {
-        '_id': this.selectedConversationId._id,
-        '_rev': this.selectedConversationId._rev
+        _id: this.selectedConversationId._id,
+        _rev: this.selectedConversationId._rev
       } : {})
     };
   }
@@ -312,8 +312,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           id: Date.now().toString(), query: request.content, response: completion?.chat, citations: completion?.citations
         });
         this.selectedConversationId = {
-          '_id': completion.couchDBResponse?.id,
-          '_rev': completion.couchDBResponse?.rev
+          _id: completion.couchDBResponse?.id,
+          _rev: completion.couchDBResponse?.rev
         };
         this.postSubmit();
       },

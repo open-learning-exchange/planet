@@ -850,7 +850,7 @@ export class SubmissionsService {
       const analysis = await this.chatService.analyzeSurvey({
         exam: { name: exam.name, description: exam.description, type: exam.type },
         questions: payload,
-        ...(analysisProvider ? { 'aiProvider': { 'name': analysisProvider } } : {})
+        ...(analysisProvider ? { aiProvider: { name: analysisProvider } } : {})
       }).toPromise();
 
       this.planetMessageService.showMessage($localize`AI analysis completed successfully.`);

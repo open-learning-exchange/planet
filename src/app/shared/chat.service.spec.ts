@@ -6,30 +6,30 @@ import { CouchService } from './couchdb.service';
 import { ChatService } from './chat.service';
 
 const services = (enabled: Partial<Record<keyof AIServices, boolean>>): AIServices => ({
-  'openai': { 'enabled': !!enabled.openai, 'capabilities': [], 'fileSearchContentTypes': [] },
-  'perplexity': { 'enabled': !!enabled.perplexity, 'capabilities': [], 'fileSearchContentTypes': [] },
-  'deepseek': { 'enabled': !!enabled.deepseek, 'capabilities': [], 'fileSearchContentTypes': [] },
-  'gemini': { 'enabled': !!enabled.gemini, 'capabilities': [], 'fileSearchContentTypes': [] }
+  openai: { enabled: !!enabled.openai, capabilities: [], fileSearchContentTypes: [] },
+  perplexity: { enabled: !!enabled.perplexity, capabilities: [], fileSearchContentTypes: [] },
+  deepseek: { enabled: !!enabled.deepseek, capabilities: [], fileSearchContentTypes: [] },
+  gemini: { enabled: !!enabled.gemini, capabilities: [], fileSearchContentTypes: [] }
 });
 
 const promptDefaults: PromptProfiles = {
-  'general_chat': 'GENERAL DEFAULT',
-  'course_help': 'COURSE DEFAULT',
-  'survey_analysis': 'SURVEY DEFAULT'
+  general_chat: 'GENERAL DEFAULT',
+  course_help: 'COURSE DEFAULT',
+  survey_analysis: 'SURVEY DEFAULT'
 };
 
 const discovery = (enabled: Partial<Record<keyof AIServices, boolean>>): AIServiceDiscovery => ({
-  'providers': services(enabled),
+  providers: services(enabled),
   promptDefaults
 });
 
 const installWebSocketMock = () => {
   let messageHandler: ((event: { data: string }) => void) | undefined;
   const socket: any = {
-    'readyState': WebSocket.OPEN,
-    'send': vi.fn(),
-    'close': vi.fn(),
-    'addEventListener': vi.fn((event: string, handler: (event: { data: string }) => void) => {
+    readyState: WebSocket.OPEN,
+    send: vi.fn(),
+    close: vi.fn(),
+    addEventListener: vi.fn((event: string, handler: (event: { data: string }) => void) => {
       if (event === 'message') {
         messageHandler = handler;
       }
@@ -44,7 +44,7 @@ const installWebSocketMock = () => {
   return {
     socket,
     webSocketMock,
-    'emitMessage': (data: string) => {
+    emitMessage: (data: string) => {
       if (!messageHandler) {
         throw new Error('WebSocket message handler is not registered');
       }
@@ -58,15 +58,15 @@ describe('ChatService', () => {
     vi.unstubAllGlobals();
   });
 
-  const createService = (providerResponse = of(discovery({ 'perplexity': true })), locale = 'en') => {
+  const createService = (providerResponse = of(discovery({ perplexity: true })), locale = 'en') => {
     const httpClient = {
-      'get': vi.fn().mockReturnValue(providerResponse),
-      'post': vi.fn(),
-      'delete': vi.fn()
+      get: vi.fn().mockReturnValue(providerResponse),
+      post: vi.fn(),
+      delete: vi.fn()
     };
     return {
       httpClient,
-      'service': new ChatService(httpClient as any, {} as CouchService, locale)
+      service: new ChatService(httpClient as any, {} as CouchService, locale)
     };
   };
 
@@ -90,17 +90,17 @@ describe('ChatService', () => {
 
       expect(states).toEqual([ undefined ]);
 
-      pending.next(discovery({ 'perplexity': true }));
+      pending.next(discovery({ perplexity: true }));
 
-      expect(states.at(-1)).toEqual(discovery({ 'perplexity': true }));
+      expect(states.at(-1)).toEqual(discovery({ perplexity: true }));
     });
 
     it('does not emit a stale discovery before a queued forced refresh', () => {
       const pending = new Subject<AIServiceDiscovery>();
       const httpClient = {
-        'get': vi.fn()
+        get: vi.fn()
           .mockReturnValueOnce(pending)
-          .mockReturnValueOnce(of(discovery({ 'openai': true })))
+          .mockReturnValueOnce(of(discovery({ openai: true })))
       };
       const service = new ChatService(httpClient as any, {} as CouchService, 'en');
       const states: Array<AIServiceDiscovery | null | undefined> = [];
@@ -111,14 +111,14 @@ describe('ChatService', () => {
 
       expect(httpClient.get).toHaveBeenCalledTimes(1);
 
-      pending.next(discovery({ 'perplexity': true }));
+      pending.next(discovery({ perplexity: true }));
 
       expect(httpClient.get).toHaveBeenCalledTimes(2);
-      expect(states).toEqual([ undefined, discovery({ 'openai': true }) ]);
+      expect(states).toEqual([ undefined, discovery({ openai: true }) ]);
     });
 
     it('reports a failed discovery instead of holding consumers at pending', () => {
-      const { service } = createService(throwError({ 'status': 503 }));
+      const { service } = createService(throwError({ status: 503 }));
       const states: Array<AIServiceDiscovery | null | undefined> = [];
 
       service.getAIServiceDiscovery().subscribe((value) => states.push(value));
@@ -130,9 +130,9 @@ describe('ChatService', () => {
       vi.useFakeTimers();
       try {
         const httpClient = {
-          'get': vi.fn()
-            .mockReturnValueOnce(throwError({ 'status': 503 }))
-            .mockReturnValueOnce(of(discovery({ 'perplexity': true })))
+          get: vi.fn()
+            .mockReturnValueOnce(throwError({ status: 503 }))
+            .mockReturnValueOnce(of(discovery({ perplexity: true })))
         };
         const service = new ChatService(httpClient as any, {} as CouchService, 'en');
 
@@ -152,7 +152,7 @@ describe('ChatService', () => {
       const { service, httpClient } = createService();
       const providerLists: string[][] = [];
       service.listAIProviders().subscribe((providers) => providerLists.push(providers.map((provider) => provider.name)));
-      httpClient.get.mockReturnValueOnce(throwError({ 'status': 503 }));
+      httpClient.get.mockReturnValueOnce(throwError({ status: 503 }));
 
       service.refreshAIProviders();
 
@@ -175,9 +175,9 @@ describe('ChatService', () => {
       const { service } = createService();
       let openHandler: () => void;
       const socket = {
-        'readyState': WebSocket.CONNECTING,
-        'send': vi.fn(),
-        'addEventListener': vi.fn((event: string, handler: () => void) => {
+        readyState: WebSocket.CONNECTING,
+        send: vi.fn(),
+        addEventListener: vi.fn((event: string, handler: () => void) => {
           if (event === 'open') {
             openHandler = handler;
           }
@@ -185,12 +185,12 @@ describe('ChatService', () => {
       };
       (service as any).socket = socket;
 
-      service.sendUserInput({ 'content': 'hello' });
+      service.sendUserInput({ content: 'hello' });
       expect(socket.send).not.toHaveBeenCalled();
       socket.readyState = WebSocket.OPEN;
       openHandler();
 
-      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
+      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ content: 'hello', locale: 'en' }));
     });
 
     it('opens the production WebSocket through the nginx /ml/ location', () => {
@@ -198,21 +198,21 @@ describe('ChatService', () => {
       const { socket, webSocketMock } = installWebSocketMock();
       (service as any).baseUrl = 'https://planet.example/ml';
 
-      service.sendUserInput({ 'content': 'hello' });
+      service.sendUserInput({ content: 'hello' });
 
       expect(webSocketMock).toHaveBeenCalledWith('wss://planet.example/ml/');
-      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
+      expect(socket.send).toHaveBeenCalledWith(JSON.stringify({ content: 'hello', locale: 'en' }));
     });
 
     it('replaces a closing WebSocket before sending', () => {
       const { service } = createService();
       const { socket: replacement, webSocketMock } = installWebSocketMock();
-      (service as any).socket = { 'readyState': WebSocket.CLOSING };
+      (service as any).socket = { readyState: WebSocket.CLOSING };
 
-      service.sendUserInput({ 'content': 'hello' });
+      service.sendUserInput({ content: 'hello' });
 
       expect(webSocketMock).toHaveBeenCalledOnce();
-      expect(replacement.send).toHaveBeenCalledWith(JSON.stringify({ 'content': 'hello', 'locale': 'en' }));
+      expect(replacement.send).toHaveBeenCalledWith(JSON.stringify({ content: 'hello', locale: 'en' }));
     });
 
     it('reports an unexpected socket close once and clears the active socket', () => {
@@ -221,7 +221,7 @@ describe('ChatService', () => {
       const errors: string[] = [];
       service.getErrorStream().subscribe((error) => errors.push(error));
 
-      service.sendUserInput({ 'content': 'hello' });
+      service.sendUserInput({ content: 'hello' });
       socket.onclose();
 
       expect(errors).toEqual([ 'WebSocket connection closed' ]);
@@ -234,8 +234,8 @@ describe('ChatService', () => {
       const errors: string[] = [];
       service.getErrorStream().subscribe((error) => errors.push(error));
 
-      service.sendUserInput({ 'content': 'hello' });
-      emitMessage(JSON.stringify({ 'type': 'error', 'message': 'Session expired' }));
+      service.sendUserInput({ content: 'hello' });
+      emitMessage(JSON.stringify({ type: 'error', message: 'Session expired' }));
       socket.onclose();
 
       expect(errors).toEqual([ 'Session expired' ]);
@@ -248,11 +248,11 @@ describe('ChatService', () => {
       const errors: string[] = [];
       service.getErrorStream().subscribe((error) => errors.push(error));
 
-      service.sendUserInput({ 'content': 'hello' });
+      service.sendUserInput({ content: 'hello' });
       emitMessage(JSON.stringify({
-        'type': 'error',
-        'code': 'resource_attachments_unsupported',
-        'message': 'server-owned English details'
+        type: 'error',
+        code: 'resource_attachments_unsupported',
+        message: 'server-owned English details'
       }));
 
       expect(errors).toEqual([
@@ -267,10 +267,10 @@ describe('ChatService', () => {
       const messages: any[] = [];
       service.getChatStream().subscribe((message) => messages.push(message));
 
-      service.sendUserInput({ 'content': 'hello' });
-      emitMessage(JSON.stringify({ 'type': 'final', 'completionText': 'done' }));
+      service.sendUserInput({ content: 'hello' });
+      emitMessage(JSON.stringify({ type: 'final', completionText: 'done' }));
 
-      expect(messages).toEqual([ { 'type': 'final', 'completionText': 'done' } ]);
+      expect(messages).toEqual([ { type: 'final', completionText: 'done' } ]);
       expect(socket.close).toHaveBeenCalled();
       expect((service as any).pendingSocket).toBeUndefined();
     });
@@ -281,8 +281,8 @@ describe('ChatService', () => {
       const { service } = createService();
 
       expect(service.chatErrorMessage({
-        'code': 'resource_context_unavailable',
-        'message': 'Resource context is unavailable'
+        code: 'resource_context_unavailable',
+        message: 'Resource context is unavailable'
       })).toEqual('This resource is unavailable for AI chat. Reload the course step or ask a manager for access.');
     });
   });
@@ -290,36 +290,36 @@ describe('ChatService', () => {
   describe('provider-specific requests', () => {
     it('prefers structured output for survey analysis instead of inheriting the last chat provider', () => {
       const providerResponse = of({
-        'providers': {
-          ...services({ 'openai': true, 'perplexity': true }),
-          'openai': { 'enabled': true, 'capabilities': [ 'chat', 'structuredOutput' ], 'fileSearchContentTypes': [] },
-          'perplexity': { 'enabled': true, 'capabilities': [ 'chat' ], 'fileSearchContentTypes': [] }
+        providers: {
+          ...services({ openai: true, perplexity: true }),
+          openai: { enabled: true, capabilities: [ 'chat', 'structuredOutput' ], fileSearchContentTypes: [] },
+          perplexity: { enabled: true, capabilities: [ 'chat' ], fileSearchContentTypes: [] }
         },
         promptDefaults
       });
       const { service, httpClient } = createService(providerResponse);
-      httpClient.post.mockReturnValue(of({ 'provider': 'openai', 'sections': [] }));
+      httpClient.post.mockReturnValue(of({ provider: 'openai', sections: [] }));
       service.listAIProviders().subscribe();
-      service.setChatAIProvider({ 'name': 'perplexity' });
+      service.setChatAIProvider({ name: 'perplexity' });
 
-      service.analyzeSurvey({ 'exam': { 'name': 'Survey' }, 'questions': [] }).subscribe();
+      service.analyzeSurvey({ exam: { name: 'Survey' }, questions: [] }).subscribe();
 
-      expect(service.getPreferredAnalysisProvider()).toMatchObject({ 'name': 'openai' });
+      expect(service.getPreferredAnalysisProvider()).toMatchObject({ name: 'openai' });
       expect(httpClient.post.mock.calls[0][1]).toMatchObject({
-        'aiProvider': { 'name': 'openai' },
-        'locale': 'en'
+        aiProvider: { name: 'openai' },
+        locale: 'en'
       });
     });
 
     it('exposes gateway file-search metadata for enabled providers', () => {
       const providerResponse = of({
-        'providers': {
-          ...services({ 'openai': true }),
-          'openai': {
-            'label': 'OpenAI',
-            'enabled': true,
-            'capabilities': [ 'chat', 'fileSearch' ],
-            'fileSearchContentTypes': [ 'application/pdf' ]
+        providers: {
+          ...services({ openai: true }),
+          openai: {
+            label: 'OpenAI',
+            enabled: true,
+            capabilities: [ 'chat', 'fileSearch' ],
+            fileSearchContentTypes: [ 'application/pdf' ]
           }
         },
         promptDefaults
@@ -332,10 +332,10 @@ describe('ChatService', () => {
 
       expect(service.hasFileSearchProvider()).toEqual(true);
       expect(providers).toEqual([ {
-        'name': 'openai',
-        'label': 'OpenAI',
-        'capabilities': [ 'chat', 'fileSearch' ],
-        'fileSearchContentTypes': [ 'application/pdf' ]
+        name: 'openai',
+        label: 'OpenAI',
+        capabilities: [ 'chat', 'fileSearch' ],
+        fileSearchContentTypes: [ 'application/pdf' ]
       } ]);
       expect(defaults).toEqual(promptDefaults);
     });

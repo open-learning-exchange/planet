@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  clientIp,
   consumeRequest,
   preAuthRateLimit,
   rateLimit,
@@ -15,10 +16,12 @@ const mockResponse = (user?: string) => {
 };
 
 const mockRequest = (ip = '10.0.0.1') => ({
+  'headers': {},
   ip,
   'method': 'POST',
   'path': '/',
-  'route': { 'path': '/' }
+  'route': { 'path': '/' },
+  'socket': { 'remoteAddress': ip }
 } as any);
 
 describe('rate-limit middleware', () => {
@@ -26,11 +29,13 @@ describe('rate-limit middleware', () => {
     resetRateLimiter();
     delete process.env.RATE_LIMIT_PER_MINUTE;
     delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
+    delete process.env.TRUST_PROXY_CLIENT_IP;
   });
 
   afterEach(() => {
     delete process.env.RATE_LIMIT_PER_MINUTE;
     delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
+    delete process.env.TRUST_PROXY_CLIENT_IP;
   });
 
   it('allows requests through the limit and rejects requests beyond it', async () => {
@@ -93,6 +98,37 @@ describe('rate-limit middleware', () => {
     const rejected = mockResponse();
     await limiter(mockRequest('10.0.0.1'), rejected, next);
     await limiter(mockRequest('10.0.0.2'), mockResponse(), next);
+
+    expect(next).toHaveBeenCalledTimes(2);
+    expect(rejected.status).toHaveBeenCalledWith(429);
+  });
+
+  it('uses nginx client addresses only when proxy trust is explicitly enabled', () => {
+    const req = mockRequest('172.18.0.4');
+    req.headers['x-real-ip'] = '192.0.2.10';
+
+    expect(clientIp(req)).toEqual('172.18.0.4');
+    process.env.TRUST_PROXY_CLIENT_IP = 'true';
+    expect(clientIp(req)).toEqual('192.0.2.10');
+
+    req.headers['x-real-ip'] = '192.0.2.10, 198.51.100.8';
+    expect(clientIp(req)).toEqual('172.18.0.4');
+  });
+
+  it('keeps proxied clients in independent pre-auth buckets', async () => {
+    process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE = '1';
+    process.env.TRUST_PROXY_CLIENT_IP = 'true';
+    const limiter = preAuthRateLimit();
+    const next = vi.fn();
+    const first = mockRequest('172.18.0.4');
+    first.headers['x-real-ip'] = '192.0.2.10';
+    const second = mockRequest('172.18.0.4');
+    second.headers['x-real-ip'] = '192.0.2.11';
+
+    await limiter(first, mockResponse(), next);
+    await limiter(second, mockResponse(), next);
+    const rejected = mockResponse();
+    await limiter(first, rejected, next);
 
     expect(next).toHaveBeenCalledTimes(2);
     expect(rejected.status).toHaveBeenCalledWith(429);

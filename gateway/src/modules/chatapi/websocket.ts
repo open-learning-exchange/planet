@@ -12,7 +12,7 @@ import {
   SessionValidationError,
   validateSession
 } from './middleware/auth';
-import { consumeRequest } from './middleware/rate-limit';
+import { clientIp, consumePreAuthRequest, consumeRequest } from './middleware/rate-limit';
 import { ChatRequestPayload, isNonEmptyObject } from './models/chat.model';
 import { chat } from './services/chat.service';
 import { httpErrorName, toHttpError } from './utils/http-error';
@@ -82,6 +82,16 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
       activeRequest?.abort(new Error('WebSocket closed'));
     });
 
+    if (!await consumePreAuthRequest(`${clientIp(req)}:WS`)) {
+      sendSocket(ws, {
+        'type': 'error',
+        'error': 'Too Many Requests',
+        'message': 'Rate limit exceeded — try again in a minute'
+      });
+      ws.close(1013, 'Rate limit exceeded');
+      return;
+    }
+
     if (isAuthRequired()) {
       if (!authSessionCookie(req.headers.cookie)) {
         sendSocket(ws, { 'type': 'error', 'error': 'Unauthorized', 'message': 'A valid Planet session is required' });
@@ -134,7 +144,7 @@ export function registerChatApiWebSocket(wss: WebSocket.Server) {
         clearTimeout(turnStartDeadline);
         turnStartDeadline = undefined;
       }
-      const identity = session?.name || req.socket.remoteAddress || 'unknown';
+      const identity = session?.name || clientIp(req);
       try {
         if (!await consumeRequest(`${identity}:chat`)) {
           sendSocket(ws, {

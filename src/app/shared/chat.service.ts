@@ -163,9 +163,9 @@ const PROVIDER_DISCOVERY_RETRY_MS = 5000;
             .filter(([ _, service ]) => service?.enabled === true)
             .map(([ name, service ]) => ({
               name,
-              'label': service.label || name,
-              'capabilities': service.capabilities || [],
-              'fileSearchContentTypes': service.fileSearchContentTypes || []
+              label: service.label || name,
+              capabilities: service.capabilities || [],
+              fileSearchContentTypes: service.fileSearchContentTypes || []
             }));
           this.aiServiceDiscoverySubject.next(discovery);
           this.aiProvidersSubject.next(providers);
@@ -188,7 +188,7 @@ const PROVIDER_DISCOVERY_RETRY_MS = 5000;
 
   getPrompt(data: object, save: boolean): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}/`, {
-      'data': this.withLocale(data),
+      data: this.withLocale(data),
       save,
     }, { withCredentials: true });
   }
@@ -251,7 +251,7 @@ const PROVIDER_DISCOVERY_RETRY_MS = 5000;
   }
 
   private withLocale<T extends object>(data: T): T & { locale: string } {
-    return { ...data, 'locale': this.localeId };
+    return { ...data, locale: this.localeId };
   }
 
   // Function to close ws connection

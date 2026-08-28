@@ -41,6 +41,18 @@ describe('analyze service', () => {
     await expect(analyze({ 'exam': { 'name': 'x' }, 'questions': [] } as any)).rejects.toMatchObject({ 'statusCode': 400 });
   });
 
+  it('rejects oversized survey data before building a provider request', async () => {
+    const oversized = payload();
+    oversized.questions[0].responses = [ { 'response': 'x'.repeat(512 * 1024) } ];
+
+    await expect(analyze(oversized)).rejects.toMatchObject({
+      'statusCode': 413,
+      'message': 'Survey analysis input is too large'
+    });
+    expect(mocks.getAIConfig).not.toHaveBeenCalled();
+    expect(mocks.runProviderChat).not.toHaveBeenCalled();
+  });
+
   it('rejects an explicit unknown provider instead of silently selecting openai', async () => {
     await expect(analyze({
       ...payload(),

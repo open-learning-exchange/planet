@@ -34,6 +34,8 @@ describe('chatapi WebSocket', () => {
     delete process.env.CHATAPI_AUTH;
     delete process.env.CORS_ORIGINS;
     delete process.env.RATE_LIMIT_PER_MINUTE;
+    delete process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE;
+    delete process.env.TRUST_PROXY_CLIENT_IP;
     vi.unstubAllGlobals();
   });
 
@@ -95,6 +97,19 @@ describe('chatapi WebSocket', () => {
     expect(mocks.chat).toHaveBeenCalledTimes(2);
     const lastFrame = JSON.parse(lastSocket.send.mock.calls.at(-1)[0]);
     expect(lastFrame).toMatchObject({ 'type': 'error', 'error': 'Too Many Requests' });
+  });
+
+  it('rate-limits WebSocket handshakes before session validation', async () => {
+    process.env.PRE_AUTH_RATE_LIMIT_PER_MINUTE = '1';
+
+    const first = await connect({ 'host': 'planet.local:5000' });
+    const second = await connect({ 'host': 'planet.local:5000' });
+
+    expect(first.close).not.toHaveBeenCalledWith(1013, 'Rate limit exceeded');
+    expect(second.close).toHaveBeenCalledWith(1013, 'Rate limit exceeded');
+    expect(JSON.parse(second.send.mock.calls.at(-1)[0])).toMatchObject({
+      'type': 'error', 'error': 'Too Many Requests'
+    });
   });
 
   it('contains session-validation outages during the WebSocket handshake', async () => {
@@ -176,6 +191,7 @@ describe('chatapi WebSocket', () => {
     });
     const queued = messageHandler(ws)(JSON.stringify({ 'content': 'hi' }));
     expect(mocks.chat).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(deferred.resolve).toBeDefined());
     if (!deferred.resolve) {
       throw new Error('session resolver was not initialized');
     }
