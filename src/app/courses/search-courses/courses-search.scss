@@ -9,6 +9,7 @@ planet-courses-search {
   grid-auto-flow: column;
   align-items: start;
   grid-column-gap: 0.75rem;
+  padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 
   & > planet-courses-search-list {
