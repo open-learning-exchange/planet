@@ -17,10 +17,18 @@
 
   .search-bar {
     height: r.$toolbar-height;
+
+    @media (max-width: v.$screen-sm) {
+      height: r.$toolbar-height-mobile;
+    }
   }
 
   .view-full-height.view-with-search {
     height: calc(#{v.$view-container-height} - #{r.$toolbar-height});
+
+    @media (max-width: v.$screen-sm) {
+      height: calc(#{v.$view-container-height} - #{r.$toolbar-height-mobile});
+    }
   }
 
   .mat-mdc-button, .mat-mdc-outlined-button {
