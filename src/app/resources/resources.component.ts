@@ -8,8 +8,8 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { catchError, map, skip, startWith, switchMap, takeUntil, tap, timeout } from 'rxjs/operators';
-import { combineLatest, defer, Observable, of, Subject } from 'rxjs';
+import { catchError, map, skip, startWith, switchMap, takeUntil, timeout } from 'rxjs/operators';
+import { combineLatest, defer, EMPTY, of, Subject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { ChatService } from '../shared/chat.service';
@@ -353,39 +353,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Do not block resource deletion when AI index cleanup is unavailable.
-  // The gateway retries retained index state after the resource document is deleted.
-  private cleanupResourceIndexes(resources: any[]): Observable<boolean> {
+  // Start authenticated cleanup while the resource still exists for ownership checks. Deletion
+  // never waits for it; retained local state lets the gateway retry failures during reconciliation.
+  private cleanupResourceIndexes(resources: any[]): void {
     if (resources.length === 0) {
-      return of(false);
+      return;
     }
     const resourceIds = resources.map((resource) => resource._id);
     const immediateResourceIds = resourceIds.slice(0, 500);
-    return this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
+    this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
       timeout(this.resourceIndexCleanupTimeoutMs),
-      map((response) => resourceIds.length > immediateResourceIds.length ||
-        response.results.some((result) => result.deferred || result.failed)),
-      catchError(() => of(true))
-    );
-  }
-
-  private showDeferredIndexCleanup(cleanupDeferred: boolean) {
-    if (!cleanupDeferred) {
-      return;
-    }
-    this.planetMessageService.showAlert(
-      $localize`The resource was deleted, but its AI search index could not be cleaned up now. Cleanup will be retried.`
-    );
+      catchError(() => EMPTY),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
   }
 
   deleteResource(resource) {
     const { _id: resourceId, _rev: resourceRev } = resource;
     return {
-      request: this.cleanupResourceIndexes([ resource ]).pipe(
-        switchMap((cleanupDeferred) => this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev).pipe(
-          tap(() => this.showDeferredIndexCleanup(cleanupDeferred))
-        ))
-      ),
+      request: defer(() => {
+        this.cleanupResourceIndexes([ resource ]);
+        return this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev);
+      }),
       onNext: (data) => {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
@@ -398,12 +387,13 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteResources(resources) {
     return {
-      request: this.cleanupResourceIndexes(resources).pipe(
-        switchMap((cleanupDeferred) => this.couchService.post(
+      request: defer(() => {
+        this.cleanupResourceIndexes(resources);
+        return this.couchService.post(
           this.dbName + '/_bulk_docs',
           { docs: createDeleteArray(resources) }
-        ).pipe(tap(() => this.showDeferredIndexCleanup(cleanupDeferred))))
-      ),
+        );
+      }),
       onNext: (data) => {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();

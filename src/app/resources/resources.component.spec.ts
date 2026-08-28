@@ -33,7 +33,7 @@ const createComponent = (
 
 describe('ResourcesComponent', () => {
   describe('AI index cleanup', () => {
-    it('requests immediate index cleanup before deleting a resource', async () => {
+    it('starts best-effort index cleanup before deleting without waiting for its result', async () => {
       const couchService = { delete: vi.fn().mockReturnValue(of({ id: 'res1' })) };
       const chatService = { removeResourceIndexes: vi.fn().mockReturnValue(of({ results: [] })) };
       const component = createComponent(couchService, chatService);
@@ -43,9 +43,11 @@ describe('ResourcesComponent', () => {
 
       expect(chatService.removeResourceIndexes).toHaveBeenCalledWith([ 'res1' ]);
       expect(couchService.delete).toHaveBeenCalledWith('resources/res1?rev=1-a');
+      expect(chatService.removeResourceIndexes.mock.invocationCallOrder[0])
+        .toBeLessThan(couchService.delete.mock.invocationCallOrder[0]);
     });
 
-    it('still deletes and warns when the gateway cannot clean the index immediately', async () => {
+    it('deletes silently when the gateway cannot clean the index immediately', async () => {
       const couchService = { delete: vi.fn().mockReturnValue(of({ id: 'res1' })) };
       const chatService = { removeResourceIndexes: vi.fn().mockReturnValue(throwError({ status: 502 })) };
       const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
@@ -55,29 +57,27 @@ describe('ResourcesComponent', () => {
         .resolves.toEqual({ id: 'res1' });
 
       expect(couchService.delete).toHaveBeenCalled();
-      expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
+      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
     });
 
-    it('still deletes and warns when immediate index cleanup times out', async () => {
+    it('does not hold resource deletion open while immediate cleanup is pending', async () => {
       vi.useFakeTimers();
       try {
         const couchService = { delete: vi.fn().mockReturnValue(of({ id: 'res1' })) };
         const chatService = { removeResourceIndexes: vi.fn().mockReturnValue(NEVER) };
         const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
         const component = createComponent(couchService, chatService, planetMessageService);
-        const request = component.deleteResource({ _id: 'res1', _rev: '1-a' }).request.toPromise();
-
-        await vi.advanceTimersByTimeAsync(11001);
-
-        await expect(request).resolves.toEqual({ id: 'res1' });
+        await expect(component.deleteResource({ _id: 'res1', _rev: '1-a' }).request.toPromise())
+          .resolves.toEqual({ id: 'res1' });
         expect(couchService.delete).toHaveBeenCalled();
-        expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
+        expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+        await vi.advanceTimersByTimeAsync(11001);
       } finally {
         vi.useRealTimers();
       }
     });
 
-    it('warns for structured deferred cleanup without displaying gateway text', async () => {
+    it('does not expose structured deferred-cleanup results to the resource UI', async () => {
       const couchService = { delete: vi.fn().mockReturnValue(of({ id: 'res1' })) };
       const chatService = {
         removeResourceIndexes: vi.fn().mockReturnValue(of({
@@ -89,9 +89,7 @@ describe('ResourcesComponent', () => {
 
       await component.deleteResource({ _id: 'res1', _rev: '1-a' }).request.toPromise();
 
-      expect(planetMessageService.showAlert).toHaveBeenCalledWith(
-        'The resource was deleted, but its AI search index could not be cleaned up now. Cleanup will be retried.'
-      );
+      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
     });
 
     it('uses one cleanup request before bulk deletion regardless of selection size', async () => {
@@ -107,7 +105,7 @@ describe('ResourcesComponent', () => {
       expect(couchService.post).toHaveBeenCalledTimes(1);
     });
 
-    it('warns when resources beyond the immediate cleanup batch are deferred', async () => {
+    it('leaves resources beyond the immediate cleanup batch for silent reconciliation', async () => {
       const couchService = { post: vi.fn().mockReturnValue(of([])) };
       const chatService = { removeResourceIndexes: vi.fn().mockReturnValue(of({ results: [] })) };
       const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
@@ -118,7 +116,7 @@ describe('ResourcesComponent', () => {
 
       expect(chatService.removeResourceIndexes).toHaveBeenCalledTimes(1);
       expect(chatService.removeResourceIndexes.mock.calls[0][0]).toHaveLength(500);
-      expect(planetMessageService.showAlert).toHaveBeenCalledWith(expect.stringContaining('Cleanup will be retried'));
+      expect(planetMessageService.showAlert).not.toHaveBeenCalled();
     });
 
     it('requests cleanup even before provider discovery is available', async () => {

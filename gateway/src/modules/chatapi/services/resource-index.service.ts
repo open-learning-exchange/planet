@@ -23,14 +23,18 @@ export const FILE_SEARCH_CONTENT_TYPES = [
 const SUPPORTED_CONTENT_TYPES = new Set<string>(FILE_SEARCH_CONTENT_TYPES);
 const DEFAULT_MAX_FILE_BYTES = 25 * 1024 * 1024;
 const DEFAULT_MAX_TOTAL_BYTES = 50 * 1024 * 1024;
-const MAX_RESOURCE_INDEX_FILES = 500;
-const FILE_BATCH_POLL_INTERVAL_MS = 5000;
+const DEFAULT_MAX_RESOURCE_INDEX_FILES = 50;
+const FILE_BATCH_INITIAL_POLL_INTERVAL_MS = 250;
+const FILE_BATCH_MAX_POLL_INTERVAL_MS = 5000;
 const REMOTE_MAINTENANCE_TIMEOUT_MS = 5000;
 const RESOURCE_INDEX_ADMIN_ROLES = new Set([ '_admin', 'manager' ]);
 const RECONCILIATION_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const DEFAULT_RECONCILIATION_START_DELAY_MS = 5 * 60 * 1000;
+const RECONCILIATION_STATE_ID = '_local/chatapi-resource-index-reconciliation';
 const resourceOperationTails = new Map<string, Promise<void>>();
 let reconciliationTimer: NodeJS.Timeout | undefined;
 let reconciliationInFlight: Promise<void> | undefined;
+let reconciliationEnabled = false;
 
 interface ResourceDoc {
   addedBy?: string;
@@ -47,6 +51,19 @@ interface ResourceIndexState {
   store: ResourceVectorStore;
 }
 
+interface ReconciliationState {
+  _id: string;
+  _rev?: string;
+  lastSuccessfulRun: number;
+}
+
+class RemoteCleanupError extends Error {
+  constructor(readonly failures: unknown[]) {
+    super('One or more remote index objects could not be deleted');
+    this.name = 'RemoteCleanupError';
+  }
+}
+
 export interface ResourceIndex {
   vectorStoreId: string;
   fileNamesById: Record<string, string>;
@@ -61,6 +78,9 @@ const positiveIntegerOr = (value: string | undefined, fallback: number): number 
 };
 const maxFileBytes = (): number => positiveIntegerOr(process.env.RESOURCE_INDEX_MAX_FILE_BYTES, DEFAULT_MAX_FILE_BYTES);
 const maxTotalBytes = (): number => positiveIntegerOr(process.env.RESOURCE_INDEX_MAX_TOTAL_BYTES, DEFAULT_MAX_TOTAL_BYTES);
+const maxFiles = (): number => positiveIntegerOr(process.env.RESOURCE_INDEX_MAX_FILES, DEFAULT_MAX_RESOURCE_INDEX_FILES);
+const reconciliationStartDelayMs = (): number =>
+  positiveIntegerOr(process.env.RESOURCE_INDEX_RECONCILIATION_START_DELAY_MS, DEFAULT_RECONCILIATION_START_DELAY_MS);
 const indexStateId = (resourceId: string): string =>
   `${RESOURCE_INDEX_STATE_PREFIX}${createHash('sha256').update(resourceId).digest('hex')}`;
 const throwIfAborted = (signal?: AbortSignal) => {
@@ -146,8 +166,9 @@ export async function resourceHasSupportedAttachments(
 const enforceAttachmentLimits = (eligible: Array<[string, Attachment]>) => {
   const fileLimit = maxFileBytes();
   const totalLimit = maxTotalBytes();
-  if (eligible.length > MAX_RESOURCE_INDEX_FILES) {
-    throw new HttpError(413, `A resource can have at most ${MAX_RESOURCE_INDEX_FILES} attachments indexed for AI search`);
+  const fileCountLimit = maxFiles();
+  if (eligible.length > fileCountLimit) {
+    throw new HttpError(413, `A resource can have at most ${fileCountLimit} attachments indexed for AI search`);
   }
   const missingSize = eligible.find(([ , attachment ]) =>
     typeof attachment.length !== 'number' || !Number.isInteger(attachment.length) || attachment.length < 0);
@@ -216,24 +237,43 @@ const ignoreNotFound = async (operation: Promise<unknown>) => {
 };
 
 const deleteRemoteIndex = async (client: OpenAI, store: ResourceVectorStore, signal?: AbortSignal) => {
-  await ignoreNotFound(signal ? client.vectorStores.del(store.id, { signal }) : client.vectorStores.del(store.id));
+  const failures: unknown[] = [];
+  const attempt = async (operation: Promise<unknown>) => {
+    try {
+      await ignoreNotFound(operation);
+    } catch (error) {
+      if (signal?.aborted) {
+        throw signal.reason || error;
+      }
+      failures.push(error);
+    }
+  };
+
+  await attempt(signal ? client.vectorStores.del(store.id, { signal }) : client.vectorStores.del(store.id));
   for (const { fileId } of Object.values(store.files)) {
-    await ignoreNotFound(signal ? client.files.del(fileId, { signal }) : client.files.del(fileId));
+    throwIfAborted(signal);
+    await attempt(signal ? client.files.del(fileId, { signal }) : client.files.del(fileId));
+  }
+  if (failures.length) {
+    throw new RemoteCleanupError(failures);
   }
 };
 
 const remoteCleanupErrorContext = (error: any): string => {
-  const status = error?.status || error?.statusCode;
-  const requestId = error?.request_id || error?.headers?.['x-request-id'];
+  const source = error instanceof RemoteCleanupError ? error.failures[0] as any : error;
+  const status = source?.status || source?.statusCode;
+  const requestId = source?.request_id || source?.headers?.['x-request-id'];
   return `${status ? ` (status ${status})` : ''}${requestId ? `, request ${requestId}` : ''}`;
 };
 
 /** The pinned SDK helper omits request options during create and cannot cancel its polling sleep. */
 const createFileBatchAndWait = async (client: OpenAI, storeId: string, fileIds: string[], signal: AbortSignal) => {
   let batch = await client.vectorStores.fileBatches.create(storeId, { 'file_ids': fileIds }, { signal });
+  let pollIntervalMs = FILE_BATCH_INITIAL_POLL_INTERVAL_MS;
   while (batch.status === 'in_progress') {
-    await wait(FILE_BATCH_POLL_INTERVAL_MS, undefined, { signal });
+    await wait(pollIntervalMs, undefined, { signal });
     batch = await client.vectorStores.fileBatches.retrieve(storeId, batch.id, { signal });
+    pollIntervalMs = Math.min(pollIntervalMs * 2, FILE_BATCH_MAX_POLL_INTERVAL_MS);
   }
   return batch;
 };
@@ -333,11 +373,11 @@ async function ensureResourceIndexedUnlocked(
 /** Obtain an OpenAI client for index maintenance without requiring a chat model. */
 export async function getOpenAIIndexClient(): Promise<OpenAI> {
   const config = await getAIConfig();
-  const { client } = config.providers.openai;
-  if (!client) {
+  const { fileSearchClient } = config.providers.openai;
+  if (!fileSearchClient) {
     throw new HttpError(503, 'AI provider "openai" has no API key configured');
   }
-  return client;
+  return fileSearchClient;
 }
 
 /** Serialize one resource's local and OpenAI-side lifecycle within the gateway process. */
@@ -470,31 +510,81 @@ export async function reconcileOrphanedResourceIndexes(
   }
 }
 
-/** Reconcile orphaned index state at startup and daily without keeping Node alive. */
-export function startResourceIndexReconciliation(): () => void {
-  const run = () => {
-    if (reconciliationInFlight) {
+const loadReconciliationState = async (): Promise<ReconciliationState | undefined> => {
+  try {
+    return await requestResourceDatabase({ 'doc': RECONCILIATION_STATE_ID }) as ReconciliationState;
+  } catch (error) {
+    if (isNotFound(error)) {
+      return undefined;
+    }
+    throw error;
+  }
+};
+
+const saveReconciliationState = async (state: ReconciliationState | undefined, lastSuccessfulRun: number) => {
+  await requestResourceDatabase({
+    'method': 'PUT',
+    'doc': RECONCILIATION_STATE_ID,
+    'body': {
+      '_id': RECONCILIATION_STATE_ID,
+      ...(state?._rev ? { '_rev': state._rev } : {}),
+      lastSuccessfulRun
+    }
+  });
+};
+
+const reconcileIfDue = async (): Promise<number> => {
+  const state = await loadReconciliationState();
+  const now = Date.now();
+  if (state && Number.isFinite(state.lastSuccessfulRun) && state.lastSuccessfulRun > 0) {
+    const elapsed = Math.max(0, now - state.lastSuccessfulRun);
+    if (elapsed < RECONCILIATION_INTERVAL_MS) {
+      return RECONCILIATION_INTERVAL_MS - elapsed;
+    }
+  }
+  const client = await getOpenAIIndexClient();
+  await reconcileOrphanedResourceIndexes(async () => client);
+  await saveReconciliationState(state, Date.now());
+  return RECONCILIATION_INTERVAL_MS;
+};
+
+const scheduleReconciliation = (delayMs: number) => {
+  if (!reconciliationEnabled) {
+    return;
+  }
+  reconciliationTimer = setTimeout(() => {
+    reconciliationTimer = undefined;
+    if (!reconciliationEnabled || reconciliationInFlight) {
       return;
     }
-    reconciliationInFlight = getOpenAIIndexClient()
-      .then((client) => reconcileOrphanedResourceIndexes(async () => client))
+    let nextDelay = RECONCILIATION_INTERVAL_MS;
+    reconciliationInFlight = reconcileIfDue()
+      .then((delay) => {
+        nextDelay = delay;
+      })
       .catch((error) => {
         if (!(error instanceof HttpError && error.statusCode === 503)) {
-          console.error(`chatapi: resource index reconciliation failed: ${error}`);
+          console.error(`chatapi: resource index reconciliation failed${remoteCleanupErrorContext(error)}`);
         }
       })
       .finally(() => {
         reconciliationInFlight = undefined;
+        scheduleReconciliation(nextDelay);
       });
-  };
-  run();
-  if (!reconciliationTimer) {
-    reconciliationTimer = setInterval(run, RECONCILIATION_INTERVAL_MS);
-    reconciliationTimer.unref();
+  }, Math.max(1, delayMs));
+  reconciliationTimer.unref();
+};
+
+/** Reconcile orphaned index state no more than daily, after startup work has settled. */
+export function startResourceIndexReconciliation(): () => void {
+  if (!reconciliationEnabled) {
+    reconciliationEnabled = true;
+    scheduleReconciliation(reconciliationStartDelayMs());
   }
   return () => {
+    reconciliationEnabled = false;
     if (reconciliationTimer) {
-      clearInterval(reconciliationTimer);
+      clearTimeout(reconciliationTimer);
       reconciliationTimer = undefined;
     }
   };

@@ -81,7 +81,10 @@ describe('resource index service', () => {
     resetResourceIndexLocks();
     delete process.env.RESOURCE_INDEX_MAX_FILE_BYTES;
     delete process.env.RESOURCE_INDEX_MAX_TOTAL_BYTES;
+    delete process.env.RESOURCE_INDEX_MAX_FILES;
     delete process.env.RESOURCE_INDEX_TIMEOUT_MS;
+    delete process.env.RESOURCE_INDEX_RECONCILIATION_START_DELAY_MS;
+    vi.useRealTimers();
   });
 
   it('returns null without creating local state when no supported attachment or index exists', async () => {
@@ -358,8 +361,8 @@ describe('resource index service', () => {
     expect(mocks.resourceDB.attachment.get).not.toHaveBeenCalled();
   });
 
-  it('rejects more than 500 searchable attachments before uploading', async () => {
-    const attachments = Object.fromEntries(Array.from(Array(501).keys(), (index) => [
+  it('rejects more than 50 searchable attachments before uploading', async () => {
+    const attachments = Object.fromEntries(Array.from(Array(51).keys(), (index) => [
       `guide-${index}.pdf`,
       { 'content_type': 'application/pdf', 'digest': `md5-${index}`, 'length': 1 }
     ]));
@@ -446,20 +449,23 @@ describe('resource index service', () => {
   it('retains dirty state after partial multi-file cleanup so it can be retried', async () => {
     const state = localState({
       'id': 'vs_old',
-      'files': {
-        'a.pdf': { 'fileId': 'file_a', 'digest': 'a' },
-        'b.pdf': { 'fileId': 'file_b', 'digest': 'b' }
-      }
+        'files': {
+          'a.pdf': { 'fileId': 'file_a', 'digest': 'a' },
+          'b.pdf': { 'fileId': 'file_b', 'digest': 'b' },
+          'c.pdf': { 'fileId': 'file_c', 'digest': 'c' }
+        }
     });
     setDocs({ '_id': 'res1', '_rev': '4-d' }, state);
     const client: any = fakeClient();
-    client.files.del
-      .mockResolvedValueOnce({})
-      .mockRejectedValueOnce(Object.assign(new Error('server error'), { 'status': 500 }));
+    client.files.del.mockImplementation((fileId: string) => fileId === 'file_b'
+      ? Promise.reject(Object.assign(new Error('server error'), { 'status': 500 }))
+      : Promise.resolve({}));
 
     await expect(deleteResourceIndex(async () => client, 'res1')).rejects.toMatchObject({ 'statusCode': 502 });
 
     expect(client.vectorStores.del).toHaveBeenCalledWith('vs_old');
+    expect(client.files.del).toHaveBeenCalledTimes(3);
+    expect(client.files.del).toHaveBeenCalledWith('file_c');
     expect(mocks.resourceDB.insert).toHaveBeenCalledWith(
       expect.objectContaining({ 'store': expect.objectContaining({ 'dirty': true }) }),
       '_local/saved-index'
@@ -647,11 +653,48 @@ describe('resource index service', () => {
   });
 
   it('skips the production reconciliation scan when OpenAI is not configured', async () => {
-    mocks.getAIConfig.mockResolvedValue({ 'providers': { 'openai': { 'client': undefined } } });
+    vi.useFakeTimers();
+    process.env.RESOURCE_INDEX_RECONCILIATION_START_DELAY_MS = '1';
+    mocks.resourceDB.get.mockRejectedValue(notFound());
+    mocks.getAIConfig.mockResolvedValue({ 'providers': { 'openai': { 'fileSearchClient': undefined } } });
 
     const stop = startResourceIndexReconciliation();
+    expect(mocks.getAIConfig).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(1);
     await vi.waitFor(() => expect(mocks.getAIConfig).toHaveBeenCalled());
 
+    expect(mocks.listResourceLocalDocs).not.toHaveBeenCalled();
+    stop();
+  });
+
+  it('persists a successful reconciliation time and skips another boot-time scan until it is due', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-08-28T12:00:00Z'));
+    process.env.RESOURCE_INDEX_RECONCILIATION_START_DELAY_MS = '1';
+    const client = fakeClient();
+    mocks.resourceDB.get.mockRejectedValue(notFound());
+    mocks.getAIConfig.mockResolvedValue({ 'providers': { 'openai': { 'fileSearchClient': client } } });
+
+    let stop = startResourceIndexReconciliation();
+    await vi.advanceTimersByTimeAsync(1);
+    await vi.waitFor(() => expect(mocks.resourceDB.insert).toHaveBeenCalled());
+    const savedReconciliation = mocks.resourceDB.insert.mock.calls[0][0];
+    expect(savedReconciliation).toEqual(expect.objectContaining({
+      '_id': '_local/chatapi-resource-index-reconciliation',
+      'lastSuccessfulRun': expect.any(Number)
+    }));
+    stop();
+
+    vi.clearAllMocks();
+    mocks.resourceDB.get.mockResolvedValue({
+      '_id': '_local/chatapi-resource-index-reconciliation',
+      '_rev': '0-1',
+      'lastSuccessfulRun': savedReconciliation.lastSuccessfulRun
+    });
+    stop = startResourceIndexReconciliation();
+    await vi.advanceTimersByTimeAsync(1);
+
+    expect(mocks.getAIConfig).not.toHaveBeenCalled();
     expect(mocks.listResourceLocalDocs).not.toHaveBeenCalled();
     stop();
   });
