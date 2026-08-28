@@ -126,6 +126,42 @@ describe('SurveysComponent', () => {
     expect(component.surveys.data).toEqual([ activeSurvey ]);
   });
 
+  it('counts team submissions uploaded without a team stamp', () => {
+    const submissionRow = (surveyId: string, teamId: string | null) => ({
+      key: [ surveyId, teamId ], value: { status: 'complete', teamId, parent: null }
+    });
+    couchService.findAll = vi.fn((db: string) => of(db === 'exams' ? [
+      { _id: 'survey-1', name: 'Survey 1' },
+      { _id: 'team-survey-1', name: 'Survey 1 - Team 1', sourceSurveyId: 'survey-1', teamId: 'team-1' }
+    ] : []));
+    // myPlanet omits the team, planet stamps it
+    couchService.get = vi.fn(() => of({ rows: [
+      submissionRow('team-survey-1', null),
+      submissionRow('team-survey-1', 'team-1')
+    ] }));
+    couchService.checkAuthorization = vi.fn(() => of(true));
+    component = createComponent();
+    component.teamId = 'team-1';
+
+    component.ngOnInit();
+
+    expect(component.allSurveys.find(survey => survey._id === 'team-survey-1').taken).toBe(2);
+  });
+
+  it('does not attribute community survey submissions to a team', () => {
+    couchService.findAll = vi.fn((db: string) => of(db === 'exams' ? [ { _id: 'survey-1', name: 'Survey 1' } ] : []));
+    couchService.get = vi.fn(() => of({ rows: [
+      { key: [ 'survey-1', null ], value: { status: 'complete', teamId: null, parent: null } }
+    ] }));
+    couchService.checkAuthorization = vi.fn(() => of(true));
+    component = createComponent();
+    component.teamId = 'team-1';
+
+    component.ngOnInit();
+
+    expect(component.allSurveys.find(survey => survey._id === 'survey-1').taken).toBe(0);
+  });
+
   it('keeps archived shareable surveys visible in the team view', () => {
     const archivedSurvey = {
       _id: 'survey-1',
