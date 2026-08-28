@@ -27,6 +27,19 @@ planet-courses-search {
       min-height: 0;
       padding: 0;
       overflow-y: auto;
+
+      .mat-mdc-list-item-title {
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.25;
+      }
+
+      .mat-mdc-list-option {
+        height: auto;
+        min-height: 36px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
     }
   }
 
@@ -36,6 +49,10 @@ planet-courses-search {
     grid-auto-flow: row;
     grid-row-gap: 0.5rem;
     height: c.$toolbar-height-mobile;
+
+    & > planet-courses-search-list:last-child:nth-child(odd) {
+      grid-column: span 2;
+    }
   }
 
 }

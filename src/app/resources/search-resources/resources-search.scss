@@ -27,6 +27,19 @@ planet-resources-search {
       min-height: 0;
       padding: 0;
       overflow-y: auto;
+
+      .mat-mdc-list-item-title {
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.25;
+      }
+
+      .mat-mdc-list-option {
+        height: auto;
+        min-height: 36px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
     }
   }
 
