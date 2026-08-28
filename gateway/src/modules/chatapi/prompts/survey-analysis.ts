@@ -21,6 +21,8 @@ export const analysisJsonSchema = {
     'properties': {
       'sections': {
         'type': 'array',
+        'minItems': 4,
+        'maxItems': 4,
         'items': {
           'type': 'object',
           'properties': {
@@ -87,5 +89,7 @@ Please generate a detailed AI Analysis organized into four sections:
   - Highlight surprising supported insights or trends.
 
 Return one section object per numbered section. Every numeric insight must show both count and percentage.
+When the supplied data cannot support a requested section, state that limitation in the section instead
+of inferring or fabricating findings.
 Each section's content must be well-formed markdown suitable for a clean PDF layout.`;
 };

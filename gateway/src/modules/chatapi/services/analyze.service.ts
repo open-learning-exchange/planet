@@ -37,7 +37,7 @@ const normalizeSection = (section: any): AnalysisSection | null => {
 const parseSections = (text: string): AnalysisSection[] | null => {
   try {
     const parsed = JSON.parse(text);
-    if (!Array.isArray(parsed?.sections) || parsed.sections.length === 0) {
+    if (!Array.isArray(parsed?.sections) || parsed.sections.length !== 4) {
       return null;
     }
     const sections: Array<AnalysisSection | null> = parsed.sections.map((section: any) => normalizeSection(section));

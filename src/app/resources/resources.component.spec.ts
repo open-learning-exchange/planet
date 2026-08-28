@@ -1,4 +1,4 @@
-import { NEVER, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 
 import { ResourcesComponent } from './resources.component';
@@ -64,14 +64,20 @@ describe('ResourcesComponent', () => {
       vi.useFakeTimers();
       try {
         const couchService = { delete: vi.fn().mockReturnValue(of({ id: 'res1' })) };
-        const chatService = { removeResourceIndexes: vi.fn().mockReturnValue(NEVER) };
+        const cleanupUnsubscribed = vi.fn();
+        const chatService = {
+          removeResourceIndexes: vi.fn().mockReturnValue(new Observable(() => () => cleanupUnsubscribed()))
+        };
         const planetMessageService = { showAlert: vi.fn(), showMessage: vi.fn() };
         const component = createComponent(couchService, chatService, planetMessageService);
         await expect(component.deleteResource({ _id: 'res1', _rev: '1-a' }).request.toPromise())
           .resolves.toEqual({ id: 'res1' });
         expect(couchService.delete).toHaveBeenCalled();
         expect(planetMessageService.showAlert).not.toHaveBeenCalled();
+        expect(cleanupUnsubscribed).not.toHaveBeenCalled();
         await vi.advanceTimersByTimeAsync(11001);
+        expect(cleanupUnsubscribed).toHaveBeenCalledOnce();
+        expect(planetMessageService.showAlert).not.toHaveBeenCalled();
       } finally {
         vi.useRealTimers();
       }

@@ -68,7 +68,7 @@ export interface Conversation {
    * The sidebar has always excluded these records from the general-chat history;
    * retain the field so those existing documents still deserialize correctly.
    */
-  context?: ChatContext | '';
+  context?: ChatContext | string;
   shared?: boolean;
 }
 

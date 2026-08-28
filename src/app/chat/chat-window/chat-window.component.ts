@@ -316,8 +316,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
           id: Date.now().toString(), query: request.content, response: completion?.chat, citations: completion?.citations
         });
         this.selectedConversationId = {
-          _id: completion.couchDBResponse?.id,
-          _rev: completion.couchDBResponse?.rev
+          _id: completion?.couchDBResponse?.id,
+          _rev: completion?.couchDBResponse?.rev
         };
         this.postSubmit();
       },

@@ -117,6 +117,8 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly resourceIndexCleanupTimeoutMs = 11000;
+  // Must not exceed MAX_RESOURCE_CLEANUP_BATCH in the gateway cleanup route.
+  private readonly resourceIndexCleanupBatchSize = 500;
   isLoading = true;
   resources = new MatTableDataSource();
   private renderedRows: any[] = [];
@@ -360,7 +362,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     const resourceIds = resources.map((resource) => resource._id);
-    const immediateResourceIds = resourceIds.slice(0, 500);
+    const immediateResourceIds = resourceIds.slice(0, this.resourceIndexCleanupBatchSize);
     this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
       timeout(this.resourceIndexCleanupTimeoutMs),
       catchError(() => EMPTY),

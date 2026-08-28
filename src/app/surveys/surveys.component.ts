@@ -39,6 +39,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { AIProvider, ProviderName } from '../chat/chat.model';
+import { CustomValidators } from '../validators/custom-validators';
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
@@ -636,9 +637,9 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validators: (ac: FormGroup<SurveyFilterForm>) =>
-            [ 'includeQuestions', 'includeAnswers', 'includeCharts', 'includeAnalysis' ]
-              .some((name: keyof SurveyFilterForm) => ac.controls[name].value) ? null : { required: true }
+          validators: CustomValidators.atLeastOneTruthy([
+            'includeQuestions', 'includeAnswers', 'includeCharts', 'includeAnalysis'
+          ])
         }
       }
     );

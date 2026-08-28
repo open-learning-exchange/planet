@@ -12,11 +12,19 @@ import { resetRateLimiter } from './middleware/rate-limit';
 import { HttpError } from './utils/http-error';
 import { registerChatApiWebSocket } from './websocket';
 
+const mockWebSocket = () => {
+  const ws: any = { 'readyState': WebSocket.OPEN, 'send': vi.fn(), 'on': vi.fn() };
+  ws.close = vi.fn(() => {
+    ws.readyState = WebSocket.CLOSED;
+  });
+  return ws;
+};
+
 const connect = async (headers: Record<string, string | undefined>) => {
   const wss: any = { 'on': vi.fn() };
   registerChatApiWebSocket(wss);
   const onConnection = wss.on.mock.calls[0][1];
-  const ws: any = { 'readyState': WebSocket.OPEN, 'send': vi.fn(), 'close': vi.fn(), 'on': vi.fn() };
+  const ws = mockWebSocket();
   await onConnection(ws, { headers, 'socket': { 'remoteAddress': '10.0.0.9' } });
   return ws;
 };
@@ -245,9 +253,14 @@ describe('chatapi WebSocket', () => {
   });
 
   it('rejects a second frame instead of processing turns concurrently', async () => {
+    let resolveChat: (value: any) => void = () => undefined;
+    mocks.chat.mockReturnValue(new Promise((resolve) => {
+      resolveChat = resolve;
+    }));
     const ws = await connect({ 'host': 'planet.local:5000', 'cookie': 'AuthSession=abc' });
 
-    await messageHandler(ws)(JSON.stringify({ 'content': 'hi' }));
+    const firstTurn = messageHandler(ws)(JSON.stringify({ 'content': 'hi' }));
+    await vi.waitFor(() => expect(mocks.chat).toHaveBeenCalledOnce());
     await messageHandler(ws)(JSON.stringify({ 'content': 'again' }));
 
     expect(mocks.chat).toHaveBeenCalledTimes(1);
@@ -257,6 +270,8 @@ describe('chatapi WebSocket', () => {
       'message': 'Only one chat turn is allowed per WebSocket connection'
     });
     expect(ws.close).toHaveBeenCalledWith(1008, 'Only one chat turn is allowed');
+    resolveChat({ 'completionText': 'ok', 'citations': [], 'couchSaveResponse': { 'ok': true } });
+    await firstTurn;
   });
 
   it('allows only one pending frame while authentication is in progress', async () => {
@@ -268,7 +283,7 @@ describe('chatapi WebSocket', () => {
     const wss: any = { 'on': vi.fn() };
     registerChatApiWebSocket(wss);
     const onConnection = wss.on.mock.calls[0][1];
-    const ws: any = { 'readyState': WebSocket.OPEN, 'send': vi.fn(), 'close': vi.fn(), 'on': vi.fn() };
+    const ws = mockWebSocket();
     const connecting = onConnection(ws, {
       'headers': { 'host': 'planet.local:5000', 'cookie': 'AuthSession=abc' },
       'socket': { 'remoteAddress': '10.0.0.9' }
@@ -287,6 +302,7 @@ describe('chatapi WebSocket', () => {
       'json': vi.fn().mockResolvedValue({ 'userCtx': { 'name': 'amara', 'roles': [] } })
     });
     await connecting;
+    expect(mocks.chat).not.toHaveBeenCalled();
   });
 
   it('returns a bad-request frame for malformed JSON', async () => {

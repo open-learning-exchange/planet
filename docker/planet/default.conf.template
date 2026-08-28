@@ -3,11 +3,18 @@ map $http_upgrade $connection_upgrade {
   '' close;
 }
 
-# This container only listens on 80, so $scheme is always http. Preserve the scheme an
-# outer TLS proxy reported, or the gateway rejects same-origin https requests.
-map $http_x_forwarded_proto $forwarded_scheme {
-  default $http_x_forwarded_proto;
-  ''      $scheme;
+# This container only listens on 80, so $scheme is always http. Accept an outer
+# proxy's scheme only when the original peer is in the same explicitly trusted CIDR
+# used by the real-IP module; direct clients cannot spoof this header.
+geo $realip_remote_addr $planet_trusted_proxy {
+  default 0;
+  ${PLANET_TRUSTED_PROXY_CIDR} 1;
+}
+
+map "$planet_trusted_proxy:$http_x_forwarded_proto" $forwarded_scheme {
+  default   $scheme;
+  "1:http"  http;
+  "1:https" https;
 }
 
 server {

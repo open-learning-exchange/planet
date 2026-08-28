@@ -135,6 +135,19 @@ describe('ChatWindowComponent', () => {
     });
   });
 
+  it('finishes cleanly when a non-streaming response has an empty body', () => {
+    const { component, chatService } = createComponent();
+    component.providers = [ { name: 'openai' } ];
+    component.promptForm.controls.prompt.setValue('hello');
+    chatService.getPrompt.mockReturnValue(of(null));
+
+    expect(() => component.submitPrompt()).not.toThrow();
+
+    expect(component.conversations).toHaveLength(1);
+    expect(component.spinnerOn).toEqual(true);
+    expect(component.promptForm.controls.prompt.value).toEqual('');
+  });
+
   it('clears the streaming lock when an error arrives after the pending turn was replaced', () => {
     const { component, error$ } = createComponent();
     component.streaming = true;

@@ -3,9 +3,10 @@ import OpenAI from 'openai';
 import { ProviderChatRequest, ProviderChatResult } from '../models/chat.model';
 import { ProviderError } from '../utils/http-error';
 
+const UNUSABLE_TEXT_FINISH_REASONS = new Set([ 'content_filter', 'tool_calls', 'function_call' ]);
+
 const isUsableTextCompletion = (text: string, finishReason: string | null): boolean =>
-  !!text && (finishReason === null || finishReason === 'stop' || finishReason === 'length' ||
-    finishReason === 'content_filter' || finishReason === 'tool_calls');
+  !!text && !UNUSABLE_TEXT_FINISH_REASONS.has(finishReason || '');
 
 /** Run chat through providers exposing an OpenAI-compatible Chat Completions API. */
 export async function compatChat(client: OpenAI, request: ProviderChatRequest): Promise<ProviderChatResult> {

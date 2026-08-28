@@ -56,7 +56,6 @@ const requestCancellation = (req: Request, res: Response) => {
 
 export function registerChatApiRoutes(app: Express) {
   // Custom rate-limiter-flexible middleware wraps this handler before session/database work.
-  // codeql[js/missing-rate-limiting]
   app.post('/', preAuthRateLimit(), requireSession, rateLimit(undefined, 'chat'), async (req: Request, res: Response) => {
     const { data, save } = req.body ?? {};
     if (!isNonEmptyObject(data)) {
@@ -88,7 +87,6 @@ export function registerChatApiRoutes(app: Express) {
   });
 
   // Custom rate-limiter-flexible middleware wraps this handler before session/database work.
-  // codeql[js/missing-rate-limiting]
   app.get('/checkproviders', preAuthRateLimit(), requireSession, rateLimit(), async (req: Request, res: Response) => {
     void req;
     try {
@@ -110,7 +108,6 @@ export function registerChatApiRoutes(app: Express) {
   });
 
   // Custom rate-limiter-flexible middleware wraps this handler before session/database work.
-  // codeql[js/missing-rate-limiting]
   app.post('/analyze', preAuthRateLimit(), requireSession, rateLimit(), async (req: Request, res: Response) => {
     const cancellation = requestCancellation(req, res);
     try {
@@ -128,7 +125,6 @@ export function registerChatApiRoutes(app: Express) {
   });
 
   // Custom rate-limiter-flexible middleware wraps this handler before session/database work.
-  // codeql[js/missing-rate-limiting]
   app.post(
     RESOURCE_CLEANUP_ROUTE,
     preAuthRateLimit(),

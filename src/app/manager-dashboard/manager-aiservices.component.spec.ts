@@ -34,6 +34,7 @@ const discovery: AIServiceDiscovery = {
 
 describe('ManagerAIServicesComponent', () => {
   let component: ManagerAIServicesComponent;
+  let fixture: ComponentFixture<ManagerAIServicesComponent>;
   const chatService = {
     getAIServiceDiscovery: vi.fn().mockReturnValue(of(discovery)),
     refreshAIProviders: vi.fn()
@@ -57,7 +58,7 @@ describe('ManagerAIServicesComponent', () => {
         { provide: PlanetMessageService, useValue: { showAlert: vi.fn(), showMessage: vi.fn() } }
       ]
     });
-    const fixture: ComponentFixture<ManagerAIServicesComponent> = TestBed.createComponent(ManagerAIServicesComponent);
+    fixture = TestBed.createComponent(ManagerAIServicesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -68,16 +69,32 @@ describe('ManagerAIServicesComponent', () => {
     expect(component.configForm.get('keys_anthropic')).toBeTruthy();
     // Retired names keep their control so saving carries the value through, but no row is drawn.
     expect(component.configForm.get('models_legacy-provider')?.value).toEqual('legacy-model');
+    expect(fixture.nativeElement.textContent).toContain('Enter API key');
+  });
+
+  it('keeps safe prompt defaults when discovery omits them', () => {
+    chatService.getAIServiceDiscovery.mockReturnValueOnce(of({
+      ...discovery,
+      promptDefaults: undefined
+    } as any));
+    const missingDefaultsFixture = TestBed.createComponent(ManagerAIServicesComponent);
+
+    expect(() => missingDefaultsFixture.detectChanges()).not.toThrow();
+    expect(missingDefaultsFixture.componentInstance.promptDefaults).toEqual({
+      general_chat: '',
+      course_help: '',
+      survey_analysis: ''
+    });
   });
 
   it('flags unreachable discovery instead of rendering an empty form', () => {
     chatService.getAIServiceDiscovery.mockReturnValueOnce(of(null));
-    const fixture: ComponentFixture<ManagerAIServicesComponent> = TestBed.createComponent(ManagerAIServicesComponent);
-    fixture.detectChanges();
+    const unavailableFixture: ComponentFixture<ManagerAIServicesComponent> = TestBed.createComponent(ManagerAIServicesComponent);
+    unavailableFixture.detectChanges();
 
-    expect(fixture.componentInstance.providerDiscoveryFailed).toEqual(true);
+    expect(unavailableFixture.componentInstance.providerDiscoveryFailed).toEqual(true);
     // Stored names still render so an existing community keeps its inputs while the gateway is down.
-    expect(fixture.componentInstance.providerNames).toEqual([ 'legacy-provider' ]);
+    expect(unavailableFixture.componentInstance.providerNames).toEqual([ 'legacy-provider' ]);
   });
 
   it('disables the built-in prompt reset until an override exists', () => {

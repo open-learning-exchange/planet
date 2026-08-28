@@ -156,7 +156,7 @@ export class ManagerAIServicesComponent implements OnInit, OnDestroy {
   }
 
   private applyProviderDiscovery(discovery: AIServiceDiscovery) {
-    this.promptDefaults = discovery.promptDefaults;
+    this.promptDefaults = { ...this.promptDefaults, ...(discovery.promptDefaults || {}) };
     this.providerLabels = Object.fromEntries(Object.entries(discovery.providers)
       .map(([ name, provider ]) => [ name, provider.label || name ]));
     // The gateway registry is authoritative once discovery resolves, so retired or mistyped
