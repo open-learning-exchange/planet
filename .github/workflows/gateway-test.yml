@@ -1,0 +1,51 @@
+name: Gateway Checks
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: gateway-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint, build, and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            gateway/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install gateway dependencies
+        run: npm ci
+        working-directory: gateway
+
+      - name: Lint gateway
+        run: npm run lint
+        working-directory: gateway
+
+      - name: Build gateway
+        run: npm run build
+        working-directory: gateway
+
+      - name: Test gateway
+        run: npm test
+        working-directory: gateway

@@ -8,10 +8,11 @@ import {
 } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntil, map, switchMap, startWith, skip } from 'rxjs/operators';
-import { Subject, of, combineLatest, defer } from 'rxjs';
+import { catchError, map, skip, startWith, switchMap, takeUntil, timeout } from 'rxjs/operators';
+import { combineLatest, defer, EMPTY, of, Subject } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
+import { ChatService } from '../shared/chat.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { FuzzySearchService } from '../shared/fuzzy-search.service';
@@ -115,6 +116,9 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
   ]
 })
 export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly resourceIndexCleanupTimeoutMs = 11000;
+  // Must not exceed MAX_RESOURCE_CLEANUP_BATCH in the gateway cleanup route.
+  private readonly resourceIndexCleanupBatchSize = 500;
   isLoading = true;
   resources = new MatTableDataSource();
   private renderedRows: any[] = [];
@@ -196,7 +200,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     public dialogGuard: DialogGuardService,
     private searchService: SearchService,
     private deviceInfoService: DeviceInfoService,
-    private fuzzySearchService: FuzzySearchService
+    private fuzzySearchService: FuzzySearchService,
+    private chatService: ChatService
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -350,10 +355,28 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  // Start authenticated cleanup while the resource still exists for ownership checks. Deletion
+  // never waits for it; retained local state lets the gateway retry failures during reconciliation.
+  private cleanupResourceIndexes(resources: any[]): void {
+    if (resources.length === 0) {
+      return;
+    }
+    const resourceIds = resources.map((resource) => resource._id);
+    const immediateResourceIds = resourceIds.slice(0, this.resourceIndexCleanupBatchSize);
+    this.chatService.removeResourceIndexes(immediateResourceIds).pipe(
+      timeout(this.resourceIndexCleanupTimeoutMs),
+      catchError(() => EMPTY),
+      takeUntil(this.onDestroy$)
+    ).subscribe();
+  }
+
   deleteResource(resource) {
     const { _id: resourceId, _rev: resourceRev } = resource;
     return {
-      request: this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev),
+      request: defer(() => {
+        this.cleanupResourceIndexes([ resource ]);
+        return this.couchService.delete(this.dbName + '/' + resourceId + '?rev=' + resourceRev);
+      }),
       onNext: (data) => {
         this.selection.deselect(resourceId);
         this.resources.data = this.resources.data.filter((res: any) => data.id !== res._id);
@@ -365,14 +388,19 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   deleteResources(resources) {
-    const deleteArray = createDeleteArray(resources);
     return {
-      request: this.couchService.post(this.dbName + '/_bulk_docs', { docs: deleteArray }),
+      request: defer(() => {
+        this.cleanupResourceIndexes(resources);
+        return this.couchService.post(
+          this.dbName + '/_bulk_docs',
+          { docs: createDeleteArray(resources) }
+        );
+      }),
       onNext: (data) => {
         this.resourcesService.requestResourcesUpdate(this.parent);
         this.selection.clear();
         this.deleteDialog.close();
-        this.planetMessageService.showMessage($localize`You have deleted ${deleteArray.length} resources`);
+        this.planetMessageService.showMessage($localize`You have deleted ${resources.length} resources`);
       },
       onError: (error) => this.planetMessageService.showAlert($localize`There was a problem deleting this resource.`)
     };

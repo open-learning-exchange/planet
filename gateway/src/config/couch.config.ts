@@ -15,16 +15,58 @@ const withCredentials = (url: string, user: string, pass: string) => {
   return parsedUrl.toString().replace(/\/$/, '');
 };
 
+const stripUrlCredentials = (url: string) => {
+  const parsedUrl = new URL(url);
+  parsedUrl.username = '';
+  parsedUrl.password = '';
+  return parsedUrl.toString().replace(/\/$/, '');
+};
+
+/** CouchDB base URL without embedded credentials for session validation. */
+const couchBaseUrl = stripUrlCredentials(couchUrl || defaultCouchUrl);
+
 const couchHost = couchUser && couchPass
   ? withCredentials(couchUrl || defaultCouchUrl, couchUser, couchPass)
   : (couchUrl || defaultCouchUrl);
 
 const db = nano(couchHost);
 const chatDB = db.use('chat_history');
-const resourceDB = db.use('resources');
 const configurationDB = db.use('configurations');
 const examsDB = db.use('exams');
 const submissionsDB = db.use('submissions');
 const teamsDB = db.use('teams');
+export const RESOURCE_INDEX_STATE_PREFIX = '_local/chatapi-resource-index-';
 
-export { chatDB, configurationDB, examsDB, resourceDB, submissionsDB, teamsDB };
+/** Options supported by Nano at runtime but missing from its v10 RequestOptions type. */
+type ResourceRequestOptions = nano.RequestOptions & {
+  signal?: AbortSignal;
+  dontParse?: boolean;
+};
+
+/** Run a resource-database request that can be cancelled with its owning operation. */
+const requestResourceDatabase = (options: ResourceRequestOptions) => db.request({
+  ...options,
+  'db': 'resources'
+} as nano.RequestOptions);
+
+/** List deployment-local resource metadata, which CouchDB omits from `_all_docs`. */
+const listResourceLocalDocs = () => db.request({
+  'db': 'resources',
+  'path': '_local_docs',
+  'qs': {
+    'include_docs': true,
+    'startkey': RESOURCE_INDEX_STATE_PREFIX,
+    'endkey': `${RESOURCE_INDEX_STATE_PREFIX}\ufff0`
+  }
+});
+
+export {
+  chatDB,
+  configurationDB,
+  couchBaseUrl,
+  examsDB,
+  listResourceLocalDocs,
+  requestResourceDatabase,
+  submissionsDB,
+  teamsDB
+};

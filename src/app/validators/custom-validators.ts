@@ -6,6 +6,11 @@ const isStringEdgeCase = (string: string) => string.trim() === '' || string.trim
 
 export class CustomValidators {
 
+  static atLeastOneTruthy(controlNames: ReadonlyArray<string>): ValidatorFn {
+    return (ac: AbstractControl): ValidationErrors | null =>
+      controlNames.some((name) => !!ac.get(name)?.value) ? null : { required: true };
+  }
+
   // these validators are for cases when the browser does not support input type=date,time and color and the browser falls back to type=text
   static integerValidator(ac: AbstractControl<number | string | null>): ValidationErrors | null {
     if (ac.value === null || ac.value === undefined || ac.value === '') {

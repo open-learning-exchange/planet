@@ -1,6 +1,31 @@
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
+# This container only listens on 80, so $scheme is always http. Accept an outer
+# proxy's scheme only when the original peer is in the same explicitly trusted CIDR
+# used by the real-IP module; direct clients cannot spoof this header.
+geo $realip_remote_addr $planet_trusted_proxy {
+  default 0;
+  ${PLANET_TRUSTED_PROXY_CIDR} 1;
+}
+
+map "$planet_trusted_proxy:$http_x_forwarded_proto" $forwarded_scheme {
+  default   $scheme;
+  "1:http"  http;
+  "1:https" https;
+}
+
 server {
 
   listen 80;
+
+  # Ignore forwarded addresses from direct clients. Operators with an outer
+  # reverse proxy must set its address/CIDR so $remote_addr becomes the client.
+  set_real_ip_from ${PLANET_TRUSTED_PROXY_CIDR};
+  real_ip_header X-Forwarded-For;
+  real_ip_recursive on;
 
   sendfile on;
 
@@ -137,17 +162,20 @@ server {
   location /ml/ {
     proxy_pass       http://chatapi:5000/;
     proxy_http_version 1.1;
-    proxy_set_header Host      $host;
+    proxy_set_header Host      $http_host;
     proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $forwarded_scheme;
     proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
+    proxy_set_header Connection $connection_upgrade;
+    proxy_read_timeout 900s;
     client_max_body_size 1024M;
   }
 
   location /api/ {
     proxy_pass       http://chatapi:5000/;
-    proxy_set_header Host      $host;
+    proxy_set_header Host      $http_host;
     proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto $forwarded_scheme;
     client_max_body_size 1024M;
   }
 

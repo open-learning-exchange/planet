@@ -24,7 +24,6 @@ export default defineConfig(({ mode }) => ({
       'src/**/courses-view.component.spec.ts',
       'src/**/notifications.component.spec.ts',
       'src/**/login.component.spec.ts',
-      'src/**/resources.component.spec.ts',
       'src/**/meetups.component.spec.ts',
       'src/**/meetups-add.component.spec.ts',
     ],

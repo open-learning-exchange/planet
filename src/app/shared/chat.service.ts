@@ -1,12 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { findDocuments, inSelector } from '../shared/mangoQueries';
 import { CouchService } from '../shared/couchdb.service';
-import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
+import {
+  AIServiceDiscovery,
+  AIServiceStatus,
+  AIProvider,
+  ChatStreamMessage,
+  hasSearchableAttachments,
+  ProviderName,
+  ResourceIndexCleanupResponse,
+  SurveyAnalysisPayload,
+  SurveyAnalysisResponse
+} from '../chat/chat.model';
+
+const PROVIDER_DISCOVERY_RETRY_MS = 5000;
 
 @Injectable({
   providedIn: 'root'
@@ -14,15 +26,21 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
   readonly dbName = 'chat_history';
 
   private baseUrl = `${environment.chatAddress}${environment.production ? '/ml' : ''}`;
-  private socket: WebSocket;
+  private socket?: WebSocket;
+  private pendingSocket?: WebSocket;
 
-  private chatStreamSubject: Subject<string> = new Subject<string>();
+  private chatStreamSubject: Subject<ChatStreamMessage> = new Subject<ChatStreamMessage>();
   private errorSubject: Subject<string> = new Subject<string>();
   private newChatAdded: Subject<void> = new Subject<void>();
   private newChatSelected: Subject<void> = new Subject<void>();
-  private toggleAIService = new Subject<ProviderName>();
+  private toggleAIService = new ReplaySubject<ProviderName>(1);
   private selectedConversationIdSubject = new BehaviorSubject<object | null>(null);
   private aiProvidersSubject = new BehaviorSubject<Array<AIProvider>>([]);
+  // undefined until the first attempt settles, null when it failed with nothing cached to keep.
+  private aiServiceDiscoverySubject = new BehaviorSubject<AIServiceDiscovery | null | undefined>(undefined);
+  private providerDiscoveryInFlight = false;
+  private providerDiscoveryQueued = false;
+  private providerDiscoveryRetryAt = 0;
   private currentChatAIProvider = new BehaviorSubject<AIProvider>(undefined);
 
   newChatAdded$ = this.newChatAdded.asObservable();
@@ -34,68 +52,194 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 
   constructor(
     private httpClient: HttpClient,
-    private couchService: CouchService
-  ) {
-    this.fetchAIProviders();
+    private couchService: CouchService,
+    @Inject(LOCALE_ID) private localeId: string
+  ) {}
+
+  chatErrorMessage(error: { code?: string; message?: string } | undefined, fallback = $localize`Chat request failed`): string {
+    if (error?.code === 'resource_attachments_unsupported') {
+      return $localize`This AI provider does not support resource attachments. Select a provider that does.`;
+    }
+    if (error?.code === 'resource_context_unavailable') {
+      return $localize`This resource is unavailable for AI chat. Reload the course step or ask a manager for access.`;
+    }
+    if (error?.code === 'conversation_turn_limit') {
+      return $localize`This conversation is full. Start a new conversation to continue.`;
+    }
+    return error?.message || fallback;
   }
 
-  initializeWebSocket() {
-    if (!this.socket || this.socket.readyState === WebSocket.CLOSED) {
-      this.socket = new WebSocket(this.baseUrl.replace(/^http/, 'ws'));
-      this.socket.onerror = (error) => {
-        this.errorSubject.next('WebSocket connection error');
+  private webSocketUrl(): string {
+    return this.baseUrl.replace(/^http/, 'ws').replace(/\/?$/, '/');
+  }
+
+  private initializeWebSocket() {
+    if (!this.socket || this.socket.readyState === WebSocket.CLOSED || this.socket.readyState === WebSocket.CLOSING) {
+      const socket = new WebSocket(this.webSocketUrl());
+      this.socket = socket;
+      let errorReported = false;
+      const reportConnectionError = (message: string, suppressDuplicate = false) => {
+        if (socket === this.socket && (!suppressDuplicate || !errorReported)) {
+          errorReported = true;
+          this.errorSubject.next(message);
+        }
       };
-      this.socket.addEventListener('message', (event) => {
+      socket.onerror = () => reportConnectionError('WebSocket connection error', true);
+      socket.onclose = () => {
+        if (socket === this.socket) {
+          const requestWasPending = this.pendingSocket === socket;
+          if (requestWasPending) {
+            this.pendingSocket = undefined;
+          }
+          this.socket = undefined;
+          if (requestWasPending && !errorReported) {
+            this.errorSubject.next('WebSocket connection closed');
+          }
+        }
+      };
+      socket.addEventListener('message', (event) => {
+        if (socket !== this.socket) {
+          return;
+        }
         try {
           const message = JSON.parse(event.data);
           if (message.type === 'error') {
-            this.errorSubject.next(message.error);
+            if (this.pendingSocket === socket) {
+              this.pendingSocket = undefined;
+            }
+            reportConnectionError(this.chatErrorMessage(message, message.error));
+            socket.close();
           } else {
-            this.chatStreamSubject.next(event.data);
+            errorReported = false;
+            if (message.type === 'final' && this.pendingSocket === socket) {
+              this.pendingSocket = undefined;
+            }
+            this.chatStreamSubject.next(message as ChatStreamMessage);
+            if (message.type === 'final') {
+              socket.close();
+            }
           }
         } catch (error) {
-          this.errorSubject.next('Invalid message format');
+          reportConnectionError('Invalid message format');
         }
       });
     }
   }
 
-  private fetchAIProviders() {
+  refreshAIProviders(): void {
+    this.loadAIProviders(true);
+  }
+
+  private ensureAIProviders(): void {
+    this.loadAIProviders(false);
+  }
+
+  private loadAIProviders(force: boolean): void {
+    // Back off transient discovery failures without permanently disabling discovery for the session.
+    const cachedDiscovery = this.aiServiceDiscoverySubject.value;
+    if (!force && cachedDiscovery !== undefined &&
+      (cachedDiscovery !== null || Date.now() < this.providerDiscoveryRetryAt)) {
+      return;
+    }
+    if (this.providerDiscoveryInFlight) {
+      // An in-flight response predates a forced refresh, so run again once it settles.
+      this.providerDiscoveryQueued = this.providerDiscoveryQueued || force;
+      return;
+    }
+    this.providerDiscoveryInFlight = true;
     this.httpClient
-      .get<AIServices>(`${this.baseUrl}/checkproviders`)
+      .get<AIServiceDiscovery>(`${this.baseUrl}/checkproviders`, { withCredentials: true })
       .pipe(
         catchError((err) => {
           console.error(err);
-          return of({ openai: false, perplexity: false, deepseek: false, gemini: false });
-        }),
-        map((services: AIServices) => {
-          if (services) {
-            return (Object.entries(services) as [ ProviderName, boolean ][])
-              .filter(([ _, model ]) => model === true)
-              .map(([ key ]) => ({ name: key, model: key }));
-          } else {
-            return [];
-          }
+          return of(null);
         })
       )
-      .subscribe((providers) => {
-        this.aiProvidersSubject.next(providers);
+      .subscribe((discovery) => {
+        this.providerDiscoveryInFlight = false;
+        if (this.providerDiscoveryQueued) {
+          this.providerDiscoveryQueued = false;
+          this.loadAIProviders(true);
+          return;
+        }
+        if (discovery) {
+          const providers = (Object.entries(discovery.providers) as [ string, AIServiceStatus ][])
+            .filter(([ _, service ]) => service?.enabled === true)
+            .map(([ name, service ]) => ({
+              name,
+              label: service.label || name,
+              capabilities: service.capabilities || [],
+              fileSearchContentTypes: service.fileSearchContentTypes || []
+            }));
+          this.aiServiceDiscoverySubject.next(discovery);
+          this.aiProvidersSubject.next(providers);
+        } else if (!this.aiServiceDiscoverySubject.value) {
+          this.aiServiceDiscoverySubject.next(null);
+          this.providerDiscoveryRetryAt = Date.now() + PROVIDER_DISCOVERY_RETRY_MS;
+        }
       });
   }
 
   listAIProviders(): Observable<Array<AIProvider>> {
+    this.ensureAIProviders();
     return this.aiProviders$;
+  }
+
+  getAIServiceDiscovery(): Observable<AIServiceDiscovery | null | undefined> {
+    this.ensureAIProviders();
+    return this.aiServiceDiscoverySubject.asObservable();
   }
 
   getPrompt(data: object, save: boolean): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}/`, {
-      data,
+      data: this.withLocale(data),
       save,
-    });
+    }, { withCredentials: true });
+  }
+
+  analyzeSurvey(payload: SurveyAnalysisPayload): Observable<SurveyAnalysisResponse> {
+    const provider = payload.aiProvider || this.getPreferredAnalysisProvider();
+    const body = this.withLocale(provider ? { ...payload, aiProvider: { name: provider.name } } : payload);
+    return this.httpClient.post<SurveyAnalysisResponse>(`${this.baseUrl}/analyze`, body, { withCredentials: true });
+  }
+
+  getPreferredAnalysisProvider(): AIProvider | undefined {
+    const providers = this.aiProvidersSubject.value;
+    return providers.find((provider) => provider.capabilities?.includes('structuredOutput')) || providers[0];
+  }
+
+  hasFileSearchProvider(): boolean {
+    return this.aiProvidersSubject.value.some((provider) => provider.capabilities?.includes('fileSearch'));
+  }
+
+  courseChatAvailable(attachments?: Record<string, unknown>): boolean {
+    const enabledProviders = this.aiProvidersSubject.value;
+    if (enabledProviders.length === 0) {
+      return false;
+    }
+    const discovery = this.aiServiceDiscoverySubject.value;
+    const knownProviders = discovery ? Object.values(discovery.providers) : [];
+    const resourceNeedsFileSearch = knownProviders.some((provider) =>
+      provider.capabilities?.includes('fileSearch') &&
+      hasSearchableAttachments(attachments, provider.fileSearchContentTypes)
+    );
+    return !resourceNeedsFileSearch || enabledProviders.some((provider) =>
+      provider.capabilities?.includes('fileSearch') &&
+      hasSearchableAttachments(attachments, provider.fileSearchContentTypes)
+    );
+  }
+
+  // Attempts immediate cleanup; retained local state lets the gateway retry after resource deletion.
+  removeResourceIndexes(resourceIds: string[]): Observable<ResourceIndexCleanupResponse> {
+    return this.httpClient.post<ResourceIndexCleanupResponse>(
+      `${this.baseUrl}/resources/indexes/cleanup`,
+      { resourceIds },
+      { withCredentials: true }
+    );
   }
 
   // Subscribe to stream updates
-  getChatStream(): Observable<string> {
+  getChatStream(): Observable<ChatStreamMessage> {
     return this.chatStreamSubject.asObservable();
   }
 
@@ -105,15 +249,40 @@ import { AIServices, AIProvider, ProviderName } from '../chat/chat.model';
 
   // Method to send user input via WebSocket
   sendUserInput(data: any): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(data));
+    let socket = this.socket;
+    if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+      this.initializeWebSocket();
+      socket = this.socket;
     }
+    if (!socket) {
+      this.errorSubject.next('WebSocket connection error');
+      return;
+    }
+    const send = () => {
+      if (socket === this.socket && socket.readyState === WebSocket.OPEN) {
+        this.pendingSocket = socket;
+        socket.send(JSON.stringify(this.withLocale(data)));
+      }
+    };
+    if (socket.readyState === WebSocket.OPEN) {
+      send();
+    } else if (socket.readyState === WebSocket.CONNECTING) {
+      socket.addEventListener('open', send, { once: true });
+    }
+  }
+
+  private withLocale<T extends object>(data: T): T & { locale: string } {
+    return { ...data, locale: this.localeId };
   }
 
   // Function to close ws connection
   closeWebSocket(): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.close();
+    const socket = this.socket;
+    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+      if (this.pendingSocket === socket) {
+        this.pendingSocket = undefined;
+      }
+      socket.close();
     }
   }
 

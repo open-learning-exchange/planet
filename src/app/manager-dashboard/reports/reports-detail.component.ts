@@ -19,7 +19,7 @@ import { CustomValidators } from '../../validators/custom-validators';
 import {
   attachNamesToPlanets, filterByDate, setMonths, activityParams, codeToPlanetName, reportsDetailParams,
   xyChartData, datasetObject, fullLabel, titleOfChartName, monthDataLabels, filterByMember,
-  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay
+  sortingOptionsMap, weekDataLabels, lastThursday, thursdayWeekRangeFromEnd, startOfDay, chatActivityHasAttachments
 } from './reports.utils';
 import { DialogsResourcesViewerComponent } from '../../shared/dialogs/dialogs-resources-viewer.component';
 import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
@@ -818,9 +818,8 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       [$localize`AI Provider`]: activity.aiProvider || '',
       [$localize`Timestamp`]: formatLocaleDate(activity.createdDate, 'medium', this.localeId),
       [$localize`Chat Responses`]: activity.conversations?.length || 0,
-      [$localize`Assistant`]: activity.assistant ? $localize`Yes` : $localize`No`,
       [$localize`Shared`]: activity.shared ? $localize`Yes` : $localize`No`,
-      [$localize`Has Attachments`]: activity.context?.resource?.attachments?.length > 0 ? $localize`Yes` : $localize`No`
+      [$localize`Has Attachments`]: chatActivityHasAttachments(activity) ? $localize`Yes` : $localize`No`
     }));
     this.csvService.exportCSV({
       data: exportData,

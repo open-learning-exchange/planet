@@ -15,11 +15,10 @@ services:
     image: treehouses/planet:chatapi-local
     depends_on:
       - couchdb
-    ports:
-      - "5000:5000"
     environment:
-      - COUCHDB_HOST=http://couchdb:5984
-      - SERVE_PORT=5000
+      COUCHDB_HOST: http://couchdb:5984
+      SERVE_PORT: 5000
+      TRUST_PROXY_CLIENT_IP: "true"
     env_file:
       - .chat.env
   db-init:
@@ -43,5 +42,6 @@ services:
       - DB_PORT=2200
       - CENTER_ADDRESS=planet.earth.ole.org/db
       - DEFAULT_LANGUAGE=eng
+      - PLANET_TRUSTED_PROXY_CIDR=${PLANET_TRUSTED_PROXY_CIDR:-127.0.0.1/32}
     depends_on:
       - couchdb

@@ -22,9 +22,11 @@ Because we want to run our production Planet mostly in Raspberry Pi, the target 
 
 ### Docker-related files
 * Docker file (`Dockerfile`)
-* Docker compose files (`planet.yml`, `hub.yml`)
+* Docker compose files (`planet.yml`, `planet.dev.yml`, `hub.yml`)
 
 This docker compose can be use for your development environment and very handy, you can spawn the development environment in a matter of seconds and start your development. Your code changes in host folder are automatically reflected to docker and ready to test in your browser.
+
+`planet.yml` keeps the gateway internal to the Compose network so nginx can supply a trusted client address for rate limiting. For development that needs direct access on port 5000, add `planet.dev.yml`; it publishes the port and disables trust in client-supplied proxy headers. If another reverse proxy sits in front of Planet, set `PLANET_TRUSTED_PROXY_CIDR` to that proxy's address or network and have it overwrite `X-Forwarded-For` and `X-Forwarded-Proto`. Planet's nginx ignores both forwarded values from all other peers; the default `127.0.0.1/32` trusts no remote proxy. The setting accepts one address or CIDR for the immediate proxy tier. Do not use an unrestricted network such as `0.0.0.0/0` or `::/0`.
 
 ## How to use
 I will divide this how to use into two sections, for development and for production. It is interesting to run our development environment on top of isolated docker container.
@@ -50,7 +52,7 @@ You'll see you containers like this
 ```
 CONTAINER ID   IMAGE                      COMMAND                  CREATED         STATUS         PORTS                                                             NAMES
 0914c167f20e   d14b10ade528               "/bin/sh -c ./docker…"   2 weeks ago     Up 2 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 443/tcp                      planet-prod-planet-1
-42d4b4ea3826   898294509ee6               "npm run start"          2 weeks ago     Up 2 seconds   0.0.0.0:5400->5400/tcp, [::]:5400->5400/tcp                       planet-prod-chatapi-1
+42d4b4ea3826   898294509ee6               "npm run start"          2 weeks ago     Up 2 seconds   5000/tcp                                                          planet-prod-chatapi-1
 c03b86dfede9   9859c264e24e               "/bin/sh -c 'bash ./…"   2 weeks ago     Up 2 seconds                                                                     planet-prod-db-init-1
 f7ddb76ae6b6   treehouses/couchdb:2.3.1   "tini -- /docker-ent…"   14 months ago   Up 2 seconds   4369/tcp, 9100/tcp, 0.0.0.0:2200->5984/tcp, [::]:2200->5984/tcp   planet-prod-couchdb-1
 ```
@@ -88,3 +90,11 @@ docker-compose -f planet.yml -p planet down
 ```
 
 Remember when your containers active you can always look to your containers logs to see whats going on on the background.
+
+### For Development
+
+Publish the gateway for direct local access with the development override:
+
+```
+docker-compose -f planet.yml -f planet.dev.yml -p planet up -d --build
+```

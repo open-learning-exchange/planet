@@ -20,7 +20,6 @@ LABEL maintainer="dogi@ole.org,mutugiii@ole.org"
 
 WORKDIR /
 
-RUN apk add --no-cache poppler-utils
 COPY ./gateway/package.json ./gateway/package-lock.json ./
 
 COPY --from=builder /node_modules ./node_modules/

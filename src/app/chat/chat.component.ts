@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ChatService } from '../shared/chat.service';
 import { AIProvider, ProviderName } from './chat.model';
@@ -19,7 +21,8 @@ import { ChatSidebarComponent } from './chat-sidebar/chat-sidebar.component';
   styleUrls: ['./chat.scss'],
   imports: [MatToolbar, MatIconButton, MatIcon, MatFormField, MatSelect, FormsModule, MatOption, ChatSidebarComponent]
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
+  private onDestroy$ = new Subject<void>();
   activeService?: ProviderName;
   aiServices: AIProvider[] = [];
   displayToggle: boolean;
@@ -31,7 +34,7 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.chatService.listAIProviders().subscribe((providers) => {
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe((providers) => {
       this.aiServices = providers;
       this.activeService = this.aiServices[0]?.name;
       this.displayToggle = this.aiServices.length > 0;
@@ -44,12 +47,18 @@ export class ChatComponent implements OnInit {
 
   subscribeToAIService() {
     this.chatService.currentChatAIProvider$
+      .pipe(takeUntil(this.onDestroy$))
       .subscribe((aiService => {
         if (aiService) {
           this.activeService = aiService.name;
           this.toggleAIService();
         }
       }));
+  }
+
+  ngOnDestroy() {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
   }
 
   goBack(): void {

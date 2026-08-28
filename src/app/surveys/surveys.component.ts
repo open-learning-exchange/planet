@@ -22,7 +22,7 @@ import { findByIdInArray, filterById } from '../shared/utils';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UserService } from '../shared/user.service';
 import { findDocuments } from '../shared/mangoQueries';
-import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
+import { DialogField, DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { ExamsService } from '../exams/exams.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
@@ -38,12 +38,15 @@ import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { AIProvider, ProviderName } from '../chat/chat.model';
+import { CustomValidators } from '../validators/custom-validators';
 
 interface SurveyFilterForm {
   includeQuestions: FormControl<boolean>;
   includeAnswers: FormControl<boolean>;
   includeCharts: FormControl<boolean>;
   includeAnalysis: FormControl<boolean>;
+  analysisProvider: FormControl<ProviderName | null>;
 }
 
 @Component({
@@ -119,7 +122,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   routeTeamId = this.route.parent?.snapshot.paramMap.get('teamId') || null;
   @Input() teamId?: string;
-  availableAIProviders: any[] = [];
+  availableAIProviders: AIProvider[] = [];
   deviceType: DeviceType;
   isMobile: boolean;
 
@@ -574,40 +577,69 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     const hasChartableData = survey.questions.some(
       (question) => question.type === 'select' || question.type === 'selectMultiple' || question.type === 'ratingScale');
     const chatDisabled = this.availableAIProviders.length === 0;
+    const preferredAnalysisProvider = this.chatService.getPreferredAnalysisProvider();
 
     const formGroup: FormGroup<SurveyFilterForm> = this.fb.group({
       includeQuestions: this.fb.control(true),
       includeAnswers: this.fb.control(true),
       includeCharts: this.fb.control(false),
-      includeAnalysis: this.fb.control(false)
+      includeAnalysis: this.fb.control(false),
+      analysisProvider: this.fb.control<ProviderName | null>(preferredAnalysisProvider?.name || null)
     });
+
+    const exportFields: DialogField[] = [
+      { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
+      { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
+      { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
+      {
+        name: 'includeAnalysis',
+        placeholder: $localize`Include AI Analysis`,
+        type: 'checkbox',
+        planetBeta: true,
+        disabled: chatDisabled,
+        tooltip: chatDisabled ? $localize`AI analysis is disabled, contact community admin` : undefined
+      }
+    ];
+    if (this.availableAIProviders.length > 1) {
+      exportFields.push({
+        name: 'analysisProvider',
+        placeholder: $localize`AI Analysis Provider`,
+        type: 'selectbox',
+        planetBeta: true,
+        required: true,
+        options: this.availableAIProviders.map((provider) => {
+          const displayName = provider.label || provider.name;
+          return {
+            value: provider.name,
+            name: provider.capabilities?.includes('structuredOutput')
+              ? $localize`${displayName} — structured sections`
+              : $localize`${displayName} — formatting may vary`
+          };
+        })
+      });
+    }
 
     this.dialogsFormService.openDialogsForm(
       $localize`Records to Export`,
-      [
-        { name: 'includeQuestions', placeholder: $localize`Include Questions`, type: 'checkbox' },
-        { name: 'includeAnswers', placeholder: $localize`Include Answers`, type: 'checkbox' },
-        { name: 'includeCharts', placeholder: $localize`Include Charts`, type: 'checkbox', disabled: !hasChartableData },
-        {
-          name: 'includeAnalysis',
-          placeholder: $localize`Include AI Analysis`,
-          type: 'checkbox',
-          planetBeta: true,
-          disabled: chatDisabled,
-          tooltip: chatDisabled && $localize`AI analysis is disabled, contact community admin`
-        }
-      ],
+      exportFields,
       formGroup,
       {
         autoFocus: true,
         disableIfInvalid: true,
-        onSubmit: (options: { includeQuestions, includeAnswers, includeCharts, includeAnalysis }) => {
+        onSubmit: (options: {
+          includeQuestions: boolean;
+          includeAnswers: boolean;
+          includeCharts: boolean;
+          includeAnalysis: boolean;
+          analysisProvider: ProviderName | null;
+        }) => {
           this.dialogsFormService.closeDialogsForm();
           this.submissionsService.exportSubmissionsPdf(survey, 'survey', options, this.teamId || this.routeTeamId || '');
         },
         formOptions: {
-          validators: (ac: FormGroup<SurveyFilterForm>) =>
-            Object.values(ac.controls).some(control => control.value) ? null : { required: true }
+          validators: CustomValidators.atLeastOneTruthy([
+            'includeQuestions', 'includeAnswers', 'includeCharts', 'includeAnalysis'
+          ])
         }
       }
     );

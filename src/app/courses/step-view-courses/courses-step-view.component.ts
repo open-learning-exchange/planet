@@ -12,7 +12,6 @@ import { DialogsSubmissionsComponent } from '../../shared/dialogs/dialogs-submis
 import { StateService } from '../../shared/state.service';
 import { ChatService } from '../../shared/chat.service';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
-import { coursesStepPrompt } from '../../shared/ai-prompts.constants';
 import { ChallengesService } from '../../shared/challenges/challenges.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatButton, MatIconButton, MatAnchor } from '@angular/material/button';
@@ -25,6 +24,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ResourcesViewerComponent } from '../../resources/view-resources/resources-viewer.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
+import { ChatContext } from '../../chat/chat.model';
 
 @Component({
   templateUrl: './courses-step-view.component.html',
@@ -73,10 +73,41 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   countActivity = true;
   isGridView = true;
   showChat = false;
-  isOpenai = false;
+  isChatEnabled = false;
   isLoading = true;
   deviceType: DeviceType;
+  localizedStepInfo = '';
+  chatContext: ChatContext = { type: 'coursestep', data: '' };
   @ViewChild('previewTrigger') previewButton: MatMenuTrigger;
+
+  private updateChatContext() {
+    const title = this.stepDetail?.stepTitle;
+    const description = this.stepDetail?.description;
+    // eslint-disable-next-line max-len -- Keep the localized message as one template literal.
+    this.localizedStepInfo = $localize`The following information is a course step from the "${title}" course with a description "${description}".
+  Be sure to assist the learner in the best way you can. `;
+    this.chatContext = {
+      type: 'coursestep',
+      data: this.localizedStepInfo,
+      ...(!this.parent && this.resource?._id ? {
+        resource: { id: this.resource._id, attachments: this.resource._attachments }
+      } : {})
+    };
+  }
+
+  get isMobile(): boolean {
+    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
+  }
+
+  get hasActionButtons(): boolean {
+    const hasExam = !!this.stepDetail?.exam?.questions.length;
+    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
+    return (this.isChatEnabled && !!this.stepDetail?.description) ||
+      this.attempts > 0 ||
+      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
+      (this.canManage && (hasExam || hasSurvey)) ||
+      (this.stepDetail?.resources?.length || 0) !== 0;
+  }
 
   constructor(
     private chatService: ChatService,
@@ -98,20 +129,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.deviceType = this.deviceInfoService.getDeviceType();
   }
 
-  get isMobile(): boolean {
-    return this.deviceType === DeviceType.MOBILE || this.deviceType === DeviceType.SMALL_MOBILE;
-  }
-
-  get hasActionButtons(): boolean {
-    const hasExam = !!this.stepDetail?.exam?.questions.length;
-    const hasSurvey = !!this.stepDetail?.survey?.questions.length;
-    return (this.isOpenai && !!this.stepDetail?.description) ||
-      this.attempts > 0 ||
-      ((hasExam || hasSurvey) && this.isUserEnrolled) ||
-      (this.canManage && (hasExam || hasSurvey)) ||
-      (this.stepDetail?.resources?.length || 0) !== 0;
-  }
-
   ngOnInit() {
     combineLatest(
       this.coursesService.courseUpdated$,
@@ -131,14 +148,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.getSubmission();
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.parent = this.route.snapshot.data.parent;
+      this.updateChatContext();
       this.stepNum = +params.get('stepNum'); // Leading + forces string to number
       this.courseId = params.get('id');
       this.attempts = 0;
       this.coursesService.requestCourse({ courseId: this.courseId, parent: this.parent });
     });
     this.resourcesService.requestResourcesUpdate(this.parent);
-    this.chatService.listAIProviders().subscribe((providers) => {
-      this.isOpenai = providers.some(provider => provider.model === 'openai');
+    this.chatService.listAIProviders().pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.updateChatAvailability();
     });
   }
 
@@ -191,6 +209,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     this.stepDetail.resources.sort(this.coursesService.stepResourceSort);
     this.stepDetail.resources = this.filterResources(this.stepDetail, resources);
     this.resource = this.resource === undefined && this.stepDetail.resources ? this.stepDetail.resources[0] : this.resource;
+    this.updateChatContext();
+    this.updateChatAvailability();
   }
 
   // direction = -1 for previous, 1 for next
@@ -215,6 +235,8 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   resetCourseStep() {
     this.resource = undefined;
     this.stepDetail = { stepTitle: '', description: '', resources: [] };
+    this.updateChatContext();
+    this.updateChatAvailability();
     this.attempts = 0;
   }
 
@@ -248,6 +270,15 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
 
   onResourceChange(value) {
     this.resource = value;
+    this.updateChatContext();
+    this.updateChatAvailability();
+  }
+
+  private updateChatAvailability() {
+    this.isChatEnabled = this.chatService.courseChatAvailable(this.chatContext.resource?.attachments);
+    if (!this.isChatEnabled) {
+      this.showChat = false;
+    }
   }
 
   goToExam(type = 'exam', preview = false) {
@@ -268,10 +299,10 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
   }
 
   filterResources(step, resources) {
-    const resourceIds = resources.map((res: any) => res._id);
-    return step.resources ?
-      step.resources.filter((resource) => resourceIds.indexOf(resource._id) !== -1 && resource._attachments) :
-      [];
+    const resourcesById = new Map(resources.map((resource: any) => [ resource._id, resource ]));
+    return (step.resources || [])
+      .map((resource) => resourcesById.get(resource._id))
+      .filter((resource: any) => resource?._attachments);
   }
 
   openReviewDialog() {
@@ -290,10 +321,6 @@ export class CoursesStepViewComponent implements OnInit, OnDestroy {
     }
     this.previewButton.closeMenu();
     this.goToExam(stepType, true);
-  }
-
-  get localizedStepInfo(): string {
-    return coursesStepPrompt(this.stepDetail?.stepTitle, this.stepDetail?.description);
   }
 
 }

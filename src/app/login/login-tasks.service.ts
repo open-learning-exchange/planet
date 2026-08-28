@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
@@ -14,6 +14,7 @@ import { DashboardNotificationsDialogComponent } from '../dashboard/dashboard-no
 import { findDocuments } from '../shared/mangoQueries';
 import { dedupeObjectArray } from '../shared/utils';
 import { environment } from '../../environments/environment';
+import { ChatService } from '../shared/chat.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class LoginTasksService {
     private stateService: StateService,
     private healthService: HealthService,
     private submissionsService: SubmissionsService,
+    private chatService: ChatService,
     private planetMessageService: PlanetMessageService,
     private dialog: MatDialog
   ) {}
@@ -35,6 +37,7 @@ export class LoginTasksService {
   postLoginTasks$(name: string, password: string, isCreate: boolean, userId: string, configuration: any) {
     return forkJoin(this.pouchService.replicateFromRemoteDBs()).pipe(
       switchMap(this.createSession(name, password)),
+      tap(() => this.chatService.refreshAIProviders()),
       switchMap((sessionData) => {
         const adminName = configuration.adminName.split('@')[0];
         return isCreate ? this.sendNotifications(adminName, name) : of(sessionData);
