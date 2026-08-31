@@ -19,6 +19,7 @@ import { AttachmentInputState } from '../shared/forms/file-upload.component';
 import { TeamsAttachmentsService } from './teams-attachments.service';
 import { formatDate, NgClass, DatePipe, CurrencyPipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
@@ -48,6 +49,7 @@ interface NewReportForm {
     MatButton,
     MatIconButton,
     MatIcon,
+    MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatCard,
     MatCardContent,
@@ -132,10 +134,17 @@ export class TeamsReportsComponent implements OnChanges {
           { name: 'endDate', placeholder: $localize`End Date`, type: 'date', required: true },
           { name: 'description', placeholder: $localize`Summary`, type: 'markdown', required: true },
           { name: 'beginningBalance', placeholder: $localize`Beginning Balance`, type: 'textbox', inputType: 'number', required: true },
-          { name: 'sales', placeholder: $localize`Sales`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherIncome', placeholder: $localize`Other Income`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'wages', placeholder: $localize`Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
-          { name: 'otherExpenses', placeholder: $localize`Non-Personnel`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'sales', placeholder: $localize`Sales (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'otherIncome', placeholder: $localize`Other (Income)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          { name: 'wages', placeholder: $localize`Personnel (Expenses)`, type: 'textbox', inputType: 'number', required: true, min: 0 },
+          {
+            name: 'otherExpenses',
+            placeholder: $localize`Non-Personnel (Expenses)`,
+            type: 'textbox',
+            inputType: 'number',
+            required: true,
+            min: 0
+          },
           {
             name: 'receiptImages',
             placeholder: $localize`Attached Images`,
@@ -240,12 +249,10 @@ export class TeamsReportsComponent implements OnChanges {
         value;
     const { receiptImages = this.teamsAttachmentsService.emptyAttachmentState(), ...reportFields } = newReport as NewReportForm;
     const { _id, _rev, _attachments, ...newDoc } = Object.entries(reportFields).reduce(
-      (obj, [ key, value ]: [ string, string | Date | number ]) => {
-        return {
-          ...obj,
-          [key]: transformFields(key, value)
-        };
-      },
+      (obj, [ key, value ]: [ string, string | Date | number ]) => ({
+        ...obj,
+        [key]: transformFields(key, value)
+      }),
       {}
     ) as any;
     const docs = [ { ...oldReport, status: 'archived' }, newDoc ].filter(doc => doc.startDate !== undefined);

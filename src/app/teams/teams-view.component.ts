@@ -23,8 +23,7 @@ import { DialogsResourcesViewerComponent } from '../shared/dialogs/dialogs-resou
 import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
-import { memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,10 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -74,13 +70,7 @@ import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-lab
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatTabLabel,
-    TdMarkdownComponent,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -140,6 +130,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
+  get requestBadgeDescription(): string {
+    return $localize`Pending join requests: ${this.requests.length}:count:`;
+  }
+
+  get taskBadgeDescription(): string {
+    return $localize`Incomplete tasks: ${this.taskCount}:count:`;
+  }
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -188,8 +186,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab': this.taskTab,
-      'applicantTab': this.applicantTab
+      taskTab: this.taskTab,
+      applicantTab: this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -217,7 +215,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     return this.couchService.post('courses/_find', findDocuments(
-      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+      { _id: { $in: courseIds } }, [ '_id' ], 0, courseIds.length
     )).pipe(
       map(({ docs }) => {
         const existingIds = new Set(docs.map(course => course._id));
@@ -282,11 +280,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            viewIn: { $elemMatch: {
+              _id: teamId, section: 'teams', ...(showAll ? {} : { public: true })
             } }
           }
         ],
@@ -376,6 +374,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       team, leaveTeam,
       this.members.find(doc => doc.userId === this.user._id) || { userId: this.user._id, userPlanetCode: this.user.planetCode }
     ).pipe(
+      catchError(error => this.refreshMembersOnError(error)),
       switchMap((newTeam) => {
         this.team = newTeam;
         return this.getMembers();
@@ -434,11 +433,15 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   updateRole(member) {
     return ({ teamRole }) => {
       this.teamsService.updateMembershipDoc(this.team, false, { ...member, role: teamRole }).pipe(
+        catchError(error => this.refreshMembersOnError(error)),
         finalize(() => this.dialogsLoadingService.stop()),
         switchMap(() => this.getMembers())
-      ).subscribe(() => {
-        this.dialogsFormService.closeDialogsForm();
-        this.planetMessageService.showMessage($localize`Role has been updated.`);
+      ).subscribe({
+        next: () => {
+          this.dialogsFormService.closeDialogsForm();
+          this.planetMessageService.showMessage($localize`Role has been updated.`);
+        },
+        error: () => this.dialogsFormService.showErrorMessage($localize`There was a problem updating the role.`)
       });
     };
   }
@@ -456,25 +459,65 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  changeMembershipRequest(type, memberDoc?) {
+  changeMembershipRequest(type, memberDoc?, stopLoading = true) {
     const changeObject = this.changeObject(type, memberDoc);
     return () => {
+      let membershipWriteCompleted = false;
       return changeObject.obs.pipe(
+        catchError(error => this.refreshMembersOnError(error)),
+        tap(() => {
+          membershipWriteCompleted = true;
+        }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
         switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
-        finalize(() => this.dialogsLoadingService.stop())
+        catchError(error => membershipWriteCompleted ?
+          this.refreshMembersOnError(error) : throwError(error)),
+        finalize(() => {
+          if (stopLoading) {
+            this.dialogsLoadingService.stop();
+          }
+        })
       );
     };
   }
 
   changeMembership(type, memberDoc?) {
+    if (type === 'request' && this.team.type === 'enterprise') {
+      this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          okClick: {
+            request: this.changeMembershipRequest(type, memberDoc, false)(),
+            onNext: (message) => {
+              this.dialogPrompt.close();
+              this.setStatus(this.team, this.leader, this.userService.get());
+              this.planetMessageService.showMessage(message);
+            },
+            onError: () => {
+              this.planetMessageService.showAlert(
+                $localize`There was a problem requesting to join this enterprise.`
+              );
+            }
+          },
+          changeType: 'request',
+          type: 'enterprise',
+          displayName: this.team.name,
+          rules: this.team.rules,
+          extraMessage: enterpriseJoinAgreement()
+        }
+      });
+      return;
+    }
+
     this.dialogsLoadingService.start();
-    this.changeMembershipRequest(type, memberDoc)().subscribe((message) => {
-      this.setStatus(this.team, this.leader, this.userService.get());
-      this.planetMessageService.showMessage(message);
+    this.changeMembershipRequest(type, memberDoc)().subscribe({
+      next: (message) => {
+        this.setStatus(this.team, this.leader, this.userService.get());
+        this.planetMessageService.showMessage(message);
+      },
+      error: () => this.planetMessageService.showAlert($localize`There was a problem updating team membership.`)
     });
   }
 
@@ -520,7 +563,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       case 'request':
         return ({
           obs: this.teamsService.requestToJoinTeam(this.team, this.user),
-          message: $localize`Request to join team sent`
+          message: this.team.type === 'enterprise'
+            ? $localize`Request to join enterprise sent`
+            : $localize`Request to join team sent`
         });
       case 'removed':
         return ({
@@ -563,26 +608,36 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   addMembers(selected: any[]) {
+    let membershipWriteCompleted = false;
     this.dialogsLoadingService.start();
-    const newMembershipDocs = selected.map(
-      user => this.teamsService.membershipProps(this.team, { userId: user._id, userPlanetCode: user.planetCode }, 'membership')
-    );
-    const requestsToDelete = this.requests.filter(request => newMembershipDocs.some(member => member.userId === request.userId))
-      .map(request => ({ ...request, _deleted: true }));
-    this.couchService.bulkDocs(this.dbName, [ ...newMembershipDocs, ...requestsToDelete ]).pipe(
-      switchMap(() => {
-        return forkJoin([
-          this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...this.team }
-          }),
-          this.sendNotifications('addMember', { newMembersLength: selected.length })
-        ]);
+    this.teamsService.addMembers(this.team, selected, this.requests).pipe(
+      catchError(error => {
+        this.dialogRef.close();
+        return this.refreshMembersOnError(error);
       }),
+      tap(() => {
+        membershipWriteCompleted = true;
+        this.dialogRef.close();
+      }),
+      switchMap(() => forkJoin([
+        this.teamsService.sendNotifications('added', selected, {
+          url: this.router.url, team: { ...this.team }
+        }),
+        this.sendNotifications('addMember', { newMembersLength: selected.length })
+      ])),
       switchMap(() => this.getMembers()),
+      catchError(error => membershipWriteCompleted ? this.refreshMembersOnError(error) : throwError(error)),
       finalize(() => this.dialogsLoadingService.stop())
-    ).subscribe(() => {
-      this.dialogRef.close();
-      this.planetMessageService.showMessage($localize`Member${(selected.length > 1 ? 's' : '')} added successfully`);
+    ).subscribe({
+      next: () => {
+        this.planetMessageService.showMessage($localize`Member${(selected.length > 1 ? 's' : '')} added successfully`);
+      },
+      error: () => {
+        const message = membershipWriteCompleted
+          ? $localize`Members were added, but notifications or the member-list refresh failed.`
+          : $localize`There was a problem adding members.`;
+        this.planetMessageService.showAlert(message);
+      }
     });
   }
 
@@ -629,7 +684,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
+      viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
@@ -683,8 +738,18 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   makeLeader(member) {
-    const { tasks, ...currentLeader } = this.members.find(mem => memberCompare(mem, this.leader));
-    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(switchMap(() => this.getMembers()));
+    const currentLeader = this.members.find(mem => memberCompare(mem, this.leader)) || {};
+    return () => this.teamsService.changeTeamLeadership(currentLeader, member).pipe(
+      catchError(error => this.refreshMembersOnError(error)),
+      switchMap(() => this.getMembers())
+    );
+  }
+
+  private refreshMembersOnError(error) {
+    return this.getMembers().pipe(
+      catchError(() => of([])),
+      switchMap(() => throwError(error))
+    );
   }
 
   removeCourse(course) {
@@ -707,7 +772,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -722,14 +787,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
-    });
-  }
-
-  openMemberDialog(member) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
     });
   }
 

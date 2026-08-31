@@ -65,7 +65,7 @@
             }
           </h3>
           <div class="content">
-            <td-markdown [content]="element.description"></td-markdown>
+            <planet-markdown [content]="element.description" [imageSource]="parent ? 'parent' : 'local'"></planet-markdown>
           </div>
           @if (!parent) {
             <button class="menu" mat-icon-button [matMenuTriggerFor]="meetupMenu">
@@ -110,7 +110,7 @@
             <p>
               <span i18n>Date:</span>
               <span>{{ ' ' + (element.startDate | date: 'fullDate') + ' ' }}</span>
-              @if (element.endDate && element.endDate !== element.startDate) {
+              @if (element.endDate && (element.endDate | date: 'fullDate') !== (element.startDate | date: 'fullDate')) {
                 <span>{{ '- ' + (element.endDate | date: 'fullDate') + ' ' }}</span>
               }
               @if (element.startTime || element.endTime) {

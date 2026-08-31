@@ -19,9 +19,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/avatar.component';
+import { fullName } from '../../shared/utils';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -36,7 +39,7 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     PlanetBetaDirective,
     MatList,
     MatListItem,
@@ -45,17 +48,20 @@ import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
     NgClass,
     MatListItemLine,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
   user: any = {};
+  userName: string;
+  userPlanetCode: string;
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
@@ -83,11 +89,15 @@ export class UsersAchievementsComponent implements OnInit {
       const currentUser = this.userService.get();
       if (name === null || name === undefined) {
         this.user = currentUser;
+        this.userName = currentUser.name;
+        this.userPlanetCode = currentUser.planetCode;
         id = (this.user._id + '@' + this.stateService.configuration.code);
       } else {
         name = name.split('@')[0];
-        this.initUser(name, params.get('planet'));
-        id = 'org.couchdb.user:' + name + '@' + params.get('planet');
+        this.userName = name;
+        this.userPlanetCode = params.get('planet');
+        this.initUser(name, this.userPlanetCode);
+        id = 'org.couchdb.user:' + name + '@' + this.userPlanetCode;
       }
       if (id === (currentUser._id + '@' + currentUser.planetCode)) {
         this.ownAchievements = true;
@@ -164,14 +174,6 @@ export class UsersAchievementsComponent implements OnInit {
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
-  get profileImg() {
-    const attachments = this.userService.get()._attachments;
-    if (attachments) {
-      return this.urlPrefix + Object.keys(attachments)[0];
-    }
-    return 'assets/image.png';
-  }
-
   setCertifications(courses = [], progress = [], certifications = []) {
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
@@ -188,6 +190,7 @@ export class UsersAchievementsComponent implements OnInit {
 
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
+    const formattedMemberSince = this.user.joinDate ? formatDate(this.user.joinDate, 'mediumDate', this.localeId) : '';
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -196,9 +199,10 @@ export class UsersAchievementsComponent implements OnInit {
       },
       {
         text: `
-          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${fullName(this.user) || this.user.name}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
+          ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
           `,
         alignment: 'center',
       },
@@ -226,11 +230,9 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.certifications && this.certifications.length > 0) {
       optionals.push(
         { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
-          return [
-            { text: certification.name, bold: true, margin: [ 20, 5 ] },
-          ];
-        }),
+        ...this.certifications.map((certification) => [
+          { text: certification.name, bold: true, margin: [ 20, 5 ] },
+        ]),
         sectionSpacer
       );
     }
@@ -254,12 +256,10 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
         { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.links.map((achievement) => {
-          return [
-            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.url, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.links.map((achievement) => [
+          { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.url, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }
@@ -267,14 +267,12 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
         { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.references.map((achievement) => {
-          return [
-            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.relationship, marginLeft: 40 },
-            { text: achievement.phone, marginLeft: 40 },
-            { text: achievement.email, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.references.map((achievement) => [
+          { text: achievement.name, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.relationship, marginLeft: 40 },
+          { text: achievement.phone, marginLeft: 40 },
+          { text: achievement.email, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }

@@ -229,8 +229,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
   handleIncomingMessage(message: any) {
     if (message.type === 'final') {
       this.selectedConversationId = {
-        '_id': message.couchDBResponse?.id,
-        '_rev': message.couchDBResponse?.rev
+        _id: message.couchDBResponse?.id,
+        _rev: message.couchDBResponse?.rev
       };
       this.postSubmit();
     } else {
@@ -275,8 +275,8 @@ export class ChatWindowComponent implements OnInit, OnDestroy, AfterViewInit {
         (completion: any) => {
           this.conversations.push({ id: Date.now().toString(), query: content, response: completion?.chat });
           this.selectedConversationId = {
-            '_id': completion.couchDBResponse?.id,
-            '_rev': completion.couchDBResponse?.rev
+            _id: completion.couchDBResponse?.id,
+            _rev: completion.couchDBResponse?.rev
           };
           this.postSubmit();
         },

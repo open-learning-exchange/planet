@@ -13,6 +13,9 @@
                     <mat-label i18n>Search voice</mat-label>
                     <mat-icon matIconPrefix>search</mat-icon>
                     <input matInput [(ngModel)]="voiceSearch" (ngModelChange)="voiceSearch$.next($event)">
+                    <button type="button" mat-icon-button matSuffix (click)="voiceSearch = ''; voiceSearch$.next('')" [style.visibility]="voiceSearch ? 'visible' : 'hidden'" matTooltip="Clear voice search" i18n-matTooltip i18n-aria-label aria-label="Clear voice search">
+                      <mat-icon>close</mat-icon>
+                    </button>
                   </mat-form-field>
                   <mat-form-field class="label-filter-field mdc-toolbar-input">
                     <mat-label i18n>Label</mat-label>
@@ -45,7 +48,7 @@
                       <mat-icon>label</mat-icon>
                     </button>
                   }
-                  <button mat-icon-button (click)="pinned = !pinned" class="pin-btn">
+                  <button mat-icon-button [matTooltip]="voicesToolbarPinTooltip" [attr.aria-label]="voicesToolbarPinTooltip" (click)="pinned = !pinned" class="pin-btn">
                     <mat-icon svgIcon="{{ pinned ? 'unpin' : 'pin' }}"></mat-icon>
                   </button>
                 </mat-toolbar>
@@ -63,14 +66,12 @@
             }
             <div class="card-grid">
               @for (councillor of councillors; track councillor) {
-                <mat-card>
-                  <planet-teams-member
-                    [leadershipTitle]="councillor.doc.leadershipTitle"
-                    [member]="councillor"
-                    [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
-                    (actionClick)="openChangeTitleDialog($event)">
-                  </planet-teams-member>
-                </mat-card>
+                <planet-teams-member
+                  [leadershipTitle]="councillor.doc.leadershipTitle"
+                  [member]="councillor"
+                  [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                  (actionClick)="openChangeTitleDialog($event)">
+                </planet-teams-member>
               }
             </div>
           </mat-tab>

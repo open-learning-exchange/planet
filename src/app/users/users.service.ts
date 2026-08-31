@@ -3,10 +3,11 @@ import { forkJoin, Subject, combineLatest, of, throwError } from 'rxjs';
 import { switchMap, map, catchError, filter } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { CouchService } from '../shared/couchdb.service';
+import { fullName } from '../shared/utils';
 import { UserService } from '../shared/user.service';
 import { StateService } from '../shared/state.service';
 import { TasksService } from '../tasks/tasks.service';
-import { findDocuments } from '../shared/mangoQueries';
+import { NotificationsService, notificationRecipient } from '../notifications/notifications.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class UsersService {
     private couchService: CouchService,
     private userService: UserService,
     private stateService: StateService,
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private notificationsService: NotificationsService
   ) {
     const checkIfLocal = (data: { newData, planetField, db }) => data && data.planetField === 'local';
     const dataToUse = (oldData, data: { newData, planetField, db }, isLocal) => isLocal ? data.newData : oldData;
@@ -45,13 +47,15 @@ export class UsersService {
           of(parentUsers.newData)
         ]);
       })
-    ).subscribe(([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
-      if (childUsers === undefined) {
-        return;
+    ).subscribe(
+      ([ users, { rows: loginActivities }, childUsers, parentUsers ]: [ any[], { rows: any[] }, any[], any[] ]) => {
+        if (childUsers === undefined) {
+          return;
+        }
+        this.data = { users, loginActivities, childUsers, parentUsers };
+        this.updateUsers();
       }
-      this.data = { users, loginActivities, childUsers, parentUsers };
-      this.updateUsers();
-    });
+    );
   }
 
   getAllUsers(withPrivateDocs = false) {
@@ -94,7 +98,7 @@ export class UsersService {
       _id: user._id,
       doc: user,
       imageSrc: '',
-      fullName: (user.firstName || user.lastName) ? `${user.firstName} ${user.middleName} ${user.lastName}` : user.name,
+      fullName: fullName(user) || user.name,
       ...this.userLoginActivities(user, this.data.loginActivities)
     };
     if (user._attachments) {
@@ -161,11 +165,11 @@ export class UsersService {
   setRoles(user, roles) {
     const tempUser = {
       ...user,
-      roles: roles,
+      roles,
       oldRoles: user.roles?.length ? [ ...user.roles ] : [ 'learner' ],
     };
     return this.couchService.put('_users/org.couchdb.user:' + tempUser.name, tempUser).pipe(
-      switchMap(() => this.sendNotifications(user))
+      switchMap(() => roles.length ? this.sendNotifications(user) : of({}))
     );
   }
 
@@ -185,14 +189,12 @@ export class UsersService {
   deleteUser(user) {
     const userId = 'org.couchdb.user:' + user.name;
     return this.couchService.get('shelf/' + userId).pipe(
-      switchMap(shelfUser => {
-        return forkJoin([
-          this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
-          this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
-          this.deleteUserFromTeams(user),
-          this.tasksService.removeAssigneeFromTasks(user._id)
-        ]);
-      }),
+      switchMap(shelfUser => forkJoin([
+        this.couchService.delete('_users/' + userId + '?rev=' + user._rev),
+        this.couchService.delete('shelf/' + userId + '?rev=' + shelfUser._rev),
+        this.deleteUserFromTeams(user),
+        this.tasksService.removeAssigneeFromTasks(user._id)
+      ])),
       map(() => this.requestUsers(true))
     );
   }
@@ -219,21 +221,15 @@ export class UsersService {
 
   sendNotifications(user) {
     const notificationDoc = {
-      user: user._id,
-      'message': $localize`You were assigned a new role`,
+      ...notificationRecipient(user),
+      message: $localize`You were assigned a new role`,
       link: '/myDashboard',
-      'type': 'newRole',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
-      userPlanetCode: user.userPlanetCode
+      type: 'newRole',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
-    return this.couchService.findAll(
-      'notifications/_find',
-      findDocuments({ 'user': user._id, 'status': 'unread', 'type': 'newRole' })
-    ).pipe(
-      switchMap((res: any[]) => res.length === 0 ? this.couchService.updateDocument('notifications', notificationDoc) : of({}))
-    );
+    return this.notificationsService.sendNotificationToUser(notificationDoc);
   }
 
 }

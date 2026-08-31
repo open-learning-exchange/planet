@@ -8,12 +8,15 @@
     <mat-icon class="input-icon">search</mat-icon>
     <mat-form-field class="font-size-1">
       <mat-label i18n>Type title to search...</mat-label>
-      <input matInput (keyup)="applyFilter($event.target.value)">
+      <input matInput [ngModel]="searchValue" (ngModelChange)="applyFilter($event)">
+      <button type="button" mat-icon-button matSuffix (click)="applyFilter('')" [style.visibility]="searchValue ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
     </mat-form-field>
   </mat-toolbar>
 }
 
-<div class="space-container primary-link-hover">
+<div class="primary-link-hover" [class.space-container]="!teamId">
   @if (!teamId) {
     <mat-toolbar class="primary-color font-size-1">
       @if (isAuthorized) {
@@ -38,7 +41,7 @@
       </ng-container>
     </mat-toolbar>
   }
-  <div class="view-container view-full-height view-table">
+  <div class="view-container view-full-height view-table" [class.fill-parent]="teamId">
     @if (isLoading && !useDialogLoading) {
       <planet-loading-spinner text="Loading surveys..." i18n-text></planet-loading-spinner>
     }
@@ -164,12 +167,14 @@
             }
           }
           @if (routeTeamId && currentFilter.viewMode === 'adopt') {
-            <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
-              <mat-icon>get_app</mat-icon>
-              @if (!isMobile) {
-                <label i18n> Adopt</label>
-              }
-            </button>
+            <div [matTooltip]="getActionTooltip(element, 'adopt')">
+              <button mat-raised-button color="primary" (click)="adoptSurvey(element)">
+                <mat-icon>get_app</mat-icon>
+                @if (!isMobile) {
+                  <label i18n> Adopt</label>
+                }
+              </button>
+            </div>
           }
           @if (currentFilter.viewMode !== 'adopt') {
             <div [matTooltip]="getActionTooltip(element, 'export')">

@@ -29,7 +29,7 @@ import { NgClass } from '@angular/common';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect, MatSelectTrigger } from '@angular/material/select';
@@ -37,7 +37,6 @@ import { LabelComponent } from '../shared/label.component';
 import { MatOption } from '@angular/material/autocomplete';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { TeamsMemberComponent } from '../teams/teams-member.component';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import {
@@ -72,6 +71,7 @@ interface CommunityDescriptionForm {
     MatLabel,
     MatIcon,
     MatPrefix,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatSelect,
@@ -81,7 +81,6 @@ interface CommunityDescriptionForm {
     AuthorizedRolesDirective,
     MatButton,
     MatIconButton,
-    MatCard,
     TeamsMemberComponent,
     PlanetMarkdownComponent,
     MatNavList,
@@ -146,6 +145,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   get leadersTabLabel(): string {
     return this.configuration.planetType === 'nation' ? $localize`Nation Leaders` : $localize`Community Leaders`;
+  }
+
+  get voicesToolbarPinTooltip(): string {
+    return this.pinned ? $localize`Unpin Voices Toolbar` : $localize`Pin Voices Toolbar`;
   }
 
   localLinkTooltip(link: any): string {
@@ -284,9 +287,9 @@ export class CommunityComponent implements OnInit, OnDestroy {
   requestNewsAndUsers(planetCode?: string) {
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           { messagePlanetCode: planetCode ? planetCode : this.configuration.code, viewableBy: 'community' },
-          { viewIn: { '$elemMatch': { '_id': this.teamId, section: 'community' } } }
+          { viewIn: { $elemMatch: { _id: this.teamId, section: 'community' } } }
         ]
       },
       viewId: this.teamId
@@ -309,7 +312,7 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'community' } ],
+      viewIn: [ { _id: this.teamId, section: 'community' } ],
       messageType: 'sync',
       messagePlanetCode: this.configuration.code,
       ...message
@@ -319,11 +322,11 @@ export class CommunityComponent implements OnInit, OnDestroy {
         this.couchService.findAll('notifications', findDocuments({ status: 'unread', type: 'communityMessage' }))
       ])),
       switchMap(([ users, notifications ]: [ any[], any[] ]) => {
-        const docs = users.filter(user => {
-          return this.user._id !== user._id &&
-            user._id !== 'satellite' &&
-            notifications.every(notification => notification.user !== user._id);
-        }).map(user => this.sendNotifications(user._id, this.user._id));
+        const docs = users.filter(user => (
+          this.user._id !== user._id &&
+          user._id !== 'satellite' &&
+          notifications.every(notification => notification.user !== user._id)
+        )).map(user => this.sendNotifications(user._id, this.user._id));
         return this.couchService.updateDocument('notifications/_bulk_docs', { docs });
       }),
       finalize(() => this.dialogsLoadingService.stop())
@@ -351,13 +354,13 @@ export class CommunityComponent implements OnInit, OnDestroy {
 
   sendNotifications(user, currentUser) {
     return {
-      'user': user,
-      'message': $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
-      'link': '/',
-      'type': 'communityMessage',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      user,
+      message: $localize`<b>${currentUser.split(':')[1]}</b> posted a <b>new story</b>.`,
+      link: '/',
+      type: 'communityMessage',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       planetCode: user.userPlanetCode
     };
   }
@@ -597,11 +600,10 @@ export class CommunityComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = this.news;
     if (this.selectedLabel) {
-      filtered = filtered.filter(item => {
-        return (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
+      filtered = filtered.filter(item =>
+        (item.doc.labels || []).some(label => voiceLabelsEqual(label, this.selectedLabel))
           || (item.doc.viewIn || []).some(view => view.name && voiceLabelsEqual(view.name, this.selectedLabel))
-          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true);
-      });
+          || (voiceLabelsEqual(this.selectedLabel, SHARED_CHAT_LABEL) && item.doc.chat === true));
     }
     if (this.voiceSearch) {
       const lower = this.voiceSearch.toLowerCase();
