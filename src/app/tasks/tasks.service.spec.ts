@@ -46,7 +46,7 @@ describe('TasksService assignee cleanup', () => {
     const query = couchService.findAll.mock.calls[0][1];
     expect(query.selector.link).toEqual({ teams: 'team-1' });
     expect(query.selector.$or).toContainEqual({
-      assignees: { '$elemMatch': { userId: 'alex', userPlanetCode: 'planet-a' } }
+      assignees: { $elemMatch: { userId: 'alex', userPlanetCode: 'planet-a' } }
     });
   });
 

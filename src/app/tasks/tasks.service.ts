@@ -132,11 +132,11 @@ export class TasksService {
       code ? { 'assignee.userId': userId, 'assignee.userPlanetCode': code } : { 'assignee.userId': userId }
     );
     const arraySelectors: any[] = planetCodes.map(code => ({
-      assignees: { '$elemMatch': code ? { userId, userPlanetCode: code } : { userId } }
+      assignees: { $elemMatch: code ? { userId, userPlanetCode: code } : { userId } }
     }));
     if (planetCodes.includes(localPlanetCode)) {
-      legacySelectors.push({ 'assignee.userId': userId, 'assignee.userPlanetCode': { '$exists': false } });
-      arraySelectors.push({ assignees: { '$elemMatch': { userId, userPlanetCode: { '$exists': false } } } });
+      legacySelectors.push({ 'assignee.userId': userId, 'assignee.userPlanetCode': { $exists: false } });
+      arraySelectors.push({ assignees: { $elemMatch: { userId, userPlanetCode: { $exists: false } } } });
     }
     const selector: any = {
       $or: [ ...legacySelectors, ...arraySelectors ]
