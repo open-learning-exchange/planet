@@ -1,10 +1,15 @@
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { PlanetCalendarComponent } from './calendar.component';
 import { styleVariables } from './utils';
 
 describe('PlanetCalendarComponent', () => {
-  const createComponent = (couchService: any = {}) => new PlanetCalendarComponent(
+  const createComponent = (
+    couchService: any = {},
+    userService: any = { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'org.couchdb.user:admin' }) },
+    messageService: any = { showMessage: vi.fn(), showAlert: vi.fn() },
+    loadingService: any = { start: vi.fn(), stop: vi.fn() }
+  ) => new PlanetCalendarComponent(
     document,
     'en',
     {} as any,
@@ -12,8 +17,9 @@ describe('PlanetCalendarComponent', () => {
     {} as any,
     {} as any,
     {} as any,
-    {} as any,
-    {} as any
+    messageService,
+    loadingService,
+    userService
   );
 
   it('preserves the time stored in a task deadline', () => {
@@ -81,4 +87,49 @@ describe('PlanetCalendarComponent', () => {
     expect(component.tasks[0].textColor).toBe(styleVariables.accentText);
     expect(component.tasks[1].textColor).toBe(styleVariables.accentText);
   });
+
+  it('sets editable based on user authorization and recurring status', () => {
+    const adminComponent = createComponent({}, { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'admin' }) });
+    const userComponent = createComponent({}, { get: () => ({ name: 'user', isUserAdmin: false, _id: 'user' }) });
+
+    expect(adminComponent.eventObject({ title: 'Event', createdBy: 'other', recurring: 'none' }, new Date()).editable).toBe(true);
+    expect(userComponent.eventObject({ title: 'Event', createdBy: 'other', recurring: 'none' }, new Date()).editable).toBe(false);
+    expect(adminComponent.eventObject({ title: 'Event', createdBy: 'admin', recurring: 'daily' }, new Date()).editable).toBe(false);
+  });
+
+  it('updates document on authorized eventDrop and reverts when unauthorized', () => {
+    const couchService = { updateDocument: vi.fn(() => of({ ok: true })), findAll: vi.fn(() => of([])) };
+    const adminComponent = createComponent(couchService, { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'admin' }) });
+    const userComponent = createComponent(couchService, { get: () => ({ name: 'user', isUserAdmin: false, _id: 'user' }) });
+    const revert = vi.fn();
+
+    const oldStart = new Date(2026, 7, 10);
+    const newStart = new Date(2026, 7, 12);
+    const meetup = {
+      _id: 'm1',
+      title: 'Meetup',
+      createdBy: 'admin',
+      recurring: 'none',
+      startDate: oldStart.getTime(),
+      endDate: oldStart.getTime()
+    };
+
+    // Unauthorized revert
+    userComponent.eventDrop({ event: { extendedProps: { meetup } }, revert });
+    expect(revert).toHaveBeenCalled();
+
+    // Authorized update
+    adminComponent.eventDrop({
+      event: { start: newStart, extendedProps: { meetup } },
+      oldEvent: { start: oldStart },
+      revert: vi.fn()
+    });
+    expect(couchService.updateDocument).toHaveBeenCalledWith('meetups', expect.objectContaining({
+      _id: 'm1',
+      startDate: newStart.getTime(),
+      endDate: newStart.getTime()
+    }));
+  });
 });
+
+

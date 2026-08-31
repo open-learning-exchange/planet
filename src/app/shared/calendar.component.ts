@@ -17,6 +17,8 @@ import { DialogsFormService } from './dialogs/dialogs-form.service';
 import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { UserService } from './user.service';
+import { finalize } from 'rxjs/operators';
 
 const taskEventColors = {
   completed: {
@@ -105,7 +107,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     select: (arg) => {
       this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
-    eventClick: this.eventClick.bind(this)
+    eventClick: this.eventClick.bind(this),
+    eventDrop: this.eventDrop.bind(this)
   };
 
   constructor(
@@ -117,7 +120,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     private tasksService: TasksService,
     private dialogsFormService: DialogsFormService,
     private planetMessageService: PlanetMessageService,
-    private dialogsLoadingService: DialogsLoadingService
+    private dialogsLoadingService: DialogsLoadingService,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
@@ -177,6 +181,11 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     });
   }
 
+  canEditMeetup(meetup: any): boolean {
+    const user = this.userService.get();
+    return !!user?._id && (user.isUserAdmin || user.name === meetup?.createdBy);
+  }
+
   eventObject(
     meetup,
     startDate = meetup.startDate,
@@ -197,12 +206,17 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       end = timedEnd > start ? timedEnd : undefined;
     }
 
+    const isRecurring = meetup.recurring && meetup.recurring !== 'none';
+    const editable = meetup.isTask
+      ? this.editable
+      : (this.canEditMeetup(meetup) && !isRecurring && this.editable);
+
     return {
       title: meetup.title,
       start,
       ...(end ? { end } : {}),
       allDay,
-      editable: true,
+      editable,
       extendedProps: { meetup },
       ...otherProps
     };
@@ -337,6 +351,79 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         changeType: 'delete',
         type: 'task',
         displayName: task.title
+      }
+    });
+  }
+
+  eventDrop(info: any) {
+    const eventData = info.event?.extendedProps?.meetup;
+    if (!eventData) {
+      info.revert();
+      return;
+    }
+
+    if (eventData.isTask) {
+      if (!this.editable) {
+        info.revert();
+        this.planetMessageService.showAlert($localize`You are not authorized to edit this task`);
+        return;
+      }
+      const newDeadline = info.event.start ? info.event.start.getTime() : eventData.deadline;
+      const { isTask, ...taskDoc } = eventData;
+      const updatedTask = { ...taskDoc, deadline: newDeadline };
+
+      this.dialogsLoadingService.start();
+      this.couchService.updateDocument('tasks', updatedTask).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe({
+        next: () => {
+          this.planetMessageService.showMessage($localize`Task rescheduled successfully`);
+          this.getTasks();
+        },
+        error: (err) => {
+          console.error(err);
+          info.revert();
+          this.planetMessageService.showAlert($localize`Failed to reschedule task`);
+        }
+      });
+      return;
+    }
+
+    if (!this.canEditMeetup(eventData)) {
+      info.revert();
+      this.planetMessageService.showAlert($localize`You are not authorized to edit this meetup`);
+      return;
+    }
+
+    if (eventData.recurring && eventData.recurring !== 'none') {
+      info.revert();
+      this.planetMessageService.showAlert($localize`Recurring meetups cannot be rescheduled by dragging. Please edit the meetup schedule.`);
+      return;
+    }
+
+    const originalStartDate = this.dateAtTime(eventData.startDate, eventData.startTime);
+    const deltaMs = (info.event.start ? info.event.start.getTime() : 0) - originalStartDate.getTime();
+    const newStartDate = Number(eventData.startDate) + deltaMs;
+    const newEndDate = eventData.endDate ? Number(eventData.endDate) + deltaMs : newStartDate;
+
+    const updatedMeetup = {
+      ...eventData,
+      startDate: newStartDate,
+      endDate: newEndDate
+    };
+
+    this.dialogsLoadingService.start();
+    this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe({
+      next: () => {
+        this.planetMessageService.showMessage($localize`Event rescheduled: ${eventData.title}`);
+        this.getMeetups();
+      },
+      error: (err) => {
+        console.error(err);
+        info.revert();
+        this.planetMessageService.showAlert($localize`Failed to reschedule event`);
       }
     });
   }
