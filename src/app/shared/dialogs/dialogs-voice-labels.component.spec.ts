@@ -6,6 +6,7 @@ import { DialogsVoiceLabelsComponent } from './dialogs-voice-labels.component';
 describe('DialogsVoiceLabelsComponent', () => {
   let dialogRef: any;
   let stateService: any;
+  let configurationService: any;
   let couchService: any;
   let planetMessageService: any;
   let dialogsLoadingService: any;
@@ -15,6 +16,7 @@ describe('DialogsVoiceLabelsComponent', () => {
     dialogRef,
     data,
     stateService,
+    configurationService,
     couchService,
     planetMessageService,
     dialogsLoadingService,
@@ -31,6 +33,9 @@ describe('DialogsVoiceLabelsComponent', () => {
     stateService = {
       configuration: { _id: 'configuration', code: 'local', customVoiceLabels: [ 'Stale label' ] },
       requestData: vi.fn()
+    };
+    configurationService = {
+      patchLocalConfiguration: vi.fn().mockReturnValue(of({}))
     };
     couchService = {
       get: vi.fn().mockReturnValue(of({
@@ -68,14 +73,12 @@ describe('DialogsVoiceLabelsComponent', () => {
     component.save();
 
     expect(component.initialCustomLabels).toEqual([ 'Current label' ]);
-    expect(couchService.get).toHaveBeenCalledWith('configurations/configuration');
-    expect(couchService.updateDocument).toHaveBeenCalledWith('configurations', {
-      _id: 'configuration',
-      _rev: '2-current',
-      code: 'local',
-      keys: { service: 'secret' },
+    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
       customVoiceLabels: [ 'Current label', 'New label' ]
     });
+    expect(couchService.get).not.toHaveBeenCalled();
+    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    expect(stateService.requestData).toHaveBeenCalledWith('configurations', 'local');
     expect(dialogsLoadingService.stop).toHaveBeenCalled();
     expect(dialogRef.close).toHaveBeenCalledWith([ 'Current label', 'New label' ]);
   });
@@ -87,11 +90,7 @@ describe('DialogsVoiceLabelsComponent', () => {
 
     component.save();
 
-    expect(couchService.updateDocument).toHaveBeenCalledWith('configurations', {
-      _id: 'configuration',
-      _rev: '2-current',
-      code: 'local',
-      keys: { service: 'secret' },
+    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
       customVoiceLabels: [ 'Event' ]
     });
     expect(dialogRef.close).toHaveBeenCalledWith([ 'Event' ]);
@@ -104,9 +103,9 @@ describe('DialogsVoiceLabelsComponent', () => {
 
     component.save();
 
-    expect(couchService.updateDocument).toHaveBeenCalledWith('configurations', expect.objectContaining({
+    expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({
       customVoiceLabels: [ 'announcement' ]
-    }));
+    });
   });
 
   it('merges team labels into the latest team revision', () => {

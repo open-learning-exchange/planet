@@ -8,6 +8,7 @@ import { MatInput } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { ConfigurationService } from '../../configuration/configuration.service';
 import { StateService } from '../state.service';
 import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
@@ -54,6 +55,7 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
     private dialogRef: MatDialogRef<DialogsVoiceLabelsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private stateService: StateService,
+    private configurationService: ConfigurationService,
     private couchService: CouchService,
     private planetMessageService: PlanetMessageService,
     private dialogsLoadingService: DialogsLoadingService,
@@ -197,10 +199,11 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
     this.isSaving = true;
     this.dialogsLoadingService.start();
     const customVoiceLabels = [ ...this.customLabels ];
-    const database = isCommunity ? 'configurations' : 'teams';
-    const updateRequest = this.couchService.get(`${database}/${targetDocument._id}`).pipe(
-      switchMap(currentDocument => this.couchService.updateDocument(database, { ...currentDocument, customVoiceLabels }))
-    );
+    const updateRequest = isCommunity ?
+      this.configurationService.patchLocalConfiguration({ customVoiceLabels }) :
+      this.couchService.get(`teams/${targetDocument._id}`).pipe(
+        switchMap(currentDocument => this.couchService.updateDocument('teams', { ...currentDocument, customVoiceLabels }))
+      );
 
     updateRequest.pipe(
       finalize(() => {
