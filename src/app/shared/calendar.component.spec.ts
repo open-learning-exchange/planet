@@ -7,7 +7,8 @@ describe('PlanetCalendarComponent', () => {
   const createComponent = (
     couchService: any = {},
     userService: any = { get: () => ({ name: 'admin', isUserAdmin: true, _id: 'org.couchdb.user:admin' }) },
-    messageService: any = { showMessage: vi.fn(), showAlert: vi.fn() }
+    messageService: any = { showMessage: vi.fn(), showAlert: vi.fn() },
+    loadingService: any = { start: vi.fn(), stop: vi.fn() }
   ) => new PlanetCalendarComponent(
     document,
     'en',
@@ -17,7 +18,7 @@ describe('PlanetCalendarComponent', () => {
     {} as any,
     {} as any,
     messageService,
-    {} as any,
+    loadingService,
     userService
   );
 
@@ -102,15 +103,22 @@ describe('PlanetCalendarComponent', () => {
     const userComponent = createComponent(couchService, { get: () => ({ name: 'user', isUserAdmin: false, _id: 'user' }) });
     const revert = vi.fn();
 
-    const meetup = { _id: 'm1', title: 'Meetup', createdBy: 'admin', recurring: 'none', startDate: 1000, endDate: 1000 };
+    const oldStart = new Date(2026, 7, 10);
+    const newStart = new Date(2026, 7, 12);
+    const meetup = {
+      _id: 'm1',
+      title: 'Meetup',
+      createdBy: 'admin',
+      recurring: 'none',
+      startDate: oldStart.getTime(),
+      endDate: oldStart.getTime()
+    };
 
     // Unauthorized revert
     userComponent.eventDrop({ event: { extendedProps: { meetup } }, revert });
     expect(revert).toHaveBeenCalled();
 
     // Authorized update
-    const oldStart = new Date(1000);
-    const newStart = new Date(2000);
     adminComponent.eventDrop({
       event: { start: newStart, extendedProps: { meetup } },
       oldEvent: { start: oldStart },
@@ -118,8 +126,8 @@ describe('PlanetCalendarComponent', () => {
     });
     expect(couchService.updateDocument).toHaveBeenCalledWith('meetups', expect.objectContaining({
       _id: 'm1',
-      startDate: 2000,
-      endDate: 2000
+      startDate: newStart.getTime(),
+      endDate: newStart.getTime()
     }));
   });
 });

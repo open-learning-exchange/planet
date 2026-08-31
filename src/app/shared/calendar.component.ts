@@ -18,6 +18,7 @@ import { PlanetMessageService } from './planet-message.service';
 import { DialogsLoadingService } from './dialogs/dialogs-loading.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { UserService } from './user.service';
+import { finalize } from 'rxjs/operators';
 
 const taskEventColors = {
   completed: {
@@ -371,7 +372,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       const { isTask, ...taskDoc } = eventData;
       const updatedTask = { ...taskDoc, deadline: newDeadline };
 
-      this.couchService.updateDocument('tasks', updatedTask).subscribe({
+      this.dialogsLoadingService.start();
+      this.couchService.updateDocument('tasks', updatedTask).pipe(
+        finalize(() => this.dialogsLoadingService.stop())
+      ).subscribe({
         next: () => {
           this.planetMessageService.showMessage($localize`Task rescheduled successfully`);
           this.getTasks();
@@ -397,7 +401,8 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       return;
     }
 
-    const deltaMs = (info.event.start?.getTime() ?? 0) - (info.oldEvent?.start?.getTime() ?? 0);
+    const originalStartDate = this.dateAtTime(eventData.startDate, eventData.startTime);
+    const deltaMs = (info.event.start ? info.event.start.getTime() : 0) - originalStartDate.getTime();
     const newStartDate = Number(eventData.startDate) + deltaMs;
     const newEndDate = eventData.endDate ? Number(eventData.endDate) + deltaMs : newStartDate;
 
@@ -407,7 +412,10 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       endDate: newEndDate
     };
 
-    this.couchService.updateDocument(this.dbName, updatedMeetup).subscribe({
+    this.dialogsLoadingService.start();
+    this.couchService.updateDocument(this.dbName, updatedMeetup).pipe(
+      finalize(() => this.dialogsLoadingService.stop())
+    ).subscribe({
       next: () => {
         this.planetMessageService.showMessage($localize`Event rescheduled: ${eventData.title}`);
         this.getMeetups();
