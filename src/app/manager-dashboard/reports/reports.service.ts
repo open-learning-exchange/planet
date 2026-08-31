@@ -94,7 +94,7 @@ export class ReportsService {
       findDocuments({
         ...{ [field]: planetCode },
         ...this.timeFilter(dateField, tillDate),
-        ...(fromMyPlanet !== undefined ? { androidId: { '$exists': fromMyPlanet } } : {})
+        ...(fromMyPlanet !== undefined ? { androidId: { $exists: fromMyPlanet } } : {})
       }) :
       undefined;
   }
@@ -117,7 +117,7 @@ export class ReportsService {
       byGender: users.reduce((usersByGender: any, user: any) => {
         usersByGender[(user.doc || user).gender || 'didNotSpecify'] += 1;
         return usersByGender;
-      }, { 'male': 0, 'female': 0, 'didNotSpecify': 0 }),
+      }, { male: 0, female: 0, didNotSpecify: 0 }),
       byMonth: this.groupByMonth(users, 'joinDate')
     });
   }
@@ -132,9 +132,7 @@ export class ReportsService {
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
     return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, fromMyPlanet }))
-      .pipe(map((activities: any) => {
-        return this.filterAdmin(activities, filterAdmin);
-      }));
+      .pipe(map((activities: any) => this.filterAdmin(activities, filterAdmin)));
   }
 
   groupLoginActivities(loginActivities) {
@@ -169,9 +167,7 @@ export class ReportsService {
     return forkJoin([
       this.couchService.get(db),
       this.couchService.get(db + '/_design_docs')
-    ]).pipe(map(([ schema, ddocs ]) => {
-      return schema.doc_count - ddocs.total_rows;
-    }));
+    ]).pipe(map(([ schema, ddocs ]) => schema.doc_count - ddocs.total_rows));
   }
 
   getChildDatabaseCounts(code: string) {
@@ -180,9 +176,7 @@ export class ReportsService {
 
   getAdminActivities({ planetCode, tillDate, domain }: { planetCode?: string, tillDate?: number, domain?: string }) {
     return this.couchService.findAll('admin_activities', this.selector(planetCode, { tillDate, dateField: 'time' }), { domain })
-      .pipe(map(adminActivities => {
-        return this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' });
-      }));
+      .pipe(map(adminActivities => this.groupBy(adminActivities, [ 'parentCode', 'createdOn', 'type' ], { maxField: 'time' })));
   }
 
   mostRecentAdminActivities(planet, logins, adminActivities) {
@@ -217,7 +211,7 @@ export class ReportsService {
   }
 
   timeFilter(field, time) {
-    return time !== undefined ? { [field]: { '$gt': time } } : {};
+    return time !== undefined ? { [field]: { $gt: time } } : {};
   }
 
   filterAdmin(records, filter) {
@@ -268,25 +262,23 @@ export class ReportsService {
       this.couchService.get('courses_progress/_design/courses_progress/_view/completion?group=true'),
       this.couchService.get('courses_progress/_design/courses_progress/_view/steps?group=true'),
       this.coursesService.coursesListener$().pipe(take(1))
-    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => {
-      return {
-        courses: courses.map(course => ({
-          steps: course.doc.steps.length,
-          exams: course.doc.steps.filter(step => step.exam).length,
-          _id: course._id
-        })),
-        enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
-        completions: completions.filter(({ key, value }) => {
-          const course = courses.find(c => c._id === key.courseId);
-          return course && value.count === course.doc.steps.length;
-        })
-          .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
-        steps: steps.map(({ key, value }) => {
-          const course = courses.find(c => c._id === key.courseId);
-          return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
-        })
-      };
-    }));
+    ]).pipe(map(([ { rows: enrollments }, { rows: completions }, { rows: steps }, courses ]) => ({
+      courses: courses.map(course => ({
+        steps: course.doc.steps.length,
+        exams: course.doc.steps.filter(step => step.exam).length,
+        _id: course._id
+      })),
+      enrollments: enrollments.map(({ key, value }) => ({ ...key, time: value.min })),
+      completions: completions.filter(({ key, value }) => {
+        const course = courses.find(c => c._id === key.courseId);
+        return course && value.count === course.doc.steps.length;
+      })
+        .map(({ key, value }) => ({ ...key, time: value.max, stepCount: value.count })),
+      steps: steps.map(({ key, value }) => {
+        const course = courses.find(c => c._id === key.courseId);
+        return { ...key, time: value.max, title: course ? course.doc.courseTitle : '' };
+      })
+    })));
   }
 
   getChatHistory() {

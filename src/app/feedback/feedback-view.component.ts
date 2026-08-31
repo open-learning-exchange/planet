@@ -125,7 +125,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
   }
 
   getFeedback(id) {
-    return this.couchService.post(this.dbName + '/_find', findDocuments({ '_id': id }));
+    return this.couchService.post(this.dbName + '/_find', findDocuments({ _id: id }));
   }
 
   postMessage() {
@@ -161,12 +161,12 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     ));
     const notificationDoc = ({ user, userPlanetCode }) => ({
       user,
-      'message': $localize`You have unread messages in feedback`,
+      message: $localize`You have unread messages in feedback`,
       link,
-      'type': 'feedbackReply',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      type: 'feedbackReply',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode
     });
     return this.couchService.findAll('notifications', findDocuments({ link, type: 'feedbackReply', status: 'unread' })).pipe(
@@ -196,9 +196,7 @@ export class FeedbackViewComponent implements OnInit, OnDestroy {
     this.couchService.stream('GET', this.dbName + '/_changes?feed=continuous&since=now')
       .pipe(
         takeUntil(this.onDestroy$),
-        switchMap(() => {
-          return this.getFeedback(id);
-        })
+        switchMap(() => this.getFeedback(id))
       )
       .subscribe(this.setFeedback.bind(this), error => console.log(error), () => {
         // Feed times out after one minute, so resubscribe until ngOnDestrpy runs.

@@ -24,9 +24,7 @@ const dropdownString = (fieldValue: any, value: string) => {
   }
 };
 
-const dropdownArray = (fieldValue: any, values: string[]) => {
-  return values.findIndex(value => !dropdownString(fieldValue, value)) === -1;
-};
+const dropdownArray = (fieldValue: any, values: string[]) => values.findIndex(value => !dropdownString(fieldValue, value)) === -1;
 
 const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) => {
   const dataField = getProperty(data, field);
@@ -39,37 +37,31 @@ const checkFilterItems = (data: any) => ((includeItem: boolean, [ field, val ]) 
 });
 
 // Multi level field filter by spliting each field by '.'
-export const filterSpecificFields = (filterFields: string[]): any => {
-  return (data: any, filter: string) => {
-    const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    for (let i = 0; i < filterFields.length; i++) {
-      const fieldValue = getProperty(data, filterFields[i]);
-      if (typeof fieldValue === 'string' &&
+export const filterSpecificFields = (filterFields: string[]): any => (data: any, filter: string) => {
+  const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  for (let i = 0; i < filterFields.length; i++) {
+    const fieldValue = getProperty(data, filterFields[i]);
+    if (typeof fieldValue === 'string' &&
           fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').indexOf(normalizedFilter) > -1) {
-        return true;
-      }
+      return true;
     }
-    return false;
-  };
+  }
+  return false;
 };
 
-export const filterSpecificFieldsByWord = (filterFields: string[]): any => {
-  return (data: any, filter: string) => {
-    // Normalize each word
-    const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
-    return words.every(word => {
-      return filterFields.some(field => {
-        const fieldValue = getProperty(data, field);
-        return typeof fieldValue === 'string' &&
+export const filterSpecificFieldsByWord = (filterFields: string[]): any => (data: any, filter: string) => {
+  // Normalize each word
+  const words = filter.split(' ').map(value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  return words.every(word => filterFields.some(field => {
+    const fieldValue = getProperty(data, field);
+    return typeof fieldValue === 'string' &&
                fieldValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(word);
-      });
-    });
-  };
+  }));
 };
 
 // Enhanced version that combines exact and fuzzy search
-export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => {
-  return (data: any, filter: string) => {
+export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchService?: FuzzySearchService): any => (
+  (data: any, filter: string) => {
     const normalizedFilter = filter.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (!normalizedFilter) {
       return true;
@@ -86,25 +78,20 @@ export const filterSpecificFieldsHybrid = (filterFields: string[], fuzzySearchSe
       return normalizedFieldValue.includes(normalizedFilter) ||
              (fuzzySearchService?.fuzzyWordMatch(filter, fieldValue, { threshold: 0.6, maxDistance: 2 }) ?? false);
     });
-  };
-};
+  }
+);
 
-export const filterDropdowns = (filterObj: any) => {
-  return (data: any, filter: string) => {
-    // Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
-    return Object.entries(filterObj).reduce(checkFilterItems(data), true);
-  };
-};
+export const filterDropdowns = (filterObj: any) => (data: any, filter: string) =>
+// Object.entries returns an array of each key/value pair as arrays in the form of [ key, value ]
+  Object.entries(filterObj).reduce(checkFilterItems(data), true);
 
 // Takes array of field names and if trueIfExists is true, return true if field exists
 // if false return true if it does not exist
-export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => {
-  return (data: any, filter: string) => {
-    for (let i = 0; i < filterFields.length; i++) {
-      return trueIfExists === (getProperty(data, filterFields[i]) !== undefined);
-    }
-    return true;
-  };
+export const filterFieldExists = (filterFields: string[], trueIfExists: boolean): any => (data: any, filter: string) => {
+  for (let i = 0; i < filterFields.length; i++) {
+    return trueIfExists === (getProperty(data, filterFields[i]) !== undefined);
+  }
+  return true;
 };
 
 const matchAllItems = (filterItems: string[], propItems: string[]) => {
@@ -112,50 +99,36 @@ const matchAllItems = (filterItems: string[], propItems: string[]) => {
   return filterItems.every(filter => propSet.has(filter));
 };
 
-const filterArrayField = (filterField: string, filterItems: string[]) => {
-  return (data: unknown, _filter: string) => {
-    const raw = getProperty(data, filterField);
-    const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
+const filterArrayField = (filterField: string, filterItems: string[]) => (data: unknown, _filter: string) => {
+  const raw = getProperty(data, filterField);
+  const propItems = Array.isArray(raw) ? raw : raw == null ? [] : [String(raw)];
 
-    return matchAllItems(filterItems, propItems);
-  };
+  return matchAllItems(filterItems, propItems);
 };
 
-export const filterTags = (filterControl: FormControl) => {
-  return (data: any, filter: string) => {
-    return filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter);
-  };
-};
+export const filterTags = (filterControl: FormControl) => (data: any, filter: string) => (
+  filterArrayField('tags', filterControl.value)({ tags: data.tags.map((tag: any) => tag._id) }, filter)
+);
 
-export const filterAdvancedSearch = (searchObj: any) => {
-  return (data: any, filter: string) => {
-    return Object.entries(searchObj).reduce(
-      (isMatch, [ field, val ]: any[]) => (
-        isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
-      ),
-      true
-    );
-  };
-};
+export const filterAdvancedSearch = (searchObj: any) => (data: any, filter: string) => Object.entries(searchObj).reduce(
+  (isMatch, [ field, val ]: any[]) => (
+    isMatch && (field.indexOf('_') > -1 || field === 'isEmpty' || filterArrayField(field, val)(data.doc, filter))
+  ),
+  true
+);
 
 // filterOnOff must be an object so it references a variable on component & changes with component changes
-export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: string) => {
-  return (data: any, filter: string) => {
-    return filterOnOff.value === 'off' || data[filterField] === true;
-  };
-};
+export const filterShelf = (filterOnOff: { value: 'on' | 'off' }, filterField: string) => (data: any, filter: string) => (
+  filterOnOff.value === 'off' || data[filterField] === true
+);
 
 // Special filter for showing members that are admins
 export const filterAdmin = (data, filter) => data.doc.isUserAdmin && data.doc.roles.length === 0;
 
 // Takes an array of the above filtering functions and returns true if all match
-export const composeFilterFunctions = (filterFunctions: any[]) => {
-  return (data: any, filter: any) => {
-    return filterFunctions.reduce((isMatch, filterFunction) => {
-      return isMatch && filterFunction(data, filter);
-    }, true);
-  };
-};
+export const composeFilterFunctions = (filterFunctions: any[]) => (
+  (data: any, filter: any) => filterFunctions.reduce((isMatch, filterFunction) => isMatch && filterFunction(data, filter), true)
+);
 
 export const sortNumberOrString = (item, property) => {
   switch (typeof item[property]) {
@@ -211,8 +184,6 @@ export const showFormErrors = <T extends { [K in keyof T]: AbstractControl }>(co
   });
 };
 
-export const filterIds = (filterObj: { ids: string[] }) => {
-  return (data: any, filter: string) => {
-    return filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true;
-  };
-};
+export const filterIds = (filterObj: { ids: string[] }) => (data: any, filter: string) => (
+  filterObj.ids.length > 0 ? filterObj.ids.indexOf(data._id) > -1 : true
+);

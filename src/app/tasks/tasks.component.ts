@@ -340,13 +340,13 @@ export class TasksComponent implements OnInit {
     const notificationDoc = {
       // Associated accounts store their id with an @planetCode suffix the recipient's filter does not use.
       ...notificationRecipient(assignee.userDoc?.doc || assignee, assignee.userPlanetCode),
-      'message': $localize`You were assigned a new task`,
+      message: $localize`You were assigned a new task`,
       link,
       linkParams: { activeTab: 'taskTab' },
-      'type': 'newTask',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      type: 'newTask',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
     return this.notificationsService.sendNotificationToUser(notificationDoc);
   }

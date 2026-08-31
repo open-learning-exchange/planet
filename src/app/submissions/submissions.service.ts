@@ -65,9 +65,7 @@ export class SubmissionsService {
   }
 
   setSubmission(id: string) {
-    this.submission = this.submissions.find((submission) => {
-      return submission._id === id;
-    });
+    this.submission = this.submissions.find((submission) => submission._id === id);
   }
 
   private newSubmission({ parentId, parent, user, type }) {
@@ -90,7 +88,7 @@ export class SubmissionsService {
   }
 
   openSubmission({ parentId = '', parent = '', user = { name: '' }, type = '', submissionId = '', status = 'pending' }: any) {
-    const selector = submissionId ? { '_id': submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
+    const selector = submissionId ? { _id: submissionId } : { parentId, 'user.name': user.name, 'parent._rev': parent._rev };
     const obs = user.name || submissionId ? this.couchService.post('submissions/_find', { selector }) : of({ docs: [] });
     obs.subscribe((res) => {
       let attempts = res.docs.length - 1;
@@ -193,12 +191,12 @@ export class SubmissionsService {
   }
 
   sendSubmissionRequests(users: any[], { parentId, parent }, team?: { _id: string, name: string, type: string }) {
-    const queryOr = team ? [{ 'team._id': team._id }] : users.map((user: any) => ({ 'user._id': user._id, 'source': user.planetCode }));
+    const queryOr = team ? [{ 'team._id': team._id }] : users.map((user: any) => ({ 'user._id': user._id, source: user.planetCode }));
 
     return this.couchService.post('submissions/_find', findDocuments({
       parentId,
-      'parent': { '_rev': parent._rev },
-      '$or': queryOr
+      parent: { _rev: parent._rev },
+      $or: queryOr
     })).pipe(
       switchMap((submissions: any) => {
         const sender = this.userService.get().name;
@@ -249,14 +247,14 @@ export class SubmissionsService {
 
   sendSubmissionNotification(isRecorded: boolean, isUpdated: boolean = false) {
     const data = {
-      'message': $localize`<b>${this.userService.get().name}</b> has
+      message: $localize`<b>${this.userService.get().name}</b> has
         ${isUpdated ? 'updated' : isRecorded ? 'recorded' : 'completed'} the survey <b>${this.submission.parent.name}</b>`,
-      'link': '/myDashboard/submissions/exam',
-      'linkParams': { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
-      'type': 'survey',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      link: '/myDashboard/submissions/exam',
+      linkParams: { submissionId: this.submission._id, questionNum: 1, status: 'complete', mode: 'view' },
+      type: 'survey',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
     const docs = [ this.submission.parent.createdBy, this.submission.sender ].reduce(dedupeShelfReduce, [])
       .filter(name => name !== undefined && name !== this.userService.get().name)
@@ -270,7 +268,7 @@ export class SubmissionsService {
     return this.couchService.findAll('exams', findDocuments({ sourceSurveyId: surveyId })).pipe(
       switchMap((teamSurveys: any[]) => {
         const allSurveyIds = [surveyId, ...teamSurveys.map(ts => ts._id)];
-        const query = findDocuments({ 'parent._id': { '$in': allSurveyIds }, type, status: statusFilter });
+        const query = findDocuments({ 'parent._id': { $in: allSurveyIds }, type, status: statusFilter });
 
         return this.getSubmissions(query);
       })
