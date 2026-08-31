@@ -53,7 +53,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run lint
         run: npm run lint
 
@@ -71,7 +71,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-          
+
       - name: Set is release
         if: ${{ endsWith(github.ref_name, env.PLANET_VERSION) }}
         run: |
@@ -97,7 +97,7 @@ jobs:
           docker build -f './docker/planet/pre-builder-Dockerfile' -t $repo .
           docker images
           docker push $repo
-      
+
       - name: Push latest pre-build
         if: ${{ (github.ref == 'refs/heads/master' || env.IS_RELEASE == 'true') && (env.SHOULD_UPDATE_PACKAGES == 1 || github.event.inputs.buildtype == 'prebuild') }}
         run: |
@@ -229,6 +229,9 @@ jobs:
             "${cacheargs[@]}" \
             --load \
             -t $repo .
+          # Optional to prevent silently publishing an image under the wrong architecture tag if its base-image argument is ignored or misconfigured
+          actual_arch="$(docker image inspect "$repo" --format '{{.Architecture}}')"
+          [ "$actual_arch" = '${{ matrix.arch }}' ] || { echo "architecture mismatch: expected ${{ matrix.arch }}, got ${actual_arch:-<none>}"; exit 1; }
           docker images
           docker tag $repo $branchrepo
           docker push $repo
