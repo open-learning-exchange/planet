@@ -65,6 +65,15 @@ describe('DialogsVoiceLabelsComponent', () => {
     expect(planetMessageService.showAlert).toHaveBeenCalled();
   });
 
+  it('sanitizes and deduplicates stored labels when opening', () => {
+    const component = createComponent({ target: 'community', customLabels: [ 'Event', null, 'event', 'News' ] });
+
+    component.ngOnInit();
+
+    expect(component.initialCustomLabels).toEqual([ 'Event', 'News' ]);
+    expect(component.customLabels).toEqual([ 'Event', 'News' ]);
+  });
+
   it('uses the labels supplied by the parent and updates only the local configuration', () => {
     const component = createComponent({ target: 'community', customLabels: [ 'Current label' ] });
     component.ngOnInit();
@@ -109,10 +118,14 @@ describe('DialogsVoiceLabelsComponent', () => {
   });
 
   it('merges team labels into the latest team revision', () => {
+    const team = { _id: 'team', _rev: '1-stale' };
     couchService.get.mockReturnValue(of({ _id: 'team', _rev: '2-current', name: 'Team' }));
+    couchService.updateDocument.mockReturnValue(of({
+      doc: { _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ 'Event' ] }
+    }));
     const component = createComponent({
       target: 'team',
-      team: { _id: 'team', _rev: '1-stale' },
+      team,
       customLabels: []
     });
     component.ngOnInit();
@@ -127,6 +140,8 @@ describe('DialogsVoiceLabelsComponent', () => {
       name: 'Team',
       customVoiceLabels: [ 'Event' ]
     });
+    expect(configurationService.patchLocalConfiguration).not.toHaveBeenCalled();
+    expect(team).toEqual({ _id: 'team', _rev: '3-saved', name: 'Team', customVoiceLabels: [ 'Event' ] });
   });
 
   it('asks for confirmation before discarding edited labels', () => {

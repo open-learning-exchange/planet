@@ -643,8 +643,8 @@ export class CommunityComponent implements OnInit, OnDestroy {
   }
 
   get canManageLabels(): boolean {
-    return !this.planetCode && (this.user.isUserAdmin ||
-      this.user?.roles?.some(role => [ '_admin', 'manager' ].includes(role)));
+    return !this.planetCode &&
+      (this.isCommunityLeader || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
   }
 
   changeLabelsFilter({ label, action }: { label: string, action: 'remove' | 'add' | 'select' }) {

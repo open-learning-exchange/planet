@@ -14,7 +14,7 @@ import { CouchService } from '../couchdb.service';
 import { PlanetMessageService } from '../planet-message.service';
 import { DialogsLoadingService } from './dialogs-loading.service';
 import { LabelComponent } from '../label.component';
-import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL } from '../voice-labels';
+import { DEFAULT_VOICE_LABELS, SHARED_CHAT_LABEL, dedupeVoiceLabels } from '../voice-labels';
 import { UnsavedChangesPromptComponent } from '../unsaved-changes.component';
 import { Subject } from 'rxjs';
 import { filter, finalize, switchMap, take, takeUntil } from 'rxjs/operators';
@@ -82,8 +82,9 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
       configuredLabels = this.team.customVoiceLabels;
     }
 
-    this.initialCustomLabels = [ ...configuredLabels ];
-    this.customLabels = [ ...configuredLabels ];
+    const uniqueLabels = dedupeVoiceLabels(configuredLabels);
+    this.initialCustomLabels = [ ...uniqueLabels ];
+    this.customLabels = [ ...uniqueLabels ];
   }
 
   get sectionHeader(): string {
@@ -211,9 +212,11 @@ export class DialogsVoiceLabelsComponent implements OnInit, OnDestroy {
         this.dialogsLoadingService.stop();
       })
     ).subscribe({
-      next: () => {
+      next: (savedDocument) => {
         if (isCommunity) {
           this.stateService.requestData('configurations', 'local');
+        } else if (savedDocument?.doc) {
+          Object.assign(this.team, savedDocument.doc);
         }
         this.planetMessageService.showMessage($localize`Voice labels updated successfully.`);
         this.dialogRef.close(customVoiceLabels);

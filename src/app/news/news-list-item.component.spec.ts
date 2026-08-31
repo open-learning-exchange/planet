@@ -1,6 +1,7 @@
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { DeviceType } from '../shared/device-info.service';
+import { LabelComponent } from '../shared/label.component';
 import { NewsListItemComponent } from './news-list-item.component';
 
 describe('NewsListItemComponent label choices', () => {
@@ -135,5 +136,14 @@ describe('NewsListItemComponent notifications', () => {
     });
 
     expect(notificationsService.sendNotificationToUser).not.toHaveBeenCalled();
+  });
+});
+
+describe('voice label display', () => {
+  it('does not resolve custom labels through inherited object properties', () => {
+    const component = new LabelComponent();
+    component.label = 'constructor';
+
+    expect(component.getTranslatedLabel()).toBe('constructor');
   });
 });

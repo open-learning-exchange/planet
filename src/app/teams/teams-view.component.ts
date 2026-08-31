@@ -358,7 +358,9 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   get canManageLabels(): boolean {
-    return this.isUserLeader || this.userService.get().isUserAdmin || this.userService.doesUserHaveRole([ '_admin', 'manager' ]);
+    const canManageLocalTeams = this.team?.teamPlanetCode === this.planetCode &&
+      (this.user.isUserAdmin || this.userService.doesUserHaveRole([ '_admin', 'manager' ]));
+    return this.isUserLeader || canManageLocalTeams;
   }
 
   get customVoiceLabels(): string[] {
@@ -704,7 +706,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }).afterClosed().subscribe((updatedLabels?: string[]) => {
       if (updatedLabels) {
         this.team = { ...this.team, customVoiceLabels: updatedLabels };
-        this.getTeam(this.teamId).subscribe();
       }
     });
   }

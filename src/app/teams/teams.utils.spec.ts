@@ -37,4 +37,29 @@ describe('team member helpers', () => {
     component.team = { customVoiceLabels: [ 'Updated' ] };
     expect(component.customVoiceLabels).toEqual([ 'Updated' ]);
   });
+
+  it('limits planet-level label managers to locally owned teams', () => {
+    const component = Object.create(TeamsViewComponent.prototype) as any;
+    component.isUserLeader = false;
+    component.planetCode = 'local';
+    component.team = { teamPlanetCode: 'remote' };
+    component.user = { isUserAdmin: false };
+    component.userService = { doesUserHaveRole: () => true };
+
+    expect(component.canManageLabels).toBe(false);
+
+    component.team.teamPlanetCode = 'local';
+    expect(component.canManageLabels).toBe(true);
+  });
+
+  it('allows a team leader to manage labels regardless of the team planet', () => {
+    const component = Object.create(TeamsViewComponent.prototype) as any;
+    component.isUserLeader = true;
+    component.planetCode = 'local';
+    component.team = { teamPlanetCode: 'remote' };
+    component.user = { isUserAdmin: false };
+    component.userService = { doesUserHaveRole: () => false };
+
+    expect(component.canManageLabels).toBe(true);
+  });
 });

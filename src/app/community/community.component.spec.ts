@@ -4,12 +4,29 @@ import { CommunityComponent } from './community.component';
 import { DialogsVoiceLabelsComponent } from '../shared/dialogs/dialogs-voice-labels.component';
 
 describe('CommunityComponent custom labels', () => {
-  it('allows an administrator without manager roles to manage community labels', () => {
+  it('allows community leaders and planet managers to manage community labels', () => {
     const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
     component.planetCode = null;
-    component.user = { isUserAdmin: true, roles: [] } as any;
+    component.isCommunityLeader = true;
+    (component as any).userService = { doesUserHaveRole: () => false };
 
     expect(component.canManageLabels).toBe(true);
+
+    component.isCommunityLeader = false;
+    (component as any).userService = { doesUserHaveRole: () => true };
+
+    expect(component.canManageLabels).toBe(true);
+  });
+
+  it('filters malformed labels without crashing', () => {
+    const component = Object.create(CommunityComponent.prototype) as CommunityComponent;
+    component.news = [ { doc: { labels: [ null, 42, 'Event' ], viewIn: [] } } ];
+    component.selectedLabel = 'event';
+    component.voiceSearch = '';
+
+    component.applyFilters();
+
+    expect(component.filteredNews).toEqual(component.news);
   });
 
   it('passes current labels to the dialog and applies the saved vocabulary locally', () => {

@@ -300,7 +300,7 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     const labels = action === 'remove' ?
-      news.labels.filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
+      (news.labels || []).filter(existingLabel => !voiceLabelsEqual(existingLabel, label)) :
       dedupeVoiceLabels([ ...(news.labels || []), label ]);
     this.newsService.postNews({ ...news, labels }, $localize`Label ${action === 'remove' ? 'removed' : 'added'}`).subscribe();
   }
