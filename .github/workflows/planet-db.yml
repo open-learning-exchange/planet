@@ -84,7 +84,6 @@ jobs:
             "${cacheargs[@]}" \
             --load \
             -t $repo .
-          # Optional to prevent silently publishing an image under the wrong architecture tag if its base-image argument is ignored or misconfigured
           actual_arch="$(docker image inspect "$repo" --format '{{.Architecture}}')"
           [ "$actual_arch" = '${{ matrix.arch }}' ] || { echo "architecture mismatch: expected ${{ matrix.arch }}, got ${actual_arch:-<none>}"; exit 1; }
           docker images
