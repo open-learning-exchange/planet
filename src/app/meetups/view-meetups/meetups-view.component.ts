@@ -110,11 +110,9 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   getEnrolledUsers() {
     // find meetupId on User shelf
     return this.couchService.post('shelf/_find', findDocuments({
-      'meetupIds': { '$in': [ this.route.snapshot.paramMap.get('id') ] }
+      meetupIds: { $in: [ this.route.snapshot.paramMap.get('id') ] }
     }, 0)). subscribe((data) => {
-      this.members = data.docs.map((res) => {
-        return res._id.split(':')[1];
-      });
+      this.members = data.docs.map((res) => res._id.split(':')[1]);
     });
   }
 
@@ -159,9 +157,7 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
   }
 
   sendInvitations(selected: string[]) {
-    const invites = selected.map((user: any) => {
-      return this.inviteNotification(user._id, this.meetupDetail);
-    });
+    const invites = selected.map((user: any) => this.inviteNotification(user._id, this.meetupDetail));
     this.couchService.updateDocument('notifications/_bulk_docs', { docs: invites }).subscribe(res => {
       this.listDialogRef.close();
       this.planetMessageService.showMessage($localize`Invitation${(invites.length > 1 ? 's' : '')} sent successfully`);
@@ -170,15 +166,15 @@ export class MeetupsViewComponent implements OnInit, OnDestroy {
 
   inviteNotification(userId, meetupDetail) {
     return {
-      'user': userId,
-      'message': $localize`<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
+      user: userId,
+      message: $localize`<b>${this.userService.get().name}</b> would like you to join <b>"${meetupDetail.title}"</b> meetup
         ${(meetupDetail.meetupLocation ? ' at ' + meetupDetail.meetupLocation : '')}`,
-      'link': this.router.url,
-      'item': meetupDetail._id,
-      'type': 'meetup',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      link: this.router.url,
+      item: meetupDetail._id,
+      type: 'meetup',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
   }
 

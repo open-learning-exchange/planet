@@ -233,7 +233,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   addExam(examInfo: ExamInfo, reRoute: boolean) {
     const namePrefix = this.courseName || { exam: 'Exam', survey: 'Survey' }[this.examType];
     this.couchService.findAll(this.dbName,
-      { selector: { type: this.examForm.controls.type.value, name: { '$regex': namePrefix } } }
+      { selector: { type: this.examForm.controls.type.value, name: { $regex: namePrefix } } }
     ).pipe(switchMap((exams: Array<{ name: string }>) => {
       examInfo.name = examInfo.name || this.newExamName(exams, namePrefix);
       return this.examsService.createExamDocument(examInfo);

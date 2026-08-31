@@ -130,9 +130,9 @@ export class DialogsListComponent implements AfterViewInit {
   isAllSelected() {
     // Finds first instance that a filtered row id is not selected, and undefined if all are selected
     // Convert to boolean with ! (true = all selected, false = not all selected)
-    const allShownSelected = !this.tableData.filteredData.find((row: any) => {
-      return this.selection.selected.indexOf(this.selectIdentifier(row)) === -1;
-    });
+    const allShownSelected = !this.tableData.filteredData.find(
+      (row: any) => this.selection.selected.indexOf(this.selectIdentifier(row)) === -1
+    );
 
     if (this.tableData.filteredData.length === 0) {
       return 'hidden';
@@ -163,9 +163,7 @@ export class DialogsListComponent implements AfterViewInit {
   }
 
   selectedRows() {
-    return this.selection.selected.map(id => this.tableData.data.find((row: any) => {
-      return this.selectIdentifier(row) === id;
-    }));
+    return this.selection.selected.map(id => this.tableData.data.find((row: any) => this.selectIdentifier(row) === id));
   }
 
   initializeTooltip() {

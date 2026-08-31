@@ -33,10 +33,10 @@ interface PlanetTagDialogData {
 }
 
 @Component({
-  'selector': 'planet-tag-input',
-  'templateUrl': './planet-tag-input.component.html',
-  'styleUrls': ['planet-tag-input.scss'],
-  'providers': [
+  selector: 'planet-tag-input',
+  templateUrl: './planet-tag-input.component.html',
+  styleUrls: ['planet-tag-input.scss'],
+  providers: [
     { provide: MatFormFieldControl, useExisting: PlanetTagInputComponent }
   ],
   imports: [

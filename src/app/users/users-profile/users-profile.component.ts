@@ -116,7 +116,7 @@ export class UsersProfileComponent implements OnInit, OnDestroy {
     const createdOn = this.planetCode || this.stateService.configuration.code;
     this.couchService.findAll(
       'login_activities',
-      findDocuments({ 'user': name, createdOn },0, [ { 'loginTime': 'desc' } ])
+      findDocuments({ user: name, createdOn },0, [ { loginTime: 'desc' } ])
     ).subscribe((logins: any) => {
       this.totalLogins = logins.length;
       this.lastLogin = logins.length ? logins[0].loginTime : '';

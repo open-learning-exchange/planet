@@ -214,10 +214,10 @@ export class NewsListComponent implements OnInit, OnChanges, AfterViewInit, OnDe
       return;
     }
     const fields = [ {
-      'type': 'markdown',
-      'name': 'message',
+      type: 'markdown',
+      name: 'message',
       placeholder,
-      'required': true,
+      required: true,
       imageGroup: this.viewableBy !== 'community' ? { [this.viewableBy]: this.viewableId } : this.viewableBy
     } ];
     const formGroup = { message: [ initialValue, CustomValidators.requiredMarkdown ] };

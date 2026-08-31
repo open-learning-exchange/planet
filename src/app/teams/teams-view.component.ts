@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,9 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -73,11 +70,6 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     NewsListComponent,
     MatTabLabel,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -136,6 +128,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
+  get requestBadgeDescription(): string {
+    return $localize`Pending join requests: ${this.requests.length}:count:`;
+  }
+
+  get taskBadgeDescription(): string {
+    return $localize`Incomplete tasks: ${this.taskCount}:count:`;
+  }
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -144,7 +144,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     private planetMessageService: PlanetMessageService,
     private teamsService: TeamsService,
     private dialog: MatDialog,
-    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsLoadingService: DialogsLoadingService,
     private dialogsFormService: DialogsFormService,
     private newsService: NewsService,
@@ -185,8 +184,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab': this.taskTab,
-      'applicantTab': this.applicantTab
+      taskTab: this.taskTab,
+      applicantTab: this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -214,7 +213,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     return this.couchService.post('courses/_find', findDocuments(
-      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+      { _id: { $in: courseIds } }, [ '_id' ], 0, courseIds.length
     )).pipe(
       map(({ docs }) => {
         const existingIds = new Set(docs.map(course => course._id));
@@ -279,11 +278,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            viewIn: { $elemMatch: {
+              _id: teamId, section: 'teams', ...(showAll ? {} : { public: true })
             } }
           }
         ],
@@ -610,14 +609,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         membershipWriteCompleted = true;
         this.dialogRef.close();
       }),
-      switchMap(() => {
-        return forkJoin([
-          this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...this.team }
-          }),
-          this.sendNotifications('addMember', { newMembersLength: selected.length })
-        ]);
-      }),
+      switchMap(() => forkJoin([
+        this.teamsService.sendNotifications('added', selected, {
+          url: this.router.url, team: { ...this.team }
+        }),
+        this.sendNotifications('addMember', { newMembersLength: selected.length })
+      ])),
       switchMap(() => this.getMembers()),
       catchError(error => membershipWriteCompleted ? this.refreshMembersOnError(error) : throwError(error)),
       finalize(() => this.dialogsLoadingService.stop())
@@ -677,7 +674,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
+      viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
@@ -768,17 +765,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
       },
       autoFocus: false
     });
-  }
-
-  openMemberDialog(member, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      if ((event as KeyboardEvent).repeat) {
-        return;
-      }
-    }
-    this.usersProfileDialogService.open({ member });
   }
 
 }

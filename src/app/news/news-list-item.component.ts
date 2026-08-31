@@ -179,13 +179,13 @@ export class NewsListItemComponent implements OnInit, OnChanges, OnDestroy {
     const link = this.router.url;
     const notification = {
       ...recipient,
-      'message':  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
+      message:  $localize`<b>${replyBy}</b> replied to your ${news.viewableBy === 'community' ? 'community ' : ''}message.`,
       link,
-      'priority': 1,
-      'type': 'replyMessage',
-      'replyTo': news._id,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      priority: 1,
+      type: 'replyMessage',
+      replyTo: news._id,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
     };
     this.notificationsService.sendNotificationToUser(notification).subscribe();
   }

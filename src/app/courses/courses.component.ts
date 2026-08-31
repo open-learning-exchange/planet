@@ -39,7 +39,7 @@ import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
 import { PlanetTagSelectedInputComponent } from '../shared/forms/planet-tag-selected-input.component';
@@ -69,6 +69,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatIconButton,
     MatIcon,
     MatFormField,
+    MatSuffix,
     PlanetTagInputComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -507,9 +508,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   addToCourse(courses) {
     const currentShelf = this.userService.shelf;
-    const courseIds = courses.map((data) => {
-      return data._id;
-    }).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
+    const courseIds = courses.map((data) => data._id).concat(currentShelf.courseIds).reduce(dedupeShelfReduce, []);
     const message = courses.length === 1 ?
       $localize`${courses[0].courseTitle} have been added to` :
       $localize`${courses.length} courses have been added to`;
@@ -566,7 +565,7 @@ export class CoursesComponent implements OnInit, OnChanges, AfterViewInit, OnDes
 
   openSendCourseDialog() {
     this.dialogGuard.open('send-course', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendCourse().bind(this),
