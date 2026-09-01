@@ -1,5 +1,8 @@
 name: Planet automerge
 
+# Needs the AUTOMERGE_TOKEN secret: a push made with GITHUB_TOKEN triggers no
+# builders, so the prepared commit never gets a verdict. Logic: .github/scripts/automerge.sh
+
 on:
   workflow_dispatch:
     inputs:
