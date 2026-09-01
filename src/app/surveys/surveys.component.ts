@@ -227,13 +227,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
             ])
           ].filter(Boolean);
 
-          // myPlanet uploads survey submissions without any team stamp, so fall back to the team
-          // owning the survey the submission was answered against before filtering by team
-          const collectSubmissions = (surveyDoc: any) => (submissionsBySurvey[surveyDoc._id] || [])
-            .map(submission => ({ ...submission, teamId: submission.teamId || surveyDoc.teamId || null }));
+          const collectSubmissions = (surveyId: string) => submissionsBySurvey[surveyId] || [];
           const taken = [
-            ...collectSubmissions(survey),
-            ...derivedTeamSurveys.flatMap(ts => collectSubmissions(ts))
+            ...collectSubmissions(survey._id),
+            ...derivedTeamSurveys.flatMap(ts => collectSubmissions(ts._id))
           ].filter(submission => submission.status === 'complete' && (!targetTeamId || submission.teamId === targetTeamId)).length;
           const course = surveyCourseMap[survey._id];
 
