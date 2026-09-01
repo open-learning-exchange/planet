@@ -121,7 +121,20 @@ export class PlanetRatingComponent implements OnChanges {
     }
 
     this.enrolled = true;
-    if (this.disabled || form.controls.rate.value === 0) {
+    if (this.disabled) {
+      return;
+    }
+    if (form.controls.rate.value === 0) {
+      if (this.rating.userRating?._id) {
+        this.deleteRating().subscribe({
+          next: () => {
+            this.planetMessage.showMessage($localize`Rating removed!`);
+          },
+          error: () => {
+            this.ratingError();
+          }
+        });
+      }
       return;
     }
     this.updateRating(form).subscribe(res => {
@@ -138,6 +151,20 @@ export class PlanetRatingComponent implements OnChanges {
     }, (err) => {
       this.ratingError();
     });
+  }
+
+  deleteRating() {
+    const { _id, _rev } = this.rating.userRating;
+    return this.couchService.delete(`${this.dbName}/${_id}?rev=${_rev}`).pipe(
+      map((res: any) => {
+        this.rating.userRating = {};
+        this.rateForm.setValue({ rate: 0 });
+        this.popupForm.setValue({ rate: 0, comment: '' });
+        this.isPopupOpen = false;
+        this.ratingService.newRatings(false);
+        return res;
+      })
+    );
   }
 
   updateRating(form: FormGroup<RateFormModel> | FormGroup<PopupFormModel>) {

@@ -6,22 +6,72 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UserService } from '../user.service';
 import { NgClass, NgStyle } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
+import { MatIconButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'planet-rating-stars',
   templateUrl: './planet-rating-stars.component.html',
   styles: [`
+    :host {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+    }
+    .stars-wrapper {
+      display: inline-flex;
+      align-items: center;
+      vertical-align: middle;
+      height: 24px;
+      line-height: 24px;
+    }
+    .stars {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      line-height: 24px;
+    }
     .stars mat-icon {
       cursor: default;
+      height: 24px;
+      width: 24px;
+      font-size: 24px;
+      line-height: 24px;
     }
     .stars.stars-enabled mat-icon {
       cursor: pointer;
+    }
+    .clear-rating-button.mat-mdc-icon-button {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      margin-left: 8px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      --mat-icon-button-touch-target-display: none;
+      --mdc-icon-button-state-layer-size: 24px;
+      --mdc-icon-button-icon-size: 20px;
+      color: rgba(0, 0, 0, 0.54);
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
   `],
   providers: [
     { provide: MatFormFieldControl, useExisting: PlanetRatingStarsComponent }
   ],
-  imports: [NgClass, MatIcon, NgStyle]
+  imports: [NgClass, MatIcon, NgStyle, MatIconButton, MatTooltip]
 })
 export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, ControlValueAccessor, OnDestroy {
 
@@ -33,6 +83,15 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
   #required = false;
   #placeholder: string;
   #disabled = false;
+  #showClear = false;
+
+  @Input()
+  get showClear() {
+    return this.#showClear;
+  }
+  set showClear(val: any) {
+    this.#showClear = coerceBooleanProperty(val);
+  }
 
   starActiveWidth = '0%';
   stateChanges = new Subject<void>();
@@ -114,6 +173,13 @@ export class PlanetRatingStarsComponent implements MatFormFieldControl<number>, 
       }
     }
     this.writeValue(rating);
+  }
+
+  clearRating(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.writeValue(0);
   }
 
   mouseOverStar(starNumber: number): void {
