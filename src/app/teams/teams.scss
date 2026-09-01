@@ -23,6 +23,23 @@
 
   .mat-column-action {
     @include m.table-column-fixed(18rem);
+
+    @media (max-width: v.$screen-sm) {
+      @include m.table-column-fixed(6rem);
+      justify-content: flex-end;
+    }
+  }
+
+  .table-action-buttons {
+    @media (max-width: v.$screen-sm) {
+      grid-template-columns: 1fr;
+      justify-items: flex-end;
+
+      button[mat-raised-button] {
+        min-width: 0;
+        padding: 6px 8px;
+      }
+    }
   }
 
   mat-row {

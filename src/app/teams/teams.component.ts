@@ -137,7 +137,20 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       .subscribe((deviceType) => {
         this.deviceType = deviceType;
         this.isMobile = deviceType === DeviceType.MOBILE || deviceType === DeviceType.SMALL_MOBILE;
+        this.setDisplayedColumns();
       });
+  }
+
+  setDisplayedColumns() {
+    if (this.isMobile) {
+      this.displayedColumns = this.isDialog
+        ? [ 'doc.name', 'doc.teamType' ]
+        : [ 'doc.name', 'action' ];
+    } else {
+      this.displayedColumns = this.isDialog || this.userNotInShelf
+        ? [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ]
+        : [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
+    }
   }
 
   ngOnInit() {
@@ -148,9 +161,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     ]);
     this.teams.sortingDataAccessor = deepSortingDataAccessor;
     this.couchService.checkAuthorization('teams').subscribe((isAuthorized) => this.isAuthorized = isAuthorized);
-    this.displayedColumns = this.isDialog ?
-      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ] :
-      [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType', 'action' ];
+    this.setDisplayedColumns();
   }
 
   getTeams() {
@@ -184,7 +195,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
       this.isLoading = false;
     }, (error) => {
       if (this.userNotInShelf) {
-        this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
+        this.setDisplayedColumns();
         this.couchService.findAll(this.dbName, { selector: { status: 'active' } }).subscribe((teams) => {
           this.teams.data = this.teamList(
             teams.filter((team: any) => (

@@ -60,7 +60,7 @@
   }
 
   <div class="primary-link-hover" [ngClass]="{'view-container view-table view-full-height':!isDialog}">
-    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog" [dataSource]="teams" matSort [matSortDisableClear]="true">
+    <mat-table #table class="responsive-table" [class.min-width-table]="!isDialog && !isMobile" [dataSource]="teams" matSort [matSortDisableClear]="true">
       <ng-container matColumnDef="doc.name">
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
