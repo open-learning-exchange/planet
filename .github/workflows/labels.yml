@@ -1,10 +1,5 @@
 name: Planet labels
 
-# Size the pull request by its reviewable diff and label it small, medium,
-# large or enormous -- plus `less` when it only removes code. Generated and
-# translated files, and the automerge version bump, do not count.
-# Logic: .github/scripts/labels.sh
-
 on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
