@@ -1,10 +1,14 @@
-﻿import { of } from 'rxjs';
+import { of } from 'rxjs';
 import { describe, it, expect, vi } from 'vitest';
 import { RatingService } from './rating.service';
 
 describe('RatingService promptRating', () => {
   const setup = (inShelf = true, dialogResult: any = undefined) => {
-    const couch = { updateDocument: vi.fn().mockReturnValue(of({ ok: true })), datePlaceholder: 'DATE' };
+    const couch = {
+      findAll: vi.fn().mockReturnValue(of([])),
+      updateDocument: vi.fn().mockReturnValue(of({ ok: true })),
+      datePlaceholder: 'DATE'
+    };
     const user = { get: () => ({ _id: 'u-1', name: 'tester' }), countInShelf: () => ({ inShelf }) };
     const state = { configuration: { code: 'c1', parentCode: 'p1', parentDomain: 'dom' } };
     const dialogs = { confirm: vi.fn().mockReturnValue(of(dialogResult)) };
@@ -19,6 +23,7 @@ describe('RatingService promptRating', () => {
     expect(dialogs.confirm).toHaveBeenCalled();
     expect(couch.updateDocument).toHaveBeenCalledWith('ratings', expect.objectContaining({ rate: 5, item: 'r-1' }));
     expect(msg.showMessage).toHaveBeenCalled();
+    expect(msg.showAlert).not.toHaveBeenCalled();
   });
 
   it('skips prompt when item is already rated or not in shelf', () => {

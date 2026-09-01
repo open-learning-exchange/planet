@@ -104,6 +104,7 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params: ParamMap) => {
         this.resourceId = params.get('id');
+        this.promptedForRating = false;
         this.resourcesService.requestResourcesUpdate(this.parent);
       }, error => console.log(error), () => console.log('complete getting resource id'));
     this.resourcesService.resourcesListener(this.parent).pipe(takeUntil(this.onDestroy$))

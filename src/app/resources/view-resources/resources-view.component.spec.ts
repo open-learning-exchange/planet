@@ -133,7 +133,8 @@ describe('ResourcesViewComponent', () => {
     component.resource = { _id: 'r-1' };
     component.promptedForRating = false;
 
-    component.canDeactivate();
+    const result = component.canDeactivate();
+    (result as Observable<boolean>).subscribe(val => expect(val).toBe(true));
 
     expect(ratingServiceMock.promptRating).toHaveBeenCalledWith({ _id: 'r-1' }, 'resource', component.parent);
     expect(component.promptedForRating).toBe(true);

@@ -118,6 +118,7 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     }, () => this.isLoading = false);
     this.route.paramMap.pipe(takeUntil(this.onDestroy$)).subscribe((params: ParamMap) => {
       this.courseId = params.get('id');
+      this.promptedForRating = false;
       this.coursesService.requestCourse({ courseId: this.courseId, forceLatest: true, parent: this.parent });
     });
   }
