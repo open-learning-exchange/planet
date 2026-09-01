@@ -135,7 +135,6 @@ add_marker_label() {
     gh pr edit "$pr" --repo "$REPO" --add-label "$label" >/dev/null 2>&1
 }
 
-# Drop $LABEL so the queue moves on, and mark why on the PR itself.
 retire_pr() {
     local pr=$1 marker=$2 color=$3 desc=$4 what=$5
 
@@ -401,12 +400,6 @@ merge_with_retry() {
     return 1
 }
 
-# GitHub links a PR to its issue from the PR *description*, never from its
-# title, and a squash merge made through the API does not fire the closing
-# keyword in the commit message either. A title-only `(fixes #N)` therefore
-# merges perfectly green and leaves the issue open, silently -- so put the
-# keyword where GitHub actually reads it before handing the PR to the merge.
-# `(connects #N)` is deliberately left alone: that issue is meant to stay open.
 link_fixed_issues() {
     local pr=$1 title=$2 body n kind
 
