@@ -55,6 +55,16 @@ describe('PlanetStepListComponent', () => {
     expect(dialogConfig.data.displayName).toBe('Step 1');
   });
 
+  it('should use custom deletePromptMessage when provided', () => {
+    component.confirmDelete = true;
+    component.deletePromptMessage = 'Are you sure you want to delete the following achievement?';
+    component.moveStep({ index: 0, direction: 0, listId: component.listId });
+    expect(dialogMock.open).toHaveBeenCalled();
+
+    const dialogConfig = dialogMock.open.mock.calls[0][1];
+    expect(dialogConfig.data.extraMessage).toBe('Are you sure you want to delete the following achievement?');
+  });
+
   it('should remove step when prompt dialog okClick onNext is called', () => {
     component.confirmDelete = true;
     component.moveStep({ index: 0, direction: 0, listId: component.listId });

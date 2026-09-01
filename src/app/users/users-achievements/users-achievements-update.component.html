@@ -69,7 +69,7 @@
               }
             </a>
           }
-          <planet-step-list [steps]="achievements" [ignoreClick]="true">
+          <planet-step-list [steps]="achievements" [ignoreClick]="true" [confirmDelete]="true" nameProp="title" defaultName="Achievement" i18n-defaultName deletePromptMessage="Are you sure you want to delete the following achievement?" i18n-deletePromptMessage>
             @for (achievement of achievements.controls; track achievement; let i = $index) {
               <planet-step-list-item>
                 <span matListItemTitle>{{achievement.value.title || achievement.value}}</span>
@@ -86,7 +86,7 @@
         </div>
         <div>
           <p class="mat-hint mat-caption" i18n>Add any references below</p>
-          <planet-step-list [steps]="references" [ignoreClick]="true">
+          <planet-step-list [steps]="references" [ignoreClick]="true" [confirmDelete]="true" nameProp="name" defaultName="Reference" i18n-defaultName deletePromptMessage="Are you sure you want to delete the following reference?" i18n-deletePromptMessage>
             @for (reference of references.controls; track reference; let i = $index) {
               <planet-step-list-item>
                 <span matListItemTitle>{{reference.value.name}}</span>
@@ -103,7 +103,7 @@
         </div>
         <div>
           <p class="mat-hint mat-caption" i18n>Add any links below</p>
-          <planet-step-list [steps]="links" [ignoreClick]="true">
+          <planet-step-list [steps]="links" [ignoreClick]="true" [confirmDelete]="true" nameProp="title" defaultName="Link" i18n-defaultName deletePromptMessage="Are you sure you want to delete the following link?" i18n-deletePromptMessage>
             @for (link of links.controls; track link; let i = $index) {
               <planet-step-list-item>
                 <span matListItemTitle>{{link.value.title}}</span>
