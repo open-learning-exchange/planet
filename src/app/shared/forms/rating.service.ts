@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { CouchService } from '../couchdb.service';
 import { findDocuments } from '../mangoQueries';
 import { UserService } from '../user.service';
-import { of, Subject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { StateService } from '../state.service';
+import { DialogField, DialogsFormService } from '../dialogs/dialogs-form.service';
+import { PlanetMessageService } from '../planet-message.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 const startingRating = { rateSum: 0, totalRating: 0, maleRating: 0, femaleRating: 0, userRating: {}, allRatings: [] };
 
@@ -20,7 +23,9 @@ export class RatingService {
   constructor(
     private couchService: CouchService,
     private userService: UserService,
-    private stateService: StateService
+    private stateService: StateService,
+    private dialogsFormService: DialogsFormService,
+    private planetMessageService: PlanetMessageService
   ) {}
 
   newRatings(parent: boolean) {
@@ -81,6 +86,80 @@ export class RatingService {
       return this.addRatingToItem(id, index + 1, ratings, ratingInfo);
     }
     return ratingInfo;
+  }
+
+  promptRating(item: any, type: 'course' | 'resource', parent: boolean = false): Observable<boolean> {
+    const user = this.userService.get();
+    if (!user?._id || !item?._id) {
+      return of(true);
+    }
+    const idType = type === 'course' ? 'courseIds' : 'resourceIds';
+    const { inShelf } = this.userService.countInShelf([ item._id ], idType);
+    if (!inShelf) {
+      return of(true);
+    }
+    const userRating = item.rating?.userRating;
+    if (userRating?.rate && userRating.rate > 0) {
+      return of(true);
+    }
+
+    const formGroup = new FormGroup({
+      rate: new FormControl<number>(0),
+      comment: new FormControl<string>('')
+    });
+
+    const popupFields: DialogField[] = [
+      {
+        label: $localize`Rate`,
+        type: 'rating',
+        name: 'rate',
+        placeholder: $localize`Your Rating`,
+        required: false
+      },
+      {
+        label: $localize`Comment`,
+        type: 'textarea',
+        name: 'comment',
+        placeholder: $localize`Would you like to leave a comment?`,
+        required: false
+      }
+    ];
+
+    const title = type === 'course'
+      ? $localize`How would you rate this course?`
+      : $localize`How would you rate this resource?`;
+
+    return this.dialogsFormService.confirm(title, popupFields, formGroup).pipe(
+      switchMap((res: any) => {
+        if (res && res.rate > 0) {
+          const configuration = this.stateService.configuration;
+          const newRating = {
+            type,
+            item: item._id,
+            title: item.title || item.courseTitle,
+            createdTime: this.couchService.datePlaceholder,
+            ...res,
+            time: this.couchService.datePlaceholder,
+            user: this.userService.get(),
+            createdOn: configuration.code,
+            parentCode: configuration.parentCode
+          };
+          return this.couchService.updateDocument(this.dbName, newRating).pipe(
+            map(() => {
+              this.planetMessageService.showMessage($localize`Thank you, your rating is submitted!`);
+              this.newRatings(parent);
+              return true;
+            }),
+            catchError(() => {
+              this.planetMessageService.showAlert($localize`There was an issue updating your rating`);
+              return of(true);
+            })
+          );
+        }
+        return of(true);
+      }),
+      catchError(() => of(true))
+    );
   }
 
 }

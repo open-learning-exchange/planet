@@ -71,7 +71,9 @@ export interface DialogsFormData<T extends DialogFormValueMap = DialogFormValueM
   formGroup: DialogFormGroupInput<T>;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DialogsFormService {
 
   private dialogRef?: MatDialogRef<DialogsFormComponent>;

@@ -8,7 +8,7 @@ import { ResourcesAddComponent } from './resources-add.component';
 
 const routes: Routes = [
   { path: '', component: ResourcesComponent },
-  { path: 'view/:id', component: ResourcesViewComponent },
+  { path: 'view/:id', component: ResourcesViewComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'add', component: ResourcesAddComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'update/:id', component: ResourcesAddComponent, canDeactivate: [UnsavedChangesGuard] }
 ];

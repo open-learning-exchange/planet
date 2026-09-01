@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'add', component: CoursesAddComponent },
   { path: 'update/:id', component: CoursesAddComponent },
   { path: 'view/:id/update', component: CoursesAddComponent },
-  { path: 'view/:id', component: CoursesViewComponent },
+  { path: 'view/:id', component: CoursesViewComponent, canDeactivate: [UnsavedChangesGuard] },
   { path: 'exam', component: ExamsAddComponent },
   { path: 'survey', component: ExamsAddComponent },
   { path: 'view/:id/step/:stepNum', component: CoursesStepViewComponent, },
