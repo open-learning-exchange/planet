@@ -2,7 +2,7 @@ name: Planet labels
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   workflow_dispatch:
     inputs:
       pr:
@@ -32,6 +32,9 @@ jobs:
     name: planet labels
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # `edited` also fires on every title and body edit -- the automerge drainer's
+    # own `Fixes #N` link among them -- so only a retarget is worth a resize.
+    if: ${{ github.event.action != 'edited' || github.event.changes.base }}
     steps:
       - name: label the pull request by size
         shell: bash

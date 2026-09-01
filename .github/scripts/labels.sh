@@ -24,7 +24,6 @@ EXCLUDE_PATHS="${EXCLUDE_PATHS:-src/i18n/messages.*.xlf package-lock.json}"
 DRY_RUN="${DRY_RUN:-false}"
 
 FILES_JSON="${FILES_JSON:-}"
-CURRENT_LABELS="${CURRENT_LABELS-}"
 
 EDIT_RETRY_DELAYS='3 9'
 

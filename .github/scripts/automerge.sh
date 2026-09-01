@@ -24,7 +24,9 @@ BASE="${BASE:?}"
 # goes unused, a slot left off the end keeps the default below.
 if [ -n "${LABELS:-}" ]; then
     label_i=0
-    while IFS= read -r label_part; do
+    label_rest="$LABELS"
+    while :; do
+        label_part="${label_rest%%,*}"
         label_part="${label_part#"${label_part%%[![:space:]]*}"}"
         label_part="${label_part%"${label_part##*[![:space:]]}"}"
         case "$label_i" in
@@ -34,7 +36,8 @@ if [ -n "${LABELS:-}" ]; then
             3) FAILING_LABEL="$label_part" ;;
         esac
         label_i=$(( label_i + 1 ))
-    done <<<"$(printf '%s' "$LABELS" | tr ',' '\n')"
+        case "$label_rest" in *,*) label_rest="${label_rest#*,}" ;; *) break ;; esac
+    done
 fi
 
 LABEL="${LABEL:?the queue label may not be blank -- it is the first slot of LABELS}"
@@ -111,21 +114,6 @@ pick_pr() {
 
 pr_state()  { gh pr view "$1" --repo "$REPO" --json state --jq '.state' 2>/dev/null || echo ''; }
 pr_review() { gh pr view "$1" --repo "$REPO" --json reviewDecision --jq '.reviewDecision' 2>/dev/null || echo ''; }
-
-check_mergeable() {
-    local pr=$1 state=""
-    for _ in 1 2 3 4 5; do
-        state=$(gh pr view "$pr" --repo "$REPO" --json mergeable --jq '.mergeable' 2>/dev/null || echo '')
-        case "$state" in MERGEABLE|CONFLICTING) break ;; esac
-        sleep 5
-    done
-    case "$state" in
-        MERGEABLE) ;;
-        CONFLICTING) return 1 ;;
-        *)
-            log "  #$pr mergeability is ${state:-unavailable} -- letting step 1 decide" ;;
-    esac
-}
 
 add_marker_label() {
     local pr=$1 label=$2 color=$3 desc=$4
@@ -518,12 +506,6 @@ while :; do
             skip_numbers="$skip_numbers $NUMBER"
             continue ;;
     esac
-
-    if ! check_mergeable "$NUMBER"; then
-        handle_conflict "$NUMBER"
-        skip_numbers="$skip_numbers $NUMBER"
-        continue
-    fi
 
     base_pkg="${RUNNER_TEMP:-/tmp}/base-package.json"
     git show "origin/$BASE:$PKG_FILE" > "$base_pkg"
