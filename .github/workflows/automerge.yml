@@ -1,11 +1,5 @@
 name: Planet automerge
 
-# Queue drainer, started by hand: for each PR labelled `automerge`, merge the
-# base in, bump the version, wait for the builders, squash merge, cut the
-# release that builds the versioned images. A PR that conflicts or goes red is
-# relabelled and skipped; the queue keeps draining.
-# Needs AUTOMERGE_TOKEN. Logic, and what does stop it: .github/scripts/automerge.sh
-
 on:
   workflow_dispatch:
     inputs:
@@ -53,15 +47,15 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  BASE: master                                 # 🌿 branch the queue merges into
-  PKG_FILE: package.json                       # 📄 file the version bump edits
-  OWNER_LOGIN: dogi                            # 🙏 credited on PRs they did not author
-  MYPLANET_REPO: open-learning-exchange/myplanet  # 📦 where the apk pins are checked
-  REQUIRE_CHECKS: 'true'                       # ✅ never merge an unverified commit
+  BASE: master                                                                   # 🌿 branch the queue merges into
+  PKG_FILE: package.json                                                         # 📄 file the version bump edits
+  OWNER_LOGIN: dogi                                                              # 🙏 credited on PRs they did not author
+  MYPLANET_REPO: open-learning-exchange/myplanet                                 # 📦 where the apk pins are checked
+  REQUIRE_CHECKS: 'true'                                                         # ✅ never merge an unverified commit
   REQUIRED_WORKFLOWS: 'Planet Builder, Gateway Builder, Planet DB-Init Builder'  # 🔍 must be green on it
-  DELETE_BRANCH: 'true'                        # 🧹 drop each head branch after merging
-  CREATE_RELEASE: 'true'                       # 🚀 tag each merge, the event that builds the images
-  WAIT_TIMEOUT_MIN: '45'                       # ⏱️ per commit, all builders
+  DELETE_BRANCH: 'true'                                                          # 🧹 drop each head branch after merging
+  CREATE_RELEASE: 'true'                                                         # 🚀 tag each merge, the event that builds the images
+  WAIT_TIMEOUT_MIN: '15'                                                         # ⏱️ per commit, all builders
 
 jobs:
   automerge:
