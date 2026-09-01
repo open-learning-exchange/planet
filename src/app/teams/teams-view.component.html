@@ -120,11 +120,7 @@
         }
         <planet-markdown [content]="team.services"></planet-markdown>
         @if (team?.rules) {
-          @if (mode === 'enterprise') {
-            <div class="mat-headline-6" i18n>What are the Rules of your enterprise?</div>
-          } @else {
-            <div class="mat-headline-6" i18n>What are the Rules of your team?</div>
-          }
+          <div class="mat-headline-6" i18n>What are the Rules of your enterprise?</div>
         }
         <planet-markdown [content]="team.rules"></planet-markdown>
       } @else {
