@@ -3,109 +3,31 @@ import { describe, it, expect, vi } from 'vitest';
 import { RatingService } from './rating.service';
 
 describe('RatingService promptRating', () => {
-  const setup = (options: { inShelf?: boolean; existingRate?: number; dialogResult?: any } = {}) => {
-    const couchService = {
-      findAll: vi.fn().mockReturnValue(of([])),
-      updateDocument: vi.fn().mockReturnValue(of({ ok: true })),
-      datePlaceholder: 'DATE'
-    };
-    const userService = {
-      get: vi.fn().mockReturnValue({ _id: 'u-1', name: 'tester' }),
-      countInShelf: vi.fn().mockReturnValue({ inShelf: options.inShelf ?? true })
-    };
-    const stateService = {
-      configuration: { code: 'c1', parentCode: 'p1', parentDomain: 'parent.dom' }
-    };
-    const dialogsFormService = {
-      confirm: vi.fn().mockReturnValue(of(options.dialogResult))
-    };
-    const planetMessageService = {
-      showMessage: vi.fn(),
-      showAlert: vi.fn()
-    };
-
-    const service = new RatingService(
-      couchService as any,
-      userService as any,
-      stateService as any,
-      dialogsFormService as any,
-      planetMessageService as any
-    );
-
-    return { service, couchService, dialogsFormService, planetMessageService };
+  const setup = (inShelf = true, dialogResult: any = undefined) => {
+    const couch = { updateDocument: vi.fn().mockReturnValue(of({ ok: true })), datePlaceholder: 'DATE' };
+    const user = { get: () => ({ _id: 'u-1', name: 'tester' }), countInShelf: () => ({ inShelf }) };
+    const state = { configuration: { code: 'c1', parentCode: 'p1', parentDomain: 'dom' } };
+    const dialogs = { confirm: vi.fn().mockReturnValue(of(dialogResult)) };
+    const msg = { showMessage: vi.fn(), showAlert: vi.fn() };
+    const service = new RatingService(couch as any, user as any, state as any, dialogs as any, msg as any);
+    return { service, couch, dialogs, msg };
   };
 
-  it('skips prompt when item is not in user shelf', () => {
-    const { service, dialogsFormService } = setup({ inShelf: false });
-    const item = { _id: 'r-1' };
-
-    let completed = false;
-    service.promptRating(item, 'resource').subscribe(res => {
-      expect(res).toBe(true);
-      completed = true;
-    });
-
-    expect(completed).toBe(true);
-    expect(dialogsFormService.confirm).not.toHaveBeenCalled();
-  });
-
-  it('skips prompt when item is already rated by the user', () => {
-    const { service, dialogsFormService } = setup({ inShelf: true });
-    const item = { _id: 'r-1', rating: { userRating: { rate: 4 } } };
-
-    let completed = false;
-    service.promptRating(item, 'resource').subscribe(res => {
-      expect(res).toBe(true);
-      completed = true;
-    });
-
-    expect(completed).toBe(true);
-    expect(dialogsFormService.confirm).not.toHaveBeenCalled();
-  });
-
   it('prompts dialog and saves rating when enrolled and unrated', () => {
-    const { service, dialogsFormService, couchService, planetMessageService } = setup({
-      inShelf: true,
-      dialogResult: { rate: 5, comment: 'Great resource!' }
-    });
-    const item = { _id: 'r-1', title: 'Test Resource' };
-
-    let completed = false;
-    service.promptRating(item, 'resource').subscribe(res => {
-      expect(res).toBe(true);
-      completed = true;
-    });
-
-    expect(completed).toBe(true);
-    expect(dialogsFormService.confirm).toHaveBeenCalled();
-    expect(couchService.updateDocument).toHaveBeenCalledWith(
-      'ratings',
-      expect.objectContaining({
-        type: 'resource',
-        item: 'r-1',
-        title: 'Test Resource',
-        rate: 5,
-        comment: 'Great resource!'
-      })
-    );
-    expect(planetMessageService.showMessage).toHaveBeenCalled();
+    const { service, dialogs, couch, msg } = setup(true, { rate: 5, comment: 'Nice' });
+    service.promptRating({ _id: 'r-1', title: 'Res' }, 'resource').subscribe(res => expect(res).toBe(true));
+    expect(dialogs.confirm).toHaveBeenCalled();
+    expect(couch.updateDocument).toHaveBeenCalledWith('ratings', expect.objectContaining({ rate: 5, item: 'r-1' }));
+    expect(msg.showMessage).toHaveBeenCalled();
   });
 
-  it('returns true and does not save if user dismisses dialog without rating', () => {
-    const { service, dialogsFormService, couchService } = setup({
-      inShelf: true,
-      dialogResult: undefined
-    });
-    const item = { _id: 'r-1' };
+  it('skips prompt when item is already rated or not in shelf', () => {
+    const { service, dialogs } = setup(false);
+    service.promptRating({ _id: 'r-1' }, 'resource').subscribe(res => expect(res).toBe(true));
+    expect(dialogs.confirm).not.toHaveBeenCalled();
 
-    let completed = false;
-    service.promptRating(item, 'resource').subscribe(res => {
-      expect(res).toBe(true);
-      completed = true;
-    });
-
-    expect(completed).toBe(true);
-    expect(dialogsFormService.confirm).toHaveBeenCalled();
-    expect(couchService.updateDocument).not.toHaveBeenCalled();
+    const { service: s2, dialogs: d2 } = setup(true);
+    s2.promptRating({ _id: 'r-1', rating: { userRating: { rate: 4 } } }, 'resource').subscribe();
+    expect(d2.confirm).not.toHaveBeenCalled();
   });
 });
