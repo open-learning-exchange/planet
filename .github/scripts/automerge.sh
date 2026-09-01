@@ -82,6 +82,7 @@ failing_count=0
 failing_list=""
 skip_numbers=""
 last_base_sha=""
+link_note=""
 
 MAX_REPREPARES=2
 reprep_pr=""
@@ -400,6 +401,44 @@ merge_with_retry() {
     return 1
 }
 
+# GitHub links a PR to its issue from the PR *description*, never from its
+# title, and a squash merge made through the API does not fire the closing
+# keyword in the commit message either. A title-only `(fixes #N)` therefore
+# merges perfectly green and leaves the issue open, silently -- so put the
+# keyword where GitHub actually reads it before handing the PR to the merge.
+# `(connects #N)` is deliberately left alone: that issue is meant to stay open.
+link_fixed_issues() {
+    local pr=$1 title=$2 body n kind
+
+    for n in $(grep -oE '\(fixes #[0-9]+\)' <<<"$title" | grep -oE '[0-9]+'); do
+        body=$(gh pr view "$pr" --repo "$REPO" --json body --jq '.body // ""' 2>/dev/null || echo '')
+        if grep -qiE "(fix(e[sd])?|close[sd]?|resolve[sd]?)[[:space:]]+#$n([^0-9]|$)" <<<"$body"; then
+            continue
+        fi
+
+        # A number that turns out to be a pull request would close that PR.
+        kind=$(gh api "repos/$REPO/issues/$n" \
+                 --jq 'if .pull_request then "pr" else "issue" end' 2>/dev/null || echo '')
+        case "$kind" in
+            issue) ;;
+            pr) log "  #$pr claims to fix #$n, which is a pull request -- not linking it"; continue ;;
+            *)  log "  #$pr claims to fix #$n, which could not be read -- not linking it"; continue ;;
+        esac
+
+        if [ "$DRY_RUN" = 'true' ]; then
+            log "  dry run: would add 'Fixes #$n' to #$pr's description so the merge closes it"
+            continue
+        fi
+
+        if gh pr edit "$pr" --repo "$REPO" --body "Fixes #$n"$'\n\n'"$body" >/dev/null 2>&1; then
+            log "  linked #$pr to #$n through its description"
+            link_note="$link_note, closes #$n"
+        else
+            log "  could not add 'Fixes #$n' to #$pr's description -- #$n will stay open"
+        fi
+    done
+}
+
 push_with_retry() {
     local ref=$1
     for delay in 0 2 4 8 16; do
@@ -508,6 +547,7 @@ while :; do
                 log "           pin myplanet latest=${MYPLANET_LATEST:-unchanged} min=${MYPLANET_MIN:-unchanged},"
             fi
             log "           wait for ${REQUIRED_WORKFLOWS:-the triggered workflows}, then squash merge #$NUMBER"
+            link_fixed_issues "$NUMBER" "$TITLE"
             if [ "$CREATE_RELEASE" = 'true' ]; then
                 log "           and cut v$new_name from the merge"
             fi
@@ -612,6 +652,9 @@ while :; do
         fi
     fi
 
+    link_note=""
+    link_fixed_issues "$NUMBER" "$TITLE"
+
     commit_body=$(REPO="$REPO" PR="$NUMBER" "$COAUTHORS_SH")
     if [ -n "$commit_body" ]; then
         log "  co-authors:"
@@ -696,7 +739,7 @@ while :; do
     merged_count=$((merged_count + 1))
     merged_list="$merged_list #$NUMBER"
     skip_numbers="$skip_numbers $NUMBER"
-    summary "| #$NUMBER | → \`$new_name\` | merged as \`${last_base_sha:0:7}\`$release_note |"
+    summary "| #$NUMBER | → \`$new_name\` | merged as \`${last_base_sha:0:7}\`$release_note$link_note |"
 done
 
 log "done: merged $merged_count PR(s):${merged_list:- none}"
