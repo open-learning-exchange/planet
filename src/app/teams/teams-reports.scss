@@ -35,6 +35,10 @@
       height: 18px;
     }
   }
+  .reports-filter {
+    flex: 0 1 260px;
+    min-width: 180px;
+  }
 }
 
 .reports-grid {
@@ -68,6 +72,27 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+}
+
+.report-card-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.report-card-label {
+  max-width: 100%;
+  min-width: 0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: v.$light-grey;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 11px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .report-card-eyebrow {

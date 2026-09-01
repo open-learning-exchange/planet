@@ -17,9 +17,17 @@
         @if (field.type === 'textbox') {
           <mat-form-field class="full-width">
             <mat-label>{{field.placeholder}}</mat-label>
-            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min">
+            <input matInput type="{{field.inputType || 'text'}}" formControlName="{{field.name}}" [required]="field.required" [min]="field.min"
+              [attr.maxlength]="field.maxLength" [attr.list]="field.suggestions?.length ? field.name + '-suggestions' : null">
             <mat-error><planet-form-error-messages [control]="modalForm.controls[field.name]"></planet-form-error-messages></mat-error>
           </mat-form-field>
+          @if (field.suggestions?.length) {
+            <datalist [id]="field.name + '-suggestions'">
+              @for (suggestion of field.suggestions; track suggestion) {
+                <option [value]="suggestion"></option>
+              }
+            </datalist>
+          }
         }
         <!-- password field -->
         @if (field.type === 'password') {
