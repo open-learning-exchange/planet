@@ -31,9 +31,6 @@ EDIT_RETRY_DELAYS='3 9'
 log()     { printf '%s | %s\n' "$(date -u +%H:%M:%S)" "$*"; }
 summary() { [ -n "${GITHUB_STEP_SUMMARY:-}" ] && printf '%s\n' "$*" >> "$GITHUB_STEP_SUMMARY"; return 0; }
 
-# Split on whitespace only. An unquoted $EXCLUDE_PATHS in a for-list would be
-# pathname-expanded against whatever the runner happens to have checked out,
-# quietly turning the patterns into a snapshot of today's filenames.
 read -r -a EXCLUDE_GLOBS <<<"$EXCLUDE_PATHS"
 
 excluded() {
@@ -53,8 +50,6 @@ read_files() {
     fi | jq -r '.[] | [.filename, (.additions // 0), (.deletions // 0), ((.patch // "") | @base64)] | @tsv'
 }
 
-# The automerge bump lands on the PR branch before the merge, so the size
-# label must not count it. Same three keys the bump is allowed to touch.
 version_lines() {
     printf '%s\n' "$1" | grep -cE "^\\$2[[:space:]]*\"(version|latest|min)\"[[:space:]]*:" || true
 }
