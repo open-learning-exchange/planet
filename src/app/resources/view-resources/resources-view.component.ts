@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject, defer } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -187,8 +187,19 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
-  canDeactivate(): Observable<boolean> | boolean {
-    if (this.promptedForRating || !this.resource?._id) {
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    const nextUrl = nextState?.url || '';
+    if (
+      this.promptedForRating ||
+      !this.resource?._id ||
+      this.canManage ||
+      nextUrl.includes('/update') ||
+      nextUrl.includes('/add')
+    ) {
       return true;
     }
     this.promptedForRating = true;

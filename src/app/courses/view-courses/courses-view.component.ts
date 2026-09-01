@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, ParamMap, Router, RouterStateSnapshot } from '@angular/router';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Observable, Subject, defer } from 'rxjs';
 import { takeUntil, switchMap, take, filter, map } from 'rxjs/operators';
@@ -257,8 +257,23 @@ export class CoursesViewComponent implements OnInit, OnDestroy {
     this.router.navigate([ '../../' ], { relativeTo: this.route });
   }
 
-  canDeactivate(): Observable<boolean> | boolean {
-    if (this.promptedForRating || !this.courseDetail?._id) {
+  canDeactivate(
+    currentRoute?: ActivatedRouteSnapshot,
+    currentState?: RouterStateSnapshot,
+    nextState?: RouterStateSnapshot
+  ): Observable<boolean> | boolean {
+    const nextUrl = nextState?.url || '';
+    if (
+      this.promptedForRating ||
+      !this.courseDetail?._id ||
+      this.canManage ||
+      nextUrl.includes('/update') ||
+      nextUrl.includes('/step/') ||
+      nextUrl.includes('/exam') ||
+      nextUrl.includes('/survey') ||
+      nextUrl.includes('/progress/') ||
+      nextUrl.includes('/enrolled/')
+    ) {
       return true;
     }
     this.promptedForRating = true;

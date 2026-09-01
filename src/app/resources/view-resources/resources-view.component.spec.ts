@@ -131,6 +131,7 @@ describe('ResourcesViewComponent', () => {
 
   it('delegates to ratingService.promptRating on canDeactivate', () => {
     component.resource = { _id: 'r-1' };
+    component.canManage = false;
     component.promptedForRating = false;
 
     const result = component.canDeactivate();
@@ -140,15 +141,20 @@ describe('ResourcesViewComponent', () => {
     expect(component.promptedForRating).toBe(true);
   });
 
-  it('skips promptRating if already prompted', () => {
+  it('skips promptRating when navigating to edit/update or if already prompted', () => {
     component.resource = { _id: 'r-1' };
-    component.promptedForRating = true;
+    component.canManage = false;
+    component.promptedForRating = false;
     ratingServiceMock.promptRating.mockClear();
 
-    const result = component.canDeactivate();
-
+    const editResult = component.canDeactivate(undefined, undefined, { url: '/resources/update/r-1' } as any);
     expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
-    expect(result).toBe(true);
+    expect(editResult).toBe(true);
+
+    component.promptedForRating = true;
+    const promptedResult = component.canDeactivate();
+    expect(ratingServiceMock.promptRating).not.toHaveBeenCalled();
+    expect(promptedResult).toBe(true);
   });
 
 
