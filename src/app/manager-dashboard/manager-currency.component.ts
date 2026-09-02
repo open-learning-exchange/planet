@@ -56,8 +56,7 @@ export class ManagerCurrencyComponent implements OnInit {
       return;
     }
     this.spinnerOn = true;
-    const updatedConfig = { ...this.configuration, keys: this.stateService.keys, currency: { ...this.form.value } };
-    this.configurationService.updateConfiguration(updatedConfig)
+    this.configurationService.patchLocalConfiguration({ currency: { ...this.form.value } })
       .pipe(finalize(spinnerOff))
       .subscribe(
         () => {

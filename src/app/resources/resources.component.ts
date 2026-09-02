@@ -26,7 +26,8 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -38,7 +39,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
@@ -69,6 +70,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatIcon,
     ResourcesSearchComponent,
     MatFormField,
+    MatSuffix,
     PlanetTagInputComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -244,12 +246,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupList(resourcesRes, myLibrarys) {
     return resourcesRes.map((resource: any) => {
-      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-        return resource._id === resourceId;
-      });
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => resource._id === resourceId);
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
-      return { ...resource, libraryInfo: myLibraryIndex > -1 };
+      const downloadFilename = resourceAttachmentFilename(resource.doc);
+      return {
+        ...resource,
+        libraryInfo: myLibraryIndex > -1,
+        downloadUrl: downloadFilename ? this.urlPrefix + couchAttachmentPath(resource._id, downloadFilename) : '',
+        downloadFileSize: formatResourceAttachmentSize(resource.doc, downloadFilename)
+      };
     });
   }
 
@@ -473,7 +479,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogGuard.open('send-resource', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),

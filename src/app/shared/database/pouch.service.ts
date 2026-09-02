@@ -87,7 +87,7 @@ export class PouchService {
 
   saveDocEditing(doc, db, id = 'new') {
     this.getDocEditing(db, id).subscribe((oldDoc: any) => {
-      this.docEditingDB(db, id).put({ ...doc, '_id': id, '_rev': oldDoc && oldDoc._rev });
+      this.docEditingDB(db, id).put({ ...doc, _id: id, _rev: oldDoc && oldDoc._rev });
     });
   }
 

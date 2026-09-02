@@ -96,13 +96,13 @@ export class LoginFormComponent implements OnInit {
 
   welcomeNotification(userId: string) {
     const data = {
-      'user': userId,
-      'message': $localize`Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
-      'link': '',
-      'type': 'register',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder
+      user: userId,
+      message: $localize`Welcome <b>${userId.replace('org.couchdb.user:', '')}</b> to the Planet Learning`,
+      link: '',
+      type: 'register',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder
     };
     this.couchService.updateDocument('notifications', data)
       .subscribe();
@@ -198,7 +198,7 @@ export class LoginFormComponent implements OnInit {
 
   errorHandler(message: string) {
     return () => {
-      this.userForm.setErrors({ 'invalid': true });
+      this.userForm.setErrors({ invalid: true });
       this.planetMessageService.showAlert(message);
     };
   }

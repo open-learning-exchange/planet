@@ -84,10 +84,10 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   trackByFn = trackByCategory;
 
   categories = [
-    { 'label': 'subject', 'options': constants.subjectList },
-    { 'label': 'language', 'options': languages },
-    { 'label': 'medium', 'options': constants.media },
-    { 'label': 'level', 'options': constants.levelList }
+    { label: 'subject', options: constants.subjectList },
+    { label: 'language', options: languages },
+    { label: 'medium', options: constants.media },
+    { label: 'level', options: constants.levelList }
   ];
 
   searchLists = [];
@@ -98,9 +98,7 @@ export class ResourcesSearchComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.searchLists = this.categories.reduce((lists, category) => {
-      return lists.concat(this.createSearchList(category, this.filteredData));
-    }, []);
+    this.searchLists = this.categories.reduce((lists, category) => lists.concat(this.createSearchList(category, this.filteredData)), []);
   }
 
   reset({ startingSelection = {}, isInit = false } = {}) {

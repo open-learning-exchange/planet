@@ -226,11 +226,11 @@ export class HealthEventComponent implements OnInit, CanComponentDeactivate {
   isFieldValueExpected(field: HealthEventFormFields) {
     const value = this.healthForm.controls[field].value;
     const limits = {
-      'temperature': { min: 30, max: 45 },
-      'pulse': { min: 30, max: 300 },
-      'height': { min: 30, max: 275 },
-      'weight': { min: 0, max: 500 },
-      'bp': 'n/a'
+      temperature: { min: 30, max: 45 },
+      pulse: { min: 30, max: 300 },
+      height: { min: 30, max: 275 },
+      weight: { min: 0, max: 500 },
+      bp: 'n/a'
     };
     if (value === null || value === '' || !limits[field]) {
       return true;

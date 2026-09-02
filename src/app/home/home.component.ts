@@ -90,6 +90,10 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   configuration = this.stateService.configuration;
   planetType = this.stateService.configuration.planetType;
 
+  get notificationsLabel(): string {
+    return $localize`Notifications: ${this.notifications.length}:count:`;
+  }
+
   constructor(
     private dialog: MatDialog,
     private couchService: CouchService,
@@ -241,20 +245,20 @@ export class HomeComponent implements OnInit, DoCheck, AfterViewChecked, OnDestr
   getNotification() {
     const userFilter = notificationUserFilter(this.userService.get());
     this.couchService.findAll('notifications', findDocuments(
-      { '$or': userFilter,
+      { $or: userFilter,
       // The sorted item must be included in the selector for sort to work
-        'time': { '$gt': 0 },
-        'status': 'unread'
+        time: { $gt: 0 },
+        status: 'unread'
       },
       0,
-      [ { 'time': 'desc' } ])
+      [ { time: 'desc' } ])
     ).subscribe(data => {
       this.notifications = data;
     }, (error) => console.log(error));
   }
 
   readNotification(notification) {
-    const updateNotificaton = { ...notification, 'status': 'read' };
+    const updateNotificaton = { ...notification, status: 'read' };
     this.couchService.put('notifications/' + notification._id, updateNotificaton).subscribe((data) => {
       this.userService.setNotificationStateChange();
     }, (err) => console.log(err));
