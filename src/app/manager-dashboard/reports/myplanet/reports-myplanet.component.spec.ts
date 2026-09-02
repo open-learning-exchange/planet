@@ -51,6 +51,27 @@ describe('ReportsMyPlanetComponent', () => {
     const csvRows = component.mapToCsvData(children);
     expect(csvRows.map(row => row[$localize`Source`])).toEqual([ 'myPlanet', 'myPlanet Lite' ]);
   });
+
+  it('does not flatten usages arrays on non-usage activity documents', () => {
+    const groups = component.myPlanetGroups(community, [ {
+      androidId: 'device-1',
+      createdOn: 'community-1',
+      time: fullAppTime,
+      totalUsed: 10,
+      type: 'sync',
+      usages: [ { time: liteAppTime, totalUsed: 20 } ]
+    } ]);
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0].androidId).toBe('device-1');
+    expect(groups[0].sum).toBe(10);
+  });
+
+  it('exports an empty device ID when neither identifier is available', () => {
+    const csvRow = component.mapToCsvData([ { count: 1, source: 'myPlanet', totalUsedTime: 0 } ])[0];
+
+    expect(csvRow[$localize`ID`]).toBe('');
+  });
 });
 
 describe('MyPlanetTableComponent', () => {

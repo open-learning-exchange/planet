@@ -138,7 +138,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
       myPlanets
         .filter(myPlanet => myPlanet.createdOn === planet.doc.code || myPlanet.parentCode === planet.doc.code)
         .flatMap(myPlanet => {
-          const activities = myPlanet.type === 'usages' || myPlanet.usages?.length > 0 ? myPlanet.usages || [] : [ myPlanet ];
+          const activities = myPlanet.type === 'usages' ? myPlanet.usages || [] : [ myPlanet ];
           return activities.map(activity => {
             const app = activity.app === undefined ? myPlanet.app : activity.app;
             return { ...activity, appSource: appSourceOf({ ...activity, app }) };
@@ -196,7 +196,7 @@ export class ReportsMyPlanetComponent extends MyPlanetFiltersBase implements OnI
   private mapToCsvData(children: any[], planetName?: string): any[] {
     return children.map((data: any) => ({
       ...(planetName ? { [$localize`Planet Name`]: planetName } : {}),
-      [$localize`ID`]: data.androidId.toString() || data.uniqueAndroidId.toString(),
+      [$localize`ID`]: (data.androidId || data.uniqueAndroidId || '').toString(),
       [$localize`Name`]: data.deviceName || data.customDeviceName,
       [$localize`Source`]: data.source,
       [$localize`Last Synced`]: data.time && data.time !== 0 ?

@@ -19,6 +19,11 @@ describe('app source utilities', () => {
     expect(appSourceOf({ app: 'planet', androidId: 'abc' })).toBe('planet');
   });
 
+  it('normalizes declared app source casing', () => {
+    expect(appSourceOf({ app: 'myPlanet-lite', androidId: 'abc' })).toBe('myplanet-lite');
+    expect(appSourceOf({ app: 'Planet', androidId: 'abc' })).toBe('planet');
+  });
+
   it('falls back to the androidId heuristic for an unrecognized app field', () => {
     expect(appSourceOf({ app: 'myplanet-nano', androidId: 'abc' })).toBe('myplanet');
     expect(appSourceOf({ app: '' })).toBe('planet');

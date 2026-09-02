@@ -7,11 +7,15 @@ export const appSources: { value: AppSource, label: string }[] = [
   { value: 'myplanet-lite', label: $localize`myPlanet Lite` }
 ];
 
-const isAppSource = (value: any): value is AppSource => appSources.some(source => source.value === value);
+const normalizeAppSource = (value: any): AppSource | undefined => {
+  const normalizedValue = typeof value === 'string' ? value.toLowerCase() : value;
+  return appSources.find(source => source.value === normalizedValue)?.value;
+};
 
 export const appSourceOf = (doc: any): AppSource => {
-  if (isAppSource(doc?.app)) {
-    return doc.app;
+  const appSource = normalizeAppSource(doc?.app);
+  if (appSource) {
+    return appSource;
   }
   return doc?.androidId === undefined ? 'planet' : 'myplanet';
 };
