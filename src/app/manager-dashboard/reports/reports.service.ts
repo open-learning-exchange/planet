@@ -9,12 +9,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogsViewComponent } from '../../shared/dialogs/dialogs-view.component';
 import { StateService } from '../../shared/state.service';
 import { CoursesService } from '../../courses/courses.service';
-import { AppSourceFilter, appSourceSelector } from '../../shared/app-source';
 
 interface ActivityRequestObject {
   planetCode?: string;
   tillDate?: number;
-  app?: AppSourceFilter;
   filterAdmin?: boolean;
 }
 
@@ -90,12 +88,11 @@ export class ReportsService {
     );
   }
 
-  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time', app }: any = { field: 'createdOn' }) {
+  selector(planetCode: string, { field = 'createdOn', tillDate, dateField = 'time' }: any = { field: 'createdOn' }) {
     return planetCode ?
       findDocuments({
         ...{ [field]: planetCode },
-        ...this.timeFilter(dateField, tillDate),
-        ...appSourceSelector(app)
+        ...this.timeFilter(dateField, tillDate)
       }) :
       undefined;
   }
@@ -129,10 +126,10 @@ export class ReportsService {
 
   getAllActivities(
     db: 'login_activities' | 'resource_activities' | 'course_activities',
-    { planetCode, tillDate, app, filterAdmin }: ActivityRequestObject = {}
+    { planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}
   ) {
     const dateField = db === 'login_activities' ? 'loginTime' : 'time';
-    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField, app }))
+    return this.couchService.findAll(db, this.selector(planetCode, { tillDate, dateField }))
       .pipe(map((activities: any) => this.filterAdmin(activities, filterAdmin)));
   }
 
@@ -144,8 +141,8 @@ export class ReportsService {
     });
   }
 
-  getRatingInfo({ planetCode, tillDate, app, filterAdmin }: ActivityRequestObject = {}) {
-    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time', app })).pipe(
+  getRatingInfo({ planetCode, tillDate, filterAdmin }: ActivityRequestObject = {}) {
+    return this.couchService.findAll('ratings', this.selector(planetCode, { tillDate, dateField: 'time' })).pipe(
       map((ratings: any) => this.filterAdmin(ratings, filterAdmin)));
   }
 

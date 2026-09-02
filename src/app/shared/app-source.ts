@@ -1,9 +1,9 @@
-// Every activity document in the ecosystem is written by one of the OLE apps, which each stamp their
-// own name on the `app` field: 'planet' from the web app, 'myplanet' from myPlanet, 'myplanet-lite'
-// from myPlanet Lite.  Documents written before that field existed are classified by the presence of
-// `androidId`, which only the Android clients set, so they keep landing in the bucket they always
-// did.  That fallback is why myPlanet needs no change to stay separated, and why myPlanet Lite --
-// which also writes `androidId` -- has to declare itself to be counted apart from myPlanet.
+// Activity documents may identify the OLE app that wrote them with an `app` field: 'planet' from the
+// web app, 'myplanet' from myPlanet, or 'myplanet-lite' from myPlanet Lite. Documents without a
+// recognized `app` value are classified by the presence of `androidId`, which only the Android
+// clients set, so legacy documents keep landing in the bucket they always did. That fallback is why
+// myPlanet Lite, which also writes `androidId`, has to declare itself to be counted apart from
+// myPlanet.
 
 export type AppSource = 'planet' | 'myplanet' | 'myplanet-lite';
 export type AppSourceFilter = AppSource | '';
@@ -28,18 +28,3 @@ export const appSourceLabel = (doc: any): string =>
 
 export const isFromAppSource = (doc: any, filter: AppSourceFilter): boolean =>
   filter === '' || appSourceOf(doc) === filter;
-
-// Mango selector fragment for a CouchDB query.  myPlanet docs predate the `app` field, so they are
-// matched as "has an androidId and does not declare a different app".
-export const appSourceSelector = (filter: AppSourceFilter | undefined) => {
-  switch (filter) {
-    case 'planet':
-      return { androidId: { $exists: false } };
-    case 'myplanet':
-      return { androidId: { $exists: true }, app: { $ne: 'myplanet-lite' } };
-    case 'myplanet-lite':
-      return { app: 'myplanet-lite' };
-    default:
-      return {};
-  }
-};

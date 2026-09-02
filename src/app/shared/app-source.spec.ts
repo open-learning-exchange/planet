@@ -1,4 +1,4 @@
-import { appSourceLabel, appSourceOf, appSourceSelector, isFromAppSource } from './app-source';
+import { appSourceLabel, appSourceOf, isFromAppSource } from './app-source';
 
 describe('app source utilities', () => {
 
@@ -15,8 +15,8 @@ describe('app source utilities', () => {
 
   it('prefers the app field the app declares over the androidId heuristic', () => {
     expect(appSourceOf({ app: 'myplanet-lite', androidId: 'abc' })).toBe('myplanet-lite');
-    expect(appSourceOf({ app: 'myplanet', androidId: 'abc' })).toBe('myplanet');
-    expect(appSourceOf({ app: 'planet' })).toBe('planet');
+    expect(appSourceOf({ app: 'myplanet' })).toBe('myplanet');
+    expect(appSourceOf({ app: 'planet', androidId: 'abc' })).toBe('planet');
   });
 
   it('falls back to the androidId heuristic for an unrecognized app field', () => {
@@ -33,14 +33,6 @@ describe('app source utilities', () => {
   it('matches every source when the filter is empty', () => {
     expect(isFromAppSource({ app: 'myplanet-lite' }, '')).toBe(true);
     expect(isFromAppSource({}, '')).toBe(true);
-  });
-
-  it('builds a mango selector that keeps myplanet-lite out of the myplanet bucket', () => {
-    expect(appSourceSelector('planet')).toEqual({ androidId: { $exists: false } });
-    expect(appSourceSelector('myplanet')).toEqual({ androidId: { $exists: true }, app: { $ne: 'myplanet-lite' } });
-    expect(appSourceSelector('myplanet-lite')).toEqual({ app: 'myplanet-lite' });
-    expect(appSourceSelector('')).toEqual({});
-    expect(appSourceSelector(undefined)).toEqual({});
   });
 
   it('keeps myplanet-lite docs out of the myplanet bucket', () => {
