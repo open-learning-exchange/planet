@@ -68,7 +68,6 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   @Input() buttonText?: any = {
     today: $localize`Today`
   };
-  @Input() _events: any[] = [ {} ];
   // Initializing events with blank object as first array value ensures calendar renders even if there are no events found
   events: any[] = [ {} ];
   calendarPlugins = [ dayGridPlugin, interactionPlugin ];
@@ -104,6 +103,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     dayMaxEventRows: 2,
     selectable: true,
     select: (arg) => {
+      if (!this.editable) {
+        return;
+      }
       this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this)
@@ -130,6 +132,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         addEventButton: {
           text: $localize`Add Event`,
           click: (arg) => {
+            if (!this.editable) {
+              return;
+            }
             this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }
@@ -138,7 +143,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     this.calendarOptions.headerToolbar = this.header;
     this.calendarOptions.buttonText = this.buttonText;
     this.calendarOptions.customButtons = this.buttons;
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -146,7 +151,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
       this.calendar.getApi().updateSize();
       this.resizeCalendar = false;
     }
-    this.calendarOptions.events = [ ...this.events, ...this._events ];
+    this.calendarOptions.events = [ ...this.events ];
   }
 
   getMeetups() {
@@ -244,6 +249,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openAddEventDialog(event) {
+    if (!this.editable) {
+      return;
+    }
     const today = new Date();
     const meetup = event?.start
       ? {
@@ -255,7 +263,7 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         endDate: today,
       };
     this.dialog.open(DialogsAddMeetupsComponent, {
-      data: { meetup: meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
+      data: { meetup, link: this.link, sync: this.sync, onMeetupsChange: this.onMeetupsChange.bind(this), editable: this.editable },
       panelClass: 'fit-screen-dialog',
       maxHeight: '90vh'
     });
@@ -305,6 +313,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskEditDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
       onSubmit: (newTask) => {
@@ -321,6 +332,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskDeleteDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {

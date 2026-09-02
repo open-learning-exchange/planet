@@ -19,7 +19,7 @@ import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
@@ -46,7 +46,7 @@ interface ExamViewForm {
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     MatFormField,
     MatLabel,
     FormsModule,
@@ -228,7 +228,7 @@ export class ExamsViewComponent implements OnInit, OnDestroy, CanComponentDeacti
       this.mode = mode || 'grade';
       this.grade = mode === 'take' ? 0 : undefined;
       this.comment = undefined;
-      this.submissionsService.openSubmission({ submissionId, 'status': params.get('status') });
+      this.submissionsService.openSubmission({ submissionId, status: params.get('status') });
     }
   }
 

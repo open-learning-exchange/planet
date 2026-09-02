@@ -29,6 +29,8 @@ import { PlanetMarkdownTextboxComponent } from '../../shared/forms/planet-markdo
 import { MatListItemTitle, MatListItemMeta } from '@angular/material/list';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { SubmitDirective } from '../../shared/submit.directive';
+import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 type DateValue = string | Date;
 type DateSortOrder = 'none' | 'asc' | 'desc';
@@ -104,13 +106,15 @@ type LinkFormGroup = FormGroup<LinkFormControls>;
     MatButton,
     MatCheckbox,
     SubmitDirective,
-    FileUploadComponent
+    FileUploadComponent,
+    TruncateTextPipe,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   user = this.userService.get();
   configuration = this.stateService.configuration;
-  docInfo = { '_id': this.user._id + '@' + this.configuration.code, '_rev': undefined };
+  docInfo = { _id: this.user._id + '@' + this.configuration.code, _rev: undefined };
   readonly dbName = 'achievements';
   readonly resumeAttachmentKey = 'resume.pdf';
   readonly maxResumeSizeMb = 512;
@@ -313,10 +317,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.dialogsFormService.openDialogsForm(
       achievement.title !== '' ? $localize`Edit Achievement` : $localize`Add Achievement`,
       [
-        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Title`, required: true },
-        { 'type': 'date', 'name': 'date', 'placeholder': $localize`Date`, 'required': false },
-        { 'type': 'textbox', 'name': 'link', 'placeholder': $localize`Link`, required: false },
-        { 'type': 'textarea', 'name': 'description', 'placeholder': $localize`Description`, 'required': false },
+        { type: 'textbox', name: 'title', placeholder: $localize`Title`, required: true },
+        { type: 'date', name: 'date', placeholder: $localize`Date`, required: false },
+        { type: 'textbox', name: 'link', placeholder: $localize`Link`, required: false },
+        { type: 'textarea', name: 'description', placeholder: $localize`Description`, required: false },
       ],
       this.createAchievementGroup(achievement),
       { onSubmit: (formValue, formGroup) => {
@@ -332,10 +336,10 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.dialogsFormService.openDialogsForm(
       reference.name !== '' ? $localize`Edit Reference` : $localize`Add Reference`,
       [
-        { 'type': 'textbox', 'name': 'name', 'placeholder': $localize`Name`, required: true },
-        { 'type': 'textbox', 'name': 'relationship', 'placeholder': $localize`Relationship`, 'required': false },
-        { 'type': 'textbox', 'name': 'phone', 'placeholder': $localize`Phone Number`, 'required': false },
-        { 'type': 'textbox', 'name': 'email', 'placeholder': $localize`Email`, 'required': false }
+        { type: 'textbox', name: 'name', placeholder: $localize`Name`, required: true },
+        { type: 'textbox', name: 'relationship', placeholder: $localize`Relationship`, required: false },
+        { type: 'textbox', name: 'phone', placeholder: $localize`Phone Number`, required: false },
+        { type: 'textbox', name: 'email', placeholder: $localize`Email`, required: false }
       ],
       this.createReferenceGroup(reference),
       { onSubmit: this.onDialogSubmit(this.references, index), closeOnSubmit: true }
@@ -346,8 +350,8 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     this.dialogsFormService.openDialogsForm(
       link.title !== '' ? $localize`Edit Link` : $localize`Add Link`,
       [
-        { 'type': 'textbox', 'name': 'title', 'placeholder': $localize`Link Title`, required: true },
-        { 'type': 'textbox', 'name': 'url', 'placeholder': $localize`URL`, 'required': true }
+        { type: 'textbox', name: 'title', placeholder: $localize`Link Title`, required: true },
+        { type: 'textbox', name: 'url', placeholder: $localize`URL`, required: true }
       ],
       this.createLinkGroup(link),
       { onSubmit: this.onDialogSubmit(this.links, index), closeOnSubmit: true }
@@ -507,9 +511,9 @@ export class UsersAchievementsUpdateComponent implements OnInit, OnDestroy, CanC
     const achievementsDoc: any = {
       ...docInfo,
       ...achievements,
-      'createdOn': this.configuration.code,
-      'username': this.user.name,
-      'parentCode': this.configuration.parentCode
+      createdOn: this.configuration.code,
+      username: this.user.name,
+      parentCode: this.configuration.parentCode
     };
 
     if (this.resumeFile) {

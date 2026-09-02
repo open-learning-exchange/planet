@@ -24,7 +24,6 @@ import { CustomValidators } from '../validators/custom-validators';
 import { planetAndParentId } from '../manager-dashboard/reports/reports.utils';
 import { CoursesViewDetailDialogComponent } from '../courses/view-courses/courses-view-detail.component';
 import { enterpriseJoinAgreement, memberCompare, memberSort, requestDateCompare } from './teams.utils';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar } from '@angular/material/toolbar';
 import { MatIconAnchor, MatIconButton, MatButton, MatAnchor } from '@angular/material/button';
@@ -35,10 +34,7 @@ import { MatChipSet, MatChip } from '@angular/material/chips';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { PlanetLoadingSpinnerComponent } from '../shared/planet-loading-spinner.component';
 import { NewsListComponent } from '../news/news-list.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
-import {
-  MatCard, MatCardHeader, MatCardAvatar, MatCardTitle, MatCardSubtitle, MatCardActions, MatCardContent
-} from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { TeamsMemberComponent } from './teams-member.component';
 import { MatBadge } from '@angular/material/badge';
 import { TasksComponent } from '../tasks/tasks.component';
@@ -49,6 +45,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetMarkdownComponent } from '../shared/planet-markdown.component';
 import { SurveysComponent } from '../surveys/surveys.component';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
+import { assigneeMatches, isTaskAssignedTo } from '../tasks/tasks.utils';
 
 @Component({
   templateUrl: './teams-view.component.html',
@@ -73,13 +70,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     PlanetLoadingSpinnerComponent,
     NewsListComponent,
     MatTabLabel,
-    TdMarkdownComponent,
     MatCard,
-    MatCardHeader,
-    MatCardAvatar,
-    MatCardTitle,
-    MatCardSubtitle,
-    MatCardActions,
     TeamsMemberComponent,
     MatBadge,
     TasksComponent,
@@ -138,6 +129,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   deviceType: DeviceType;
   deviceTypes: typeof DeviceType = DeviceType;
 
+  get requestBadgeDescription(): string {
+    return $localize`Pending join requests: ${this.requests.length}:count:`;
+  }
+
+  get taskBadgeDescription(): string {
+    return $localize`Incomplete tasks: ${this.taskCount}:count:`;
+  }
+
   constructor(
     private couchService: CouchService,
     private userService: UserService,
@@ -186,8 +185,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   getActiveTab(initTab: string) {
     const activeTabs = {
-      'taskTab': this.taskTab,
-      'applicantTab': this.applicantTab
+      taskTab: this.taskTab,
+      applicantTab: this.applicantTab
     };
     return activeTabs[initTab];
   }
@@ -215,7 +214,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
 
     return this.couchService.post('courses/_find', findDocuments(
-      { _id: { '$in': courseIds } }, [ '_id' ], 0, courseIds.length
+      { _id: { $in: courseIds } }, [ '_id' ], 0, courseIds.length
     )).pipe(
       map(({ docs }) => {
         const existingIds = new Set(docs.map(course => course._id));
@@ -280,11 +279,11 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     const showAll = this.userStatus === 'member' || this.team.public === true;
     this.newsService.requestNews({
       selectors: {
-        '$or': [
+        $or: [
           ...(showAll ? [ { viewableBy: 'teams', viewableId: teamId } ] : []),
           {
-            viewIn: { '$elemMatch': {
-              '_id': teamId, section: 'teams', ...(showAll ? {} : { public: true })
+            viewIn: { $elemMatch: {
+              _id: teamId, section: 'teams', ...(showAll ? {} : { public: true })
             } }
           }
         ],
@@ -328,10 +327,14 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
   setTasks(tasks = []) {
     this.members = this.members.map(member => ({
       ...member,
-      tasks: this.tasksService.sortedTasks(tasks.filter(({ assignee }) => assignee && assignee.userId === member.userId), member.tasks)
+      tasks: this.tasksService.sortedTasks(tasks.filter(task => isTaskAssignedTo(task, member, this.planetCode)), member.tasks)
     }));
     if (this.userStatus === 'member') {
-      const tasksForCount = this.isUserLeader ? tasks : this.members.find(member => member.userId === this.user._id).tasks;
+      const currentMember = this.members.find(member => assigneeMatches(member, {
+        userId: this.user._id,
+        userPlanetCode: this.planetCode
+      }, this.planetCode));
+      const tasksForCount = this.isUserLeader ? tasks : currentMember?.tasks || [];
       this.taskCount = tasksForCount.filter(task => task.completed === false).length;
     }
   }
@@ -357,8 +360,13 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
+  // Requests are stamped with the local configuration code, so identity here stays local-planet and only
+  // gains the fallback that lets a legacy member doc without a code still match.
   isUserInMemberDocs(memberDocs, user) {
-    return memberDocs.some((memberDoc: any) => memberDoc.userId === user._id && memberDoc.userPlanetCode === this.planetCode);
+    return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
+      userId: user._id,
+      userPlanetCode: this.planetCode
+    }, this.planetCode));
   }
 
   toggleMembership(team, leaveTeam) {
@@ -461,7 +469,8 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
           membershipWriteCompleted = true;
         }),
         switchMap(() => type === 'added' ? this.teamsService.removeFromRequests(this.team, memberDoc) : of({})),
-        switchMap(() => type === 'removed' ? this.tasksService.removeAssigneeFromTasks(memberDoc.userId, { teams: this.teamId }) : of({})),
+        switchMap(() => type === 'removed' ?
+          this.tasksService.removeAssigneeFromTasks(memberDoc.userId, memberDoc.userPlanetCode, { teams: this.teamId }) : of({})),
         switchMap(() => this.getMembers()),
         switchMap(() => this.sendNotifications(type, { members: type === 'request' ? this.members : [ memberDoc ] })),
         map(() => changeObject.message),
@@ -611,14 +620,12 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         membershipWriteCompleted = true;
         this.dialogRef.close();
       }),
-      switchMap(() => {
-        return forkJoin([
-          this.teamsService.sendNotifications('added', selected, {
-            url: this.router.url, team: { ...this.team }
-          }),
-          this.sendNotifications('addMember', { newMembersLength: selected.length })
-        ]);
-      }),
+      switchMap(() => forkJoin([
+        this.teamsService.sendNotifications('added', selected, {
+          url: this.router.url, team: { ...this.team }
+        }),
+        this.sendNotifications('addMember', { newMembersLength: selected.length })
+      ])),
       switchMap(() => this.getMembers()),
       catchError(error => membershipWriteCompleted ? this.refreshMembersOnError(error) : throwError(error)),
       finalize(() => this.dialogsLoadingService.stop())
@@ -678,7 +685,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   postMessage(message) {
     this.newsService.postNews({
-      viewIn: [ { '_id': this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
+      viewIn: [ { _id: this.teamId, section: 'teams', public: this.userStatus !== 'member', name: this.team.name, mode: this.mode } ],
       messageType: this.team.teamType,
       messagePlanetCode: this.team.teamPlanetCode,
       ...message
@@ -753,7 +760,7 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
+      data: { courseId, returnState: { route: `${this.mode}s/view/${this.teamId}` } },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -768,21 +775,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
         returnState: { route: `${this.mode}s/view/${this.teamId}` }
       },
       autoFocus: false
-    });
-  }
-
-  openMemberDialog(member, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      if ((event as KeyboardEvent).repeat) {
-        return;
-      }
-    }
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member },
-      maxWidth: '90vw',
-      maxHeight: '90vh'
     });
   }
 
