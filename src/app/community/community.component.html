@@ -6,7 +6,8 @@
           @if (newsLoading) {
             <planet-loading-spinner text="Loading voices..." i18n-text></planet-loading-spinner>
           } @else {
-            <planet-news-list [items]="filteredNews" [customLabels]="customVoiceLabels" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId" [useReplyRoutes]="true" (changeLabelsFilter)="changeLabelsFilter($event)">
+            <planet-news-list [items]="filteredNews" [customLabels]="customVoiceLabels" [shareTarget]="shareTarget" (viewChange)="toggleShowButton($event)" [viewableId]="teamId"
+              [useReplyRoutes]="!isRemoteExchange" [readOnly]="isRemoteExchange" (changeLabelsFilter)="changeLabelsFilter($event)">
               @if (!activeReplyId) {
                 <mat-toolbar class="bg-light-grey font-size-1 toolbar-row" [ngClass]="{ 'sticky-button': pinned }">
                   <mat-form-field class="search-form-field mdc-toolbar-input">
@@ -39,7 +40,7 @@
                     </mat-select>
                   </mat-form-field>
                   <ng-container *planetAuthorizedRoles="'learner'">
-                    @if (showNewsButton && isLoggedIn) {
+                    @if (showNewsButton && isLoggedIn && !isRemoteExchange) {
                       <button class="new-voice-btn" mat-raised-button (click)="openAddMessageDialog()" i18n>New Voice</button>
                     }
                   </ng-container>
@@ -69,7 +70,7 @@
                 <planet-teams-member
                   [leadershipTitle]="councillor.doc.leadershipTitle"
                   [member]="councillor"
-                  [actionMenu]="!planetCode && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
+                  [actionMenu]="!isRemoteExchange && (user.roles.indexOf('_admin') > -1 || user.roles.indexOf('manager') > -1) ? [ 'title' ] : []"
                   (actionClick)="openChangeTitleDialog($event)">
                 </planet-teams-member>
               }
@@ -90,7 +91,7 @@
               }
             }
             <ng-container *planetAuthorizedRoles="''">
-              @if (!planetCode) {
+              @if (!isRemoteExchange) {
                 <div class="action-buttons button-row">
                   <button class="toggle-button" (click)="openDescriptionDialog()" mat-stroked-button i18n>
                 { servicesDescriptionLabel, select, Edit {Edit} Add {Add}} { configuration.planetType, select, community {Community} nation {Nation} center {Earth}} Description
@@ -114,7 +115,7 @@
                   @if (localLinks.length > 0) {
                     <h3 mat-subheader i18n>Local</h3>
                     @for (link of localLinks; track link) {
-                      <mat-list-item [routerLink]="(link.teamType === 'sync' || !planetCode) ? link.route : []" [matTooltip]="localLinkTooltip(link)" [disableRipple]="link.teamType === 'local' && planetCode">
+                      <mat-list-item [routerLink]="(link.teamType === 'sync' || !isRemoteExchange) ? link.route : []" [matTooltip]="localLinkTooltip(link)" [disableRipple]="link.teamType === 'local' && isRemoteExchange">
                         <mat-icon matListItemIcon>{{link.icon || 'link'}}</mat-icon>
                         <span matListItemTitle>{{link.title}}</span>
                         <span matListItemMeta>
@@ -147,26 +148,28 @@
               }
             </ng-container>
             <div *planetAuthorizedRoles="''">
-              <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
-              <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
-                @if (!deleteMode) {
-                  <span i18n>Remove Links</span>
-                }
-                @if (deleteMode) {
-                  <span i18n>Done Removing Links</span>
-                }
-              </button>
+              @if (!isRemoteExchange) {
+                <button (click)="openAddLinkDialog()" mat-stroked-button i18n>Add Link</button>
+                <button (click)="toggleDeleteMode()" [disabled]="links.length===0" mat-stroked-button>
+                  @if (!deleteMode) {
+                    <span i18n>Remove Links</span>
+                  }
+                  @if (deleteMode) {
+                    <span i18n>Done Removing Links</span>
+                  }
+                </button>
+              }
             </div>
           </mat-tab>
         }
-        @if (configuration.planetType==='nation' && isLoggedIn) {
+        @if (configuration.planetType==='nation' && isLoggedIn && !isRemoteExchange) {
           <mat-tab i18n-label label="Communities">
             <planet-community-list></planet-community-list>
           </mat-tab>
         }
         @if (isLoggedIn) {
           <mat-tab i18n-label label="Finances">
-            <planet-teams-view-finances [finances]="finances" [isLoading]="communityDataLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !planetCode"></planet-teams-view-finances>
+            <planet-teams-view-finances [finances]="finances" [isLoading]="communityDataLoading" [team]="team" (financesChanged)="dataChanged()" [editable]="isCommunityLeader && !isRemoteExchange"></planet-teams-view-finances>
           </mat-tab>
         }
         @if (isLoggedIn) {
@@ -175,19 +178,22 @@
               <planet-loading-spinner text="Loading reports..." i18n-text></planet-loading-spinner>
             }
             @if (!communityDataLoading) {
-              <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !planetCode" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
+              <planet-teams-reports [reports]="reports" [editable]="isCommunityLeader && !isRemoteExchange" [team]="team" (reportsChanged)="dataChanged()"></planet-teams-reports>
             }
           </mat-tab>
         }
         @if (deviceType !== deviceTypes.DESKTOP) {
-          <mat-tab i18n-label label="Calendar">
-            <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'community'" [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+          <mat-tab i18n-label label="Calendar" #calendarTab>
+            @if (calendarTab.isActive) {
+              <planet-calendar [type]="'community'" [link]="{ teams: teamId }"
+                [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }" [editable]="!isRemoteExchange"></planet-calendar>
+            }
           </mat-tab>
         }
       </mat-tab-group>
     </div>
     @if (deviceType === deviceTypes.DESKTOP) {
-      <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }"></planet-calendar>
+      <planet-calendar [link]="{ teams: teamId }" [sync]="{ type: 'sync', planetCode: planetCode || configuration.code }" [editable]="!isRemoteExchange"></planet-calendar>
     }
   </div>
 </div>
