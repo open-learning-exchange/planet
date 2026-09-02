@@ -6,6 +6,8 @@ import { PlanetCalendarComponent } from './calendar.component';
 import { styleVariables } from './utils';
 
 describe('PlanetCalendarComponent', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
   const createComponent = (couchService: any = {}, element = document.createElement('div')) => new PlanetCalendarComponent(
     document,
     'en',
@@ -71,6 +73,7 @@ describe('PlanetCalendarComponent', () => {
   it('re-measures the calendar once its container reports a width', () => {
     const updateSize = vi.fn();
     let notify: (entries: any[]) => void;
+    let runFrame: FrameRequestCallback;
     vi.stubGlobal('ResizeObserver', class {
       constructor(callback: (entries: any[]) => void) {
         notify = callback;
@@ -78,26 +81,31 @@ describe('PlanetCalendarComponent', () => {
       observe() {}
       disconnect() {}
     });
+    vi.stubGlobal('requestAnimationFrame', vi.fn((callback: FrameRequestCallback) => {
+      runFrame = callback;
+      return 1;
+    }));
+    vi.stubGlobal('cancelAnimationFrame', vi.fn());
     const component = createComponent();
     component.calendar = { getApi: () => ({ updateSize }) };
 
     component.ngAfterViewInit();
-    // ResizeObserver reports zero until the calendar has been laid out on screen
     notify([ { contentRect: { width: 0 } } ]);
     notify([ { contentRect: { width: 800 } } ]);
+    notify([ { contentRect: { width: 400 } } ]);
+    runFrame(0);
 
-    expect(updateSize).toHaveBeenCalledTimes(2);
-
-    // the calendar changes its own height, so an unchanged width should not re-measure
-    notify([ { contentRect: { width: 800 } } ]);
-
-    expect(updateSize).toHaveBeenCalledTimes(2);
+    expect(updateSize).toHaveBeenCalledOnce();
 
     notify([ { contentRect: { width: 400 } } ]);
 
-    expect(updateSize).toHaveBeenCalledTimes(3);
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(2);
+
+    notify([ { contentRect: { width: 200 } } ]);
+
     component.ngOnDestroy();
-    vi.unstubAllGlobals();
+
+    expect(cancelAnimationFrame).toHaveBeenCalledTimes(2);
   });
 
   it('survives a resize reported before the calendar has an api', () => {
@@ -116,7 +124,6 @@ describe('PlanetCalendarComponent', () => {
 
     expect(() => notify([ { contentRect: { width: 800 } } ])).not.toThrow();
     component.ngOnDestroy();
-    vi.unstubAllGlobals();
   });
 
   it('uses the task event colors for matching legend swatches', () => {

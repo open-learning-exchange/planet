@@ -108,6 +108,7 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   private resizeObserver: ResizeObserver | null = null;
+  private resizeFrameId: number | null = null;
   private calendarWidth: number;
 
   constructor(
@@ -144,10 +145,6 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
     this.calendarOptions.events = [ ...this.events ];
   }
 
-  // FullCalendar measures its scroller once while rendering and caches the widths it finds. A
-  // calendar created inside a tab that is not on screen yet measures zero, which collapses every
-  // day column until something else triggers a resize. Watching our own element re-measures as
-  // soon as the browser has laid the calendar out, and again whenever its container changes width.
   ngAfterViewInit() {
     if (typeof ResizeObserver === 'undefined') {
       return;
@@ -160,15 +157,23 @@ export class PlanetCalendarComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
   }
 
-  private onCalendarResize(width: number) {
-    // Height changes are the calendar's own doing, so only a new width is worth re-measuring for.
-    if (width === undefined || width === this.calendarWidth) {
+  private onCalendarResize(width?: number) {
+    if (!width || width === this.calendarWidth) {
       return;
     }
     this.calendarWidth = width;
-    this.calendar?.getApi()?.updateSize();
+    if (this.resizeFrameId !== null) {
+      cancelAnimationFrame(this.resizeFrameId);
+    }
+    this.resizeFrameId = requestAnimationFrame(() => {
+      this.calendar?.getApi()?.updateSize();
+      this.resizeFrameId = null;
+    });
   }
 
   getMeetups() {

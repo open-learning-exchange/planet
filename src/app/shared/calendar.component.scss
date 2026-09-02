@@ -1,5 +1,3 @@
-// A block box also lets ResizeObserver report the calendar's width; it skips inline elements,
-// which is what the component's resize handling relies on to size the day grid.
 :host {
   display: block;
 }
