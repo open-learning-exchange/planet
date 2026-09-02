@@ -168,6 +168,7 @@ describe('PlanetCalendarComponent', () => {
 
   it('survives a resize reported before the calendar has an api', () => {
     let notify: (entries: any[]) => void;
+    let runFrame: FrameRequestCallback;
     vi.stubGlobal('ResizeObserver', class {
       constructor(callback: (entries: any[]) => void) {
         notify = callback;
@@ -175,12 +176,19 @@ describe('PlanetCalendarComponent', () => {
       observe() {}
       disconnect() {}
     });
+    vi.stubGlobal('requestAnimationFrame', vi.fn((callback: FrameRequestCallback) => {
+      runFrame = callback;
+      return 1;
+    }));
     const component = createComponent();
     component.calendar = { getApi: () => null };
 
     component.ngAfterViewInit();
 
-    expect(() => notify([ { contentRect: { width: 800 } } ])).not.toThrow();
+    expect(() => {
+      notify([ { contentRect: { width: 800 } } ]);
+      runFrame(0);
+    }).not.toThrow();
     component.ngOnDestroy();
   });
 
