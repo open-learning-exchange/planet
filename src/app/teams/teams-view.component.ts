@@ -372,8 +372,6 @@ export class TeamsViewComponent implements OnInit, AfterViewChecked, OnDestroy {
     return this.team?.customVoiceLabels || this.emptyVoiceLabels;
   }
 
-  // Requests are stamped with the local configuration code, so identity here stays local-planet and only
-  // gains the fallback that lets a legacy member doc without a code still match.
   isUserInMemberDocs(memberDocs, user) {
     return memberDocs.some((memberDoc: any) => assigneeMatches(memberDoc, {
       userId: user._id,
