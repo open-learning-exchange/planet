@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 import {
-  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, fullName, hasMarkdownImages, normalizeImage,
-  normalizeMarkdownWhitespace, scaledDimensions
+  couchAttachmentPath, couchAttachmentUrl, doesMarkdownPreviewTruncate, formatBytes, fullName, hasMarkdownImages,
+  normalizeImage, normalizeMarkdownWhitespace, scaledDimensions
 } from './utils';
 
 describe('utils', () => {
@@ -314,6 +314,29 @@ ${'\t'.repeat(18)}
       const result = await normalizeImage(file, { usedNames: [ 'cover.png' ] });
 
       expect(result.fileName).toBe('cover-1.png');
+    });
+
+  });
+
+  describe('formatBytes', () => {
+
+    it('returns an empty string for invalid or missing bytes', () => {
+      expect(formatBytes(undefined)).toBe('');
+      expect(formatBytes(null as any)).toBe('');
+      expect(formatBytes(-100)).toBe('');
+      expect(formatBytes(NaN)).toBe('');
+    });
+
+    it('formats bytes, kilobytes, megabytes, and gigabytes correctly', () => {
+      expect(formatBytes(0)).toBe('0 B');
+      expect(formatBytes(500)).toBe('500 B');
+      expect(formatBytes(0.5)).toBe('0.5 B');
+      expect(formatBytes(1024)).toBe('1 KB');
+      expect(formatBytes(1536)).toBe('1.5 KB');
+      expect(formatBytes(1048576)).toBe('1 MB');
+      expect(formatBytes(2516582)).toBe('2.4 MB');
+      expect(formatBytes(1073741824)).toBe('1 GB');
+      expect(formatBytes(1048575)).toBe('1 MB');
     });
 
   });

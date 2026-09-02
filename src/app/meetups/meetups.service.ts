@@ -40,22 +40,20 @@ export class MeetupService {
   }
 
   getAllMeetups(opts: any) {
-    return this.couchService.findAll('meetups', findDocuments({ '_id': { '$gt': null } }, 0 ), opts);
+    return this.couchService.findAll('meetups', findDocuments({ _id: { $gt: null } }, 0 ), opts);
   }
 
   getMeetups(meetupIds: string[], opts: any) {
     // find meetupId on meetup table
     return this.couchService.post('meetups/_find', findDocuments({
-      '_id': { '$in': meetupIds }
+      _id: { $in: meetupIds }
     }, 0), opts);
   }
 
   meetupList(meetupRes, userMeetupRes) {
     return meetupRes.map((res: any) => {
       const meetup = res.doc || res;
-      const meetupIndex = userMeetupRes.findIndex(meetupIds => {
-        return meetup._id === meetupIds;
-      });
+      const meetupIndex = userMeetupRes.findIndex(meetupIds => meetup._id === meetupIds);
       if (meetupIndex > -1) {
         return { ...meetup, participate: true };
       }

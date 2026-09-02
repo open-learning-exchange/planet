@@ -137,7 +137,9 @@
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
-        <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length + requests.length}})
+        <span [matBadge]="requests.length" [matBadgeHidden]="requests.length === 0 || userStatus !== 'member'" matBadgeColor="accent" matBadgeOverlap="false" [matBadgeDescription]="requestBadgeDescription">
+          <ng-container i18n>{ mode, select, team {Members} enterprise {Team} services {Members} }</ng-container> ({{members.length}})
+        </span>
       </ng-template>
       @if (!teamDataLoading && requests.length > 0) {
         <div class="join-requests-section" style="margin-top: 32px;">
@@ -185,7 +187,7 @@
     @if (team?.public === true || userStatus === 'member') {
       <mat-tab #taskTab>
         <ng-template mat-tab-label>
-          <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" i18n>Tasks</span></ng-container>
+          <ng-container><span [matBadge]="taskCount" [matBadgeHidden]="taskCount === 0" matBadgeOverlap="false" [matBadgeDescription]="taskBadgeDescription" i18n>Tasks</span></ng-container>
         </ng-template>
         @if (taskCount === 0) {
           <p i18n>There are currently no tasks assigned to this { mode, select, team {team} enterprise {enterprise} }.</p>
@@ -260,7 +262,7 @@
                   </button>
                 }
                 <mat-menu #resourceMenu="matMenu">
-                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: 'document' })">
+                  <button mat-menu-item (click)="openDialogPrompt(resource, 'resource', { changeType: 'remove', type: mode === 'team' ? 'resource' : 'document' })">
                     <mat-icon>clear</mat-icon>
                     <span i18n>Remove</span>
                   </button>

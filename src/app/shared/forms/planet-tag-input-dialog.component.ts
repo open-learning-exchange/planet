@@ -41,8 +41,8 @@ interface TagFormControls {
 type TagFormGroup = FormGroup<TagFormControls>;
 
 @Component({
-  'selector': 'planet-tag-input-toggle-icon',
-  'template': `
+  selector: 'planet-tag-input-toggle-icon',
+  template: `
     @if (!isOpen) {
       <mat-icon [inline]="true">expand_more</mat-icon>
     }
@@ -50,7 +50,7 @@ type TagFormGroup = FormGroup<TagFormControls>;
       <mat-icon [inline]="true">expand_less</mat-icon>
     }
     `,
-  'styles': [`
+  styles: [`
     mat-icon {
       vertical-align: middle;
     }
@@ -63,10 +63,9 @@ export class PlanetTagInputToggleIconComponent {
 
 }
 
-
 @Component({
-  'templateUrl': 'planet-tag-input-dialog.component.html',
-  'styleUrls': ['planet-tag-input-dialog.scss'],
+  templateUrl: 'planet-tag-input-dialog.component.html',
+  styleUrls: ['planet-tag-input-dialog.scss'],
   imports: [
     MatDialogTitle,
     CdkScrollable,

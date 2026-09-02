@@ -16,7 +16,7 @@ import { MatDrawerContainer, MatDrawer } from '@angular/material/sidenav';
 import { MatButton, MatMiniFabButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet } from '@angular/common';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -43,6 +43,7 @@ interface TitleForm {
     MatMiniFabButton,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatIconButton,
@@ -235,8 +236,8 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
     }
     const currentProvider = this.chatService.getChatAIProvider();
     this.chatService.setSelectedConversationId({
-      '_id': conversation?._id,
-      '_rev': conversation?._rev
+      _id: conversation?._id,
+      _rev: conversation?._rev
     });
     this.onConversationRender(index);
   }
@@ -260,7 +261,7 @@ export class ChatSidebarComponent implements OnInit, OnDestroy {
   recordSearch(complete = false) {
     this.searchService.recordSearch({
       type: this.dbName,
-      filter: { 'title': this.titleSearch }
+      filter: { title: this.titleSearch }
     }, complete);
   }
 

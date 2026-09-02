@@ -230,7 +230,7 @@
         ],
         "no-unsafe-finally": "error",
         "no-unused-labels": "error",
-        // "no-var": "error",
+        "no-var": "error",
         // "object-shorthand": "error",
         "one-var": ["error", "never"],
         "prefer-arrow/prefer-arrow-functions": "error",
@@ -241,7 +241,7 @@
 
         // From ng-cli-compat-formatting-add-on
 
-        // "arrow-body-style": "error",
+        "arrow-body-style": "error",
         "arrow-parens": "off",
         "comma-dangle": "off",
         "curly": "error",
@@ -256,7 +256,7 @@
         "new-parens": "error",
         "no-multiple-empty-lines": "off",
         "no-trailing-spaces": "error",
-        // "quote-props": ["error", "as-needed"],
+        "quote-props": ["error", "as-needed"],
         // "space-before-function-paren": [
         //   "error",
         //   {
