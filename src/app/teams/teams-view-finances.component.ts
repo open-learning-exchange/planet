@@ -15,6 +15,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { StateService } from '../shared/state.service';
 import { CsvService } from '../shared/csv.service';
 import { endOfDay, fullLabel } from '../manager-dashboard/reports/reports.utils';
+import { fromMinorUnits, roundCurrency, sumCurrency, toMinorUnits } from './teams.utils';
 import { NgClass, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -154,10 +155,11 @@ export class TeamsViewFinancesComponent implements OnChanges {
   }
 
   private combineTransactionData(newArray: any[], transaction: any, index: number) {
-    const previousBalance = index !== 0 ? newArray[index - 1].balance : 0;
+    const previousBalance = index !== 0 ? toMinorUnits(newArray[index - 1].balance) : 0;
+    const balance = previousBalance + toMinorUnits(transaction.credit) - toMinorUnits(transaction.debit);
     return [
       ...newArray,
-      { ...transaction, balance: previousBalance + (transaction.credit || 0) - (transaction.debit || 0) }
+      { ...transaction, balance: fromMinorUnits(balance) }
     ];
   }
 
@@ -284,9 +286,9 @@ export class TeamsViewFinancesComponent implements OnChanges {
 
   private updateTotals() {
     const rows = this.table.data || [];
-    const credit = rows.reduce((sum, r) => sum + (r.credit || 0), 0);
-    const debit = rows.reduce((sum, r) => sum + (r.debit || 0), 0);
-    const balance = credit - debit;
+    const credit = sumCurrency(rows.map(row => row.credit));
+    const debit = sumCurrency(rows.map(row => row.debit));
+    const balance = roundCurrency(credit - debit);
     this.totals = { credit, debit, balance };
     this.emptyTable = rows.length === 0;
   }

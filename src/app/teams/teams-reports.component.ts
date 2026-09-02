@@ -10,7 +10,7 @@ import { TeamsReportsDialogComponent } from './teams-reports-dialog.component';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { convertUtcDate } from './teams.utils';
+import { convertUtcDate, roundCurrency, sumCurrency } from './teams.utils';
 import { CsvService } from '../shared/csv.service';
 import { StateService } from '../shared/state.service';
 import { PlanetMessageService } from '../shared/planet-message.service';
@@ -76,16 +76,16 @@ export class TeamsReportsComponent implements OnChanges {
     this.reportCards = (this.reports || [])
       .filter(report => report.status !== 'archived')
       .map(report => {
-        const income = (+report.sales || 0) + (+report.otherIncome || 0);
-        const expenses = (+report.wages || 0) + (+report.otherExpenses || 0);
-        const net = income - expenses;
+        const income = sumCurrency([ report.sales, report.otherIncome ]);
+        const expenses = sumCurrency([ report.wages, report.otherExpenses ]);
+        const net = roundCurrency(income - expenses);
         return {
           report,
           receiptImageCount: this.teamsAttachmentsService.receiptAttachments(report).length,
           income,
           expenses,
           net,
-          endingBalance: net + (+report.beginningBalance || 0),
+          endingBalance: sumCurrency([ net, report.beginningBalance ]),
           isLoss: net < 0
         };
       });
@@ -287,8 +287,8 @@ export class TeamsReportsComponent implements OnChanges {
 
   exportReportsPdf() {
     const { data, title, titleName } = this.reportsExportData();
-    const totalIncome = this.reportCards.reduce((sum, card) => sum + card.income, 0);
-    const totalExpenses = this.reportCards.reduce((sum, card) => sum + card.expenses, 0);
+    const totalIncome = sumCurrency(this.reportCards.map(card => card.income));
+    const totalExpenses = sumCurrency(this.reportCards.map(card => card.expenses));
     this.dialogsLoadingService.start();
     this.receiptImageSections()
       .pipe(finalize(() => this.dialogsLoadingService.stop()))
@@ -310,7 +310,7 @@ export class TeamsReportsComponent implements OnChanges {
           { label: $localize`Reports`, value: this.reportCards.length },
           { label: $localize`Total Credit`, value: totalIncome, format: 'currency' },
           { label: $localize`Total Debit`, value: totalExpenses, format: 'currency' },
-          { label: $localize`Net Profit/Loss`, value: totalIncome - totalExpenses, format: 'currency' }
+          { label: $localize`Net Profit/Loss`, value: roundCurrency(totalIncome - totalExpenses), format: 'currency' }
         ],
         imageSections,
         filename: $localize`Financial Summary for ${titleName}.pdf`
