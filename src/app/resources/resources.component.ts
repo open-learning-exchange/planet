@@ -26,7 +26,8 @@ import { FormControl } from '../../../node_modules/@angular/forms';
 import { PlanetTagInputComponent } from '../shared/forms/planet-tag-input.component';
 import { DialogsListService } from '../shared/dialogs/dialogs-list.service';
 import { DialogsListComponent } from '../shared/dialogs/dialogs-list.component';
-import { doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { couchAttachmentPath, doesMarkdownPreviewTruncate, findByIdInArray, hasMarkdownImages } from '../shared/utils';
+import { formatResourceAttachmentSize, resourceAttachmentFilename } from './resources.utils';
 import { StateService } from '../shared/state.service';
 import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service';
 import { DialogGuardService } from '../shared/dialogs/dialog-guard.service';
@@ -38,7 +39,7 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { FilteredAmountComponent } from '../shared/planet-filtered-amount.component';
@@ -69,6 +70,7 @@ import { TruncateTextPipe } from '../shared/truncate-text.pipe';
     MatIcon,
     ResourcesSearchComponent,
     MatFormField,
+    MatSuffix,
     PlanetTagInputComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -139,14 +141,14 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   tagFilterValue = [];
   // As of v0.1.13 ResourcesComponent does not have download link available on parent view
   urlPrefix = environment.couchAddress + '/' + this.dbName + '/';
-  private _titleSearch = '';
+  #titleSearch = '';
   get titleSearch(): string {
-    return this._titleSearch.trim();
+    return this.#titleSearch.trim();
   }
   set titleSearch(value: string) {
     // When setting the titleSearch, also set the resource filter
     this.resources.filter = value ? value : this.dropdownsFill();
-    this._titleSearch = value;
+    this.#titleSearch = value;
     this.recordSearch();
     this.removeFilteredFromSelection();
   }
@@ -156,7 +158,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedSync = [];
   isAuthorized = false;
   showFilters = false;
-  searchSelection: any = { _empty: true };
+  searchSelection: any = { isEmpty: true };
   filterPredicate = composeFilterFunctions(
     [
       filterAdvancedSearch(this.searchSelection),
@@ -244,12 +246,16 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   setupList(resourcesRes, myLibrarys) {
     return resourcesRes.map((resource: any) => {
-      const myLibraryIndex = myLibrarys.findIndex(resourceId => {
-        return resource._id === resourceId;
-      });
+      const myLibraryIndex = myLibrarys.findIndex(resourceId => resource._id === resourceId);
       resource.canManage = this.currentUser.isUserAdmin ||
         (resource.doc.addedBy === this.currentUser.name && resource.doc.sourcePlanet === this.planetConfiguration.code);
-      return { ...resource, libraryInfo: myLibraryIndex > -1 };
+      const downloadFilename = resourceAttachmentFilename(resource.doc);
+      return {
+        ...resource,
+        libraryInfo: myLibraryIndex > -1,
+        downloadUrl: downloadFilename ? this.urlPrefix + couchAttachmentPath(resource._id, downloadFilename) : '',
+        downloadFileSize: formatResourceAttachmentSize(resource.doc, downloadFilename)
+      };
     });
   }
 
@@ -315,9 +321,9 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   deleteSelected() {
     const resources = this.selection.selected.map(id => this.resources.data.find((r: any) => r._id === id));
-    let amount = 'many',
-      okClick = this.deleteResources(resources),
-      displayName = '';
+    let amount = 'many';
+    let okClick = this.deleteResources(resources);
+    let displayName = '';
     if (resources.length === 1) {
       const resource: any = resources[0];
       amount = 'single';
@@ -412,8 +418,8 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   shareResource(type, resources) {
-    const msg = (type === 'pull' ? 'fetch' : 'send'),
-      items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
+    const msg = (type === 'pull' ? 'fetch' : 'send');
+    const items = resources.map(id => ({ item: this.resources.data.find((resource: any) => resource._id === id), db: this.dbName }));
     this.syncService.confirmPasswordAndRunReplicators(this.syncService.createReplicatorsArray(items, type) )
       .subscribe((response: any) => {
         this.planetMessageService.showMessage($localize`${resources.length} ${this.dbName} queued to ${msg}`);
@@ -429,7 +435,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onSearchChange({ items, category }) {
     this.searchSelection[category] = items;
-    this.searchSelection._empty = Object.entries(this.searchSelection).every(
+    this.searchSelection.isEmpty = Object.entries(this.searchSelection).every(
       ([ field, val ]: any[]) => !Array.isArray(val) || val.length === 0
     );
     this.titleSearch = this.titleSearch;
@@ -449,7 +455,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
   recordSearch(complete = false) {
     if (this.resources.filter !== '') {
       this.searchService.recordSearch({
-        text: this._titleSearch,
+        text: this.titleSearch,
         type: this.dbName,
         filter: { ...this.searchSelection, tags: this.tagFilter.value }
       }, complete);
@@ -473,7 +479,7 @@ export class ResourcesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   openSendResourceDialog() {
     this.dialogGuard.open('send-resource', () =>
-      this.dialogsListService.getListAndColumns('communityregistrationrequests', { 'registrationRequest': 'accepted' }).pipe(
+      this.dialogsListService.getListAndColumns('communityregistrationrequests', { registrationRequest: 'accepted' }).pipe(
         map(planet => this.dialog.open(DialogsListComponent, {
           data: {
             okClick: this.sendResource().bind(this),

@@ -1,4 +1,5 @@
 @use 'app/variables' as v;
+@use 'app/mixins' as m;
 @use 'planet-mat-theme';
 
 body {
@@ -359,10 +360,10 @@ body {
   // https://material.angular.io/components/table/overview#selection
   // Note checkbox column must be named "select" in table
   .mat-column-select {
+    @include m.table-column-fixed(4rem);
     overflow: visible;
     // Reduce padding for MDC checkbox cells
     padding-left: 12px !important;
-    max-width: 44px;
   }
 
   .planet-radio-section {
@@ -540,6 +541,11 @@ body {
 
   // Shared opt-in card-stack table styling to collapse tables rows into stacked cards on smaller screens.
   .card-table {
+    .mat-column-courseTitle,
+    .mat-column-title {
+      @include m.table-column-grow;
+    }
+
     .mat-mdc-row {
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
@@ -549,18 +555,19 @@ body {
     }
 
     .mat-column-info {
-      max-width: 200px;
+      @include m.table-column-fixed(13rem);
       align-self: start;
       padding: 0;
     }
 
     .mat-column-createdDate {
+      @include m.table-column-fixed(8rem);
       align-self: start;
       padding: 0;
     }
 
     .mat-column-rating {
-      max-width: 145px;
+      @include m.table-column-fixed(9rem);
       padding: 0;
     }
 
@@ -585,12 +592,6 @@ body {
       max-height: none;
     }
 
-    @media (max-width: v.$screen-md) {
-      .mat-column-info {
-        max-width: 120px;
-      }
-    }
-
     @media (max-width: v.$screen-sm) {
       .mat-mdc-header-row {
         display: none;
@@ -602,9 +603,24 @@ body {
         padding: 8px 24px;
       }
 
+      .mat-column-select,
+      .mat-column-courseTitle,
+      .mat-column-title,
+      .mat-column-info,
+      .mat-column-createdDate,
+      .mat-column-rating {
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+      }
+
       .mat-column-info,
       .mat-column-createdDate {
         max-width: fit-content;
+      }
+
+      .mat-column-rating {
+        max-width: 9rem;
       }
 
       .created-label {
@@ -951,6 +967,23 @@ body {
         color: currentColor;
       }
     }
+  }
+
+  .tags-list-wrap .mat-mdc-chip {
+    height: auto;
+    max-width: 100%;
+    min-height: var(--mat-chip-container-height, 32px);
+  }
+
+  .tags-list-wrap .mat-mdc-chip .mat-mdc-chip-action-label {
+    overflow-wrap: anywhere;
+    padding: calc((var(--mat-chip-container-height, 32px) - var(--mat-chip-label-text-line-height, 20px)) / 2) 0;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .tags-list-wrap .mat-mdc-chip .mdc-evolution-chip__action--primary {
+    cursor: default;
   }
 
   // Course/Resources Details ellipsis menu

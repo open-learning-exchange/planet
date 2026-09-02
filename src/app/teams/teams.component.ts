@@ -25,9 +25,10 @@ import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { NgTemplateOutlet, NgClass, DatePipe } from '@angular/common';
 import { MatIconButton, MatButton, MatMiniFabButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FeedbackDirective } from '../feedback/feedback.directive';
 import { AuthorizedRolesDirective } from '../shared/authorized-roles.directive';
 import { TruncateTextPipe } from '../shared/truncate-text.pipe';
@@ -46,9 +47,11 @@ import { enterpriseJoinAgreement } from './teams.utils';
     NgTemplateOutlet,
     MatFormField,
     MatLabel,
+    MatSuffix,
     MatInput,
     FormsModule,
     MatButton,
+    MatTooltip,
     NgClass,
     MatMiniFabButton,
     MatTable,
@@ -90,14 +93,14 @@ export class TeamsComponent implements OnInit, AfterViewInit {
   cancelDialog: any;
   isLoading = true;
   readonly myTeamsFilter = this.route.snapshot.data.myTeams ? 'on' : 'off';
-  private _mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
+  #mode: 'team' | 'enterprise' = this.route.snapshot.data.mode || 'team';
   @Input()
   get mode(): 'team' | 'enterprise' {
-    return this._mode;
+    return this.#mode;
   }
   set mode(newMode: 'team' | 'enterprise') {
-    if (newMode !== this._mode) {
-      this._mode = newMode;
+    if (newMode !== this.#mode) {
+      this.#mode = newMode;
       this.getTeams();
     }
   }
@@ -159,9 +162,9 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     this.dialogsLoadingService.start();
     this.couchService.currentTime().pipe(switchMap(time =>
       forkJoin([
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }),
+        this.couchService.findAll(this.dbName, { selector: { status: 'active' } }),
         this.getMembershipStatus(),
-        this.couchService.findAll('team_activities', { 'selector': { 'type': 'teamVisit', 'time': { '$gte': thirtyDaysAgo(time) } } }),
+        this.couchService.findAll('team_activities', { selector: { type: 'teamVisit', time: { $gte: thirtyDaysAgo(time) } } }),
         this.couchService.findAll('communityregistrationrequests')
       ])
     )).subscribe(([ teams, requests, activities, planets ]: any[]) => {
@@ -182,11 +185,12 @@ export class TeamsComponent implements OnInit, AfterViewInit {
     }, (error) => {
       if (this.userNotInShelf) {
         this.displayedColumns = [ 'doc.name', 'visitLog.lastVisit', 'visitLog.visitCount', 'doc.teamType' ];
-        this.couchService.findAll(this.dbName, { 'selector': { 'status': 'active' } }).subscribe((teams) => {
-          this.teams.data = this.teamList(teams.filter((team: any) => {
-            return (team.type === this.mode || (team.type === undefined && this.mode === 'team'))
-            && this.excludeIds.indexOf(team._id) === -1;
-          }));
+        this.couchService.findAll(this.dbName, { selector: { status: 'active' } }).subscribe((teams) => {
+          this.teams.data = this.teamList(
+            teams.filter((team: any) => (
+              team.type === this.mode || (team.type === undefined && this.mode === 'team')
+            )
+            && this.excludeIds.indexOf(team._id) === -1));
         });
       }
       this.dialogsLoadingService.stop();
@@ -197,7 +201,7 @@ export class TeamsComponent implements OnInit, AfterViewInit {
 
   getMembershipStatus() {
     return forkJoin([
-      this.couchService.findAll(this.dbName, { 'selector': { 'userId': this.user._id, 'userPlanetCode': this.planetCode } }),
+      this.couchService.findAll(this.dbName, { selector: { userId: this.user._id, userPlanetCode: this.planetCode } }),
       this.couchService.get('shelf/' + this.user._id)
     ]).pipe(
       map(([ membershipDocs, shelf ]) => this.userMembership = [

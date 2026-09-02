@@ -48,8 +48,11 @@
   <mat-form-field class="font-size-1 margin-lr-4 mdc-toolbar-input">
     <mat-label i18n>Title</mat-label>
     <input matInput [(ngModel)]="titleSearch">
+    <button type="button" mat-icon-button matSuffix (click)="titleSearch = ''" [style.visibility]="titleSearch ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+      <mat-icon>close</mat-icon>
+    </button>
   </mat-form-field>
-  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection._empty"><span i18n>Clear</span></button>
+  <button mat-raised-button color="primary" (click)="resetFilter()" [disabled]="resources.filter.trim() === '' && tagFilter.value.length === 0 && searchSelection.isEmpty"><span i18n>Clear filters</span></button>
 </ng-template>
 
 <div class="space-container primary-link-hover">
@@ -250,10 +253,12 @@
               <mat-icon>star</mat-icon>
               <span i18n>View Ratings</span>
             </button>
-            <a href="{{urlPrefix + element._id + '/' + element.doc.filename}}" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
-              <mat-icon>file_download</mat-icon>
-              <span i18n>Download file</span>
-            </a>
+            @if (element.downloadUrl) {
+              <a [href]="element.downloadUrl" mat-menu-item download [disabled]="!(myView === 'myPersonals') && !element.doc.isDownloadable">
+                <mat-icon>file_download</mat-icon>
+                <span i18n>Download file</span>@if (element.downloadFileSize) {<span> ({{ element.downloadFileSize }})</span>}
+              </a>
+            }
           </mat-menu>
         </mat-cell>
       </ng-container>

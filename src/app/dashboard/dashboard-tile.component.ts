@@ -67,15 +67,15 @@ export class DashboardTileTitleComponent {
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
-  private _cardType: string;
+  #cardType: string;
   @Input() set cardType(value: string) {
-    this._cardType = value;
+    this.#cardType = value;
     if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
       this.isExpanded = true;
     }
   }
   get cardType(): string {
-    return this._cardType;
+    return this.#cardType;
   }
   @Input() color: string;
   @Input() itemData;
@@ -87,6 +87,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
+  courseTileLines = 2;
   recentlyDragged = false;
   isExpanded = false;
   deviceType: DeviceType;
@@ -123,21 +124,49 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   ngAfterViewChecked() {
-    const divHeight = this.itemDiv?.nativeElement.offsetHeight;
-    const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
+    const itemDiv = this.itemDiv?.nativeElement;
+    if (!itemDiv) {
+      return;
+    }
+    const dashboardItem = itemDiv.querySelector('.dashboard-item:not(.has-course-cover)') ??
+      itemDiv.querySelector('.dashboard-item');
     if (!dashboardItem) {
       return;
     }
-    const itemStyle = window.getComputedStyle(dashboardItem);
-    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
-    const fontSize = +(itemStyle.fontSize.replace('px', ''));
-    const tileHeight = divHeight - tilePadding;
-    // line-height: normal varies by browser, but should be between 1-1.2
-    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
-    if (tileLines !== this.tileLines) {
+    const tileLines = this.textLinesForItem(this.itemContent(dashboardItem), itemDiv.clientHeight);
+    const courseItem = itemDiv.querySelector('.dashboard-item.has-course-cover');
+    const courseTileLines = courseItem ?
+      this.textLinesForItem(this.itemContent(courseItem), itemDiv.clientHeight) : this.courseTileLines;
+    if (tileLines !== this.tileLines || courseTileLines !== this.courseTileLines) {
       this.tileLines = tileLines;
+      this.courseTileLines = courseTileLines;
       this.cd.detectChanges();
     }
+  }
+
+  private itemContent(item: HTMLElement): HTMLElement {
+    return item.querySelector<HTMLElement>('.dashboard-item-link') ?? item;
+  }
+
+  private textLinesForItem(item: HTMLElement, availableHeight: number): number {
+    const itemStyle = window.getComputedStyle(item);
+    const padding = this.cssPixels(itemStyle.paddingTop) + this.cssPixels(itemStyle.paddingBottom);
+    const reservedHeight = Array.from(item.children)
+      .filter(element => element.matches('.dashboard-course-cover, p:not(.dashboard-text)'))
+      .reduce((height, element) => height + this.elementOuterHeight(element as HTMLElement), 0);
+    const fontSize = this.cssPixels(itemStyle.fontSize) || 16;
+    // line-height: normal varies by browser, but should be between 1-1.2
+    const lineHeight = this.cssPixels(itemStyle.lineHeight) || fontSize * 1.2;
+    return Math.max(1, Math.floor((availableHeight - padding - reservedHeight) / lineHeight));
+  }
+
+  private elementOuterHeight(element: HTMLElement): number {
+    const elementStyle = window.getComputedStyle(element);
+    return element.offsetHeight + this.cssPixels(elementStyle.marginTop) + this.cssPixels(elementStyle.marginBottom);
+  }
+
+  private cssPixels(value: string): number {
+    return parseFloat(value) || 0;
   }
 
   toggleAccordion(event: Event) {
@@ -260,6 +289,10 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     }, 300);
   }
 
+  badgeDescription(item: any): string {
+    return $localize`Pending: ${item.badge}:count:`;
+  }
+
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
   }
@@ -268,7 +301,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (this.isAccordionMode) {
       return 'none';
     }
-    return this.cardType === 'myCourses' && item.coverFileName ? 2 : this.tileLines;
+    return this.cardType === 'myCourses' && item.coverFileName ? this.courseTileLines : this.tileLines;
   }
 
   coverImageUrl(item: any): string {

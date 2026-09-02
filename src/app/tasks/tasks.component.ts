@@ -12,7 +12,7 @@ import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.compone
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { DialogsAddMeetupsComponent } from '../shared/dialogs/dialogs-add-meetups.component';
-import { UserProfileDialogComponent } from '../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../users/users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -80,15 +80,15 @@ export class TasksComponent implements OnInit {
   @Input() link: any;
   @Input() sync: { type: 'local' | 'sync', planetCode: string };
   @Input() editable = true;
-  private _assignees: any[] = [];
+  #assignees: any[] = [];
   private currentAssignees = new Map<string, any>();
   private failedAvatarSources = new Map<string, string>();
   @Input()
   get assignees() {
-    return this._assignees;
+    return this.#assignees;
   }
   set assignees(newAssignees: any[]) {
-    this._assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    this.#assignees = [ ...(newAssignees || []) ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
     this.setCurrentAssignees();
     this.setTaskViews();
     this.filterTasks();
@@ -109,6 +109,7 @@ export class TasksComponent implements OnInit {
     private userService: UserService,
     private couchService: CouchService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private dialogsFormService: DialogsFormService,
     private notificationsService: NotificationsService
   ) {}
@@ -125,7 +126,7 @@ export class TasksComponent implements OnInit {
   }
 
   private setCurrentAssignees() {
-    this.currentAssignees = new Map(this._assignees
+    this.currentAssignees = new Map(this.#assignees
       .filter(assignee => assigneeKey(assignee))
       .map(assignee => [ assigneeKey(assignee), assignee ]));
   }
@@ -245,13 +246,13 @@ export class TasksComponent implements OnInit {
     const link = this.mode === 'services' ? 'community' : `/${this.mode}s/view/${this.link.teams}`;
     const notificationDoc = {
       user: assignee.userId,
-      'message': $localize`You were assigned a new task`,
+      message: $localize`You were assigned a new task`,
       link,
       linkParams: { activeTab: 'taskTab' },
-      'type': 'newTask',
-      'priority': 1,
-      'status': 'unread',
-      'time': this.couchService.datePlaceholder,
+      type: 'newTask',
+      priority: 1,
+      status: 'unread',
+      time: this.couchService.datePlaceholder,
       userPlanetCode: assignee.userPlanetCode
     };
     return this.notificationsService.sendNotificationToUser(notificationDoc);
@@ -270,11 +271,7 @@ export class TasksComponent implements OnInit {
   }
 
   openMemberDialog(assignee) {
-    this.dialog.open(UserProfileDialogComponent,
-      {
-        data: { member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode } },
-        autoFocus: false
-      });
+    this.usersProfileDialogService.open({ member: { name: assignee.name, userPlanetCode: assignee.userPlanetCode } });
   }
 
   getAssignTooltip(task: any): string {

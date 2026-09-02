@@ -19,10 +19,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
 import { AvatarComponent } from '../../shared/avatar.component';
+import { fullName } from '../../shared/utils';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 @Component({
   templateUrl: './users-achievements.component.html',
@@ -37,7 +39,7 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     PlanetBetaDirective,
     MatList,
     MatListItem,
@@ -47,7 +49,8 @@ import { AvatarComponent } from '../../shared/avatar.component';
     MatListItemLine,
     DatePipe,
     TruncateTextPipe,
-    AvatarComponent
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit {
@@ -196,7 +199,7 @@ export class UsersAchievementsComponent implements OnInit {
       },
       {
         text: `
-          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${fullName(this.user) || this.user.name}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
           ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
@@ -227,11 +230,9 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.certifications && this.certifications.length > 0) {
       optionals.push(
         { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
-          return [
-            { text: certification.name, bold: true, margin: [ 20, 5 ] },
-          ];
-        }),
+        ...this.certifications.map((certification) => [
+          { text: certification.name, bold: true, margin: [ 20, 5 ] },
+        ]),
         sectionSpacer
       );
     }
@@ -255,12 +256,10 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
         { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.links.map((achievement) => {
-          return [
-            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.url, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.links.map((achievement) => [
+          { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.url, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }
@@ -268,14 +267,12 @@ export class UsersAchievementsComponent implements OnInit {
     if (this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
         { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.references.map((achievement) => {
-          return [
-            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.relationship, marginLeft: 40 },
-            { text: achievement.phone, marginLeft: 40 },
-            { text: achievement.email, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.references.map((achievement) => [
+          { text: achievement.name, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.relationship, marginLeft: 40 },
+          { text: achievement.phone, marginLeft: 40 },
+          { text: achievement.email, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }

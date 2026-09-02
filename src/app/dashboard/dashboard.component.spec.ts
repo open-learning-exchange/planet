@@ -89,12 +89,12 @@ describe('DashboardComponent', () => {
     vi.restoreAllMocks();
   });
 
-  function createComponent(userOverrides: any = {}) {
+  const createComponent = (userOverrides: any = {}) => {
     userServiceMock.get.mockReturnValue({ ...mockUser, ...userOverrides });
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     return fixture;
-  }
+  };
 
   it('initializes user information and roles', () => {
     createComponent().detectChanges();
@@ -104,8 +104,8 @@ describe('DashboardComponent', () => {
     expect(component.roles).toEqual([ 'learner', 'admin' ]);
   });
 
-  it('uses the username when firstName is undefined', () => {
-    createComponent({ firstName: undefined }).detectChanges();
+  it('uses the username when no name parts are available', () => {
+    createComponent({ firstName: undefined, lastName: undefined }).detectChanges();
 
     expect(component.displayName).toBe('johndoe');
   });
@@ -215,7 +215,7 @@ describe('DashboardComponent', () => {
       selector: { type: 'survey', status: 'pending', 'user.name': 'johndoe' }
     }));
     expect(submissionsServiceMock.getSubmissions).toHaveBeenCalledWith(expect.objectContaining({
-      selector: { type: 'exam', status: 'requires grading', 'user.name': { '$gt': null } }
+      selector: { type: 'exam', status: 'requires grading', 'user.name': { $gt: null } }
     }));
   });
 

@@ -19,12 +19,12 @@ import { UsersService } from '../users/users.service';
 export class CoursesService {
   private dbName = 'courses';
   private progressDb = 'courses_progress';
-  private _course: any = {};
+  #course: any = {};
   get course() {
-    return this._course;
+    return this.#course;
   }
   set course(newCourse: any) {
-    this._course = { ...this._course, ...newCourse };
+    this.#course = { ...this.#course, ...newCourse };
   }
   progress: any;
   private courseUpdated = new Subject<{ progress: any, course: any }>();
@@ -127,13 +127,13 @@ export class CoursesService {
     forkJoin(obs).subscribe(([ progress, course, ratings, users ]: [ any[], any, any, any[] ]) => {
       this.progress = progress;
       course.creatorDoc = users.find(user => `${user.doc.name}@${user.doc.planetCode}` === course.creator);
-      this.updateCourse({ progress: progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
+      this.updateCourse({ progress, course: this.ratingService.createItemList([ course ], ratings)[0] });
     });
     this.usersService.requestUserData();
   }
 
   reset() {
-    this._course = {};
+    this.#course = {};
     this.stepIndex = -1;
     this.returnUrl = '';
   }
@@ -180,20 +180,20 @@ export class CoursesService {
   }
 
   findCourses(ids, opts) {
-    return this.couchService.findAll(this.dbName, findDocuments({ '_id': inSelector(ids) }), opts);
+    return this.couchService.findAll(this.dbName, findDocuments({ _id: inSelector(ids) }), opts);
   }
 
   findProgress(ids, opts) {
-    const userQuery = opts.allUsers ? {} : { 'userId': this.userService.get()._id };
+    const userQuery = opts.allUsers ? {} : { userId: this.userService.get()._id };
     return this.couchService.findAll(
       this.progressDb,
-      findDocuments({ 'courseId': inSelector(ids), ...userQuery }), opts
+      findDocuments({ courseId: inSelector(ids), ...userQuery }), opts
     );
   }
 
   findOneCourseProgress(courseId: string, userId?) {
     return this.couchService.findAll(this.progressDb, findDocuments({
-      'userId': userId || this.userService.get()._id,
+      userId: userId || this.userService.get()._id,
       courseId
     }));
   }
@@ -239,15 +239,15 @@ export class CoursesService {
   courseActivity(type: string, course: any, courseStep?: number) {
     this.userService.getCurrentSession().pipe(switchMap(currentSession => {
       const data = {
-        'courseId': course._id,
-        'title': course.courseTitle,
-        'user': this.userService.get().name,
+        courseId: course._id,
+        title: course.courseTitle,
+        user: this.userService.get().name,
         type,
         courseStep,
-        'time': this.couchService.datePlaceholder,
-        'createdOn': this.stateService.configuration.code,
-        'parentCode': this.stateService.configuration.parentCode,
-        'session': currentSession._id
+        time: this.couchService.datePlaceholder,
+        createdOn: this.stateService.configuration.code,
+        parentCode: this.stateService.configuration.parentCode,
+        session: currentSession._id
       };
       return this.couchService.updateDocument('course_activities', data);
     })).subscribe((response) => {}, (error) => console.log('Error'));

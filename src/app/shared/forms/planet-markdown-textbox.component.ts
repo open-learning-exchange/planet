@@ -21,13 +21,13 @@ interface FullscreenState {
 }
 
 @Component({
-  'selector': 'planet-markdown-textbox',
-  'templateUrl': './planet-markdown-textbox.component.html',
-  'styleUrls': ['planet-markdown-textbox.scss'],
-  'providers': [
+  selector: 'planet-markdown-textbox',
+  templateUrl: './planet-markdown-textbox.component.html',
+  styleUrls: ['planet-markdown-textbox.scss'],
+  providers: [
     { provide: MatFormFieldControl, useExisting: PlanetMarkdownTextboxComponent },
   ],
-  'encapsulation': ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
   imports: [TdTextEditorComponent, NgClass, FormsModule]
 })
 export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoCheck, OnInit, OnDestroy {
@@ -57,12 +57,12 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     this.onChange(this._value);
     this.stateChanges.next();
   }
-  private _textValue: string;
+  #textValue: string;
   get textValue(): string {
-    return this._textValue;
+    return this.#textValue;
   }
   set textValue(newText: string) {
-    this._textValue = newText;
+    this.#textValue = newText;
     if (newText !== (typeof this._value === 'string' ? this._value : this._value.text)) {
       this.value = typeof this._value === 'string' ? newText : { ...this._value, text: newText };
     }
@@ -73,26 +73,26 @@ export class PlanetMarkdownTextboxComponent implements ControlValueAccessor, DoC
     return (typeof this._value === 'string' ? this._value : this._value.text).length === 0;
   }
 
-  private _placeholder: string;
   private fullscreenState?: FullscreenState;
+  #placeholder: string;
   @Input()
   get placeholder() {
-    return this._placeholder;
+    return this.#placeholder;
   }
   set placeholder(text: string) {
-    this._placeholder = text;
+    this.#placeholder = text;
     this.stateChanges.next();
   }
 
   @Input()
   get required(): boolean {
-    return this._required;
+    return this.#required;
   }
   set required(value: boolean) {
-    this._required = value;
+    this.#required = value;
     this.stateChanges.next();
   }
-  private _required = false;
+  #required = false;
 
   get shouldLabelFloat() {
     return true;
