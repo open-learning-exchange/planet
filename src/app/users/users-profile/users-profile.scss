@@ -77,6 +77,10 @@
 
     .cards-container {
       flex-direction: column;
+
+      mat-card {
+        flex-basis: auto;
+      }
     }
 
     .profile-list-lt, .profile-list-rt {

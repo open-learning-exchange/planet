@@ -132,13 +132,13 @@
         <mat-card-content>
           <mat-list>
             @for (team of teams; track team) {
-              <mat-list-item [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
-                <h4 matListItemTitle><b>{{team.doc.name}}</b></h4>
+              <mat-list-item lines="2" [routerLink]="['/teams/view', team.doc._id]" mat-dialog-close class="cursor-pointer">
+                <h4 matListItemTitle [matTooltip]="team.doc.name"><b>{{team.doc.name | truncateText:40}}</b></h4>
               </mat-list-item>
             }
             @if (teams.length === 0) {
-              <mat-list-item>
-                <span matListItemTitle i18n>User is not a member of any teams</span>
+              <mat-list-item lines="2">
+                <span matListItemTitle i18n>This user is not a member of any team.</span>
               </mat-list-item>
             }
           </mat-list>
@@ -151,13 +151,13 @@
         <mat-card-content>
           <mat-list>
             @for (enterprise of enterprises; track enterprise) {
-              <mat-list-item [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
-                <h4 matListItemTitle><b>{{enterprise.doc.name}}</b></h4>
+              <mat-list-item lines="2" [routerLink]="['/enterprises/view', enterprise.doc._id]" mat-dialog-close class="cursor-pointer">
+                <h4 matListItemTitle [matTooltip]="enterprise.doc.name"><b>{{enterprise.doc.name | truncateText:40}}</b></h4>
               </mat-list-item>
             }
             @if (enterprises.length === 0) {
-              <mat-list-item>
-                <span matListItemTitle i18n>User is not a member of any enterprises</span>
+              <mat-list-item lines="2">
+                <span matListItemTitle i18n>This user is not a member of any enterprise.</span>
               </mat-list-item>
             }
           </mat-list>
