@@ -1,10 +1,3 @@
-// Activity documents may identify the OLE app that wrote them with an `app` field: 'planet' from the
-// web app, 'myplanet' from myPlanet, or 'myplanet-lite' from myPlanet Lite. Documents without a
-// recognized `app` value are classified by the presence of `androidId`, which only the Android
-// clients set, so legacy documents keep landing in the bucket they always did. That fallback is why
-// myPlanet Lite, which also writes `androidId`, has to declare itself to be counted apart from
-// myPlanet.
-
 export type AppSource = 'planet' | 'myplanet' | 'myplanet-lite';
 export type AppSourceFilter = AppSource | '';
 
