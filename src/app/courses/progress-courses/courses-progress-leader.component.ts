@@ -126,7 +126,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
   setSubmissions() {
     this.chartData = [];
     this.submissionsService.updateSubmissions({
-      query: findDocuments({ parentId: { '$regex': this.course._id } }),
+      query: findDocuments({ parentId: { $regex: this.course._id } }),
       onlyBest: true
     });
   }
@@ -156,9 +156,13 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     if (!step.exam) {
       return { number: '', fill: userProgress.stepNum > index };
     }
-    const submission = submissions.find((sub: any) => {
-      return sub.user.name === user.name && sub.source === user.planetCode && sub.parentId === (step.exam._id + '@' + this.course._id);
-    });
+    const submission = submissions.find(
+      (sub: any) => (
+        sub.user.name === user.name &&
+        sub.source === user.planetCode &&
+        sub.parentId === (step.exam._id + '@' + this.course._id)
+      )
+    );
     if (submission) {
       return this.totalSubmissionAnswers(submission);
     }
@@ -171,9 +175,7 @@ export class CoursesProgressLeaderComponent implements OnInit, OnDestroy {
     this.yAxisLength = this.course.steps.length;
     const users = dedupeObjectArray(submissions.map((sub: any) => sub.user), [ 'name', 'planetCode' ]);
     this.allChartData = users.map((user: any) => {
-      const answers = this.course.steps.map((step: any, index: number) => {
-        return this.userCourseAnswers(user, step, index, submissions);
-      }).reverse();
+      const answers = this.course.steps.map((step: any, index: number) => this.userCourseAnswers(user, step, index, submissions)).reverse();
       return ({
         items: answers,
         label: user.name,

@@ -103,6 +103,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
     dayMaxEventRows: 2,
     selectable: true,
     select: (arg) => {
+      if (!this.editable) {
+        return;
+      }
       this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
     },
     eventClick: this.eventClick.bind(this)
@@ -129,6 +132,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
         addEventButton: {
           text: $localize`Add Event`,
           click: (arg) => {
+            if (!this.editable) {
+              return;
+            }
             this.authService.checkAuthenticationStatus().subscribe(() => this.openAddEventDialog(arg));
           }
         }
@@ -243,6 +249,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openAddEventDialog(event) {
+    if (!this.editable) {
+      return;
+    }
     const today = new Date();
     const meetup = event?.start
       ? {
@@ -304,6 +313,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskEditDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const { fields, formGroup } = this.tasksService.addDialogForm(task);
     this.dialogsFormService.openDialogsForm(task.title ? $localize`Edit Task` : $localize`Add Task`, fields, formGroup, {
       onSubmit: (newTask) => {
@@ -320,6 +332,9 @@ export class PlanetCalendarComponent implements OnInit, OnChanges {
   }
 
   openTaskDeleteDialog(task) {
+    if (!this.editable) {
+      return;
+    }
     const dialogRef = this.dialog.open(DialogsPromptComponent, {
       data: {
         okClick: {

@@ -29,7 +29,7 @@ export class NewsService {
 
   requestNews({ selectors, viewId } = this.currentOptions) {
     this.currentOptions = { selectors, viewId };
-    this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { 'time': 'desc' } ])).pipe(
+    return this.couchService.findAll(this.dbName, findDocuments(selectors, 0, [ { time: 'desc' } ])).pipe(
       switchMap((newsItems: any[]) =>
         this.couchService.findAttachmentsByIds(this.collectAttachmentIds(newsItems)).pipe(
           map((attachments: any[]) => ({
@@ -119,7 +119,7 @@ export class NewsService {
 
   shareNews(news, planets?: any[], successMessage = $localize`Message has been successfully shared`) {
     const viewInObject = (planet) => (
-      { '_id': `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
+      { _id: `${planet.code}@${planet.parentCode}`, section: 'community', sharedDate: this.couchService.datePlaceholder }
     );
     const existingPlanetIds = (news.viewIn || []).map(view => view._id);
     const newPlanets = planets ? planets

@@ -166,17 +166,13 @@ export const dedupeShelfReduce = (ids, id) => {
   return ids.concat(id);
 };
 
-export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => {
-  return array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index;
-});
+export const dedupeObjectArray = (array: any[], fields: string[]) => array.filter((item, index) => (
+  array.findIndex((i: any) => fields.every(field => i[field] === item[field])) === index)
+);
 
-export const removeFromArray = (startArray = [], removeArray = []) => {
-  return startArray.filter(item => removeArray.indexOf(item) === -1);
-};
+export const removeFromArray = (startArray = [], removeArray = []) => startArray.filter(item => removeArray.indexOf(item) === -1);
 
-export const addToArray = (startArray = [], addArray = []) => {
-  return startArray.concat(addArray).reduce(dedupeShelfReduce, []);
-};
+export const addToArray = (startArray = [], addArray = []) => startArray.concat(addArray).reduce(dedupeShelfReduce, []);
 
 export const findByIdInArray = (array = [], id: string) => array.find(item => item._id === id);
 
@@ -463,4 +459,22 @@ export const extractMarkdownImageUrls = (content: string) => {
   }
 
   return matches;
+};
+
+export const formatBytes = (bytes?: number): string => {
+  if (bytes === undefined || bytes === null || Number.isNaN(bytes) || bytes < 0) {
+    return '';
+  }
+  if (bytes === 0) {
+    return '0 B';
+  }
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let unitIndex = Math.max(0, Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1));
+  let formattedValue = parseFloat((bytes / Math.pow(k, unitIndex)).toFixed(1));
+  if (formattedValue === k && unitIndex < sizes.length - 1) {
+    unitIndex++;
+    formattedValue = 1;
+  }
+  return `${formattedValue} ${sizes[unitIndex]}`;
 };
