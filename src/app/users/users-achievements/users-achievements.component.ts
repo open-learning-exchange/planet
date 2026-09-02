@@ -19,9 +19,12 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { MatDivider, MatList, MatListItem, MatListItemTitle, MatListItemMeta, MatListItemLine } from '@angular/material/list';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { PlanetBetaDirective } from '../../shared/beta.directive';
 import { TruncateTextPipe } from '../../shared/truncate-text.pipe';
+import { AvatarComponent } from '../../shared/avatar.component';
+import { fullName } from '../../shared/utils';
+import { FullNamePipe } from '../../shared/full-name.pipe';
 
 interface AchievementsRoute {
   achievementsId: string;
@@ -49,7 +52,7 @@ type AchievementsUpdate =
     MatTooltip,
     PlanetLoadingSpinnerComponent,
     MatDivider,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     PlanetBetaDirective,
     MatList,
     MatListItem,
@@ -58,7 +61,9 @@ type AchievementsUpdate =
     NgClass,
     MatListItemLine,
     DatePipe,
-    TruncateTextPipe
+    TruncateTextPipe,
+    AvatarComponent,
+    FullNamePipe
   ]
 })
 export class UsersAchievementsComponent implements OnInit, OnDestroy {
@@ -70,7 +75,6 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
   achievements: any;
   achievementNotFound = false;
   ownAchievements = false;
-  urlPrefix = environment.couchAddress + '/_users/org.couchdb.user:' + this.userService.get().name + '/';
   openAchievementIndex = -1;
   certifications: any[] = [];
   publicView = this.route.snapshot.data.requiresAuth === false && !this.userService.get()._id;
@@ -165,9 +169,9 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
   }
 
   private userUpdates(name: string, planetCode: string): Observable<AchievementsUpdate> {
-    const isLocal = this.stateService.configuration.code === planetCode;
-    const db = isLocal ? '_users' : 'child_users';
-    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
+    const relationship = this.userRelationship(planetCode);
+    const db = relationship === 'local' ? '_users' : relationship + '_users';
+    const id = relationship === 'child' ? name + '@' + planetCode : 'org.couchdb.user:' + name;
     return this.couchService.get(db + '/' + id).pipe(
       map((user): AchievementsUpdate => ({ type: 'user', user })),
       catchError(() => of<AchievementsUpdate>({ type: 'userError' }))
@@ -208,6 +212,14 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     }
   }
 
+  userRelationship(planetCode?: string | null): 'local' | 'parent' | 'child' {
+    const { code, parentCode } = this.stateService.configuration;
+    if (!planetCode || planetCode === code) {
+      return 'local';
+    }
+    return planetCode === parentCode ? 'parent' : 'child';
+  }
+
   goBack() {
     this.router.navigate([ '..' ], { relativeTo: this.route });
   }
@@ -235,14 +247,6 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     return `${environment.couchAddress}/${this.dbName}/${this.achievements._id}/${this.resumeAttachmentKey}`;
   }
 
-  get profileImg() {
-    const attachments = this.userService.get()._attachments;
-    if (attachments) {
-      return this.urlPrefix + Object.keys(attachments)[0];
-    }
-    return 'assets/image.png';
-  }
-
   setCertifications(courses = [], progress = [], certifications = []) {
     this.certifications = certifications.filter(certification => {
       const certificateCourses = courses
@@ -259,6 +263,7 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
 
   generatePDF() {
     const formattedBirthDate = this.user.birthDate ? formatDate(this.user.birthDate, 'mediumDate', this.localeId) : '';
+    const formattedMemberSince = this.user.joinDate ? formatDate(this.user.joinDate, 'mediumDate', this.localeId) : '';
     let contentArray = [
       {
         text: $localize`${this.user.firstName}'s achievements`,
@@ -267,9 +272,10 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
       },
       {
         text: `
-          ${this.user.firstName} ${this.user.middleName ? this.user.middleName : ''} ${this.user.lastName}
+          ${fullName(this.user) || this.user.name}
           ${formattedBirthDate ? $localize`Birthdate: ${formattedBirthDate}` : ''}
           ${this.user.birthplace ? $localize`Birthplace: ${this.user.birthplace}` : ''}
+          ${formattedMemberSince ? $localize`Member since: ${formattedMemberSince}` : ''}
           `,
         alignment: 'center',
       },
@@ -297,11 +303,9 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.certifications && this.certifications.length > 0) {
       optionals.push(
         { text: $localize`My Certifications`, style: 'subHeader', alignment: 'center' },
-        ...this.certifications.map((certification) => {
-          return [
-            { text: certification.name, bold: true, margin: [ 20, 5 ] },
-          ];
-        }),
+        ...this.certifications.map((certification) => [
+          { text: certification.name, bold: true, margin: [ 20, 5 ] },
+        ]),
         sectionSpacer
       );
     }
@@ -325,12 +329,10 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.achievements.links && this.achievements.links.length > 0) {
       optionals.push(
         { text: $localize`My Links`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.links.map((achievement) => {
-          return [
-            { text: achievement.title, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.url, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.links.map((achievement) => [
+          { text: achievement.title, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.url, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }
@@ -338,14 +340,12 @@ export class UsersAchievementsComponent implements OnInit, OnDestroy {
     if (this.achievements.references && this.achievements.references.length > 0) {
       optionals.push(
         { text: $localize`My References`, style: 'subHeader', alignment: 'center' },
-        ...this.achievements.references.map((achievement) => {
-          return [
-            { text: achievement.name, bold: true, margin: [ 20, 5 ] },
-            { text: achievement.relationship, marginLeft: 40 },
-            { text: achievement.phone, marginLeft: 40 },
-            { text: achievement.email, marginLeft: 40 },
-          ];
-        }),
+        ...this.achievements.references.map((achievement) => [
+          { text: achievement.name, bold: true, margin: [ 20, 5 ] },
+          { text: achievement.relationship, marginLeft: 40 },
+          { text: achievement.phone, marginLeft: 40 },
+          { text: achievement.email, marginLeft: 40 },
+        ]),
         sectionSpacer
       );
     }

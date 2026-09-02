@@ -38,11 +38,9 @@ export class SyncDirective {
 
   syncPlanet() {
     const defaultList = this.replicatorList((type) => (val) => this.syncService.replicatorId(val, type));
-    const deleteArray = (replicators) => replicators.filter(rep => {
-      return rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1;
-    }).map(rep => {
-      return { ...rep, _deleted: true };
-    });
+    const deleteArray = (replicators) => replicators.filter(
+      rep => rep._replication_state === 'completed' || defaultList.indexOf(rep._id) > -1
+    ).map(rep => ({ ...rep, _deleted: true }));
     this.couchService.findAll('_replicator').pipe(
       switchMap((replicators) => this.syncService.deleteReplicators(deleteArray(replicators))),
       switchMap(() => forkJoin(this.sendStatsToParent(), this.getParentUsers())),
@@ -65,10 +63,10 @@ export class SyncDirective {
   replicatorList(mapFunc = (type) => (val) => ({ continuous: this.planetConfiguration.alwaysOnline, ...val, type })) {
     const bothList = [
       { db: 'submissions', selector: { source: this.planetConfiguration.code } },
-      { db: 'teams', selector: { '$or': [ { teamType: 'sync' }, { docType: 'link' } ], teamPlanetCode: this.planetConfiguration.code } },
-      { db: 'news', selector: { '$or': [
+      { db: 'teams', selector: { $or: [ { teamType: 'sync' }, { docType: 'link' } ], teamPlanetCode: this.planetConfiguration.code } },
+      { db: 'news', selector: { $or: [
         { messageType: 'sync', messagePlanetCode: this.planetConfiguration.code },
-        { viewIn: { '$elemMatch': { '_id': `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } }
+        { viewIn: { $elemMatch: { _id: `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } }
       ] } },
       { db: 'team_activities', selector: { teamType: 'sync', teamPlanetCode: this.planetConfiguration.code } },
       { db: 'tasks', selector: { 'sync.type': 'sync', 'sync.planetCode': this.planetConfiguration.code } },
@@ -77,11 +75,11 @@ export class SyncDirective {
     const pushList = [ ...this.pushList(), ...bothList ];
     const pullList = [ ...this.pullList(), ...bothList ];
     const internalList = [
-      { dbSource: '_users', db: 'tablet_users', selector: { 'isUserAdmin': false, 'requestId': { '$exists': false } }, continuous: true },
+      { dbSource: '_users', db: 'tablet_users', selector: { isUserAdmin: false, requestId: { $exists: false } }, continuous: true },
       {
         dbSource: 'meetups',
         db: 'community_meetups',
-        selector: { 'link': { 'teams': { '$eq': `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } },
+        selector: { link: { teams: { $eq: `${this.planetConfiguration.code}@${this.planetConfiguration.parentCode}` } } },
         continuous: true
       }
     ];
@@ -120,7 +118,7 @@ export class SyncDirective {
     const userProperties = this.userService.userProperties.filter(prop => prop !== 'requestId');
     return forkJoin([
       this.couchService.findAll('_users', findDocuments(
-        { 'isUserAdmin': { '$exists': true }, 'requestId': { '$exists': false } },
+        { isUserAdmin: { $exists: true }, requestId: { $exists: false } },
         userProperties
       )),
       this.couchService.findAll('replicator_users', findDocuments({}, [ ...userProperties, 'couchId', 'planetCode' ]))
@@ -129,7 +127,7 @@ export class SyncDirective {
         const newRepUsers = this.createReplicatorUserDoc(users, repUsers);
         const deletedRepUsers = repUsers
           .filter((rUser: any) => users.findIndex((user: any) => rUser.couchId === user._id) < 0)
-          .map((rUser: any) => ({ ...rUser, '_deleted': true }));
+          .map((rUser: any) => ({ ...rUser, _deleted: true }));
         return this.couchService.post('replicator_users/_bulk_docs', { docs: newRepUsers.concat(deletedRepUsers) });
       })
     );
@@ -138,14 +136,14 @@ export class SyncDirective {
   createReplicatorUserDoc(users: any[], repUsers: any[]) {
     const planetCode = this.planetConfiguration.code;
     return users.map((user: any) => {
-      const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {},
-        { _id, _rev, ...userProps } = user;
+      const repUser = repUsers.find((rUser: any) => rUser.couchId === user._id) || {};
+      const { _id, _rev, ...userProps } = user;
       return {
         ...repUser,
         ...userProps,
         _id: user.name + '@' + planetCode,
         couchId: user._id,
-        planetCode: planetCode
+        planetCode
       };
     });
   }
@@ -205,7 +203,7 @@ export class SyncDirective {
       this.couchService.findAll(
         'teams', findDocuments({ docType: 'resourceLink', teamType: 'sync', teamPlanetCode: this.planetConfiguration.code })
       ),
-      this.couchService.findAll('news', findDocuments({ images: { '$exists': true }, messageType: 'sync' }))
+      this.couchService.findAll('news', findDocuments({ images: { $exists: true }, messageType: 'sync' }))
     ]);
   }
 

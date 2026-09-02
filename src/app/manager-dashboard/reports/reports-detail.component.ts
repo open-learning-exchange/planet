@@ -26,7 +26,7 @@ import { ReportsDetailData, ReportDetailFilter } from './reports-detail-data';
 import { UsersService } from '../../users/users.service';
 import { CoursesViewDetailDialogComponent } from '../../courses/view-courses/courses-view-detail.component';
 import { ReportsHealthComponent } from './reports-health.component';
-import { UserProfileDialogComponent } from '../../users/users-profile/users-profile-dialog.component';
+import { UsersProfileDialogService } from '../../users/users-profile/users-profile-dialog.service';
 import { findDocuments } from '../../shared/mangoQueries';
 import { DeviceInfoService, DeviceType } from '../../shared/device-info.service';
 import { PlanetMessageService } from '../../shared/planet-message.service';
@@ -178,6 +178,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     private couchService: CouchService,
     private usersService: UsersService,
     private dialog: MatDialog,
+    private usersProfileDialogService: UsersProfileDialogService,
     private fb: NonNullableFormBuilder,
     private deviceInfoService: DeviceInfoService,
     private planetMessageService: PlanetMessageService,
@@ -449,7 +450,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
   }
 
   getTeams() {
-    this.couchService.findAll('teams', { 'selector': { 'status': 'active' } }).subscribe((teams: any[]) => {
+    this.couchService.findAll('teams', { selector: { status: 'active' } }).subscribe((teams: any[]) => {
       this.teams = teams
         .filter(team => team.teamPlanetCode === this.planetCode && team.name)
         .sort((teamA, teamB) => teamA.name.localeCompare(teamB.name, 'en', { sensitivity: 'base' }))
@@ -610,16 +611,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
       ...this.teams.enterprise.map(t => ({ name: t.name, value: t }))
     ];
     const commonFields = [
-      { 'placeholder': $localize`From`, 'name': 'startDate', ...commonProps },
-      { 'placeholder': $localize`To`, 'name': 'endDate', ...commonProps }
+      { placeholder: $localize`From`, name: 'startDate', ...commonProps },
+      { placeholder: $localize`To`, name: 'endDate', ...commonProps }
     ];
-    const teamField = { 'placeholder': $localize`Team`, 'name': 'team', 'options': teamOptions, 'type': 'selectbox' };
+    const teamField = { placeholder: $localize`Team`, name: 'team', options: teamOptions, type: 'selectbox' };
     const sortingOptions = sortingOptionsMap[reportType];
     const fields = [
       ...commonFields,
       ...(reportType === 'health' ? [] : [ teamField ]),
       ...(sortingOptions && sortingOptions.length > 0
-        ? [ { 'placeholder': $localize`Sort By`, 'name': 'sortBy', 'options': sortingOptions, 'type': 'selectbox' } ]
+        ? [ { placeholder: $localize`Sort By`, name: 'sortBy', options: sortingOptions, type: 'selectbox' } ]
         : [])
     ];
     const formGroup = {
@@ -784,7 +785,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
           data = this.sortData(data, sortBy);
         }
         this.csvService.exportCSV({
-          data: data,
+          data,
           title: $localize`Member Visits`
         });
         break;
@@ -868,7 +869,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   openCourseView(courseId) {
     this.dialog.open(CoursesViewDetailDialogComponent, {
-      data: { courseId: courseId },
+      data: { courseId },
       minWidth: '600px',
       maxWidth: '90vw',
       maxHeight: '90vh',
@@ -878,16 +879,16 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
 
   exportDocView(reportType: string, dateRange: any, members: any[], sortBy: string) {
     let data = {
-      'resourceViews': this.resourceActivities.total.data,
-      'courseViews': this.courseActivities.total.data,
-      'stepCompletions': this.progress.steps.data,
-      'health': this.healthComponent && this.healthComponent.examinations
+      resourceViews: this.resourceActivities.total.data,
+      courseViews: this.courseActivities.total.data,
+      stepCompletions: this.progress.steps.data,
+      health: this.healthComponent && this.healthComponent.examinations
     }[reportType];
     const title = {
-      'resourceViews': $localize`Resource Views`,
-      'courseViews': $localize`:@@course-views-single:Course Views`,
-      'health': $localize`Community Health`,
-      'stepCompletions': $localize`Courses Progress` }[reportType];
+      resourceViews: $localize`Resource Views`,
+      courseViews: $localize`:@@course-views-single:Course Views`,
+      health: $localize`Community Health`,
+      stepCompletions: $localize`Courses Progress` }[reportType];
     if (sortBy) {
       data = this.sortData(data, sortBy);
     }
@@ -918,11 +919,18 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.dialog.open(DialogsResourcesViewerComponent, { data: { resourceId }, autoFocus: false });
   }
 
-  openMemberView(user) {
-    this.dialog.open(UserProfileDialogComponent, {
-      data: { member: { name: user.name, userPlanetCode: user.planetCode } },
-      autoFocus: false
-    });
+  openMemberView(user, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+      if ((event as KeyboardEvent).repeat) {
+        return;
+      }
+    }
+    if (!user) {
+      return;
+    }
+    this.usersProfileDialogService.open({ member: { name: user.name, userPlanetCode: user.planetCode } });
   }
 
   resetDateFilter({ startDate, endDate }: { startDate?: Date, endDate?: Date } = {}) {
@@ -1057,7 +1065,7 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
         week1: week1Value,
         week2: week2Value,
         change: changeText,
-        changeValue: changeValue
+        changeValue
       };
     });
   }

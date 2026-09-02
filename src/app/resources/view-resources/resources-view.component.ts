@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, defer } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserService } from '../../shared/user.service';
 import { ResourcesService } from '../resources.service';
@@ -16,10 +16,13 @@ import { MatIcon } from '@angular/material/icon';
 import { NgTemplateOutlet, NgClass } from '@angular/common';
 import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
 import { PlanetRatingComponent } from '../../shared/forms/planet-rating.component';
-import { TdMarkdownComponent } from '@covalent/markdown';
+import { PlanetMarkdownComponent } from '../../shared/planet-markdown.component';
 import { LanguageLabelComponent } from '../../shared/language-label.component';
 import { PlanetLoadingSpinnerComponent } from '../../shared/planet-loading-spinner.component';
 import { ResourcesViewerComponent } from './resources-viewer.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogsPromptComponent } from '../../shared/dialogs/dialogs-prompt.component';
+import { formatResourceAttachmentSize, formatResourceAttachmentsSize } from '../resources.utils';
 
 @Component({
   templateUrl: './resources-view.component.html',
@@ -36,7 +39,7 @@ import { ResourcesViewerComponent } from './resources-viewer.component';
     MatAnchor,
     NgClass,
     PlanetRatingComponent,
-    TdMarkdownComponent,
+    PlanetMarkdownComponent,
     LanguageLabelComponent,
     PlanetLoadingSpinnerComponent,
     ResourcesViewerComponent
@@ -52,6 +55,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   currentUser = this.userService.get();
   mediaType = '';
   resourceSrc = '';
+  formattedFileSize = '';
+  downloadFileSize = '';
   pdfSrc: any;
   contentType = '';
   isUserEnrolled = false;
@@ -81,7 +86,8 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private resourcesService: ResourcesService,
     private planetMessageService: PlanetMessageService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private dialog: MatDialog
   ) {
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
       this.deviceType = deviceType;
@@ -105,8 +111,13 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
           }
           this.planetMessageService.showAlert($localize`Resource does not exist in Library`);
           this.router.navigate([ '/resources' ]);
+          this.isLoading = false;
+          return;
         }
         this.isLoading = false;
+        const attachmentCount = Object.keys(this.resource.doc?._attachments || {}).length;
+        this.formattedFileSize = attachmentCount > 1 ? formatResourceAttachmentsSize(this.resource.doc) : '';
+        this.downloadFileSize = formatResourceAttachmentSize(this.resource.doc);
         this.isUserEnrolled = this.userService.shelf.resourceIds.includes(this.resource._id);
         this.canManage = (this.currentUser.isUserAdmin && !this.parent) ||
           (this.currentUser.name === this.resource.doc.addedBy && this.resource.doc.sourcePlanet === this.planetConfiguration.code);
@@ -131,6 +142,24 @@ export class ResourcesViewComponent implements OnInit, OnDestroy {
   }
 
   libraryToggle(resourceId, type) {
+    if (type === 'remove') {
+      const dialogRef = this.dialog.open(DialogsPromptComponent, {
+        data: {
+          changeType: 'remove',
+          type: 'resource',
+          displayName: this.resource?.doc?.title || '',
+          okClick: {
+            request: defer(() => this.resourcesService.libraryAddRemove([ resourceId ], type)),
+            onNext: () => {
+              this.isUserEnrolled = !this.isUserEnrolled;
+              dialogRef.close();
+            },
+            onError: () => this.planetMessageService.showAlert($localize`There was a problem removing this resource from myLibrary.`)
+          }
+        }
+      });
+      return;
+    }
     this.resourcesService.libraryAddRemove([ resourceId ], type).subscribe((res) => {
       this.isUserEnrolled = !this.isUserEnrolled;
     }, (error) => ((error)));

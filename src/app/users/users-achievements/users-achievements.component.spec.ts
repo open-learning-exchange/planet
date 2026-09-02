@@ -239,6 +239,18 @@ describe('UsersAchievementsComponent', () => {
     expect(couchService.get).toHaveBeenCalledWith('child_users/alice@child');
   });
 
+  it('requests a parent user from the parent users database', () => {
+    navigate('alice', 'parent');
+
+    expect(couchService.get).toHaveBeenCalledWith('parent_users/org.couchdb.user:alice');
+  });
+
+  it('treats a missing planet code as local when requesting a user', () => {
+    navigate('alice');
+
+    expect(couchService.get).toHaveBeenCalledWith('_users/org.couchdb.user:alice');
+  });
+
   it('shows an alert when the achievements request fails without a 404', () => {
     navigate('alice', 'local');
     request(achievementsUrl('alice')).error({ status: 500 });

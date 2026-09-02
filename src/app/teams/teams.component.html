@@ -31,8 +31,10 @@
     <mat-form-field subscriptSizing="dynamic" class="font-size-1">
       <mat-label i18n>Type name to search...</mat-label>
       <input matInput (keyup)="applyFilter($event.target.value)" [(ngModel)]="filter">
+      <button type="button" mat-icon-button matSuffix (click)="filter = ''; resetSearch()" [style.visibility]="filter ? 'visible' : 'hidden'" matTooltip="Clear search" i18n-matTooltip i18n-aria-label aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="resetSearch()" [disabled]="teams.filter === ' '"><span i18n>Clear</span></button>
   </div>
 </ng-template>
 
@@ -63,7 +65,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header="doc.name" i18n>Name</mat-header-cell>
         <mat-cell *matCellDef="let element">
           <h3 class="team-name">
-            {{element.doc.name | truncateText:150}}
+            <a (click)="$event.stopPropagation(); teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.space)="$event.preventDefault(); $event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               (keydown.enter)="$event.stopPropagation(); !$event.repeat && teamClick(element.doc._id, element.doc.teamType)"
+               tabindex="0" role="button"
+               [attr.aria-label]="element.doc.name"
+               [attr.aria-pressed]="isDialog ? selectedIds.includes(element.doc._id) : null">
+              {{element.doc.name | truncateText:150}}
+            </a>
             @if (element.userStatus === 'member' && mode === 'enterprise') {
               <mat-icon class="margin-lr-3" i18n-title title="Joined Enterprise" [inline]="true">check</mat-icon>
             }
@@ -139,12 +148,22 @@
                   }
                 }
                 @case ('unrelated') {
-                  <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
-                    <mat-icon>add_circle</mat-icon>
-                    @if (!isMobile) {
-                      <label i18n> Request to Join </label>
-                    }
-                  </button>
+                  @if (element.doc.type === 'enterprise') {
+                    <button mat-raised-button color="primary"
+                      (click)="requestToJoinEnterprise(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  } @else {
+                    <button mat-raised-button color="primary" (click)="requestToJoin(element.doc); $event.stopPropagation()">
+                      <mat-icon>add_circle</mat-icon>
+                      @if (!isMobile) {
+                        <label i18n> Request to Join </label>
+                      }
+                    </button>
+                  }
                 }
                 @case ('requesting') {
                   <button mat-raised-button color="warn" aria-label="Cancel Join Request" i18n-aria-label

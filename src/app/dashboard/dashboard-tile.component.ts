@@ -3,10 +3,12 @@ import {
   ChangeDetectorRef, DestroyRef, HostBinding, OnInit, forwardRef, inject
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { defer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UserService } from '../shared/user.service';
 import { TeamsService } from '../teams/teams.service';
+import { CoursesService } from '../courses/courses.service';
 import { CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag } from '@angular/cdk/drag-drop';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
@@ -65,15 +67,15 @@ export class DashboardTileTitleComponent {
 export class DashboardTileComponent implements AfterViewChecked, OnInit {
   private readonly destroyRef = inject(DestroyRef);
   @Input() cardTitle: string;
-  private _cardType: string;
+  #cardType: string;
   @Input() set cardType(value: string) {
-    this._cardType = value;
+    this.#cardType = value;
     if (value === 'myLife' && this.deviceType === DeviceType.MOBILE) {
       this.isExpanded = true;
     }
   }
   get cardType(): string {
-    return this._cardType;
+    return this.#cardType;
   }
   @Input() color: string;
   @Input() itemData;
@@ -85,6 +87,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   @ViewChild('items') itemDiv: ElementRef;
   dialogPrompt: MatDialogRef<DialogsPromptComponent>;
   tileLines = 2;
+  courseTileLines = 2;
   recentlyDragged = false;
   isExpanded = false;
   deviceType: DeviceType;
@@ -99,6 +102,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     private planetMessageService: PlanetMessageService,
     private userService: UserService,
     private teamsService: TeamsService,
+    private coursesService: CoursesService,
     private dialog: MatDialog,
     private cd: ChangeDetectorRef,
     private deviceInfoService: DeviceInfoService
@@ -120,21 +124,49 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
   }
 
   ngAfterViewChecked() {
-    const divHeight = this.itemDiv?.nativeElement.offsetHeight;
-    const dashboardItem = this.itemDiv.nativeElement.querySelector('.dashboard-item');
+    const itemDiv = this.itemDiv?.nativeElement;
+    if (!itemDiv) {
+      return;
+    }
+    const dashboardItem = itemDiv.querySelector('.dashboard-item:not(.has-course-cover)') ??
+      itemDiv.querySelector('.dashboard-item');
     if (!dashboardItem) {
       return;
     }
-    const itemStyle = window.getComputedStyle(dashboardItem);
-    const tilePadding = +(itemStyle.paddingTop.replace('px', '')) * 2;
-    const fontSize = +(itemStyle.fontSize.replace('px', ''));
-    const tileHeight = divHeight - tilePadding;
-    // line-height: normal varies by browser, but should be between 1-1.2
-    const tileLines = Math.floor(tileHeight / (fontSize * 1.2));
-    if (tileLines !== this.tileLines) {
+    const tileLines = this.textLinesForItem(this.itemContent(dashboardItem), itemDiv.clientHeight);
+    const courseItem = itemDiv.querySelector('.dashboard-item.has-course-cover');
+    const courseTileLines = courseItem ?
+      this.textLinesForItem(this.itemContent(courseItem), itemDiv.clientHeight) : this.courseTileLines;
+    if (tileLines !== this.tileLines || courseTileLines !== this.courseTileLines) {
       this.tileLines = tileLines;
+      this.courseTileLines = courseTileLines;
       this.cd.detectChanges();
     }
+  }
+
+  private itemContent(item: HTMLElement): HTMLElement {
+    return item.querySelector<HTMLElement>('.dashboard-item-link') ?? item;
+  }
+
+  private textLinesForItem(item: HTMLElement, availableHeight: number): number {
+    const itemStyle = window.getComputedStyle(item);
+    const padding = this.cssPixels(itemStyle.paddingTop) + this.cssPixels(itemStyle.paddingBottom);
+    const reservedHeight = Array.from(item.children)
+      .filter(element => element.matches('.dashboard-course-cover, p:not(.dashboard-text)'))
+      .reduce((height, element) => height + this.elementOuterHeight(element as HTMLElement), 0);
+    const fontSize = this.cssPixels(itemStyle.fontSize) || 16;
+    // line-height: normal varies by browser, but should be between 1-1.2
+    const lineHeight = this.cssPixels(itemStyle.lineHeight) || fontSize * 1.2;
+    return Math.max(1, Math.floor((availableHeight - padding - reservedHeight) / lineHeight));
+  }
+
+  private elementOuterHeight(element: HTMLElement): number {
+    const elementStyle = window.getComputedStyle(element);
+    return element.offsetHeight + this.cssPixels(elementStyle.marginTop) + this.cssPixels(elementStyle.marginBottom);
+  }
+
+  private cssPixels(value: string): number {
+    return parseFloat(value) || 0;
   }
 
   toggleAccordion(event: Event) {
@@ -157,10 +189,53 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     const { _id: userId, planetCode: userPlanetCode } = this.userService.get();
     if (this.shelfName === 'myTeamIds') {
       this.removeTeam(item, userId, userPlanetCode);
+    } else if (this.shelfName === 'resourceIds') {
+      this.removeResource(item);
+    } else if (this.shelfName === 'courseIds') {
+      this.removeCourse(item);
     } else {
       const newIds = this.userService.shelf[this.shelfName].filter((shelfId) => shelfId !== item._id);
       this.userService.updateShelf(newIds, this.shelfName).subscribe(() => this.removeMessage(item));
     }
+  }
+
+  removeResource(item: any) {
+    const dialogRef = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'remove',
+        type: 'resource',
+        displayName: item.title,
+        okClick: {
+          request: defer(() => this.userService.updateShelf(
+            this.userService.shelf.resourceIds.filter((shelfId) => shelfId !== item._id),
+            'resourceIds'
+          )),
+          onNext: () => {
+            dialogRef.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
+  }
+
+  removeCourse(item: any) {
+    this.dialogPrompt = this.dialog.open(DialogsPromptComponent, {
+      data: {
+        changeType: 'leave',
+        type: 'course',
+        displayName: item.title,
+        okClick: {
+          request: defer(() => this.coursesService.courseResignAdmission(item._id, 'resign', item.title)),
+          onNext: () => {
+            this.dialogPrompt.close();
+            this.removeMessage(item);
+          },
+          onError: () => this.planetMessageService.showMessage($localize`There was an error removing ${item.title}`)
+        }
+      }
+    });
   }
 
   removeTeam(item, userId, userPlanetCode) {
@@ -214,6 +289,10 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     }, 300);
   }
 
+  badgeDescription(item: any): string {
+    return $localize`Pending: ${item.badge}:count:`;
+  }
+
   getRemoveTooltip(cardTitle: string): string {
     return $localize`Remove from ${cardTitle}`;
   }
@@ -222,7 +301,7 @@ export class DashboardTileComponent implements AfterViewChecked, OnInit {
     if (this.isAccordionMode) {
       return 'none';
     }
-    return this.cardType === 'myCourses' && item.coverFileName ? 2 : this.tileLines;
+    return this.cardType === 'myCourses' && item.coverFileName ? this.courseTileLines : this.tileLines;
   }
 
   coverImageUrl(item: any): string {

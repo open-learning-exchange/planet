@@ -9,11 +9,7 @@
 <div class="space-container">
   <mat-toolbar class="primary-color font-size-1 responsive-toolbar">
     <div>
-      @if (user?.firstName) {
-        <span>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</span>
-      } @else {
-        {{ userName | truncateText:40 }}
-      }
+      <span>{{ ((user | fullName) || user?.name) | truncateText:40 }}</span>
     </div>
     <span class="toolbar-fill"></span>
     <div class="auto-adjust-buttons">
@@ -51,16 +47,21 @@
         @if (achievements !== undefined) {
           <div class="achievements-container">
             <div class="user-info">
-              <img class="profile-image" [src]="profileImg">
-              <h2>{{ (user.firstName + ' ' + user.middleName + ' ' + user.lastName) | truncateText:40 }}</h2>
+              <planet-avatar [username]="userName" [planetCode]="userPlanetCode" imgClass="profile-image"></planet-avatar>
+              <h2>{{ ((user | fullName) || user?.name) | truncateText:40 }}</h2>
               @if (!publicView) {
                 <div class="birth-info">
                   @if (user.birthDate) {
-                    <span i18n>Birthdate: {{' ' + (user.birthDate | date: medium) + ' '}}</span>
+                    <span i18n>Birthdate: {{' ' + (user.birthDate | date:'mediumDate') + ' '}}</span>
                     }<br/><br/>
                     @if (user.birthplace) {
                       <span i18n>Birthplace: {{' ' + user.birthplace}} </span>
                     }
+                  </div>
+                }
+                @if (user.joinDate) {
+                  <div>
+                    <span i18n>Member since: {{ user.joinDate | date:'mediumDate' }}</span>
                   </div>
                 }
               </div>
@@ -68,14 +69,14 @@
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Purpose</h3>
-                  <td-markdown [content]="achievements.purpose"></td-markdown>
+                  <planet-markdown [content]="achievements.purpose"></planet-markdown>
                 </div>
               }
               @if (achievements.goals) {
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Goals</h3>
-                  <td-markdown [content]="achievements.goals"></td-markdown>
+                  <planet-markdown [content]="achievements.goals"></planet-markdown>
                 </div>
               }
               <ng-container *planetBeta>
@@ -111,7 +112,7 @@
                 <div>
                   <mat-divider></mat-divider>
                   <h3 i18n>My Achievements</h3>
-                  <td-markdown [content]="achievements.achievementsHeader"></td-markdown>
+                  <planet-markdown [content]="achievements.achievementsHeader"></planet-markdown>
                   <mat-list>
                     @for (achievement of achievements.achievements; track achievement; let i = $index) {
                       <mat-list-item class="mat-list-item-word-wrap" [ngClass]="{'cursor-pointer':isClickable(achievement)}" (click)="onAchievementClick(achievement, i)">
