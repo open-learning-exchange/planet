@@ -777,9 +777,9 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     switch (reportType) {
       case 'logins':
         let data = filterByMember(filterByDate(this.loginActivities.data, 'loginTime', dateRange), members)
-          .map(activity => ({
+          .map(({ app, ...activity }) => ({
             ...activity,
-            app: appSourceLabel(activity),
+            [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId }),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || '',
             customDeviceName: activity.customDeviceName || ''
@@ -898,15 +898,17 @@ export class ReportsDetailComponent implements OnInit, OnDestroy {
     this.csvService.exportCSV({
       data: this.activityService.appendAge(
         filterByMember(filterByDate(data, reportType === 'health' ? 'date' : 'time', dateRange), members), this.today)
-        .map(activity => {
+        .map(({ app, ...activity }) => {
           const baseActivity = {
             ...activity,
-            app: appSourceLabel(activity),
+            ...(reportType === 'health' ? {} : {
+              [$localize`Source`]: appSourceLabel({ app, androidId: activity.androidId })
+            }),
             androidId: activity.androidId || '',
             deviceName: activity.deviceName || ''
           };
           if (reportType === 'health' && activity.updatedDate) {
-            baseActivity.updatedDate = fullLabel(activity.updatedDate, this.localeId);
+            return { ...baseActivity, updatedDate: fullLabel(activity.updatedDate, this.localeId) };
           }
           return baseActivity;
         }),
