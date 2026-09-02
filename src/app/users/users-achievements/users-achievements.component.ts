@@ -140,11 +140,19 @@ export class UsersAchievementsComponent implements OnInit {
     });
   }
 
-  initUser(name, planetCode) {
-    const isLocal = this.stateService.configuration.code === planetCode;
-    const db = isLocal ? '_users' : 'child_users';
-    const id = isLocal ? 'org.couchdb.user:' + name : name + '@' + planetCode;
+  initUser(name: string, planetCode?: string | null): void {
+    const relationship = this.userRelationship(planetCode);
+    const db = relationship === 'local' ? '_users' : relationship + '_users';
+    const id = relationship === 'child' ? name + '@' + planetCode : 'org.couchdb.user:' + name;
     this.couchService.get(db + '/' + id).subscribe((user) => this.user = user);
+  }
+
+  userRelationship(planetCode?: string | null): 'local' | 'parent' | 'child' {
+    const { code, parentCode } = this.stateService.configuration;
+    if (!planetCode || planetCode === code) {
+      return 'local';
+    }
+    return planetCode === parentCode ? 'parent' : 'child';
   }
 
   goBack() {
