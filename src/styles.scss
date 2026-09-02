@@ -181,8 +181,15 @@ body {
     grid-template-rows: auto 1fr min-content min-content;
 
     .header {
+      display: flex;
+      align-items: center;
       grid-area: hd;
       margin: 8px 0;
+
+      > span {
+        display: flex;
+        align-items: center;
+      }
     }
 
     .content {
