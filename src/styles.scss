@@ -686,6 +686,11 @@ body {
     gap: 5px;
   }
 
+  .filter-dialog .mat-mdc-dialog-content {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
   .fit-screen-dialog .mat-mdc-dialog-content {
     max-height: calc(90vh - 96px);
   }
@@ -714,6 +719,14 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex: 0 1 auto;
+      min-width: 0;
+      overflow: hidden;
+
+      .mat-mdc-form-field-infix {
+        min-width: 0;
+        max-width: 100%;
+      }
     }
   }
 
