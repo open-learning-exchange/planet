@@ -70,6 +70,33 @@ describe('UsersTableComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should render the optional profile columns from the user doc', () => {
+    component.users = [ {
+      _id: 'org.couchdb.user:johndoe',
+      fullName: 'John Doe',
+      doc: {
+        ...mockUser,
+        email: 'johndoe@ole.org',
+        phoneNumber: '58584845',
+        birthDate: '1973-11-11T06:00:00.000Z',
+        gender: 'female',
+        level: 'Beginner',
+        language: 'Espa\u00f1ol'
+      }
+    } ];
+    component.displayedColumns = [ 'name', 'email', 'phoneNumber', 'birthDate', 'gender', 'level', 'language' ];
+    component.ngOnChanges();
+    fixture.detectChanges();
+
+    const rowText = fixture.nativeElement.textContent;
+    expect(rowText).toContain('johndoe@ole.org');
+    expect(rowText).toContain('58584845');
+    expect(rowText).toContain('Nov 11, 1973');
+    expect(rowText).toContain('Female');
+    expect(rowText).toContain('Beginner');
+    expect(rowText).toContain('Espa\u00f1ol');
+  });
+
   it('should open DialogsPromptComponent with deactivate configuration when deactivateClick is called', () => {
     const { event, dialogOpenSpy } = openDeactivateDialog();
 

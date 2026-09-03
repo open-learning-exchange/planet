@@ -20,6 +20,7 @@ import { StateService } from '../shared/state.service';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DialogsPromptComponent } from '../shared/dialogs/dialogs-prompt.component';
 import { UsersService } from './users.service';
+import { educationLevel } from './user-constants';
 import { PlanetMessageService } from '../shared/planet-message.service';
 import { UsersProfileDialogService } from './users-profile/users-profile-dialog.service';
 import { NgClass, DatePipe } from '@angular/common';
@@ -30,6 +31,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { PlanetRoleComponent } from '../shared/planet-role.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
+import { LanguageLabelComponent } from '../shared/language-label.component';
 
 export class TableState {
   isOnlyManagerSelected = false;
@@ -60,6 +62,7 @@ export class TableState {
     MatIcon,
     MatChipRemove,
     MatButton,
+    LanguageLabelComponent,
     MatHeaderRowDef,
     MatHeaderRow,
     MatRowDef,
@@ -127,6 +130,7 @@ export class UsersTableComponent implements OnInit, OnDestroy, AfterViewInit, On
   deviceType: DeviceType;
   isMobile: boolean;
   trackById = trackById;
+  educationLevel = educationLevel;
 
   constructor(
     private dialog: MatDialog,

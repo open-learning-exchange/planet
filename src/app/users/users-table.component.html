@@ -81,6 +81,28 @@
         }
       </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="email" i18n>Email</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.doc.email}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="phoneNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="phoneNumber" i18n>Phone Number</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.doc.phoneNumber}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="gender">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="gender" i18n>Gender</mat-header-cell>
+      <mat-cell *matCellDef="let element" i18n>{ element.doc.gender, select, male {Male} female {Female} other {} }</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="level">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="level" i18n>Education Level</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <planet-language-label [options]="educationLevel" [label]="element.doc.level"></planet-language-label>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="language">
+      <mat-header-cell *matHeaderCellDef mat-sort-header="language" i18n>Language</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element.doc.language}}</mat-cell>
+    </ng-container>
     <ng-container matColumnDef="birthDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header="birthDate" i18n>Birthdate</mat-header-cell>
       <mat-cell *matCellDef="let element">

@@ -9,6 +9,8 @@ import { DialogsLoadingService } from '../shared/dialogs/dialogs-loading.service
 import { ManagerService } from '../manager-dashboard/manager.service';
 import { UsersService } from './users.service';
 import { TableState, UsersTableComponent } from './users-table.component';
+import { optionalUserColumns } from './user-constants';
+import { ConfigurationService } from '../configuration/configuration.service';
 import { attachNamesToPlanets, sortPlanet } from '../manager-dashboard/reports/reports.utils';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
@@ -67,6 +69,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   allRolesList = this.usersService.allRolesList;
   selectedRoles: string[] = [];
   filteredRole: string;
+  optionalUserColumns = optionalUserColumns;
+  extraColumns: string[] = [];
+  private savedExtraColumns: string[] = [];
   userShelf = this.userService.shelf;
   private onDestroy$ = new Subject<void>();
   private searchChange = new Subject<string>();
@@ -86,7 +91,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     private dialogsLoadingService: DialogsLoadingService,
     private managerService: ManagerService,
     private usersService: UsersService,
-    private deviceInfoService: DeviceInfoService
+    private deviceInfoService: DeviceInfoService,
+    private configurationService: ConfigurationService
   ) {
     this.dialogsLoadingService.start();
     this.deviceInfoService.watchDeviceType().pipe(takeUntil(this.onDestroy$)).subscribe((deviceType) => {
@@ -98,6 +104,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.planetType = this.stateService.configuration.planetType;
     this.isUserAdmin = this.userService.get().isUserAdmin;
+    this.setExtraColumns(this.stateService.configuration.userTableColumns);
     this.route.queryParamMap.pipe(
       takeUntil(this.onDestroy$)
     ).subscribe((params: ParamMap) => {
@@ -135,13 +142,42 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   filterDisplayColumns(type: string) {
     if (type === 'local') {
-      this.displayedColumns = [ 'profile', 'name', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
+      this.displayedColumns = [ 'profile', 'name', ...this.extraColumns, 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ];
       if (this.isUserAdmin) {
         this.displayedColumns.unshift('select');
       }
     } else {
       this.displayedColumns = [ 'profile', 'name', 'joinDate', 'lastLogin', 'action' ];
     }
+  }
+
+  // Unknown values are dropped so a stale configuration cannot ask the table for a column it has no definition for
+  private setExtraColumns(columns: any) {
+    const optionalColumns = this.optionalUserColumns.map(({ value }) => value);
+    this.extraColumns = Array.isArray(columns) ? columns.filter((column: any) => optionalColumns.indexOf(column) > -1) : [];
+    this.savedExtraColumns = this.extraColumns;
+    this.filterDisplayColumns(this.tableState.filterType);
+  }
+
+  extraColumnsChanged(columns: string[]) {
+    this.extraColumns = columns;
+    this.filterDisplayColumns(this.tableState.filterType);
+  }
+
+  // Saved when the dropdown closes so choosing several columns is one write rather than one per column
+  saveExtraColumns() {
+    if (this.extraColumns.join(',') === this.savedExtraColumns.join(',')) {
+      return;
+    }
+    const userTableColumns = [ ...this.extraColumns ];
+    this.configurationService.patchLocalConfiguration({ userTableColumns }).subscribe(
+      () => {
+        this.savedExtraColumns = userTableColumns;
+        this.stateService.requestData('configurations', 'local');
+        this.planetMessageService.showMessage($localize`Member table columns updated`);
+      },
+      () => this.planetMessageService.showAlert($localize`There was an error updating the member table columns`)
+    );
   }
 
   applyFilter(filterValue: string) {

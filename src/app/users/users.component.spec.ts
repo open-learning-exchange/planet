@@ -11,14 +11,21 @@ import { MaterialModule } from '../shared/material.module';
 import { UsersComponent } from './users.component';
 import { CouchService } from '../shared/couchdb.service';
 import { UserService } from '../shared/user.service';
-import { of } from 'rxjs';
+import { ConfigurationService } from '../configuration/configuration.service';
+import { of, throwError } from 'rxjs';
 
 describe('Users', () => {
 
   const setup = () => {
+    const configurationService = { patchLocalConfiguration: vi.fn(() => of({})) };
     TestBed.configureTestingModule({
       imports: [RouterTestingModule.withRoutes([]), FormsModule, CommonModule, MaterialModule, BrowserAnimationsModule, UsersComponent],
-      providers: [CouchService, UserService, provideHttpClient(withInterceptorsFromDi())]
+      providers: [
+        CouchService,
+        UserService,
+        { provide: ConfigurationService, useValue: configurationService },
+        provideHttpClient(withInterceptorsFromDi())
+      ]
     });
     const fixture = TestBed.createComponent(UsersComponent);
     const comp = fixture.componentInstance;
@@ -33,12 +40,77 @@ describe('Users', () => {
       ] },
       admins: { testAdmin: 1 }
     };
-    return { fixture, comp, couchService, userService, testUsers };
+    return { fixture, comp, couchService, userService, configurationService, testUsers };
   };
 
   it('Should be a UsersComponent', () => {
     const { comp } = setup();
     expect(comp instanceof UsersComponent).toBe(true, 'Should create UsersComponent');
+  });
+
+  describe('Extra columns', () => {
+
+    it('Should show configured extra columns after the name column', () => {
+      const { comp } = setup();
+      comp['setExtraColumns']([ 'email', 'phoneNumber' ]);
+      expect(comp.displayedColumns).toEqual(
+        [ 'profile', 'name', 'email', 'phoneNumber', 'visitCount', 'joinDate', 'lastLogin', 'roles', 'action' ]
+      );
+    });
+
+    it('Should drop column names the table has no definition for', () => {
+      const { comp } = setup();
+      comp['setExtraColumns']([ 'email', 'password_scheme', 'derived_key' ]);
+      expect(comp.extraColumns).toEqual([ 'email' ]);
+    });
+
+    it('Should ignore a configuration value which is not an array', () => {
+      const { comp } = setup();
+      comp['setExtraColumns']('email');
+      expect(comp.extraColumns).toEqual([]);
+    });
+
+    it('Should leave the associated planets view unchanged', () => {
+      const { comp } = setup();
+      comp['setExtraColumns']([ 'email' ]);
+      comp.filterDisplayColumns('associated');
+      expect(comp.displayedColumns).toEqual([ 'profile', 'name', 'joinDate', 'lastLogin', 'action' ]);
+    });
+
+    it('Should save the selection to the local configuration', () => {
+      const { comp, configurationService } = setup();
+      comp.extraColumns = [ 'email', 'gender' ];
+      comp.saveExtraColumns();
+      expect(configurationService.patchLocalConfiguration).toHaveBeenCalledWith({ userTableColumns: [ 'email', 'gender' ] });
+    });
+
+    it('Should not write to the configuration when the selection is unchanged', () => {
+      const { comp, configurationService } = setup();
+      comp['setExtraColumns']([ 'email' ]);
+      comp.saveExtraColumns();
+      expect(configurationService.patchLocalConfiguration).not.toHaveBeenCalled();
+    });
+
+    it('Should render the column picker for an admin and hide it for everyone else', () => {
+      const { fixture, comp, userService } = setup();
+      vi.spyOn(userService, 'get').mockReturnValue({ isUserAdmin: true, name: 'admin' } as any);
+      comp.ngOnInit();
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('.km-extra-columns'))).toBeTruthy();
+
+      comp.isUserAdmin = false;
+      fixture.detectChanges();
+      expect(fixture.debugElement.query(By.css('.km-extra-columns'))).toBeNull();
+    });
+
+    it('Should keep the columns selected in the table when the save fails', () => {
+      const { comp, configurationService } = setup();
+      configurationService.patchLocalConfiguration.mockReturnValue(throwError(() => new Error('offline')));
+      comp.extraColumns = [ 'email' ];
+      comp.saveExtraColumns();
+      expect(comp.extraColumns).toEqual([ 'email' ]);
+    });
+
   });
 
   // describe('Init', () => {
