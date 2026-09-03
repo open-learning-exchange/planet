@@ -131,10 +131,16 @@ export class CouchService {
 
   bulkGet(db: string, ids: string[], opts?: any) {
     const docs = ids.map(id => ({ id }));
-    const revNum = doc => +(doc._rev.split('-')[0]);
+    const revNum = doc => +((doc._rev || '0-0').split('-')[0]);
     return this.post(db + '/_bulk_get', { docs }, opts).pipe(
-      map((response: any) => response.results
-        .map((result: any) => result.docs.reduce((maxDoc, { ok: doc }) => revNum(maxDoc) > revNum(doc) ? maxDoc : doc, { _rev: '0-0' }))
+      map((response: any) => (response && response.results || [])
+        // CouchDB returns one entry per requested id, but an id which is missing or deleted comes
+        // back as `{ error: ... }` rather than `{ ok: doc }`.  Drop those instead of letting them
+        // reach revNum, which would throw and lose every other doc in the batch.
+        .map((result: any) => (result.docs || [])
+          .filter((entry: any) => entry && entry.ok)
+          .reduce((maxDoc, { ok: doc }) => maxDoc !== undefined && revNum(maxDoc) > revNum(doc) ? maxDoc : doc, undefined)
+        )
         .filter((doc: any) => doc !== undefined && doc._deleted !== true)
       )
     );
