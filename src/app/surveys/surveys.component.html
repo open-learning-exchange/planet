@@ -81,6 +81,16 @@
           {{element.createdDate | date: 'mediumDate'}}
         </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="deadline">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="deadline" i18n>Deadline</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          @if (element.deadline) {
+            <span [class.warn-text-color]="isDeadlinePassed(element)">{{element.deadline | date: 'mediumDate'}}</span>
+          } @else {
+            <span>&mdash;</span>
+          }
+        </mat-cell>
+      </ng-container>
       <ng-container matColumnDef="action">
         <mat-header-cell *matHeaderCellDef i18n>Action</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -98,7 +108,7 @@
             }
             @if (!teamId && !routeTeamId) {
               <div [matTooltip]="getActionTooltip(element, 'send')">
-                <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
+                <button mat-raised-button color="primary" [matMenuTriggerFor]="sendMenu" [disabled]="!element.questions?.length || isSurveyClosed(element) || (element.teamId && isManagerRoute)">
                   <mat-icon>send</mat-icon>
                   @if (!isMobile) {
                     <label i18n> Send</label>
@@ -111,7 +121,7 @@
               </mat-menu>
             }
             <div [matTooltip]="getActionTooltip(element, 'record')">
-              <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || element.isArchived || (element.teamId && isManagerRoute)">
+              <button mat-raised-button color="primary" (click)="recordSurvey(element)" [disabled]="!element.questions?.length || isSurveyClosed(element) || (element.teamId && isManagerRoute)">
                 <mat-icon>fiber_manual_record</mat-icon>
                 @if (!isMobile) {
                   <label i18n> Record</label>
@@ -120,7 +130,7 @@
             </div>
             @if (element.teamId && (teamId || routeTeamId)) {
               <div [matTooltip]="getActionTooltip(element, 'public')">
-                <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || element.isArchived">
+                <button mat-raised-button color="accent" (click)="element.publicAccess === true ? copyPublicSurveyLink(element) : toggleSurveyPublicAccess(element)" [disabled]="!element.questions?.length || isSurveyClosed(element)">
                   <mat-icon>{{ element.publicAccess === true ? 'link' : 'public' }}</mat-icon>
                   @if (!isMobile) {
                     @if (element.publicAccess === true) {

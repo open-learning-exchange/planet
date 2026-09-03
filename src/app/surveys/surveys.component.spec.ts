@@ -232,6 +232,65 @@ describe('SurveysComponent', () => {
 
     expect(component.surveys.data).toEqual([ teamSurvey, managerSurvey ]);
   });
+
+  it('explains the actions a passed deadline blocks and leaves the others alone', () => {
+    const survey = { _id: 'survey-1', questions: [ {} ], taken: 2, deadline: Date.now() - 1 };
+    const closed = 'Survey deadline has passed and it cannot accept new submissions';
+
+    expect(component.getActionTooltip(survey, 'send')).toBe(closed);
+    expect(component.getActionTooltip(survey, 'record')).toBe(closed);
+    expect(component.getActionTooltip(survey, 'public')).toBe(closed);
+    expect(component.getActionTooltip(survey, 'edit')).toBe('Edit Survey');
+    expect(component.getActionTooltip(survey, 'archive')).toBe('Archive Survey');
+    expect(component.getActionTooltip(survey, 'submissions')).toBe('View Submissions');
+  });
+
+  it('keeps the archived reason for archived surveys that also passed their deadline', () => {
+    const survey = { _id: 'survey-1', questions: [ {} ], taken: 2, isArchived: true, deadline: Date.now() - 1 };
+
+    expect(component.getActionTooltip(survey, 'send')).toBe('Survey is archived and cannot accept new actions');
+    expect(component.getActionTooltip(survey, 'archive')).toBe('Survey is already archived');
+  });
+
+  it('leaves surveys whose deadline is still ahead untouched', () => {
+    const survey = { _id: 'survey-1', questions: [ {} ], taken: 2, deadline: Date.now() + 60000 };
+
+    expect(component.isSurveyClosed(survey)).toBe(false);
+    expect(component.getActionTooltip(survey, 'send')).toBe('Send Survey');
+  });
+
+  it('closes surveys that are archived or past their deadline', () => {
+    expect(component.isSurveyClosed({ _id: 'survey-1', isArchived: true })).toBe(true);
+    expect(component.isSurveyClosed({ _id: 'survey-2', deadline: Date.now() - 1 })).toBe(true);
+    expect(component.isSurveyClosed({ _id: 'survey-3' })).toBe(false);
+  });
+
+  it('excludes shareable surveys past their deadline from the adopt view', () => {
+    const closedSurvey = {
+      _id: 'survey-1',
+      deadline: Date.now() - 1,
+      teamId: 'team-1',
+      teamIds: [ 'team-1' ],
+      teamShareAllowed: true
+    };
+    const openSurvey = { ...closedSurvey, _id: 'survey-2', deadline: Date.now() + 60000 };
+    component.teamId = 'team-2';
+    component.allSurveys = [ closedSurvey, openSurvey ];
+    component.currentFilter.viewMode = 'adopt';
+
+    component.toggleSurveysView();
+
+    expect(component.surveys.data).toEqual([ openSurvey ]);
+  });
+
+  it('does not record a survey whose deadline has passed', () => {
+    component.recordSurvey({ _id: 'survey-1', name: 'Survey 1', deadline: Date.now() - 1 });
+
+    expect(submissionsService.createSubmission).not.toHaveBeenCalled();
+    expect(planetMessageService.showAlert).toHaveBeenCalledWith('This survey is closed and cannot accept new submissions.');
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
   it('opens the export dialog for a survey whose questions property is missing', () => {
     component.exportPdf({ _id: 'survey-1', taken: 1 });
 

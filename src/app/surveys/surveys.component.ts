@@ -25,6 +25,7 @@ import { findDocuments } from '../shared/mangoQueries';
 import { DialogsFormService } from '../shared/dialogs/dialogs-form.service';
 import { DialogsAddTableComponent } from '../shared/dialogs/dialogs-add-table.component';
 import { ExamsService } from '../exams/exams.service';
+import { isSurveyClosed, isSurveyDeadlinePassed } from '../exams/survey-deadline.helpers';
 import { DeviceInfoService, DeviceType } from '../shared/device-info.service';
 import { DatePipe } from '@angular/common';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -42,6 +43,8 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 type SurveyAction = 'select' | 'edit' | 'send' | 'record' | 'archive' | 'submissions' | 'export' | 'public' | 'revoke' | 'adopt';
 
 const archiveBlockedActions: SurveyAction[] = [ 'edit', 'send', 'record', 'public', 'revoke' ];
+// A passed deadline only stops new submissions, so editing it to extend the survey stays available
+const deadlineBlockedActions: SurveyAction[] = [ 'send', 'record', 'public' ];
 const questionBlockedActions: SurveyAction[] = [ 'send', 'record', 'public', 'submissions' ];
 
 interface SurveyFilterForm {
@@ -105,8 +108,8 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output() surveyCount = new EventEmitter<number>();
   get displayedColumns() {
     const surveyColumns = this.teamSurveyMode ?
-      [ 'name', 'taken', 'createdDate', 'action' ] :
-      [ 'name', 'taken', 'courseTitle', 'createdDate', 'action' ];
+      [ 'name', 'taken', 'createdDate', 'deadline', 'action' ] :
+      [ 'name', 'taken', 'courseTitle', 'createdDate', 'deadline', 'action' ];
     return (this.userService.doesUserHaveRole([ '_admin', 'manager' ]) ? [ 'select' ] : []).concat(surveyColumns);
   }
   dialogRef: MatDialogRef<DialogsAddTableComponent>;
@@ -268,7 +271,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.currentFilter.viewMode === 'adopt') {
         // active, shareable community surveys the team has not already adopted
         return !survey.sourceSurveyId && survey.teamShareAllowed === true &&
-          !survey.teamIds?.includes(targetTeamId) && !survey.isArchived;
+          !survey.teamIds?.includes(targetTeamId) && !isSurveyClosed(survey);
       }
       // without a target team, include surveys that are original rather than derived copies
       return targetTeamId ? survey.teamId === targetTeamId : !survey.sourceSurveyId;
@@ -434,6 +437,7 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
       type: sourceSurvey.type,
       teamId: team._id,
       sourceSurveyId: sourceSurvey._id,
+      deadline: sourceSurvey.deadline ?? null,
     };
     return this.examsService.createExamDocument(teamSurveyData);
   }
@@ -511,6 +515,10 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   recordSurvey(survey: any) {
+    if (this.isSurveyClosed(survey)) {
+      this.planetMessageService.showAlert($localize`This survey is closed and cannot accept new submissions.`);
+      return;
+    }
     this.dialogsLoadingService.start();
     this.getRecordTeam().pipe(
       switchMap((team: any) => {
@@ -686,7 +694,19 @@ export class SurveysComponent implements OnInit, AfterViewInit, OnDestroy {
     this.surveys.data = this.surveys.data.map(item => item._id === surveyId ? { ...item, ...changes } : item);
   }
 
+  isSurveyClosed(survey: any): boolean {
+    return isSurveyClosed(survey);
+  }
+
+  isDeadlinePassed(survey: any): boolean {
+    return isSurveyDeadlinePassed(survey);
+  }
+
   getActionTooltip(survey: any, action: SurveyAction): string {
+    if (!survey.isArchived && isSurveyDeadlinePassed(survey) && deadlineBlockedActions.includes(action)) {
+      return $localize`Survey deadline has passed and it cannot accept new submissions`;
+    }
+
     if (survey.isArchived) {
       if (action === 'archive') {
         return $localize`Survey is already archived`;

@@ -30,19 +30,22 @@ import { findDocuments } from '../shared/mangoQueries';
 import { CanComponentDeactivate } from '../shared/unsaved-changes.guard';
 import { warningMsg } from '../shared/unsaved-changes.component';
 import { MatToolbar } from '@angular/material/toolbar';
-import { MatIconAnchor, MatButton } from '@angular/material/button';
+import { MatIconAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { NgClass } from '@angular/common';
 import { SubmitDirective } from '../shared/submit.directive';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle } from '@angular/material/expansion';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { FormErrorMessagesComponent } from '../shared/forms/form-error-messages.component';
 import { PlanetMarkdownTextboxComponent } from '../shared/forms/planet-markdown-textbox.component';
 import { MatListItemTitle, MatListItemLine } from '@angular/material/list';
 import { ExamsQuestionComponent } from './exams-question.component';
+import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatTooltip } from '@angular/material/tooltip';
+import { surveyDeadlineDate, surveyDeadlineTimestamp } from './survey-deadline.helpers';
 
 interface ExamFormControls {
   name: FormControl<string>;
@@ -51,6 +54,7 @@ interface ExamFormControls {
   questions: FormArray<QuestionFormGroup>;
   type: FormControl<'courses' | 'surveys'>;
   teamShareAllowed: FormControl<boolean>;
+  deadline: FormControl<Date | string | null>;
 }
 
 interface ExamInfo {
@@ -60,6 +64,7 @@ interface ExamInfo {
   questions: Array<{ marks: number }>;
   type: 'courses' | 'surveys';
   teamShareAllowed: boolean;
+  deadline?: number | null;
   teamId?: string | null;
   _id?: string;
   _rev?: string;
@@ -76,6 +81,7 @@ interface ExamDocumentInfo {
   imports: [
     MatToolbar,
     MatIconAnchor,
+    MatIconButton,
     MatIcon,
     FormsModule,
     ReactiveFormsModule,
@@ -94,6 +100,11 @@ interface ExamDocumentInfo {
     MatLabel,
     MatInput,
     MatError,
+    MatHint,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatDatepickerToggle,
+    MatTooltip,
     FormErrorMessagesComponent,
     PlanetMarkdownTextboxComponent,
     PlanetStepListComponent,
@@ -123,6 +134,9 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
   activeQuestionIndex = -1;
   isManagerRoute = this.router.url.startsWith('/manager/surveys');
   isQuestionsActive = false;
+  // A deadline already in the past must stay selectable, otherwise editing the survey to extend it
+  // would be blocked by its own stale value
+  deadlineMinDate = new Date();
   #question!: QuestionFormGroup;
   get question(): QuestionFormGroup {
     return this.#question;
@@ -168,7 +182,8 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       passingPercentage: this.fb.control(100, { validators: [ CustomValidators.positiveNumberValidator, Validators.max(100) ] }),
       questions: this.fb.array<QuestionFormGroup>([]),
       type: this.fb.control<'courses' | 'surveys'>(examRecordType),
-      teamShareAllowed: this.fb.control(false)
+      teamShareAllowed: this.fb.control(false),
+      deadline: this.fb.control<Date | string | null>(null)
     });
   }
 
@@ -192,6 +207,7 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       this.documentInfo = { _rev: exam._rev, _id: exam._id };
       this.examForm.controls.name.setAsyncValidators(this.nameValidator(exam.name));
       this.examForm.patchValue(exam);
+      this.setDeadline(surveyDeadlineDate(exam.deadline));
       this.initializeQuestions(exam.questions);
       if (submissions.length > 0) {
         this.pageType = 'Copy';
@@ -206,8 +222,12 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
 
   onSubmit(reRoute = false) {
     if (this.examForm.valid) {
-      const formValue = this.examForm.getRawValue();
-      const examInfo: ExamInfo = { ...formValue, ...(this.teamId ? { teamId: this.teamId } : {}) };
+      const { deadline, ...formValue } = this.examForm.getRawValue();
+      const examInfo: ExamInfo = {
+        ...formValue,
+        ...(this.examType === 'survey' ? { deadline: surveyDeadlineTimestamp(deadline) } : {}),
+        ...(this.teamId ? { teamId: this.teamId } : {})
+      };
       this.showFormError = false;
       this.addExam({ ...examInfo, ...this.documentInfo }, reRoute);
     } else {
@@ -216,6 +236,16 @@ export class ExamsAddComponent implements OnInit, CanComponentDeactivate {
       }
       this.showErrorMessage();
     }
+  }
+
+  setDeadline(deadline: Date | null) {
+    this.examForm.controls.deadline.setValue(deadline);
+    this.deadlineMinDate = deadline && deadline < this.deadlineMinDate ? deadline : this.deadlineMinDate;
+  }
+
+  clearDeadline() {
+    this.examForm.controls.deadline.setValue(null);
+    this.examForm.controls.deadline.markAsDirty();
   }
 
   nameValidator(exception = ''): AsyncValidatorFn {
