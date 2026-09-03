@@ -93,9 +93,14 @@
         <planet-loading-spinner text="Loading messages..." i18n-text></planet-loading-spinner>
       }
       @if (!newsLoading) {
-        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
+        <planet-news-list [items]="news" viewableBy="teams" [viewableId]="team?._id" [customLabels]="customVoiceLabels" [shareTarget]="configuration?.planetType" (viewChange)="toggleAdd($event)" editSuccessMessage="Message has been updated successfully" [editable]="userStatus === 'member'">
           @if (isRoot) {
             <button mat-stroked-button (click)="openAddMessageDialog()" i18n>New message</button>
+            @if (canManageLabels) {
+              <button class="margin-lr-8" mat-icon-button (click)="openManageLabelsDialog()" matTooltip="Manage Voice Labels" i18n-matTooltip aria-label="Manage Voice Labels" i18n-aria-label>
+                <mat-icon>label</mat-icon>
+              </button>
+            }
           }
           @if (news?.length === 0) {
             <p i18n>No messages available.</p>
@@ -110,6 +115,9 @@
       @if ((team?.description || team?.services || team?.rules)) {
         @if (team?.description && mode === 'enterprise') {
           <div class="mat-headline-6" i18n>What is your enterprise's Mission?</div>
+        }
+        @if (team?.description && mode === 'team') {
+          <div class="mat-headline-6" i18n>What is your team's Plan?</div>
         }
         <planet-markdown [content]="team.description"></planet-markdown>
         @if (team?.services) {
@@ -128,8 +136,8 @@
           </button>
         }
       }
-      @if (mode!=='services') {
-        <p><ng-container i18n>Created</ng-container> {{ team?.createdDate | date:'medium' }}</p>
+      @if (mode!=='services' && team?.createdDate) {
+        <p><ng-container i18n>{ mode, select, enterprise {Enterprise Created} other {Team Created} }</ng-container> {{ team?.createdDate | date:'medium' }}</p>
       }
       @if (team?.description && mode === 'services') {
         <button mat-raised-button color="accent" (click)="updateTeam()" i18n>Edit Services</button>
@@ -199,7 +207,7 @@
           <ng-container i18n>Calendar</ng-container>
         </ng-template>
         @if (calendarTab.isActive) {
-          <planet-calendar [resizeCalendar]="resizeCalendar" [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
+          <planet-calendar [type]="'team'" [link]="{ teams: teamId }" [sync]="{ type: team.teamType, planetCode: team.teamPlanetCode }" [editable]="userStatus === 'member'"></planet-calendar>
         }
       </mat-tab>
       @if (mode!=='team') {
